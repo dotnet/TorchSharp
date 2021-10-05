@@ -55,6 +55,12 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Crop a random portion of image and resize it to a given size. 
         /// </summary>
+        /// <param name="height">expected output height of the crop</param>
+        /// <param name="width">expected output width of the crop</param>
+        /// <param name="scaleMin">lower bounds for the random area of the crop</param>
+        /// <param name="scaleMax">upper bounds for the random area of the crop</param>
+        /// <param name="ratioMin">lower bounds for the random aspect ratio of the crop</param>
+        /// <param name="ratioMax">upper bounds for the random aspect ratio of the crop</param>
         static public ITransform RandomResizedCrop(int height, int width, double scaleMin = 0.08, double scaleMax = 1.0, double ratioMin = 0.75, double ratioMax = 1.3333333333333)
         {
             return new RandomResizedCrop(height, width, scaleMin, scaleMax, ratioMin, ratioMax);
@@ -63,6 +69,11 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Crop a random portion of image and resize it to a given size. 
         /// </summary>
+        /// <param name="size">expected output size of the crop</param>
+        /// <param name="scaleMin">lower for the random area of the crop</param>
+        /// <param name="scaleMax">upper bounds for the random area of the crop</param>
+        /// <param name="ratioMin">lower bounds for the random aspect ratio of the crop</param>
+        /// <param name="ratioMax">upper bounds for the random aspect ratio of the crop</param>
         static public ITransform RandomResizedCrop(int size, double scaleMin = 0.08, double scaleMax = 1.0, double ratioMin = 0.75, double ratioMax = 1.3333333333333)
         {
             return RandomResizedCrop(size, size, scaleMin, scaleMax, ratioMin, ratioMax);

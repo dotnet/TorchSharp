@@ -593,7 +593,6 @@ namespace TorchSharp.torchvision
                     throw new NotImplementedException("Interpolation mode != 'Nearest'");
                 }
 
-
                 var img = SqueezeIn(input, new ScalarType[] { ScalarType.Float32, ScalarType.Float64 }, out var needCast, out var needSqueeze, out var dtype);
 
                 img = torch.nn.functional.interpolate(img, new long[] { h, w }, mode: interpolation, align_corners: null);

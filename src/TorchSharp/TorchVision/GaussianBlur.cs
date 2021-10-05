@@ -32,8 +32,8 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Apply a Gaussian blur effect to the image.
         /// </summary>
-        /// <param name="kernelSize"></param>
-        /// <param name="sigma"></param>
+        /// <param name="kernelSize">Gaussian kernel size</param>
+        /// <param name="sigma">Gaussian kernel standard deviation</param>
         /// <returns></returns>
         static public ITransform GaussianBlur(IList<long> kernelSize, float sigma)
         {
@@ -43,6 +43,9 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Apply a Gaussian blur effect to the image.
         /// </summary>
+        /// <param name="kernelSize">Gaussian kernel size</param>
+        /// <param name="min">minimum value of the range for the uniform distribution from which the Gaussian kernel standard deviation will sampled</param>
+        /// <param name="max">maximum value of the range for the uniform distribution from which the Gaussian kernel standard deviation will sampled</param>
         static public ITransform GaussianBlur(IList<long> kernelSize, float min = 0.1f, float max = 2.0f)
         {
             return new GaussianBlur(kernelSize, min, max);
@@ -51,6 +54,8 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Apply a Gaussian blur effect to the image.
         /// </summary>
+        /// <param name="kernelSize">Gaussian kernel size</param>
+        /// <param name="sigma">Gaussian kernel standard deviation</param>
         static public ITransform GaussianBlur(long kernelSize, float sigma)
         {
             return new GaussianBlur(new long[] { kernelSize, kernelSize }, sigma, sigma);
@@ -59,6 +64,9 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Apply a Gaussian blur effect to the image.
         /// </summary>
+        /// <param name="kernelSize">Gaussian kernel size</param>
+        /// <param name="min">minimum value of the range for the uniform distribution from which the Gaussian kernel standard deviation will sampled</param>
+        /// <param name="max">maximum value of the range for the uniform distribution from which the Gaussian kernel standard deviation will sampled</param>
         static public ITransform GaussianBlur(long kernelSize, float min = 0.1f, float max = 2.0f)
         {
             return new GaussianBlur(new long[] { kernelSize, kernelSize }, min, max);
@@ -67,6 +75,9 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Apply a Gaussian blur effect to the image.
         /// </summary>
+        /// <param name="kernelHeight">Gaussian kernel height</param>
+        /// <param name="kernelWidth">Gaussian kernel width</param>
+        /// <param name="sigma">Gaussian kernel standard deviation</param>
         static public ITransform GaussianBlur(long kernelHeight, long kernelWidth, float sigma)
         {
             return new GaussianBlur(new long[] { kernelHeight, kernelWidth }, sigma, sigma);
@@ -75,6 +86,10 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Apply a Gaussian blur effect to the image.
         /// </summary>
+        /// <param name="kernelHeight">Gaussian kernel height</param>
+        /// <param name="kernelWidth">Gaussian kernel width</param>
+        /// <param name="min">minimum value of the range for the uniform distribution from which the Gaussian kernel standard deviation will sampled</param>
+        /// <param name="max">minimum value of the range for the uniform distribution from which the Gaussian kernel standard deviation will sampled</param>
         static public ITransform GaussianBlur(long kernelHeight, long kernelWidth, float min = 0.1f, float max = 2.0f)
         {
             return new GaussianBlur(new long[] { kernelHeight, kernelWidth }, min, max);
