@@ -70,7 +70,6 @@ namespace TorchSharp.torchvision
         /// <param name="dtype">Bool to make this operation inplace.</param>
         /// <param name="device">The device to place the output tensor on.</param>
         /// <returns></returns>
-
         static public ITransform Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, torch.Device device = null)
         {
             return new Normalize(means, stdevs, dtype, device);
