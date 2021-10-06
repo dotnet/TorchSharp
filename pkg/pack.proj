@@ -1,15 +1,15 @@
 <Project>
   <Import Project="..\Directory.Build.props" />
   <ItemGroup>
-    <PackProject Include="**\TorchSharp-cpu.nupkgproj" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'" />
-    <PackProject Include="**\TorchSharp-cuda-linux.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'linux'" />
-    <PackProject Include="**\TorchSharp-cuda-windows.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'windows'" />
     <PackProject Include="**\libtorch-cpu.nupkgproj" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'" />
     <PackProject Include="**\libtorch-cpu-*.nupkgproj" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'" />
     <PackProject Include="**\libtorch-cuda-$(CudaVersionDot)-linux-*.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'linux'" />
     <PackProject Include="**\libtorch-cuda-$(CudaVersionDot)-win-*.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'windows'" />
     <PackProject Include="**\libtorch-cuda-$(CudaVersionDot)-mac-*.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'mac'" />
     <PackProject Include="**\TorchSharp.nupkgproj" Condition="'$(IncludeTorchSharpPackage)' == 'true'" />
+    <PackProject Include="**\TorchSharp-cpu.nupkgproj" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'" />
+    <PackProject Include="**\TorchSharp-cuda-linux.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'linux'" />
+    <PackProject Include="**\TorchSharp-cuda-windows.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'windows'" />
   </ItemGroup>
   <Target Name="Pack">
     <Message Text="Restoring packaging projects..." Importance="high" />
