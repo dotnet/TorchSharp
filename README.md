@@ -1,4 +1,4 @@
-[![Build Status](https://dotnet.visualstudio.com/TorchSharp/_apis/build/status/dotnet.TorchSharp?branchName=main)](https://donsyme.visualstudio.com/TorchSharp/_build/latest?definitionId=174&branchName=main)
+[![Build Status](https://dotnet.visualstudio.com/TorchSharp/_apis/build/status/dotnet.TorchSharp?branchName=main)](https://dotnet.visualstudio.com/TorchSharp/_build/latest?definitionId=174&branchName=main)
 
 __NOTE:__
 
