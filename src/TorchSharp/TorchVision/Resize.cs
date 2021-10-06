@@ -63,8 +63,8 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Resize the input image to the given size.
         /// </summary>
-        /// <param name="height"></param>
-        /// <param name="width"></param>
+        /// <param name="height">Desired output height</param>
+        /// <param name="width">Desired output width</param>
         /// <returns></returns>
         static public ITransform Resize(int height, int width)
         {
@@ -74,8 +74,8 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Resize the input image to the given size.
         /// </summary>
-        /// <param name="size"></param>
-        /// <param name="maxSize"></param>
+        /// <param name="size">Desired output size</param>
+        /// <param name="maxSize">Max size</param>
         static public ITransform Resize(int size, int? maxSize = null)
         {
             return new Resize(size, -1, maxSize);

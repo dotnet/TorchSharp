@@ -29,6 +29,8 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Crop the center of the image.
         /// </summary>
+        /// <param name="height">Desired output height of the crop</param>
+        /// <param name="width">Desired output width of the crop</param>
         static public ITransform CenterCrop(int height, int width)
         {
             return new CenterCrop(height, width);
@@ -37,6 +39,7 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Crop the center of the image.
         /// </summary>
+        /// <param name="size">Desired output size of the crop</param>
         static public ITransform CenterCrop(int size)
         {
             return new CenterCrop(size, size);
