@@ -17,8 +17,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            using (var inverted = transforms.Invert().forward(input))
-                return input.where(input < threshold, inverted);
+            return transforms.functional.solarize(input, threshold);
         }
 
         private double threshold;

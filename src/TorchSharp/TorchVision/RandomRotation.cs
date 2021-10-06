@@ -59,7 +59,7 @@ namespace TorchSharp.torchvision
         /// <param name="fill">Pixel fill value for the area outside the rotated. If given a number, the value is used for all bands respectively.</param>
         static public ITransform RandomRotation((double, double) degrees, InterpolationMode interpolation = InterpolationMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
         {
-            return RandomRotation(degrees, interpolation, expand, center, fill);
+            return new RandomRotation(degrees, interpolation, expand, center, fill);
         }
     }
 }
