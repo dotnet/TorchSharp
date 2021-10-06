@@ -526,7 +526,7 @@ jobs:
     displayName: 'NuGet push (TorchSharp-cpu)'
     inputs:
       command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp-cpu.*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp-*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
