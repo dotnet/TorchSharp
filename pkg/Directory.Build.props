@@ -30,7 +30,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
-  <!-- TorchSharp -->
+  <!-- TorchSharp, TorchSharp=cpu, TorchSharp-cuda-linux, TorchSharp-cuda=windows -->
   <PropertyGroup Condition="'$(_IsLibTorchPackage)' != 'true'">
     <Authors>TorchSharp contributors</Authors>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
@@ -39,7 +39,7 @@
     <Copyright>Copyright .NET Foundation and Contributors</Copyright>
     <Owners>.NET Foundation and Contributors</Owners>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageDescription>TorchSharp makes PyTorch available for .NET users. $(MSBuildProjectName) contains components of the PyTorch LibTorch library version $(LibTorchVersion) redistributed as a NuGet package with added support for TorchSharp.</PackageDescription>
+    <PackageDescription>TorchSharp makes PyTorch available for .NET users.</PackageDescription>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
