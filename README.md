@@ -1,9 +1,5 @@
 [![Build Status](https://dotnet.visualstudio.com/TorchSharp/_apis/build/status/dotnet.TorchSharp?branchName=main)](https://dotnet.visualstudio.com/TorchSharp/_build/latest?definitionId=174&branchName=main)
 
-__NOTE:__
-
-The build status indicates that the build of TorchSharp is failing. This is because the Ubuntu builds are failing setting up the image used to run the build. It is being looked at, but we do not currently know how to address it. Fortunately, it is not holding up a release. TorchSharp 0.93.1 and libtorch 1.9.0.11 are available on NuGet and are up do date with all recent functional changes.
-
 __TorchSharp is now in the .NET Foundation!__
 
 If you are using TorchSharp from NuGet, you should be using a version >= 0.93.1 of TorchSharp, and >= 1.9.0.11 of the libtorch-xxx redistributable packages.
