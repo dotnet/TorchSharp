@@ -21,7 +21,8 @@ namespace TorchSharp.torchvision
                 this.means = this.means.to_type(dtype);
                 this.stdevs = this.stdevs.to_type(dtype);
             }
-            if (device != null) {
+
+            if (device != null && device.type != DeviceType.CPU) {
                 this.means = this.means.to(device);
                 this.stdevs = this.stdevs.to(device);
             }
