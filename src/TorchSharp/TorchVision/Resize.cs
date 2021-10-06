@@ -13,16 +13,14 @@ namespace TorchSharp.torchvision
         {
             this.height = height;
             this.width = width;
-            this.interpolation = InterpolationMode.Nearest;
             this.maxSize = maxSize; 
         }
 
         public Tensor forward(Tensor input)
         {
-            return transforms.functional.resize(input, height, width, interpolation, maxSize);
+            return transforms.functional.resize(input, height, width, maxSize);
         }
 
-        private InterpolationMode interpolation;
         private int height, width;
         private int? maxSize;
     }
