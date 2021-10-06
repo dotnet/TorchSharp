@@ -129,7 +129,7 @@ namespace TorchSharp.Examples
             {
                 RegisterComponents();
 
-                if (device != null && device.type == DeviceType.CUDA)
+                if (device.type == DeviceType.CUDA)
                     this.to(device);
             }
 

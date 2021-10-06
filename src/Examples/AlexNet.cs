@@ -54,7 +54,7 @@ namespace TorchSharp.Examples
             register_module("avg", avgPool);
             register_module("classify", classifier);
 
-            if (device != null && device.type == DeviceType.CUDA)
+            if (device.type == DeviceType.CUDA)
                 this.to(device);
         }
 
