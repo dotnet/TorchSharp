@@ -517,7 +517,16 @@ jobs:
     displayName: 'NuGet push (TorchSharp)'
     inputs:
       command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp.*.nupkg'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (TorchSharp-cpu)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp-cpu.*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
@@ -587,7 +596,7 @@ jobs:
     displayName: Download Signed Windows CUDA Packages
     artifact: SignedWinCUDAPackages
 
-  # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
+  # push the Windows Cuda packages
   - task: NuGetCommand@2
     displayName: 'NuGet push (cuda win-x64)'
     inputs:
@@ -598,7 +607,7 @@ jobs:
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
 
-  # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
+  # push the Windows Cuda packages
   - task: NuGetCommand@2
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
@@ -609,7 +618,7 @@ jobs:
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
 
-  # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
+  # push the Windows Cuda packages
   - task: NuGetCommand@2
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
@@ -620,7 +629,7 @@ jobs:
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
 
-  # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
+  # push the Windows Cuda packages
   - task: NuGetCommand@2
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
@@ -631,7 +640,7 @@ jobs:
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
 
-  # push the Windows Cuda packages as they are useful even if pushing the huge and messy Linux cuda packages fails
+  # push the Windows Cuda packages
   - task: NuGetCommand@2
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
