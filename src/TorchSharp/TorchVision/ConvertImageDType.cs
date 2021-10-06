@@ -29,6 +29,7 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Convert a tensor image to the given dtype and scale the values accordingly
         /// </summary>
+        /// <param name="dtype">Desired data type of the output</param>
         static public ITransform ConvertImageDType(ScalarType dtype)
         {
             return new ConvertImageDType(dtype);
