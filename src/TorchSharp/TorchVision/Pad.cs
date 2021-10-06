@@ -38,7 +38,7 @@ namespace TorchSharp.torchvision
         /// If a sequence of length 4 is provided this is the padding for the left, top, right and bottom borders respectively.
         /// </param>
         /// <param name="fill">Pixel fill value for constant fill.</param>
-        /// <param name="mode"></param>
+        /// <param name="mode">Type of padding.</param>
         static public ITransform Pad(long[] padding, PaddingModes mode = PaddingModes.Constant, double fill = 0)
         {
             return new Pad(padding, mode, fill);
