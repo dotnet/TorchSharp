@@ -17,6 +17,7 @@
     <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netcoreapp3.1\$(MSBuildProjectName).targets" />
     <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netcoreapp3.1\_._" />
     <Content Include="$(RepoRoot)\THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="LICENSE-LIBTORCH.txt" />
+    <Content Include="$(RepoRoot)\LICENSE.txt" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
