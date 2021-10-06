@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="TorchSharp.nupkgproj" />
-    <ProjectReference Include="libtorch-cpu.nupkgproj" />
+    <ProjectReference Include="..\TorchSharp\TorchSharp.nupkgproj" />
+    <ProjectReference Include="..\libtorch-cpu\libtorch-cpu.nupkgproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
