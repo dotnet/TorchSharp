@@ -21,7 +21,7 @@ TorchSharp is a .NET library that provides access to the library that powers PyT
 
 The focus is to bind the API surfaced by libtorch with a particular focus on tensors. The design intent is to stay as close as possible to the Pytorch experience, while still taking advantage of the benefits of the .NET static type system where it makes sense. For example: method overloading is relied on when Pytorch defines multiple valid types for a particular parameter.
 
-The technology is a "wrapper library": no more, no less. [DiffSharp](https://github.com/DiffSharp/DiffSharp/) uses this
+The technology is a wrapper library. [DiffSharp](https://github.com/DiffSharp/DiffSharp/) uses this
 repository extensively and has been a major factor in iterating support.
 
 Things that you can try:
@@ -84,15 +84,23 @@ See [docfx/articles/memory.md](docfx/articles/memory.md).
 
 TorchSharp is distributed via the NuGet gallery: https://www.nuget.org/packages/TorchSharp/
 
-To use TorchSharp, you also need one of the LibTorch backend packages: https://www.nuget.org/packages?q=libtorch, specifically one of
+To use TorchSharp, you also need a LibTorch backend and should reference one of
 
-* `libtorch-cpu-linux-x64` (CPU, Linux)
+* `TorchSharp-cpu` (CPU)
 
-* `libtorch-cpu-win-x64` (CPU, Windows)
+* `TorchSharp-cuda-11.1-linux-x64` (CPU)
 
-* `libtorch-cpu-osx-x64` (CPU, OSX)
+* `TorchSharp-cuda-11.1-win-x64` (CPU)
 
-* `libtorch-cpu` (CPU, references all three, larger download but simpler)
+This combines TorchSharp with an appropriate selection of the LibTorch backend packages: https://www.nuget.org/packages?q=libtorch, specifically 
+
+* `libtorch-cpu` (CPU), referencing all of
+
+  * `libtorch-cpu-linux-x64` (CPU, Linux)
+
+  * `libtorch-cpu-win-x64` (CPU, Windows)
+
+  * `libtorch-cpu-osx-x64` (CPU, OSX)
 
 * `libtorch-cuda-11.1-linux-x64` (CPU/CUDA 11.1, Linux)
 
