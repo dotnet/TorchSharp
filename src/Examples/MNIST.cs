@@ -136,7 +136,7 @@ namespace TorchSharp.Examples
             public override Tensor forward(Tensor input)
             {
                 var l11 = conv1.forward(input);
-                var l12 = relu2.forward(l11);
+                var l12 = relu1.forward(l11);
 
                 var l21 = conv2.forward(l12);
                 var l22 = relu2.forward(l21);
