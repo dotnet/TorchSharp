@@ -592,7 +592,7 @@ jobs:
     displayName: 'NuGet push (cuda win-x64)'
     inputs:
       command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -603,7 +603,7 @@ jobs:
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
       command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -614,7 +614,7 @@ jobs:
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
       command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -625,7 +625,7 @@ jobs:
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
       command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -636,7 +636,7 @@ jobs:
     displayName: 'NuGet push (cuda win-x64 retry)'
     inputs:
       command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -679,7 +679,7 @@ jobs:
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
       command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -690,7 +690,7 @@ jobs:
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
       command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -701,7 +701,7 @@ jobs:
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
       command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
@@ -712,7 +712,7 @@ jobs:
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
       command: push
-      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux-x64*.nupkg'
+      packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
