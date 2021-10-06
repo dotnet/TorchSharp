@@ -49,7 +49,7 @@ namespace TorchSharp.torchvision
         /// </summary>
         static public ITransform RandomRotation((double, double) degrees, InterpolationMode mode = InterpolationMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
         {
-            return RandomRotation(degrees, mode, expand, center, fill);
+            return new RandomRotation(degrees, mode, expand, center, fill);
         }
     }
 }
