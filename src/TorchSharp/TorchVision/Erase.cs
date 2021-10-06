@@ -22,11 +22,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor img)
         {
-            if (!inplace)
-                img = img.clone();
-
-            img[TensorIndex.Ellipsis, top..(top + height), left..(left + width)] = value;
-            return img;
+            return transforms.functional.erase(img, top, left, height, width, value, inplace);
         }
 
         private int top, left, height, width;

@@ -556,13 +556,11 @@ namespace TorchSharp.torchvision
             /// <param name="input">An image tensor.</param>
             /// <param name="height"></param>
             /// <param name="width"></param>
+            /// <param name="interpolation"></param>
             /// <param name="maxSize"></param>
             /// <returns></returns>
-            public static Tensor resize(Tensor input, int height, int width, int? maxSize = null)
+            public static Tensor resize(Tensor input, int height, int width, InterpolationMode interpolation = InterpolationMode.Nearest, int? maxSize = null)
             {
-                // For now, we don't allow any other modes.
-                const InterpolationMode interpolation = InterpolationMode.Nearest;
-
                 var hoffset = input.Dimensions - 2;
                 var iHeight = input.shape[hoffset];
                 var iWidth = input.shape[hoffset + 1];
@@ -589,6 +587,7 @@ namespace TorchSharp.torchvision
                     }
                 }
 
+                // For now, we don't allow any other modes.
                 if (interpolation != InterpolationMode.Nearest) {
                     throw new NotImplementedException("Interpolation mode != 'Nearest'");
                 }
