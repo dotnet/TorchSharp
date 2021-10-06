@@ -42,7 +42,7 @@ namespace TorchSharp.torchvision
         /// <param name="degrees">Range of degrees to select from (-degrees, +degrees).</param>
         /// <param name="interpolation">Desired interpolation enum. Default is `InterpolationMode.NEAREST`.</param>
         /// <param name="expand">If true, expands the output to make it large enough to hold the entire rotated image. If false or omitted, make the output image the same size as the input image. Note that the expand flag assumes rotation around the center and no translation.</param>
-        /// <param name="center">center of rotation, (x, y). Origin is the upper left corner.</param>
+        /// <param name="center">Center of rotation, (x, y). Origin is the upper left corner.</param>
         /// <param name="fill">Pixel fill value for the area outside the rotated. If given a number, the value is used for all bands respectively.</param>
         static public ITransform RandomRotation(double degrees, InterpolationMode interpolation = InterpolationMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
         {
@@ -55,7 +55,7 @@ namespace TorchSharp.torchvision
         /// <param name="degrees">Range of degrees to select from</param>
         /// <param name="interpolation">Desired interpolation enum. Default is `InterpolationMode.NEAREST`.</param>
         /// <param name="expand">If true, expands the output to make it large enough to hold the entire rotated image. If false or omitted, make the output image the same size as the input image. Note that the expand flag assumes rotation around the center and no translation.</param>
-        /// <param name="center">center of rotation, (x, y). Origin is the upper left corner.</param>
+        /// <param name="center">Center of rotation, (x, y). Origin is the upper left corner.</param>
         /// <param name="fill">Pixel fill value for the area outside the rotated. If given a number, the value is used for all bands respectively.</param>
         static public ITransform RandomRotation((double, double) degrees, InterpolationMode interpolation = InterpolationMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
         {
