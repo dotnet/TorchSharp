@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="TorchSharp.nupkgproj" />
-    <ProjectReference Include="libtorch-cpu.nupkgproj" />
+    <ProjectReference Include="libtorch-cuda-11.1-win-x64.nupkgproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">

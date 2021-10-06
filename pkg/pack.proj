@@ -1,6 +1,9 @@
 <Project>
   <Import Project="..\Directory.Build.props" />
   <ItemGroup>
+    <PackProject Include="**\TorchSharp-cpu.nupkgproj" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'" />
+    <PackProject Include="**\TorchSharp-cuda-linux.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'linux'" />
+    <PackProject Include="**\TorchSharp-cuda-windows.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'windows'" />
     <PackProject Include="**\libtorch-cpu.nupkgproj" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'" />
     <PackProject Include="**\libtorch-cpu-*.nupkgproj" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'" />
     <PackProject Include="**\libtorch-cuda-$(CudaVersionDot)-linux-*.nupkgproj" Condition="'$(IncludeLibTorchCudaPackages)' == 'true' AND '$(TargetOS)' == 'linux'" />
