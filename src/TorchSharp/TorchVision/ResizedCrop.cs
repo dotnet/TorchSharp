@@ -35,7 +35,6 @@ namespace TorchSharp.torchvision
         /// <param name="width">Width of the crop box.</param>
         /// <param name="newHeight">New height.</param>
         /// <param name="newWidth">New width.</param>
-
         static public ITransform ResizedCrop(int top, int left, int height, int width, int newHeight, int newWidth)
         {
             return new ResizedCrop(top, left, height, width, newHeight, newWidth);
