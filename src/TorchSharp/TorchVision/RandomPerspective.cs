@@ -40,7 +40,7 @@ namespace TorchSharp.torchvision
             var half_width = width / 2;
             var half_height = height / 2;
 
-            var randoms = torch.rand(8, ScalarType.Float64).Data<double>().ToArray();
+            var randoms = torch.rand(8, ScalarType.Float64).data<double>().ToArray();
 
             var topleft = new int[] {
                 Adjust(randoms[0], 0, distortion * half_width + 1),

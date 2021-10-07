@@ -127,7 +127,7 @@ namespace TorchSharp.Examples
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
                     optimizer.step();
 
-                    total_loss += loss.to(torch.CPU).DataItem<float>();
+                    total_loss += loss.to(torch.CPU).item<float>();
                 }
 
                 GC.Collect();
@@ -159,7 +159,7 @@ namespace TorchSharp.Examples
                 }
                 using (var output = model.forward(data, src_mask)) {
                     var loss = criterion(output.view(-1, ntokens), targets);
-                    total_loss += data.shape[0] * loss.to(torch.CPU).DataItem<float>();
+                    total_loss += data.shape[0] * loss.to(torch.CPU).item<float>();
                 }
 
                 data.Dispose();

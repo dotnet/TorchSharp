@@ -40,10 +40,10 @@ namespace TorchSharp
 
             if (torch.cuda.is_available()) {
                 var scalar = torch.tensor(3.14f, torch.CUDA);
-                Assert.Throws<InvalidOperationException>(() => scalar.DataItem<float>());
+                Assert.Throws<InvalidOperationException>(() => scalar.item<float>());
                 var tensor = torch.zeros(new long[] { 10, 10 }, device: torch.CUDA);
-                Assert.Throws<InvalidOperationException>(() => tensor.Data<float>());
-                Assert.Throws<InvalidOperationException>(() => tensor.Bytes());
+                Assert.Throws<InvalidOperationException>(() => tensor.data<float>());
+                Assert.Throws<InvalidOperationException>(() => { var _ = tensor.bytes; });
             }
         }
 
@@ -201,16 +201,90 @@ namespace TorchSharp
             using var y = torch.ones(3,3);
 
             var mx1 = x.max();
-            Assert.Equal(0, mx1.DataItem<float>());
+            Assert.Equal(0, mx1.item<float>());
 
             var mx2 = x.maximum(y);
             Assert.True(mx2.allclose(y));
 
             var mn1 = x.min();
-            Assert.Equal(0, mn1.DataItem<float>());
+            Assert.Equal(0, mn1.item<float>());
 
             var mn2 = x.minimum(y);
             Assert.True(mn2.allclose(x));
+        }
+
+        [Fact]
+        public void ValidateIssue399_1()
+        {
+            // Create a contiguous 3x4 matrix and fill with auto-inc values starting at zero.
+            // 0 1 2 3
+            // 4 5 6 7
+            // 8 9 10 11
+            using var contig = torch.arange(12, int32).reshape(3,4).contiguous();
+            var data1 = contig.data<int>();
+
+            // Create a 3x2 slice of this, which should contain:
+            // 1 2
+            // 5 6
+            // 9 10
+            using var sub = contig.slice(1, 1, 3, 1);
+            var data2 = sub.data<int>();
+
+            Assert.Equal(12, data1.Count);
+            Assert.Equal(6, data2.Count);
+
+            Assert.False(sub.is_contiguous());
+            Assert.Equal(sub.contiguous().data<int>(), data2);
+        }
+
+        [Fact]
+        public void ValidateIssue399_2()
+        {
+            // Create a contiguous 3x4 matrix and fill with auto-inc values starting at zero.
+            // 0 1 2 3
+            // 4 5 6 7
+            // 8 9 10 11
+            using var contig = torch.arange(12, int32).reshape(3, 4).contiguous();
+            var data1 = contig.data<int>();
+
+            // Creating the transpose, which should look like:
+            // 0 4 8
+            // 1 5 9
+            // 2 6 10
+            // 3 7 11
+            using var trans = contig.t();
+            var data2 = trans.data<int>();
+
+            Assert.False(trans.is_contiguous());
+
+            Assert.Equal(12, data1.Count);
+            Assert.Equal(12, data2.Count);
+
+            Assert.Equal(trans.contiguous().data<int>(), data2);
+        }
+
+        [Fact]
+        public void ValidateIssue399_3()
+        {
+            using var contig = torch.arange(27, int32).reshape(3, 3, 3).contiguous();
+            using var trans = contig.permute(2, 0, 1);
+
+            Assert.False(trans.is_contiguous());
+            Assert.Equal<int>(trans.contiguous().data<int>(), trans.data<int>());
+        }
+
+        [Fact]
+        public void ValidateIssue399_4()
+        {
+            // This test is added because 'flip()' may, in the future, be implemented returning a view.
+            // In that case, this will start failing and tell us we have to support negative strides.
+
+            using var contig = torch.arange(12, int32).reshape(3, 4).contiguous();
+            using var flipped = contig.t().flip(1);
+            var strides = flipped.stride();
+
+            Assert.True(flipped.is_contiguous());
+            Assert.Equal<int>(flipped.contiguous().data<int>(), flipped.data<int>());
         }
     }
 }

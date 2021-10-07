@@ -112,7 +112,7 @@ namespace TorchSharp
             Assert.Equal(forward.shape[1], matmul.shape[1]);
 
             for (int i = 0; i < 100; i++) {
-                Assert.InRange(forward.Data<float>()[i], matmul.Data<float>()[i] - 10e5f, matmul.Data<float>()[i] + 10e5f);
+                Assert.InRange(forward.data<float>()[i], matmul.data<float>()[i] - 10e5f, matmul.data<float>()[i] + 10e5f);
             }
         }
 
@@ -145,7 +145,7 @@ namespace TorchSharp
             Assert.Equal(forward.shape[1], matmul.shape[1]);
 
             for (int i = 0; i < 100; i++) {
-                Assert.Equal(forward.Data<float>()[i], matmul.Data<float>()[i]);
+                Assert.Equal(forward.data<float>()[i], matmul.data<float>()[i]);
             }
         }
 
@@ -158,7 +158,7 @@ namespace TorchSharp
             var output = lin.forward(input);
 
             for (int i = 0; i < 1000; i++) {
-                Assert.Equal(input.Data<float>()[i], output.Data<float>()[i]);
+                Assert.Equal(input.data<float>()[i], output.data<float>()[i]);
             }
         }
 
@@ -170,7 +170,7 @@ namespace TorchSharp
             lin.Bias = bias;
 
             for (int i = 0; i < 100; i++) {
-                Assert.Equal(lin.Bias.Data<float>()[i], bias.Data<float>()[i]);
+                Assert.Equal(lin.Bias.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
@@ -189,7 +189,7 @@ namespace TorchSharp
             Assert.Equal(lin.Weight.shape[1], weights.shape[1]);
 
             for (int i = 0; i < 100; i++) {
-                Assert.Equal(lin.Bias.Data<float>()[i], bias.Data<float>()[i]);
+                Assert.Equal(lin.Bias.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
@@ -225,7 +225,7 @@ namespace TorchSharp
             var rel = ReLU();
             var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= 0.0));
         }
@@ -236,7 +236,7 @@ namespace TorchSharp
             var rel = ReLU6();
             var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= 0.0 && val <= 6.0));
         }
@@ -247,7 +247,7 @@ namespace TorchSharp
             var rel = LeakyReLU();
             var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
         }
 
@@ -257,7 +257,7 @@ namespace TorchSharp
             var rel = Mish();
             var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
         }
 
@@ -267,7 +267,7 @@ namespace TorchSharp
             var rel = RReLU();
             var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
         }
 
@@ -277,7 +277,7 @@ namespace TorchSharp
             var rel = CELU();
             var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= -1.0));
         }
@@ -288,7 +288,7 @@ namespace TorchSharp
             var rel = ELU();
             var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= -1.0));
         }
@@ -299,7 +299,7 @@ namespace TorchSharp
             var rel = SELU();
             var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= -1.76));
         }
@@ -310,7 +310,7 @@ namespace TorchSharp
             var rel = GELU();
             var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= -0.2));
         }
@@ -321,7 +321,7 @@ namespace TorchSharp
             var rel = Sigmoid();
             var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
         }
@@ -332,7 +332,7 @@ namespace TorchSharp
             var rel = SiLU();
             var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= -1.0));
         }
@@ -343,7 +343,7 @@ namespace TorchSharp
             var rel = Softmax2d();
             var input = torch.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
         }
@@ -354,7 +354,7 @@ namespace TorchSharp
             var rel = Tanh();
             var input = torch.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= -1.0 && val <= 1.0));
         }
@@ -365,7 +365,7 @@ namespace TorchSharp
             var rel = Softmax(1);
             var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
         }
@@ -376,7 +376,7 @@ namespace TorchSharp
             var rel = Softmax(1);
             var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             var output = rel.forward(input);
-            var values = output.Data<float>().ToArray();
+            var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
         }
@@ -465,7 +465,7 @@ namespace TorchSharp
             using (Tensor input = torch.rand(new long[] { 5, 2 }))
             using (Tensor target = torch.rand(new long[] { 5, 2 })) {
                 var outTensor = poisson_loss(true, true)(input, target);
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -477,7 +477,7 @@ namespace TorchSharp
             using (Tensor input = torch.rand(new long[] { 5, 12 }))
             using (Tensor target = torch.randint(12, new long[] { 5 }, torch.int64)) {
                 var outTensor = cross_entropy_loss()(input, target);
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -489,7 +489,7 @@ namespace TorchSharp
             using (Tensor input = torch.rand(new long[] { 5, 2 }))
             using (Tensor target = torch.rand(new long[] { 5, 2 })) {
                 var outTensor = l1_loss()(input, target);
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -502,7 +502,7 @@ namespace TorchSharp
             using (Tensor input = torch.randn(new long[] { 3 }))
             using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = binary_cross_entropy_loss()(m.forward(input), target);
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -514,7 +514,7 @@ namespace TorchSharp
             using (Tensor input = torch.randn(new long[] { 3 }))
             using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = binary_cross_entropy_with_logits_loss()(input, target);
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -526,7 +526,7 @@ namespace TorchSharp
             using (Tensor input = torch.randn(new long[] { 3 }))
             using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = kl_div_loss()(input, target);
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -538,7 +538,7 @@ namespace TorchSharp
             using (Tensor input = torch.randn(new long[] { 3 }))
             using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = smooth_l1_loss()(input, target);
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -550,7 +550,7 @@ namespace TorchSharp
             using (Tensor input = torch.randn(new long[] { 3 }))
             using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = soft_margin_loss()(input, target);
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -565,7 +565,7 @@ namespace TorchSharp
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -575,7 +575,7 @@ namespace TorchSharp
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
-                var values = outTensor.Data<float>().ToArray();
+                var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -590,7 +590,7 @@ namespace TorchSharp
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
-                var values = outTensor.Data<double>().ToArray();
+                var values = outTensor.data<double>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -600,7 +600,7 @@ namespace TorchSharp
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
-                var values = outTensor.Data<double>().ToArray();
+                var values = outTensor.data<double>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
@@ -968,7 +968,7 @@ namespace TorchSharp
                     sum.backward();
                     var grad = x.grad();
                     Assert.False(grad is null || grad.Handle == IntPtr.Zero);
-                    var data = grad is not null ?  grad.Data<float>() : new float[] { };
+                    var data = grad is not null ?  grad.data<float>().ToArray() : new float[] { };
                     for (int i = 0; i < 2 * 3; i++) {
                         Assert.Equal(1.0, data[i]);
                     }
@@ -1017,7 +1017,7 @@ namespace TorchSharp
             Assert.Equal(new long[] { 64, 3, 3 }, weight.shape);
 
             for (int i = 0; i < 64; i++) {
-                Assert.Equal(conv.Bias.Data<float>()[i], bias.Data<float>()[i]);
+                Assert.Equal(conv.Bias.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
@@ -1099,7 +1099,7 @@ namespace TorchSharp
             Assert.Equal(new long[] { 64, 3, 3, 3 }, weight.shape);
 
             for (int i = 0; i < 64; i++) {
-                Assert.Equal(conv.Bias.Data<float>()[i], bias.Data<float>()[i]);
+                Assert.Equal(conv.Bias.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
@@ -1185,7 +1185,7 @@ namespace TorchSharp
             Assert.Equal(new long[] { 64, 3, 3, 3, 3 }, weight.shape);
 
             for (int i = 0; i < 64; i++) {
-                Assert.Equal(conv.Bias.Data<float>()[i], bias.Data<float>()[i]);
+                Assert.Equal(conv.Bias.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
@@ -1994,7 +1994,7 @@ namespace TorchSharp
         {
             var ones = torch.tensor(new long[] { 1, 2, 0, 0, 3, 4, 2, 2 });
             var env = one_hot(ones, 5);
-            var values = env.Data<long>().ToArray();
+            var values = env.data<long>().ToArray();
             Assert.Equal(ones.shape[0], env.shape[0]);
             Assert.Equal(5, env.shape[1]);
         }
@@ -2004,7 +2004,7 @@ namespace TorchSharp
         {
             var ones = torch.tensor(new long[] { 1, 2, 0, 5, 3, 4, 2, 2 });
             var env = one_hot(ones);
-            var values = env.Data<long>().ToArray();
+            var values = env.data<long>().ToArray();
             Assert.Equal(ones.shape[0], env.shape[0]);
             Assert.Equal(6, env.shape[1]);
         }
@@ -2191,8 +2191,8 @@ namespace TorchSharp
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.Data<float>().ToArray();
-            var outVal = output.Data<float>().ToArray();
+            var dataVal = data.data<float>().ToArray();
+            var outVal = output.data<float>().ToArray();
             Assert.NotEqual(outVal, dataVal);
         }
 
@@ -2204,8 +2204,8 @@ namespace TorchSharp
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.Data<float>().ToArray();
-            var outVal = output.Data<float>().ToArray();
+            var dataVal = data.data<float>().ToArray();
+            var outVal = output.data<float>().ToArray();
             Assert.Equal(outVal, dataVal);
         }
 
@@ -2217,8 +2217,8 @@ namespace TorchSharp
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.Data<float>().ToArray();
-            var outVal = output.Data<float>().ToArray();
+            var dataVal = data.data<float>().ToArray();
+            var outVal = output.data<float>().ToArray();
             Assert.NotEqual(outVal, dataVal);
         }
 
@@ -2230,8 +2230,8 @@ namespace TorchSharp
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.Data<float>().ToArray();
-            var outVal = output.Data<float>().ToArray();
+            var dataVal = data.data<float>().ToArray();
+            var outVal = output.data<float>().ToArray();
             Assert.Equal(outVal, dataVal);
         }
 
@@ -2243,8 +2243,8 @@ namespace TorchSharp
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.Data<float>().ToArray();
-            var outVal = output.Data<float>().ToArray();
+            var dataVal = data.data<float>().ToArray();
+            var outVal = output.data<float>().ToArray();
             Assert.NotEqual(outVal, dataVal);
         }
 
@@ -2256,8 +2256,8 @@ namespace TorchSharp
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.Data<float>().ToArray();
-            var outVal = output.Data<float>().ToArray();
+            var dataVal = data.data<float>().ToArray();
+            var outVal = output.data<float>().ToArray();
             Assert.Equal(outVal, dataVal);
         }
 
@@ -2269,8 +2269,8 @@ namespace TorchSharp
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.Data<float>().ToArray();
-            var outVal = output.Data<float>().ToArray();
+            var dataVal = data.data<float>().ToArray();
+            var outVal = output.data<float>().ToArray();
             Assert.NotEqual(outVal, dataVal);
         }
         #endregion
@@ -2364,7 +2364,7 @@ namespace TorchSharp
             using (var pad = ReflectionPad1d(3)) {
                 var output = pad.forward(data);
                 Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
-                var values = output.Data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(values[6], values[0]);
                 Assert.Equal(values[5], values[1]);
                 Assert.Equal(values[4], values[2]);
@@ -2382,7 +2382,7 @@ namespace TorchSharp
             using (var pad = ReflectionPad2d(3)) {
                 var output = pad.forward(data);
                 Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
-                var values = output.Data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(values[6], values[0]);
                 Assert.Equal(values[5], values[1]);
                 Assert.Equal(values[4], values[2]);
@@ -2397,7 +2397,7 @@ namespace TorchSharp
             using (var pad = ReplicationPad1d(3)) {
                 var output = pad.forward(data);
                 Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
-                var values = output.Data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(values[3], values[0]);
                 Assert.Equal(values[3], values[1]);
                 Assert.Equal(values[3], values[3]);
@@ -2415,7 +2415,7 @@ namespace TorchSharp
             using (var pad = ReplicationPad2d(3)) {
                 var output = pad.forward(data);
                 Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
-                var values = output.Data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(values[3], values[0]);
                 Assert.Equal(values[3], values[1]);
                 Assert.Equal(values[3], values[3]);
@@ -2430,7 +2430,7 @@ namespace TorchSharp
             using (var pad = ReplicationPad3d(3)) {
                 var output = pad.forward(data);
                 Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
-                var values = output.Data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(values[3], values[0]);
                 Assert.Equal(values[3], values[1]);
                 Assert.Equal(values[3], values[3]);

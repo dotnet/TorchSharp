@@ -145,28 +145,20 @@ namespace TorchSharp
             public bool is_cuda { get { return device.type == DeviceType.CUDA; } }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_data(IntPtr handle);
+            internal static extern IntPtr THSTensor_data(IntPtr handle);
 
             /// <summary>
             ///  Returns a pointer to the unmanaged data managed by this tensor.
             /// </summary>
-            public Span<T> Data<T>()
+            public Utils.TensorAccessor<T> data<T>() where T : unmanaged
             {
-                if (NumberOfElements > int.MaxValue) {
-                    throw new ArgumentException("Span only supports up to int.MaxValue elements.");
-                }
                 if (device_type != DeviceType.CPU) {
                     throw new InvalidOperationException("Reading data from non-CPU memory is not supported. Move or copy the tensor to the cpu before reading.");
                 }
 
                 ValidateType(typeof(T));
 
-                unsafe {
-                    var res = THSTensor_data(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    // NOTE: there is no safety here.
-                    return new Span<T>((void*)res, (int)NumberOfElements);
-                }
+                return new Utils.TensorAccessor<T>(this);
             }
 
             /// <summary>
@@ -174,14 +166,14 @@ namespace TorchSharp
             /// </summary>
             /// <typeparam name="T"></typeparam>
             /// <returns>The scalar held in the tensor</returns>
-            public T DataItem<T>()
+            public T item<T>() where T : unmanaged
             {
                 if (NumberOfElements != 1) throw new ArgumentException("Number of elements in the tensor must be 1");
 
-                return Data<T>()[0];
+                return data<T>()[0];
             }
 
-            private void ValidateType(Type dotnetType)
+            internal void ValidateType(Type dotnetType)
             {
                 switch (dtype) {
                 case ScalarType.Byte:
@@ -229,37 +221,45 @@ namespace TorchSharp
                 }
             }
 
-            public Span<byte> Bytes()
-            {
-                long totalSize = NumberOfElements * ElementSize;
+            /// <summary>
+            /// Get or set the contents of a tensor as raw bytes.
+            /// </summary>
+            public Span<byte> bytes {
+                get {
+                    if (!is_contiguous()) throw new NotImplementedException("Bytes() called on non-contiguous tensor.");
 
-                if (totalSize > int.MaxValue) {
-                    throw new ArgumentException("Span only supports up to int.MaxValue elements.");
-                }
-                if (device_type != DeviceType.CPU) {
-                    throw new InvalidOperationException("Reading data from non-CPU memory is not supported. Move or copy the tensor to the cpu before reading.");
-                }
-                unsafe {
-                    var res = THSTensor_data(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    // NOTE: there is no safety here.
-                    return new Span<byte>((void*)res, (int)totalSize);
-                }
-            }
+                    long totalSize = NumberOfElements * ElementSize;
 
-            public void SetBytes(Span<byte> value)
-            {
-                long totalSize = NumberOfElements * ElementSize;
-                if (totalSize != value.Length) {
-                    throw new ArgumentException("Mismatched data sizes in SetBytes().");
+                    if (totalSize > int.MaxValue) {
+                        throw new ArgumentException("Span only supports up to int.MaxValue elements.");
+                    }
+                    if (device_type != DeviceType.CPU) {
+                        throw new InvalidOperationException("Reading data from non-CPU memory is not supported. Move or copy the tensor to the cpu before reading.");
+                    }
+
+                    unsafe {
+                        var res = THSTensor_data(handle);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        // NOTE: there is no safety here.
+                        return new Span<byte>((void*)res, (int)totalSize);
+                    }
                 }
 
-                unsafe {
-                    var res = THSTensor_data(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    // NOTE: there is no safety here.
-                    var data = new Span<byte>((void*)res, value.Length);
-                    value.CopyTo(data);
+                set {
+                    if (!is_contiguous()) throw new NotImplementedException("SetBytes() called on non-contiguous tensor.");
+
+                    long totalSize = NumberOfElements * ElementSize;
+                    if (totalSize != value.Length) {
+                        throw new ArgumentException("Mismatched data sizes in SetBytes().");
+                    }
+
+                    unsafe {
+                        var res = THSTensor_data(handle);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        // NOTE: there is no safety here.
+                        var data = new Span<byte>((void*)res, value.Length);
+                        value.CopyTo(data);
+                    }
                 }
             }
 
@@ -291,56 +291,56 @@ namespace TorchSharp
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public double ReadCpuDouble(long i) => Data<double>()[(int)i];
+            public double ReadCpuDouble(long i) => data<double>()[(int)i];
 
             /// <summary>
             /// Read the single-precision float value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public float ReadCpuSingle(long i) => Data<float>()[(int)i];
+            public float ReadCpuSingle(long i) => data<float>()[(int)i];
 
             /// <summary>
             /// Read the 32-bit integer float value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public int ReadCpuInt32(long i) => Data<int>()[(int)i];
+            public int ReadCpuInt32(long i) => data<int>()[(int)i];
 
             /// <summary>
             /// Read the 64-bit integer value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public long ReadCpuInt64(long i) => Data<long>()[(int)i];
+            public long ReadCpuInt64(long i) => data<long>()[(int)i];
 
             /// <summary>
             /// Read the byte value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public byte ReadCpuByte(long i) => Data<byte>()[(int)i];
+            public byte ReadCpuByte(long i) => data<byte>()[(int)i];
 
             /// <summary>
             /// Read the short value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public sbyte ReadCpuSByte(long i) => Data<sbyte>()[(int)i];
+            public sbyte ReadCpuSByte(long i) => data<sbyte>()[(int)i];
 
             /// <summary>
             /// Read the int16 value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public short ReadCpuInt16(long i) => Data<short>()[(int)i];
+            public short ReadCpuInt16(long i) => data<short>()[(int)i];
 
             /// <summary>
             /// Read the Boolean value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public bool ReadCpuBool(long i) => Data<bool>()[(int)i];
+            public bool ReadCpuBool(long i) => data<bool>()[(int)i];
 
             [DllImport("LibTorchSharp")]
             static extern float THSTensor_data_idx_float16(IntPtr handle, long i);
@@ -866,6 +866,20 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static int THSTensor_is_contiguous(IntPtr handle);
+
+            /// <summary>
+            /// Returns true if the tensor is contiguous.
+            /// </summary>
+            /// <returns></returns>
+            public bool is_contiguous()
+            {
+                var res = THSTensor_is_contiguous(handle);
+                torch.CheckForErrors();
+                return res != 0;
             }
 
             [DllImport("LibTorchSharp")]

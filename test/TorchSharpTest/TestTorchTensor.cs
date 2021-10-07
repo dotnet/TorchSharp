@@ -206,256 +206,256 @@ namespace TorchSharp
         public void TestDataBool()
         {
             var x = torch.ones(5, torch.@bool);
-            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
-            x.Data<bool>();
+            Assert.Throws<System.ArgumentException>(() => x.data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
+            x.data<bool>();
         }
 
         [Fact]
         public void TestDataByte()
         {
             var x = torch.ones(5, torch.uint8);
-            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
-            x.Data<byte>();
+            Assert.Throws<System.ArgumentException>(() => x.data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
+            x.data<byte>();
         }
 
         [Fact]
         public void TestDataInt8()
         {
             var x = torch.ones(5, torch.int8);
-            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
-            x.Data<sbyte>();
+            Assert.Throws<System.ArgumentException>(() => x.data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
+            x.data<sbyte>();
         }
 
         [Fact]
         public void TestDataInt16()
         {
             var x = torch.ones(5, torch.int16);
-            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
-            x.Data<short>();
+            Assert.Throws<System.ArgumentException>(() => x.data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
+            x.data<short>();
         }
 
         [Fact]
         public void TestDataInt32()
         {
             var x = torch.ones(5, torch.int32);
-            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
-            x.Data<int>();
+            Assert.Throws<System.ArgumentException>(() => x.data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
+            x.data<int>();
         }
 
         [Fact]
         public void TestDataInt64()
         {
             var x = torch.ones(5, torch.int64);
-            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
-            x.Data<long>();
+            Assert.Throws<System.ArgumentException>(() => x.data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
+            x.data<long>();
         }
 
         [Fact]
         public void TestDataFloat32()
         {
             var x = torch.ones(5, torch.float32);
-            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<double>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
-            x.Data<float>();
+            Assert.Throws<System.ArgumentException>(() => x.data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
+            x.data<float>();
         }
 
         [Fact]
         public void TestDataFloat64()
         {
             var x = torch.ones(5, torch.float64);
-            Assert.Throws<System.ArgumentException>(() => x.Data<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<short>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<int>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<long>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<float>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<(float,float)>());
-            Assert.Throws<System.ArgumentException>(() => x.Data<System.Numerics.Complex>());
-            x.Data<double>();
+            Assert.Throws<System.ArgumentException>(() => x.data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.data<float>());
+            Assert.Throws<System.ArgumentException>(() => x.data<(float,float)>());
+            Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
+            x.data<double>();
         }
 
         [Fact]
         public void TestDataItemBool()
         {
             var x = torch.ones(1, torch.@bool);
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
-            x.DataItem<bool>();
+            Assert.Throws<System.ArgumentException>(() => x.item<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<short>());
+            Assert.Throws<System.ArgumentException>(() => x.item<int>());
+            Assert.Throws<System.ArgumentException>(() => x.item<long>());
+            Assert.Throws<System.ArgumentException>(() => x.item<float>());
+            Assert.Throws<System.ArgumentException>(() => x.item<double>());
+            Assert.Throws<System.ArgumentException>(() => x.item<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.item<System.Numerics.Complex>());
+            x.item<bool>();
         }
 
         [Fact]
         public void TestDataItemByte()
         {
             var x = torch.ones(1, torch.uint8);
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
-            x.DataItem<byte>();
+            Assert.Throws<System.ArgumentException>(() => x.item<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.item<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<short>());
+            Assert.Throws<System.ArgumentException>(() => x.item<int>());
+            Assert.Throws<System.ArgumentException>(() => x.item<long>());
+            Assert.Throws<System.ArgumentException>(() => x.item<float>());
+            Assert.Throws<System.ArgumentException>(() => x.item<double>());
+            Assert.Throws<System.ArgumentException>(() => x.item<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.item<System.Numerics.Complex>());
+            x.item<byte>();
         }
 
         [Fact]
         public void TestDataItemInt8()
         {
             var x = torch.ones(1, torch.int8);
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
-            x.DataItem<sbyte>();
+            Assert.Throws<System.ArgumentException>(() => x.item<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.item<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<short>());
+            Assert.Throws<System.ArgumentException>(() => x.item<int>());
+            Assert.Throws<System.ArgumentException>(() => x.item<long>());
+            Assert.Throws<System.ArgumentException>(() => x.item<float>());
+            Assert.Throws<System.ArgumentException>(() => x.item<double>());
+            Assert.Throws<System.ArgumentException>(() => x.item<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.item<System.Numerics.Complex>());
+            x.item<sbyte>();
         }
 
         [Fact]
         public void TestDataItemInt16()
         {
             var x = torch.ones(1, torch.int16);
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
-            x.DataItem<short>();
+            Assert.Throws<System.ArgumentException>(() => x.item<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.item<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<int>());
+            Assert.Throws<System.ArgumentException>(() => x.item<long>());
+            Assert.Throws<System.ArgumentException>(() => x.item<float>());
+            Assert.Throws<System.ArgumentException>(() => x.item<double>());
+            Assert.Throws<System.ArgumentException>(() => x.item<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.item<System.Numerics.Complex>());
+            x.item<short>();
         }
 
         [Fact]
         public void TestDataItemInt32()
         {
             var x = torch.ones(1, torch.int32);
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
-            x.DataItem<int>();
+            Assert.Throws<System.ArgumentException>(() => x.item<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.item<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<short>());
+            Assert.Throws<System.ArgumentException>(() => x.item<long>());
+            Assert.Throws<System.ArgumentException>(() => x.item<float>());
+            Assert.Throws<System.ArgumentException>(() => x.item<double>());
+            Assert.Throws<System.ArgumentException>(() => x.item<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.item<System.Numerics.Complex>());
+            x.item<int>();
         }
 
         [Fact]
         public void TestDataItemInt64()
         {
             var x = torch.ones(1, torch.int64);
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
-            x.DataItem<long>();
+            Assert.Throws<System.ArgumentException>(() => x.item<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.item<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<short>());
+            Assert.Throws<System.ArgumentException>(() => x.item<int>());
+            Assert.Throws<System.ArgumentException>(() => x.item<float>());
+            Assert.Throws<System.ArgumentException>(() => x.item<double>());
+            Assert.Throws<System.ArgumentException>(() => x.item<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.item<System.Numerics.Complex>());
+            x.item<long>();
         }
 
         [Fact]
         public void TestDataItemFloat32()
         {
             var x = torch.ones(1, torch.float32);
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<double>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
-            x.DataItem<float>();
+            Assert.Throws<System.ArgumentException>(() => x.item<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.item<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<short>());
+            Assert.Throws<System.ArgumentException>(() => x.item<int>());
+            Assert.Throws<System.ArgumentException>(() => x.item<long>());
+            Assert.Throws<System.ArgumentException>(() => x.item<double>());
+            Assert.Throws<System.ArgumentException>(() => x.item<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.item<System.Numerics.Complex>());
+            x.item<float>();
         }
 
         [Fact]
         public void TestDataItemFloat64()
         {
             var x = torch.ones(1, torch.float64);
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<bool>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<byte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<sbyte>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<short>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<int>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<long>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<float>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<(float, float)>());
-            Assert.Throws<System.ArgumentException>(() => x.DataItem<System.Numerics.Complex>());
-            x.DataItem<double>();
+            Assert.Throws<System.ArgumentException>(() => x.item<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.item<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.item<short>());
+            Assert.Throws<System.ArgumentException>(() => x.item<int>());
+            Assert.Throws<System.ArgumentException>(() => x.item<long>());
+            Assert.Throws<System.ArgumentException>(() => x.item<float>());
+            Assert.Throws<System.ArgumentException>(() => x.item<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.item<System.Numerics.Complex>());
+            x.item<double>();
         }
 
 
@@ -798,7 +798,7 @@ namespace TorchSharp
 
             Tensor t = torch.zeros(shape, torch.complex64);
             Assert.Equal(shape, t.shape);
-            var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
+            var v3 = t.data<(float Real, float Imaginary)>().ToArray();
             for (var i = 0; i < v3.Length; i++) {
                 Assert.Equal(0.0f, v3[i].Real);
                 Assert.Equal(0.0f, v3[i].Imaginary);
@@ -812,7 +812,7 @@ namespace TorchSharp
 
             Tensor t = torch.ones(shape, torch.complex64);
             Assert.Equal(shape, t.shape);
-            var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
+            var v3 = t.data<(float Real, float Imaginary)>().ToArray();
             for (var i = 0; i < v3.Length; i++) {
                 Assert.Equal(1.0f, v3[i].Real);
                 Assert.Equal(0.0f, v3[i].Imaginary);
@@ -889,7 +889,7 @@ namespace TorchSharp
             var shape = new long[] { 2, 2 };
             Tensor t = torch.rand(shape, torch.complex64);
             Assert.Equal(shape, t.shape);
-            var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
+            var v3 = t.data<(float Real, float Imaginary)>().ToArray();
             Assert.All(v3, t => Assert.True(t.Real >= 0.0f && t.Real < 1.0f && t.Imaginary >= 0.0f && t.Imaginary < 1.0f));
         }
 
@@ -899,7 +899,7 @@ namespace TorchSharp
             var shape = new long[] { 2, 2 };
             Tensor t = torch.randn(shape, torch.complex64);
             Assert.Equal(shape, t.shape);
-            var v3 = t.Data<(float Real, float Imaginary)>().ToArray();
+            var v3 = t.data<(float Real, float Imaginary)>().ToArray();
         }
 
         [Fact]
@@ -909,7 +909,7 @@ namespace TorchSharp
 
             Tensor t = torch.zeros(shape, complex128);
             Assert.Equal(shape, t.shape);
-            var v3 = t.Data<System.Numerics.Complex>().ToArray();
+            var v3 = t.data<System.Numerics.Complex>().ToArray();
             for (var i = 0; i < v3.Length; i++) {
                 Assert.Equal(0.0, v3[i].Real);
                 Assert.Equal(0.0, v3[i].Imaginary);
@@ -923,7 +923,7 @@ namespace TorchSharp
 
             Tensor t = torch.ones(shape, complex128);
             Assert.Equal(shape, t.shape);
-            var v3 = t.Data<System.Numerics.Complex>().ToArray();
+            var v3 = t.data<System.Numerics.Complex>().ToArray();
             for (var i = 0; i < v3.Length; i++) {
                 Assert.Equal(1.0, v3[i].Real);
                 Assert.Equal(0.0, v3[i].Imaginary);
@@ -947,7 +947,7 @@ namespace TorchSharp
         public void CreateFloat32TensorOnesCheckData()
         {
             var ones = torch.ones(new long[] { 2, 2 });
-            var data = ones.Data<float>();
+            var data = ones.data<float>();
 
             for (int i = 0; i < 4; i++) {
                 Assert.Equal(1.0, data[i]);
@@ -958,7 +958,7 @@ namespace TorchSharp
         public void CreateFloat32TensorZerosCheckData()
         {
             var zeros = torch.zeros(new long[] { 2, 2 });
-            var data = zeros.Data<float>();
+            var data = zeros.data<float>();
 
             for (int i = 0; i < 4; i++) {
                 Assert.Equal(0, data[i]);
@@ -969,7 +969,7 @@ namespace TorchSharp
         public void CreateInt32TensorOnesCheckData()
         {
             var ones = torch.ones(new long[] { 2, 2 }, int32);
-            var data = ones.Data<int>();
+            var data = ones.data<int>();
 
             for (int i = 0; i < 4; i++) {
                 Assert.Equal(1, data[i]);
@@ -1066,7 +1066,7 @@ namespace TorchSharp
             data[100] = 1;
 
             using (var tensor = torch.tensor(data, new long[] { 100, 10 })) {
-                Assert.Equal(1, tensor.Data<float>()[100]);
+                Assert.Equal(1, tensor.data<float>()[100]);
             }
         }
 
@@ -1077,7 +1077,7 @@ namespace TorchSharp
             data[100] = 1;
 
             using (var tensor = torch.tensor(data, new long[] { 100, 10 })) {
-                Assert.Equal(1, tensor.Data<float>()[100]);
+                Assert.Equal(1, tensor.data<float>()[100]);
             }
 
             Assert.Equal(1, data[100]);
@@ -1089,7 +1089,7 @@ namespace TorchSharp
             var data = new float[1000];
 
             using (var tensor = data.ToTensor(new long[] { 10, 100 })) {
-                Assert.Equal(default(float), tensor.Data<float>()[100]);
+                Assert.Equal(default(float), tensor.data<float>()[100]);
             }
         }
 
@@ -1250,7 +1250,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float32, t1.dtype);
             Assert.Equal(t1.shape, t2.shape);
             Assert.Equal(ScalarType.Float32, t2.dtype);
-            Assert.All(t2.Data<float>().ToArray(), t => Assert.True(t == 1.0f));
+            Assert.All(t2.data<float>().ToArray(), t => Assert.True(t == 1.0f));
         }
 
         [Fact]
@@ -1265,7 +1265,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float32, t1.dtype);
             Assert.Equal(t1.shape, t2.shape);
             Assert.Equal(ScalarType.Float64, t2.dtype);
-            Assert.All(t2.Data<double>().ToArray(), t => Assert.True(t == 1.0));
+            Assert.All(t2.data<double>().ToArray(), t => Assert.True(t == 1.0));
         }
 
         [Fact]
@@ -1280,7 +1280,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float32, t1.dtype);
             Assert.Equal(t1.shape, t2.shape);
             Assert.Equal(ScalarType.Float32, t2.dtype);
-            Assert.All(t2.Data<float>().ToArray(), t => Assert.True(t == 0.0f));
+            Assert.All(t2.data<float>().ToArray(), t => Assert.True(t == 0.0f));
         }
 
         [Fact]
@@ -1295,7 +1295,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float32, t1.dtype);
             Assert.Equal(t1.shape, t2.shape);
             Assert.Equal(ScalarType.Float64, t2.dtype);
-            Assert.All(t2.Data<double>().ToArray(), t => Assert.True(t == 0.0));
+            Assert.All(t2.data<double>().ToArray(), t => Assert.True(t == 0.0));
         }
 
         [Fact]
@@ -1339,7 +1339,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float32, t1.dtype);
             Assert.Equal(t1.shape, t2.shape);
             Assert.Equal(ScalarType.Float32, t2.dtype);
-            Assert.All(t2.Data<float>().ToArray(), t => Assert.True(t == 3.14f));
+            Assert.All(t2.data<float>().ToArray(), t => Assert.True(t == 3.14f));
         }
 
         [Fact]
@@ -1355,7 +1355,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float32, t1.dtype);
             Assert.Equal(t1.shape, t2.shape);
             Assert.Equal(ScalarType.Float64, t2.dtype);
-            Assert.All(t2.Data<double>().ToArray(), t => Assert.True(t == 3.14));
+            Assert.All(t2.data<double>().ToArray(), t => Assert.True(t == 3.14));
         }
 
         [Fact]
@@ -1370,7 +1370,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float32, t1.dtype);
             Assert.Equal(t1.shape, t2.shape);
             Assert.Equal(ScalarType.Float32, t2.dtype);
-            Assert.All(t2.Data<float>().ToArray(), t => Assert.True(t >= 0.0f && t < 1.0f));
+            Assert.All(t2.data<float>().ToArray(), t => Assert.True(t >= 0.0f && t < 1.0f));
         }
 
         [Fact]
@@ -1385,7 +1385,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float32, t1.dtype);
             Assert.Equal(t1.shape, t2.shape);
             Assert.Equal(ScalarType.Float64, t2.dtype);
-            Assert.All(t2.Data<double>().ToArray(), t => Assert.True(t >= 0.0 && t < 1.0));
+            Assert.All(t2.data<double>().ToArray(), t => Assert.True(t >= 0.0 && t < 1.0));
         }
 
         [Fact]
@@ -1484,7 +1484,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float32, t1.dtype);
             Assert.Equal(t1.shape, t2.shape);
             Assert.Equal(ScalarType.Float32, t2.dtype);
-            Assert.All(t2.Data<float>().ToArray(), t => Assert.True(t >= 5.0f && t < 15.0f));
+            Assert.All(t2.data<float>().ToArray(), t => Assert.True(t >= 5.0f && t < 15.0f));
         }
 
         [Fact]
@@ -1499,14 +1499,14 @@ namespace TorchSharp
             Assert.Equal(ScalarType.Float32, t1.dtype);
             Assert.Equal(t1.shape, t2.shape);
             Assert.Equal(ScalarType.Float64, t2.dtype);
-            Assert.All(t2.Data<double>().ToArray(), t => Assert.True(t >= 5.0 && t < 15.0));
+            Assert.All(t2.data<double>().ToArray(), t => Assert.True(t >= 5.0 && t < 15.0));
         }
 
         [Fact]
         public void Float32Mean()
         {
             using (var tensor = torch.arange(1, 100, float32)) {
-                var mean = tensor.mean().DataItem<float>();
+                var mean = tensor.mean().item<float>();
                 Assert.Equal(50.0f, mean);
             }
         }
@@ -1517,8 +1517,8 @@ namespace TorchSharp
         {
             using (var tensor = torch.tensor(new int[] { 1, 5, 4, 5, 3, 3, 5, 5 })) {
                 var mode = tensor.mode();
-                Assert.Equal(new int[] { 5 }, mode.values.Data<int>().ToArray());
-                Assert.Equal(new long[] { 7 }, mode.indices.Data<long>().ToArray());
+                Assert.Equal(new int[] { 5 }, mode.values.data<int>().ToArray());
+                Assert.Equal(new long[] { 7 }, mode.indices.data<long>().ToArray());
             }
         }
 
@@ -1714,16 +1714,16 @@ namespace TorchSharp
         {
             using (Tensor tensor = torch.empty(new long[] { 2, 2 })) {
                 tensor.fill_(Single.PositiveInfinity);
-                Assert.True(tensor.isposinf().Data<bool>().ToArray().All(b => b));
-                Assert.True(tensor.isinf().Data<bool>().ToArray().All(b => b));
-                Assert.False(tensor.isneginf().Data<bool>().ToArray().All(b => b));
-                Assert.False(tensor.isfinite().Data<bool>().ToArray().All(b => b));
+                Assert.True(tensor.isposinf().data<bool>().ToArray().All(b => b));
+                Assert.True(tensor.isinf().data<bool>().ToArray().All(b => b));
+                Assert.False(tensor.isneginf().data<bool>().ToArray().All(b => b));
+                Assert.False(tensor.isfinite().data<bool>().ToArray().All(b => b));
 
                 tensor.fill_(Single.NegativeInfinity);
-                Assert.True(tensor.isneginf().Data<bool>().ToArray().All(b => b));
-                Assert.True(tensor.isinf().Data<bool>().ToArray().All(b => b));
-                Assert.False(tensor.isposinf().Data<bool>().ToArray().All(b => b));
-                Assert.False(tensor.isfinite().Data<bool>().ToArray().All(b => b));
+                Assert.True(tensor.isneginf().data<bool>().ToArray().All(b => b));
+                Assert.True(tensor.isinf().data<bool>().ToArray().All(b => b));
+                Assert.False(tensor.isposinf().data<bool>().ToArray().All(b => b));
+                Assert.False(tensor.isfinite().data<bool>().ToArray().All(b => b));
             }
         }
 
@@ -1987,8 +1987,8 @@ namespace TorchSharp
                 Assert.True(sparse.is_sparse);
                 Assert.False(i.is_sparse);
                 Assert.False(v.is_sparse);
-                Assert.Equal(sparse.SparseIndices.Data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
-                Assert.Equal(sparse.SparseValues.Data<float>().ToArray(), new float[] { 3, 4, 5 });
+                Assert.Equal(sparse.SparseIndices.data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
+                Assert.Equal(sparse.SparseValues.data<float>().ToArray(), new float[] { 3, 4, 5 });
             }
         }
 
@@ -2125,7 +2125,7 @@ namespace TorchSharp
                 // Copy back to CPU to inspect the elements
                 var cpu2 = cuda.cpu();
                 Assert.Equal("cpu", cpu2.device.ToString());
-                var data = cpu.Data<float>();
+                var data = cpu.data<float>();
                 for (int i = 0; i < 4; i++) {
                     Assert.Equal(1, data[i]);
                 }
@@ -2145,7 +2145,7 @@ namespace TorchSharp
                 var cpu = cuda.cpu();
                 Assert.Equal("cpu", cpu.device.ToString());
 
-                var data = cpu.Data<float>();
+                var data = cpu.data<float>();
                 for (int i = 0; i < 4; i++) {
                     Assert.Equal(1, data[i]);
                 }
@@ -2303,12 +2303,12 @@ namespace TorchSharp
             mask[2, 3] = tTrue;
 
             var res = input.masked_scatter(mask, torch.tensor(new float[] { 3.14f, 2 * 3.14f }));
-            Assert.Equal(3.14f, res[0, 1].DataItem<float>());
-            Assert.Equal(2 * 3.14f, res[2, 3].DataItem<float>());
+            Assert.Equal(3.14f, res[0, 1].item<float>());
+            Assert.Equal(2 * 3.14f, res[2, 3].item<float>());
 
             input.masked_scatter_(mask, torch.tensor(new float[] { 3.14f, 2 * 3.14f }));
-            Assert.Equal(3.14f, input[0, 1].DataItem<float>());
-            Assert.Equal(2 * 3.14f, input[2, 3].DataItem<float>());
+            Assert.Equal(3.14f, input[0, 1].item<float>());
+            Assert.Equal(2 * 3.14f, input[2, 3].item<float>());
         }
 
         [Fact]
@@ -2368,7 +2368,7 @@ namespace TorchSharp
 
             var res = input.diag();
             Assert.Equal(2, res.Dimensions);
-            Assert.Equal(expected, res.Data<long>().ToArray());
+            Assert.Equal(expected, res.data<long>().ToArray());
         }
 
         [Fact]
@@ -2383,7 +2383,7 @@ namespace TorchSharp
 
             var res = input.diag();
             Assert.Equal(1, res.Dimensions);
-            Assert.Equal(expected, res.Data<long>().ToArray());
+            Assert.Equal(expected, res.data<long>().ToArray());
         }
 
 
@@ -2395,7 +2395,7 @@ namespace TorchSharp
 
             var res = input.diagflat();
             Assert.Equal(2, res.Dimensions);
-            Assert.Equal(expected, res.Data<long>().ToArray());
+            Assert.Equal(expected, res.data<long>().ToArray());
         }
 
         [Fact]
@@ -2407,7 +2407,7 @@ namespace TorchSharp
 
             var res = input.diagflat();
             Assert.Equal(2, res.Dimensions);
-            Assert.Equal(expected, res.Data<long>().ToArray());
+            Assert.Equal(expected, res.data<long>().ToArray());
         }
 
         [Fact]
@@ -2631,7 +2631,7 @@ namespace TorchSharp
                     sum.backward();
                     var grad = x.grad();
                     Assert.False(grad is null || grad.Handle == IntPtr.Zero);
-                    var data = grad is not null ? grad.Data<float>() : new float[] { };
+                    var data = grad is not null ? grad.data<float>().ToArray() : new float[] { };
                     for (int i = 0; i < 2 * 3; i++) {
                         Assert.Equal(1.0, data[i]);
                     }
@@ -2650,7 +2650,7 @@ namespace TorchSharp
                     sum.backward();
                     var grad = x.grad();
                     Assert.False(grad is not null && grad.Handle == IntPtr.Zero);
-                    var data = grad is not null ? grad.Data<float>() : new float[] { };
+                    var data = grad is not null ? grad.data<float>().ToArray() : new float[] { };
                     for (int i = 0; i < 2 * 3; i++) {
                         Assert.Equal(1.0, data[i]);
                     }
@@ -2666,7 +2666,7 @@ namespace TorchSharp
 
             x.sub_(y);
 
-            var xdata = x.Data<int>();
+            var xdata = x.data<int>();
 
             for (int i = 0; i < 100; i++) {
                 for (int j = 0; j < 100; j++) {
@@ -3111,7 +3111,7 @@ namespace TorchSharp
             Tensor c3,
             Func<Tensor, long, long, Tin> getFuncIn,
             Func<Tensor, Tensor, Tensor> tensorFunc,
-            Func<Tin, Tin, Tin> scalarFunc)
+            Func<Tin, Tin, Tin> scalarFunc) where Tin : unmanaged
         {
 
             var x = c1 * c3;
@@ -3121,9 +3121,9 @@ namespace TorchSharp
             var z = tensorFunc(x, y);
 
             if (x.device_type == DeviceType.CPU) {
-                var xData = x.Data<Tin>();
-                var yData = y.Data<Tin>();
-                var zData = z.Data<Tin>();
+                var xData = x.data<Tin>();
+                var yData = y.data<Tin>();
+                var zData = z.data<Tin>();
 
                 Assert.True(xData == zData);
             }
@@ -3147,8 +3147,8 @@ namespace TorchSharp
 
             var y = x.mul(0.5f.ToScalar());
 
-            var ydata = y.Data<float>();
-            var xdata = x.Data<float>();
+            var ydata = y.data<float>();
+            var xdata = x.data<float>();
 
             for (int i = 0; i < 100; i++) {
                 for (int j = 0; j < 100; j++) {
@@ -3165,7 +3165,7 @@ namespace TorchSharp
 
                 var y = x1.mm(x2).to(DeviceType.CPU);
 
-                var ydata = y.Data<float>();
+                var ydata = y.data<float>();
 
                 Assert.Equal(2.0f, ydata[0]);
             }
@@ -3176,7 +3176,7 @@ namespace TorchSharp
 
                 var y = x1.mm(x2).to(DeviceType.CPU);
 
-                var ydata = y.Data<long>();
+                var ydata = y.data<long>();
 
                 Assert.Equal(2L, ydata[0]);
             }
@@ -3269,7 +3269,7 @@ namespace TorchSharp
             var a = torch.randn(25, 25);
             var b = a.positive();
 
-            Assert.Equal(a.Data<float>().ToArray(), b.Data<float>().ToArray());
+            Assert.Equal(a.data<float>().ToArray(), b.data<float>().ToArray());
 
             var c = torch.ones(25, 25, @bool);
             Assert.Throws<ArgumentException>(() => c.positive());
@@ -3281,8 +3281,8 @@ namespace TorchSharp
             var x = torch.arange(9, float32);
             var r = x.frexp();
 
-            Assert.Equal(new float[] { 0.0000f, 0.5000f, 0.5000f, 0.7500f, 0.5000f, 0.6250f, 0.7500f, 0.8750f, 0.5000f }, r.Mantissa.Data<float>().ToArray());
-            Assert.Equal(new int[] { 0, 1, 2, 2, 3, 3, 3, 3, 4 }, r.Exponent.Data<int>().ToArray());
+            Assert.Equal(new float[] { 0.0000f, 0.5000f, 0.5000f, 0.7500f, 0.5000f, 0.6250f, 0.7500f, 0.8750f, 0.5000f }, r.Mantissa.data<float>().ToArray());
+            Assert.Equal(new int[] { 0, 1, 2, 2, 3, 3, 3, 3, 4 }, r.Exponent.data<int>().ToArray());
         }
 
         [Fact]
@@ -3314,7 +3314,7 @@ namespace TorchSharp
             var data = torch.rand(3, 3, 3) * 10;
             var cl = data.clamp(1, 5);
 
-            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
         }
 
         [Fact]
@@ -3323,7 +3323,7 @@ namespace TorchSharp
             var data = torch.rand(3, 3, 3) * 10;
             var cl = data.clamp(torch.ones(3,3,3), torch.ones(3,3,3) * 5);
 
-            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
         }
 
         [Fact]
@@ -3332,7 +3332,7 @@ namespace TorchSharp
             var data = torch.rand(3, 3, 3) * 10;
             var cl = torch.clamp(data, 1, 5);
 
-            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
         }
 
         [Fact]
@@ -3341,7 +3341,7 @@ namespace TorchSharp
             var data = torch.rand(3, 3, 3) * 10;
             var cl = torch.clamp(data, torch.ones(3, 3, 3), torch.ones(3, 3, 3) * 5);
 
-            Assert.All(cl.Data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
         }
 
         [Fact]
@@ -3357,7 +3357,7 @@ namespace TorchSharp
         public void AbsTest()
         {
             var data = torch.arange(-10.0f, 10.0f, 1.0f);
-            var expected = data.Data<float>().ToArray().Select(MathF.Abs).ToArray();
+            var expected = data.data<float>().ToArray().Select(MathF.Abs).ToArray();
             var res = data.abs();
             Assert.True(res.allclose(torch.tensor(expected)));
         }
@@ -3366,7 +3366,7 @@ namespace TorchSharp
         public void AbsTestC32()
         {
             var data = torch.rand(new long[] { 25 }, complex64);
-            var expected = data.Data<(float R, float I)>().ToArray().Select(c => MathF.Sqrt(c.R * c.R + c.I * c.I)).ToArray();
+            var expected = data.data<(float R, float I)>().ToArray().Select(c => MathF.Sqrt(c.R * c.R + c.I * c.I)).ToArray();
             var res = data.abs();
             Assert.True(res.allclose(torch.tensor(expected)));
         }
@@ -3375,7 +3375,7 @@ namespace TorchSharp
         public void AbsTestC64()
         {
             var data = torch.rand(new long[] { 25 }, complex128);
-            var expected = data.Data<System.Numerics.Complex>().ToArray().Select(c => Math.Sqrt(c.Real * c.Real + c.Imaginary * c.Imaginary)).ToArray<double>();
+            var expected = data.data<System.Numerics.Complex>().ToArray().Select(c => Math.Sqrt(c.Real * c.Real + c.Imaginary * c.Imaginary)).ToArray<double>();
             var res = data.abs();
             Assert.True(res.allclose(torch.tensor(expected, float64)));
         }
@@ -3384,7 +3384,7 @@ namespace TorchSharp
         public void AngleTestC32()
         {
             var data = torch.randn(new long[] { 25 }, complex64);
-            var expected = data.Data<(float R, float I)>().ToArray().Select(c => {
+            var expected = data.data<(float R, float I)>().ToArray().Select(c => {
                 var x = c.R;
                 var y = c.I;
                 return (x > 0 || y != 0) ? 2 * MathF.Atan(y / (MathF.Sqrt(x * x + y * y) + x)) : (x < 0 && y == 0) ? MathF.PI : 0;
@@ -3397,7 +3397,7 @@ namespace TorchSharp
         public void AngleTestC64()
         {
             var data = torch.randn(new long[] { 25 }, complex128);
-            var expected = data.Data<System.Numerics.Complex>().ToArray().Select(c => {
+            var expected = data.data<System.Numerics.Complex>().ToArray().Select(c => {
                 var x = c.Real;
                 var y = c.Imaginary;
                 return (x > 0 || y != 0) ? 2 * Math.Atan(y / (Math.Sqrt(x * x + y * y) + x)) : (x < 0 && y == 0) ? Math.PI : 0;
@@ -3578,7 +3578,7 @@ namespace TorchSharp
             var data = new float[] { 1.0f, 2.0f, 3.0f };
             var expected = data.Select(MathF.Cosh).ToArray();
             var res = torch.tensor(data).cosh();
-            var tmp = res.Data<Single>();
+            var tmp = res.data<Single>();
             Assert.True(res.allclose(torch.tensor(expected)));
         }
 
@@ -3748,11 +3748,11 @@ namespace TorchSharp
             x.fill_(4.0f);
             var y = x.reciprocal();
 
-            Assert.All(x.Data<float>().ToArray(), a => Assert.Equal(4.0f, a));
-            Assert.All(y.Data<float>().ToArray(), a => Assert.Equal(0.25f, a));
+            Assert.All(x.data<float>().ToArray(), a => Assert.Equal(4.0f, a));
+            Assert.All(y.data<float>().ToArray(), a => Assert.Equal(0.25f, a));
 
             x.reciprocal_();
-            Assert.All(x.Data<float>().ToArray(), a => Assert.Equal(0.25f, a));
+            Assert.All(x.data<float>().ToArray(), a => Assert.Equal(0.25f, a));
         }
 
         [Fact]
@@ -3792,7 +3792,7 @@ namespace TorchSharp
         public void TruncTest()
         {
             var input = torch.randn(new long[] { 25 });
-            var expected = input.Data<float>().ToArray().Select(MathF.Truncate).ToArray();
+            var expected = input.data<float>().ToArray().Select(MathF.Truncate).ToArray();
             var res = input.trunc();
             Assert.True(res.allclose(torch.tensor(expected)));
 
@@ -4341,8 +4341,8 @@ namespace TorchSharp
             var x = t.take_along_dim(max_idx);
             var y = t.take_along_dim(sort_idx, dimension: 1);
 
-            Assert.Equal(60, x.DataItem<int>());
-            Assert.Equal(new int[] { 10, 20, 30, 40, 50, 60 }, y.Data<int>().ToArray());
+            Assert.Equal(60, x.item<int>());
+            Assert.Equal(new int[] { 10, 20, 30, 40, 50, 60 }, y.data<int>().ToArray());
         }
 
         [Fact]
@@ -4632,7 +4632,7 @@ namespace TorchSharp
                      {{1.5215f, 1.3946f, 2.1327f},
                       {1.0732f, 1.3014f, 2.0696f}}};
             {
-                var data = t3p2d3.Data<float>();
+                var data = t3p2d3.data<float>();
                 for (int i = 0; i < 3; i++)
                     for (int j = 0; j < 2; j++)
                         for (int k = 0; k < 3; k++) {
@@ -4845,8 +4845,8 @@ namespace TorchSharp
                 var b = linalg.matrix_norm(a);
                 var c = linalg.matrix_norm(a, ord: -1);
 
-                Assert.Equal(14.282857f, b.DataItem<float>());
-                Assert.Equal(9.0f, c.DataItem<float>());
+                Assert.Equal(14.282857f, b.item<float>());
+                Assert.Equal(9.0f, c.item<float>());
             }
         }
 
@@ -4861,8 +4861,8 @@ namespace TorchSharp
                 var b = linalg.vector_norm(a, ord: 3.5);
                 var c = linalg.vector_norm(a.view(3, 3), ord: 3.5);
 
-                Assert.Equal(5.4344883f, b.DataItem<float>());
-                Assert.Equal(5.4344883f, c.DataItem<float>());
+                Assert.Equal(5.4344883f, b.item<float>());
+                Assert.Equal(5.4344883f, c.item<float>());
             }
         }
 
@@ -4996,7 +4996,7 @@ namespace TorchSharp
         public void TestSpecialExpit()
         {
             var a = torch.randn(new long[] { 10 });
-            var expected = torch.tensor(a.Data<float>().ToArray().Select(x => 1.0f / (1.0f + MathF.Exp(-x))).ToArray());
+            var expected = torch.tensor(a.data<float>().ToArray().Select(x => 1.0f / (1.0f + MathF.Exp(-x))).ToArray());
             var b = torch.special.expit(a);
             Assert.True(b.allclose(expected, rtol: 1e-04, atol: 1e-07));
         }
@@ -5005,7 +5005,7 @@ namespace TorchSharp
         public void TestSpecialExpm1()
         {
             var a = torch.randn(new long[] { 10 });
-            var expected = torch.tensor(a.Data<float>().ToArray().Select(x => MathF.Exp(x) - 1.0f).ToArray());
+            var expected = torch.tensor(a.data<float>().ToArray().Select(x => MathF.Exp(x) - 1.0f).ToArray());
             var b = torch.special.expm1(a);
             Assert.True(b.allclose(expected, rtol: 1e-04, atol: 1e-07));
         }
@@ -5014,7 +5014,7 @@ namespace TorchSharp
         public void TestSpecialExp2()
         {
             var a = torch.randn(new long[] { 10 });
-            var expected = torch.tensor(a.Data<float>().ToArray().Select(x => MathF.Pow(2.0f, x)).ToArray());
+            var expected = torch.tensor(a.data<float>().ToArray().Select(x => MathF.Pow(2.0f, x)).ToArray());
             var b = torch.special.exp2(a);
             Assert.True(b.allclose(expected, rtol: 1e-04, atol: 1e-07));
         }
@@ -5677,10 +5677,10 @@ namespace TorchSharp
         {
             {
                 using (var input = torch.rand(25)) {
-                    var iData = input.Data<float>().ToArray();
+                    var iData = input.data<float>();
 
                     var poster = torchvision.transforms.Invert().forward(input);
-                    var pData = poster.Data<float>().ToArray();
+                    var pData = poster.data<float>();
 
                     Assert.Equal(new long[] { 25 }, poster.shape);
                     for (int i = 0; i < poster.shape[0]; i++) {
@@ -5706,7 +5706,7 @@ namespace TorchSharp
                     var poster = torchvision.transforms.Posterize(4).forward(input);
 
                     Assert.Equal(new long[] { 25 }, poster.shape);
-                    Assert.All(poster.Data<byte>().ToArray(), b => Assert.Equal(0, b & 0xf));
+                    Assert.All(poster.data<byte>().ToArray(), b => Assert.Equal(0, b & 0xf));
                 }
             }
         }
@@ -5849,7 +5849,7 @@ namespace TorchSharp
                     var poster = torchvision.transforms.Solarize(0.55).forward(input);
 
                     Assert.Equal(new long[] { 25 }, poster.shape);
-                    Assert.All(poster.Data<float>().ToArray(), f => Assert.True(f < 0.55f));
+                    Assert.All(poster.data<float>().ToArray(), f => Assert.True(f < 0.55f));
                 }
             }
         }
