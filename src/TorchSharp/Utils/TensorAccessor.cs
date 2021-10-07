@@ -23,8 +23,8 @@ namespace TorchSharp.Utils
             _physicalStrides = tensor.stride();
 
             for (var i = 0; i < _physicalStrides.Length; i++) {
-                if (_physicalStrides[i] <= 0)
-                    throw new NotImplementedException($"Non-positive tensor strides are not currently supported. tensor.strides({i}) == {_physicalStrides[i]}");
+                if (_physicalStrides[i] < 0)
+                    throw new NotImplementedException($"Negative tensor strides are not currently supported. tensor.strides({i}) == {_physicalStrides[i]}");
             }
 
             // Compute the logical strides.

@@ -4655,6 +4655,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor slice(long dimension, long start, long finish, long step)
             {
+                if (step < 1) throw new ArgumentException($"step is {step}, but it should always be positive.");
                 var res = THSTensor_slice(handle, dimension, start, finish, step);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);

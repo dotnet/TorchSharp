@@ -286,5 +286,28 @@ namespace TorchSharp
             Assert.True(flipped.is_contiguous());
             Assert.Equal<int>(flipped.contiguous().data<int>(), flipped.data<int>());
         }
+
+        [Fact]
+        public void ValidateIssue399_5()
+        {
+            using var contig = torch.arange(12, int32).reshape(3, 4).contiguous();
+            using var strided = contig.as_strided(new long[] { 3, 2, 4 }, new long[] { 4, 0, 1 });
+
+            Assert.False(strided.is_contiguous());
+            Assert.Equal<int>(strided.contiguous().data<int>(), strided.data<int>());
+            Assert.Equal(new long[] { 3, 2, 4 }, strided.shape);
+        }
+
+
+        [Fact]
+        public void ValidateIssue399_6()
+        {
+            using var contig = torch.arange(3, int32).reshape(3, 1).contiguous();
+            using var strided = contig.expand(3, 4);
+
+            Assert.False(strided.is_contiguous());
+            Assert.Equal<int>(strided.contiguous().data<int>(), strided.data<int>());
+            Assert.Equal(new long[] { 3, 4 }, strided.shape);
+        }
     }
 }
