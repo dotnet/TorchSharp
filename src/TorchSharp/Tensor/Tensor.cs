@@ -170,6 +170,14 @@ namespace TorchSharp
             }
 
             /// <summary>
+            ///  Returns a pointer to the unmanaged data managed by this tensor.
+            /// </summary>
+            public Span<T> data<T>()
+            {
+                return Data<T>();
+            }
+
+            /// <summary>
             /// Returns the singleton value of a scalar tensor.
             /// </summary>
             /// <typeparam name="T"></typeparam>
@@ -179,6 +187,16 @@ namespace TorchSharp
                 if (NumberOfElements != 1) throw new ArgumentException("Number of elements in the tensor must be 1");
 
                 return Data<T>()[0];
+            }
+
+            /// <summary>
+            /// Returns the singleton value of a scalar tensor.
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <returns>The scalar held in the tensor</returns>
+            public T item<T>()
+            {
+                return DataItem<T>();
             }
 
             private void ValidateType(Type dotnetType)
