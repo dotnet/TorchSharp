@@ -71,7 +71,7 @@ namespace TorchSharp.Utils
         /// <returns></returns>
         private long TranslateIndex(long idx)
         {
-            if (!_needToTranslate) return idx;
+            if (!_needToTranslate || idx == 0) return idx;
 
             // First, turn the linear index into a subscript list, based on the shape, i.e. logical strides.
             var subs = new List<long>();
