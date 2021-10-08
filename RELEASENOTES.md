@@ -2,6 +2,29 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+### NuGet Version 0.93.5
+
+__Fixed Bugs:__
+
+#399 Data<T>() returns span that must be indexed using strides. 
+
+This was a major bug, affecting any code that pulled data out of a tensor view.
+
+__API Changes:__
+
+Tensor.Data<T>() -> Tensor.data<T>()
+Tensor.DataItem<T>() -> Tensor.item<T>()
+Tensor.Bytes() -> Tensor.bytes
+Tensor.SetBytes() -> Tensor.bytes
+
+### NuGet Version 0.93.4
+
+This release introduces a couple of new NuGet packages, which bundle the native libraries that you need:
+
+TorchSharp-cpu
+TorchSharp-cuda-linux
+TorchSharp-cuda-windows
+
 ### NuGet Version 0.93.1
 
 With this release, the native libtorch package version was updated to 1.9.0.11, and that required rebuilding this package.
