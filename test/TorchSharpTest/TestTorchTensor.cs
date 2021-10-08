@@ -4382,10 +4382,10 @@ namespace TorchSharp
             //var res7 = torch.randint(100, new long[] { 20, 10 }, complex32);
             //Assert.Equal(new long[] { 200 }, res7.Shape);
 
-            var res10 = torch.randint(100, new long[] { 20, 10 }, complex64);
+            var res10 = torch.randint(100, ( 20, 10 ), complex64);
             Assert.Equal(new long[] { 20, 10 }, res10.shape);
 
-            var res11 = torch.randint(10, new long[] { 20, 10 }, complex128);
+            var res11 = torch.randint(10, (20, 10), complex128);
             Assert.Equal(new long[] { 20, 10 }, res11.shape);
         }
 

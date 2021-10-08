@@ -146,7 +146,6 @@ namespace TorchSharp.Utils
         /// <returns></returns>
         public static bool operator ==(TensorAccessor<T> left, TensorAccessor<T> right)
         {
-            if (left._tensor_data_ptr == right._tensor_data_ptr) return true;
             if (left.Count != right.Count) return false;
 
             var lEnum = left.GetEnumerator();
