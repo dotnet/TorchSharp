@@ -291,56 +291,64 @@ namespace TorchSharp
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public double ReadCpuDouble(long i) => data<double>()[(int)i];
+            public double ReadCpuDouble(long i) => Utils.TensorAccessor<double>.ReadItemAt(this, i);
 
             /// <summary>
             /// Read the single-precision float value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public float ReadCpuSingle(long i) => data<float>()[(int)i];
+            public float ReadCpuSingle(long i) => Utils.TensorAccessor<float>.ReadItemAt(this, i);
 
             /// <summary>
             /// Read the 32-bit integer float value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public int ReadCpuInt32(long i) => data<int>()[(int)i];
+            public int ReadCpuInt32(long i) => Utils.TensorAccessor<int>.ReadItemAt(this, i);
 
             /// <summary>
             /// Read the 64-bit integer value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public long ReadCpuInt64(long i) => data<long>()[(int)i];
+            public long ReadCpuInt64(long i) => Utils.TensorAccessor<long>.ReadItemAt(this, i);
 
             /// <summary>
             /// Read the byte value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public byte ReadCpuByte(long i) => data<byte>()[(int)i];
+            public byte ReadCpuByte(long i) => Utils.TensorAccessor<byte>.ReadItemAt(this, i);
 
             /// <summary>
             /// Read the short value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public sbyte ReadCpuSByte(long i) => data<sbyte>()[(int)i];
+            public sbyte ReadCpuSByte(long i) => Utils.TensorAccessor<sbyte>.ReadItemAt(this, i);
 
             /// <summary>
             /// Read the int16 value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public short ReadCpuInt16(long i) => data<short>()[(int)i];
+            public short ReadCpuInt16(long i) => Utils.TensorAccessor<short>.ReadItemAt(this, i);
 
             /// <summary>
             /// Read the Boolean value at the given index.
             /// </summary>
             /// <param name="i">The index.</param>
             /// <returns></returns>
-            public bool ReadCpuBool(long i) => data<bool>()[(int)i];
+            public bool ReadCpuBool(long i) => Utils.TensorAccessor<bool>.ReadItemAt(this, i);
+
+            /// <summary>
+            /// Read the value at the given index.
+            /// </summary>
+            /// <typeparam name="T">The type of the element to read.</typeparam>
+            /// <param name="i">The index.</param>
+            /// <returns></returns>
+            public T ReadCpuValue<T>(long i) where T : unmanaged => Utils.TensorAccessor<T>.ReadItemAt(this, i);
 
             [DllImport("LibTorchSharp")]
             static extern float THSTensor_data_idx_float16(IntPtr handle, long i);

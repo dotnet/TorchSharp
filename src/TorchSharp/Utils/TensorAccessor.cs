@@ -19,29 +19,11 @@ namespace TorchSharp.Utils
                 throw new InvalidOperationException("Reading data from non-CPU memory is not supported. Move or copy the tensor to the cpu before reading.");
             }
 
-            _shape = tensor.shape;
-            _physicalStrides = tensor.stride();
-
-            for (var i = 0; i < _physicalStrides.Length; i++) {
-                if (_physicalStrides[i] < 0)
-                    throw new NotImplementedException($"Negative tensor strides are not currently supported. tensor.strides({i}) == {_physicalStrides[i]}");
+            var strides = tensor.stride();
+            for (var i = 0; i < strides.Length; i++) {
+                if (strides[i] < 0)
+                    throw new NotImplementedException($"Negative tensor strides are not currently supported. tensor.strides({i}) == {strides[i]}");
             }
-
-            // Compute the logical strides.
-
-            if (_shape.Length > 0) {
-                _logigcalStrides = new long[_shape.Length];
-                _logigcalStrides[_shape.Length - 1] = 1;
-                for (int i = _shape.Length - 2; i >= 0; i--) {
-                    _logigcalStrides[i] = _shape[i + 1] * _logigcalStrides[i + 1];
-                    if (_logigcalStrides[i] != _physicalStrides[i]) _needToTranslate = true;
-                }
-            } else {
-                // Special case -- a singleton tensor, i.e. scalar.
-                _logigcalStrides = new long[0];
-            }
-
-            Count = (int)tensor.numel();
 
             // Get the data from native code.
 
@@ -55,41 +37,12 @@ namespace TorchSharp.Utils
             _tensor = tensor; // Keep the tensor alive now that everything is alright.
         }
 
-        public long Count { get; private set; }
+        public long Count => (_tensor is not null ? _tensor.numel() : 0);
 
         public bool IsReadOnly => false;
 
         public T[] ToArray() => this.ToArray<T>();
 
-
-        /// <summary>
-        /// Translates a linear index within the span represented by the accessor to a linear index
-        /// used by the underlying tensor. The two should only be different if the tensor is a view
-        /// rather than an allocated tensor.
-        /// </summary>
-        /// <param name="idx">A linear index into the data view.</param>
-        /// <returns></returns>
-        private long TranslateIndex(long idx)
-        {
-            if (!_needToTranslate || idx == 0) return idx;
-
-            // First, turn the linear index into a subscript list, based on the shape, i.e. logical strides.
-            var subs = new List<long>();
-            for (var i = 0; i < _logigcalStrides.Length; i++) {
-                var s = idx / _logigcalStrides[i];
-                idx -= s * _logigcalStrides[i];
-                subs.Add(s);
-            }
-
-            // Then, use the actual (phyiscal) strides and the logical subscripts to determine the output index.
-
-            long result = 0;
-            for (var i = 0; i < _physicalStrides.Length; i++) {
-                result += subs[i] * _physicalStrides[i];
-            }
-
-            return result;
-        }
 
         /// <summary>
         /// Access elements of the underlying tensor / tensor view.
@@ -101,15 +54,77 @@ namespace TorchSharp.Utils
                 if (index >= Count) throw new IndexOutOfRangeException();
                 unsafe {
                     T* ptr = (T*)_tensor_data_ptr;
-                    return ptr[TranslateIndex(index)];
+                    return ptr[TranslateIndex(index, _tensor)];
                 }
             }
             set {
                 if (index >= Count) throw new IndexOutOfRangeException();
                 unsafe {
                     T* ptr = (T*)_tensor_data_ptr;
-                    ptr[TranslateIndex(index)] = value;
+                    ptr[TranslateIndex(index, _tensor)] = value;
                 }
+            }
+        }
+
+        public void CopyTo(T[] array, int arrayIndex = 0, long tensorIndex = 0)
+        {
+            for (int i = 0; i + arrayIndex < array.Length && i + tensorIndex < Count; i++) {
+                array[i + arrayIndex] = this[i + tensorIndex];
+            }
+        }
+
+        public void CopyFrom(T[] array, int arrayIndex = 0, long tensorIndex = 0)
+        {
+            for (int i = 0; i + arrayIndex < array.Length && i + tensorIndex < Count; i++) {
+                this[i + tensorIndex] = array[i + arrayIndex];
+            }
+        }
+
+        /// <summary>
+        /// Translates a linear index within the span represented by the accessor to a linear index
+        /// used by the underlying tensor. The two should only be different if the tensor is a view
+        /// rather than an allocated tensor.
+        /// </summary>
+        internal static long TranslateIndex(long idx, torch.Tensor tensor)
+        {
+            if (tensor.is_contiguous() || idx == 0) return idx;
+
+            if (idx >= tensor.numel())
+                throw new ArgumentOutOfRangeException($"{idx} in a collection of  ${tensor.numel()} elements.");
+
+            long result = 0;
+            var shape = tensor.shape;
+            var strides = tensor.stride();
+
+            for (var i = shape.Length - 1; i >= 0; i--) {
+                var s = idx % shape[i];
+                idx = idx / shape[i];
+                result += s * strides[i];
+            }
+
+            return result;
+        }
+
+        internal static T ReadItemAt(torch.Tensor tensor, long index)
+        {
+            if (tensor.device_type != DeviceType.CPU) {
+                throw new InvalidOperationException("Reading data from non-CPU memory is not supported. Move or copy the tensor to the cpu before reading.");
+            }
+
+            tensor.ValidateType(typeof(T));
+
+            var strides = tensor.stride();
+            for (var i = 0; i < strides.Length; i++) {
+                if (strides[i] < 0)
+                    throw new NotImplementedException($"Negative tensor strides are not currently supported. tensor.strides({i}) == {strides[i]}");
+            }
+
+            unsafe {
+                var res = torch.Tensor.THSTensor_data(tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                // NOTE: there is no safety here.
+                T* ptr = (T*)res;
+                return ptr[TranslateIndex(index, tensor)];
             }
         }
 
@@ -169,20 +184,6 @@ namespace TorchSharp.Utils
             return ToArray().GetHashCode();
         }
 
-        public void CopyTo(T[] array, int arrayIndex = 0, long tensorIndex = 0)
-        {
-            for (int i = 0; i + arrayIndex < array.Length && i + tensorIndex < Count; i++) {
-                array[i + arrayIndex] = this[i + tensorIndex];
-            }
-        }
-
-        public void CopyFrom(T[] array, int arrayIndex = 0, long tensorIndex = 0)
-        {
-            for (int i = 0; i + arrayIndex < array.Length && i + tensorIndex < Count; i++) {
-                this[i + tensorIndex] = array[i + arrayIndex];
-            }
-        }
-
         public IEnumerator<T> GetEnumerator()
         {
             return new TensorAccessorEnumerator(this);
@@ -195,16 +196,14 @@ namespace TorchSharp.Utils
 
         public void Dispose()
         {
-            // Clear the tensor we've been keeping alive.
+            _tensor_data_ptr = IntPtr.Zero;
+
+            // Clear the tensor that we've been keeping alive.
             _tensor = null;
         }
 
         private torch.Tensor _tensor;   // Keeping it alive.
         private IntPtr _tensor_data_ptr;
-        private long[] _shape;
-        private long[] _physicalStrides;
-        private long[] _logigcalStrides;
-        private bool _needToTranslate = false;
 
         private class TensorAccessorEnumerator : IEnumerator<T>
         {
