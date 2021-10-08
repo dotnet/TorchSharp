@@ -54,7 +54,7 @@ namespace TorchSharp
         public void TestScalarToString()
         {
             {
-                Tensor t = torch.tensor(3.14f);
+                Tensor t = (Tensor)3.14f;
                 var str = t.ToString(true);
                 Assert.Equal("[], type = Float32, device = cpu, value = 3.14", str);
             }
@@ -1981,7 +1981,7 @@ namespace TorchSharp
         public void TestSparse()
         {
             using (var i = torch.tensor(new long[] { 0, 1, 1, 2, 0, 2 }, new long[] { 2, 3 }))
-            using (var v = torch.tensor(new float[] { 3, 4, 5 }, new long[] { 3 })) {
+            using (Tensor v = new float[] { 3, 4, 5 }) {
                 var sparse = torch.sparse(i, v, new long[] { 2, 3 });
 
                 Assert.True(sparse.is_sparse);
@@ -2157,7 +2157,8 @@ namespace TorchSharp
         [Fact]
         public void TestSquareEuclideanDistance()
         {
-            var input = new double[] { 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.2, 0.1, 0.1 }.ToTensor(new long[] { 9 }).to_type(ScalarType.Float32);
+            Tensor input = new float[] { 0.1f, 0.1f, 0.1f, 0.1f, 0.2f, 0.1f, 0.2f, 0.1f, 0.1f };
+
             var zeros = torch.zeros(new long[] { 1, 9 });
             var ones = torch.ones(new long[] { 1, 9 });
             var centroids = torch.cat(new Tensor[] { zeros, ones }, 0);
