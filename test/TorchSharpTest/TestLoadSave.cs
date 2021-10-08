@@ -44,6 +44,44 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSaveLoadError_1()
+        {
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var linear = Linear(100, 10, true);
+            var params0 = linear.parameters();
+            linear.save(".model.ts");
+            var loaded = Conv2d(100, 10, 5);
+            Assert.Throws<ArgumentException>(() => loaded.load(".model.ts"));
+            File.Delete(".model.ts");
+        }
+
+        [Fact]
+        public void TestSaveLoadError_2()
+        {
+            // Submodule count mismatch
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var linear = Sequential(("linear1", Linear(100, 10, true)));
+            var params0 = linear.parameters();
+            linear.save(".model.ts");
+            var loaded = Sequential(("linear1", Linear(100, 10, true)), ("conv1", Conv2d(100, 10, 5)));
+            Assert.Throws<ArgumentException>(() => loaded.load(".model.ts"));
+            File.Delete(".model.ts");
+        }
+
+        [Fact]
+        public void TestSaveLoadError_3()
+        {
+            // Submodule name mismatch
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var linear = Sequential(("linear1", Linear(100, 10, true)));
+            var params0 = linear.parameters();
+            linear.save(".model.ts");
+            var loaded = Sequential(("linear2", Linear(100, 10, true)));
+            Assert.Throws<ArgumentException>(() => loaded.load(".model.ts"));
+            File.Delete(".model.ts");
+        }
+
+        [Fact]
         public void TestSaveLoadSequence()
         {
             if (File.Exists(".model-list.txt")) File.Delete(".model-list.txt");
