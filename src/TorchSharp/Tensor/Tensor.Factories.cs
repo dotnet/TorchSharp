@@ -677,6 +677,46 @@ namespace TorchSharp
             }
         }
 
+        static public Tensor randint(long max, long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(max, new long[] { size }, dtype, device, requiresGrad);
+        }
+
+        static public Tensor randint(long max, (long,long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(max, new long[] { size.Item1, size.Item2 }, dtype, device, requiresGrad);
+        }
+
+        static public Tensor randint(long max, (long, long, long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(max, new long[] { size.Item1, size.Item2, size.Item3 }, dtype, device, requiresGrad);
+        }
+
+        static public Tensor randint(long max, (long, long, long, long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(max, new long[] { size.Item1, size.Item2, size.Item3, size.Item4 }, dtype, device, requiresGrad);
+        }
+
+        static public Tensor randint(long max, int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(max, new long[] { size }, dtype, device, requiresGrad);
+        }
+
+        static public Tensor randint(long max, (int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(max, new long[] { size.Item1, size.Item2 }, dtype, device, requiresGrad);
+        }
+
+        static public Tensor randint(long max, (int, int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(max, new long[] { size.Item1, size.Item2, size.Item3 }, dtype, device, requiresGrad);
+        }
+
+        static public Tensor randint(long max, (int, int, int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(max, new long[] { size.Item1, size.Item2, size.Item3, size.Item4 }, dtype, device, requiresGrad);
+        }
+
         static private Tensor randint_c32(long max, long[] size, torch.Device device, bool requiresGrad)
         {
             var sz = new List<long>();
