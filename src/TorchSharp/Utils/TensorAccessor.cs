@@ -98,10 +98,10 @@ namespace TorchSharp.Utils
         /// </summary>
         internal static long TranslateIndex(long idx, torch.Tensor tensor)
         {
-            if (tensor.is_contiguous() || idx == 0) return idx;
-
-            if (idx >= tensor.numel())
+            if (idx >= tensor.numel() || idx < 0)
                 throw new ArgumentOutOfRangeException($"{idx} in a collection of  ${tensor.numel()} elements.");
+
+            if (tensor.is_contiguous() || idx == 0) return idx;
 
             long result = 0;
             var shape = tensor.shape;
@@ -167,25 +167,19 @@ namespace TorchSharp.Utils
         /// <returns></returns>
         public static bool operator !=(TensorAccessor<T> left, TensorAccessor<T> right)
         {
-            if (left._tensor_data_ptr == right._tensor_data_ptr) return false;
-            if (left.Count != right.Count) return true;
-
-            var lEnum = left.GetEnumerator();
-            var rEnum = right.GetEnumerator();
-
-            while (lEnum.MoveNext() && rEnum.MoveNext()) {
-                if (lEnum.Current.Equals(rEnum.Current))
-                    return false;
-            }
-            return true;
+            return !(left == right);
         }
 
 
         private IEnumerable<long> GetSubsequentIndices(long startingIndex)
         {
+            if (startingIndex < 0 || startingIndex >= Count)
+                throw new ArgumentOutOfRangeException(nameof(startingIndex));
+
             if (Count <= 1) {
-                if (Count == 0)
+                if (Count == 0) {
                     return Enumerable.Empty<long>();
+                }
 
                 return (new long [] { 0 }).AsEnumerable<long>();
             }
@@ -198,7 +192,7 @@ namespace TorchSharp.Utils
             Debug.Assert(stride.Length > 0);
 
             if (stride.Length == 1) {
-                return SimpleIndices(startingIndex);
+                return SimpleIndices(startingIndex, stride[0]);
             }
 
             return MultiDimensionIndices(startingIndex);
@@ -237,9 +231,8 @@ namespace TorchSharp.Utils
             }
         }
 
-        private IEnumerable<long> SimpleIndices(long startingIndex)
+        private IEnumerable<long> SimpleIndices(long startingIndex, long stride)
         {
-            long stride = _tensor.stride()[0];
             long index = startingIndex;
             long offset = TranslateIndex(startingIndex, _tensor);
 
@@ -283,7 +276,7 @@ namespace TorchSharp.Utils
 
         public override int GetHashCode()
         {
-            return _tensor_data_ptr.GetHashCode();
+            return base.GetHashCode();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -312,61 +305,17 @@ namespace TorchSharp.Utils
             }
 
             if (_tensor.is_contiguous()) {
-                return new ContiguousAccessorEnumerator(this);
+                return new SimpleAtorImpl(this, 1);
             }
 
             var stride = _tensor.stride();
             Debug.Assert(stride.Length > 0);
 
             if (stride.Length == 1) {
-                return new SimpleAtorImpl(this, stride);
+                return new SimpleAtorImpl(this, stride[0]);
             }
 
             return new GeneralAtorImpl(this, stride);
-        }
-
-        private class ContiguousAccessorEnumerator : IEnumerator<T>
-        {
-            public ContiguousAccessorEnumerator(TensorAccessor<T> span)
-            {
-                _currentIdx = -1;
-                _span = span;
-                
-            }
-
-            public T Current => _current;
-
-            object IEnumerator.Current => _current;
-
-            public void Dispose()
-            {
-                // Just clear the span field.
-                _span = null;
-            }
-
-            public bool MoveNext()
-            {
-                if (_currentIdx < 0) {
-                    _currentIdx = 0;
-                } else if (++_currentIdx >= _span.Count) {
-                    Reset();
-                    return false;
-                }
-
-                unsafe { _current = ((T*)_span._tensor_data_ptr)[_currentIdx]; }
-
-                return true;
-            }
-
-            public void Reset()
-            {
-                _currentIdx = -1;
-                _current = default(T);
-            }
-
-            private T _current;
-            private long _currentIdx;
-            private TensorAccessor<T> _span;
         }
 
         private class SimpleAtorImpl : IEnumerator<T>
@@ -380,12 +329,12 @@ namespace TorchSharp.Utils
             private long _offset;
             private T _current;
 
-            public SimpleAtorImpl(TensorAccessor<T> span, long[] stride)
+            public SimpleAtorImpl(TensorAccessor<T> span, long stride)
             {
                 _span = span;
                 _count = span.Count;
                 Debug.Assert(_count > 0);
-                _stride = stride[0];
+                _stride = stride;
                 Reset();
             }
 
