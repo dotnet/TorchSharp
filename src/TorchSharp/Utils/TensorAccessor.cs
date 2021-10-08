@@ -25,6 +25,12 @@ namespace TorchSharp.Utils
                     throw new NotImplementedException($"Negative tensor strides are not currently supported. tensor.strides({i}) == {strides[i]}");
             }
 
+            for (var i = 0; i < tensor.shape.Length; i++) {
+                if (tensor.shape[i] == 0)
+                    throw new NotImplementedException($"Not currently supported: tensor dimensions of size 0. tensor.shape[{i}] == 0");
+            }
+
+
             // Get the data from native code.
 
             unsafe {
@@ -97,8 +103,7 @@ namespace TorchSharp.Utils
             var strides = tensor.stride();
 
             for (var i = shape.Length - 1; i >= 0; i--) {
-                var s = idx % shape[i];
-                idx = idx / shape[i];
+                idx = Math.DivRem(idx, shape[i], out long s);
                 result += s * strides[i];
             }
 
