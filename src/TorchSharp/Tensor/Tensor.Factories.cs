@@ -649,6 +649,9 @@ namespace TorchSharp
         /// </summary>
         static public Tensor rand(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
+            if (dtype.HasValue && !torch.is_floating_point(dtype.Value))
+                throw new ArgumentException($"torch.rand() was given a bad dtype: {dtype}. It must be floating point.", "dtype");
+
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -706,6 +709,9 @@ namespace TorchSharp
         /// </summary>
         static public Tensor randn(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
+            if (dtype.HasValue && !torch.is_floating_point(dtype.Value))
+                throw new ArgumentException($"torch.randn() was given a bad dtype: {dtype}. It must be floating point.", "dtype");
+
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
