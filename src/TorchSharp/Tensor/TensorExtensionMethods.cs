@@ -76,7 +76,7 @@ namespace TorchSharp
             var type = (ScalarType)reader.Decode();
 
             if (type != tensor.dtype)
-                throw new ArgumentException("Mismatched tensor data types while loading.");
+                throw new ArgumentException("Mismatched tensor data types while loading. Make sure that the model you are loading into is exactly the same as the origin.");
 
             // Then, the shape
             var shLen = reader.Decode();
@@ -89,7 +89,7 @@ namespace TorchSharp
             }
 
             if (!loadedShape.SequenceEqual(tensor.shape))
-                throw new ArgumentException("Mismatched tensor shape while loading.");
+                throw new ArgumentException("Mismatched tensor shape while loading. Make sure that the model you are loading into is exactly the same as the origin.");
 
             //
             // TODO: Fix this so that you can read large tensors. Right now, they are limited to 2GB

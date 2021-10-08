@@ -524,12 +524,12 @@ namespace TorchSharp
                     var streamEntries = reader.Decode();
 
                     if (streamEntries != sd.Count)
-                        throw new ArgumentException("Mismatched number of state entries while loading module.");
+                        throw new ArgumentException($"Mismatched state_dict sizes: expected {sd.Count}, but found {streamEntries} entries.");
 
                     for (int i = 0; i < streamEntries; ++i) {
                         var key = reader.ReadString();
                         if (!sd.ContainsKey(key)) {
-                            throw new ArgumentException("Mismatched module state names.");
+                            throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
                         }
 
                         sd[key].Load(reader);

@@ -234,7 +234,10 @@ namespace TorchSharp
             Assert.Equal(6, data2.Count);
 
             Assert.False(sub.is_contiguous());
+            Assert.True(sub.contiguous().data<int>() == data2);
+            Assert.False(sub.contiguous().data<int>() != data2);
             Assert.Equal(sub.contiguous().data<int>(), data2);
+            Assert.Equal(sub.contiguous().data<int>().ToArray(), data2.ToArray());
         }
 
         [Fact]
@@ -260,7 +263,10 @@ namespace TorchSharp
             Assert.Equal(12, data1.Count);
             Assert.Equal(12, data2.Count);
 
+            Assert.True(trans.contiguous().data<int>() == data2);
+            Assert.False(trans.contiguous().data<int>() != data2);
             Assert.Equal(trans.contiguous().data<int>(), data2);
+            Assert.Equal(trans.contiguous().data<int>().ToArray(), data2.ToArray());
         }
 
         [Fact]
@@ -271,6 +277,7 @@ namespace TorchSharp
 
             Assert.False(trans.is_contiguous());
             Assert.Equal<int>(trans.contiguous().data<int>(), trans.data<int>());
+            Assert.Equal<int>(trans.contiguous().data<int>().ToArray(), trans.data<int>().ToArray());
         }
 
         [Fact]
@@ -285,6 +292,7 @@ namespace TorchSharp
 
             Assert.True(flipped.is_contiguous());
             Assert.Equal<int>(flipped.contiguous().data<int>(), flipped.data<int>());
+            Assert.Equal<int>(flipped.contiguous().data<int>().ToArray(), flipped.data<int>().ToArray());
         }
 
         [Fact]
@@ -298,7 +306,6 @@ namespace TorchSharp
             Assert.Equal(new long[] { 3, 2, 4 }, strided.shape);
         }
 
-
         [Fact]
         public void ValidateIssue399_6()
         {
@@ -308,6 +315,80 @@ namespace TorchSharp
             Assert.False(strided.is_contiguous());
             Assert.Equal<int>(strided.contiguous().data<int>(), strided.data<int>());
             Assert.Equal(new long[] { 3, 4 }, strided.shape);
+        }
+
+        [Fact]
+        public void ValidateIssue399_7()
+        {
+            using var contig = torch.arange(27, int32).reshape(3, 3, 3).contiguous();
+            using var trans = contig.permute(2, 0, 1);
+
+            Assert.False(trans.is_contiguous());
+
+            // Test the enumerators.
+            var data1 = trans.contiguous().data<int>();
+            var data2 = trans.data<int>();
+
+            var expected = new int[] { 0, 3, 6, 9, 12, 15, 18, 21, 24, 1, 4, 7, 10, 13, 16, 19, 22, 25, 2, 5, 8, 11, 14, 17, 20, 23, 26};
+
+            long idx = 0;
+            foreach (var value in data1) {
+                Assert.Equal(expected[idx], value);
+                idx += 1;
+            }
+            Assert.Equal(27, idx);
+
+            idx = 0;
+            foreach (var value in data2) {
+                Assert.Equal(expected[idx], value);
+                idx += 1;
+            }
+            Assert.Equal(27, idx);
+
+            var arr1 = data1.AsEnumerable<int>().ToArray();
+            var arr2 = data2.AsEnumerable<int>().ToArray();
+
+            Assert.Equal(expected, arr1);
+            Assert.Equal(arr1, arr2);
+        }
+
+        [Fact]
+        public void ValidateIssue399_8()
+        {
+            // We need to test something that has rank 1, because the TensorAccessor uses
+            // seprate enumeration logic for that.
+            using var contig = torch.arange(48, int32).reshape(12, 4).contiguous();
+            using var sub = contig.slice(1, 1, 2, 1).squeeze(1);
+
+            var data1 = sub.contiguous().data<int>();
+            var data2 = sub.data<int>();
+
+            Assert.True(data1 == data2);
+            Assert.False(data1 != data2);
+
+            Assert.Equal(data1.ToArray(), data2.ToArray());
+
+            var expected = new int [] { 1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45};
+
+            long idx = 0;
+            foreach (var value in data1) {
+                Assert.Equal(expected[idx], value);
+                idx += 1;
+            }
+            Assert.Equal(12, idx);
+
+            idx = 0;
+            foreach (var value in data2) {
+                Assert.Equal(expected[idx], value);
+                idx += 1;
+            }
+            Assert.Equal(12, idx);
+
+            var arr1 = data1.AsEnumerable<int>().ToArray();
+            var arr2 = data2.AsEnumerable<int>().ToArray();
+
+            Assert.Equal(expected, arr1);
+            Assert.Equal(arr1, arr2);
         }
     }
 }
