@@ -77,7 +77,7 @@ namespace TorchSharp
 
                     Assert.Equal(data.shape, new long[] { 16, 3, 32, 32 });
                     Assert.Equal(target.shape, new long[] { 16 });
-                    Assert.True(target.Data<int>().ToArray().Where(x => x >= 0 && x < 10).Count() == 16);
+                    Assert.True(target.data<int>().ToArray().Where(x => x >= 0 && x < 10).Count() == 16);
 
                     data.Dispose();
                     target.Dispose();

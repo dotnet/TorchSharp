@@ -62,7 +62,7 @@ namespace TorchSharp
             writer.Encode(tensor.shape.Length); // 4 bytes
             foreach (var s in tensor.shape) writer.Encode(s); // n * 8 bytes
                                                                 // Then, the data
-            writer.Write(tensor.Bytes()); // ElementSize * NumberofElements
+            writer.Write(tensor.bytes); // ElementSize * NumberofElements
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace TorchSharp
             if (totalSize > int.MaxValue)
                 throw new NotImplementedException("Loading tensors larger than 2GB");
 
-            tensor.SetBytes(reader.ReadBytes((int)(totalSize * tensor.ElementSize)));
+            tensor.bytes = reader.ReadBytes((int)(totalSize * tensor.ElementSize));
         }
 
         /// <summary>

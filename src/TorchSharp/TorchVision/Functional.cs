@@ -929,7 +929,7 @@ namespace TorchSharp.torchvision
                 var b_str = b_matrix.ToString(true);
 
                 var res = torch.linalg.lstsq(a_matrix, b_matrix).Solution;
-                return res.Data<float>().ToArray();
+                return res.data<float>().ToArray();
             }
 
             private static Tensor EqualizeSingleImage(Tensor img)

@@ -46,7 +46,7 @@ namespace TorchSharp.Examples
                 var channels = image.shape[0];
 
                 using (var stream = File.OpenWrite(outputPathPrefix + n + ".png")) {
-                    var bitmap = GetBitmapFromBytes(image.Data<byte>().ToArray(), 256, 256, channels == 1 ? SKColorType.Gray8 : SKColorType.Bgra8888);
+                    var bitmap = GetBitmapFromBytes(image.data<byte>().ToArray(), 256, 256, channels == 1 ? SKColorType.Gray8 : SKColorType.Bgra8888);
                     bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
                 }
             }
@@ -65,7 +65,7 @@ namespace TorchSharp.Examples
                 var channels = image.shape[0];
 
                 using (var stream = File.OpenWrite(outputPathPrefix + (n + first.shape[0]) + ".png")) {
-                    var bitmap = GetBitmapFromBytes(image.Data<byte>().ToArray(), 256, 256, channels == 1 ? SKColorType.Gray8 : SKColorType.Bgra8888);
+                    var bitmap = GetBitmapFromBytes(image.data<byte>().ToArray(), 256, 256, channels == 1 ? SKColorType.Gray8 : SKColorType.Bgra8888);
                     bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
                 }
             }
@@ -105,7 +105,7 @@ namespace TorchSharp.Examples
 
                             Tensor finalized = inputTensor;
 
-                            var nz = inputTensor.count_nonzero().DataItem<long>();
+                            var nz = inputTensor.count_nonzero().item<long>();
 
                             if (bitmap.Width != width || bitmap.Height != height) {
                                 var t = inputTensor.reshape(1, channels, bitmap.Height, bitmap.Width);

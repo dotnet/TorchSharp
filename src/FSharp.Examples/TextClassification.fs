@@ -90,7 +90,7 @@ let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) 
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5) |> ignore
         optimizer.step() |> ignore
 
-        total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().DataItem<int64>())
+        total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().item<int64>())
         total_count <- total_count + labels.size(0)
 
         if (batch % logInterval = 0) && (batch > 0) then
@@ -113,7 +113,7 @@ let evaluate (testData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (mod
         let predicted_labels = model.forward(texts, offsets)
         let loss = criterion predicted_labels labels
 
-        total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().DataItem<int64>())
+        total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().item<int64>())
         total_count <- total_count + labels.size(0)
 
     total_acc / (float total_count)
