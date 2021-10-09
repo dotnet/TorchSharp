@@ -641,12 +641,18 @@ namespace TorchSharp
 
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_randint(long low, long high, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
         ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
-        static public Tensor randint(long max, long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long low, long high, long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             //TODO: fix randint to take a low bound, too.
 
@@ -657,19 +663,19 @@ namespace TorchSharp
             }
 
             if (dtype == ScalarType.ComplexFloat32) {
-                return randint_c32(max, size, device, requiresGrad);
+                return randint_c32(low, high, size, device, requiresGrad);
             }
             else if (dtype == ScalarType.ComplexFloat64) {
-                return randint_c64(max, size, device, requiresGrad);
+                return randint_c64(low, high, size, device, requiresGrad);
             }
 
             unsafe {
                 fixed (long* psizes = size) {
-                    var handle = THSTensor_randint(max, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                    var handle = THSTensor_randint(low, high, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_randint(max, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                        handle = THSTensor_randint(low, high, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(handle);
@@ -677,47 +683,246 @@ namespace TorchSharp
             }
         }
 
-        static public Tensor randint(long max, long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long high, long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return randint(max, new long[] { size }, dtype, device, requiresGrad);
+            return randint(0, high, size, dtype, device, requiresGrad);
         }
 
-        static public Tensor randint(long max, (long,long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long high, long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return randint(max, new long[] { size.Item1, size.Item2 }, dtype, device, requiresGrad);
+            return randint(0, high, new long[] { size }, dtype, device, requiresGrad);
         }
 
-        static public Tensor randint(long max, (long, long, long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long high, (long,long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return randint(max, new long[] { size.Item1, size.Item2, size.Item3 }, dtype, device, requiresGrad);
+            return randint(0, high, new long[] { size.Item1, size.Item2 }, dtype, device, requiresGrad);
         }
 
-        static public Tensor randint(long max, (long, long, long, long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long high, (long, long, long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return randint(max, new long[] { size.Item1, size.Item2, size.Item3, size.Item4 }, dtype, device, requiresGrad);
+            return randint(0, high, new long[] { size.Item1, size.Item2, size.Item3 }, dtype, device, requiresGrad);
         }
 
-        static public Tensor randint(long max, int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long high, (long, long, long, long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return randint(max, new long[] { size }, dtype, device, requiresGrad);
+            return randint(0, high, new long[] { size.Item1, size.Item2, size.Item3, size.Item4 }, dtype, device, requiresGrad);
         }
 
-        static public Tensor randint(long max, (int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long low, long high, long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return randint(max, new long[] { size.Item1, size.Item2 }, dtype, device, requiresGrad);
+            return randint(low, high, new long[] { size }, dtype, device, requiresGrad);
         }
 
-        static public Tensor randint(long max, (int, int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long low, long high, (long, long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return randint(max, new long[] { size.Item1, size.Item2, size.Item3 }, dtype, device, requiresGrad);
+            return randint(low, high, new long[] { size.Item1, size.Item2 }, dtype, device, requiresGrad);
         }
 
-        static public Tensor randint(long max, (int, int, int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long low, long high, (long, long, long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return randint(max, new long[] { size.Item1, size.Item2, size.Item3, size.Item4 }, dtype, device, requiresGrad);
+            return randint(low, high, new long[] { size.Item1, size.Item2, size.Item3 }, dtype, device, requiresGrad);
         }
 
-        static private Tensor randint_c32(long max, long[] size, torch.Device device, bool requiresGrad)
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long low, long high, (long, long, long, long) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(low, high, new long[] { size.Item1, size.Item2, size.Item3, size.Item4 }, dtype, device, requiresGrad);
+        }
+
+        // The 'int' versions of the randint() API will help F#, which doesn't implicitly widen.
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(int high, int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(0, high, new long[] { size }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(int high, (int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(0, high, new long[] { size.Item1, size.Item2 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(int high, (int, int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(0, high, new long[] { size.Item1, size.Item2, size.Item3 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(int high, (int, int, int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(0, high, new long[] { size.Item1, size.Item2, size.Item3, size.Item4 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(int low, int high, int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(low, high, new long[] { size }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(int low, int high, (int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(low, high, new long[] { size.Item1, size.Item2 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(int low, int high, (int, int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(low, high, new long[] { size.Item1, size.Item2, size.Item3 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(int low, int high, (int, int, int, int) size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(low, high, new long[] { size.Item1, size.Item2, size.Item3, size.Item4 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 32-bit complex tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static private Tensor randint_c32(long low, long high, long[] size, torch.Device device, bool requiresGrad)
         {
             var sz = new List<long>();
             sz.AddRange(size);
@@ -731,11 +936,11 @@ namespace TorchSharp
                     // but we can get around that by adding another dimension, creating a float tensor, and then
                     // converting it to a complex tensor in the end.
                     //
-                    var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
+                    var handle = THSTensor_randint(low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
+                        handle = THSTensor_randint(low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
@@ -762,7 +967,15 @@ namespace TorchSharp
             }
         }
 
-        static private Tensor randint_c64(long max, long[] size, torch.Device device, bool requiresGrad)
+        /// <summary>
+        ///  Create a new 64-bit complex tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static private Tensor randint_c64(long low, long high, long[] size, torch.Device device, bool requiresGrad)
         {
             var sz = new List<long>();
             sz.AddRange(size);
@@ -776,11 +989,11 @@ namespace TorchSharp
                     // but we can get around that by adding another dimension, creating a float tensor, and then
                     // converting it to a complex tensor in the end.
                     //
-                    var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
+                    var handle = THSTensor_randint(low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
+                        handle = THSTensor_randint(low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
