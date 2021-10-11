@@ -4734,6 +4734,13 @@ namespace TorchSharp
                 return sb.ToString();
             }
 
+            /// <summary>
+            /// Get a string representation of the tensor.
+            /// </summary>
+            /// <param name="withData">Boolean, used to discriminate.</param>
+            /// <param name="fltFormat">The format string to use for floating point values.</param>
+            /// <param name="width">The width of each line of the output string.</param>
+            /// <returns></returns>
             public string ToString(bool withData, string fltFormat = "g5", int width = 100)
             {
                 if (!withData) return this.ToString();
