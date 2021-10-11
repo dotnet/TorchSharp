@@ -644,7 +644,7 @@ namespace TorchSharp
         extern static IntPtr THSTensor_randint(long low, long high, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -681,6 +681,33 @@ namespace TorchSharp
                     return new Tensor(handle);
                 }
             }
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(int low, int high, int[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(low, high, size.Select(i => (long)i).ToArray(), dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(int high, int[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(0, high, size.Select(i => (long)i).ToArray(), dtype, device, requiresGrad);
         }
 
         /// <summary>
@@ -749,7 +776,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -763,7 +790,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -777,7 +804,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -791,7 +818,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -859,7 +886,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -873,7 +900,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -887,7 +914,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -901,7 +928,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
