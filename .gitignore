@@ -269,3 +269,4 @@ packages/
 *.bin
 /*.png
 /src/Native/out/build/x64-Debug
+*.code-workspace

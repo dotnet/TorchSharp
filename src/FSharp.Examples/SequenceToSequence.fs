@@ -168,7 +168,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
             torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5) |> ignore
             optimizer.step() |> ignore
 
-            total_loss <- total_loss + loss.cpu().DataItem<float32>()
+            total_loss <- total_loss + loss.cpu().item<float32>()
         end 
 
         GC.Collect()
@@ -208,7 +208,7 @@ let evaluate (model:TransformerModel) (evalData:torch.Tensor) ntokens =
 
             use output = model.forward(data, src_mask)
             use loss = criterion (output.view(-1L, ntokens)) targets
-            total_loss <- total_loss + (float32 data.shape.[0]) * loss.cpu().DataItem<float32>()
+            total_loss <- total_loss + (float32 data.shape.[0]) * loss.cpu().item<float32>()
         end 
 
         GC.Collect()

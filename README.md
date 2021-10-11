@@ -11,6 +11,8 @@ In PR 302, significant changes were made to the TorchSharp API, aligning more cl
 
 In PR 354, further significant changes were made, again aligning with the Pytorch APIs. It is also a massively breaking change. We removed the {IntNN|FloatNN|ComplexNN}Tensor.* APIs, which had no parallel in PyTorch. Once again, we apologize for any extra work this may cause, but we believe that what was done is in the best long-term interest of TorchSharp users.
 
+As we build up to a v1.0 release, we will continue to make breaking changes, but only when we consider it necessary for usability. Similarity to the PyTorch experience is a primarly design tenet, and we will continue on that path.
+
 # TorchSharp
 
 TorchSharp is a .NET library that provides access to the library that powers PyTorch. It is part of the .NET Foundation.

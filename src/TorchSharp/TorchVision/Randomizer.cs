@@ -20,7 +20,7 @@ namespace TorchSharp.torchvision
         {
             using (var chance = torch.rand(1))
 
-                if (chance.DataItem<float>() < p) {
+                if (chance.item<float>() < p) {
                     return transform.forward(input);
                 } else {
                     return input;

@@ -40,10 +40,10 @@ namespace TorchSharp
 
             if (torch.cuda.is_available()) {
                 var scalar = torch.tensor(3.14f, torch.CUDA);
-                Assert.Throws<InvalidOperationException>(() => scalar.DataItem<float>());
+                Assert.Throws<InvalidOperationException>(() => scalar.item<float>());
                 var tensor = torch.zeros(new long[] { 10, 10 }, device: torch.CUDA);
-                Assert.Throws<InvalidOperationException>(() => tensor.Data<float>());
-                Assert.Throws<InvalidOperationException>(() => tensor.Bytes());
+                Assert.Throws<InvalidOperationException>(() => tensor.data<float>());
+                Assert.Throws<InvalidOperationException>(() => { var _ = tensor.bytes; });
             }
         }
 
@@ -201,16 +201,194 @@ namespace TorchSharp
             using var y = torch.ones(3,3);
 
             var mx1 = x.max();
-            Assert.Equal(0, mx1.DataItem<float>());
+            Assert.Equal(0, mx1.item<float>());
 
             var mx2 = x.maximum(y);
             Assert.True(mx2.allclose(y));
 
             var mn1 = x.min();
-            Assert.Equal(0, mn1.DataItem<float>());
+            Assert.Equal(0, mn1.item<float>());
 
             var mn2 = x.minimum(y);
             Assert.True(mn2.allclose(x));
+        }
+
+        [Fact]
+        public void ValidateIssue399_1()
+        {
+            // Create a contiguous 3x4 matrix and fill with auto-inc values starting at zero.
+            // 0 1 2 3
+            // 4 5 6 7
+            // 8 9 10 11
+            using var contig = torch.arange(12, int32).reshape(3,4).contiguous();
+            var data1 = contig.data<int>();
+
+            // Create a 3x2 slice of this, which should contain:
+            // 1 2
+            // 5 6
+            // 9 10
+            using var sub = contig.slice(1, 1, 3, 1);
+            var data2 = sub.data<int>();
+
+            Assert.Equal(12, data1.Count);
+            Assert.Equal(6, data2.Count);
+
+            Assert.False(sub.is_contiguous());
+            Assert.True(sub.contiguous().data<int>() == data2);
+            Assert.False(sub.contiguous().data<int>() != data2);
+            Assert.Equal(sub.contiguous().data<int>(), data2);
+            Assert.Equal(sub.contiguous().data<int>().ToArray(), data2.ToArray());
+        }
+
+        [Fact]
+        public void ValidateIssue399_2()
+        {
+            // Create a contiguous 3x4 matrix and fill with auto-inc values starting at zero.
+            // 0 1 2 3
+            // 4 5 6 7
+            // 8 9 10 11
+            using var contig = torch.arange(12, int32).reshape(3, 4).contiguous();
+            var data1 = contig.data<int>();
+
+            // Creating the transpose, which should look like:
+            // 0 4 8
+            // 1 5 9
+            // 2 6 10
+            // 3 7 11
+            using var trans = contig.t();
+            var data2 = trans.data<int>();
+
+            Assert.False(trans.is_contiguous());
+
+            Assert.Equal(12, data1.Count);
+            Assert.Equal(12, data2.Count);
+
+            Assert.True(trans.contiguous().data<int>() == data2);
+            Assert.False(trans.contiguous().data<int>() != data2);
+            Assert.Equal(trans.contiguous().data<int>(), data2);
+            Assert.Equal(trans.contiguous().data<int>().ToArray(), data2.ToArray());
+        }
+
+        [Fact]
+        public void ValidateIssue399_3()
+        {
+            using var contig = torch.arange(27, int32).reshape(3, 3, 3).contiguous();
+            using var trans = contig.permute(2, 0, 1);
+
+            Assert.False(trans.is_contiguous());
+            Assert.Equal<int>(trans.contiguous().data<int>(), trans.data<int>());
+            Assert.Equal<int>(trans.contiguous().data<int>().ToArray(), trans.data<int>().ToArray());
+        }
+
+        [Fact]
+        public void ValidateIssue399_4()
+        {
+            // This test is added because 'flip()' may, in the future, be implemented returning a view.
+            // In that case, this will start failing and tell us we have to support negative strides.
+
+            using var contig = torch.arange(12, int32).reshape(3, 4).contiguous();
+            using var flipped = contig.t().flip(1);
+            var strides = flipped.stride();
+
+            Assert.True(flipped.is_contiguous());
+            Assert.Equal<int>(flipped.contiguous().data<int>(), flipped.data<int>());
+            Assert.Equal<int>(flipped.contiguous().data<int>().ToArray(), flipped.data<int>().ToArray());
+        }
+
+        [Fact]
+        public void ValidateIssue399_5()
+        {
+            using var contig = torch.arange(12, int32).reshape(3, 4).contiguous();
+            using var strided = contig.as_strided(new long[] { 3, 2, 4 }, new long[] { 4, 0, 1 });
+
+            Assert.False(strided.is_contiguous());
+            Assert.Equal<int>(strided.contiguous().data<int>(), strided.data<int>());
+            Assert.Equal(new long[] { 3, 2, 4 }, strided.shape);
+        }
+
+        [Fact]
+        public void ValidateIssue399_6()
+        {
+            using var contig = torch.arange(3, int32).reshape(3, 1).contiguous();
+            using var strided = contig.expand(3, 4);
+
+            Assert.False(strided.is_contiguous());
+            Assert.Equal<int>(strided.contiguous().data<int>(), strided.data<int>());
+            Assert.Equal(new long[] { 3, 4 }, strided.shape);
+        }
+
+        [Fact]
+        public void ValidateIssue399_7()
+        {
+            using var contig = torch.arange(27, int32).reshape(3, 3, 3).contiguous();
+            using var trans = contig.permute(2, 0, 1);
+
+            Assert.False(trans.is_contiguous());
+
+            // Test the enumerators.
+            var data1 = trans.contiguous().data<int>();
+            var data2 = trans.data<int>();
+
+            var expected = new int[] { 0, 3, 6, 9, 12, 15, 18, 21, 24, 1, 4, 7, 10, 13, 16, 19, 22, 25, 2, 5, 8, 11, 14, 17, 20, 23, 26};
+
+            long idx = 0;
+            foreach (var value in data1) {
+                Assert.Equal(expected[idx], value);
+                idx += 1;
+            }
+            Assert.Equal(27, idx);
+
+            idx = 0;
+            foreach (var value in data2) {
+                Assert.Equal(expected[idx], value);
+                idx += 1;
+            }
+            Assert.Equal(27, idx);
+
+            var arr1 = data1.AsEnumerable<int>().ToArray();
+            var arr2 = data2.AsEnumerable<int>().ToArray();
+
+            Assert.Equal(expected, arr1);
+            Assert.Equal(arr1, arr2);
+        }
+
+        [Fact]
+        public void ValidateIssue399_8()
+        {
+            // We need to test something that has rank 1, because the TensorAccessor uses
+            // seprate enumeration logic for that.
+            using var contig = torch.arange(48, int32).reshape(12, 4).contiguous();
+            using var sub = contig.slice(1, 1, 2, 1).squeeze(1);
+
+            var data1 = sub.contiguous().data<int>();
+            var data2 = sub.data<int>();
+
+            Assert.True(data1 == data2);
+            Assert.False(data1 != data2);
+
+            Assert.Equal(data1.ToArray(), data2.ToArray());
+
+            var expected = new int [] { 1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45};
+
+            long idx = 0;
+            foreach (var value in data1) {
+                Assert.Equal(expected[idx], value);
+                idx += 1;
+            }
+            Assert.Equal(12, idx);
+
+            idx = 0;
+            foreach (var value in data2) {
+                Assert.Equal(expected[idx], value);
+                idx += 1;
+            }
+            Assert.Equal(12, idx);
+
+            var arr1 = data1.AsEnumerable<int>().ToArray();
+            var arr2 = data2.AsEnumerable<int>().ToArray();
+
+            Assert.Equal(expected, arr1);
+            Assert.Equal(arr1, arr2);
         }
     }
 }

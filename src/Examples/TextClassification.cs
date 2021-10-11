@@ -118,7 +118,7 @@ namespace TorchSharp.Examples
                     torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
                     optimizer.step();
 
-                    total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).DataItem<long>();
+                    total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).item<long>();
                     total_count += labels.size(0);
                 }
 
@@ -147,7 +147,7 @@ namespace TorchSharp.Examples
                 using (var predicted_labels = model.forward(texts, offsets)) {
                     var loss = criterion(predicted_labels, labels);
 
-                    total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).DataItem<long>();
+                    total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).item<long>();
                     total_count += labels.size(0);
                 }
             }
