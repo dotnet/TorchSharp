@@ -4802,6 +4802,107 @@ namespace TorchSharp
                 return right.le(left);
             }
 
+            public static explicit operator Tensor(byte value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static explicit operator Tensor(sbyte value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static explicit operator Tensor(short value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static explicit operator Tensor(int value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static explicit operator Tensor(long value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static explicit operator Tensor(float value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static explicit operator Tensor(double value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static explicit operator Tensor(bool value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static explicit operator Tensor((float, float) value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static explicit operator Tensor(System.Numerics.Complex value)
+            {
+                return torch.tensor(value);
+            }
+
+
+            public static implicit operator Tensor(byte[] value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static implicit operator Tensor(sbyte[] value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static implicit operator Tensor(short[] value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static implicit operator Tensor(int[] value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static implicit operator Tensor(long[] value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static implicit operator Tensor(float[] value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static implicit operator Tensor(double[] value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static implicit operator Tensor(bool[] value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static implicit operator Tensor((float, float)[] value)
+            {
+                return torch.tensor(value);
+            }
+
+            public static implicit operator Tensor(System.Numerics.Complex[] value)
+            {
+                return torch.tensor(value);
+            }
+
             // Specifically added to make F# look good.
             public static Tensor op_MinusMinusGreater(Tensor t, torch.nn.Module m) => m.forward(t);
 
@@ -4831,6 +4932,13 @@ namespace TorchSharp
                 return sb.ToString();
             }
 
+            /// <summary>
+            /// Get a string representation of the tensor.
+            /// </summary>
+            /// <param name="withData">Boolean, used to discriminate.</param>
+            /// <param name="fltFormat">The format string to use for floating point values.</param>
+            /// <param name="width">The width of each line of the output string.</param>
+            /// <returns></returns>
             public string ToString(bool withData, string fltFormat = "g5", int width = 100)
             {
                 if (!withData) return this.ToString();

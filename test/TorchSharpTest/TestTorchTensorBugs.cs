@@ -390,5 +390,22 @@ namespace TorchSharp
             Assert.Equal(expected, arr1);
             Assert.Equal(arr1, arr2);
         }
+
+        [Fact]
+        public void ValidateRandThrowsOnWrongType()
+        {
+            Assert.Throws<ArgumentException>(() => torch.rand(3, 4, dtype: torch.int8));
+            Assert.Throws<ArgumentException>(() => torch.rand(3, 4, dtype: torch.uint8));
+            Assert.Throws<ArgumentException>(() => torch.rand(3, 4, dtype: torch.int16));
+            Assert.Throws<ArgumentException>(() => torch.rand(3, 4, dtype: torch.int32));
+            Assert.Throws<ArgumentException>(() => torch.rand(3, 4, dtype: torch.int64));
+            Assert.Throws<ArgumentException>(() => torch.rand(3, 4, dtype: torch.@bool));
+            Assert.Throws<ArgumentException>(() => torch.randn(3, 4, dtype: torch.int8));
+            Assert.Throws<ArgumentException>(() => torch.randn(3, 4, dtype: torch.uint8));
+            Assert.Throws<ArgumentException>(() => torch.randn(3, 4, dtype: torch.int16));
+            Assert.Throws<ArgumentException>(() => torch.randn(3, 4, dtype: torch.int32));
+            Assert.Throws<ArgumentException>(() => torch.randn(3, 4, dtype: torch.int64));
+            Assert.Throws<ArgumentException>(() => torch.randn(3, 4, dtype: torch.@bool));
+        }
     }
 }

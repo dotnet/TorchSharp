@@ -54,7 +54,7 @@ namespace TorchSharp
         public void TestScalarToString()
         {
             {
-                Tensor t = torch.tensor(3.14f);
+                Tensor t = (Tensor)3.14f;
                 var str = t.ToString(true);
                 Assert.Equal("[], type = Float32, device = cpu, value = 3.14", str);
             }
@@ -1981,7 +1981,7 @@ namespace TorchSharp
         public void TestSparse()
         {
             using (var i = torch.tensor(new long[] { 0, 1, 1, 2, 0, 2 }, new long[] { 2, 3 }))
-            using (var v = torch.tensor(new float[] { 3, 4, 5 }, new long[] { 3 })) {
+            using (Tensor v = new float[] { 3, 4, 5 }) {
                 var sparse = torch.sparse(i, v, new long[] { 2, 3 });
 
                 Assert.True(sparse.is_sparse);
@@ -2157,7 +2157,8 @@ namespace TorchSharp
         [Fact]
         public void TestSquareEuclideanDistance()
         {
-            var input = new double[] { 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.2, 0.1, 0.1 }.ToTensor(new long[] { 9 }).to_type(ScalarType.Float32);
+            Tensor input = new float[] { 0.1f, 0.1f, 0.1f, 0.1f, 0.2f, 0.1f, 0.2f, 0.1f, 0.1f };
+
             var zeros = torch.zeros(new long[] { 1, 9 });
             var ones = torch.ones(new long[] { 1, 9 });
             var centroids = torch.cat(new Tensor[] { zeros, ones }, 0);
@@ -4375,16 +4376,16 @@ namespace TorchSharp
             var res8 = torch.randint(10, new long[] { 200 });
             Assert.Equal(new long[] { 200 }, res8.shape);
 
-            var res9 = torch.randint(10, new long[] { 200 }, float64);
+            var res9 = torch.randint(10, 200, float64);
             Assert.Equal(new long[] { 200 }, res9.shape);
 
             //var res7 = torch.randint(100, new long[] { 20, 10 }, complex32);
             //Assert.Equal(new long[] { 200 }, res7.Shape);
 
-            var res10 = torch.randint(100, new long[] { 20, 10 }, complex64);
+            var res10 = torch.randint(100, ( 20, 10 ), complex64);
             Assert.Equal(new long[] { 20, 10 }, res10.shape);
 
-            var res11 = torch.randint(10, new long[] { 20, 10 }, complex128);
+            var res11 = torch.randint(10, ( 20, 10 ), complex128);
             Assert.Equal(new long[] { 20, 10 }, res11.shape);
         }
 
