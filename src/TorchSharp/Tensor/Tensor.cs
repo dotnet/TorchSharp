@@ -266,7 +266,7 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_real(IntPtr handle);
 
-            public Tensor Real {
+            public Tensor real {
                 get {
                     var res = THSTensor_real(Handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -278,7 +278,7 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_imag(IntPtr handle);
 
-            public Tensor Imag {
+            public Tensor imag {
                 get {
                     var res = THSTensor_imag(Handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -5125,19 +5125,21 @@ namespace TorchSharp
                     break;
                 case ScalarType.ComplexFloat32:
                     var val1 = value.ToComplexFloat32();
-                    if (val1.Real != 0.0f || val1.Imaginary == 0.0f)
+                    if (val1.Real != 0.0f || val1.Imaginary == 0.0f) {
                         builder.Append(val1.Real.ToString(fltFormat));
-                    if (val1.Real != 0.0f || val1.Imaginary != 0.0f)
-                        builder.Append('+');
+                        if (val1.Imaginary != 0.0f)
+                            builder.Append('+');
+                    }
                     if (val1.Imaginary != 0.0f)
                         builder.Append(val1.Imaginary.ToString(fltFormat)).Append('i');
                     break;
                 case ScalarType.ComplexFloat64:
                     var val2 = value.ToComplexFloat64();
-                    if (val2.Real != 0.0f || val2.Imaginary == 0.0f)
-                        builder.Append(val2.Real.ToString(fltFormat)).Append('+');
-                    if (val2.Real != 0.0f || val2.Imaginary != 0.0f)
-                        builder.Append('+');
+                    if (val2.Real != 0.0f || val2.Imaginary == 0.0f) {
+                        builder.Append(val2.Real.ToString(fltFormat));
+                        if (val2.Imaginary != 0.0f)
+                            builder.Append('+');
+                    }
                     if (val2.Imaginary != 0.0f)
                         builder.Append(val2.Imaginary.ToString(fltFormat)).Append('i');
                     break;

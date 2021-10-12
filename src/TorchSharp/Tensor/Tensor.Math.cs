@@ -295,7 +295,7 @@ namespace TorchSharp
             /// <param name="beta"></param>
             /// <param name="alpha"></param>
             /// <returns></returns>
-            public Tensor addmm(Tensor mat1, Tensor mat2, float beta, float alpha)
+            public Tensor addmm(Tensor mat1, Tensor mat2, float beta = 1, float alpha = 1)
             {
                 var res = THSTensor_addmm(handle, mat1.Handle, mat2.Handle, beta, alpha);
                 if (res == IntPtr.Zero)
@@ -314,7 +314,7 @@ namespace TorchSharp
             /// <param name="beta"></param>
             /// <param name="alpha"></param>
             /// <returns></returns>
-            public Tensor addmm_(Tensor mat1, Tensor mat2, float beta, float alpha)
+            public Tensor addmm_(Tensor mat1, Tensor mat2, float beta = 1, float alpha = 1)
             {
                 var res = THSTensor_addmm_(handle, mat1.Handle, mat2.Handle, beta, alpha);
                 if (res == IntPtr.Zero)
@@ -323,7 +323,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_addmv(IntPtr mat, IntPtr mat1, IntPtr vec2, float beta, float alpha);
+            static extern IntPtr THSTensor_addmv(IntPtr mat, IntPtr mat1, IntPtr vec2, float beta = 1, float alpha = 1);
 
             /// <summary>
             /// Performs a matrix-vector product of the matrix mat and the vector vec. The vector input is added to the final result.

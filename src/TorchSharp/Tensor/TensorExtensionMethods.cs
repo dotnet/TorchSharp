@@ -34,6 +34,20 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Uses Console.WriteLine to print a tensor expression on stdout. This is intended for
+        /// .NET Interactive notebook use, primarily.
+        /// </summary>
+        /// <param name="t">The input tensor.</param>
+        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="width">The width of each line of the output string.</param>
+        /// <returns></returns>
+        public static Tensor print(this Tensor t, string fltFormat = "g5", int width = 100)
+        {
+            Console.WriteLine(t.str());
+            return t;
+        }
+
+        /// <summary>
         /// Indicates whether the element type of a given tensor is integral.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
