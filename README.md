@@ -2,8 +2,11 @@
 
 __TorchSharp is now in the .NET Foundation!__
 
-If you are using TorchSharp from NuGet, you should be using a version >= 0.93.1 of TorchSharp, and >= 1.9.0.11 of the libtorch-xxx redistributable packages.
+If you are using TorchSharp from NuGet, you should be using a version >= 0.93.5 of TorchSharp, and >= 1.9.0.11 of the libtorch-xxx redistributable packages.
 
+__TorchSharp examples now has their own home!__
+
+Head over to the [TorchSharp Examples Repo](https://github.com/dotnet/TorchSharpExamples) for convenient access to existing an upcoming examples.
 
 __NOTE:__
 
