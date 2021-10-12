@@ -29,13 +29,13 @@ namespace TorchSharp
                 var sample = dist.sample(2,3);
 
                 Assert.Equal(new long[] { 2, 3 }, sample.shape);
-                Assert.All<double>(sample.Data<double>().ToArray(), d => Assert.True(d >= 0 && d < 3.5));
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d < 3.5));
             }
             {
                 var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
 
                 Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
-                Assert.All<double>(sample.Data<double>().ToArray(), d => Assert.True(d >= 0 && d < 3.5));
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d < 3.5));
             }
         }
 
@@ -89,19 +89,19 @@ namespace TorchSharp
                 var sample = dist.sample();
 
                 Assert.Single(sample.shape);
-                Assert.All<double>(sample.Data<double>().ToArray(), d => Assert.True(d == 0 || d == 1));
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d == 0 || d == 1));
             }
             {
                 var sample = dist.sample(2, 3);
 
                 Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
-                Assert.All<double>(sample.Data<double>().ToArray(), d => Assert.True(d == 0 || d == 1));
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d == 0 || d == 1));
             }
             {
                 var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
                 Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
-                Assert.All<double>(sample.Data<double>().ToArray(), d => Assert.True(d == 0 || d == 1));
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d == 0 || d == 1));
             }
         }
 
@@ -136,19 +136,19 @@ namespace TorchSharp
                 var sample = dist.sample();
 
                 Assert.Single(sample.shape);
-                Assert.All<double>(sample.Data<double>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
             }
             {
                 var sample = dist.sample(2, 3);
 
                 Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
-                Assert.All<double>(sample.Data<double>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
             }
             {
                 var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
                 Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
-                Assert.All<double>(sample.Data<double>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
             }
         }
 
@@ -163,13 +163,13 @@ namespace TorchSharp
 
                 Assert.Single(sample.shape);
                 Assert.Equal(3, sample.shape[0]);
-                Assert.All<long>(sample.Data<long>().ToArray(), l => Assert.True(l >= 0 && l < categories));
+                Assert.All<long>(sample.data<long>().ToArray(), l => Assert.True(l >= 0 && l < categories));
             }
             {
                 var sample = dist.sample(2, 3);
 
                 Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
-                Assert.All<long>(sample.Data<long>().ToArray(), l => Assert.True(l >= 0 && l < categories));
+                Assert.All<long>(sample.data<long>().ToArray(), l => Assert.True(l >= 0 && l < categories));
             }
         }
 
@@ -340,19 +340,19 @@ namespace TorchSharp
                 var sample = dist.sample();
 
                 Assert.Equal(new long[] { 3, categories }, sample.shape);
-                Assert.All<float>(sample.Data<float>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
+                Assert.All<float>(sample.data<float>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
             }
             {
                 var sample = dist.sample(2, 3);
 
                 Assert.Equal(new long[] { 2, 3, 3, categories }, sample.shape);
-                Assert.All<float>(sample.Data<float>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
+                Assert.All<float>(sample.data<float>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
             }
             {
                 var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
                 Assert.Equal(new long[] { 2, 3, 3, 3, categories }, sample.shape);
-                Assert.All<float>(sample.Data<float>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
+                Assert.All<float>(sample.data<float>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
             }
         }
     }

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.TensorExtensionMethods;
 
@@ -21,7 +19,7 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor image)
         {
-            var randoms = torch.rand(4, ScalarType.Float32).Data<float>().ToArray();
+            var randoms = torch.rand(4, ScalarType.Float32).data<float>().ToArray();
             var b = Adjust(randoms[0], brightness.Item1, brightness.Item2);
             var c = Adjust(randoms[1], contrast.Item1, contrast.Item2);
             var s = Adjust(randoms[2], saturation.Item1, saturation.Item2);

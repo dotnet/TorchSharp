@@ -20,7 +20,7 @@ namespace TorchSharp.torchvision
         {
             using (var chance = torch.rand(1))
 
-                if (chance.DataItem<float>() < p) {
+                if (chance.item<float>() < p) {
                     return transform.forward(input);
                 } else {
                     return input;
@@ -143,7 +143,7 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Apply randomly a list of transformations with a given probability.
         /// </summary>
-        /// <param name="transforms"></param>
+        /// <param name="transforms">A list of transforms to compose serially.</param>
         /// <param name="p">Probability of the transforms being applied.</param>
         /// <returns></returns>
         static public ITransform RandomApply(ITransform[] transforms, double p = 0.5)

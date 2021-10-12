@@ -97,7 +97,7 @@ namespace TorchSharp
             writer.Encode(tensor.shape.Length); // 4 bytes
             foreach (var s in tensor.shape) writer.Encode(s); // n * 8 bytes
                                                                 // Then, the data
-            writer.Write(tensor.Bytes()); // ElementSize * NumberofElements
+            writer.Write(tensor.bytes); // ElementSize * NumberofElements
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace TorchSharp
             var type = (ScalarType)reader.Decode();
 
             if (type != tensor.dtype)
-                throw new ArgumentException("Mismatched tensor data types while loading.");
+                throw new ArgumentException("Mismatched tensor data types while loading. Make sure that the model you are loading into is exactly the same as the origin.");
 
             // Then, the shape
             var shLen = reader.Decode();
@@ -124,7 +124,7 @@ namespace TorchSharp
             }
 
             if (!loadedShape.SequenceEqual(tensor.shape))
-                throw new ArgumentException("Mismatched tensor shape while loading.");
+                throw new ArgumentException("Mismatched tensor shape while loading. Make sure that the model you are loading into is exactly the same as the origin.");
 
             //
             // TODO: Fix this so that you can read large tensors. Right now, they are limited to 2GB
@@ -132,7 +132,7 @@ namespace TorchSharp
             if (totalSize > int.MaxValue)
                 throw new NotImplementedException("Loading tensors larger than 2GB");
 
-            tensor.SetBytes(reader.ReadBytes((int)(totalSize * tensor.ElementSize)));
+            tensor.bytes = reader.ReadBytes((int)(totalSize * tensor.ElementSize));
         }
 
         /// <summary>
@@ -212,6 +212,8 @@ namespace TorchSharp
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 
+        public static (float Real,float Imaginary) ToComplexFloat32(this Tensor value) => value.ToScalar().ToComplexFloat32();
+        public static System.Numerics.Complex ToComplexFloat64(this Tensor value) => value.ToScalar().ToComplexFloat64();
         public static float ToSingle(this Tensor value) => value.ToScalar().ToSingle();
         public static double ToDouble(this Tensor value) => value.ToScalar().ToDouble();
         public static sbyte ToSByte(this Tensor value) => value.ToScalar().ToSByte();

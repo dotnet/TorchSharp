@@ -13,8 +13,8 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_1_9_0_10
-        const string libtorchPackageVersion = "1.9.0.10";
+#if LIBTORCH_1_9_0_11
+        const string libtorchPackageVersion = "1.9.0.11";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -131,7 +131,7 @@ namespace TorchSharp
                         RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "libLibTorchSharp.dylib" :
                         "libLibTorchSharp.so";
 
-                    // See https://github.com/xamarin/TorchSharp/issues/169
+                    // See https://github.com/dotnet/TorchSharp/issues/169
                     //
                     // If we are loading in .NET Interactive or F# Interactive, these are in packages in separate
                     // package directories. For managed DLLs this works OK, but native DLLs do not load transitive dependencies.
@@ -196,7 +196,7 @@ namespace TorchSharp
                         trace.AppendLine("    Giving up, TorchSharp.dll does not appear to have been loaded from package directories");
                     }
                     if (!ok) {
-                        var message = $"This application uses TorchSharp but doesn't contain reference to either {cudaRootPackage} or {cpuRootPackage}, {libtorchPackageVersion}. Consider either referencing one of these packages or call System.Runtime.InteropServices.NativeLibrary.Load(path-to-{target}) explicitly for a Python install or a download of libtorch.so/torch.dll. See https://github.com/xamarin/TorchSharp/issues/169.\". Trace from LoadNativeBackend:\n{trace}";
+                        var message = $"This application uses TorchSharp but doesn't contain reference to either {cudaRootPackage} or {cpuRootPackage}, {libtorchPackageVersion}. Consider either referencing one of these packages or call System.Runtime.InteropServices.NativeLibrary.Load(path-to-{target}) explicitly for a Python install or a download of libtorch.so/torch.dll. See https://github.com/dotnet/TorchSharp/issues/169.\". Trace from LoadNativeBackend:\n{trace}";
                         Console.WriteLine(message);
                         throw new NotSupportedException(message);
                     }

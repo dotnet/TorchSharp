@@ -17,7 +17,7 @@ namespace TorchSharp
         // Most operations are duplicated -- in the 'torch' namespace, and as methods on 'Tensor.'
         // This is done in order to mimic the Pytorch experience.
 
-        public sealed partial class Tensor
+        public partial class Tensor
         {
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_angle(IntPtr tensor);
@@ -47,7 +47,10 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor asin()
             {
-                return new Tensor(THSTensor_asin(handle));
+                var res = THSTensor_asin(handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
             }
 
             /// <summary>

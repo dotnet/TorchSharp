@@ -21,7 +21,8 @@ namespace TorchSharp.torchvision
                 this.means = this.means.to_type(dtype);
                 this.stdevs = this.stdevs.to_type(dtype);
             }
-            if (device != null) {
+
+            if (device != null && device.type != DeviceType.CPU) {
                 this.means = this.means.to(device);
                 this.stdevs = this.stdevs.to(device);
             }
@@ -70,7 +71,6 @@ namespace TorchSharp.torchvision
         /// <param name="dtype">Bool to make this operation inplace.</param>
         /// <param name="device">The device to place the output tensor on.</param>
         /// <returns></returns>
-
         static public ITransform Normalize(double[] means, double[] stdevs, ScalarType dtype = ScalarType.Float32, torch.Device device = null)
         {
             return new Normalize(means, stdevs, dtype, device);

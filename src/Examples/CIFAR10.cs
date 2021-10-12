@@ -67,6 +67,8 @@ namespace TorchSharp.Examples
                 Utils.Decompress.ExtractTGZ(Path.Combine(sourceDir, "cifar-10-binary.tar.gz"), targetDir);
             }
 
+            Console.WriteLine($"\tCreating the model...");
+
             Module model = null;
 
             switch (modelName.ToLower()) {
@@ -113,7 +115,10 @@ namespace TorchSharp.Examples
             var rotate = torchvision.transforms.Rotate(90);
             var contrast = torchvision.transforms.AdjustContrast(1.25);
 
-            using (var train = new CIFARReader(targetDir, false, _trainBatchSize, shuffle: true, device: device, transforms: new torchvision.ITransform[] { hflip, gray, rotate, contrast }))
+            Console.WriteLine($"\tPreparing training and test data...");
+            Console.WriteLine();
+
+            using (var train = new CIFARReader(targetDir, false, _trainBatchSize, shuffle: true, device: device, transforms: new torchvision.ITransform[] { }))
             using (var test = new CIFARReader(targetDir, true, _testBatchSize, device: device))
             using (var optimizer = torch.optim.Adam(model.parameters(), 0.001)) {
 

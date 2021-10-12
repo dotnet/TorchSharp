@@ -246,6 +246,38 @@ namespace TorchSharp
         }
 
         /// <summary>
+        ///  Create a new 1-D tensor filled with zeros
+        /// </summary>
+        static public Tensor zeros(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { size }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 2-D tensor filled with zeros
+        /// </summary>
+        static public Tensor zeros(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { rows, columns }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 3-D tensor filled with zeros
+        /// </summary>
+        static public Tensor zeros(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        static public Tensor zeros(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return zeros(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
         /// Returns a tensor filled with the scalar value 0, with the same size as input.
         /// </summary>
         public static Tensor zeros_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.zeros_like(dtype, device, requiresGrad);
@@ -314,6 +346,38 @@ namespace TorchSharp
         }
 
         /// <summary>
+        ///  Create a new 1-D tensor filled with ones
+        /// </summary>
+        static public Tensor ones(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { size }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 2-D tensor filled with ones
+        /// </summary>
+        static public Tensor ones(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { rows, columns }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 3-D tensor filled with ones
+        /// </summary>
+        static public Tensor ones(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        static public Tensor ones(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return ones(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
         /// Returns a tensor filled with the scalar value 1, with the same size as input.
         /// </summary>
         public static Tensor ones_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.ones_like(dtype, device, requiresGrad);
@@ -377,6 +441,38 @@ namespace TorchSharp
         ///  Create a new 4-D tensor filled with empty
         /// </summary>
         static public Tensor empty(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 1-D tensor filled with empty
+        /// </summary>
+        static public Tensor empty(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { size }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 2-D tensor filled with empty
+        /// </summary>
+        static public Tensor empty(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { rows, columns }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 3-D tensor filled with empty
+        /// </summary>
+        static public Tensor empty(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return empty(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with empty
+        /// </summary>
+        static public Tensor empty(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
         }
@@ -480,6 +576,38 @@ namespace TorchSharp
         }
 
         /// <summary>
+        ///  Create a new 1-D tensor filled with given value
+        /// </summary>
+        static public Tensor full(int size, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { size }, value, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 2-D tensor filled with given value
+        /// </summary>
+        static public Tensor full(int rows, int columns, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { rows, columns }, value, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 3-D tensor filled with given value
+        /// </summary>
+        static public Tensor full(int dim0, int dim1, int dim2, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2 }, value, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with given value
+        /// </summary>
+        static public Tensor full(int dim0, int dim1, int dim2, int dim3, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return full(new long[] { dim0, dim1, dim2, dim3 }, value, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
         /// Returns a tensor with the same size as input filled with 'value.'
         /// </summary>
         static public Tensor full_like(Tensor input, Scalar value, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.full_like(value, dtype, device, requiresGrad);
@@ -513,14 +641,20 @@ namespace TorchSharp
 
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+        extern static IntPtr THSTensor_randint(long low, long high, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
-        static public Tensor randint(long max, long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long low, long high, Size size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            //TODO: fix randint to take a low bound, too.
+            var shape = size.Shape;
 
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -529,19 +663,19 @@ namespace TorchSharp
             }
 
             if (dtype == ScalarType.ComplexFloat32) {
-                return randint_c32(max, size, device, requiresGrad);
+                return randint_c32(low, high, shape, device, requiresGrad);
             }
             else if (dtype == ScalarType.ComplexFloat64) {
-                return randint_c64(max, size, device, requiresGrad);
+                return randint_c64(low, high, shape, device, requiresGrad);
             }
 
             unsafe {
-                fixed (long* psizes = size) {
-                    var handle = THSTensor_randint(max, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                fixed (long* psizes = shape) {
+                    var handle = THSTensor_randint(low, high, (IntPtr)psizes, shape.Length, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_randint(max, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                        handle = THSTensor_randint(low, high, (IntPtr)psizes, shape.Length, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(handle);
@@ -549,7 +683,88 @@ namespace TorchSharp
             }
         }
 
-        static private Tensor randint_c32(long max, long[] size, torch.Device device, bool requiresGrad)
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long high, Size size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(0, high, size, dtype, device, requiresGrad);
+        }
+
+        // Note: Once F# implicit conversion support is broadly available, all the following overloads will be redundant.
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(long high, long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(0, high, new Size(size), dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        /// <remarks>The array-size and 'int' overloads are necessary for F#, which doesn't implicitly convert types.
+        ///          Once implicit conversion support is broadly available, some of these overloads can be removed.</remarks>
+        static public Tensor randint(long low, long high, long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(low, high, size, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        /// <remarks>The array-size and 'int' overloads are necessary for F#, which doesn't implicitly convert types.
+        ///          Once implicit conversion support is broadly available, some of these overloads can be removed.</remarks>
+        static public Tensor randint(int low, int high, int[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(low, high, size, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="dtype">The desired data type of the tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static public Tensor randint(int high, int[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randint(0, high, size, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 32-bit complex tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static private Tensor randint_c32(long low, long high, long[] size, torch.Device device, bool requiresGrad)
         {
             var sz = new List<long>();
             sz.AddRange(size);
@@ -563,11 +778,11 @@ namespace TorchSharp
                     // but we can get around that by adding another dimension, creating a float tensor, and then
                     // converting it to a complex tensor in the end.
                     //
-                    var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
+                    var handle = THSTensor_randint(low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
+                        handle = THSTensor_randint(low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
@@ -594,7 +809,15 @@ namespace TorchSharp
             }
         }
 
-        static private Tensor randint_c64(long max, long[] size, torch.Device device, bool requiresGrad)
+        /// <summary>
+        ///  Create a new 64-bit complex tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="size">The shape of the output tensor.</param>
+        /// <param name="device">The desired device of returned tensor.</param>
+        /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
+        static private Tensor randint_c64(long low, long high, long[] size, torch.Device device, bool requiresGrad)
         {
             var sz = new List<long>();
             sz.AddRange(size);
@@ -608,11 +831,11 @@ namespace TorchSharp
                     // but we can get around that by adding another dimension, creating a float tensor, and then
                     // converting it to a complex tensor in the end.
                     //
-                    var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
+                    var handle = THSTensor_randint(low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
+                        handle = THSTensor_randint(low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
                     }
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
@@ -649,6 +872,9 @@ namespace TorchSharp
         /// </summary>
         static public Tensor rand(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
+            if (dtype.HasValue && torch.is_integral(dtype.Value))
+                throw new ArgumentException($"torch.rand() was passed a bad dtype: {dtype}. It must be floating point or complex.", "dtype");
+
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -702,10 +928,45 @@ namespace TorchSharp
         }
 
         /// <summary>
+        ///  Create a new 1-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public Tensor rand(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { size }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 2-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public Tensor rand(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { rows, columns }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 3-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public Tensor rand(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
+        static public Tensor rand(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return rand(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
         static public Tensor randn(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
+            if (dtype.HasValue && torch.is_integral(dtype.Value))
+                throw new ArgumentException($"torch.randn() was passed a bad dtype: {dtype}. It must be floating point or complex.", "dtype");
+
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -754,6 +1015,38 @@ namespace TorchSharp
         ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
         static public Tensor randn(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randn(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 1-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        static public Tensor randn(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randn(new long[] { size }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 2-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        static public Tensor randn(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randn(new long[] { rows, columns }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 3-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        static public Tensor randn(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return randn(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        static public Tensor randn(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return randn(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
         }

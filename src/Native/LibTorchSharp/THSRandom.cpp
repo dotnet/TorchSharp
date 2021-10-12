@@ -105,6 +105,7 @@ Tensor THSTensor_rand_like(
 }
 
 Tensor THSTensor_randint(
+    const int64_t low,
     const int64_t high,
     const int64_t* sizes,
     const int length,
@@ -119,14 +120,14 @@ Tensor THSTensor_randint(
         .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
-        tensor = new torch::Tensor(torch::randint(high, at::ArrayRef<int64_t>(sizes, length), options));
+        tensor = new torch::Tensor(torch::randint(low, high, at::ArrayRef<int64_t>(sizes, length), options));
     )
     return tensor;
 }
 
-Tensor THSTensor_randint_out(const int64_t high, const int64_t* sizes, const int length, const Tensor out)
+Tensor THSTensor_randint_out(const int64_t low, const int64_t high, const int64_t* sizes, const int length, const Tensor out)
 {
-    CATCH_TENSOR(torch::randint_out(*out, high, at::ArrayRef<int64_t>(sizes, length)));
+    CATCH_TENSOR(torch::randint_out(*out, low, high, at::ArrayRef<int64_t>(sizes, length)));
 }
 
 Tensor THSTensor_randint_like(

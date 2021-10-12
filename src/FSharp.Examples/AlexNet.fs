@@ -105,7 +105,7 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: CIFARReader) epoch =
             use output = loss estimate labels
 
             output.backward()
-            optimizer.step()
+            optimizer.step() |> ignore
 
             total <- total + labels.shape.[0]
 

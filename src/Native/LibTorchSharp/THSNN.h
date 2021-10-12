@@ -35,7 +35,7 @@ EXPORT_API(void)        THSNN_Module_to_dtype(NNModule module, int8_t dtype);
 EXPORT_API(void)        THSNN_AnyModule_dispose(const NNAnyModule module);
 //EXPORT_API(NNModule)    THSNN_AnyModule_get(const NNAnyModule module);
 
-EXPORT_API(NNModule) THSNN_custom_module(const char* name, const char** names, at::Tensor** parameters, const bool* require_grad, const int length, Tensor(*forward)(Tensor), NNAnyModule* outAsAnyModule);
+EXPORT_API(NNModule) THSNN_custom_module(const char* name, Tensor(*forward)(Tensor), NNAnyModule* outAsAnyModule);
 
 // Pooling
 
@@ -328,9 +328,9 @@ EXPORT_API(Optimizer) THSNN_LBFGS_ctor(const Tensor* parameters, const int len, 
 EXPORT_API(Optimizer) THSNN_RMSprop_ctor(const Tensor* parameters, const int length, const double learning_rate, const double alpha, const double eps, const double weight_decay, const double momentum, const bool centered);
 EXPORT_API(Optimizer) THSNN_SGD_ctor(const Tensor* parameters, const int length, const double learning_rate, const double momentum, const double dampening, const double weight_decay, const bool nesterov);
 
-EXPORT_API(void) THSNN_Optimizer_zero_grad(const Optimizer optimizer);
-EXPORT_API(void) THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length));
-EXPORT_API(void) THSNN_Optimizer_step(const Optimizer optimizer, Tensor(*loss_closure)());
+EXPORT_API(void)   THSNN_Optimizer_zero_grad(const Optimizer optimizer);
+EXPORT_API(void)   THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length));
+EXPORT_API(Tensor) THSNN_Optimizer_step(const Optimizer optimizer, Tensor(*loss_closure)());
 
 EXPORT_API(void) THSNN_Optimizer_dispose(const Optimizer optimizer);
 

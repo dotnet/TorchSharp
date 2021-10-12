@@ -12,7 +12,7 @@ namespace TorchSharp
     public static partial class torch
     {
 
-        public sealed partial class Tensor
+        public partial class Tensor
         {
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_cholesky(IntPtr input, bool upper);

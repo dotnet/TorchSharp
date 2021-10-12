@@ -45,10 +45,10 @@ Build with
 
 ## Packages
 
-An ephemeral feed of packages from CI is available
+An ephemeral feed of packages from Azure DevOps CI is available for those 
 
-* View link: https://donsyme.visualstudio.com/TorchSharp/_packaging?_a=feed&feed=packages2
-* Nuget feed: https://donsyme.pkgs.visualstudio.com/TorchSharp/_packaging/packages2/nuget/v3/index.json
+* View link: https://dotnet.visualstudio.com/TorchSharp/_packaging?_a=feed&feed=SignedPackages
+* Nuget feed: https://dotnet.pkgs.visualstudio.com/TorchSharp/_packaging/SignedPackages/nuget/v3/index.json
 
 Some releases are pushed to nuget
 
@@ -129,7 +129,7 @@ For this reason, we do the following
    b. Press 'New Release'
 
    c. Select the successful main CI build that includes the `libtorch` packages, create the release and wait for it to finish. You should
-      see `Initialize job`, `Download artifact - _xamarin.TorchSharp - packages`, `NuGet push`, `Finalize Job` succeeded.
+      see `Initialize job`, `Download artifact - dotnet.TorchSharp - packages`, `NuGet push`, `Finalize Job` succeeded.
 
    d. All packages should now be pushed to `nuget.org` and will appear after indexing.
 
@@ -220,7 +220,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 9. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
    get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` in [azure-pipelines.yml](azure-pipelines.yml):
 
-       <LibTorchPackageVersion>1.9.0.10</LibTorchPackageVersion>
+       <LibTorchPackageVersion>1.9.0.11</LibTorchPackageVersion>
 
        dotnet pack -c Debug /p:SkipCuda=true
        dotnet pack -c Release /p:SkipCuda=true

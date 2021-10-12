@@ -53,7 +53,9 @@ namespace TorchSharp
 
                 protected Optimizer(IntPtr handle)
                 {
-                    this.handle = new HType(handle, true);
+                    if (handle != IntPtr.Zero) {
+                        this.handle = new HType(handle, true);
+                    }
                 }
 
                 ~Optimizer()
@@ -75,7 +77,7 @@ namespace TorchSharp
                 /// </summary>
                 protected void Dispose(bool disposing)
                 {
-                    if (disposing) {
+                    if (disposing && handle != null && !handle.IsInvalid) {
                         handle.Dispose();
                         handle.SetHandleAsInvalid();
                     }
@@ -84,7 +86,7 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Optimizer_zero_grad(HType module);
 
-                public void zero_grad()
+                public virtual void zero_grad()
                 {
                     THSNN_Optimizer_zero_grad(handle);
                     torch.CheckForErrors();
@@ -95,20 +97,22 @@ namespace TorchSharp
 
 
                 [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Optimizer_step(HType module, LossClosure closure);
+                private static extern IntPtr THSNN_Optimizer_step(HType module, LossClosure closure);
 
-                public virtual void step(Func<Tensor> closure = null)
+                public virtual Tensor step(Func<Tensor> closure = null)
                 {
-                    if (closure == null) {
-                        THSNN_Optimizer_step(handle, null);
-                    } else {
+                    IntPtr res = (closure == null) ?
+                        THSNN_Optimizer_step(handle, null) :
                         THSNN_Optimizer_step(handle, () => {
                             var res = closure();
                             GC.SuppressFinalize(res);
                             return res.handle;
                         });
-                    }
-                    torch.CheckForErrors();
+
+                    if (res == IntPtr.Zero)
+                        torch.CheckForErrors();
+
+                    return (res == IntPtr.Zero) ? null : new Tensor(res);
                 }
 
                 [DllImport("LibTorchSharp")]
@@ -155,7 +159,7 @@ namespace TorchSharp
             ///
             /// Proposed by G.Hinton in his course.
             /// </summary>
-            /// <param name="parameters">Prameters to optimize</param>
+            /// <param name="parameters">Parameters to optimize</param>
             /// <param name="learningRate">Learning rate (default: 1e-2)</param>
             /// <param name="alpha">Smoothing constant (default: 0.99)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
@@ -181,7 +185,7 @@ namespace TorchSharp
             ///
             /// It has been proposed in Adam: A Method for Stochastic Optimization.The implementation of the L2 penalty follows changes proposed in Decoupled Weight Decay Regularization.
             /// </summary>
-            /// <param name="parameters">Prameters to optimize</param>
+            /// <param name="parameters">Parameters to optimize</param>
             /// <param name="learningRate">learning rate (default: 1e-3)</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
@@ -207,7 +211,7 @@ namespace TorchSharp
             ///
             /// It has been proposed in Adam: A Method for Stochastic Optimization. The AdamW variant was proposed in Decoupled Weight Decay Regularization.
             /// </summary>
-            /// <param name="parameters">Prameters to optimize</param>
+            /// <param name="parameters">Parameters to optimize</param>
             /// <param name="learningRate">learning rate (default: 1e-3)</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
@@ -233,7 +237,7 @@ namespace TorchSharp
             ///
             /// It has been proposed in Adaptive Subgradient Methods for Online Learning and Stochastic Optimization.
             /// </summary>
-            /// <param name="parameters">Prameters to optimize</param>
+            /// <param name="parameters">Parameters to optimize</param>
             /// <param name="learningRate">learning rate (default: 1e-2)</param>
             /// <param name="lr_decay">learning rate decay (default: 0)</param>
             /// <param name="weight_decay">weight decay (L2 penalty) (default: 0)</param>
@@ -250,13 +254,78 @@ namespace TorchSharp
                 return new AdagradOptimizer(res, learningRate);
             }
 
+            /// <summary>
+            /// Implements Adadelta algorithm.
+            ///
+            /// It has been proposed in ADADELTA: An Adaptive Learning Rate Method.
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public static AdadeltaOptimizer Adadelta(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+            {
+                return new AdadeltaOptimizer(named_parameters, lr, rho, eps, weight_decay);
+            }
+
+            /// <summary>
+            /// Implements Adamax algorithm (a variant of Adam based on infinity norm).
+            ///
+            /// It has been proposed in Adam: A Method for Stochastic Optimization.
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public static AdamaxOptimizer Adamax(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            {
+                return new AdamaxOptimizer(named_parameters, lr, beta1, beta2, eps, weight_decay);
+            }
+
+            /// <summary>
+            /// Implements Averaged Stochastic Gradient Descent.
+            ///
+            /// It has been proposed in Acceleration of stochastic approximation by averaging.
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="lambd">Decay term (default: 1e-4)</param>
+            /// <param name="alpha">Power for eta update (default: 0.75)</param>
+            /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public static ASGDOptimizer ASGD(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
+            {
+                return new ASGDOptimizer(named_parameters, lr, lambd, alpha, t0, weight_decay);
+            }
+
+            /// <summary>
+            /// Implements the resilient backpropagation algorithm.
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="etaminus">Multiplicative increase factor.</param>
+            /// <param name="etaplus">Multiplicative decrease factor.</param>
+            /// <param name="min_step">Minimum allowed step size.</param>
+            /// <param name="max_step">Maximum allowed step size.</param>
+            /// <returns></returns>
+            public static RpropOptimizer Rprop(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+            {
+                return new RpropOptimizer(named_parameters, lr, etaminus, etaplus, min_step, max_step);
+            }
+
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_SGD_ctor(IntPtr parameters, int len, double learningRate, double momentum, double dampening, double weight_decay, bool nesterov);
 
             /// <summary>
             /// Implements stochastic gradient descent (optionally with momentum).
             /// </summary>
-            /// <param name="parameters">Prameters to optimize</param>
+            /// <param name="parameters">Parameters to optimize</param>
             /// <param name="learningRate">Learning rate</param>
             /// <param name="momentum">Momentum factor (default: 0)</param>
             /// <param name="dampening">Dampening for momentum (default: 0)</param>
@@ -279,6 +348,415 @@ namespace TorchSharp
     {
         using static torch.optim;
 
+        // Most optimizers are implemented in native code, but a few of them are directly implemented in
+        // managed code.
+
+        /// <summary>
+        /// Base class to help with a couple of the things that managed-code implementations need.
+        /// </summary>
+        public class OptimizerHelper : Optimizer, ILearningRateController
+        {
+            public OptimizerHelper(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate) : base(IntPtr.Zero)
+            {
+                LearningRate = learningRate;
+                _parameters = named_parameters;
+            }
+
+            public override void zero_grad()
+            {
+                foreach (var (_, p) in _parameters) {
+                    if (p.grad() is null) continue;
+
+                    p.grad().zero_();
+                }
+            }
+
+            public double LearningRate { get; set; }
+
+            protected IEnumerable<(string name, Modules.Parameter parameter)> _parameters;
+        }
+
+        public class AdadeltaOptimizer : OptimizerHelper, ILearningRateController
+        {
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            public AdadeltaOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0) : base(named_parameters, lr)
+            {
+                LearningRate = lr;
+                _rho = rho;
+                _eps = eps;
+                _weight_decay = weight_decay;
+
+                foreach (var (name, p) in named_parameters) {
+                    var state = new State();
+                    _state[name] = state;
+                    state.step = 0;
+                    state.square_avg = torch.zeros_like(p);
+                    state.acc_delta = torch.zeros_like(p);
+                }
+            }
+
+            public override Tensor step(Func<Tensor> closure = null)
+            {
+                Tensor loss = null;
+
+                if (closure != null) {
+                    loss = closure();
+                }
+
+                List<Tensor> paramsWithGrads = new List<Tensor>();
+                List<Tensor> grads = new List<Tensor>();
+                List<Tensor> square_avgs = new List<Tensor>();
+                List<Tensor> acc_deltas = new List<Tensor>();
+
+                foreach (var (name, p) in _parameters) {
+
+                    if (p.grad() is null) continue;
+
+                    if (p.grad().is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
+
+                    paramsWithGrads.Add(p);
+                    grads.Add(p.grad());
+
+                    var state = _state[name];
+
+                    square_avgs.Add(state.square_avg);
+                    acc_deltas.Add(state.acc_delta);
+
+                    state.step += 1;
+                }
+
+                using (var _ = torch.no_grad()) {
+
+                    for (int i = 0; i < grads.Count; i++) {
+
+                        var grad = grads[i];
+                        var param = paramsWithGrads[i];
+                        var square_avg = square_avgs[i];
+                        var acc_delta = acc_deltas[i];
+
+                        if (_weight_decay != 0) {
+                            grad = grad.add(param, alpha: _weight_decay);
+                        }
+
+                        square_avg.mul_(_rho).addcmul_(grad, grad, 1 - _rho);
+                        var std = square_avg.add(_eps).sqrt_();
+                        var delta = acc_delta.add(_eps).sqrt_().div_(std).mul_(grad);
+                        param.add_(delta, alpha: -LearningRate);
+                        acc_delta.mul_(_rho).addcmul_(delta, delta, 1 - _rho);
+                    }
+                }
+
+                return loss;
+            }
+
+            private class State
+            {
+                public int step;
+                public Tensor square_avg;
+                public Tensor acc_delta;
+            }
+
+            private Dictionary<string, State> _state = new Dictionary<string, State>();
+            private double _rho;
+            private double _eps;
+            private double _weight_decay;
+        }
+
+        public class AdamaxOptimizer : OptimizerHelper, ILearningRateController
+        {
+            /// <summary>
+            /// Implements Adamax algorithm (a variant of Adam based on infinity norm).
+            ///
+            /// It has been proposed in Adam: A Method for Stochastic Optimization.
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public AdamaxOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0) : base(named_parameters, lr)
+            {
+                LearningRate = lr;
+                _beta1 = beta1;
+                _beta2 = beta2;
+                _eps = eps;
+                _weight_decay = weight_decay;
+
+                foreach (var (name, p) in named_parameters) {
+                    var state = new State();
+                    _state[name] = state;
+                    state.step = 0;
+                    state.exp_avg = torch.zeros_like(p);
+                    state.exp_inf = torch.zeros_like(p);
+                }
+            }
+
+            public override Tensor step(Func<Tensor> closure = null)
+            {
+                Tensor loss = null;
+
+                if (closure != null) {
+                    loss = closure();
+                }
+
+                List<Tensor> paramsWithGrads = new List<Tensor>();
+                List<Tensor> grads = new List<Tensor>();
+                List<Tensor> exp_avgs = new List<Tensor>();
+                List<Tensor> exp_infs = new List<Tensor>();
+
+                List<string> names = new List<string>();
+
+                using (var _ = torch.no_grad()) {
+
+                    foreach (var (name, param) in _parameters) {
+
+                        if (param.grad() is null) continue;
+
+                        if (param.grad().is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
+
+                        var state = _state[name];
+
+                        state.step += 1;
+
+                        var grad = param.grad();
+                        var exp_avg = state.exp_avg;
+                        var exp_inf = state.exp_inf;
+
+                        if (_weight_decay != 0) {
+                            grad = grad.add(param, alpha: _weight_decay);
+                        }
+
+                        exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
+
+                        var norm_buf = torch.cat(new Tensor[] {
+                            exp_inf.mul_(_beta2).unsqueeze(0),
+                            grad.abs().add_(_eps).unsqueeze_(0) }, 0);
+
+                        torch.amax(norm_buf, new long[] { 0 }, false, exp_inf);
+
+                        var clr = LearningRate / (1 - Math.Pow(_beta1, state.step));
+                        param.addcdiv_(exp_avg, exp_inf, value: -clr);
+                    }
+                }
+
+                return loss;
+            }
+
+            private class State
+            {
+                public int step;
+                public Tensor exp_avg;
+                public Tensor exp_inf;
+            }
+
+            private Dictionary<string, State> _state = new Dictionary<string, State>();
+            private double _beta1;
+            private double _beta2;
+            private double _eps;
+            private double _weight_decay;
+        }
+
+        public class ASGDOptimizer : OptimizerHelper, ILearningRateController
+        {
+            /// <summary>
+            /// Implements ASGD algorithm (a variant of Adam based on infinity norm).
+            ///
+            /// It has been proposed in Adam: A Method for Stochastic Optimization.
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="lambd">Decay term (default: 1e-4)</param>
+            /// <param name="alpha">Power for eta update (default: 0.75)</param>
+            /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public ASGDOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0) : base(named_parameters, lr)
+            {
+                LearningRate = lr;
+                _lambd = lambd;
+                _alpha = alpha;
+                _t0 = t0;
+                _weight_decay = weight_decay;
+
+                foreach (var (name, p) in named_parameters) {
+                    var state = new State();
+                    _state[name] = state;
+                    state.step = 0;
+                    state.eta = lr;
+                    state.mu = 1;
+                    state.ax = torch.zeros_like(p);
+                }
+            }
+
+            public override Tensor step(Func<Tensor> closure = null)
+            {
+                Tensor loss = null;
+
+                if (closure != null) {
+                    loss = closure();
+                }
+
+                List<Tensor> paramsWithGrads = new List<Tensor>();
+                List<Tensor> grads = new List<Tensor>();
+                List<Tensor> exp_avgs = new List<Tensor>();
+                List<Tensor> exp_infs = new List<Tensor>();
+
+                List<string> names = new List<string>();
+
+                using (var _ = torch.no_grad()) {
+
+                    foreach (var (name, p) in _parameters) {
+
+                        if (p.grad() is null) continue;
+
+                        if (p.grad().is_sparse) throw new ArgumentException("ASGD does not support sparse gradients");
+
+                        var state = _state[name];
+
+                        state.step += 1;
+
+                        var grad = p.grad();
+
+                        if (_weight_decay != 0) {
+                            grad = grad.add(p, alpha: _weight_decay);
+                        }
+
+                        p.mul_(1 - _lambd * state.eta);
+                        p.add_(grad, alpha: -state.eta);
+
+                        if (state.mu != 1) {
+                            state.ax.add_(p.sub(state.ax).mul(state.mu));
+                        }
+                        else {
+                            state.ax.copy_(p);
+                        }
+
+                        state.eta = LearningRate / Math.Pow((1 + _lambd * LearningRate * state.step), _alpha);
+                        state.mu = 1 / Math.Max(1, state.step - _t0);
+                    }
+                }
+
+                return loss;
+            }
+
+            private class State
+            {
+                public int step;
+                public double eta;
+                public double mu;
+                public Tensor ax;
+            }
+
+            private Dictionary<string, State> _state = new Dictionary<string, State>();
+            private double _lambd;
+            private double _alpha;
+            private double _t0;
+            private double _weight_decay;
+        }
+
+        public class RpropOptimizer : OptimizerHelper, ILearningRateController
+        {
+            /// <summary>
+            /// Implements Rprop algorithm (a variant of Adam based on infinity norm).
+            ///
+            /// It has been proposed in Adam: A Method for Stochastic Optimization.
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="etaminus">Multiplicative increase factor.</param>
+            /// <param name="etaplus">Multiplicative decrease factor.</param>
+            /// <param name="min_step">Minimum allowed step size.</param>
+            /// <param name="max_step">Maximum allowed step size.</param>
+            /// <returns></returns>
+            public RpropOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50) : base(named_parameters, lr)
+            {
+                LearningRate = lr;
+                _etaminus = etaminus;
+                _etaplus = etaplus;
+                _min_step = min_step;
+                _max_step = max_step;
+            }
+
+            public override Tensor step(Func<Tensor> closure = null)
+            {
+                Tensor loss = null;
+
+                if (closure != null) {
+                    loss = closure();
+                }
+
+                List<Tensor> paramsWithGrads = new List<Tensor>();
+                List<Tensor> grads = new List<Tensor>();
+                List<Tensor> exp_avgs = new List<Tensor>();
+                List<Tensor> exp_infs = new List<Tensor>();
+
+                List<string> names = new List<string>();
+
+                using (var _ = torch.no_grad()) {
+
+                    foreach (var (name, p) in _parameters) {
+
+                        if (p.grad() is null) continue;
+
+                        if (p.grad().is_sparse) throw new ArgumentException("Rprop does not support sparse gradients");
+
+                        var grad = p.grad();
+
+                        if (!_state.TryGetValue(name, out var state)) {
+                            state = new State();
+                            _state[name] = state;
+                            state.step = 0;
+                            state.prev = torch.zeros_like(p);
+                            state.step_size = grad.new_empty(grad.shape).fill_(LearningRate);
+                        }
+
+                        state.step += 1;
+
+                        if (_max_step != 0) {
+                            grad = grad.add(p, alpha: _max_step);
+                        }
+
+                        var sign = grad.mul(state.prev).sign();
+                        sign.index_put_(_etaplus, sign.gt(0));
+                        sign.index_put_(_etaminus, sign.lt(0));
+                        sign.index_put_(1, sign.lt(0));
+
+                        state.step_size.mul_(sign).clamp_(_min_step, _max_step);
+                        grad = grad.clone();
+                        grad.index_put_(0, sign.eq(_etaminus));
+
+                        p.addcmul_(grad.sign(), state.step_size, -1);
+                    }
+                }
+
+                return loss;
+            }
+
+            private class State
+            {
+                public int step;
+                public Tensor prev;
+                public Tensor step_size;
+            }
+
+            private Dictionary<string, State> _state = new Dictionary<string, State>();
+            private double _etaminus;
+            private double _etaplus;
+            private double _min_step;
+            private double _max_step;
+        }
+
+        // The following optimizers are just wrappers for the native code implementations.
+
         public class AdagradOptimizer : Optimizer, ILearningRateController
         {
             public AdagradOptimizer(IntPtr handle, double lr) : base(handle)
@@ -291,7 +769,7 @@ namespace TorchSharp
 
             public double LearningRate {
                 get { return _rate; }
-                set { THSNN_Adagrad_set_lr(handle, value); torch.CheckForErrors(); }
+                set { THSNN_Adagrad_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
 
             private double _rate;
@@ -366,11 +844,11 @@ namespace TorchSharp
                 set { THSNN_LBFGS_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
 
-            public override void step(Func<Tensor> closure = null)
+            public override Tensor step(Func<Tensor> closure = null)
             {
                 if (closure == null)
                     throw new ArgumentNullException("'closure' must be non-null when using the LBFGS optimizer. See: https://pytorch.org/docs/1.9.0/optim.html");
-                base.step(closure);
+                return base.step(closure);
             }
 
             private double _rate;

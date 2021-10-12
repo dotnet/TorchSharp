@@ -63,8 +63,10 @@ EXPORT_API(Tensor) THSTensor_all(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_all_along_dimension(const Tensor tensor, const int64_t dim, bool keepdim);
 
 EXPORT_API(Tensor) THSTensor_amax(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim);
+EXPORT_API(Tensor) THSTensor_amax_out(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, const Tensor out);
 
 EXPORT_API(Tensor) THSTensor_amin(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim);
+EXPORT_API(Tensor) THSTensor_amin_out(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, const Tensor out);
 
 EXPORT_API(Tensor) THSTensor_any(const Tensor tensor);
 
@@ -563,6 +565,8 @@ EXPORT_API(Tensor) THSTensor_inner(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_inverse(const Tensor tensor);
 
+EXPORT_API(int) THSTensor_is_contiguous(const Tensor input);
+
 EXPORT_API(int) THSTensor_is_sparse(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_isclose(const Tensor tensor, const Tensor other, const double rtol, const double atol, const bool equal_nan);
@@ -905,9 +909,9 @@ EXPORT_API(Tensor) THSTensor_rand_out(const int64_t* sizes, const int length, co
 
 EXPORT_API(Tensor) THSTensor_rand_like(const Tensor input, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
-EXPORT_API(Tensor) THSTensor_randint(const int64_t high, const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+EXPORT_API(Tensor) THSTensor_randint(const int64_t low, const int64_t high, const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
-EXPORT_API(Tensor) THSTensor_randint_out(const int64_t high, const int64_t* sizes, const int length, const Tensor out);
+EXPORT_API(Tensor) THSTensor_randint_out(const int64_t low, const int64_t high, const int64_t* sizes, const int length, const Tensor out);
 
 EXPORT_API(Tensor) THSTensor_randint_like(const Tensor input, const int64_t low, const int64_t high, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 

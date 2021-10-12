@@ -19,6 +19,9 @@ open TorchSharp.Examples
 // It relies on the AG_NEWS dataset, which can be downloaded in CSV form at:
 //
 // https://github.com/mhjabreel/CharCnn_Keras/tree/master/data/ag_news_csv
+//
+// Download the two files, and place them in a folder called "AG_NEWS" in
+// accordance with the file path below (Windows only).
 
 let emsize = 200L
 
@@ -85,9 +88,9 @@ let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) 
 
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5) |> ignore
-        optimizer.step()
+        optimizer.step() |> ignore
 
-        total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().DataItem<int64>())
+        total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().item<int64>())
         total_count <- total_count + labels.size(0)
 
         if (batch % logInterval = 0) && (batch > 0) then
@@ -110,7 +113,7 @@ let evaluate (testData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (mod
         let predicted_labels = model.forward(texts, offsets)
         let loss = criterion predicted_labels labels
 
-        total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().DataItem<int64>())
+        total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().item<int64>())
         total_count <- total_count + labels.size(0)
 
     total_acc / (float total_count)

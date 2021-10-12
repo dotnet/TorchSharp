@@ -196,18 +196,9 @@ class CustomModule : public torch::nn::Module
 public:
     CustomModule(
         const char* name,
-        const char** names,
-        at::Tensor** parameters,
-        const bool* require_grad,
-        const int length,
         Tensor(*forward)(Tensor))
         : torch::nn::Module(name), _forward(forward)
     {
-        for (int i = 0; i < length; i++)
-        {
-            register_parameter(names[i], *parameters[i], require_grad[i]);
-        }
-
     }
 
     Tensor(*_forward)(Tensor);
@@ -219,15 +210,11 @@ public:
 };
 
 NNModule THSNN_custom_module(const char* name,
-    const char** names,
-    at::Tensor** parameters,
-    const bool* require_grad,
-    const int length,
     Tensor(*forward)(Tensor),
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto mod = new CustomModule(name, names, parameters, require_grad, length, forward);
+        auto mod = new CustomModule(name, forward);
 
     // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
     // a Module can only be boxed to AnyModule at the point its static type is known).

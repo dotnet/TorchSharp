@@ -40,7 +40,7 @@ namespace TorchSharp.torchvision
             var half_width = width / 2;
             var half_height = height / 2;
 
-            var randoms = torch.rand(8, ScalarType.Float64).Data<double>().ToArray();
+            var randoms = torch.rand(8, ScalarType.Float64).data<double>().ToArray();
 
             var topleft = new int[] {
                 Adjust(randoms[0], 0, distortion * half_width + 1),
@@ -75,8 +75,8 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Performs a random perspective transformation of the given image with a given probability.
         /// </summary>
-        /// <param name="distortion"></param>
-        /// <param name="p"></param>
+        /// <param name="distortion">Argument to control the degree of distortion and ranges from 0 to 1. Default is 0.5.</param>
+        /// <param name="p">Probability of the image being transformed. Default is 0.5.</param>
         /// <returns></returns>
         /// <remarks>The application and perspectives are all stochastic.</remarks>
         static public ITransform RandomPerspective(double distortion = 0.5, double p = 0.5)

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageDescription>TorchSharp makes PyTorch available for .NET users. This package combines the TorchSharp package with LibTorch $(LibTorchVersion) CUDA $(CudaVersionDot) support for Windows.</PackageDescription>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TorchSharp\TorchSharp.nupkgproj" />
+    <ProjectReference Include="..\libtorch-cuda-11.1-win-x64\libtorch-cuda-11.1-win-x64.nupkgproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netcoreapp3.1\$(MSBuildProjectName).props" />
+    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netcoreapp3.1\$(MSBuildProjectName).targets" />
+    <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netcoreapp3.1\_._" />
+    <Content Include="$(RepoRoot)\THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="LICENSE-LIBTORCH.txt" />
+    <Content Include="$(RepoRoot)\LICENSE.txt" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

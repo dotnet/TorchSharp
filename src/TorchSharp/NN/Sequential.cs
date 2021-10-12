@@ -47,7 +47,11 @@ namespace TorchSharp
             {
                 if (_modules.Count == 0) return tensor.clone();
 
-                // Using an index helps debugging, because we know the ordinal of the submodule.
+                // Note: we have not been able to detect any significant performance difference between
+                // implementing forward() in native or managed code.
+
+                // Using an for loop helps debugging, since we can know the ordinal of the submodule.
+
                 for (var idx = 0; idx < _modules.Count; idx++) {
                     tensor = _modules[idx].forward(tensor);
                 }
@@ -63,9 +67,11 @@ namespace TorchSharp
 
             }
 
-            // There is no functional reason for this collection, but since the module
-            // handles are held in the native runtime, which calls back into managed code,
-            // the modules need to stay alive, and keeping a list of them will do that.
+            // Currently, Sequential is implemented entirely in managed code, but if we go back to
+            // using the native forward() implementation, this collection is still necessary.
+            // The module handles are held in the native runtime, which calls back into managed code,
+            // the .NET module instances need to stay alive, and keeping a list of them will do that.
+
             private List<torch.nn.Module> _modules = new List<nn.Module>();
             private List<string> _names = new List<string>();
         }

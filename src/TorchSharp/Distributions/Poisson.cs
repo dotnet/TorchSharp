@@ -40,7 +40,7 @@ namespace TorchSharp
                 var bcast = torch.broadcast_tensors(rate, value);
                 var r = bcast[0];
                 var v = bcast[1];
-                return r.log() * value - r - (value + 1).lgamma();
+                return value.xlogy(r) - r - (value + 1).lgamma();
             }
 
             public override Tensor cdf(Tensor value)
