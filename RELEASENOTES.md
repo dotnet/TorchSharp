@@ -12,6 +12,8 @@ __Fixed Bugs:__
 __API Changes:__
 
 Added some overloads to make F# usage more convenient.
+Added convenience overloads to a number of random distribution factories.
+Added '_' to the torch.nn.init functions. They overwrite the input tensor, so they should have the in-place indicator.
 
 ### NuGet Version 0.93.5
 

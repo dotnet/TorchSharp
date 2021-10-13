@@ -19,8 +19,11 @@ namespace TorchSharp
 
             public override Tensor variance => probs * (1 - probs);
 
-            public Bernoulli(Tensor p = null, Tensor l = null) 
+            public Bernoulli(Tensor p = null, Tensor l = null)
             {
+                if ((p is null && logits is null) || (p is not null && l is not null))
+                    throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
+
                 this.batch_shape = p is null ? l.size() : p.size();
                 this._probs = p;
                 this._logits = l;
@@ -91,6 +94,39 @@ namespace TorchSharp
             public static Bernoulli Bernoulli(Tensor probs = null, Tensor logits = null)
             {
                 return new Bernoulli(probs, logits);
+            }
+
+            /// <summary>
+            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// </summary>
+            /// <param name="probs">The probability of sampling '1'</param>
+            /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <returns></returns>
+            public static Bernoulli Bernoulli(float? probs, float? logits)
+            {
+                if (probs.HasValue && !logits.HasValue)
+                    return new Bernoulli(torch.tensor(probs.Value), null);
+                else if (!probs.HasValue && logits.HasValue)
+                    return new Bernoulli(null, torch.tensor(logits.Value));
+                else
+                    throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
+            }
+
+
+            /// <summary>
+            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// </summary>
+            /// <param name="probs">The probability of sampling '1'</param>
+            /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <returns></returns>
+            public static Bernoulli Bernoulli(double? probs, double? logits)
+            {
+                if (probs.HasValue && !logits.HasValue)
+                    return new Bernoulli(torch.tensor(probs.Value), null);
+                else if (!probs.HasValue && logits.HasValue)
+                    return new Bernoulli(null, torch.tensor(logits.Value));
+                else
+                    throw new ArgumentException("One and only one of 'probs' and 'logits' should be non-null");
             }
         }
     }

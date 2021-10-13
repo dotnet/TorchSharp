@@ -91,6 +91,26 @@ namespace TorchSharp
             {
                 return new Poisson(rate);
             }
+
+            /// <summary>
+            /// Creates a Poisson distribution parameterized by `rate`.
+            /// </summary>
+            /// <param name="rate">rate = 1 / scale of the distribution (often referred to as 'β')</param>
+            /// <returns></returns>
+            public static Poisson Poisson(float rate)
+            {
+                return new Poisson(torch.tensor(rate));
+            }
+
+            /// <summary>
+            /// Creates a Poisson distribution parameterized by `rate`.
+            /// </summary>
+            /// <param name="rate">rate = 1 / scale of the distribution (often referred to as 'β')</param>
+            /// <returns></returns>
+            public static Poisson Poisson(double rate)
+            {
+                return new Poisson(torch.tensor(rate));
+            }
         }
     }
 }

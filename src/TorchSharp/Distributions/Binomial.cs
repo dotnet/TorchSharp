@@ -101,6 +101,42 @@ namespace TorchSharp
             {
                 return new Binomial(total_count, probs, logits);
             }
+
+            /// <summary>
+            /// Creates a Binomial distribution parameterized by `probs` or `logits` (but not both).
+            /// </summary>
+            /// <param name="total_count">Number of Bernoulli trials</param>
+            /// <param name="probs">The probability of sampling '1'</param>
+            /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <returns></returns>
+            public static Binomial Binomial(int total_count, float? probs, float? logits)
+            {
+                if (probs.HasValue && !logits.HasValue)
+                    return new Binomial(torch.tensor(total_count), torch.tensor(probs.Value), null);
+                else if (!probs.HasValue && logits.HasValue)
+                    return new Binomial(torch.tensor(total_count), null, torch.tensor(logits.Value));
+                else
+                    throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
+            }
+
+
+            /// <summary>
+            /// Creates a Binomial distribution parameterized by `probs` or `logits` (but not both).
+            /// </summary>
+            /// <param name="total_count">Number of Bernoulli trials</param>
+            /// <param name="probs">The probability of sampling '1'</param>
+            /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <returns></returns>
+            public static Binomial Binomial(int total_count, double? probs, double? logits)
+            {
+                if (probs.HasValue && !logits.HasValue)
+                    return new Binomial(torch.tensor(total_count), torch.tensor(probs.Value), null);
+                else if (!probs.HasValue && logits.HasValue)
+                    return new Binomial(torch.tensor(total_count), null, torch.tensor(logits.Value));
+                else
+                    throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
+            }
+
         }
     }
 }

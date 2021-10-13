@@ -42,7 +42,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with the value 1
                 /// </summary>
-                public static Tensor ones(Tensor tensor)
+                public static Tensor ones_(Tensor tensor)
                 {
                     var res = THSInit_ones_(tensor.Handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -52,7 +52,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with the value 0
                 /// </summary>
-                public static Tensor zeros(Tensor tensor)
+                public static Tensor zeros_(Tensor tensor)
                 {
                     var res = THSInit_zeros_(tensor.Handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -63,7 +63,7 @@ namespace TorchSharp
                 /// Fills the {3, 4, 5}-dimensional input Tensor with the Dirac delta function.
                 /// Preserves the identity of the inputs in Convolutional layers, where as many input channels are preserved as possible.
                 /// </summary>
-                public static Tensor dirac(Tensor tensor)
+                public static Tensor dirac_(Tensor tensor)
                 {
                     var res = THSInit_dirac_(tensor.Handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -74,7 +74,7 @@ namespace TorchSharp
                 /// Fills the 2-dimensional input Tensor with the identity matrix.
                 /// Preserves the identity of the inputs in Linear layers, where as many inputs are preserved as possible.
                 /// </summary>
-                public static Tensor eye(Tensor tensor)
+                public static Tensor eye_(Tensor tensor)
                 {
                     var res = THSInit_eye_(tensor.Handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -84,7 +84,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with the value 'val'
                 /// </summary>
-                public static Tensor constant(Tensor tensor, Scalar val)
+                public static Tensor constant_(Tensor tensor, Scalar val)
                 {
                     var res = THSInit_constant_(tensor.Handle, val.Handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -94,7 +94,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with values drawn from the uniform distribution
                 /// </summary>
-                public static Tensor uniform(Tensor tensor, double low = 0, double high = 1)
+                public static Tensor uniform_(Tensor tensor, double low = 0, double high = 1)
                 {
                     var res = THSInit_uniform_(tensor.Handle, low, high);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -104,7 +104,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with values drawn from the normal distribution
                 /// </summary>
-                public static Tensor normal(Tensor tensor, double mean = 0, double std = 1)
+                public static Tensor normal_(Tensor tensor, double mean = 0, double std = 1)
                 {
                     var res = THSInit_normal_(tensor.Handle, mean, std);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -114,7 +114,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with a (semi) orthogonal matrix, as described in 'Exact solutions to the nonlinear dynamics of learning in deep linear neural networks'
                 /// </summary>
-                public static Tensor orthogonal(Tensor tensor, double gain = 1.0)
+                public static Tensor orthogonal_(Tensor tensor, double gain = 1.0)
                 {
                     var res = THSInit_orthogonal_(tensor.Handle, gain);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -124,7 +124,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the 2D input Tensor as a sparse matrix, where the non-zero elements will be drawn from the normal distribution N(0,std)
                 /// </summary>
-                public static Tensor sparse(Tensor tensor, double sparsity, double std = 0.01)
+                public static Tensor sparse_(Tensor tensor, double sparsity, double std = 0.01)
                 {
                     var res = THSInit_sparse_(tensor.Handle, sparsity, std);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -134,7 +134,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with values according to the method described in 'Delving deep into rectifiers: Surpassing human-level performance on ImageNet classification'
                 /// </summary>
-                public static Tensor kaiming_uniform(Tensor tensor, double a = 0, FanInOut mode = FanInOut.FanIn, NonlinearityType nonlinearity = NonlinearityType.LeakyReLU)
+                public static Tensor kaiming_uniform_(Tensor tensor, double a = 0, FanInOut mode = FanInOut.FanIn, NonlinearityType nonlinearity = NonlinearityType.LeakyReLU)
                 {
                     var res = THSInit_kaiming_uniform_(tensor.Handle, a, (long)mode, (long)nonlinearity);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -144,7 +144,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with values according to the method described in 'Delving deep into rectifiers: Surpassing human-level performance on ImageNet classification'
                 /// </summary>
-                public static Tensor kaiming_normal(Tensor tensor, double a = 0, FanInOut mode = FanInOut.FanIn, NonlinearityType nonlinearity = NonlinearityType.LeakyReLU)
+                public static Tensor kaiming_normal_(Tensor tensor, double a = 0, FanInOut mode = FanInOut.FanIn, NonlinearityType nonlinearity = NonlinearityType.LeakyReLU)
                 {
                     var res = THSInit_kaiming_normal_(tensor.Handle, a, (long)mode, (long)nonlinearity);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -154,7 +154,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with values according to the method described in 'Understanding the difficulty of training deep feedforward neural networks'
                 /// </summary>
-                public static Tensor xavier_uniform(Tensor tensor, double gain = 1.0)
+                public static Tensor xavier_uniform_(Tensor tensor, double gain = 1.0)
                 {
                     var res = THSInit_xavier_uniform_(tensor.Handle, gain);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -164,12 +164,12 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with values according to the method described in 'Understanding the difficulty of training deep feedforward neural networks'
                 /// </summary>
-                public static Tensor glorot_uniform(Tensor tensor, double gain = 1.0) => xavier_uniform(tensor, gain);
+                public static Tensor glorot_uniform_(Tensor tensor, double gain = 1.0) => xavier_uniform_(tensor, gain);
 
                 /// <summary>
                 /// Fills the input Tensor with values according to the method described in 'Understanding the difficulty of training deep feedforward neural networks'
                 /// </summary>
-                public static Tensor xavier_normal(Tensor tensor, double gain = 1.0)
+                public static Tensor xavier_normal_(Tensor tensor, double gain = 1.0)
                 {
                     var res = THSInit_xavier_uniform_(tensor.Handle, gain);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -179,7 +179,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with values according to the method described in 'Understanding the difficulty of training deep feedforward neural networks'
                 /// </summary>
-                public static Tensor glorot_normal(Tensor tensor, double gain = 1.0) => glorot_normal(tensor, gain);
+                public static Tensor glorot_normal_(Tensor tensor, double gain = 1.0) => xavier_normal_(tensor, gain);
 
                 public static (long fanIn, long fanOut) CalculateFanInAndFanOut<T>(Tensor tensor)
                 {

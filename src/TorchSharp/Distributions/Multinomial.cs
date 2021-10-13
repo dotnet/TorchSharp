@@ -117,6 +117,19 @@ namespace TorchSharp
             {
                 return new Multinomial(total_count, probs, logits);
             }
+
+            /// <summary>
+            /// Creates an equal-probability multinomial distribution parameterized by the number of categories.
+            /// `total_count` must be broadcastable with `probs`/`logits`.
+            /// </summary>
+            /// <param name="total_count">Number of Bernoulli trials</param>
+            /// <param name="categories">The number of categories.</param>
+            /// <returns></returns>
+            public static Multinomial Multinomial(int total_count, int categories)
+            {
+                var probs = torch.tensor(1.0 / categories).expand(categories);
+                return new Multinomial(total_count, probs, null);
+            }
         }
     }
 }
