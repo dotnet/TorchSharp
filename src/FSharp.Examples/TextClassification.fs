@@ -55,9 +55,9 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.Device)
     do
         let initrange = 0.5
 
-        init.uniform(embedding.Weight, -initrange, initrange) |> ignore
-        init.uniform(fc.Weight, -initrange, initrange) |> ignore
-        init.zeros(fc.Bias) |> ignore
+        init.uniform_(embedding.Weight, -initrange, initrange) |> ignore
+        init.uniform_(fc.Weight, -initrange, initrange) |> ignore
+        init.zeros_(fc.Bias) |> ignore
 
         this.RegisterComponents()
 
