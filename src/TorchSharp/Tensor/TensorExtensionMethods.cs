@@ -16,11 +16,52 @@ namespace TorchSharp
     /// </summary>
     public static class TensorExtensionMethods
     {
+        /// <summary>
+        /// Get a string representation of the tensor.
+        /// </summary>
+        /// <param name="tensor">The input tensor.</param>
+        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="width">The width of each line of the output string.</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This method does exactly the same as ToString(bool, string, int), but is shorter,
+        /// looks more like  Python 'str' and doesn't require a boolean argument 'true' in order
+        /// to discriminate.
+        /// </remarks>
+        public static string str(this Tensor tensor, string fltFormat = "g5", int width = 100)
+        {
+            return tensor.ToString(true, fltFormat, width);
+        }
+
+        /// <summary>
+        /// Uses Console.WriteLine to print a tensor expression on stdout. This is intended for
+        /// .NET Interactive notebook use, primarily.
+        /// </summary>
+        /// <param name="t">The input tensor.</param>
+        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="width">The width of each line of the output string.</param>
+        /// <returns></returns>
+        public static Tensor print(this Tensor t, string fltFormat = "g5", int width = 100)
+        {
+            Console.WriteLine(t.str());
+            return t;
+        }
+
+        /// <summary>
+        /// Indicates whether the element type of a given tensor is integral.
+        /// </summary>
+        /// <param name="tensor">The input tensor.</param>
+        /// <returns></returns>
         internal static bool IsIntegral(this Tensor tensor)
         {
             return IsIntegral(tensor.dtype);
         }
 
+        /// <summary>
+        /// Indicates whether a given element type is integral.
+        /// </summary>
+        /// <param name="type">The input type.</param>
+        /// <returns></returns>
         internal static bool IsIntegral(this ScalarType type)
         {
             switch (type) {
@@ -36,6 +77,14 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        /// Indicates whether a given element type is real.
+        /// </summary>
+        /// <param name="type">The input type.</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Complex numbers are not real, and thus will return 'false'
+        /// </remarks>
         internal static bool IsFloatingPoint(this ScalarType type)
         {
             switch (type) {

@@ -106,6 +106,11 @@ namespace TorchSharp
                 var str = t.ToString(true);
                 Assert.Equal($"[2x4], type = ComplexFloat32, device = cpu{_sep}{_sep} 0 0 0 0{_sep} 0 0 0 0{_sep}", str);
             }
+            {
+                Tensor t = torch.ones(2, 4, torch.complex64);
+                var str = t.ToString(true);
+                Assert.Equal($"[2x4], type = ComplexFloat32, device = cpu{_sep}{_sep} 1 1 1 1{_sep} 1 1 1 1{_sep}", str);
+            }
         }
 
         [Fact]
@@ -830,8 +835,8 @@ namespace TorchSharp
 
             Assert.Equal(shape, x.shape);
             Assert.Equal(ScalarType.ComplexFloat32, x.dtype);
-            Assert.True(r.allclose(x.Real));
-            Assert.True(i.allclose(x.Imag));
+            Assert.True(r.allclose(x.real));
+            Assert.True(i.allclose(x.imag));
         }
 
         [Fact]
@@ -845,8 +850,8 @@ namespace TorchSharp
 
             Assert.Equal(shape, x.shape);
             Assert.Equal(ScalarType.ComplexFloat64, x.dtype);
-            Assert.True(r.allclose(x.Real));
-            Assert.True(i.allclose(x.Imag));
+            Assert.True(r.allclose(x.real));
+            Assert.True(i.allclose(x.imag));
         }
 
         [Fact]
@@ -862,8 +867,8 @@ namespace TorchSharp
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat32, p.dtype);
-            Assert.True(r.allclose(p.Real, rtol: 1e-04, atol: 1e-07));
-            Assert.True(i.allclose(p.Imag, rtol: 1e-04, atol: 1e-07));
+            Assert.True(r.allclose(p.real, rtol: 1e-04, atol: 1e-07));
+            Assert.True(i.allclose(p.imag, rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
@@ -879,8 +884,8 @@ namespace TorchSharp
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat64, p.dtype);
-            Assert.True(r.allclose(p.Real, rtol: 1e-04, atol: 1e-07));
-            Assert.True(i.allclose(p.Imag, rtol: 1e-04, atol: 1e-07));
+            Assert.True(r.allclose(p.real, rtol: 1e-04, atol: 1e-07));
+            Assert.True(i.allclose(p.imag, rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
@@ -5106,8 +5111,8 @@ namespace TorchSharp
         public void Complex32PartsTest()
         {
             var x = torch.zeros(new long[] { 20 }, complex64);
-            var r1 = x.Real;
-            var i1 = x.Imag;
+            var r1 = x.real;
+            var i1 = x.imag;
 
             Assert.Equal(x.shape, r1.shape);
             Assert.Equal(x.shape, i1.shape);
@@ -5135,8 +5140,8 @@ namespace TorchSharp
         public void Complex64PartsTest()
         {
             var x = torch.zeros(new long[] { 20 }, complex128);
-            var r1 = x.Real;
-            var i1 = x.Imag;
+            var r1 = x.real;
+            var i1 = x.imag;
 
             Assert.Equal(x.shape, r1.shape);
             Assert.Equal(x.shape, i1.shape);

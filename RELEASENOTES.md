@@ -2,6 +2,17 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+### NuGet Version 0.93.6
+
+__Fixed Bugs:__
+
+#407 rand() and randn() must check that the data type is floating-point. 
+
+
+__API Changes:__
+
+Added some overloads to make F# usage more convenient.
+
 ### NuGet Version 0.93.5
 
 __Fixed Bugs:__
