@@ -174,9 +174,9 @@ namespace TorchSharp.Examples
         {
             var initrange = 0.5;
 
-            init.uniform(embedding.Weight, -initrange, initrange);
-            init.uniform(fc.Weight, -initrange, initrange);
-            init.zeros(fc.Bias);
+            init.uniform_(embedding.Weight, -initrange, initrange);
+            init.uniform_(fc.Weight, -initrange, initrange);
+            init.zeros_(fc.Bias);
         }
 
         public override Tensor forward(Tensor t)

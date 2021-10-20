@@ -55,7 +55,7 @@ namespace TorchText.Vocab
         public Vocab(Counter<string> counter, int? maxSize = null, int minFreq = 1, string[] specials = null, Func<torch.Tensor, torch.Tensor> unkInit = null, bool specialsFirst = true)
         {
             if (specials == null) specials = new string[] { "<unk>", "<pad>" };
-            if (unkInit == null) unkInit = (t => init.zeros(t.clone()));
+            if (unkInit == null) unkInit = (t => init.zeros_(t.clone()));
             if (specialsFirst) {
                 foreach (var sp in specials) {
                     _dict.Add(sp, _last++);

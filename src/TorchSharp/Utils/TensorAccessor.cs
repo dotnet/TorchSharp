@@ -52,21 +52,41 @@ namespace TorchSharp.Utils
         /// <summary>
         /// Access elements of the underlying tensor / tensor view.
         /// </summary>
-        /// <param name="index">A linear index into the data.</param>
+        /// <param name="indices">A linear index into the data.</param>
         /// <returns></returns>
-        public T this[long index] {
+        public T this[params long[] indices] {
             get {
-                if (index >= Count) throw new IndexOutOfRangeException();
-                unsafe {
-                    T* ptr = (T*)_tensor_data_ptr;
-                    return ptr[TranslateIndex(index, _tensor)];
+                long index = 0;
+                if (indices.Length == 1) {
+                    index = indices[0];
+                    if (index >= Count) throw new IndexOutOfRangeException();
+                    unsafe {
+                        T* ptr = (T*)_tensor_data_ptr;
+                        return ptr[TranslateIndex(index, _tensor)];
+                    }
+                }
+                else {
+                    unsafe {
+                        T* ptr = (T*)_tensor_data_ptr;
+                        return ptr[TranslateIndex(indices, _tensor)];
+                    }
                 }
             }
             set {
-                if (index >= Count) throw new IndexOutOfRangeException();
-                unsafe {
-                    T* ptr = (T*)_tensor_data_ptr;
-                    ptr[TranslateIndex(index, _tensor)] = value;
+                long index = 0;
+                if (indices.Length == 1) {
+                    index = indices[0];
+                    if (index >= Count) throw new IndexOutOfRangeException();
+                    unsafe {
+                        T* ptr = (T*)_tensor_data_ptr;
+                        ptr[TranslateIndex(indices, _tensor)] = value;
+                    }
+                }
+                else {
+                    unsafe {
+                        T* ptr = (T*)_tensor_data_ptr;
+                        ptr[TranslateIndex(indices, _tensor)] = value;
+                    }
                 }
             }
         }
@@ -110,6 +130,21 @@ namespace TorchSharp.Utils
             for (var i = shape.Length - 1; i >= 0; i--) {
                 idx = Math.DivRem(idx, shape[i], out long s);
                 result += s * strides[i];
+            }
+
+            return result;
+        }
+
+        internal static long TranslateIndex(long[] idx, torch.Tensor tensor)
+        {
+            long result = 0;
+            var shape = tensor.shape;
+            var strides = tensor.stride();
+
+            for (var i = shape.Length - 1; i >= 0; i--) {
+                if (idx[i] >= shape[i] || idx[i] < 0)
+                    throw new IndexOutOfRangeException($"{idx[i]} >= {shape[i]} in dimension {i}.");
+                result += idx[i] * strides[i];
             }
 
             return result;

@@ -123,6 +123,18 @@ namespace TorchSharp
             {
                 return new Categorical(probs, logits);
             }
+
+            /// <summary>
+            /// Creates an equal-probability categorical distribution parameterized by the number of categories.
+            ///
+            /// </summary>
+            /// <param name="categories">The number of categories.</param>
+            /// <returns></returns>
+            public static Categorical Categorical(int categories)
+            {
+                var probs = torch.tensor(1.0 / categories).expand(categories);
+                return new Categorical(probs, null);
+            }
         }
     }
 }

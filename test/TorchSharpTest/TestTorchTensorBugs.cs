@@ -263,6 +263,9 @@ namespace TorchSharp
             Assert.Equal(12, data1.Count);
             Assert.Equal(12, data2.Count);
 
+            Assert.Equal(6, data2[2, 1]);
+            Assert.Equal(7, data2[3, 1]);
+
             Assert.True(trans.contiguous().data<int>() == data2);
             Assert.False(trans.contiguous().data<int>() != data2);
             Assert.Equal(trans.contiguous().data<int>(), data2);

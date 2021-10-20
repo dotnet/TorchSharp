@@ -91,15 +91,40 @@ namespace TorchSharp
         public static partial class distributions
         {
             /// <summary>
-            /// Samples from a Normal (Lorentz) distribution. The distribution of the ratio of
+            /// Samples from a Normal (Gaussian) distribution. The distribution of the ratio of
             /// independent normally distributed random variables with means `0` follows a Normal distribution.
             /// </summary>
             /// <param name="loc">Mode or median of the distribution.</param>
-            /// <param name="scale">Half width at half maximum.</param>
+            /// <param name="scale">Standard deviation.</param>
             /// <returns></returns>
             public static Normal Normal(Tensor loc, Tensor scale)
             {
                 return new Normal(loc, scale);
+            }
+
+            /// <summary>
+            /// Samples from a Normal (Gaussian) distribution. The distribution of the ratio of
+            /// independent normally distributed random variables with means `0` follows a Normal distribution.
+            /// </summary>
+            /// <param name="loc">Mode or median of the distribution.</param>
+            /// <param name="scale">Standard deviation.</param>
+            /// <returns></returns>
+            public static Normal Normal(float loc, float scale = 1.0f)
+            {
+                return new Normal(torch.tensor(loc), torch.tensor(scale));
+            }
+
+
+            /// <summary>
+            /// Samples from a Normal (Gaussian) distribution. The distribution of the ratio of
+            /// independent normally distributed random variables with means `0` follows a Normal distribution.
+            /// </summary>
+            /// <param name="loc">Mode or median of the distribution.</param>
+            /// <param name="scale">Standard deviation.</param>
+            /// <returns></returns>
+            public static Normal Normal(double loc, double scale = 1.0)
+            {
+                return new Normal(torch.tensor(loc), torch.tensor(scale));
             }
         }
     }

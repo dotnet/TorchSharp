@@ -54,7 +54,7 @@ namespace TorchSharp
         public void TestScalarToString()
         {
             {
-                Tensor t = torch.tensor(3.14f);
+                Tensor t = (Tensor)3.14f;
                 var str = t.ToString(true);
                 Assert.Equal("[], type = Float32, device = cpu, value = 3.14", str);
             }
@@ -105,6 +105,11 @@ namespace TorchSharp
                 Tensor t = torch.zeros(2, 4, torch.complex64);
                 var str = t.ToString(true);
                 Assert.Equal($"[2x4], type = ComplexFloat32, device = cpu{_sep}{_sep} 0 0 0 0{_sep} 0 0 0 0{_sep}", str);
+            }
+            {
+                Tensor t = torch.ones(2, 4, torch.complex64);
+                var str = t.ToString(true);
+                Assert.Equal($"[2x4], type = ComplexFloat32, device = cpu{_sep}{_sep} 1 1 1 1{_sep} 1 1 1 1{_sep}", str);
             }
         }
 
@@ -830,8 +835,8 @@ namespace TorchSharp
 
             Assert.Equal(shape, x.shape);
             Assert.Equal(ScalarType.ComplexFloat32, x.dtype);
-            Assert.True(r.allclose(x.Real));
-            Assert.True(i.allclose(x.Imag));
+            Assert.True(r.allclose(x.real));
+            Assert.True(i.allclose(x.imag));
         }
 
         [Fact]
@@ -845,8 +850,8 @@ namespace TorchSharp
 
             Assert.Equal(shape, x.shape);
             Assert.Equal(ScalarType.ComplexFloat64, x.dtype);
-            Assert.True(r.allclose(x.Real));
-            Assert.True(i.allclose(x.Imag));
+            Assert.True(r.allclose(x.real));
+            Assert.True(i.allclose(x.imag));
         }
 
         [Fact]
@@ -862,8 +867,8 @@ namespace TorchSharp
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat32, p.dtype);
-            Assert.True(r.allclose(p.Real, rtol: 1e-04, atol: 1e-07));
-            Assert.True(i.allclose(p.Imag, rtol: 1e-04, atol: 1e-07));
+            Assert.True(r.allclose(p.real, rtol: 1e-04, atol: 1e-07));
+            Assert.True(i.allclose(p.imag, rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
@@ -879,8 +884,8 @@ namespace TorchSharp
 
             Assert.Equal(x.shape, p.shape);
             Assert.Equal(ScalarType.ComplexFloat64, p.dtype);
-            Assert.True(r.allclose(p.Real, rtol: 1e-04, atol: 1e-07));
-            Assert.True(i.allclose(p.Imag, rtol: 1e-04, atol: 1e-07));
+            Assert.True(r.allclose(p.real, rtol: 1e-04, atol: 1e-07));
+            Assert.True(i.allclose(p.imag, rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
@@ -1728,7 +1733,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TorchNormal()
+        public void TorchBernoulli()
         {
             using (var tensor = torch.bernoulli(torch.rand(5))) {
                 Assert.Equal(5, tensor.shape[0]);
@@ -1757,7 +1762,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.zeros(tensor)) { }
+                using (var res = torch.nn.init.zeros_(tensor)) { }
             }
         }
 
@@ -1767,7 +1772,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.ones(tensor)) { }
+                using (var res = torch.nn.init.ones_(tensor)) { }
             }
         }
 
@@ -1777,7 +1782,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.dirac(tensor)) { }
+                using (var res = torch.nn.init.dirac_(tensor)) { }
             }
         }
 
@@ -1787,7 +1792,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.eye(tensor)) { }
+                using (var res = torch.nn.init.eye_(tensor)) { }
             }
         }
 
@@ -1797,7 +1802,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.constant(tensor, Math.PI)) { }
+                using (var res = torch.nn.init.constant_(tensor, Math.PI)) { }
             }
         }
 
@@ -1807,7 +1812,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.uniform(tensor)) { }
+                using (var res = torch.nn.init.uniform_(tensor)) { }
             }
         }
 
@@ -1817,7 +1822,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.normal(tensor)) { }
+                using (var res = torch.nn.init.normal_(tensor)) { }
             }
         }
 
@@ -1827,7 +1832,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.orthogonal(tensor)) { }
+                using (var res = torch.nn.init.orthogonal_(tensor)) { }
             }
         }
 
@@ -1837,7 +1842,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.sparse(tensor, 0.25)) { }
+                using (var res = torch.nn.init.sparse_(tensor, 0.25)) { }
             }
         }
 
@@ -1847,7 +1852,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.kaiming_uniform(tensor)) { }
+                using (var res = torch.nn.init.kaiming_uniform_(tensor)) { }
             }
         }
 
@@ -1857,7 +1862,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.kaiming_normal(tensor)) { }
+                using (var res = torch.nn.init.kaiming_normal_(tensor)) { }
             }
         }
 
@@ -1867,7 +1872,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.xavier_uniform(tensor)) { }
+                using (var res = torch.nn.init.xavier_uniform_(tensor)) { }
             }
         }
 
@@ -1877,7 +1882,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.xavier_normal(tensor)) { }
+                using (var res = torch.nn.init.xavier_normal_(tensor)) { }
             }
         }
 
@@ -1981,7 +1986,7 @@ namespace TorchSharp
         public void TestSparse()
         {
             using (var i = torch.tensor(new long[] { 0, 1, 1, 2, 0, 2 }, new long[] { 2, 3 }))
-            using (var v = torch.tensor(new float[] { 3, 4, 5 }, new long[] { 3 })) {
+            using (Tensor v = new float[] { 3, 4, 5 }) {
                 var sparse = torch.sparse(i, v, new long[] { 2, 3 });
 
                 Assert.True(sparse.is_sparse);
@@ -2157,7 +2162,8 @@ namespace TorchSharp
         [Fact]
         public void TestSquareEuclideanDistance()
         {
-            var input = new double[] { 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.2, 0.1, 0.1 }.ToTensor(new long[] { 9 }).to_type(ScalarType.Float32);
+            Tensor input = new float[] { 0.1f, 0.1f, 0.1f, 0.1f, 0.2f, 0.1f, 0.2f, 0.1f, 0.1f };
+
             var zeros = torch.zeros(new long[] { 1, 9 });
             var ones = torch.ones(new long[] { 1, 9 });
             var centroids = torch.cat(new Tensor[] { zeros, ones }, 0);
@@ -4375,16 +4381,16 @@ namespace TorchSharp
             var res8 = torch.randint(10, new long[] { 200 });
             Assert.Equal(new long[] { 200 }, res8.shape);
 
-            var res9 = torch.randint(10, new long[] { 200 }, float64);
+            var res9 = torch.randint(10, 200, float64);
             Assert.Equal(new long[] { 200 }, res9.shape);
 
             //var res7 = torch.randint(100, new long[] { 20, 10 }, complex32);
             //Assert.Equal(new long[] { 200 }, res7.Shape);
 
-            var res10 = torch.randint(100, new long[] { 20, 10 }, complex64);
+            var res10 = torch.randint(100, ( 20, 10 ), complex64);
             Assert.Equal(new long[] { 20, 10 }, res10.shape);
 
-            var res11 = torch.randint(10, new long[] { 20, 10 }, complex128);
+            var res11 = torch.randint(10, ( 20, 10 ), complex128);
             Assert.Equal(new long[] { 20, 10 }, res11.shape);
         }
 
@@ -5105,8 +5111,8 @@ namespace TorchSharp
         public void Complex32PartsTest()
         {
             var x = torch.zeros(new long[] { 20 }, complex64);
-            var r1 = x.Real;
-            var i1 = x.Imag;
+            var r1 = x.real;
+            var i1 = x.imag;
 
             Assert.Equal(x.shape, r1.shape);
             Assert.Equal(x.shape, i1.shape);
@@ -5134,8 +5140,8 @@ namespace TorchSharp
         public void Complex64PartsTest()
         {
             var x = torch.zeros(new long[] { 20 }, complex128);
-            var r1 = x.Real;
-            var i1 = x.Imag;
+            var r1 = x.real;
+            var i1 = x.imag;
 
             Assert.Equal(x.shape, r1.shape);
             Assert.Equal(x.shape, i1.shape);
