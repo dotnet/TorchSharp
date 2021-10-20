@@ -205,14 +205,14 @@ Tensor THSTensor_randperm(
         .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
 
-        tensor = new torch::Tensor(torch::randperm(n, options));
+        tensor = new torch::Tensor(gen == nullptr ? torch::randperm(n, options) : torch::randperm(n, *gen, options));
     )
         return tensor;
 }
 
 Tensor THSTensor_randperm_out(const Generator gen, const int64_t n, const Tensor out)
 {
-    CATCH_TENSOR(torch::randperm_out(*out, n));
+    CATCH_TENSOR(gen == nullptr ? torch::randperm_out(*out, n) : torch::randperm_out(*out, n, *gen));
 }
 
 Tensor THSInit_kaiming_normal_(Tensor tensor, double a, const int64_t mode, const int64_t nonlinearity)

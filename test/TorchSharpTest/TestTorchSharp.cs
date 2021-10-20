@@ -102,23 +102,30 @@ namespace TorchSharp
                 Assert.Equal(4355, c);
 
                 {
-                    var x = torch.rand(new long[] { 100 }, generator: genB);
-                    var y = torch.rand(new long[] { 100 }, generator: genC);
+                    var x = torch.rand(100, generator: genB);
+                    var y = torch.rand(100, generator: genC);
                     Assert.Equal(new long[] { 100 }, x.shape);
                     Assert.True(x.allclose(y));
                 }
 
                 {
-                    var x = torch.randn(new long[] { 100 }, generator: genB);
-                    var y = torch.randn(new long[] { 100 }, generator: genC);
+                    var x = torch.randn(100, generator: genB);
+                    var y = torch.randn(100, generator: genC);
                     Assert.Equal(new long[] { 100 }, x.shape);
                     Assert.True(x.allclose(y));
                 }
 
                 {
-                    var x = torch.randint(1000, new long[] { 100 }, generator: genB);
-                    var y = torch.randint(1000, new long[] { 100 }, generator: genC);
+                    var x = torch.randint(1000, 100, generator: genB);
+                    var y = torch.randint(1000, 100, generator: genC);
                     Assert.Equal(new long[] { 100 }, x.shape);
+                    Assert.True(x.allclose(y));
+                }
+
+                {
+                    var x = torch.randperm(1000, generator: genB);
+                    var y = torch.randperm(1000, generator: genC);
+                    Assert.Equal(new long[] { 1000 }, x.shape);
                     Assert.True(x.allclose(y));
                 }
             }
