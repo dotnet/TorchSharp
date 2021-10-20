@@ -19,7 +19,7 @@ namespace TorchSharp
 
             public override Tensor variance => total_count * probs * (1 - probs);
 
-            public Multinomial(int total_count, Tensor p = null, Tensor l = null) 
+            public Multinomial(int total_count, Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator) 
             {
                 this.total_count = total_count;
                 this.categorical = new Categorical(p, l);
@@ -28,7 +28,7 @@ namespace TorchSharp
                 this.event_shape = new long[] { ps[ps.Length-1] };
             }
 
-            private Multinomial(int total_count, Categorical categorical)
+            private Multinomial(int total_count, Categorical categorical, torch.Generator generator = null) : base(generator)
             {
                 this.total_count = total_count;
                 this.categorical = categorical;
@@ -112,10 +112,11 @@ namespace TorchSharp
             /// <param name="total_count">Number of Bernoulli trials</param>
             /// <param name="probs">The probability of sampling '1'</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Multinomial Multinomial(int total_count, Tensor probs = null, Tensor logits = null)
+            public static Multinomial Multinomial(int total_count, Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
             {
-                return new Multinomial(total_count, probs, logits);
+                return new Multinomial(total_count, probs, logits, generator);
             }
 
             /// <summary>
@@ -124,11 +125,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="total_count">Number of Bernoulli trials</param>
             /// <param name="categories">The number of categories.</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Multinomial Multinomial(int total_count, int categories)
+            public static Multinomial Multinomial(int total_count, int categories, torch.Generator generator = null)
             {
                 var probs = torch.tensor(1.0 / categories).expand(categories);
-                return new Multinomial(total_count, probs, null);
+                return new Multinomial(total_count, probs, null, generator);
             }
         }
     }

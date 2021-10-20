@@ -24,7 +24,7 @@ namespace TorchSharp
                 }
             }
 
-            public Dirichlet(Tensor concentration)
+            public Dirichlet(Tensor concentration, torch.Generator generator = null) : base(generator)
             {
                 var cshape = concentration.shape;
                 this.batch_shape = cshape.Take(cshape.Length - 1).ToArray();
@@ -38,7 +38,7 @@ namespace TorchSharp
             {
                 var shape = ExtendedShape(sample_shape);
                 var con = concentration.expand(shape);
-                return torch._sample_dirichlet(con);
+                return torch._sample_dirichlet(con, generator);
             }
 
             public override Tensor log_prob(Tensor value)
@@ -96,9 +96,10 @@ namespace TorchSharp
             /// Creates a Dirichlet distribution parameterized by shape `concentration` and `rate`.
             /// </summary>
             /// <param name="concentration">Shape parameter of the distribution (often referred to as 'α')</param>
-            public static Dirichlet Dirichlet(Tensor concentration)
+            /// <param name="generator">An optional random number generator object.</param>
+            public static Dirichlet Dirichlet(Tensor concentration, torch.Generator generator = null)
             {
-                return new Dirichlet(concentration);
+                return new Dirichlet(concentration, generator);
             }
         }
     }

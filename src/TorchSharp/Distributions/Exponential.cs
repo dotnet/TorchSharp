@@ -22,7 +22,7 @@ namespace TorchSharp
             public override Tensor stddev => rate.reciprocal();
 
 
-            public Exponential(Tensor rate)
+            public Exponential(Tensor rate, torch.Generator generator = null) : base(generator)
             {
                 var locScale = torch.broadcast_tensors(rate);
                 this.batch_shape = rate.size();
@@ -34,7 +34,7 @@ namespace TorchSharp
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
-                return rate.new_empty(shape).exponential_() / rate;
+                return rate.new_empty(shape).exponential_(generator: generator) / rate;
             }
 
             public override Tensor log_prob(Tensor value)
@@ -90,10 +90,11 @@ namespace TorchSharp
             /// Creates a Exponential distribution parameterized by `rate`.
             /// </summary>
             /// <param name="rate">rate = 1 / scale of the distribution (often referred to as 'β')</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Exponential Exponential(Tensor rate)
+            public static Exponential Exponential(Tensor rate, torch.Generator generator = null)
             {
-                return new Exponential(rate);
+                return new Exponential(rate, generator);
             }
         }
     }

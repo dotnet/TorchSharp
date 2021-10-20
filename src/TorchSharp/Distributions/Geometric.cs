@@ -19,7 +19,7 @@ namespace TorchSharp
 
             public override Tensor variance => (1.0f / probs - 1.0f) / probs;
 
-            public Geometric(Tensor p = null, Tensor l = null) 
+            public Geometric(Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator) 
             {
                 this.batch_shape = p is null ? l.size() : p.size();
                 this._probs = p;
@@ -45,7 +45,7 @@ namespace TorchSharp
                 var shape = ExtendedShape(sample_shape);
                 var tiny = torch.finfo(probs.dtype).tiny;
                 using (torch.no_grad()) {
-                    var u = probs.new_empty(shape).uniform_(tiny, 1);
+                    var u = probs.new_empty(shape).uniform_(tiny, 1, generator: generator);
                     return (u.log() / (-probs).log1p()).floor();
                 }
             }
@@ -96,10 +96,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="probs">The probability of sampling '1'. Must be in range (0, 1]</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Geometric Geometric(Tensor probs = null, Tensor logits = null)
+            public static Geometric Geometric(Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
             {
-                return new Geometric(probs, logits);
+                return new Geometric(probs, logits, generator);
             }
         }
     }

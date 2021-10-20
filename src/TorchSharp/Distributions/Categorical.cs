@@ -19,7 +19,7 @@ namespace TorchSharp
 
             public override Tensor variance => torch.full(ExtendedShape(), double.NaN, dtype: probs.dtype, device: probs.device);
 
-            public Categorical(Tensor p = null, Tensor l = null) 
+            public Categorical(Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
             {
                 var param = p is null ? l : p;
 
@@ -54,7 +54,7 @@ namespace TorchSharp
             public override Tensor rsample(params long[] sample_shape)
             {
                 var probs_2d = probs.reshape(-1, num_events);
-                var samples_2d = torch.multinomial(probs_2d, sample_shape.Aggregate<long, long>(1, (x, y) => x * y), true).T;
+                var samples_2d = torch.multinomial(probs_2d, sample_shape.Aggregate<long, long>(1, (x, y) => x * y), true, generator).T;
                 return samples_2d.reshape(ExtendedShape(sample_shape));
             }
 
@@ -118,8 +118,9 @@ namespace TorchSharp
             /// </summary>
             /// <param name="probs">The probability of sampling '1'</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Categorical Categorical(Tensor probs = null, Tensor logits = null)
+            public static Categorical Categorical(Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
             {
                 return new Categorical(probs, logits);
             }
@@ -129,11 +130,12 @@ namespace TorchSharp
             ///
             /// </summary>
             /// <param name="categories">The number of categories.</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Categorical Categorical(int categories)
+            public static Categorical Categorical(int categories, torch.Generator generator = null)
             {
                 var probs = torch.tensor(1.0 / categories).expand(categories);
-                return new Categorical(probs, null);
+                return new Categorical(probs, null, generator);
             }
         }
     }

@@ -872,9 +872,9 @@ namespace TorchSharp
             }
         }
 
-        static public Tensor normal(Tensor means, Tensor stddev)
+        static public Tensor normal(Tensor means, Tensor stddev, torch.Generator generator = null)
         {
-            return randn(means.shape) * stddev + means;
+            return randn(means.shape, generator: generator) * stddev + means;
         }
 
         /// <summary>

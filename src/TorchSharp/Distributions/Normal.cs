@@ -22,7 +22,7 @@ namespace TorchSharp
             public override Tensor variance => scale.pow(2);
 
 
-            public Normal(Tensor loc, Tensor scale)
+            public Normal(Tensor loc, Tensor scale, torch.Generator generator = null) : base(generator)
             {
                 this.batch_shape = loc.size();
                 var locScale = torch.broadcast_tensors(loc, scale);
@@ -37,14 +37,14 @@ namespace TorchSharp
             {
                 var shape = ExtendedShape(sample_shape);
                 using (torch.no_grad()) {
-                    return torch.normal(loc.expand(shape), scale.expand(shape));
+                    return torch.normal(loc.expand(shape), scale.expand(shape), generator);
                 }
             }
 
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
-                var eps = torch.empty(shape, dtype: loc.dtype, device: loc.device).normal_();
+                var eps = torch.empty(shape, dtype: loc.dtype, device: loc.device).normal_(generator: generator);
                 return loc + eps * scale;
             }
 
@@ -96,10 +96,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="loc">Mode or median of the distribution.</param>
             /// <param name="scale">Standard deviation.</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Normal Normal(Tensor loc, Tensor scale)
+            public static Normal Normal(Tensor loc, Tensor scale, torch.Generator generator = null)
             {
-                return new Normal(loc, scale);
+                return new Normal(loc, scale, generator);
             }
 
             /// <summary>
@@ -108,10 +109,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="loc">Mode or median of the distribution.</param>
             /// <param name="scale">Standard deviation.</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Normal Normal(float loc, float scale = 1.0f)
+            public static Normal Normal(float loc, float scale = 1.0f, torch.Generator generator = null)
             {
-                return new Normal(torch.tensor(loc), torch.tensor(scale));
+                return new Normal(torch.tensor(loc), torch.tensor(scale), generator);
             }
 
 
@@ -121,10 +123,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="loc">Mode or median of the distribution.</param>
             /// <param name="scale">Standard deviation.</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Normal Normal(double loc, double scale = 1.0)
+            public static Normal Normal(double loc, double scale = 1.0, torch.Generator generator = null)
             {
-                return new Normal(torch.tensor(loc), torch.tensor(scale));
+                return new Normal(torch.tensor(loc), torch.tensor(scale), generator);
             }
         }
     }

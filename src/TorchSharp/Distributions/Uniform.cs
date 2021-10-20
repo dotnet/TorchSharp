@@ -19,7 +19,7 @@ namespace TorchSharp
 
             public override Tensor variance => (high - low).pow(2) / 12;
 
-            public Uniform(Tensor low, Tensor high) : base(low.size())
+            public Uniform(Tensor low, Tensor high, torch.Generator generator = null) : base(generator, low.size())
             {
                 var lowHigh = torch.broadcast_tensors(low, high);
                 this.low = lowHigh[0];
@@ -32,7 +32,7 @@ namespace TorchSharp
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
-                var rand = torch.rand(shape, dtype: low.dtype, device: low.device);
+                var rand = torch.rand(shape, dtype: low.dtype, device: low.device, generator: generator);
                 return low + rand * (high - low);
             }
 
@@ -87,10 +87,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="low">Lower bound (inclusive)</param>
             /// <param name="high">Upper bound (exclusive)</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Uniform Uniform(Tensor low, Tensor high)
+            public static Uniform Uniform(Tensor low, Tensor high, torch.Generator generator = null)
             {
-                return new Uniform(low, high);
+                return new Uniform(low, high, generator);
             }
         }
     }
