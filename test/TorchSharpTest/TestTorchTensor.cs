@@ -1733,7 +1733,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TorchNormal()
+        public void TorchBernoulli()
         {
             using (var tensor = torch.bernoulli(torch.rand(5))) {
                 Assert.Equal(5, tensor.shape[0]);
