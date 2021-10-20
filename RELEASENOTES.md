@@ -6,7 +6,8 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __Fixed Bugs:__
 
-#407 rand() and randn() must check that the data type is floating-point. 
+#407 rand() and randn() must check that the data type is floating-point.
+#410 Support for passing random number generators to rand(), randn(), and randint()
 
 
 __API Changes:__
