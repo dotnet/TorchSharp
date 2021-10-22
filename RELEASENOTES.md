@@ -2,6 +2,16 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+### NuGet Version 0.93.7
+
+__Fixed Bugs:__
+
+#413 Random Distributions Should Take a Generator Argument
+
+__API Changes:__
+
+Added Module.Create<T>() to create a model and load weights.
+
 ### NuGet Version 0.93.6
 
 __Fixed Bugs:__

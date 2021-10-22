@@ -538,6 +538,19 @@ namespace TorchSharp
                     return this;
                 }
 
+
+                /// <summary>
+                /// Create a module and load its weights from disk.
+                /// </summary>
+                /// <typeparam name="T"></typeparam>
+                /// <param name="path"></param>
+                /// <returns></returns>
+                public static Module Create<T>(string path) where T : nn.Module, new()
+                {
+                    var model = new T();
+                    return model.load(path);
+                }
+
                 private delegate IntPtr ForwardFunctionC(IntPtr tensor);
 
                 [DllImport("LibTorchSharp")]
