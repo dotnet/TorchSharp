@@ -921,9 +921,9 @@ EXPORT_API(Tensor) THSTensor_randn_out(const Generator gen, const int64_t* sizes
 
 EXPORT_API(Tensor) THSTensor_randn_like(const Tensor input, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
-EXPORT_API(Tensor) THSTensor_randperm(const int64_t n, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+EXPORT_API(Tensor) THSTensor_randperm(const Generator gen, const int64_t n, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
-EXPORT_API(Tensor) THSTensor_randperm_out(const int64_t n, const Tensor out);
+EXPORT_API(Tensor) THSTensor_randperm_out(const Generator gen, const int64_t n, const Tensor out);
 
 EXPORT_API(Tensor) THSTensor_ravel(const Tensor tensor);
 

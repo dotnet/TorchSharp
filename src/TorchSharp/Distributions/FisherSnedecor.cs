@@ -31,13 +31,13 @@ namespace TorchSharp
                 }
             }
 
-            public FisherSnedecor(Tensor df1, Tensor df2) 
+            public FisherSnedecor(Tensor df1, Tensor df2, torch.Generator generator = null) : base(generator)
             {
                 var bcast = torch.broadcast_tensors(df1, df2);
                 this.df1 = bcast[0];
                 this.df2 = bcast[1];
-                this.gamma1 = new Gamma(this.df1 * 0.5, this.df1);
-                this.gamma2 = new Gamma(this.df2 * 0.5, this.df2);
+                this.gamma1 = new Gamma(this.df1 * 0.5, this.df1, generator);
+                this.gamma2 = new Gamma(this.df2 * 0.5, this.df2, generator);
                 this.batch_shape = this.df1.size();
             }
 
@@ -107,10 +107,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="df1">Degrees of freedom parameter 1</param>
             /// <param name="df2">Degrees of freedom parameter 2</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static FisherSnedecor FisherSnedecor(Tensor df1, Tensor df2)
+            public static FisherSnedecor FisherSnedecor(Tensor df1, Tensor df2, torch.Generator generator = null)
             {
-                return new FisherSnedecor(df1, df2);
+                return new FisherSnedecor(df1, df2, generator);
             }
         }
     }

@@ -11,6 +11,9 @@ namespace TorchSharp
         {
             public abstract class ExponentialFamily : Distribution
             {
+                protected ExponentialFamily(torch.Generator generator) : base(generator)
+                {
+                }
 
                 protected abstract IList<Tensor> NaturalParams { get; }
 

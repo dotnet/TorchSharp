@@ -27,12 +27,12 @@ namespace TorchSharp
             // Note that the order of the arguments is not a mistake -- the original source has them
             // ordered this way.
 
-            public Beta(Tensor concentration1, Tensor concentration0)
+            public Beta(Tensor concentration1, Tensor concentration0, torch.Generator generator = null) : base(generator)
             {
                 var bcast = torch.broadcast_tensors(concentration1, concentration0);
                 this.concentration1 = bcast[0];
                 this.concentration0 = bcast[1];
-                this.dirichlet = new Dirichlet(torch.stack(bcast, -1));
+                this.dirichlet = new Dirichlet(torch.stack(bcast, -1), generator);
                 this.batch_shape = this.dirichlet.batch_shape;
             }
 
@@ -100,12 +100,13 @@ namespace TorchSharp
             /// </summary>
             /// <param name="concentration1">1st concentration parameter of the distribution (often referred to as 'α')</param>
             /// <param name="concentration0">2nd concentration parameter of the distribution (often referred to as 'β')</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
             /// <remarks>The order of the arguments is not a mistake -- the original source has them ordered this way.
             /// </remarks>
-            public static Beta Beta(Tensor concentration1, Tensor concentration0)
+            public static Beta Beta(Tensor concentration1, Tensor concentration0, torch.Generator generator = null)
             {
-                return new Beta(concentration1, concentration0);
+                return new Beta(concentration1, concentration0, generator);
             }
         }
     }

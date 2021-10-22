@@ -19,11 +19,12 @@ namespace TorchSharp
 
             public override Tensor variance => total_count * probs * (1 - probs);
 
-            public Binomial(Tensor total_count, Tensor p = null, Tensor l = null) 
+            public Binomial(Tensor total_count, Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
             {
                 this.batch_shape = p is null ? l.size() : p.size();
                 this._probs = p;
                 this._logits = l;
+                this.generator = generator;
 
                 var broadcast = (p is null) ? torch.broadcast_tensors(total_count, l) : torch.broadcast_tensors(total_count, p);
                 this.total_count = broadcast[0].type_as(p ?? l);
@@ -47,7 +48,7 @@ namespace TorchSharp
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
-                return torch.binomial(total_count.expand(shape), probs.expand(shape));
+                return torch.binomial(total_count.expand(shape), probs.expand(shape), generator);
             }
 
             public override Tensor log_prob(Tensor value)
@@ -96,8 +97,9 @@ namespace TorchSharp
             /// <param name="total_count">Number of Bernoulli trials</param>
             /// <param name="probs">The probability of sampling '1'</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Binomial Binomial(Tensor total_count, Tensor probs = null, Tensor logits = null)
+            public static Binomial Binomial(Tensor total_count, Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
             {
                 return new Binomial(total_count, probs, logits);
             }
@@ -108,8 +110,9 @@ namespace TorchSharp
             /// <param name="total_count">Number of Bernoulli trials</param>
             /// <param name="probs">The probability of sampling '1'</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Binomial Binomial(int total_count, float? probs, float? logits)
+            public static Binomial Binomial(int total_count, float? probs, float? logits, torch.Generator generator = null)
             {
                 if (probs.HasValue && !logits.HasValue)
                     return new Binomial(torch.tensor(total_count), torch.tensor(probs.Value), null);
@@ -126,13 +129,14 @@ namespace TorchSharp
             /// <param name="total_count">Number of Bernoulli trials</param>
             /// <param name="probs">The probability of sampling '1'</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Binomial Binomial(int total_count, double? probs, double? logits)
+            public static Binomial Binomial(int total_count, double? probs, double? logits, torch.Generator generator = null)
             {
                 if (probs.HasValue && !logits.HasValue)
-                    return new Binomial(torch.tensor(total_count), torch.tensor(probs.Value), null);
+                    return new Binomial(torch.tensor(total_count), torch.tensor(probs.Value), null, generator);
                 else if (!probs.HasValue && logits.HasValue)
-                    return new Binomial(torch.tensor(total_count), null, torch.tensor(logits.Value));
+                    return new Binomial(torch.tensor(total_count), null, torch.tensor(logits.Value), generator);
                 else
                     throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
             }

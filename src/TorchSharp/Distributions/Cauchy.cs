@@ -20,7 +20,7 @@ namespace TorchSharp
             public override Tensor variance => torch.full(ExtendedShape(), double.NaN, dtype: loc.dtype, device: loc.device);
 
 
-            public Cauchy(Tensor loc, Tensor scale) 
+            public Cauchy(Tensor loc, Tensor scale, torch.Generator generator = null) : base(generator)
             {
                 this.batch_shape = loc.size();
                 var locScale = torch.broadcast_tensors(loc, scale);
@@ -34,7 +34,7 @@ namespace TorchSharp
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
-                var eps = loc.new_empty(shape).cauchy_();
+                var eps = loc.new_empty(shape).cauchy_(generator: generator);
                 return loc + eps * scale;
             }
 
@@ -83,10 +83,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="loc">Mode or median of the distribution.</param>
             /// <param name="scale">Half width at half maximum.</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Cauchy Cauchy(Tensor loc, Tensor scale)
+            public static Cauchy Cauchy(Tensor loc, Tensor scale, torch.Generator generator = null)
             {
-                return new Cauchy(loc, scale);
+                return new Cauchy(loc, scale, generator);
             }
         }
     }

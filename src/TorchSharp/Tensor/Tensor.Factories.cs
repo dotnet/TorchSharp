@@ -162,21 +162,23 @@ namespace TorchSharp
         // randperm()
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
+        extern static IntPtr THSTensor_randperm(IntPtr generator, long n, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public Tensor randperm(long n, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        static public Tensor randperm(long n, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             device = torch.InitializeDevice(device);
             dtype = dtype.HasValue ? dtype : ScalarType.Int64;
 
-            var handle = THSTensor_randperm(n, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+            var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle;
+
+            var handle = THSTensor_randperm(genHandle, n, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
             if (handle == IntPtr.Zero) {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                handle = THSTensor_randperm(n, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                handle = THSTensor_randperm(genHandle, n, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Tensor(handle);
@@ -872,9 +874,9 @@ namespace TorchSharp
             }
         }
 
-        static public Tensor normal(Tensor means, Tensor stddev)
+        static public Tensor normal(Tensor means, Tensor stddev, torch.Generator generator = null)
         {
-            return randn(means.shape) * stddev + means;
+            return randn(means.shape, generator: generator) * stddev + means;
         }
 
         /// <summary>

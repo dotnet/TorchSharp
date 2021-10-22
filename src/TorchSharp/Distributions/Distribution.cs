@@ -11,8 +11,9 @@ namespace TorchSharp
         {
             public abstract class Distribution
             {
-                public Distribution(long[] batch_shape = null, long[] event_shape = null)
+                public Distribution(torch.Generator generator, long[] batch_shape = null, long[] event_shape = null)
                 {
+                    this.generator = generator;
                     this.batch_shape = batch_shape != null ? batch_shape : new long[0];
                     this.event_shape = event_shape != null ? event_shape : new long[0];
                 }
@@ -154,6 +155,8 @@ namespace TorchSharp
                 }
 
                 protected Tensor ClampByZero(Tensor x) => (x.clamp_min(0) + x - x.clamp_max(0)) / 2;
+
+                protected torch.Generator generator;
             }
         }
     }
