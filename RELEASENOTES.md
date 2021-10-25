@@ -6,12 +6,15 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __Fixed Bugs:__
 
-#407 rand() and randn() must check that the data type is floating-point. 
+#407 rand() and randn() must check that the data type is floating-point.
+#410 Support for passing random number generators to rand(), randn(), and randint()
 
 
 __API Changes:__
 
 Added some overloads to make F# usage more convenient.
+Added convenience overloads to a number of random distribution factories.
+Added '_' to the torch.nn.init functions. They overwrite the input tensor, so they should have the in-place indicator.
 
 ### NuGet Version 0.93.5
 

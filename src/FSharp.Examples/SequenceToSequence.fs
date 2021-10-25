@@ -90,9 +90,9 @@ type TransformerModel(ntokens, device:torch.Device) as this =
     do
         let initrange = 0.1
 
-        init.uniform(encoder.Weight, -initrange, initrange) |> ignore
-        init.zeros(decoder.Bias) |> ignore
-        init.uniform(decoder.Weight, -initrange, initrange) |> ignore
+        init.uniform_(encoder.Weight, -initrange, initrange) |> ignore
+        init.zeros_(decoder.Bias) |> ignore
+        init.uniform_(decoder.Weight, -initrange, initrange) |> ignore
 
         this.RegisterComponents()
 

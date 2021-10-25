@@ -15,7 +15,7 @@ namespace TorchSharp
 
         public class Chi2 : Gamma
         {
-            public Chi2(Tensor df) : base(df * 0.5, torch.tensor(0.5))
+            public Chi2(Tensor df, torch.Generator generator = null) : base(df * 0.5, torch.tensor(0.5), generator)
             {
             }
 
@@ -42,10 +42,11 @@ namespace TorchSharp
             /// Creates a Gamma distribution parameterized by a single shape parameter.
             /// </summary>
             /// <param name="df">Shape parameter of the distribution</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Chi2 Chi2(Tensor df)
+            public static Chi2 Chi2(Tensor df, torch.Generator generator = null)
             {
-                return new Chi2(df);
+                return new Chi2(df, generator);
             }
         }
     }

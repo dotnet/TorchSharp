@@ -39,11 +39,6 @@ namespace TorchSharp
                 Assert.Equal(0, deviceCount);
                 Assert.False(isCudnnAvailable);
             }
-
-            //Tensor t = torch.ones(shape);
-            //Assert.Equal(shape, t.Shape);
-            //Assert.Equal(1.0f, t[0, 0].ToSingle());
-            //Assert.Equal(1.0f, t[1, 1].ToSingle());
         }
 
         [Fact]
@@ -89,17 +84,50 @@ namespace TorchSharp
             // This tests that the default generator can be disposed, but will keep on going.
             lock (_lock) {
 
-                long a, b, c;
-                using (var gen = torch.random.manual_seed(4711)) {
-                    a = gen.initial_seed();
-                }
-                using (torch.Generator gen = torch.Generator.Default, genA = new torch.Generator(4355)) {
-                    b = gen.initial_seed();
-                    c = genA.initial_seed();
-                }
+                long a, b, c, d;
+                var gen = torch.random.manual_seed(4711);
+                a = gen.initial_seed();
+
+                torch.Generator genA = torch.Generator.Default;
+                torch.Generator genB = new torch.Generator(4355);
+                torch.Generator genC = new torch.Generator(4355);
+
+                b = genA.initial_seed();
+                c = genB.initial_seed();
+                d = genC.initial_seed(); 
+
                 Assert.Equal(a, b);
+                Assert.Equal(c, d);
                 Assert.NotEqual(a, c);
                 Assert.Equal(4355, c);
+
+                {
+                    var x = torch.rand(100, generator: genB);
+                    var y = torch.rand(100, generator: genC);
+                    Assert.Equal(new long[] { 100 }, x.shape);
+                    Assert.True(x.allclose(y));
+                }
+
+                {
+                    var x = torch.randn(100, generator: genB);
+                    var y = torch.randn(100, generator: genC);
+                    Assert.Equal(new long[] { 100 }, x.shape);
+                    Assert.True(x.allclose(y));
+                }
+
+                {
+                    var x = torch.randint(1000, 100, generator: genB);
+                    var y = torch.randint(1000, 100, generator: genC);
+                    Assert.Equal(new long[] { 100 }, x.shape);
+                    Assert.True(x.allclose(y));
+                }
+
+                {
+                    var x = torch.randperm(1000, generator: genB);
+                    var y = torch.randperm(1000, generator: genC);
+                    Assert.Equal(new long[] { 1000 }, x.shape);
+                    Assert.True(x.allclose(y));
+                }
             }
         }
 

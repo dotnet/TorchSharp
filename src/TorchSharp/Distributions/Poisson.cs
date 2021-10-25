@@ -19,7 +19,7 @@ namespace TorchSharp
 
             public override Tensor variance => rate;
 
-            public Poisson(Tensor rate)
+            public Poisson(Tensor rate, torch.Generator generator = null) : base(generator)
             {
                 var locScale = torch.broadcast_tensors(rate);
                 this.batch_shape = rate.size();
@@ -32,7 +32,7 @@ namespace TorchSharp
             {
                 var shape = ExtendedShape(sample_shape);
                 using(torch.no_grad())
-                    return torch.poisson(rate.expand(shape));
+                    return torch.poisson(rate.expand(shape), generator: generator);
             }
 
             public override Tensor log_prob(Tensor value)
@@ -86,10 +86,33 @@ namespace TorchSharp
             /// Creates a Poisson distribution parameterized by `rate`.
             /// </summary>
             /// <param name="rate">rate = 1 / scale of the distribution (often referred to as 'β')</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Poisson Poisson(Tensor rate)
+            public static Poisson Poisson(Tensor rate, torch.Generator generator = null)
             {
-                return new Poisson(rate);
+                return new Poisson(rate, generator);
+            }
+
+            /// <summary>
+            /// Creates a Poisson distribution parameterized by `rate`.
+            /// </summary>
+            /// <param name="rate">rate = 1 / scale of the distribution (often referred to as 'β')</param>
+            /// <param name="generator">An optional random number generator object.</param>
+            /// <returns></returns>
+            public static Poisson Poisson(float rate, torch.Generator generator = null)
+            {
+                return new Poisson(torch.tensor(rate), generator);
+            }
+
+            /// <summary>
+            /// Creates a Poisson distribution parameterized by `rate`.
+            /// </summary>
+            /// <param name="rate">rate = 1 / scale of the distribution (often referred to as 'β')</param>
+            /// <param name="generator">An optional random number generator object.</param>
+            /// <returns></returns>
+            public static Poisson Poisson(double rate, torch.Generator generator = null)
+            {
+                return new Poisson(torch.tensor(rate), generator);
             }
         }
     }

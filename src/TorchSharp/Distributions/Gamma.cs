@@ -20,7 +20,7 @@ namespace TorchSharp
             public override Tensor variance => concentration / rate.pow(2);
 
 
-            public Gamma(Tensor concentration, Tensor rate)
+            public Gamma(Tensor concentration, Tensor rate, torch.Generator generator = null) : base(generator)
             {
                 var locScale = torch.broadcast_tensors(concentration, rate);
                 this.concentration = locScale[0];
@@ -34,7 +34,7 @@ namespace TorchSharp
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
-                var value = torch._standard_gamma(concentration.expand(shape)) / rate.expand(shape);
+                var value = torch._standard_gamma(concentration.expand(shape), generator: generator) / rate.expand(shape);
                 return value.detach().clamp_(min: torch.finfo(value.dtype).tiny);
             }
 
@@ -91,10 +91,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="concentration">Shape parameter of the distribution (often referred to as 'α')</param>
             /// <param name="rate">rate = 1 / scale of the distribution (often referred to as 'β')</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Gamma Gamma(Tensor concentration, Tensor rate)
+            public static Gamma Gamma(Tensor concentration, Tensor rate, torch.Generator generator = null)
             {
-                return new Gamma(concentration, rate);
+                return new Gamma(concentration, rate, generator);
             }
         }
     }

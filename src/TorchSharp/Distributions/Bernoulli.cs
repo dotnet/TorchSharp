@@ -19,8 +19,11 @@ namespace TorchSharp
 
             public override Tensor variance => probs * (1 - probs);
 
-            public Bernoulli(Tensor p = null, Tensor l = null) 
+            public Bernoulli(Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
             {
+                if ((p is null && logits is null) || (p is not null && l is not null))
+                    throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
+
                 this.batch_shape = p is null ? l.size() : p.size();
                 this._probs = p;
                 this._logits = l;
@@ -44,7 +47,7 @@ namespace TorchSharp
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
-                return torch.bernoulli(probs.expand(shape));
+                return torch.bernoulli(probs.expand(shape), generator);
             }
 
             public override Tensor log_prob(Tensor value)
@@ -87,10 +90,46 @@ namespace TorchSharp
             /// </summary>
             /// <param name="probs">The probability of sampling '1'</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Bernoulli Bernoulli(Tensor probs = null, Tensor logits = null)
+            public static Bernoulli Bernoulli(Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
             {
-                return new Bernoulli(probs, logits);
+                return new Bernoulli(probs, logits, generator);
+            }
+
+            /// <summary>
+            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// </summary>
+            /// <param name="probs">The probability of sampling '1'</param>
+            /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <param name="generator">An optional random number generator object.</param>
+            /// <returns></returns>
+            public static Bernoulli Bernoulli(float? probs, float? logits, torch.Generator generator = null)
+            {
+                if (probs.HasValue && !logits.HasValue)
+                    return new Bernoulli(torch.tensor(probs.Value), null, generator);
+                else if (!probs.HasValue && logits.HasValue)
+                    return new Bernoulli(null, torch.tensor(logits.Value), generator);
+                else
+                    throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
+            }
+
+
+            /// <summary>
+            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// </summary>
+            /// <param name="probs">The probability of sampling '1'</param>
+            /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <param name="generator">An optional random number generator object.</param>
+            /// <returns></returns>
+            public static Bernoulli Bernoulli(double? probs, double? logits, torch.Generator generator = null)
+            {
+                if (probs.HasValue && !logits.HasValue)
+                    return new Bernoulli(torch.tensor(probs.Value), null, generator);
+                else if (!probs.HasValue && logits.HasValue)
+                    return new Bernoulli(null, torch.tensor(logits.Value), generator);
+                else
+                    throw new ArgumentException("One and only one of 'probs' and 'logits' should be non-null");
             }
         }
     }
