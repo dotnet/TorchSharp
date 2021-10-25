@@ -134,6 +134,8 @@ namespace TorchSharp
             public interface ILearningRateController
             {
                 double LearningRate { set; get; }
+
+                Tensor step(Func<Tensor> closure = null);
             }
 
             [DllImport("LibTorchSharp")]
