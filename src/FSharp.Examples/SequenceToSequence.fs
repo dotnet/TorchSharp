@@ -265,7 +265,7 @@ let run epochs =
 
         printfn $"\nEnd of epoch: {epoch} | lr: {lrStr} | time: {elapsed}s | loss: {lossStr}\n"
 
-        scheduler.step()
+        scheduler.step() |> ignore
 
     let tst_loss = evaluate model test_data ntokens
 
