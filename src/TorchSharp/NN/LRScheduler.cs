@@ -15,7 +15,11 @@ namespace TorchSharp
             {
                 public abstract class LRScheduler
                 {
-                    internal LRScheduler(ILearningRateController optimizer, int last_epoch = -1, bool verbose = false)
+                    protected LRScheduler()
+                    {
+
+                    }
+                    protected LRScheduler(ILearningRateController optimizer, int last_epoch = -1, bool verbose = false)
                     {
                         _optimizer = optimizer;
                         _last_epoch = last_epoch;
@@ -71,7 +75,7 @@ namespace TorchSharp
                         /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
                         /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
                         /// <returns>A scheduler</returns>
-                        public LambdaLR(ILearningRateController optimizer, Func<int,double> lr_lambda, int last_epoch = -1, bool verbose = false) : base(optimizer, last_epoch, verbose)
+                        public LambdaLR(ILearningRateController optimizer, Func<int, double> lr_lambda, int last_epoch = -1, bool verbose = false) : base(optimizer, last_epoch, verbose)
                         {
                             if (optimizer == null) throw new ArgumentNullException("optimizer");
                             _lr_lambda = lr_lambda;
@@ -175,7 +179,7 @@ namespace TorchSharp
                         /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
                         /// <returns>A scheduler</returns>
                         public MultiStepLR(ILearningRateController optimizer, IList<int> milestones, double gamma = 0.1, int last_epoch = -1, bool verbose = false) : base(optimizer, last_epoch, verbose)
-                        { 
+                        {
                             if (optimizer == null) throw new ArgumentNullException("optimizer");
                             _milestones = milestones;
                             _gamma = gamma;
@@ -228,6 +232,118 @@ namespace TorchSharp
                         }
 
                         private double _gamma;
+                    }
+
+                    /// <summary>
+                    /// Decays the learning rate of each parameter group by a small constant factor until the number of epoch reaches a pre-defined milestone: total_iters.
+                    /// Notice that such decay can happen simultaneously with other changes to the learning rate from outside this scheduler.
+                    /// When last_epoch=-1, sets initial lr as lr.
+                    /// </summary>
+                    public class ConstantLR : LRScheduler
+                    {
+                        /// <summary>
+                        /// Constructor
+                        /// </summary>
+                        /// <param name="optimizer">Wrapped optimizer.</param>
+                        /// <param name="factor">The number we multiply learning rate until the milestone.</param>
+                        /// <param name="total_iters">The number of steps that the scheduler decays the learning rate.</param>
+                        /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
+                        /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
+                        /// <returns>A scheduler</returns>
+                        public ConstantLR(ILearningRateController optimizer, double factor = 1.0 / 3, int total_iters = 5, int last_epoch = -1, bool verbose = false) : base(optimizer, last_epoch, verbose)
+                        {
+                            if (optimizer == null) throw new ArgumentNullException("optimizer");
+                            _factor = factor;
+                            _total_iters = total_iters;
+
+                            step();
+                        }
+
+                        public override double LearningRate {
+                            get {
+                                if (_last_epoch == 0) {
+                                    return _optimizer.LearningRate * _factor;
+                                } else if (_last_epoch == _total_iters) {
+                                    return _optimizer.LearningRate * (1.0 / _factor);
+                                } else {
+                                    return _optimizer.LearningRate;
+                                }
+                            }
+                        }
+
+                        private double _factor;
+                        private int _total_iters;
+                    }
+
+
+                    /// <summary>
+                    /// Decays the learning rate of each parameter group by linearly changing small multiplicative factor until the
+                    /// number of epoch reaches a pre-defined milestone: total_iters.
+                    /// Notice that such decay can happen simultaneously with other changes to the learning rate from outside this scheduler.
+                    /// When last_epoch=-1, sets initial lr as lr.
+                    /// </summary>
+                    public class LinearLR : LRScheduler
+                    {
+                        /// <summary>
+                        /// Constructor
+                        /// </summary>
+                        /// <param name="optimizer">Wrapped optimizer.</param>
+                        /// <param name="start_factor">The number we multiply learning rate in the first epoch. The multiplication factor changes towards end_factor in the following epochs.</param>
+                        /// <param name="end_factor">The number we multiply learning rate at the end of linear changing process.</param>
+                        /// <param name="total_iters">The number of steps that the scheduler decays the learning rate.</param>
+                        /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
+                        /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
+                        /// <returns>A scheduler</returns>
+                        public LinearLR(ILearningRateController optimizer, double start_factor = 1.0 / 3, double end_factor = 5, int total_iters = 5, int last_epoch = -1, bool verbose = false) : base(optimizer, last_epoch, verbose)
+                        {
+                            if (optimizer == null) throw new ArgumentNullException("optimizer");
+                            _start_factor = start_factor;
+                            _end_factor = end_factor;
+                            _total_iters = total_iters;
+
+                            step();
+                        }
+
+                        public override double LearningRate {
+                            get {
+                                if (_last_epoch == 0) {
+                                    return _optimizer.LearningRate * _start_factor;
+                                } else if (_last_epoch > _total_iters) {
+                                    return _optimizer.LearningRate;
+                                } else {
+                                    return (_total_iters * _start_factor + (_last_epoch - 1) * (_end_factor - _start_factor));
+                                }
+                            }
+                        }
+
+                        private double _start_factor;
+                        private double _end_factor;
+                        private int _total_iters;
+                    }
+
+                    /// <summary>
+                    /// Chains list of learning rate schedulers. It takes a list of chainable learning rate schedulers and applies step() to all of them.
+                    /// </summary>
+                    public class ChainedLR : LRScheduler
+                    {
+                        /// <summary>
+                        /// Constructor
+                        /// </summary>
+                        /// <param name="schedulers">List of chained schedulers.</param>
+                        /// <returns>A scheduler</returns>
+                        public ChainedLR(IEnumerable<LRScheduler> schedulers)
+                        {
+                            _schedulers = schedulers;
+                        }
+
+                        public override void step()
+                        {
+                            foreach (var sched in _schedulers) {
+                                sched.step();
+                            }
+                        }
+
+                        private IEnumerable<LRScheduler> _schedulers;
                     }
                 }
 
@@ -307,6 +423,48 @@ namespace TorchSharp
                 public static LRScheduler ExponentialLR(ILearningRateController optimizer, double gamma = 0.1, int last_epoch = -1, bool verbose = false)
                 {
                     return new impl.ExponentialLR(optimizer, gamma, last_epoch, verbose);
+                }
+
+                /// <summary>
+                /// Decays the learning rate of each parameter group by a small constant factor until the number of epoch reaches a pre-defined milestone: total_iters.
+                /// Notice that such decay can happen simultaneously with other changes to the learning rate from outside this scheduler.
+                /// When last_epoch=-1, sets initial lr as lr.
+                /// </summary>
+                /// <param name="optimizer">Wrapped optimizer.</param>
+                /// <param name="factor">The number we multiply learning rate until the milestone.</param>
+                /// <param name="total_iters">The number of steps that the scheduler decays the learning rate.</param>
+                /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
+                /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
+                /// <returns>A scheduler</returns>
+                public static LRScheduler ConstantLR(ILearningRateController optimizer, double factor = 1.0 / 3, int total_iters = 5, int last_epoch = -1, bool verbose = false)
+                {
+                    return new impl.ConstantLR(optimizer, factor, total_iters, last_epoch, verbose);
+                }
+
+                /// <summary>
+                /// Decays the learning rate of each parameter group by linearly changing small multiplicative factor until the
+                /// number of epoch reaches a pre-defined milestone: total_iters.
+                /// </summary>
+                /// <param name="optimizer">Wrapped optimizer.</param>
+                /// <param name="start_factor">The number we multiply learning rate in the first epoch. The multiplication factor changes towards end_factor in the following epochs.</param>
+                /// <param name="end_factor">The number we multiply learning rate at the end of linear changing process.</param>
+                /// <param name="total_iters">The number of steps that the scheduler decays the learning rate.</param>
+                /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
+                /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
+                /// <returns>A scheduler</returns>
+                public static LRScheduler LinearLR(ILearningRateController optimizer, double start_factor = 1.0 / 3, double end_factor = 5, int total_iters = 5, int last_epoch = -1, bool verbose = false)
+                {
+                    return new impl.LinearLR(optimizer, start_factor, end_factor, total_iters, last_epoch, verbose);
+                }
+
+                /// <summary>
+                /// Chains list of learning rate schedulers. It takes a list of chainable learning rate schedulers and applies step() to all of them.
+                /// </summary>
+                ///<param name="schedulers">List of chained schedulers.</param>
+                /// <returns>A scheduler</returns>
+                public static LRScheduler ChainedLR(IEnumerable<LRScheduler> schedulers)
+                {
+                    return new impl.ChainedLR(schedulers);
                 }
             }
         }
