@@ -15,7 +15,8 @@ namespace TorchSharp
             {
                 public abstract class LRScheduler
                 {
-                    public abstract void step();
+                    public abstract Tensor step(Func<Tensor> closure = null);
+
                     public double LearningRate => _optimizer.LearningRate;
 
                     protected ILearningRateController _optimizer;
@@ -46,23 +47,24 @@ namespace TorchSharp
                             _initial = optimizer.LearningRate;
                             _step = step_size;
                             _gamma = gamma;
-                            _last = last_epoch;
+                            _last = last_epoch == -1 ? int.MaxValue : last_epoch;
                             _verbose = verbose;
                         }
 
-                        public override void step()
+                        public override Tensor step(Func<Tensor> closure = null)
                         {
                             _epoch += 1;
 
-                            if (_last == -1) {
-                                _optimizer.LearningRate = _initial;
-                                if (_verbose) Console.WriteLine($"Learning rate updated to: {_initial}");
-                            } else if (_epoch % _step == 0 && _epoch <= _last) {
+                            var result = _optimizer.step(closure);
+
+                            if (_epoch % _step == 0 && _epoch <= _last) {
                                 var lr = _optimizer.LearningRate;
                                 lr *= _gamma;
                                 _optimizer.LearningRate = lr;
                                 if (_verbose) Console.WriteLine($"Learning rate updated to: {lr}");
                             }
+
+                            return result;
                         }
 
                         private double _initial;
@@ -94,23 +96,24 @@ namespace TorchSharp
                             _optimizer = optimizer;
                             _initial = optimizer.LearningRate;
                             _gamma = gamma;
-                            _last = last_epoch;
+                            _last = last_epoch == -1 ? int.MaxValue : last_epoch;
                             _verbose = verbose;
                         }
 
-                        public override void step()
+                        public override Tensor step(Func<Tensor> closure = null)
                         {
                             _epoch += 1;
 
-                            if (_last == -1) {
-                                _optimizer.LearningRate = _initial;
-                                if (_verbose) Console.WriteLine($"Learning rate updated to: {_initial}");
-                            } else if (_epoch <= _last) {
+                            var result = _optimizer.step(closure);
+
+                            if (_epoch <= _last) {
                                 var lr = _optimizer.LearningRate;
                                 lr *= _gamma;
                                 _optimizer.LearningRate = lr;
                                 if (_verbose) Console.WriteLine($"Learning rate updated to: {lr}");
                             }
+
+                            return result;
                         }
 
                         private double _initial;

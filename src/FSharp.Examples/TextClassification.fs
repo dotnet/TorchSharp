@@ -152,7 +152,7 @@ let run epochs =
         let lrStr = scheduler.LearningRate.ToString("0.0000")
         let tsStr = sw.Elapsed.TotalSeconds.ToString("0.0")
         printfn $"\nEnd of epoch: {epoch} | lr: {lrStr} | time: {tsStr}s\n"
-        scheduler.step()
+        scheduler.step() |> ignore
 
     use test_reader = TorchText.Data.AG_NEWSReader.AG_NEWS("test", device, datasetPath)
 
