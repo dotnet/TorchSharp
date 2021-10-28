@@ -340,6 +340,76 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using NAdam optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingNAdam()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.NAdam(seq.named_parameters());
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingRAdam()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.RAdam(seq.named_parameters());
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using ASGD optimizer.
         /// </summary>
         [Fact]

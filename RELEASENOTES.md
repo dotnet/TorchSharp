@@ -10,7 +10,8 @@ __Fixed Bugs:__
 
 __API Changes:__
 
-Added several missing learning rate schedulers.
+Added the NAdam and RAdam optimizers.
+Added several missing and new learning rate schedulers.
 
 
 ### NuGet Version 0.93.8
