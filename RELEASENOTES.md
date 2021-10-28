@@ -2,6 +2,17 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+### NuGet Version 0.93.9
+
+__Fixed Bugs:__
+
+#414 LRScheduler -- not calling the optimizer to step() [The original, closing fix was actually incorrect, but was then fixed again.]
+
+__API Changes:__
+
+Added several missing learning rate schedulers.
+
+
 ### NuGet Version 0.93.8
 
 __Fixed Bugs:__

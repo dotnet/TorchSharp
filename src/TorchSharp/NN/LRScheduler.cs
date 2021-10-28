@@ -321,6 +321,50 @@ namespace TorchSharp
                         private int _total_iters;
                     }
 
+
+                    /// <summary>
+                    /// Set the learning rate of each parameter group using a cosine annealing schedule.
+                    /// When last_epoch=-1, sets initial lr as lr.
+                    /// </summary>
+                    public class CosineAnnealingLR : LRScheduler
+                    {
+                        /// <summary>
+                        /// Constructor
+                        /// </summary>
+                        /// <param name="optimizer">Wrapped optimizer.</param>
+                        /// <param name="T_max">Maximum number of iterations.</param>
+                        /// <param name="eta_min">Minimum learning rate.</param>
+                        /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
+                        /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
+                        /// <returns>A scheduler</returns>
+                        public CosineAnnealingLR(ILearningRateController optimizer, double T_max, double eta_min = 0, int last_epoch = -1, bool verbose = false) : base(optimizer, last_epoch, verbose)
+                        {
+                            if (optimizer == null) throw new ArgumentNullException("optimizer");
+                            _T_max = T_max;
+                            _eta_min = eta_min;
+
+                            step();
+                        }
+
+                        public override double LearningRate {
+                            get {
+                                if (_last_epoch == 0) {
+                                    return _optimizer.LearningRate;
+                                } else if ((_last_epoch - 1 - _T_max) % (2 * _T_max) == 0) {
+                                    return _optimizer.LearningRate + (_base_lr - _eta_min) *
+                                           (1 - Math.Cos(Math.PI / _T_max)) / 2;
+                                } else {
+                                    return (1 + Math.Cos(Math.PI * _last_epoch / _T_max)) /
+                                           (1 + Math.Cos(Math.PI * (_last_epoch - 1)/ _T_max)) *
+                                           (_optimizer.LearningRate - _eta_min) + _eta_min;
+                                }
+                            }
+                        }
+
+                        private double _T_max;
+                        private double _eta_min;
+                    }
+
                     /// <summary>
                     /// Chains list of learning rate schedulers. It takes a list of chainable learning rate schedulers and applies step() to all of them.
                     /// </summary>
@@ -465,6 +509,20 @@ namespace TorchSharp
                 public static LRScheduler ChainedLR(IEnumerable<LRScheduler> schedulers)
                 {
                     return new impl.ChainedLR(schedulers);
+                }
+
+                /// <summary>
+                /// Sets the learning rate using a cosine annealing schedule.
+                /// </summary>
+                /// <param name="optimizer">Wrapped optimizer.</param>
+                /// <param name="T_max">Maximum number of iterations.</param>
+                /// <param name="eta_min">Minimum learning rate.</param>
+                /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
+                /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
+                /// <returns>A scheduler</returns>
+                public static LRScheduler CosineAnnealingLR(ILearningRateController optimizer, double T_max, double eta_min = 0, int last_epoch = -1, bool verbose = false)
+                {
+                    return new impl.CosineAnnealingLR(optimizer, T_max, eta_min, last_epoch, verbose);
                 }
             }
         }

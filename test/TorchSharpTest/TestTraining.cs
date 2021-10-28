@@ -703,6 +703,50 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestTrainingSGDCosineAnnealingLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, 10);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            double lastLR = learning_rate;
+
+            for (int i = 0; i < 10; i++) {
+                var eval = seq.forward(x);
+                var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
+
+                if (i == 2 || i == 4 || i == 6) {
+                    Assert.True(scheduler.LearningRate < lastLR);
+                }
+                lastLR = scheduler.LearningRate;
+            }
+
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
         public void TestTrainingLBFGSDefaults()
         {
             var lin1 = Linear(1000, 100);
