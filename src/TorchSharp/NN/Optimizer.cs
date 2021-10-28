@@ -136,8 +136,6 @@ namespace TorchSharp
                 double LearningRate { set; get; }
 
                 double InitialLearningRate { set; get; }
-
-                Tensor step(Func<Tensor> closure = null);
             }
 
             [DllImport("LibTorchSharp")]
