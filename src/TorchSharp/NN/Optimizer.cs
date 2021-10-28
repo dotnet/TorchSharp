@@ -135,7 +135,7 @@ namespace TorchSharp
             {
                 double LearningRate { set; get; }
 
-                Tensor step(Func<Tensor> closure = null);
+                double InitialLearningRate { set; get; }
             }
 
             [DllImport("LibTorchSharp")]
@@ -361,6 +361,7 @@ namespace TorchSharp
             public OptimizerHelper(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate) : base(IntPtr.Zero)
             {
                 LearningRate = learningRate;
+                InitialLearningRate = learningRate;
                 _parameters = named_parameters;
             }
 
@@ -374,6 +375,8 @@ namespace TorchSharp
             }
 
             public double LearningRate { get; set; }
+
+            public double InitialLearningRate { get; set; }
 
             protected IEnumerable<(string name, Modules.Parameter parameter)> _parameters;
         }
@@ -391,6 +394,7 @@ namespace TorchSharp
             public AdadeltaOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0) : base(named_parameters, lr)
             {
                 LearningRate = lr;
+                InitialLearningRate = lr;
                 _rho = rho;
                 _eps = eps;
                 _weight_decay = weight_decay;
@@ -488,6 +492,7 @@ namespace TorchSharp
             public AdamaxOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0) : base(named_parameters, lr)
             {
                 LearningRate = lr;
+                InitialLearningRate = lr;
                 _beta1 = beta1;
                 _beta2 = beta2;
                 _eps = eps;
@@ -584,6 +589,7 @@ namespace TorchSharp
             public ASGDOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0) : base(named_parameters, lr)
             {
                 LearningRate = lr;
+                InitialLearningRate = lr;
                 _lambd = lambd;
                 _alpha = alpha;
                 _t0 = t0;
@@ -682,6 +688,7 @@ namespace TorchSharp
             public RpropOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50) : base(named_parameters, lr)
             {
                 LearningRate = lr;
+                InitialLearningRate = lr;
                 _etaminus = etaminus;
                 _etaplus = etaplus;
                 _min_step = min_step;
@@ -764,6 +771,7 @@ namespace TorchSharp
             public AdagradOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -774,6 +782,8 @@ namespace TorchSharp
                 set { THSNN_Adagrad_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
 
+            public double InitialLearningRate { get; set; }
+
             private double _rate;
         }
 
@@ -782,6 +792,7 @@ namespace TorchSharp
             public AdamOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -792,6 +803,8 @@ namespace TorchSharp
                 set { THSNN_Adam_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
 
+            public double InitialLearningRate { get; set; }
+
             private double _rate;
         }
 
@@ -800,6 +813,7 @@ namespace TorchSharp
             public AdamWOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -810,6 +824,8 @@ namespace TorchSharp
                 set { THSNN_AdamW_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
 
+            public double InitialLearningRate { get; set; }
+
             private double _rate;
         }
 
@@ -818,6 +834,7 @@ namespace TorchSharp
             public RMSPropOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -828,6 +845,8 @@ namespace TorchSharp
                 set { THSNN_RMSprop_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
 
+            public double InitialLearningRate { get; set; }
+
             private double _rate;
         }
 
@@ -836,6 +855,7 @@ namespace TorchSharp
             public LBFGSOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -845,6 +865,8 @@ namespace TorchSharp
                 get { return _rate; }
                 set { THSNN_LBFGS_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
+
+            public double InitialLearningRate { get; set; }
 
             public override Tensor step(Func<Tensor> closure = null)
             {
@@ -861,6 +883,7 @@ namespace TorchSharp
             public SGDOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -870,6 +893,8 @@ namespace TorchSharp
                 get { return _rate; }
                 set { THSNN_SGD_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
+
+            public double InitialLearningRate { get; set; }
 
             private double _rate;
         }
