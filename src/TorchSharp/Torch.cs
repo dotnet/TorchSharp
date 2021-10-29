@@ -285,6 +285,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSGenerator_manual_seed(long seed);
 
+            /// <summary>
+            /// Sets the seed for generating random numbers. Returns a torch.Generator object.
+            /// </summary>
+            /// <param name="seed">The desired seed.</param>
+            /// <returns></returns>
             public static Generator manual_seed(long seed)
             {
                 TryInitializeDeviceType(DeviceType.CUDA);
@@ -349,6 +354,9 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern bool THSTorchCuda_cudnn_is_available();
 
+            /// <summary>
+            /// Returns a bool indicating if CUDNN is currently available.
+            /// </summary>
             public static bool is_cudnn_available()
             {
                 TryInitializeDeviceType(DeviceType.CUDA);
@@ -426,6 +434,10 @@ namespace TorchSharp
         }
     }
 
+    /// <summary>
+    /// The LibTorch device types.
+    /// </summary>
+    /// <remarks>TorchSharp currently only supports CPU and CUDA.</remarks>
     public enum DeviceType
     {
         CPU = 0,

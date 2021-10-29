@@ -15,12 +15,22 @@ namespace TorchSharp
 {
     public static partial class torch
     {
+        /// <summary>
+        /// Random Number Generator
+        /// </summary>
         public class Generator : IDisposable
         {
             public IntPtr Handle { get; private set; }
 
+            /// <summary>
+            /// Gets the current device of the generator.
+            /// </summary>
             public torch.Device device { get; private set; }
 
+            /// <summary>
+            /// Returns the Generator state as a torch.ByteTensor.
+            /// </summary>
+            /// <returns></returns>
             public Tensor get_state()
             {
                 var res = THSGenerator_get_rng_state(Handle);
@@ -28,6 +38,10 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Sets the Generator state.
+            /// </summary>
+            /// <param name="value">The desired state.</param>
             public void set_state(Tensor value)
             {
                 THSGenerator_set_rng_state(Handle, value.Handle);
@@ -41,6 +55,10 @@ namespace TorchSharp
                 return this;
             }
 
+            /// <summary>
+            /// Gets a non-deterministic random number from std::random_device or the current time and uses it to seed a Generator.
+            /// </summary>
+            /// <returns></returns>
             public long seed()
             {
                 long seed = DateTime.UtcNow.Ticks;
@@ -55,6 +73,11 @@ namespace TorchSharp
                 device = torch.CPU;
             }
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="seed">An initial seed to use with the generator.</param>
+            /// <param name="device">The desired device.</param>
             public Generator(ulong seed = 0, torch.Device? device = null) :
                 this(THSGenerator_new(seed, (long)(device?.type ?? DeviceType.CPU), device?.index ?? -1))
             {
@@ -70,6 +93,10 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static long THSGenerator_initial_seed(IntPtr handle);
 
+            /// <summary>
+            /// Returns the initial seed for generating random numbers.
+            /// </summary>
+            /// <returns></returns>
             public long initial_seed()
             {
                 return THSGenerator_initial_seed(Handle);
