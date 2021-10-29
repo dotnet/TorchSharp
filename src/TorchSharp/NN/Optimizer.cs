@@ -135,7 +135,7 @@ namespace TorchSharp
             {
                 double LearningRate { set; get; }
 
-                Tensor step(Func<Tensor> closure = null);
+                double InitialLearningRate { set; get; }
             }
 
             [DllImport("LibTorchSharp")]
@@ -273,6 +273,41 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Implements NAdam algorithm.
+            ///
+            /// For further details regarding the algorithm we refer to Incorporating Nesterov Momentum into Adam.
+            /// https://openreview.net/forum?id=OM0jvwB8jIp57ZJjtNEZ
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="momentum_decay">Momentum decay</param>
+            public static NAdamOptimizer NAdam(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3)
+            {
+                return new NAdamOptimizer(named_parameters, lr, beta1, beta2, eps, weight_decay, momentum_decay);
+            }
+
+            /// <summary>
+            /// Implements RAdam algorithm.
+            ///
+            /// For further details regarding the algorithm we refer to 'On the variance of the adaptive learning rate and beyond.'
+            /// https://arxiv.org/abs/1908.03265
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            public static RAdamOptimizer RAdam(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            {
+                return new RAdamOptimizer(named_parameters, lr, beta1, beta2, eps, weight_decay);
+            }
+
+            /// <summary>
             /// Implements Adamax algorithm (a variant of Adam based on infinity norm).
             ///
             /// It has been proposed in Adam: A Method for Stochastic Optimization.
@@ -361,6 +396,7 @@ namespace TorchSharp
             public OptimizerHelper(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate) : base(IntPtr.Zero)
             {
                 LearningRate = learningRate;
+                InitialLearningRate = learningRate;
                 _parameters = named_parameters;
             }
 
@@ -374,6 +410,8 @@ namespace TorchSharp
             }
 
             public double LearningRate { get; set; }
+
+            public double InitialLearningRate { get; set; }
 
             protected IEnumerable<(string name, Modules.Parameter parameter)> _parameters;
         }
@@ -391,6 +429,7 @@ namespace TorchSharp
             public AdadeltaOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0) : base(named_parameters, lr)
             {
                 LearningRate = lr;
+                InitialLearningRate = lr;
                 _rho = rho;
                 _eps = eps;
                 _weight_decay = weight_decay;
@@ -488,6 +527,7 @@ namespace TorchSharp
             public AdamaxOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0) : base(named_parameters, lr)
             {
                 LearningRate = lr;
+                InitialLearningRate = lr;
                 _beta1 = beta1;
                 _beta2 = beta2;
                 _eps = eps;
@@ -567,6 +607,221 @@ namespace TorchSharp
             private double _weight_decay;
         }
 
+        public class NAdamOptimizer : OptimizerHelper, ILearningRateController
+        {
+            /// <summary>
+            /// Implements NAdam algorithm.
+            ///
+            /// For further details regarding the algorithm we refer to Incorporating Nesterov Momentum into Adam.
+            /// https://openreview.net/forum?id=OM0jvwB8jIp57ZJjtNEZ
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="momentum_decay">Momentum decay</param>
+            /// <returns></returns>
+            public NAdamOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3) : base(named_parameters, lr)
+            {
+                LearningRate = lr;
+                InitialLearningRate = lr;
+                _beta1 = beta1;
+                _beta2 = beta2;
+                _eps = eps;
+                _weight_decay = weight_decay;
+                _momentum_decay = momentum_decay;
+
+                foreach (var (name, p) in named_parameters) {
+                    var state = new State();
+                    _state[name] = state;
+                    state.step = 0;
+                    state.mu_product = 1;
+                    state.exp_avg = torch.zeros_like(p);
+                    state.exp_avg_sq = torch.zeros_like(p);
+                }
+            }
+
+            public override Tensor step(Func<Tensor> closure = null)
+            {
+                Tensor loss = null;
+
+                if (closure != null) {
+                    loss = closure();
+                }
+
+                List<Tensor> paramsWithGrads = new List<Tensor>();
+                List<Tensor> grads = new List<Tensor>();
+
+                List<Tensor> exp_avgs = new List<Tensor>();
+                List<Tensor> exp_avg_sqs = new List<Tensor>();
+                List<double> mu_products = new List<double>();
+
+                List<string> names = new List<string>();
+
+                using (var _ = torch.no_grad()) {
+
+                    foreach (var (name, param) in _parameters) {
+
+                        if (param.grad() is null) continue;
+
+                        var state = _state[name];
+
+                        state.step += 1;
+
+                        var grad = param.grad();
+                        var exp_avg = state.exp_avg;
+                        var exp_avg_sq = state.exp_avg_sq;
+
+                        var bias_correction2 = 1 - Math.Pow(_beta2, state.step);
+
+                        if (_weight_decay != 0) {
+                            grad = grad.add(param, alpha: _weight_decay);
+                        }
+
+                        var mu = _beta1 * (1.0 - 0.5 * Math.Pow(0.96, state.step * _momentum_decay));
+                        var mu_next = _beta1 * (1.0 - 0.5 * Math.Pow(0.96, (state.step + 1) * _momentum_decay));
+
+                        var mu_product = state.mu_product * mu;
+                        var mu_product_next = mu_product * mu * mu_next;
+
+                        exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
+                        exp_avg_sq.mul_(_beta2).addcmul_(grad, grad, value: 1 - _beta2);
+
+                        var denom = exp_avg_sq.div(bias_correction2).sqrt().add_(_eps);
+                        param.addcdiv_(grad, denom, value: -LearningRate * (1 - mu) / (1 - mu_product));
+                        param.addcdiv_(exp_avg, denom, value: -LearningRate * mu_next / (1 - mu_product_next));
+
+                        state.mu_product = mu_product;
+                    }
+                }
+
+                return loss;
+            }
+
+            private class State
+            {
+                public int step;
+                public double mu_product; 
+                public Tensor exp_avg;
+                public Tensor exp_avg_sq;
+            }
+
+            private Dictionary<string, State> _state = new Dictionary<string, State>();
+            private double _beta1;
+            private double _beta2;
+            private double _eps;
+            private double _weight_decay;
+            private double _momentum_decay;
+        }
+
+        public class RAdamOptimizer : OptimizerHelper, ILearningRateController
+        {
+            /// <summary>
+            /// Implements RAdam algorithm.
+            ///
+            /// For further details regarding the algorithm we refer to 'On the variance of the adaptive learning rate and beyond.'
+            /// https://arxiv.org/abs/1908.03265
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public RAdamOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0) : base(named_parameters, lr)
+            {
+                LearningRate = lr;
+                InitialLearningRate = lr;
+                _beta1 = beta1;
+                _beta2 = beta2;
+                _eps = eps;
+                _weight_decay = weight_decay;
+
+                foreach (var (name, p) in named_parameters) {
+                    var state = new State();
+                    _state[name] = state;
+                    state.step = 0;
+                    state.exp_avg = torch.zeros_like(p);
+                    state.exp_avg_sq = torch.zeros_like(p);
+                }
+            }
+
+            public override Tensor step(Func<Tensor> closure = null)
+            {
+                Tensor loss = null;
+
+                if (closure != null) {
+                    loss = closure();
+                }
+
+                List<Tensor> paramsWithGrads = new List<Tensor>();
+                List<Tensor> grads = new List<Tensor>();
+
+                List<Tensor> exp_avgs = new List<Tensor>();
+                List<Tensor> exp_avg_sqs = new List<Tensor>();
+                List<double> mu_products = new List<double>();
+
+                List<string> names = new List<string>();
+
+                using (var _ = torch.no_grad()) {
+
+                    foreach (var (name, param) in _parameters) {
+
+                        if (param.grad() is null) continue;
+
+                        var state = _state[name];
+
+                        state.step += 1;
+
+                        var grad = param.grad();
+                        var exp_avg = state.exp_avg;
+                        var exp_avg_sq = state.exp_avg_sq;
+
+                        var bias_correction1 = 1 - Math.Pow(_beta1, state.step);
+                        var bias_correction2 = 1 - Math.Pow(_beta2, state.step);
+
+                        if (_weight_decay != 0) {
+                            grad = grad.add(param, alpha: _weight_decay);
+                        }
+
+                        exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
+                        exp_avg_sq.mul_(_beta2).addcmul_(grad, grad, value: 1 - _beta2);
+
+                        var bias_corrected_exp_avg = exp_avg / bias_correction1;
+                        var rho_inf = 2 / (1 - _beta2) - 1;
+                        var rho_t = rho_inf - 2 * state.step * Math.Pow(_beta2, state.step) / bias_correction2;
+
+                        if (rho_t > 5) {
+                            var rect = Math.Sqrt((rho_t - 4) * (rho_t - 2) * rho_inf / ((rho_inf - 4) * (rho_inf - 2) * rho_t));
+                            var adaptive_lr = Math.Sqrt(bias_correction2) / exp_avg_sq.sqrt().add_(_eps);
+                            param.add_(bias_corrected_exp_avg * LearningRate * adaptive_lr * rect, alpha: -1.0);
+                        }
+                        else {
+                            param.add_(bias_corrected_exp_avg * LearningRate, alpha: -1.0);
+                        }
+                    }
+                }
+
+                return loss;
+            }
+
+            private class State
+            {
+                public int step;
+                public Tensor exp_avg;
+                public Tensor exp_avg_sq;
+            }
+
+            private Dictionary<string, State> _state = new Dictionary<string, State>();
+            private double _beta1;
+            private double _beta2;
+            private double _eps;
+            private double _weight_decay;
+        }
+
         public class ASGDOptimizer : OptimizerHelper, ILearningRateController
         {
             /// <summary>
@@ -584,6 +839,7 @@ namespace TorchSharp
             public ASGDOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0) : base(named_parameters, lr)
             {
                 LearningRate = lr;
+                InitialLearningRate = lr;
                 _lambd = lambd;
                 _alpha = alpha;
                 _t0 = t0;
@@ -682,6 +938,7 @@ namespace TorchSharp
             public RpropOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50) : base(named_parameters, lr)
             {
                 LearningRate = lr;
+                InitialLearningRate = lr;
                 _etaminus = etaminus;
                 _etaplus = etaplus;
                 _min_step = min_step;
@@ -764,6 +1021,7 @@ namespace TorchSharp
             public AdagradOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -774,6 +1032,8 @@ namespace TorchSharp
                 set { THSNN_Adagrad_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
 
+            public double InitialLearningRate { get; set; }
+
             private double _rate;
         }
 
@@ -782,6 +1042,7 @@ namespace TorchSharp
             public AdamOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -792,6 +1053,8 @@ namespace TorchSharp
                 set { THSNN_Adam_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
 
+            public double InitialLearningRate { get; set; }
+
             private double _rate;
         }
 
@@ -800,6 +1063,7 @@ namespace TorchSharp
             public AdamWOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -810,6 +1074,8 @@ namespace TorchSharp
                 set { THSNN_AdamW_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
 
+            public double InitialLearningRate { get; set; }
+
             private double _rate;
         }
 
@@ -818,6 +1084,7 @@ namespace TorchSharp
             public RMSPropOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -828,6 +1095,8 @@ namespace TorchSharp
                 set { THSNN_RMSprop_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
 
+            public double InitialLearningRate { get; set; }
+
             private double _rate;
         }
 
@@ -836,6 +1105,7 @@ namespace TorchSharp
             public LBFGSOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -845,6 +1115,8 @@ namespace TorchSharp
                 get { return _rate; }
                 set { THSNN_LBFGS_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
+
+            public double InitialLearningRate { get; set; }
 
             public override Tensor step(Func<Tensor> closure = null)
             {
@@ -861,6 +1133,7 @@ namespace TorchSharp
             public SGDOptimizer(IntPtr handle, double lr) : base(handle)
             {
                 _rate = lr;
+                InitialLearningRate = lr;
             }
 
             [DllImport("LibTorchSharp")]
@@ -870,6 +1143,8 @@ namespace TorchSharp
                 get { return _rate; }
                 set { THSNN_SGD_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
             }
+
+            public double InitialLearningRate { get; set; }
 
             private double _rate;
         }
