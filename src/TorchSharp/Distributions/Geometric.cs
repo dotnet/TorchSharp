@@ -12,25 +12,50 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// A Geometric distribution parameterized by probs,
+        /// where probs is the probability of success of Bernoulli trials.
+        ///
+        /// It represents the probability that in k+1 Bernoulli trials, the
+        /// first k trials failed, before seeing a success.
+        /// </summary>
         public class Geometric : torch.distributions.Distribution
         {
-
+            /// <summary>
+            /// The mean of the distribution.
+            /// </summary>
             public override Tensor mean => 1 / (probs - 1);
 
+            /// <summary>
+            /// The variance of the distribution
+            /// </summary>
             public override Tensor variance => (1.0f / probs - 1.0f) / probs;
 
-            public Geometric(Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator) 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="probs">The probability of sampling '1'. Must be in range (0, 1]</param>
+            /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <param name="generator">An optional random number generator object.</param>
+            public Geometric(Tensor probs = null, Tensor logits = null, torch.Generator generator = null) : base(generator) 
             {
-                this.batch_shape = p is null ? l.size() : p.size();
-                this._probs = p;
-                this._logits = l;
+                this.batch_shape = probs is null ? logits.size() : probs.size();
+                this._probs = probs;
+                this._logits = logits;
             }
 
+            /// <summary>
+            /// Event probabilities
+            /// </summary>
             public Tensor probs {
                 get {
                     return _probs ?? LogitsToProbs(_logits, true);
                 }
             }
+
+            /// <summary>
+            /// Event log-odds
+            /// </summary>
             public Tensor logits {
                 get {
                     return _logits ?? ProbsToLogits(_probs);
@@ -40,6 +65,11 @@ namespace TorchSharp
             private Tensor _probs;
             private Tensor _logits;
 
+            /// <summary>
+            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+            ///  if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
@@ -50,6 +80,10 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Returns the log of the probability density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
                 var bcast = torch.broadcast_tensors(value, probs);
@@ -59,18 +93,29 @@ namespace TorchSharp
                 return value * (-p).log1p() + probs.log();
             }
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
+            /// <returns></returns>
             public override Tensor entropy()
             {
                 return torch.nn.functional.binary_cross_entropy_with_logits(logits, probs, reduction: nn.Reduction.None);
             }
 
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `~torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Geometric))
                     throw new ArgumentException("expand(): 'instance' must be a Geometric distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Geometric(p: _probs?.expand(batch_shape), l: logits?.expand(batch_shape)) :
+                    new Geometric(probs: _probs?.expand(batch_shape), logits: logits?.expand(batch_shape)) :
                     instance) as Geometric;
 
                 newDistribution.batch_shape = batch_shape;

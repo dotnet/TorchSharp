@@ -12,11 +12,19 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// A Beta distribution parameterized by concentration1 and concentration0.
+        /// </summary>
         public class Beta : torch.distributions.ExponentialFamily
         {
-
+            /// <summary>
+            /// The mean of the distribution.
+            /// </summary>
             public override Tensor mean => concentration1 / (concentration1 + concentration0);
 
+            /// <summary>
+            /// The variance of the distribution
+            /// </summary>
             public override Tensor variance {
                 get {
                     var total = concentration0 + concentration1;
@@ -41,22 +49,41 @@ namespace TorchSharp
             private Tensor concentration1;
             private Tensor concentration0;
 
+            /// <summary>
+            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+            ///  if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
                 return dirichlet.rsample(sample_shape).select(-1, 0);
             }
 
+            /// <summary>
+            /// Returns the log of the probability density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
                 var heads_tails = torch.stack(new Tensor[] { value, 1.0 - value }, -1);
                 return dirichlet.log_prob(heads_tails);
             }
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
             public override Tensor entropy()
             {
                 return dirichlet.entropy();
             }
 
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `~torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Beta))

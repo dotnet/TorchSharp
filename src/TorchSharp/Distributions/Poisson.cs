@@ -12,6 +12,9 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// A Poisson distribution parameterized by `rate`.
+        /// </summary>
         public class Poisson : torch.distributions.ExponentialFamily
         {
 
@@ -19,6 +22,11 @@ namespace TorchSharp
 
             public override Tensor variance => rate;
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="rate">rate = 1 / scale of the distribution (often referred to as 'β')</param>
+            /// <param name="generator">An optional random number generator object.</param>
             public Poisson(Tensor rate, torch.Generator generator = null) : base(generator)
             {
                 var locScale = torch.broadcast_tensors(rate);
@@ -28,6 +36,11 @@ namespace TorchSharp
 
             private Tensor rate;
 
+            /// <summary>
+            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+            ///  if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
@@ -35,6 +48,10 @@ namespace TorchSharp
                     return torch.poisson(rate.expand(shape), generator: generator);
             }
 
+            /// <summary>
+            /// Returns the log of the probability density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
                 var bcast = torch.broadcast_tensors(rate, value);
@@ -43,16 +60,32 @@ namespace TorchSharp
                 return value.xlogy(r) - r - (value + 1).lgamma();
             }
 
+            /// <summary>
+            /// Returns the cumulative density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
                 return 1 - torch.exp(-rate * value);
             }
 
+            /// <summary>
+            /// Returns the inverse cumulative density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor icdf(Tensor value)
             {
                 return -torch.log(1 - value) / rate;
             }
 
+            /// <summary>
+            /// Returns tensor containing all values supported by a discrete distribution. The result will enumerate over dimension 0, so the shape
+            /// of the result will be `(cardinality,) + batch_shape + event_shape` (where `event_shape = ()` for univariate distributions).
+            ///
+            /// Note that this enumerates over all batched tensors in lock-step `[[0, 0], [1, 1], ...]`. With `expand=False`, enumeration happens
+            /// along dim 0, but with the remaining batch dimensions being singleton dimensions, `[[0], [1], ..`
+            /// </summary>
+            /// <param name="expand">Whether to expand the support over the batch dims to match the distribution's `batch_shape`.</param>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Poisson))

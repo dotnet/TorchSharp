@@ -12,16 +12,33 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// A Normal (Gaussian) distribution.
+        /// </summary>
         public class Normal : torch.distributions.Distribution
         {
-
+            /// <summary>
+            /// The mean of the distribution.
+            /// </summary>
             public override Tensor mean => loc;
 
+            /// <summary>
+            /// The standard deviation of the distribution
+            /// </summary>
             public override Tensor stddev => scale;
 
+            /// <summary>
+            /// The variance of the distribution
+            /// </summary>
             public override Tensor variance => scale.pow(2);
 
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="loc">Mode or median of the distribution.</param>
+            /// <param name="scale">Standard deviation.</param>
+            /// <param name="generator">An optional random number generator object.</param>
             public Normal(Tensor loc, Tensor scale, torch.Generator generator = null) : base(generator)
             {
                 this.batch_shape = loc.size();
@@ -33,6 +50,10 @@ namespace TorchSharp
             private Tensor loc;
             private Tensor scale;
 
+            /// <summary>
+            /// Generates a sample_shape shaped sample or sample_shape shaped batch of samples if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape"></param>
             public override Tensor sample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
@@ -41,6 +62,12 @@ namespace TorchSharp
                 }
             }
 
+
+            /// <summary>
+            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+            ///  if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
@@ -48,6 +75,10 @@ namespace TorchSharp
                 return loc + eps * scale;
             }
 
+            /// <summary>
+            /// Returns the log of the probability density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
                 var v = scale.pow(2);
@@ -55,20 +86,39 @@ namespace TorchSharp
                 return -((value - loc).pow(2)) / (2 * v) - log_scale - Math.Log(Math.Sqrt(2 * Math.PI));
             }
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
             public override Tensor entropy()
             {
                 return 0.5 + 0.5 * Math.Log(2 * Math.PI) + torch.log(scale);
             }
 
+            /// <summary>
+            /// Returns the cumulative density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
                 return 0.5 * (1 + torch.special.erf((value - loc) * scale.reciprocal() / Math.Sqrt(2)));
             }
 
+            /// <summary>
+            /// Returns the inverse cumulative density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor icdf(Tensor value)
             {
                 return loc + scale * torch.special.erfinv(2 * value - 1) * Math.Sqrt(2);
             }
+
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `~torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Normal))
