@@ -13,13 +13,13 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_1_9_0_11
-        const string libtorchPackageVersion = "1.9.0.11";
+#if LIBTORCH_1_10_0_1
+        const string libtorchPackageVersion = "1.10.0.1";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
-#if CUDA_11_1
-        const string cudaVersion = "11.1";
+#if CUDA_11_3
+        const string cudaVersion = "11.3";
 #else
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
@@ -41,7 +41,7 @@ namespace TorchSharp
             //   lib.so
             //   lib.so.1
             //   lib.so.11.0
-            //   lib.so.11.1
+            //   lib.so.11.3
             @".*\.so(\.\d*)*";
         static bool nativeBackendLoaded = false;
         static bool nativeBackendCudaLoaded = false;
@@ -104,9 +104,9 @@ namespace TorchSharp
                         TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(torch).Assembly, trace);
                         TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(torch).Assembly, trace);
                         TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("nvrtc-builtins64_111", typeof(torch).Assembly, trace);
+                        TryLoadNativeLibraryByName("nvrtc-builtins64_113", typeof(torch).Assembly, trace);
                         TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("nvrtc64_111_0", typeof(torch).Assembly, trace);
+                        TryLoadNativeLibraryByName("nvrtc64_112_0", typeof(torch).Assembly, trace);
                     }
                     TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
                     ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);

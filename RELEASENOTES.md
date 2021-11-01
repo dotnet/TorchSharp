@@ -64,7 +64,7 @@ TorchSharp-cuda-windows
 
 ### NuGet Version 0.93.1
 
-With this release, the native libtorch package version was updated to 1.9.0.11, and that required rebuilding this package.
+With this release, the native libtorch package version was updated to 1.10.0.1, and that required rebuilding this package.
 
 ### NuGet Version 0.93.0
 

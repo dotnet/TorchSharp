@@ -49,10 +49,8 @@
     <File Include="libtorch\lib\libfbjni.dylib" />
     <File Include="libtorch\lib\libiomp5.dylib" />
     <File Include="libtorch\lib\libjitbackend_test.dylib" />
-    <File Include="libtorch\lib\libprocess_group_agent.dylib" />
     <File Include="libtorch\lib\libpytorch_jni.dylib" />
     <File Include="libtorch\lib\libshm.dylib" />
-    <File Include="libtorch\lib\libtensorpipe_agent.dylib" />
     <File Include="libtorch\lib\libtorch.dylib" />
     <File Include="libtorch\lib\libtorch_cpu.dylib" />
     <File Include="libtorch\lib\libtorch_global_deps.dylib" />
@@ -67,10 +65,9 @@
     <File Include="libtorch\lib\libcaffe2_observers.so" />
     <File Include="libtorch\lib\libfbjni.so" />
     <File Include="libtorch\lib\libjitbackend_test.so" />
-    <File Include="libtorch\lib\libprocess_group_agent.so" />
+    <File Include="libtorch\lib\libnnapi_backend.so" />
     <File Include="libtorch\lib\libpytorch_jni.so" />
     <File Include="libtorch\lib\libshm.so" />
-    <File Include="libtorch\lib\libtensorpipe_agent.so" />
     <File Include="libtorch\lib\libtorch.so" />
     <File Include="libtorch\lib\libtorch_cpu.so" />
     <File Include="libtorch\lib\libtorch_global_deps.so" />
