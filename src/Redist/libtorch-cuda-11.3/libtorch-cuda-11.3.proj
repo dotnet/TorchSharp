@@ -95,19 +95,18 @@
     <File Include= "libtorch\lib\libcaffe2_observers.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libfbjni.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libjitbackend_test.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libprocess_group_agent.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnnapi_backend.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libpytorch_jni.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libtensorpipe_agent.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_cpu.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcudart-6d56b25a.so.11.0" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libnvrtc-3a20f2b6.so.11.3" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libnvrtc-builtins-07fb3db5.so.11.3" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libgomp-7c85b1e2.so.1" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcudart-a7b20f20.so.11.0" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvrtc-1ea278b5.so.11.2" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvrtc-builtins-4730a239.so.11.3" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libgomp-a34b3233.so.1" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvToolsExt-24de1d56.so.1" PackageSuffix="part1"  />
     
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
@@ -119,10 +118,7 @@
     <File Include= "libtorch\lib\libtorch_cuda_cpp.so"  PackageSuffix="part2-fragment4" FileUnstitchIndex="4" FileUnstitchStart="1000000000" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\libtorch_cuda_cpp.so"  PackageSuffix="part2-fragment5" FileUnstitchIndex="5" FileUnstitchStart="1250000000" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\libtorch_cuda_cpp.so"  PackageSuffix="part2-fragment6" FileUnstitchIndex="6" FileUnstitchStart="1500000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cpp.so"  PackageSuffix="part2-fragment7" FileUnstitchIndex="7" FileUnstitchStart="1750000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cpp.so"  PackageSuffix="part2-fragment8" FileUnstitchIndex="8" FileUnstitchStart="2000000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cpp.so"  PackageSuffix="part2-fragment9" FileUnstitchIndex="9" FileUnstitchStart="2250000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cpp.so"  PackageSuffix="part2-fragment10" FileUnstitchIndex="10" FileUnstitchStart="2500000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libtorch_cuda_cpp.so"  PackageSuffix="part2-fragment7" FileUnstitchIndex="7" FileUnstitchStart="1750000000" FileUnstitchSize="-1" />
     
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
