@@ -2,6 +2,10 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+### NuGet Version 0.95.0
+
+This version integrates with LibTorch 1.10.0. It does not yet support any of the new features.
+
 ### NuGet Version 0.93.9
 
 __Fixed Bugs:__

@@ -283,7 +283,7 @@ namespace TorchSharp
             Assert.Equal<int>(trans.contiguous().data<int>().ToArray(), trans.data<int>().ToArray());
         }
 
-        [Fact]
+        [Fact(Skip ="For now, we don't support negative strides.")]
         public void ValidateIssue399_4()
         {
             // This test is added because 'flip()' may, in the future, be implemented returning a view.

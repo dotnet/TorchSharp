@@ -10,7 +10,7 @@ namespace TorchSharp
     public static partial class torch
     {
         /// <summary>
-        /// Represents the dimensions of a tensor.
+        /// Represents the dimensions of a tensor, that is, its shape.
         /// </summary>
         /// <remarks>
         /// The primary purpose of this type, at the moment, is to avoid having to declare
@@ -180,6 +180,10 @@ namespace TorchSharp
                 return _shape.GetHashCode();
             }
 
+            /// <summary>
+            /// The number of elements in a tensor, the product of its shape elements.
+            /// </summary>
+            /// <returns></returns>
             public long numel()
             {
                 long size = 1;
@@ -203,10 +207,20 @@ namespace TorchSharp
                 return this.GetEnumerator();
             }
 
+            /// <summary>
+            /// Element accessor
+            /// </summary>
+            /// <param name="idx">The element index</param>
+            /// <returns></returns>
             public long this[int idx] {
                 get { return _shape[idx]; }
             }
 
+            /// <summary>
+            /// Element accessor
+            /// </summary>
+            /// <param name="idx">The element index</param>
+            /// <returns></returns>
             public long this[long idx] {
                 get { return _shape[(int)idx]; }
             }
