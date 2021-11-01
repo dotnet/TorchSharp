@@ -51,9 +51,10 @@
     <NativeAssemblyReference Include="fbgemm" Variant="cuda\" />
     <NativeAssemblyReference Include="libiomp5md" Variant="cuda\" />
     <NativeAssemblyReference Include="libiompstubs5md" Variant="cuda\" />
-    <NativeAssemblyReference Include="nvrtc64_111_0" Variant="cuda\" />
-    <NativeAssemblyReference Include="nvrtc-builtins64_111" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvrtc64_112_0" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvrtc-builtins64_113" Variant="cuda\" />
     <NativeAssemblyReference Include="nvToolsExt64_1" Variant="cuda\" />
+    <NativeAssemblyReference Include="pytorch_jni" Variant="cuda\" />
     <NativeAssemblyReference Include="torch" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cpu" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cuda" Variant="cuda\" />
@@ -72,10 +73,8 @@
     <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="iomp5" />
     <NativeAssemblyReference Include="jitbackend_test" />
-    <NativeAssemblyReference Include="process_group_agent" />
     <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="shm" />
-    <NativeAssemblyReference Include="tensorpipe_agent" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
@@ -91,11 +90,10 @@
     <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
     <NativeAssemblyReference Include="caffe2_observers" />
     <NativeAssemblyReference Include="fbjni" />
+    <NativeAssemblyReference Include="iomp5" />
     <NativeAssemblyReference Include="jitbackend_test" />
-    <NativeAssemblyReference Include="process_group_agent" />
     <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="shm" />
-    <NativeAssemblyReference Include="tensorpipe_agent" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
