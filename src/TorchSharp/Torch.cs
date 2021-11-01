@@ -13,13 +13,13 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_1_9_0_11
-        const string libtorchPackageVersion = "1.9.0.11";
+#if LIBTORCH_1_10_0_11
+        const string libtorchPackageVersion = "1.10.0.1";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
 #if CUDA_11_1
-        const string cudaVersion = "11.1";
+        const string cudaVersion = "11.3";
 #else
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
@@ -41,7 +41,7 @@ namespace TorchSharp
             //   lib.so
             //   lib.so.1
             //   lib.so.11.0
-            //   lib.so.11.1
+            //   lib.so.11.3
             @".*\.so(\.\d*)*";
         static bool nativeBackendLoaded = false;
         static bool nativeBackendCudaLoaded = false;

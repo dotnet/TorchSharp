@@ -24,7 +24,7 @@
     <NativeAssemblyReference Include="uv" />
   </ItemGroup>
 
-  <!-- Windows CUDA 11.1 libtorch binary list used for examples and testing -->
+  <!-- Windows CUDA 11.3 libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' == 'true' and '$(SkipCuda)' != 'true') and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="c10" Variant="cuda\" />
     <NativeAssemblyReference Include="asmjit" Variant="cuda\" />
