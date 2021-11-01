@@ -90,7 +90,6 @@
     <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
     <NativeAssemblyReference Include="caffe2_observers" />
     <NativeAssemblyReference Include="fbjni" />
-    <NativeAssemblyReference Include="iomp5" />
     <NativeAssemblyReference Include="jitbackend_test" />
     <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="shm" />
