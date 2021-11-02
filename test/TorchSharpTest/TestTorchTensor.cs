@@ -5058,11 +5058,38 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSpeciali0()
+        {
+            var a = torch.arange(0.0f, 5.0f, 1.0f);
+            var expected = torch.tensor(new float[] { 0.99999994f, 1.266066f, 2.27958512f, 4.88079262f, 11.3019209f });
+            var b = torch.special.i0(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
         public void TestSpeciali0e()
         {
             var a = torch.arange(0.0f, 5.0f, 1.0f);
             var expected = torch.tensor(new float[] { 1.0f, 0.465759635f, 0.3085083f, 0.243000358f, 0.20700191f });
             var b = torch.special.i0e(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpeciali1()
+        {
+            var a = torch.arange(0.0f, 5.0f, 1.0f);
+            var expected = torch.tensor(new float[] { 0.0000f, 0.5651591f, 1.59063685f, 3.95337057f, 9.759467f });
+            var b = torch.special.i1(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpeciali1e()
+        {
+            var a = torch.arange(0.0f, 5.0f, 1.0f);
+            var expected = torch.tensor(new float[] { 0.0000f, 0.207910419f, 0.215269282f, 0.196826726f, 0.178750873f });
+            var b = torch.special.i1e(a);
             Assert.True(b.allclose(expected));
         }
 

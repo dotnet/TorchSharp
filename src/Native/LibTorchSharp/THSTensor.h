@@ -1311,9 +1311,8 @@ EXPORT_API(Tensor) THSLinalg_vector_norm(const Tensor tensor, const Scalar ord, 
 EXPORT_API(Tensor) THSSpecial_entr(const Tensor tensor);
 
 EXPORT_API(Tensor) THSSpecial_erf(const Tensor tensor);
-
 EXPORT_API(Tensor) THSSpecial_erfc(const Tensor tensor);
-
+EXPORT_API(Tensor) THSSpecial_erfcx(const Tensor tensor);
 EXPORT_API(Tensor) THSSpecial_erfinv(const Tensor tensor);
 
 EXPORT_API(Tensor) THSSpecial_expit(const Tensor tensor);
@@ -1323,12 +1322,32 @@ EXPORT_API(Tensor) THSSpecial_expm1(const Tensor tensor);
 EXPORT_API(Tensor) THSSpecial_exp2(const Tensor tensor);
 
 EXPORT_API(Tensor) THSSpecial_gammaln(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_gammainc(const Tensor input, const Tensor other);
+EXPORT_API(Tensor) THSSpecial_gammaincc(const Tensor input, const Tensor other);
 
+EXPORT_API(Tensor) THSSpecial_polygamma(const int64_t n, const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_digamma(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_multigammaln(const Tensor tensor, const int64_t p);
+
+EXPORT_API(Tensor) THSSpecial_i0(const Tensor tensor);
 EXPORT_API(Tensor) THSSpecial_i0e(const Tensor tensor);
+
+EXPORT_API(Tensor) THSSpecial_i1(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_i1e(const Tensor tensor);
 
 EXPORT_API(Tensor) THSSpecial_logit(const Tensor tensor);
 
+EXPORT_API(Tensor) THSSpecial_log_softmax(const Tensor tensor, int64_t dim, int8_t scalar_type);
+
+EXPORT_API(Tensor) THSSpecial_ndtr(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_ndtri(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_sinc(const Tensor tensor);
+
 EXPORT_API(Tensor) THSSpecial_xlog1py(const Tensor input, const Tensor other);
+
+EXPORT_API(Tensor) THSSpecial_zeta(const Tensor input, const Tensor other);
 
 
 // torch.nn.init:
