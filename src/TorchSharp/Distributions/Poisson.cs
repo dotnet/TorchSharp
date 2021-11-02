@@ -85,7 +85,6 @@ namespace TorchSharp
             /// Note that this enumerates over all batched tensors in lock-step `[[0, 0], [1, 1], ...]`. With `expand=False`, enumeration happens
             /// along dim 0, but with the remaining batch dimensions being singleton dimensions, `[[0], [1], ..`
             /// </summary>
-            /// <param name="expand">Whether to expand the support over the batch dims to match the distribution's `batch_shape`.</param>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Poisson))

@@ -68,6 +68,8 @@ EXPORT_API(Tensor) THSTensor_amax_out(const Tensor tensor, const int64_t* dimens
 EXPORT_API(Tensor) THSTensor_amin(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim);
 EXPORT_API(Tensor) THSTensor_amin_out(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, const Tensor out);
 
+EXPORT_API(Tensor) THSTensor_aminmax(const Tensor tensor, const int64_t dim, bool keepdim, Tensor* max);
+
 EXPORT_API(Tensor) THSTensor_any(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_any_along_dimension(const Tensor tensor, const int64_t dim, bool keepdim);
@@ -279,6 +281,8 @@ EXPORT_API(Tensor) THSTensor_copy_(const Tensor input, const Tensor other, const
 
 EXPORT_API(Tensor) THSTensor_cos(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_corrcoef(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_cos_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_cosh(const Tensor tensor);
@@ -286,6 +290,8 @@ EXPORT_API(Tensor) THSTensor_cosh(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_cosh_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_count_nonzero(const Tensor tensor, const int64_t* dim, const int dim_len);
+
+EXPORT_API(Tensor) THSTensor_cov(const Tensor input, int64_t correction, const Tensor fweights, const Tensor aweights);
 
 EXPORT_API(Tensor) THSTensor_cpu(const Tensor tensor);
 
@@ -571,6 +577,8 @@ EXPORT_API(int) THSTensor_is_sparse(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_isclose(const Tensor tensor, const Tensor other, const double rtol, const double atol, const bool equal_nan);
 
+EXPORT_API(Tensor) THSTensor_isin(const Tensor elements, const Tensor test_elements, bool assume_unique, bool invert);
+
 EXPORT_API(Tensor) THSTensor_isinf(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_isfinite(const Tensor tensor);
@@ -781,6 +789,8 @@ EXPORT_API(Tensor) THSTensor_mul_(const Tensor left, const Tensor right);
 EXPORT_API(Tensor) THSTensor_mul_scalar(const Tensor tensor, const Scalar scalar);
 
 EXPORT_API(Tensor) THSTensor_mul_scalar_(const Tensor tensor, const Scalar scalar);
+
+EXPORT_API(Tensor) THSTensor_nanmean(const Tensor input, const int64_t* dims, const int dims_len, bool keepdim, int8_t scalar_type);
 
 EXPORT_API(Tensor) THSTensor_nanmedian(const Tensor input);
 
@@ -1117,6 +1127,12 @@ EXPORT_API(Tensor) THSTensor_triu(const Tensor tensor, const int64_t diagonal);
 EXPORT_API(Tensor) THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2);
 
 EXPORT_API(Tensor) THSTensor_transpose_(const Tensor tensor, const int64_t dim1, const int64_t dim2);
+
+EXPORT_API(Tensor) THSTensor_cumulative_trapezoid_x(const Tensor y, const Tensor x, int64_t dim);
+EXPORT_API(Tensor) THSTensor_cumulative_trapezoid_dx(const Tensor y, const double dx, int64_t dim);
+
+EXPORT_API(Tensor) THSTensor_trapezoid_x(const Tensor y, const Tensor x, int64_t dim);
+EXPORT_API(Tensor) THSTensor_trapezoid_dx(const Tensor y, const double dx, int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_to_dense(Tensor tensor);
 

@@ -2390,6 +2390,21 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestReflectionPad3d()
+        {
+            var data = torch.rand(new long[] { 32, 3, 4, 4, 4 });
+
+            using (var pad = ReflectionPad3d(3)) {
+                var output = pad.forward(data);
+                Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
+                var values = output.data<float>().ToArray();
+                Assert.Equal(values[6], values[0]);
+                Assert.Equal(values[5], values[1]);
+                Assert.Equal(values[4], values[2]);
+            }
+        }
+
+        [Fact]
         public void TestReplicationPad1d()
         {
             var data = torch.rand(new long[] { 32, 3, 4 });

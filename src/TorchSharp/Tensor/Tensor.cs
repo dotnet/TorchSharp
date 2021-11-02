@@ -1578,6 +1578,7 @@ namespace TorchSharp
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_amax(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim);
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_amax_out(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim, IntPtr _out);
 
@@ -1624,6 +1625,23 @@ namespace TorchSharp
                         return new Tensor(res);
                     }
                 }
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_aminmax(IntPtr tensor, long dim, bool keep_dim, out IntPtr max);
+
+
+            /// <summary>
+            /// Computes the minimum and maximum values of the input tensor.
+            /// </summary>
+            /// <param name="dim">The dimension along which to compute the values. If null, computes the values over the entire input tensor</param>
+            /// <param name="keepDim"> If true, the reduced dimensions will be kept in the output tensor as dimensions with size 1 for broadcasting.</param>
+            /// <returns></returns>
+            public (Tensor min, Tensor max) aminmax(long? dim = null, bool keepDim = false)
+            {
+                var res = THSTensor_aminmax(handle, (dim is null) ? -1 : dim.Value, keepDim, out IntPtr maxHandle);
+                if (res == IntPtr.Zero || maxHandle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return (new Tensor(res), new Tensor(maxHandle));
             }
 
             [DllImport("LibTorchSharp")]
@@ -1798,6 +1816,52 @@ namespace TorchSharp
                 }
             }
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_cov(IntPtr tensor, long correction, IntPtr fweights, IntPtr aweights);
+
+            /// <summary>
+            /// Estimates the covariance matrix of the variables given by the input matrix, where rows are the variables and columns are the observations.
+            /// </summary>
+            /// <param name="correction">
+            /// Difference between the sample size and sample degrees of freedom.
+            /// Defaults to Bessel’s correction, correction = 1 which returns the unbiased estimate,
+            /// even if both fweights and aweights are specified.
+            /// Correction = 0 will return the simple average.
+            /// </param>
+            /// <param name="fweights">
+            /// A Scalar or 1D tensor of observation vector frequencies representing the number of times each observation should be repeated.
+            /// Its numel must equal the number of columns of input.
+            /// Must have integral dtype.</param>
+            /// <param name="aweights">A Scalar or 1D array of observation vector weights.
+            /// These relative weights are typically large for observations considered “important” and smaller for
+            /// observations considered less “important”.
+            /// Its numel must equal the number of columns of input.
+            /// Must have floating point dtype.</param>
+            public Tensor cov(long correction = 1, Tensor? fweights = null, Tensor? aweights = null)
+            {
+                var fwHandle = fweights is null ? IntPtr.Zero : fweights.handle;
+                var awHandle = aweights is null ? IntPtr.Zero : aweights.handle;
+                var res = THSTensor_cov(handle, correction, fwHandle, awHandle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_corrcoef(IntPtr tensor);
+
+            /// <summary>
+            /// Estimates the Pearson product-moment correlation coefficient matrix of the variables given by the input matrix, where rows are the variables and columns are the observations.
+            /// </summary>
+            /// <remarks>
+            /// Due to floating point rounding, the resulting array may not be Hermitian and its diagonal elements may not be 1.
+            /// The real and imaginary values are clipped to the interval [-1, 1] in an attempt to improve this situation.
+            /// </remarks>
+            public Tensor corrcoef()
+            {
+                var res = THSTensor_corrcoef(handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_tile(IntPtr tensor, IntPtr reps, int reps_len);
@@ -2203,10 +2267,27 @@ namespace TorchSharp
             /// <param name="rtol">Relative tolerance</param>
             /// <param name="atol">Absolute tolerance</param>
             /// <param name="nanEqual">If true, then two NaN s will be considered equal</param>
-            /// <returns></returns>
             public Tensor isclose(Tensor other, double rtol = 1e-05, double atol = 1e-08, bool nanEqual = false)
             {
                 var res = THSTensor_isclose(handle, other.Handle, rtol, atol, nanEqual);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_isin(IntPtr elements, IntPtr test_elements, bool assume_unique, bool invert);
+
+            /// <summary>
+            /// Tests if each element of elements is in test_elements.
+            /// Returns a boolean tensor of the same shape as elements that is true for elements in test_elements and false otherwise.
+            /// </summary>
+            /// <param name="test_elements">Values against which to test for each input element</param>
+            /// <param name="assumeUnique">If true, assumes both elements and test_elements contain unique elements, which can speed up the calculation.</param>
+            /// <param name="invert">If true, inverts the boolean return tensor, resulting in true values for elements not in test_elements.</param>
+            public Tensor isin(Tensor test_elements, bool assumeUnique = false, bool invert = false)
+            {
+                var res = THSTensor_isin(handle, test_elements.handle, assumeUnique, invert);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -4549,6 +4630,21 @@ namespace TorchSharp
             public Tensor flipud()
             {
                 var res = THSTensor_flipud(handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_nanmean(IntPtr tensor, long dim, bool keepdim, sbyte scalar_type);
+
+            /// <summary>
+            /// Returns the mean of the values in input, ignoring NaN values.
+            /// </summary>
+            public Tensor nanmean(int? dim = null, bool keepdim = false, ScalarType? dtype = null)
+            {
+                var d = (dim is null) ? -1 : dim.Value;
+                var t = (dtype is null) ? this.dtype : dtype.Value;
+                var res = THSTensor_nanmean(handle, d, keepdim, (sbyte)t);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

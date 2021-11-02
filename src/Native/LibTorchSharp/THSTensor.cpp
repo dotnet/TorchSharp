@@ -39,6 +39,14 @@ Tensor THSTensor_amin_out(const Tensor tensor, const int64_t* dimensions, int le
     CATCH_TENSOR(torch::amin_out(*out, *tensor, c10::IntArrayRef(dimensions, length), keepdim));
 }
 
+Tensor THSTensor_aminmax(const Tensor tensor, const int64_t dim, bool keepdim, Tensor* max)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = dim == -1 ? tensor->aminmax(c10::nullopt, keepdim) : tensor->aminmax(dim, keepdim);)
+    *max = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 Tensor THSTensor_angle(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->angle());
@@ -249,6 +257,18 @@ int THSTensor_is_contiguous(const Tensor tensor)
 Tensor THSTensor_copysign(const Tensor input, const Tensor other)
 {
     CATCH_TENSOR(input->copysign(*other));
+}
+
+Tensor THSTensor_corrcoef(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->corrcoef());
+}
+
+Tensor THSTensor_cov(const Tensor input, int64_t correction, const Tensor fweights, const Tensor aweights)
+{
+    c10::optional<at::Tensor> fw = (fweights == nullptr) ? c10::optional<at::Tensor>() : *fweights;
+    c10::optional<at::Tensor> aw = (aweights == nullptr) ? c10::optional<at::Tensor>() : *aweights;
+    CATCH_TENSOR(input->cov(correction, fw, aw));
 }
 
 Tensor THSTensor_cpu(const Tensor tensor)
@@ -553,6 +573,11 @@ Tensor THSTensor_igammac(const Tensor tensor, const Tensor other)
 Tensor THSTensor_isclose(const Tensor tensor, const Tensor other, const double rtol, const double atol, const bool equal_nan)
 {
     CATCH_TENSOR(torch::isclose(*tensor, *other, rtol, atol, equal_nan));
+}
+
+Tensor THSTensor_isin(const Tensor elements, const Tensor test_elements, bool assume_unique, bool invert)
+{
+    CATCH_TENSOR(torch::isin(*elements, *test_elements, assume_unique, invert));
 }
 
 
@@ -890,6 +915,11 @@ Tensor THSTensor_nansum(const Tensor input)
     CATCH_TENSOR(torch::nansum(*input));
 }
 
+Tensor THSTensor_nanmean(const Tensor input, const int64_t* dims, const int dims_len, bool keepdim, int8_t scalar_type)
+{
+    CATCH_TENSOR(torch::nanmean(*input, at::ArrayRef<int64_t>(dims, dims_len), keepdim, at::ScalarType(scalar_type)));
+}
+
 Tensor THSTensor_nanmedian(const Tensor input)
 {
     CATCH_TENSOR(torch::nanmedian(*input));
@@ -1148,6 +1178,26 @@ Tensor THSTensor_sigmoid(const Tensor tensor)
 Tensor THSTensor_sigmoid_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->sigmoid_());
+}
+
+Tensor THSTensor_cumulative_trapezoid_x(const Tensor y, const Tensor x, int64_t dim)
+{
+    CATCH_TENSOR(torch::cumulative_trapezoid(*y, *x, dim));
+}
+
+Tensor THSTensor_cumulative_trapezoid_dx(const Tensor y, const double dx, int64_t dim)
+{
+    CATCH_TENSOR(torch::cumulative_trapezoid(*y, dx, dim));
+}
+
+Tensor THSTensor_trapezoid_x(const Tensor y, const Tensor x, int64_t dim)
+{
+    CATCH_TENSOR(torch::trapezoid(*y, *x, dim));
+}
+
+Tensor THSTensor_trapezoid_dx(const Tensor y, const double dx, int64_t dim)
+{
+    CATCH_TENSOR(torch::trapezoid(*y, dx, dim));
 }
 
 void THSTensor_split_with_size(

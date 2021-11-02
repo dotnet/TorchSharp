@@ -344,6 +344,19 @@ Tensor   THSNN_ReflectionPad2d_forward(const NNModule module, const Tensor tenso
     CATCH_TENSOR((*module)->as<torch::nn::ReflectionPad2d>()->forward(*tensor));
 }
 
+NNModule THSNN_ReflectionPad3d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReflectionPad3dOptions(padding);
+    res = create_module<torch::nn::ReflectionPad3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_ReflectionPad3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::ReflectionPad3d>()->forward(*tensor));
+}
+
 
 
 template<typename T>

@@ -3561,6 +3561,18 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void AMinMaxTest()
+        {
+            var a = torch.randn(new long[] { 15, 5, 4, 3 });
+            var b = a.aminmax(0);
+            Assert.Equal(new long[] { 5, 4, 3 }, b.min.shape);
+            Assert.Equal(new long[] { 5, 4, 3 }, b.max.shape);
+            var c = a.aminmax(0, keepDim: true);
+            Assert.Equal(new long[] { 1, 5, 4, 3 }, c.min.shape);
+            Assert.Equal(new long[] { 1, 5, 4, 3 }, c.max.shape);
+        }
+
+        [Fact]
         public void TanTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -3667,6 +3679,17 @@ namespace TorchSharp
                 var res = torch.tensor(data).arctan();
                 Assert.True(res.allclose(torch.tensor(expected)));
             }
+        }
+
+
+        [Fact]
+        public void CovarianceTest()
+        {
+            var data = new float[] { 0, 2, 1, 1, 2, 0 };
+            var expected = new float[] { 1, -1, -1, 1};
+            var res = torch.tensor(data).reshape(3, 2).T;
+            var cov1 = res.cov();
+            Assert.True(cov1.allclose(torch.tensor(expected).reshape(2,2)));
         }
 
         [Fact]
