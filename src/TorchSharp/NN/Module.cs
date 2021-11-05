@@ -482,6 +482,11 @@ namespace TorchSharp
 
                 public virtual Tensor forward(Tensor x, Tensor y) => throw new NotImplementedException("forward(x,y)");
 
+                /// <summary>
+                /// Save the parameters and buffers of the module to a disk location.
+                /// </summary>
+                /// <param name="location">The file path.</param>
+                /// <returns></returns>
                 public Module save(string location)
                 {
                     cpu();
@@ -513,6 +518,16 @@ namespace TorchSharp
                     }
                 }
 
+                /// <summary>
+                /// Load the parameters and buffers 
+                /// </summary>
+                /// <param name="location">The file path.</param>
+                /// <param name="strict">
+                /// If true, will only load a module if it exactly corresponds to the current module's state.
+                /// If false, will load the parameters and buffers that it finds in the saved file,
+                /// leaving everything else alone.
+                /// </param>
+                /// <returns></returns>
                 public Module load(string location, bool strict = true)
                 {
                     using (var stream = System.IO.File.OpenRead(location))
