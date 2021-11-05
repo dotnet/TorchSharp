@@ -8,6 +8,9 @@ namespace TorchSharp
 {
     using static torch;
 
+    /// <summary>
+    /// Helper class, relying on IDisposable to implement 'using (var x = torch.no_grad()) { ... } blocks.
+    /// </summary>
     internal class AutoGradMode : IDisposable
     {
         private bool _isPrevGrad;
@@ -107,6 +110,27 @@ namespace TorchSharp
              bool retain_graph, bool create_graph, bool allow_unused,
              AllocatePinnedArray allocator);
 
+            /// <summary>
+            /// Computes and returns the sum of gradients of outputs with respect to the inputs.
+            /// </summary>
+            /// <param name="outputs">Outputs of the differentiated function.</param>
+            /// <param name="inputs">Inputs w.r.t. which the gradient will be returned (and not accumulated into .grad)..</param>
+            /// <param name="grad_outputs">
+            /// The “vector” in the Jacobian-vector product. Usually gradients w.r.t. each output.
+            /// Null values can be specified for scalar Tensors or ones that don’t require grad.
+            /// If a null value would be acceptable for all grad_tensors, then this argument is optional.
+            /// </param>
+            /// <param name="retain_graph">
+            /// If false, the graph used to compute the grad will be freed.
+            /// Note that in nearly all cases setting this option to true is not needed and often can be worked around in a much more efficient way. Defaults to the value of create_graph.
+            /// </param>
+            /// <param name="create_graph">
+            ///  If true, graph of the derivative will be constructed, allowing to compute higher order derivative products.
+            ///  </param>
+            /// <param name="allow_unused">
+            /// If false, specifying inputs that were not used when computing outputs (and therefore their grad is always zero) is an error.
+            /// </param>
+            /// <returns></returns>
             public static IList<Tensor> grad(IList<Tensor> outputs, IList<Tensor> inputs, IList<Tensor> grad_outputs = null, bool retain_graph = false, bool create_graph = false, bool allow_unused = false)
             {
                 IntPtr[] result;

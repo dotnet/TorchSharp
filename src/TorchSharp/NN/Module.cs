@@ -498,14 +498,19 @@ namespace TorchSharp
 
                     // First, write how many entries.
 
+                    SaveStateDictionary(writer, sd);
+
+                    return this;
+                }
+
+                public static void SaveStateDictionary(System.IO.BinaryWriter writer, Dictionary<string, Tensor> sd)
+                {
                     writer.Encode(sd.Count); // 4 bytes
 
                     foreach (var (k, v) in sd) {
                         writer.Write(k);
                         v.Save(writer);
                     }
-
-                    return this;
                 }
 
                 public Module load(string location)

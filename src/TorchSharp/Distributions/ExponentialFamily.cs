@@ -9,6 +9,9 @@ namespace TorchSharp
     {
         public static partial class distributions
         {
+            /// <summary>
+            /// Base class for all distributions in the exponential family.
+            /// </summary>
             public abstract class ExponentialFamily : Distribution
             {
                 protected ExponentialFamily(torch.Generator generator) : base(generator)
@@ -24,6 +27,9 @@ namespace TorchSharp
 
                 protected abstract Tensor MeanCarrierMeasure { get; }
 
+                /// <summary>
+                /// Returns entropy of distribution, batched over batch_shape.
+                /// </summary>
                 public override Tensor entropy()
                 {
                     // Method to compute the entropy using Bregman divergence of the log normalizer.

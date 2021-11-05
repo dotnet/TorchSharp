@@ -12,14 +12,27 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// A Gamma distribution parameterized by shape `concentration` and `rate`.
+        /// </summary>
         public class Gamma : torch.distributions.ExponentialFamily
         {
-
+            /// <summary>
+            /// The mean of the distribution.
+            /// </summary>
             public override Tensor mean => concentration / rate;
 
+            /// <summary>
+            /// The variance of the distribution
+            /// </summary>
             public override Tensor variance => concentration / rate.pow(2);
 
-
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="concentration">Shape parameter of the distribution (often referred to as 'α')</param>
+            /// <param name="rate">rate = 1 / scale of the distribution (often referred to as 'β')</param>
+            /// <param name="generator">An optional random number generator object.</param>
             public Gamma(Tensor concentration, Tensor rate, torch.Generator generator = null) : base(generator)
             {
                 var locScale = torch.broadcast_tensors(concentration, rate);
@@ -31,6 +44,11 @@ namespace TorchSharp
             protected Tensor concentration;
             private Tensor rate;
 
+            /// <summary>
+            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+            ///  if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
@@ -38,17 +56,31 @@ namespace TorchSharp
                 return value.detach().clamp_(min: torch.finfo(value.dtype).tiny);
             }
 
+            /// <summary>
+            /// Returns the log of the probability density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
                 value = torch.as_tensor(value, dtype: rate.dtype, device: rate.device);
                 return concentration * rate.log() + (concentration - 1) * value.log() - rate * value - torch.lgamma(concentration);
             }
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
             public override Tensor entropy()
             {
                 return concentration - rate.log() + concentration.lgamma() + (1.0 - concentration) * concentration.digamma();
             }
 
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `~torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Gamma))

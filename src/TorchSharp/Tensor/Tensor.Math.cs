@@ -1784,6 +1784,74 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_cumulative_trapezoid_x(IntPtr y, IntPtr x, long dim);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_cumulative_trapezoid_dx(IntPtr y, double dx, long dim);
+
+            /// <summary>
+            /// Cumulatively computes the trapezoidal rule along dim. By default the spacing between elements is assumed to be 1,
+            /// but dx can be used to specify a different constant spacing.
+            /// </summary>
+            /// <param name="dx">Constant spacing between values.</param>
+            /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+            /// <returns></returns>
+            public Tensor cumulative_trapezoid(double dx = 1, long dim = -1)
+            {
+                IntPtr res = THSTensor_trapezoid_dx(handle, dx, dim);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Cumulatively computes the trapezoidal rule along dim. By default the spacing between elements is assumed to be 1,
+            /// but x can be used to specify arbitrary spacing along dim.
+            /// </summary>
+            /// <param name="x">Defines spacing between values as specified above.</param>
+            /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+            /// <returns></returns>
+            public Tensor cumulative_trapezoid(Tensor x, long dim = -1)
+            {
+                IntPtr res = THSTensor_trapezoid_x(handle, x.handle, dim);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_trapezoid_x(IntPtr y, IntPtr x, long dim);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_trapezoid_dx(IntPtr y, double dx, long dim);
+
+            /// <summary>
+            /// Computes the trapezoidal rule along dim. By default the spacing between elements is assumed to be 1,
+            /// but dx can be used to specify a different constant spacing.
+            /// </summary>
+            /// <param name="dx">Constant spacing between values.</param>
+            /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+            /// <returns></returns>
+            public Tensor trapezoid(double dx = 1, long dim = -1)
+            {
+                IntPtr res = THSTensor_trapezoid_dx(handle, dx, dim);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the trapezoidal rule along dim. By default the spacing between elements is assumed to be 1,
+            /// but x can be used to specify arbitrary spacing along dim.
+            /// </summary>
+            /// <param name="x">Defines spacing between values as specified above.</param>
+            /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+            /// <returns></returns>
+            public Tensor trapezoid(Tensor x, long dim = -1)
+            {
+                IntPtr res = THSTensor_trapezoid_x(handle, x.handle, dim);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_trunc(IntPtr tensor);
 
