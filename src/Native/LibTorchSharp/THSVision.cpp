@@ -3,6 +3,10 @@
 
 #include <torch/nn/init.h>
 
+// The RGB / HSV conversion code was ported from the Python implmentation found in:
+//
+// https://github.com/pytorch/vision/blob/main/torchvision/transforms/functional_tensor.py
+
 Tensor THSVision_RGBtoHSV(const Tensor img, Tensor* saturation, Tensor* value)
 {
     CATCH(

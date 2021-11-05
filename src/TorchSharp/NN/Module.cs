@@ -513,31 +513,34 @@ namespace TorchSharp
                     }
                 }
 
-                public Module load(string location)
+                public Module load(string location, bool strict = true)
                 {
                     using (var stream = System.IO.File.OpenRead(location))
                     using (var reader = new System.IO.BinaryReader(stream))
-                        load(reader);
+                        load(reader, strict);
                     return this;
                 }
 
-                public virtual Module load(System.IO.BinaryReader reader)
+                public virtual Module load(System.IO.BinaryReader reader, bool strict = true)
                 {
                     var sd = state_dict();
 
                     // First, figure out how many entries.
                     var streamEntries = reader.Decode();
 
-                    if (streamEntries != sd.Count)
+                    if (streamEntries != sd.Count && strict)
                         throw new ArgumentException($"Mismatched state_dict sizes: expected {sd.Count}, but found {streamEntries} entries.");
 
                     for (int i = 0; i < streamEntries; ++i) {
                         var key = reader.ReadString();
-                        if (!sd.ContainsKey(key)) {
+                        var found = sd.ContainsKey(key);
+                        if (!found && strict) {
                             throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
                         }
 
-                        sd[key].Load(reader);
+                        if (found) {
+                            sd[key].Load(reader);
+                        }
                     }
 
                     return this;
@@ -601,7 +604,7 @@ namespace TorchSharp
                     foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
                         var value = field.GetValue(this);
 
-                        var module = field.GetValue(this) as Module;
+                        var module = value as Module;
                         Tensor tensor = value as Tensor;
                         Modules.Parameter param = value as Modules.Parameter;
 
