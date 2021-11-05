@@ -82,7 +82,7 @@ namespace TorchSharp
 
             /// <summary>
             /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
-            /// `batch_shape`. This method calls `~torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// `batch_shape`. This method calls `torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
             /// memory for the expanded distribution instance.
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>

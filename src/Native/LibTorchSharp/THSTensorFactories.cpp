@@ -45,7 +45,6 @@ Tensor THSTensor_empty_like(
         .dtype(at::ScalarType(scalar_type))
         .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
         .requires_grad(requires_grad);
-
     CATCH_TENSOR(torch::empty_like(*input, options));
 }
 

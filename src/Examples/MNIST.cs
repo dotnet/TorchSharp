@@ -38,7 +38,7 @@ namespace TorchSharp.Examples
 
         internal static void Main(string[] args)
         {
-            var dataset = "mnist"; // args.Length > 0 ? args[0] : "mnist";
+            var dataset = args.Length > 0 ? args[0] : "mnist";
             var datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset);
 
             torch.random.manual_seed(1);

@@ -9,7 +9,7 @@ namespace TorchSharp
     using static torch;
 
     /// <summary>
-    /// Helper class, relying on IDisposable to implement 'using (var x = torch.no_grad()) { ... } blocks.
+    /// Helper class, relying on IDisposable to implement block-based scoping of autograd settings.
     /// </summary>
     internal class AutoGradMode : IDisposable
     {

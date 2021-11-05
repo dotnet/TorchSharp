@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
+using TorchSharp.Modules;
 using static TorchSharp.torch.nn;
 using Xunit;
 
@@ -44,6 +45,50 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSaveLoadCustomWithParameters()
+        {
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+
+            var original = new TestModule1();
+            Assert.True(original.has_parameter("test"));
+
+            var params0 = original.parameters();
+            Assert.True(params0[0].requires_grad);
+            original.save(".model.ts");
+
+            var loaded = new TestModule1();
+            Assert.True(loaded.has_parameter("test"));
+
+            var params1 = loaded.parameters();
+            Assert.True(params1[0].requires_grad);
+            Assert.NotEqual(params0, params1);
+
+            loaded.load(".model.ts");
+            var params2 = loaded.parameters();
+            Assert.True(params2[0].requires_grad);
+
+            File.Delete(".model.ts");
+
+            Assert.Equal(params0, params2);
+        }
+
+        private class TestModule1 : Module
+        {
+            public TestModule1() : base("TestModule1")
+            {
+                RegisterComponents();
+            }
+
+            public override torch.Tensor forward(torch.Tensor input)
+            {
+                throw new NotImplementedException();
+            }
+
+            private Parameter test = Parameter(torch.randn(new long[] { 2, 2 }));
+        }
+
+
+        [Fact]
         public void TestSaveLoadError_1()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
@@ -65,6 +110,8 @@ namespace TorchSharp
             linear.save(".model.ts");
             var loaded = Sequential(("linear1", Linear(100, 10, true)), ("conv1", Conv2d(100, 10, 5)));
             Assert.Throws<ArgumentException>(() => loaded.load(".model.ts"));
+            // Shouldn't get an error for this:
+            loaded.load(".model.ts", strict: false);
             File.Delete(".model.ts");
         }
 
@@ -98,6 +145,22 @@ namespace TorchSharp
             File.Delete("model-list.txt");
 
             var params1 = seq1.parameters();
+            Assert.Equal(params0, params1);
+        }
+
+        [Fact(Skip = "The native saving/loading of models does not seem to work right now.")]
+        public void TestNativeSaveLoad()
+        {
+            if (File.Exists(".model.native.bin")) File.Delete(".model.native.bin");
+            var linear = Linear(100, 10, true);
+            var params0 = linear.parameters();
+            linear.Save(".model.native.bin");
+
+            var lin3 = Modules.Linear.Load(".model.native.bin");
+
+            File.Delete(".model.native.bin");
+
+            var params1 = lin3.parameters();
             Assert.Equal(params0, params1);
         }
 

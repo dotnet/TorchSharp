@@ -5440,7 +5440,7 @@ namespace TorchSharp
             var inverted = fft.ifft2(output);
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
-
+#if false
         [Fact]
         public void Float32FFTN()
         {
@@ -5466,30 +5466,6 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void Float32RFFTN()
-        {
-            var input = torch.rand(new long[] { 5, 5, 5, 5 });
-            var output = fft.rfftn(input);
-            Assert.Equal(new long[] { 5, 5, 5, 3 }, output.shape);
-            Assert.Equal(ScalarType.ComplexFloat32, output.dtype);
-
-            var inverted = fft.irfftn(output);
-            Assert.Equal(ScalarType.Float32, inverted.dtype);
-        }
-
-        [Fact]
-        public void Float64RFFTN()
-        {
-            var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
-            var output = fft.rfftn(input);
-            Assert.Equal(new long[] { 5, 5, 5, 3 }, output.shape);
-            Assert.Equal(ScalarType.ComplexFloat64, output.dtype);
-
-            var inverted = fft.irfftn(output);
-            Assert.Equal(ScalarType.Float64, inverted.dtype);
-        }
-
-        [Fact]
         public void ComplexFloat32FFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex64);
@@ -5511,6 +5487,30 @@ namespace TorchSharp
 
             var inverted = fft.ifftn(output);
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
+        }
+#endif
+        [Fact]
+        public void Float32RFFTN()
+        {
+            var input = torch.rand(new long[] { 5, 5, 5, 5 });
+            var output = fft.rfftn(input);
+            Assert.Equal(new long[] { 5, 5, 5, 3 }, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, output.dtype);
+
+            var inverted = fft.irfftn(output);
+            Assert.Equal(ScalarType.Float32, inverted.dtype);
+        }
+
+        [Fact]
+        public void Float64RFFTN()
+        {
+            var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
+            var output = fft.rfftn(input);
+            Assert.Equal(new long[] { 5, 5, 5, 3 }, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, output.dtype);
+
+            var inverted = fft.irfftn(output);
+            Assert.Equal(ScalarType.Float64, inverted.dtype);
         }
 
         [Fact]
