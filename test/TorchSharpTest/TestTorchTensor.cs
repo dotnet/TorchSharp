@@ -5441,7 +5441,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
 
-        [Fact]
+        [Fact(Skip="Crashes on Ubuntu")]
         public void Float32FFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 });
