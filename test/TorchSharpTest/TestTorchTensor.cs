@@ -5246,7 +5246,7 @@ namespace TorchSharp
             Assert.Equal(x.shape, vasc.shape);
 
         }
-
+#if false
         [Fact]
         public void Float32FFT()
         {
@@ -5393,7 +5393,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
 
-        [Fact(Skip = "Crashes on Ubuntu")]
+        [Fact]
         public void Float32RFFT2()
         {
             var input = torch.rand(new long[] { 5, 5 });
@@ -5441,7 +5441,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
 
-        [Fact(Skip="Crashes on Ubuntu")]
+        [Fact]
         public void Float32FFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 });
@@ -5501,7 +5501,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.ComplexFloat32, inverted.dtype);
         }
 
-        [Fact(Skip = "Crashes on Ubuntu")]
+        [Fact]
         public void ComplexFloat64FFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex128);
@@ -5558,7 +5558,7 @@ namespace TorchSharp
             Assert.Equal(1, y.dim());
             Assert.Equal(4, y.shape[0]);
         }
-
+#endif
         [Fact]
         public void CropTensor()
         {
