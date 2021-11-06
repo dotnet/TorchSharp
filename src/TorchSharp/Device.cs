@@ -15,6 +15,10 @@ namespace TorchSharp
             public DeviceType type { get; private set; } = DeviceType.CPU;
             public int index { get; private set; } = -1;
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="description">A device descriptor 'device[:index]'</param>
             public Device(string description)
             {
                 var splits = description.Split(':');
@@ -28,23 +32,42 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="deviceType">CPU or CUDA</param>
+            /// <param name="index">For CUDA, the device index</param>
             public Device(string deviceType, int index = -1)
             {
                 type = (DeviceType)Enum.Parse(typeof(DeviceType), deviceType.ToUpper());
                 this.index = index;
             }
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="deviceType">CPU or CUDA</param>
+            /// <param name="index">For CUDA, the device index</param>
             public Device(DeviceType deviceType, int index = -1)
             {
                 type = deviceType;
                 this.index = index;
             }
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="index">The CUDA device index</param>
             public Device(int index)
             {
                 type = DeviceType.CUDA;
                 this.index = index;
             }
 
+            /// <summary>
+            /// Return the device descriptor using the input format.
+            /// </summary>
+            /// <returns></returns>
             public override string ToString()
             {
                 return type == DeviceType.CPU ? "cpu" : (index == -1) ? $"{type.ToString().ToLower()}" : $"{type.ToString().ToLower()}:{index}";

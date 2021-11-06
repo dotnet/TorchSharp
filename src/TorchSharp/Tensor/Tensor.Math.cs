@@ -67,7 +67,7 @@ namespace TorchSharp
             /// <summary>
             /// Add two tensors, element-wise
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">The right-hand-side operand.</param>
             /// <returns></returns>
             public Tensor add(Tensor target)
             {
@@ -77,8 +77,8 @@ namespace TorchSharp
             /// <summary>
             /// Add two tensors, element-wise, scaling the second operator by 'alpha'
             /// </summary>
-            /// <param name="target"></param>
-            /// <param name="alpha"></param>
+            /// <param name="target">The right-hand-side operand.</param>
+            /// <param name="alpha">The RHS scale factor</param>
             /// <returns></returns>
             public Tensor add(Tensor target, Scalar alpha)
             {
@@ -94,7 +94,7 @@ namespace TorchSharp
             /// <summary>
             /// Add a scalar value to each element in the target tensor.
             /// </summary>
-            /// <param name="scalar"></param>
+            /// <param name="scalar">The right-hand-side operand.</param>
             /// <returns></returns>
             public Tensor add(Scalar scalar)
             {
@@ -104,8 +104,8 @@ namespace TorchSharp
             /// <summary>
             /// Add a scalar value to each element in the target tensor, scaled by 'alpha'
             /// </summary>
-            /// <param name="scalar"></param>
-            /// <param name="alpha"></param>
+            /// <param name="scalar">The right-hand-side operand.</param>
+            /// <param name="alpha">The RHS scale factor</param>
             /// <returns></returns>
             public Tensor add(Scalar scalar, Scalar alpha)
             {
@@ -121,7 +121,7 @@ namespace TorchSharp
             /// <summary>
             /// In-place element-wise addition.
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">The right-hand operand.</param>
             /// <returns></returns>
             public Tensor add_(Tensor target)
             {
@@ -148,7 +148,7 @@ namespace TorchSharp
             /// <summary>
             /// In-place scalar addition.
             /// </summary>
-            /// <param name="scalar"></param>
+            /// <param name="scalar">The right-hand operand.</param>
             /// <returns></returns>
             public Tensor add_(Scalar scalar)
             {
@@ -158,8 +158,8 @@ namespace TorchSharp
             /// <summary>
             /// In-place scalar addition, scaled.
             /// </summary>
-            /// <param name="scalar"></param>
-            /// <param name="alpha"></param>
+            /// <param name="scalar">The right-hand operand.</param>
+            /// <param name="alpha">Scale factor for the right-hand operand.</param>
             /// <returns></returns>
             public Tensor add_(Scalar scalar, Scalar alpha)
             {
@@ -177,14 +177,14 @@ namespace TorchSharp
             /// add step (all matrix multiplications get accumulated along the first dimension).
             /// input is added to the final result.
             /// </summary>
-            /// <param name="mat1"></param>
-            /// <param name="mat2"></param>
-            /// <param name="beta"></param>
-            /// <param name="alpha"></param>
+            /// <param name="batch1">The first batch of matrices to be multiplied</param>
+            /// <param name="batch2">The second batch of matrices to be multiplied</param>
+            /// <param name="beta">Nultiplier for input (β)</param>
+            /// <param name="alpha">Multiplier for batch1 @ batch2 (α)</param>
             /// <returns></returns>
-            public Tensor addbmm(Tensor mat1, Tensor mat2, float beta = 1, float alpha = 1)
+            public Tensor addbmm(Tensor batch1, Tensor batch2, float beta = 1, float alpha = 1)
             {
-                var res = THSTensor_addbmm(handle, mat1.Handle, mat2.Handle, beta, alpha);
+                var res = THSTensor_addbmm(handle, batch1.Handle, batch2.Handle, beta, alpha);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -198,10 +198,10 @@ namespace TorchSharp
             /// add step (all matrix multiplications get accumulated along the first dimension).
             /// input is added to the final result.
             /// </summary>
-            /// <param name="batch1"></param>
-            /// <param name="batch2"></param>
-            /// <param name="beta"></param>
-            /// <param name="alpha"></param>
+            /// <param name="batch1">The first batch of matrices to be multiplied</param>
+            /// <param name="batch2">The second batch of matrices to be multiplied</param>
+            /// <param name="beta">Nultiplier for input (β)</param>
+            /// <param name="alpha">Multiplier for batch1 @ batch2 (α)</param>
             /// <returns></returns>
             public Tensor addbmm_(Tensor batch1, Tensor batch2, float beta = 1, float alpha = 1)
             {
@@ -217,9 +217,9 @@ namespace TorchSharp
             /// <summary>
             /// Performs the element-wise division of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
             /// </summary>
-            /// <param name="tensor1"></param>
-            /// <param name="tensor2"></param>
-            /// <param name="value"></param>
+            /// <param name="tensor1">First tensor</param>
+            /// <param name="tensor2">Second tensor</param>
+            /// <param name="value">Scale factor</param>
             /// <returns></returns>
             public Tensor addcdiv(Tensor tensor1, Tensor tensor2, Scalar value)
             {
@@ -235,9 +235,9 @@ namespace TorchSharp
             /// <summary>
             /// Performs the in-place element-wise division of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
             /// </summary>
-            /// <param name="tensor1"></param>
-            /// <param name="tensor2"></param>
-            /// <param name="value"></param>
+            /// <param name="tensor1">First tensor</param>
+            /// <param name="tensor2">Second tensor</param>
+            /// <param name="value">Scale factor</param>
             /// <returns></returns>
             public Tensor addcdiv_(Tensor tensor1, Tensor tensor2, Scalar value)
             {
@@ -253,9 +253,9 @@ namespace TorchSharp
             /// <summary>
             /// Performs the element-wise multiplication of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
             /// </summary>
-            /// <param name="tensor1"></param>
-            /// <param name="tensor2"></param>
-            /// <param name="value"></param>
+            /// <param name="tensor1">First tensor</param>
+            /// <param name="tensor2">Second tensor</param>
+            /// <param name="value">Scale factor</param>
             /// <returns></returns>
             public Tensor addcmul(Tensor tensor1, Tensor tensor2, Scalar value)
             {
@@ -271,9 +271,9 @@ namespace TorchSharp
             /// <summary>
             /// Performs the in-place element-wise multiplication of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
             /// </summary>
-            /// <param name="tensor1"></param>
-            /// <param name="tensor2"></param>
-            /// <param name="value"></param>
+            /// <param name="tensor1">First tensor</param>
+            /// <param name="tensor2">Second tensor</param>
+            /// <param name="value">Scale factor</param>
             /// <returns></returns>
             public Tensor addcmul_(Tensor tensor1, Tensor tensor2, Scalar value)
             {
@@ -290,10 +290,10 @@ namespace TorchSharp
             /// <summary>
             /// Performs a matrix multiplication of the matrices mat1 and mat2. The matrix input is added to the final result.
             /// </summary>
-            /// <param name="mat1"></param>
-            /// <param name="mat2"></param>
-            /// <param name="beta"></param>
-            /// <param name="alpha"></param>
+            /// <param name="mat1">First matrix</param>
+            /// <param name="mat2">Second matrix</param>
+            /// <param name="beta">Input scale factor</param>
+            /// <param name="alpha">Matrix multiplication scale factor</param>
             /// <returns></returns>
             public Tensor addmm(Tensor mat1, Tensor mat2, float beta = 1, float alpha = 1)
             {
@@ -309,10 +309,10 @@ namespace TorchSharp
             /// <summary>
             /// Performs an in-place matrix multiplication of the matrices mat1 and mat2. The matrix input is added to the final result.
             /// </summary>
-            /// <param name="mat1"></param>
-            /// <param name="mat2"></param>
-            /// <param name="beta"></param>
-            /// <param name="alpha"></param>
+            /// <param name="mat1">First matrix</param>
+            /// <param name="mat2">Second matrix</param>
+            /// <param name="beta">Input scale factor</param>
+            /// <param name="alpha">Matrix multiplication scale factor</param>
             /// <returns></returns>
             public Tensor addmm_(Tensor mat1, Tensor mat2, float beta = 1, float alpha = 1)
             {
@@ -328,14 +328,14 @@ namespace TorchSharp
             /// <summary>
             /// Performs a matrix-vector product of the matrix mat and the vector vec. The vector input is added to the final result.
             /// </summary>
-            /// <param name="vec1"></param>
-            /// <param name="vec2"></param>
-            /// <param name="beta"></param>
-            /// <param name="alpha"></param>
+            /// <param name="mat">Matrix to be matrix multiplied</param>
+            /// <param name="vec">Vector to be matrix multiplied</param>
+            /// <param name="beta">Input scale factor</param>
+            /// <param name="alpha">Matrix multiplication scale factor</param>
             /// <returns></returns>
-            public Tensor addmv(Tensor vec1, Tensor vec2, float beta = 1.0f, float alpha = 1.0f)
+            public Tensor addmv(Tensor mat, Tensor vec, float beta = 1.0f, float alpha = 1.0f)
             {
-                var res = THSTensor_addmv(handle, vec1.Handle, vec2.Handle, beta, alpha);
+                var res = THSTensor_addmv(handle, mat.Handle, vec.Handle, beta, alpha);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -347,14 +347,14 @@ namespace TorchSharp
             /// <summary>
             /// Performs a matrix-vector product of the matrix mat and the vector vec. The vector input is added to the final result.
             /// </summary>
-            /// <param name="vec1"></param>
-            /// <param name="vec2"></param>
-            /// <param name="beta"></param>
-            /// <param name="alpha"></param>
+            /// <param name="mat">Matrix to be matrix multiplied</param>
+            /// <param name="vec">Vector to be matrix multiplied</param>
+            /// <param name="beta">Input scale factor</param>
+            /// <param name="alpha">Matrix multiplication scale factor</param>
             /// <returns></returns>
-            public Tensor addmv_(Tensor vec1, Tensor vec2, float beta = 1.0f, float alpha = 1.0f)
+            public Tensor addmv_(Tensor mat, Tensor vec, float beta = 1.0f, float alpha = 1.0f)
             {
-                var res = THSTensor_addmv_(handle, vec1.Handle, vec2.Handle, beta, alpha);
+                var res = THSTensor_addmv_(handle, mat.Handle, vec.Handle, beta, alpha);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -366,10 +366,10 @@ namespace TorchSharp
             /// <summary>
             /// Performs the outer-product of vectors vec1 and vec2 and adds it to the input tensor.
             /// </summary>
-            /// <param name="vec1"></param>
-            /// <param name="vec2"></param>
-            /// <param name="beta"></param>
-            /// <param name="alpha"></param>
+            /// <param name="vec1">The first vector of the outer product</param>
+            /// <param name="vec2">The second vector of the outer product</param>
+            /// <param name="beta">Input scale factor</param>
+            /// <param name="alpha">Outer-product scale factor</param>
             /// <returns></returns>
             public Tensor addr(Tensor vec1, Tensor vec2, float beta = 1.0f, float alpha = 1.0f)
             {
@@ -387,10 +387,10 @@ namespace TorchSharp
             ///
             /// In-place version of 'addr'
             /// </summary>
-            /// <param name="vec1"></param>
-            /// <param name="vec2"></param>
-            /// <param name="beta"></param>
-            /// <param name="alpha"></param>
+            /// <param name="vec1">The first vector of the outer product</param>
+            /// <param name="vec2">The second vector of the outer product</param>
+            /// <param name="beta">Input scale factor</param>
+            /// <param name="alpha">Outer-product scale factor</param>
             /// <returns></returns>
             public Tensor addr_(Tensor vec1, Tensor vec2, float beta = 1.0f, float alpha = 1.0f)
             {
@@ -406,7 +406,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise bitwise AND
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor bitwise_and(Tensor other)
             {
@@ -421,7 +421,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise bitwise AND, in-place
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor bitwise_and_(Tensor other)
             {
@@ -464,6 +464,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise bitwise OR
             /// </summary>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor bitwise_or(Tensor other)
             {
@@ -478,6 +479,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise bitwise OR, in-place
             /// </summary>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor bitwise_or_(Tensor other)
             {
@@ -492,6 +494,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise bitwise XOR
             /// </summary>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor bitwise_xor(Tensor other)
             {
@@ -506,6 +509,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise bitwise XOR, in-place.
             /// </summary>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor bitwise_xor_(Tensor other)
             {
@@ -547,6 +551,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern void THSTensor_cummax(IntPtr tensor, AllocatePinnedArray allocator, long dimension);
 
+            /// <summary>
+            /// Returns a tuple (values, indices) where values is the cumulative maximum of elements of input in the dimension dim.
+            /// Indices is the index location of each maximum value found in the dimension dim.
+            /// </summary>
+            /// <param name="dimension">The dimension to do the operation over</param>
             public (Tensor values, Tensor indexes) cummax(long dimension)
             {
                 IntPtr[] ptrArray;
@@ -563,6 +572,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern void THSTensor_cummin(IntPtr tensor, AllocatePinnedArray allocator, long dimension);
 
+            /// <summary>
+            /// Returns a tuple (values, indices) where values is the cumulative minimum of elements of input in the dimension dim.
+            /// Indices is the index location of each minimum value found in the dimension dim.
+            /// </summary>
+            /// <param name="dimension">The dimension to do the operation over</param>
             public (Tensor values, Tensor indexes) cummin(long dimension)
             {
                 IntPtr[] ptrArray;
@@ -579,6 +593,13 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_cumsum(IntPtr tensor, long dimension, bool has_type, sbyte scalar_type);
 
+            /// <summary>
+            /// Returns the cumulative sum of elements of input in the dimension dim.
+            /// </summary>
+            /// <param name="dimension">The dimension to do the operation over</param>
+            /// <param name="type">The desired data type of returned tensor. If specified, the input tensor is casted to dtype before the operation is performed.
+            /// This is useful for preventing data type overflows.</param>
+            /// <returns></returns>
             public Tensor cumsum(long dimension, ScalarType? type = null)
             {
                 var res = THSTensor_cumsum(handle, dimension, type.HasValue, (sbyte)type.GetValueOrDefault());
@@ -589,6 +610,13 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_cumprod(IntPtr tensor, long dimension, bool has_type, sbyte scalar_type);
 
+            /// <summary>
+            /// Returns the cumulative product of elements of input in the dimension dim.
+            /// </summary>
+            /// <param name="dimension">The dimension to do the operation over</param>
+            /// <param name="type">The desired data type of returned tensor. If specified, the input tensor is casted to dtype before the operation is performed.
+            /// This is useful for preventing data type overflows.</param>
+            /// <returns></returns>
             public Tensor cumprod(long dimension, ScalarType? type = null)
             {
                 var res = THSTensor_cumprod(handle, dimension, type.HasValue, (sbyte)type.GetValueOrDefault());
@@ -602,8 +630,8 @@ namespace TorchSharp
             /// <summary>
             /// Divides each element of the input by the corresponding element of other.
             /// </summary>
-            /// <param name="target"></param>
-            /// <param name="rounding_mode"></param>
+            /// <param name="target">Denominator</param>
+            /// <param name="rounding_mode">Rounding mode.</param>
             /// <returns></returns>
             public Tensor div(Tensor target, RoundingMode rounding_mode = RoundingMode.None)
             {
@@ -615,8 +643,8 @@ namespace TorchSharp
             /// <summary>
             /// Divides each element of the input by the corresponding element of other.
             /// </summary>
-            /// <param name="target"></param>
-            /// <param name="rounding_mode"></param>
+            /// <param name="target">Denominator</param>
+            /// <param name="rounding_mode">Rounding mode.</param>
             /// <returns></returns>
             public Tensor divide(Tensor target, RoundingMode rounding_mode = RoundingMode.None) => div(target, rounding_mode);
 
@@ -626,8 +654,8 @@ namespace TorchSharp
             /// <summary>
             /// Scalar division
             /// </summary>
-            /// <param name="target"></param>
-            /// <param name="rounding_mode"></param>
+            /// <param name="target">Denominator</param>
+            /// <param name="rounding_mode">Rounding mode.</param>
             /// <returns></returns>
             public Tensor div(Scalar target, RoundingMode rounding_mode = RoundingMode.None)
             {
@@ -639,8 +667,8 @@ namespace TorchSharp
             /// <summary>
             /// Scalar division
             /// </summary>
-            /// <param name="target"></param>
-            /// <param name="rounding_mode"></param>
+            /// <param name="target">Denominator</param>
+            /// <param name="rounding_mode">Rounding mode.</param>
             /// <returns></returns>
             public Tensor divide(Scalar target, RoundingMode rounding_mode = RoundingMode.None) => div(target, rounding_mode);
 
@@ -650,8 +678,8 @@ namespace TorchSharp
             /// <summary>
             /// In-place division
             /// </summary>
-            /// <param name="target"></param>
-            /// <param name="rounding_mode"></param>
+            /// <param name="target">Denominator</param>
+            /// <param name="rounding_mode">Rounding mode.</param>
             /// <returns></returns>
             public Tensor div_(Tensor target, RoundingMode rounding_mode = RoundingMode.None)
             {
@@ -663,8 +691,8 @@ namespace TorchSharp
             /// <summary>
             /// In-place division
             /// </summary>
-            /// <param name="target"></param>
-            /// <param name="rounding_mode"></param>
+            /// <param name="target">Denominator</param>
+            /// <param name="rounding_mode">Rounding mode.</param>
             /// <returns></returns>
             public Tensor divide_(Tensor target, RoundingMode rounding_mode = RoundingMode.None) => div_(target, rounding_mode);
 
@@ -674,8 +702,8 @@ namespace TorchSharp
             /// <summary>
             /// In-place scalar division
             /// </summary>
-            /// <param name="target"></param>
-            /// <param name="rounding_mode"></param>
+            /// <param name="target">Denominator</param>
+            /// <param name="rounding_mode">Rounding mode.</param>
             /// <returns></returns>
             public Tensor div_(Scalar target, RoundingMode rounding_mode = RoundingMode.None)
             {
@@ -687,14 +715,17 @@ namespace TorchSharp
             /// <summary>
             /// In-place scalar division
             /// </summary>
-            /// <param name="target"></param>
-            /// <param name="rounding_mode"></param>
+            /// <param name="target">Denominator</param>
+            /// <param name="rounding_mode">Rounding mode.</param>
             /// <returns></returns>
             public Tensor divide_(Scalar target, RoundingMode rounding_mode = RoundingMode.None) => div_(target, rounding_mode);
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_exp(IntPtr tensor);
 
+            /// <summary>
+            /// Returns a new tensor with the exponential of the elements of the input tensor.
+            /// </summary>
             public Tensor exp()
             {
                 var res = THSTensor_exp(handle);
@@ -706,9 +737,8 @@ namespace TorchSharp
             static extern IntPtr THSTensor_exp_(IntPtr tensor);
 
             /// <summary>
-            /// Returns a new tensor with the exponential of the elements of the input tensor input.
+            /// Replaces the tensor with the exponential of the elements of the input tensor.
             /// </summary>
-            /// <returns></returns>
             public Tensor exp_()
             {
                 var res = THSTensor_exp_(handle);
@@ -748,7 +778,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_expm1_(IntPtr tensor);
 
             /// <summary>
-            /// Replaces each element with the exponential of the element minus 1 of input.
+            /// Replaces each element with the exponential of the element minus 1 of input, in-place.
             /// </summary>
             /// <returns></returns>
             public Tensor expm1_()
@@ -764,7 +794,7 @@ namespace TorchSharp
             /// <summary>
             /// Raises input to the power of exponent, elementwise, in double precision.
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">The exponent.</param>
             /// <returns></returns>
             /// <remarks> If neither input is complex returns a torch.float64 tensor, and if one or more inputs is complex returns a torch.complex128 tensor.</remarks>
             public Tensor float_power(Tensor target)
@@ -810,7 +840,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the element-wise remainder of division.
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Denominator</param>
             /// <returns></returns>
             public Tensor fmod(Tensor target)
             {
@@ -825,7 +855,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the element-wise remainder of division, in-place.
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Denominator</param>
             /// <returns></returns>
             public Tensor fmod_(Tensor target)
             {
@@ -840,7 +870,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the element-wise remainder of division.
             /// </summary>
-            /// <param name="scalar"></param>
+            /// <param name="scalar">Denominator</param>
             /// <returns></returns>
             public Tensor fmod(Scalar scalar)
             {
@@ -855,7 +885,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the element-wise remainder of division, in-place
             /// </summary>
-            /// <param name="scalar"></param>
+            /// <param name="scalar">Denominator</param>
             /// <returns></returns>
             public Tensor fmod_(Scalar scalar)
             {
@@ -910,6 +940,10 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_gcd(IntPtr tensor, IntPtr other);
 
+            /// <summary>
+            /// Computes the element-wise greatest common divisor (GCD) of input and other.
+            /// </summary>
+            /// <param name="other">Right-hand operand.</param>
             public Tensor gcd(Tensor other)
             {
                 var res = THSTensor_gcd(handle, other.Handle);
@@ -923,7 +957,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the element-wise greatest common divisor (GCD) of input and other.
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor gcd_(Tensor other)
             {
@@ -958,7 +992,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise: given the legs of a right triangle, return its hypotenuse.
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">The second input tensor.</param>
             /// <returns></returns>
             public Tensor hypot(Tensor other)
             {
@@ -1001,7 +1035,7 @@ namespace TorchSharp
             /// <summary>
             /// Logarithm of the sum of exponentiations of the inputs.
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">The second input tensor.</param>
             /// <returns></returns>
             public Tensor logaddexp(Tensor other)
             {
@@ -1017,7 +1051,7 @@ namespace TorchSharp
             /// <summary>
             /// Logarithm of the sum of exponentiations of the inputs in base-2.
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">The second input tensor.</param>
             /// <returns></returns>
             public Tensor logaddexp2(Tensor other)
             {
@@ -1033,7 +1067,7 @@ namespace TorchSharp
             /// <summary>
             /// Returns the logarithm of the cumulative summation of the exponentiation of elements of input in the dimension dim.
             /// </summary>
-            /// <param name="dim"></param>
+            /// <param name="dim">The dimension to do the operation over</param>
             /// <returns></returns>
             public Tensor logcumsumexp(long dim)
             {
@@ -1049,8 +1083,8 @@ namespace TorchSharp
             /// <summary>
             /// Returns the log of summed exponentials of each row of the input tensor in the given dimension dim. 
             /// </summary>
-            /// <param name="dim"></param>
-            /// <param name="keepdim"></param>
+            /// <param name="dim">The dimension to do the operation over</param>
+            /// <param name="keepdim">Thether the output tensor has dim retained or not.</param>
             /// <returns></returns>
             /// <remarks>The computation is numerically stabilized.</remarks>
             public Tensor logsumexp(long dim, Boolean keepdim = false)
@@ -1155,7 +1189,7 @@ namespace TorchSharp
             /// <summary>
             /// Logical AND
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor logical_and(Tensor other)
             {
@@ -1170,7 +1204,7 @@ namespace TorchSharp
             /// <summary>
             /// Logical AND, in place
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor logical_and_(Tensor other)
             {
@@ -1199,9 +1233,8 @@ namespace TorchSharp
             /// <summary>
             /// Logical NOT, in place
             /// </summary>
-            /// <param name="other"></param>
             /// <returns></returns>
-            public Tensor logical_not_(Tensor other)
+            public Tensor logical_not_()
             {
                 var res = THSTensor_logical_not_(handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -1214,7 +1247,7 @@ namespace TorchSharp
             /// <summary>
             /// Logical OR
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor logical_or(Tensor other)
             {
@@ -1229,7 +1262,7 @@ namespace TorchSharp
             /// <summary>
             /// Logical OR, in place
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor logical_or_(Tensor other)
             {
@@ -1244,7 +1277,7 @@ namespace TorchSharp
             /// <summary>
             /// Logical XOR
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor logical_xor(Tensor other)
             {
@@ -1259,7 +1292,7 @@ namespace TorchSharp
             /// <summary>
             /// Logical XOR, in place
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">Right-hand operand.</param>
             /// <returns></returns>
             public Tensor logical_xor_(Tensor other)
             {
@@ -1275,7 +1308,7 @@ namespace TorchSharp
             /// Returns a new tensor with the logit of the elements of input.
             /// input is clamped to [eps, 1 - eps] when eps is not null
             /// </summary>
-            /// <param name="eps"></param>
+            /// <param name="eps">The epsilon for input clamp bound.</param>
             /// <returns></returns>
             public Tensor logit(double? eps = null)
             {
@@ -1296,7 +1329,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise multiplication
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Right-hand operand</param>
             /// <returns></returns>
             public Tensor mul(Tensor target)
             {
@@ -1308,7 +1341,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise multiplication
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Right-hand operand</param>
             /// <returns></returns>
             public Tensor multiply(Tensor target) => mul(target);
 
@@ -1318,7 +1351,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise multiplication
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Right-hand operand</param>
             /// <returns></returns>
             public Tensor mul(Scalar target)
             {
@@ -1330,7 +1363,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise multiplcation
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Right-hand operand</param>
             /// <returns></returns>
             public Tensor multiply(Scalar target) => mul(target);
 
@@ -1340,7 +1373,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise multiplication, in place
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Right-hand operand</param>
             /// <returns></returns>
             public Tensor mul_(Tensor target)
             {
@@ -1355,7 +1388,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise multiplication, in place
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Right-hand operand</param>
             /// <returns></returns>
             public Tensor mul_(Scalar target)
             {
@@ -1409,7 +1442,7 @@ namespace TorchSharp
             /// <summary>
             /// Takes the power of each element in input with exponent and returns a tensor with the result.
             /// </summary>
-            /// <param name="exponent"></param>
+            /// <param name="exponent">The exponent.</param>
             /// <returns></returns>
             public Tensor pow(Tensor exponent)
             {
@@ -1424,7 +1457,7 @@ namespace TorchSharp
             /// <summary>
             /// Replaces each element in input with the power of the element and the exponent.
             /// </summary>
-            /// <param name="exponent"></param>
+            /// <param name="exponent">The exponent.</param>
             /// <returns></returns>
             public Tensor pow_(Tensor exponent)
             {
@@ -1439,7 +1472,7 @@ namespace TorchSharp
             /// <summary>
             /// Takes the power of each element in input with exponent and returns a tensor with the result.
             /// </summary>
-            /// <param name="exponent"></param>
+            /// <param name="exponent">The exponent.</param>
             /// <returns></returns>
             public Tensor pow(Scalar exponent)
             {
@@ -1454,7 +1487,7 @@ namespace TorchSharp
             /// <summary>
             /// Replaces each element in input with the power of the element and the exponent.
             /// </summary>
-            /// <param name="exponent"></param>
+            /// <param name="exponent">The exponent.</param>
             /// <returns></returns>
             public Tensor pow_(Scalar exponent)
             {
@@ -1499,7 +1532,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the element-wise remainder of division.
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Denominator</param>
             /// <returns></returns>
             public Tensor remainder(Tensor target)
             {
@@ -1514,7 +1547,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the element-wise remainder of division, in place
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Denominator</param>
             /// <returns></returns>
             public Tensor remainder_(Tensor target)
             {
@@ -1529,7 +1562,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the element-wise remainder of division.
             /// </summary>
-            /// <param name="scalar"></param>
+            /// <param name="scalar">Denominator</param>
             /// <returns></returns>
             public Tensor remainder(Scalar scalar)
             {
@@ -1545,7 +1578,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the element-wise remainder of division.
             /// </summary>
-            /// <param name="scalar"></param>
+            /// <param name="scalar">Denominator</param>
             /// <returns></returns>
             public Tensor remainder_(Scalar scalar)
             {
@@ -1697,7 +1730,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise subtraction
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Right-hand operand</param>
             /// <returns></returns>
             public Tensor sub(Tensor target)
             {
@@ -1712,7 +1745,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise subtraction
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Right-hand operand</param>
             /// <returns></returns>
             public Tensor sub(Scalar target)
             {
@@ -1727,7 +1760,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise subtraction, in place
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Right-hand operand</param>
             /// <returns></returns>
             public Tensor sub_(Tensor target)
             {
@@ -1742,11 +1775,79 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise subtraction, in-place
             /// </summary>
-            /// <param name="target"></param>
+            /// <param name="target">Right-hand operand</param>
             /// <returns></returns>
             public Tensor sub_(Scalar target)
             {
                 var res = THSTensor_sub_scalar_(handle, target.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_cumulative_trapezoid_x(IntPtr y, IntPtr x, long dim);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_cumulative_trapezoid_dx(IntPtr y, double dx, long dim);
+
+            /// <summary>
+            /// Cumulatively computes the trapezoidal rule along dim. By default the spacing between elements is assumed to be 1,
+            /// but dx can be used to specify a different constant spacing.
+            /// </summary>
+            /// <param name="dx">Constant spacing between values.</param>
+            /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+            /// <returns></returns>
+            public Tensor cumulative_trapezoid(double dx = 1, long dim = -1)
+            {
+                IntPtr res = THSTensor_trapezoid_dx(handle, dx, dim);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Cumulatively computes the trapezoidal rule along dim. By default the spacing between elements is assumed to be 1,
+            /// but x can be used to specify arbitrary spacing along dim.
+            /// </summary>
+            /// <param name="x">Defines spacing between values as specified above.</param>
+            /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+            /// <returns></returns>
+            public Tensor cumulative_trapezoid(Tensor x, long dim = -1)
+            {
+                IntPtr res = THSTensor_trapezoid_x(handle, x.handle, dim);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_trapezoid_x(IntPtr y, IntPtr x, long dim);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_trapezoid_dx(IntPtr y, double dx, long dim);
+
+            /// <summary>
+            /// Computes the trapezoidal rule along dim. By default the spacing between elements is assumed to be 1,
+            /// but dx can be used to specify a different constant spacing.
+            /// </summary>
+            /// <param name="dx">Constant spacing between values.</param>
+            /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+            /// <returns></returns>
+            public Tensor trapezoid(double dx = 1, long dim = -1)
+            {
+                IntPtr res = THSTensor_trapezoid_dx(handle, dx, dim);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the trapezoidal rule along dim. By default the spacing between elements is assumed to be 1,
+            /// but x can be used to specify arbitrary spacing along dim.
+            /// </summary>
+            /// <param name="x">Defines spacing between values as specified above.</param>
+            /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+            /// <returns></returns>
+            public Tensor trapezoid(Tensor x, long dim = -1)
+            {
+                IntPtr res = THSTensor_trapezoid_x(handle, x.handle, dim);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -1797,7 +1898,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes x * log(y)
             /// </summary>
-            /// <param name="y"></param>
+            /// <param name="y">The 'y' operand.</param>
             /// <returns></returns>
             public Tensor xlogy(Tensor y)
             {
@@ -1814,7 +1915,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes x * log(y) in place
             /// </summary>
-            /// <param name="y"></param>
+            /// <param name="y">The 'y' operand.</param>
             /// <returns></returns>
             public Tensor xlogy_(Tensor y)
             {
@@ -1830,7 +1931,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes x * log(y)
             /// </summary>
-            /// <param name="y"></param>
+            /// <param name="y">The 'y' operand.</param>
             /// <returns></returns>
             public Tensor xlogy(Scalar y)
             {
@@ -1847,7 +1948,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes x * log(y) in place
             /// </summary>
-            /// <param name="y"></param>
+            /// <param name="y">The 'y' operand.</param>
             /// <returns></returns>
             public Tensor xlogy_(Scalar y)
             {
@@ -1956,71 +2057,99 @@ namespace TorchSharp
         /// <summary>
         /// Compute the absolute value of each element in the tensor
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor abs(Tensor input) => input.abs();
 
         /// <summary>
         /// Compute the absolute value of each element in the tensor
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor absolute(Tensor input) => input.abs();
 
         /// <summary>
         /// Compute the absolute value of each element in the tensor, in-place
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor abs_(Tensor input) => input.abs_();
 
         /// <summary>
         /// Compute the absolute value of each element in the tensor, in-place
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor absolute_(Tensor input) => input.abs_();
 
         /// <summary>
         /// Add two tensors, element-wise
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         /// <returns></returns>
         public static Tensor add(Tensor left, Tensor right) => left.add(right);
 
         /// <summary>
         /// Add a scalar value to each element in the target tensor.
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor add(Tensor left, Scalar right) => left.add(right);
 
         /// <summary>
         /// Add two tensors, element-wise, scaling the second operator by 'alpha'
         /// </summary>
-        public static Tensor add(Tensor left, Tensor right, Scalar scale) => left.add(right, scale);
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
+        /// <param name="alpha">RHS scale factor.</param>
+        public static Tensor add(Tensor left, Tensor right, Scalar alpha) => left.add(right, alpha);
 
         /// <summary>
         /// Add a scalar value to each element in the target tensor, scaled by 'alpha'
         /// </summary>
-        public static Tensor add(Tensor left, Scalar right, Scalar scale) => left.add(right, scale);
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
+        /// <param name="alpha">RHS scale factor.</param>
+        public static Tensor add(Tensor left, Scalar right, Scalar alpha) => left.add(right, alpha);
 
         /// <summary>
         /// Add two tensors, element-wise, in place
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor add_(Tensor left, Tensor right) => left.add_(right);
 
         /// <summary>
         /// Add a scalar value to each element in the target tensor, in place.
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor add_(Tensor left, Scalar right) => left.add_(right);
 
         /// <summary>
         /// Add two tensors, element-wise, scaling the second operator by 'alpha', in place
         /// </summary>
-        public static Tensor add_(Tensor left, Tensor right, Scalar scale) => left.add_(right, scale);
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
+        /// <param name="alpha">RHS scale factor.</param>
+        public static Tensor add_(Tensor left, Tensor right, Scalar alpha) => left.add_(right, alpha);
 
         /// <summary>
         /// Add a scalar value to each element in the target tensor, scaled by 'alpha', in place
         /// </summary>
-        public static Tensor add_(Tensor left, Scalar right, Scalar scale) => left.add_(right, scale);
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
+        /// <param name="alpha">RHS scale factor.</param>
+        public static Tensor add_(Tensor left, Scalar right, Scalar alpha) => left.add_(right, alpha);
 
         /// <summary>
         /// Performs a batch matrix-matrix product of matrices stored in batch1 and batch2, with a reduced
         /// add step (all matrix multiplications get accumulated along the first dimension).
         /// input is added to the final result.
         /// </summary>
-        /// <returns></returns>
-        public static Tensor addbmm(Tensor input, Tensor mat1, Tensor mat2, float beta = 1, float alpha = 1) => input.addbmm(mat1, mat2, beta, alpha);
+        /// <param name="input">The input tensor.</param>
+        /// <param name="batch1">The first batch of matrices to be multiplied</param>
+        /// <param name="batch2">The second batch of matrices to be multiplied</param>
+        /// <param name="beta">Nultiplier for input (β)</param>
+        /// <param name="alpha">Multiplier for batch1 @ batch2 (α)</param>
+        public static Tensor addbmm(Tensor input, Tensor batch1, Tensor batch2, float beta = 1, float alpha = 1) => input.addbmm(batch1, batch2, beta, alpha);
 
         /// <summary>
         /// Performs a batch matrix-matrix product of matrices stored in batch1 and batch2, with a reduced
@@ -2028,57 +2157,89 @@ namespace TorchSharp
         /// input is added to the final result.
         /// In-place version of addbmm.
         /// </summary>
-        /// <returns></returns>
-        public static Tensor addbmm_(Tensor input, Tensor mat1, Tensor mat2, float beta = 1, float alpha = 1) => input.addbmm_(mat1, mat2, beta, alpha);
+        /// <param name="input">The input tensor.</param>
+        /// <param name="batch1">The first batch of matrices to be multiplied</param>
+        /// <param name="batch2">The second batch of matrices to be multiplied</param>
+        /// <param name="beta">Nultiplier for input (β)</param>
+        /// <param name="alpha">Multiplier for batch1 @ batch2 (α)</param>
+        public static Tensor addbmm_(Tensor input, Tensor batch1, Tensor batch2, float beta = 1, float alpha = 1) => input.addbmm_(batch1, batch2, beta, alpha);
 
         /// <summary>
         /// Performs the element-wise division of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="tensor1">First tensor</param>
+        /// <param name="tensor2">Second tensor</param>
+        /// <param name="value">Scale factor</param>
         public static Tensor addcdiv(Tensor input, Tensor tensor1, Tensor tensor2, Scalar value) => input.addcdiv(tensor1, tensor2, value);
 
         /// <summary>
         /// Performs the element-wise division of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
         /// In-place version of addcdiv.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="tensor1">First tensor</param>
+        /// <param name="tensor2">Second tensor</param>
+        /// <param name="value">Scale factor</param>
         public static Tensor addcdiv_(Tensor input, Tensor tensor1, Tensor tensor2, Scalar value) => input.addcdiv_(tensor1, tensor2, value);
 
         /// <summary>
         /// Performs the element-wise multiplication of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="tensor1">First tensor</param>
+        /// <param name="tensor2">Second tensor</param>
+        /// <param name="value">Scale factor</param>
         public static Tensor addcmul(Tensor input, Tensor tensor1, Tensor tensor2, Scalar value) => input.addcmul(tensor1, tensor2, value);
 
         /// <summary>
         /// Performs the element-wise divismultiplicationion of tensor1 by tensor2, multiply the result by the scalar value and add it to input.
         /// In-place version of addcdiv.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="tensor1">First tensor</param>
+        /// <param name="tensor2">Second tensor</param>
+        /// <param name="value">Scale factor</param>
         public static Tensor addcmul_(Tensor input, Tensor tensor1, Tensor tensor2, Scalar value) => input.addcmul_(tensor1, tensor2, value);
 
         /// <summary>
         /// Performs a matrix multiplication of the matrices mat1 and mat2. The matrix input is added to the final result.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="mat1">First matrix</param>
+        /// <param name="mat2">Second matrix</param>
+        /// <param name="beta">Input scale factor</param>
+        /// <param name="alpha">Matrix multiplication scale factor</param>
         public static Tensor addmm(Tensor input, Tensor mat1, Tensor mat2, float beta, float alpha) => input.addmm(mat1, mat2, beta, alpha);
 
         /// <summary>
         /// Performs a matrix multiplication of the matrices mat1 and mat2. The matrix input is added to the final result.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="mat1">First matrix</param>
+        /// <param name="mat2">Second matrix</param>
+        /// <param name="beta">Input scale factor</param>
+        /// <param name="alpha">Matrix multiplication scale factor</param>
         public static Tensor addmm_(Tensor input, Tensor mat1, Tensor mat2, float beta, float alpha) => input.addmm_(mat1, mat2, beta, alpha);
 
         /// <summary>
         /// Performs a matrix multiplication of the matrices mat1 and mat2. The matrix input is added to the final result.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="mat1">First matrix</param>
+        /// <param name="mat2">Second matrix</param>
+        /// <param name="beta">Input scale factor</param>
+        /// <param name="alpha">Matrix multiplication scale factor</param>
         public static Tensor addmv(Tensor input, Tensor mat1, Tensor mat2, float beta, float alpha) => input.addmv(mat1, mat2, beta, alpha);
 
         /// <summary>
         /// Performs a matrix multiplication of the matrices mat1 and mat2. The matrix input is added to the final result.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="mat1">First matrix</param>
+        /// <param name="mat2">Second matrix</param>
+        /// <param name="beta">Input scale factor</param>
+        /// <param name="alpha">Matrix multiplication scale factor</param>
         public static Tensor addmv_(Tensor input, Tensor mat1, Tensor mat2, float beta, float alpha) => input.addmv_(mat1, mat2, beta, alpha);
 
         /// <summary>
@@ -2090,7 +2251,11 @@ namespace TorchSharp
         /// <summary>
         /// Performs the outer-product of vectors vec1 and vec2 and adds it to the input tensor.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="vec1">The first vector of the outer product</param>
+        /// <param name="vec2">The second vector of the outer product</param>
+        /// <param name="beta">Input scale factor</param>
+        /// <param name="alpha">Outer-product scale factor</param>
         public static Tensor addr_(Tensor input, Tensor vec1, Tensor vec2, float beta = 1.0f, float alpha = 1.0f) => input.addr_(vec1, vec2, beta, alpha);
 
         public static Tensor bincount(Tensor input, Tensor weights = null, long minlength = 0) => input.bincount(weights, minlength);
@@ -2098,111 +2263,139 @@ namespace TorchSharp
         /// <summary>
         /// Element-wise bitwise AND
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Left-hand operand.</param>
+        /// <param name="right">Right-hand operand.</param>
         public static Tensor bitwise_and(Tensor left, Tensor right) => left.bitwise_and(right);
 
         /// <summary>
         /// Element-wise bitwise AND, in place.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Left-hand operand.</param>
+        /// <param name="right">Right-hand operand.</param>
         public static Tensor bitwise_and_(Tensor left, Tensor right) => left.bitwise_and_(right);
 
         /// <summary>
         /// Element-wise bitwise NOT
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor bitwise_not(Tensor input) => input.bitwise_not();
 
         /// <summary>
         /// Element-wise bitwise NOT, in place.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor bitwise_not_(Tensor input) => input.bitwise_not_();
 
         /// <summary>
         /// Element-wise bitwise OR
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Left-hand operand.</param>
+        /// <param name="right">Right-hand operand.</param>
         public static Tensor bitwise_or(Tensor left, Tensor right) => left.bitwise_or(right);
 
         /// <summary>
         /// Element-wise bitwiseXOR, in place.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Left-hand operand.</param>
+        /// <param name="right">Right-hand operand.</param>
         public static Tensor bitwise_or_(Tensor left, Tensor right) => left.bitwise_or_(right);
 
         /// <summary>
         /// Element-wise bitwise XOR
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Left-hand operand.</param>
+        /// <param name="right">Right-hand operand.</param>
         public static Tensor bitwise_xor(Tensor left, Tensor right) => left.bitwise_xor(right);
 
         /// <summary>
         /// Element-wise bitwise XOR, in place.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Left-hand operand.</param>
+        /// <param name="right">Right-hand operand.</param>
         public static Tensor bitwise_xor_(Tensor left, Tensor right) => left.bitwise_xor_(right);
 
         /// <summary>
         /// Returns a new tensor with the ceil of the elements of input, the smallest integer greater than or equal to each element.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor ceil(Tensor input) => input.ceil();
 
         /// <summary>
         /// Replaces each element of the input with the smallest integer greater than or equal to the element.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor ceil_(Tensor input) => input.ceil_();
 
+        /// <summary>
+        /// Returns the cumulative sum of elements of input in the dimension dim.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dimension">The dimension to do the operation over</param>
+        /// <param name="type">The desired data type of returned tensor. If specified, the input tensor is casted to dtype before the operation is performed.
+        /// This is useful for preventing data type overflows.</param>
         public static Tensor cumsum(Tensor input, long dimension, ScalarType? type = null) => input.cumsum(dimension, type);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
+        /// <param name="rounding_mode">Rounding mode.</param>
         public static Tensor div(Tensor left, Tensor right, RoundingMode rounding_mode = RoundingMode.None) => left.div(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
+        /// <param name="rounding_mode">Rounding mode.</param>
         public static Tensor divide(Tensor left, Tensor right, RoundingMode rounding_mode = RoundingMode.None) => left.div(right);
 
         /// <summary>
         /// Divides each element of the input by a scalar value.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
+        /// <param name="rounding_mode">Rounding mode.</param>
         public static Tensor div(Tensor left, Scalar right, RoundingMode rounding_mode = RoundingMode.None) => left.div(right);
 
         /// <summary>
         /// Divides each element of the input by a scalar value.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
+        /// <param name="rounding_mode">Rounding mode.</param>
         public static Tensor divide(Tensor left, Scalar right, RoundingMode rounding_mode = RoundingMode.None) => left.div(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
+        /// <param name="rounding_mode">Rounding mode.</param>
         public static Tensor div_(Tensor left, Tensor right, RoundingMode rounding_mode = RoundingMode.None) => left.div_(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
+        /// <param name="rounding_mode">Rounding mode.</param>
         public static Tensor divide_(Tensor left, Tensor right, RoundingMode rounding_mode = RoundingMode.None) => left.div_(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
-        public static Tensor div_(Tensor left, Scalar right, RoundingMode rounding_mode = RoundingMode.None) => left.div_(right);
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
+        /// <param name="rounding_mode">Rounding mode.</param>
+        public static Tensor div_(Tensor left, Scalar right, RoundingMode rounding_mode = RoundingMode.None) => left.div_(right, rounding_mode);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
         public static Tensor divide_(Tensor left, Scalar right) => left.div_(right);
 
         [DllImport("LibTorchSharp")]
@@ -2235,49 +2428,51 @@ namespace TorchSharp
         /// <summary>
         /// Returns a new tensor with the exponential of the elements of the input tensor input.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor exp(Tensor input) => input.exp();
 
         /// <summary>
         /// Replaces each element of the input with the exponential of the elements of the input tensor input.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor exp_(Tensor input) => input.exp_();
 
         /// <summary>
         /// Computes the base 2 exponential function of input.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor exp2(Tensor input) => input.exp2();
 
         /// <summary>
         /// Returns a new tensor with the exponential of the elements minus 1 of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor expm1(Tensor input) => input.expm1();
 
         /// <summary>
         /// Replaces each element with the exponential of the element minus 1 of input.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor expm1_(Tensor input) => input.expm1_();
 
         /// <summary>
         /// Raises input to the power of exponent, elementwise, in double precision.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="target">The exponent.</param>
         /// <remarks> If neither input is complex returns a torch.float64 tensor, and if one or more inputs is complex returns a torch.complex128 tensor.</remarks>
         public static Tensor float_power(Tensor input, Tensor target) => input.float_power(target);
 
         /// <summary>
         /// Returns a new tensor with the floor of the elements of input, the largest integer less than or equal to each element.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor floor(Tensor input) => input.floor();
 
         /// <summary>
         /// Replaces each element with the floor of the input, the largest integer less than or equal to each element.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor floor_(Tensor input) => input.exp_();
 
         /// <summary>
@@ -2288,72 +2483,102 @@ namespace TorchSharp
         /// <summary>
         /// Computes the element-wise remainder of division, in place.
         /// </summary>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
         public static Tensor fmod_(Tensor left, Tensor right) => left.fmod_(right);
 
         /// <summary>
         /// Computes the element-wise remainder of division.
         /// </summary>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
         public static Tensor fmod(Tensor left, Scalar right) => left.fmod(right);
 
         /// <summary>
         /// Computes the element-wise remainder of division, in place.
         /// </summary>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
         public static Tensor fmod_(Tensor left, Scalar right) => left.fmod_(right);
 
         /// <summary>
         /// Computes the fractional portion of each element in input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor frac(Tensor input) => input.frac();
 
         /// <summary>
         /// Computes the fractional portion of each element in input, in-place.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor frac_(Tensor input) => input.frac_();
 
         /// <summary>
         /// Decomposes input into mantissa and exponent tensors 
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static (Tensor Mantissa, Tensor Exponent) frexp(Tensor input) => input.frexp();
 
+        /// <summary>
+        /// Computes the element-wise greatest common divisor (GCD) of input and other.
+        /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor gcd(Tensor left, Tensor right) => left.gcd(right);
 
+        /// <summary>
+        /// Computes the element-wise greatest common divisor (GCD) of input and other.
+        /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor gcd_(Tensor left, Tensor right) => left.gcd_(right);
 
+        /// <summary>
+        /// Computes the histogram of a tensor.
+        /// The elements are sorted into equal width bins between min and max.If min and max are both zero, the minimum and maximum values of the data are used.
+        /// Elements lower than min and higher than max are ignored.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="bins">Number of histogram bins</param>
+        /// <param name="min">Lower end of the range (inclusive)</param>
+        /// <param name="max">Upper end of the range (inclusive)</param>
         public static Tensor histc(Tensor input, long bins = 100, long min = 0, long max = 0) => input.histc(bins, min, max);
 
         /// <summary>
         /// Element-wise: given the legs of a right triangle, return its hypotenuse.
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor hypot(Tensor left, Tensor right) => left.hypot(right);
 
         /// <summary>
         /// Computes the logarithmic derivative of the gamma function on input.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor digamma(Tensor input) => input.digamma();
 
         /// <summary>
         /// Computes the logarithmic derivative of the gamma function on input, in place.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor digamma_(Tensor input) => input.digamma_();
 
         /// <summary>
         /// Computes the logarithm of the gamma function on input.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor lgamma(Tensor input) => input.lgamma();
 
         /// <summary>
         /// Computes the logarithm of the gamma function on input, in place.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor lgamma_(Tensor input) => input.lgamma();
 
         /// <summary>
         /// Computes the multivariate log-gamma function) with dimension pp element-wise
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">The input tensor.</param>
         /// <param name="p">The number of dimensions</param>
         /// <returns></returns>
         public static Tensor mvlgamma(Tensor input, long p) => input.mvlgamma(p);
@@ -2361,117 +2586,151 @@ namespace TorchSharp
         /// <summary>
         /// Computes the multivariate log-gamma function) with dimension pp element-wise, in place.
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">The input tensor.</param>
         /// <param name="p">The number of dimensions</param>
         /// <returns></returns>
         public static Tensor mvlgamma_(Tensor input, long p) => input.mvlgamma_(p);
 
-        
+
+        /// <summary>
+        /// Computes the Nth derivative of the digamma function on input.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="p">The number of dimensions</param>
+        /// <returns></returns>
         public static Tensor polygamma(Tensor input, long p) => input.polygamma(p);
 
+        /// <summary>
+        /// Computes the Nth derivative of the digamma function on input, in-place.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="p">The number of dimensions</param>
         public static Tensor polygamma_(Tensor input, long p) => input.polygamma_(p);
 
         /// <summary>
         /// Returns a new tensor with the natural logarithm of the input elements.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor log(Tensor input) => input.log();
 
         /// <summary>
         /// Replaces each elements with the natural logarithm of the input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor log_(Tensor input) => input.log_();
 
         /// <summary>
         /// Returns a new tensor with the natural logarithm of (1 + input).
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor log1p(Tensor input) => input.log1p();
 
         /// <summary>
         /// Replaces each elements with the natural logarithm of (1 + input), in place.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor log1p_(Tensor input) => input.log1p_();
 
         /// <summary>
         /// Logarithm of the sum of exponentiations of the inputs.
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor logaddexp(Tensor left, Tensor right) => left.logaddexp(right);
 
         /// <summary>
         /// Logarithm of the sum of exponentiations of the inputs in base-2.
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor logaddexp2(Tensor left, Tensor right) => left.logaddexp2(right);
 
         /// <summary>
         /// Returns the logarithm of the cumulative summation of the exponentiation of elements of input in the dimension dim.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dim">The dimension to do the operation over</param>
         public static Tensor logcumsumexp(Tensor input, long dim) => input.logcumsumexp(dim);
 
         /// <summary>
         /// Returns the log of summed exponentials of each row of the input tensor in the given dimension dim. 
         /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dim">The dimension to do the operation over</param>
+        /// <param name="keepdim">Thether the output tensor has dim retained or not.</param>
         public static Tensor logsumexp(Tensor input, long dim, Boolean keepdim = false) => input.logsumexp(dim, keepdim);
 
         /// <summary>
         /// Returns a new tensorwith the logarithm to the base 10 of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor log10(Tensor input) => input.log();
 
         /// <summary>
         /// Replaces each elements with the logarithm to the base 10 of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor log10_(Tensor input) => input.log_();
 
         /// <summary>
         /// Returns a new tensorwith the logarithm to the base 10 of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor log2(Tensor input) => input.log2();
 
         /// <summary>
         /// Replaces each elements with the logarithm to the base 10 of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor log2_(Tensor input) => input.log2_();
 
         /// <summary>
         /// Element-wise logical AND
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor logical_and(Tensor left, Tensor right) => left.logical_and(right);
 
         /// <summary>
         /// Element-wise logical AND, in place.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor logical_and_(Tensor left, Tensor right) => left.logical_and_(right);
 
         /// <summary>
         /// Element-wise logical NOT
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor logical_not(Tensor input) => input.logical_not();
 
         /// <summary>
         /// Element-wise logical OR
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor logical_or(Tensor left, Tensor right) => left.logical_or(right);
 
         /// <summary>
         /// Element-wise logicalXOR, in place.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor logical_or_(Tensor left, Tensor right) => left.logical_or_(right);
 
         /// <summary>
         /// Element-wise logical XOR
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor logical_xor(Tensor left, Tensor right) => left.logical_xor(right);
 
         /// <summary>
         /// Returns a new tensor with the logit of the elements of input.
         /// input is clamped to [eps, 1 - eps] when eps is not null
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="eps">The epsilon for input clamp bound.</param>
         public static Tensor logit(Tensor input, double? eps = null) => input.logit(eps);
 
         public static Tensor max(Tensor input) => input.max();
@@ -2493,234 +2752,270 @@ namespace TorchSharp
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor mul(Tensor left, Tensor right) => left.mul(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor multiply(Tensor left, Tensor right) => left.mul(right);
 
         /// <summary>
         /// Computes the matrix exponential of a square matrix or of each square matrix in a batch.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor matric_exp(Tensor input) => input.matrix_exp();
 
         /// <summary>
         /// Divides each element of the input by a scalar value.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor mul(Tensor left, Scalar right) => left.mul(right);
 
         /// <summary>
         /// Divides each element of the input by a scalar value.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor multiply(Tensor left, Scalar right) => left.mul(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor mul_(Tensor left, Tensor right) => left.mul_(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor multiply_(Tensor left, Tensor right) => left.mul_(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor mul_(Tensor left, Scalar right) => left.mul_(right);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor multiply_(Tensor left, Scalar right) => left.mul_(right);
 
         /// <summary>
         /// Negation
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor neg(Tensor input) => input.neg();
 
         /// <summary>
         /// Negation
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor negative(Tensor input) => input.neg();
 
         /// <summary>
         /// In-place negation
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor neg_(Tensor input) => input.neg_();
 
         /// <summary>
         /// In-place negation
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor negative_(Tensor input) => input.neg_();
 
         /// <summary>
         /// Takes the power of each element in input with exponent and returns a tensor with the result.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="exponent">The right-hand operand.</param>
         public static Tensor pow(Tensor left, Tensor exponent) => left.pow(exponent);
 
         /// <summary>
         /// Takes the power of each element in input with exponent and returns a tensor with the result.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="exponent">The right-hand operand.</param>
         public static Tensor pow(Tensor left, Scalar exponent) => left.pow(exponent);
 
         /// <summary>
         /// Replaces each element in input with the power of the element and the exponent.
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="exponent">The right-hand operand.</param>
         public static Tensor pow_(Tensor left, Tensor exponent) => left.pow_(exponent);
 
         /// <summary>
         /// Replaces each element in input with the power of the element and the exponent.
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="exponent">The right-hand operand.</param>
         public static Tensor pow_(Tensor left, Scalar exponent) => left.pow_(exponent);
 
         /// <summary>
         /// Returns a new tensor with the reciprocal of the elements of input
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor reciprocal(Tensor input) => input.reciprocal();
 
         /// <summary>
         /// Replaces each element with the reciprocal of the input
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor reciprocal_(Tensor input) => input.reciprocal_();
 
         /// <summary>
         /// Computes the element-wise remainder of division.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
         public static Tensor remainder(Tensor left, Tensor right) => left.remainder(right);
 
         /// <summary>
         /// Computes the element-wise remainder of division.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
         public static Tensor remainder(Tensor left, Scalar right) => left.remainder(right);
 
         /// <summary>
         /// Computes the element-wise remainder of division, in place
         /// </summary>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
         public static Tensor remainder_(Tensor left, Tensor right) => left.remainder_(right);
 
         /// <summary>
         /// Computes the element-wise remainder of division, in place
         /// </summary>
+        /// <param name="left">Numerator</param>
+        /// <param name="right">Denominator</param>
         public static Tensor remainder_(Tensor left, Scalar right) => left.remainder_(right);
 
         /// <summary>
         /// Returns a new tensor with each of the elements of input rounded to the closest integer.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor round(Tensor input) => input.round();
 
         /// <summary>
         /// Replaces each of the elements of input with the element rounded to the closest integer.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor round_(Tensor input) => input.round_();
 
         /// <summary>
         /// Returns a new tensor with the reciprocal of the square-root of each of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor rsqrt(Tensor input) => input.rsqrt();
 
         /// <summary>
         /// Replaces each of the elements of input with  the reciprocal of the square-root of each of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor rsqrt_(Tensor input) => input.rsqrt_();
 
         /// <summary>
         /// Computes the element-wise square
         /// </summary>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor square(Tensor input) => input.pow(2);
 
         /// <summary>
         /// Computes the element-wise square root
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor sqrt(Tensor input) => input.sqrt();
 
         /// <summary>
         /// Computes the element-wise square root, in place
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor sqrt_(Tensor input) => input.sqrt_();
 
         /// <summary>
         /// Computes the logistic sigmoid function of the elements of input.
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor sigmoid(Tensor input) => input.sigmoid();
 
         /// <summary>
         /// Computes the logistic sigmoid function of the elements of input.
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param name="input">The input tensor.</param>
         public static Tensor sigmoid_(Tensor input) => input.sigmoid_();
 
         /// <summary>
         /// Returns a new tensor with the signs (-1, 0, 1) of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor sign(Tensor input) => input.sign();
 
         /// <summary>
         /// Replaces each element with the signs (-1, 0, 1) of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor sign_(Tensor input) => input.sign_();
 
         /// <summary>
         /// Tests whether each element of input has its sign bit set (is less than zero) or not.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         /// <returns>A boolean tensor of the same shape as the input.</returns>
         public static Tensor signbit(Tensor input) => input.signbit();
 
         /// <summary>
         /// Element-wise subtraction
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor sub(Tensor left, Tensor right) => left.sub(right);
 
         /// <summary>
         /// Element-wise subtraction
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor sub(Tensor left, Scalar right) => left.sub(right);
 
         /// <summary>
         /// Element-wise subtraction
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor subtract(Tensor left, Tensor right) => left.sub(right);
 
         /// <summary>
         /// Element-wise subtraction
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor subtract(Tensor left, Scalar right) => left.sub(right);
 
         /// <summary>
         /// Element-wise subtraction
         /// </summary>
-        /// <returns></returns>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor sub_(Tensor left, Tensor right) => left.sub_(right);
 
         /// <summary>
         /// Element-wise subtraction
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor sub_(Tensor left, Scalar right) => left.sub_(right);
 
         /// <summary>
@@ -2732,71 +3027,127 @@ namespace TorchSharp
         /// <summary>
         /// Element-wise subtraction
         /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
         public static Tensor subtract_(Tensor left, Scalar right) => left.sub_(right);
 
         /// <summary>
         /// Returns a new tensor with the truncated integer values of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor trunc(Tensor input) => input.trunc();
 
         /// <summary>
         /// Replaces each element with the truncated integer values of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor trunc_(Tensor input) => input.trunc_();
 
         /// <summary>
         /// Returns a new tensor with the truncated integer values of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor fix(Tensor input) => input.fix();
 
         /// <summary>
         /// Replaces each element with the truncated integer values of the elements of input.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor fix_(Tensor input) => input.fix_();
 
         /// <summary>
         /// Computes x * log(y)
         /// </summary>
-        /// <returns></returns>
-        public static Tensor xlogy(Tensor left, Tensor right) => left.xlogy(right);
+        /// <param name="x">The 'x' operand.</param>
+        /// <param name="y">The 'y' operand.</param>
+        public static Tensor xlogy(Tensor x, Tensor y) => x.xlogy(y);
 
         /// <summary>
         /// Computes x * log(y)
         /// </summary>
-        public static Tensor xlogy(Tensor left, Scalar right) => left.xlogy(right);
+        /// <param name="x">The 'x' operand.</param>
+        /// <param name="y">The 'y' operand.</param>
+        public static Tensor xlogy(Tensor x, Scalar y) => x.xlogy(y);
 
         /// <summary>
         /// Computes x * log(y) in place
         /// </summary>
-        /// <returns></returns>
-        public static Tensor xlogy_(Tensor left, Tensor right) => left.xlogy_(right);
+        /// <param name="x">The 'x' operand.</param>
+        /// <param name="y">The 'y' operand.</param>
+        public static Tensor xlogy_(Tensor x, Tensor y) => x.xlogy_(y);
 
         /// <summary>
         /// Computes x * log(y) in place
         /// </summary>
-        public static Tensor xlogy_(Tensor left, Scalar right) => left.xlogy_(right);
+        /// <param name="x">The 'x' operand.</param>
+        /// <param name="y">The 'y' operand.</param>
+        public static Tensor xlogy_(Tensor x, Scalar y) => x.xlogy_(y);
 
 
         // Duplication of random distribution opertors in the 'torch' namespace
 
+        /// <summary>
+        ///  Mutates the tensor to be filled with random values taken from a uniform distribution in [0, 1).
+        /// </summary>
         public static Tensor rand_out(Tensor input, params long[] sizes) => input.randn_out(sizes);
 
+        /// <summary>
+        ///  Mutates the tensor to be filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
         public static Tensor randint_out(Tensor input, long high, long[] sizes) => input.randint_out(high, sizes);
 
+        /// <summary>
+        /// Returns a tensor with the same size as input that is filled with random numbers from a uniform distribution on the interval [0,1) .
+        /// </summary>
         public static Tensor rand_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.rand_like(dtype, device, requiresGrad);
 
+        /// <summary>
+        /// Returns a tensor with the same size as input that is filled with random numbers from a normal distribution with mean 0 and variance 1. 
+        /// </summary>
         public static Tensor randn_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.randn_like(dtype, device, requiresGrad);
 
+        /// <summary>
+        /// Returns a tensor with the same shape as Tensor input filled with random integers generated uniformly in the range [low,high).
+        /// </summary>
         public static Tensor randint_like(Tensor input, long low, long high, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.randint_like(low, high, dtype, device, requiresGrad);
 
+        /// <summary>
+        ///  Mutates the tensor to be a 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
         public static Tensor randperm_out(Tensor input, long n) => input.randperm_out(n);
 
+        /// <summary>
+        /// Draws binary random numbers (0 or 1) from a Bernoulli distribution.
+        /// </summary>
+        /// <param name="input">The input tensor of probability values for the Bernoulli distribution</param>
+        /// <param name="generator">Optional random number generator</param>
+        /// <returns></returns>
         public static Tensor bernoulli(Tensor input, torch.Generator generator = null) => input.bernoulli(generator);
 
+        /// <summary>
+        /// Draws a binomial distribution given a trial count and probabilities.
+        /// </summary>
+        /// <param name="count">Trial count</param>
+        /// <param name="probs">Probability vector</param>
+        /// <param name="generator">Optional random number generator</param>
+        /// <returns></returns>
         public static Tensor binomial(Tensor count, Tensor probs, torch.Generator generator = null) => count.binomial(probs, generator);
 
+        /// <summary>
+        /// Returns a tensor of the same size as input with each element sampled from a Poisson distribution with rate parameter given by the corresponding element in input
+        /// </summary>
+        /// <param name="input">Input tensor.</param>
+        /// <param name="generator">Optional random number generator</param>
+        /// <returns></returns>
         public static Tensor poisson(Tensor input, torch.Generator generator = null) => input.poisson(generator);
 
+        /// <summary>
+        /// Returns a tensor where each row contains num_samples indices sampled from the multinomial probability distribution located in the corresponding row of tensor input.
+        /// </summary>
+        /// <param name="input">A probabilities tensor</param>
+        /// <param name="num_samples">Number of samples to draw</param>
+        /// <param name="replacement">Whether to draw with replacement or not</param>
+        /// <param name="generator">Optional random number generator</param>
         public static Tensor multinomial(Tensor input, long num_samples, bool replacement = false, torch.Generator generator = null) => input.multinomial(num_samples, replacement, generator);
     }
 }

@@ -482,6 +482,11 @@ namespace TorchSharp
 
                 public virtual Tensor forward(Tensor x, Tensor y) => throw new NotImplementedException("forward(x,y)");
 
+                /// <summary>
+                /// Save the parameters and buffers of the module to a disk location.
+                /// </summary>
+                /// <param name="location">The file path.</param>
+                /// <returns></returns>
                 public Module save(string location)
                 {
                     cpu();
@@ -498,41 +503,59 @@ namespace TorchSharp
 
                     // First, write how many entries.
 
+                    SaveStateDictionary(writer, sd);
+
+                    return this;
+                }
+
+                public static void SaveStateDictionary(System.IO.BinaryWriter writer, Dictionary<string, Tensor> sd)
+                {
                     writer.Encode(sd.Count); // 4 bytes
 
                     foreach (var (k, v) in sd) {
                         writer.Write(k);
                         v.Save(writer);
                     }
-
-                    return this;
                 }
 
-                public Module load(string location)
+                /// <summary>
+                /// Load the parameters and buffers 
+                /// </summary>
+                /// <param name="location">The file path.</param>
+                /// <param name="strict">
+                /// If true, will only load a module if it exactly corresponds to the current module's state.
+                /// If false, will load the parameters and buffers that it finds in the saved file,
+                /// leaving everything else alone.
+                /// </param>
+                /// <returns></returns>
+                public Module load(string location, bool strict = true)
                 {
                     using (var stream = System.IO.File.OpenRead(location))
                     using (var reader = new System.IO.BinaryReader(stream))
-                        load(reader);
+                        load(reader, strict);
                     return this;
                 }
 
-                public virtual Module load(System.IO.BinaryReader reader)
+                public virtual Module load(System.IO.BinaryReader reader, bool strict = true)
                 {
                     var sd = state_dict();
 
                     // First, figure out how many entries.
                     var streamEntries = reader.Decode();
 
-                    if (streamEntries != sd.Count)
+                    if (streamEntries != sd.Count && strict)
                         throw new ArgumentException($"Mismatched state_dict sizes: expected {sd.Count}, but found {streamEntries} entries.");
 
                     for (int i = 0; i < streamEntries; ++i) {
                         var key = reader.ReadString();
-                        if (!sd.ContainsKey(key)) {
+                        var found = sd.ContainsKey(key);
+                        if (!found && strict) {
                             throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
                         }
 
-                        sd[key].Load(reader);
+                        if (found) {
+                            sd[key].Load(reader);
+                        }
                     }
 
                     return this;
@@ -596,7 +619,7 @@ namespace TorchSharp
                     foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
                         var value = field.GetValue(this);
 
-                        var module = field.GetValue(this) as Module;
+                        var module = value as Module;
                         Tensor tensor = value as Tensor;
                         Modules.Parameter param = value as Modules.Parameter;
 

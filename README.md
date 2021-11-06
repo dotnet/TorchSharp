@@ -2,7 +2,9 @@
 
 __TorchSharp is now in the .NET Foundation!__
 
-If you are using TorchSharp from NuGet, you should be using a version >= 0.93.9 of TorchSharp, and >= 1.9.0.11 of the libtorch-xxx redistributable packages.
+If you are using TorchSharp from NuGet, you should be using a version >= 0.95.1 of TorchSharp, and >= 1.10.0.1 of the libtorch-xxx redistributable packages.
+
+__NOTE:__ Please do __not__ use 0.95.0 -- the package was released to NuGet in error, and without its many dependencies.
 
 __TorchSharp examples now has their own home!__
 
@@ -95,12 +97,12 @@ To use TorchSharp, you also need one of the LibTorch backend packages: https://w
 
 * `libtorch-cpu` (CPU, references all three, larger download but simpler)
 
-* `libtorch-cuda-11.1-linux-x64` (CPU/CUDA 11.1, Linux)
+* `libtorch-cuda-11.3-linux-x64` (CPU/CUDA 11.3, Linux)
 
-  > NOTE: Due to the presence of very large native binaries, using the `libtorch-cuda-11.1-linux-x64` package requires
+  > NOTE: Due to the presence of very large native binaries, using the `libtorch-cuda-11.3-linux-x64` package requires
   > .NET 6, e.g. .NET SDK version `6.0.100-preview.5.21302.13` or greater.
 
-* `libtorch-cuda-11.1-win-x64` (CPU/CUDA 11.1, Windows)
+* `libtorch-cuda-11.3-win-x64` (CPU/CUDA 11.3, Windows)
 
 Alternatively you can access the libtorch native binaries via direct reference to existing local native
 binaries of LibTorch installed through other means (for example, by installing [PyTorch](https://pytorch.org/) using a Python package manager). You will have to add an explicit load of the relevant native library, for example:

@@ -12,14 +12,28 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// A Cauchy (Lorentz) distribution. The distribution of the ratio of
+        /// independent normally distributed random variables with means `0` follows a Cauchy distribution.
+        /// </summary>
         public class Cauchy : torch.distributions.Distribution
         {
-
+            /// <summary>
+            /// The mean of the distribution.
+            /// </summary>
             public override Tensor mean => torch.full(ExtendedShape(), double.NaN, dtype: loc.dtype, device: loc.device);
 
+            /// <summary>
+            /// The variance of the distribution
+            /// </summary>
             public override Tensor variance => torch.full(ExtendedShape(), double.NaN, dtype: loc.dtype, device: loc.device);
 
-
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="loc">Mode or median of the distribution.</param>
+            /// <param name="scale">Half width at half maximum.</param>
+            /// <param name="generator">An optional random number generator object.</param>
             public Cauchy(Tensor loc, Tensor scale, torch.Generator generator = null) : base(generator)
             {
                 this.batch_shape = loc.size();
@@ -31,6 +45,12 @@ namespace TorchSharp
             private Tensor loc;
             private Tensor scale;
 
+            /// <summary>
+            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+            ///  if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape">The sample shape.</param>
+            /// <returns></returns>
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
@@ -38,24 +58,50 @@ namespace TorchSharp
                 return loc + eps * scale;
             }
 
+            /// <summary>
+            /// Returns the log of the probability density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
                 return Math.Log(Math.PI) - scale.log() - (1 + ((value - loc) / scale).pow(2)).log();
             }
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
+            /// <returns></returns>
             public override Tensor entropy()
             {
                 return Math.Log(Math.PI * 4) + scale.log();
             }
+
+            /// <summary>
+            /// Returns the cumulative density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
                 return torch.atan((value - loc) / scale) / Math.PI + 0.5;
             }
 
+            /// <summary>
+            /// Returns the inverse cumulative density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor icdf(Tensor value)
             {
                 return torch.tan(Math.PI * (value - 0.5)) * scale + loc;
             }
+
+
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Cauchy))

@@ -3561,6 +3561,18 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void AMinMaxTest()
+        {
+            var a = torch.randn(new long[] { 15, 5, 4, 3 });
+            var b = a.aminmax(0);
+            Assert.Equal(new long[] { 5, 4, 3 }, b.min.shape);
+            Assert.Equal(new long[] { 5, 4, 3 }, b.max.shape);
+            var c = a.aminmax(0, keepDim: true);
+            Assert.Equal(new long[] { 1, 5, 4, 3 }, c.min.shape);
+            Assert.Equal(new long[] { 1, 5, 4, 3 }, c.max.shape);
+        }
+
+        [Fact]
         public void TanTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -3667,6 +3679,17 @@ namespace TorchSharp
                 var res = torch.tensor(data).arctan();
                 Assert.True(res.allclose(torch.tensor(expected)));
             }
+        }
+
+
+        [Fact]
+        public void CovarianceTest()
+        {
+            var data = new float[] { 0, 2, 1, 1, 2, 0 };
+            var expected = new float[] { 1, -1, -1, 1};
+            var res = torch.tensor(data).reshape(3, 2).T;
+            var cov1 = res.cov();
+            Assert.True(cov1.allclose(torch.tensor(expected).reshape(2,2)));
         }
 
         [Fact]
@@ -5035,11 +5058,38 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSpeciali0()
+        {
+            var a = torch.arange(0.0f, 5.0f, 1.0f);
+            var expected = torch.tensor(new float[] { 0.99999994f, 1.266066f, 2.27958512f, 4.88079262f, 11.3019209f });
+            var b = torch.special.i0(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
         public void TestSpeciali0e()
         {
             var a = torch.arange(0.0f, 5.0f, 1.0f);
             var expected = torch.tensor(new float[] { 1.0f, 0.465759635f, 0.3085083f, 0.243000358f, 0.20700191f });
             var b = torch.special.i0e(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpeciali1()
+        {
+            var a = torch.arange(0.0f, 5.0f, 1.0f);
+            var expected = torch.tensor(new float[] { 0.0000f, 0.5651591f, 1.59063685f, 3.95337057f, 9.759467f });
+            var b = torch.special.i1(a);
+            Assert.True(b.allclose(expected));
+        }
+
+        [Fact]
+        public void TestSpeciali1e()
+        {
+            var a = torch.arange(0.0f, 5.0f, 1.0f);
+            var expected = torch.tensor(new float[] { 0.0000f, 0.207910419f, 0.215269282f, 0.196826726f, 0.178750873f });
+            var b = torch.special.i1e(a);
             Assert.True(b.allclose(expected));
         }
 
@@ -5390,7 +5440,7 @@ namespace TorchSharp
             var inverted = fft.ifft2(output);
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
-
+#if false
         [Fact]
         public void Float32FFTN()
         {
@@ -5416,30 +5466,6 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void Float32RFFTN()
-        {
-            var input = torch.rand(new long[] { 5, 5, 5, 5 });
-            var output = fft.rfftn(input);
-            Assert.Equal(new long[] { 5, 5, 5, 3 }, output.shape);
-            Assert.Equal(ScalarType.ComplexFloat32, output.dtype);
-
-            var inverted = fft.irfftn(output);
-            Assert.Equal(ScalarType.Float32, inverted.dtype);
-        }
-
-        [Fact]
-        public void Float64RFFTN()
-        {
-            var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
-            var output = fft.rfftn(input);
-            Assert.Equal(new long[] { 5, 5, 5, 3 }, output.shape);
-            Assert.Equal(ScalarType.ComplexFloat64, output.dtype);
-
-            var inverted = fft.irfftn(output);
-            Assert.Equal(ScalarType.Float64, inverted.dtype);
-        }
-
-        [Fact]
         public void ComplexFloat32FFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex64);
@@ -5461,6 +5487,30 @@ namespace TorchSharp
 
             var inverted = fft.ifftn(output);
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
+        }
+#endif
+        [Fact]
+        public void Float32RFFTN()
+        {
+            var input = torch.rand(new long[] { 5, 5, 5, 5 });
+            var output = fft.rfftn(input);
+            Assert.Equal(new long[] { 5, 5, 5, 3 }, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, output.dtype);
+
+            var inverted = fft.irfftn(output);
+            Assert.Equal(ScalarType.Float32, inverted.dtype);
+        }
+
+        [Fact]
+        public void Float64RFFTN()
+        {
+            var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
+            var output = fft.rfftn(input);
+            Assert.Equal(new long[] { 5, 5, 5, 3 }, output.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, output.dtype);
+
+            var inverted = fft.irfftn(output);
+            Assert.Equal(ScalarType.Float64, inverted.dtype);
         }
 
         [Fact]

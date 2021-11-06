@@ -14,6 +14,7 @@ set(SOURCES
     THSNN.h
     THSTensor.h
     THSTorch.h
+	THSVision.h
     Utils.h
     cifar10.cpp
 	THSActivation.cpp
@@ -35,6 +36,7 @@ set(SOURCES
 	THSTensorFactories.cpp
 	THSTensorMath.cpp
     THSTorch.cpp
+	THSVision.cpp
     Utils.cpp)
 
 if(NOT WIN32)

@@ -19,6 +19,7 @@ namespace TorchSharp
                     {
 
                     }
+
                     protected LRScheduler(ILearningRateController optimizer, int last_epoch = -1, bool verbose = false)
                     {
                         _optimizer = optimizer;
@@ -38,15 +39,16 @@ namespace TorchSharp
                         _last_epoch += 1;
 
                         _optimizer.LearningRate = LearningRate;
+                        Print(_last_lr != LearningRate);
                         _last_lr = LearningRate;
-                        Print();
                     }
 
                     public double get_learning_rate() => LearningRate;
 
-                    private void Print()
+                    private void Print(bool changed)
                     {
-                        Console.WriteLine($"Adjusting learning rate to {LearningRate}");
+                        if (_verbose)
+                            Console.WriteLine($"Adjusting learning rate to {LearningRate}");
                     }
 
                     public virtual double LearningRate => _optimizer.LearningRate;

@@ -166,8 +166,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise arctangent of input / other with consideration of the quadrant.
             /// </summary>
-            /// <param name="other"></param>
-            /// <returns></returns>
+            /// <param name="other">The second tensor</param>
             public Tensor atan2(Tensor other)
             {
                 var res = THSTensor_atan2(handle, other.Handle);
@@ -182,7 +181,7 @@ namespace TorchSharp
             /// <summary>
             /// Element-wise arctangent of input / other with consideration of the quadrant.
             /// </summary>
-            /// <param name="other"></param>
+            /// <param name="other">The second tensor</param>
             /// <returns></returns>
             public Tensor atan2_(Tensor other)
             {

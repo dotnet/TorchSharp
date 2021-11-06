@@ -1,7 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 using static TorchSharp.torch;
 
@@ -92,9 +93,10 @@ namespace TorchSharp.torchvision
             /// <param name="hue_factor">
             /// How much to shift the hue channel. 0 means no shift in hue.
             /// Hue is often defined in degrees, with 360 being a full turn on the color wheel.
-            /// In this library, 1.0 is a full turn, which means that 0.5 and -0.5 give complete reversal of
+            /// In this library, 1.0 is by default a full turn, which means that 0.5 and -0.5 give complete reversal of
             /// the hue channel in HSV space in positive and negative direction respectively.
             /// </param>
+            /// <param name="degrees">Whether the hue factor is measured in degrees. If true, 360 is a full turn.</param>
             /// <returns></returns>
             /// <remarks>
             /// Unlike Pytorch, TorchSharp will allow the hue_factor to lie outside the range [-0.5,0.5].
@@ -102,12 +104,15 @@ namespace TorchSharp.torchvision
             /// Note that adjusting the hue is a very expensive operation, and may therefore not be suitable as a method
             /// for data augmentation when training speed is important.
             /// </remarks>
-            public static Tensor adjust_hue(Tensor img, double hue_factor)
+            public static Tensor adjust_hue(Tensor img, double hue_factor, bool degrees = false)
             {
                 if (hue_factor == 0.0)
                     // Special case -- no change.
                     return img;
 
+                if (degrees)
+                    hue_factor = hue_factor / 360.0;
+                
                 if (img.shape.Length < 4 || img.shape[img.shape.Length - 3] == 1)
                     return img;
 
@@ -724,69 +729,30 @@ namespace TorchSharp.torchvision
                 return kernel_Y.mm(kernel_X);
             }
 
+            // HSV / RGB conversion requires some heavy math, and generates lots of temporaries.
+            // Therefore, it's worth doing it all in the native code, and just collect the results
+            // in the .NET bindings code.
+
+            /* Tensor THSVision_RGBtoHSV(const Tensor img, Tensor* saturation, Tensor* value) */
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSVision_RGBtoHSV(IntPtr img, out IntPtr saturation, out IntPtr value);
+
+            /* Tensor THSVision_HSVtoRGB(const Tensor h, const Tensor s, const Tensor v); */
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSVision_HSVtoRGB(IntPtr hue, IntPtr saturation, IntPtr value);
+
             private static (Tensor h, Tensor s, Tensor v) RGBtoHSV(Tensor img)
             {
-                var RGB = img.unbind(-3);
-                var r = RGB[0];
-                var g = RGB[1];
-                var b = RGB[2];
-
-                var maxc = torch.max(img, dimension: -3).values;
-                var minc = torch.min(img, dimension: -3).values;
-
-                var eqc = maxc == minc;
-                var cr = maxc - minc;
-                var ones = torch.ones_like(maxc);
-
-                var s = cr / torch.where(eqc, ones, maxc);
-                var cr_divisor = torch.where(eqc, ones, cr);
-
-                var rc = (maxc - r) / cr_divisor;
-                var gc = (maxc - g) / cr_divisor;
-                var bc = (maxc - b) / cr_divisor;
-
-                var hr = (maxc == r) * (bc - gc);
-                var hg = ((maxc == g) & (maxc != r)) * (2.0 + rc - bc);
-                var hb = ((maxc != g) & (maxc != r)) * (4.0 + gc - rc);
-
-                var h = (hr + hg + hb);
-                h = torch.fmod((h / 6.0 + 1.0), 1.0);
-
-                return (h, s, maxc);
+                var h = THSVision_RGBtoHSV(img.handle, out var saturation, out var value);
+                if (h == IntPtr.Zero) { torch.CheckForErrors(); }
+                return (new Tensor(h), new Tensor(saturation), new Tensor(value));
             }
 
             private static Tensor HSVtoRGB(Tensor h, Tensor s, Tensor v)
             {
-                var h6 = h * 6.0;
-                var i = torch.floor(h6);
-                var f = h6 - i;
-                i = i.to(torch.int32) % 6;
-
-                var p = torch.clamp((v * (1.0 - s)), 0.0, 1.0);
-                var q = torch.clamp((v * (1.0 - s * f)), 0.0, 1.0);
-                var t = torch.clamp((v * (1.0 - s * (1.0 - f))), 0.0, 1.0);
-
-                var iunsq = i.unsqueeze(dim: -3);
-                var mask = iunsq == torch.arange(6, device: i.device).view(-1, 1, 1);
-
-                var a1 = torch.stack(new Tensor[] { v, q, p, p, t, v }, dimension: -3);
-                var a2 = torch.stack(new Tensor[] { t, v, v, q, p, p }, dimension: -3);
-                var a3 = torch.stack(new Tensor[] { p, p, t, v, v, q }, dimension: -3);
-                var a4 = torch.stack(new Tensor[] { a1, a2, a3 }, dimension: -4);
-
-                var img = torch.einsum("...ijk,...xijk ->...xjk", mask.to(h.dtype), a4);
-
-                //
-                // Something really strange happens here -- the image comes out as 'NxCxHxW', but the
-                // underlying memory is strided as if it's 'NxHxWxC'.
-                //
-                // So, as a workaround, we need to reshape it and permute the dimensions.
-                //
-                long[] NHWC = new long[] { img.shape[0], img.shape[2], img.shape[3], img.shape[1] };
-                long[] permutation = new long[] { 0, 3, 1, 2 };
-
-                return img.reshape(NHWC).permute(permutation);
-
+                var img = THSVision_HSVtoRGB(h.handle, s.handle, v.handle);
+                if (img == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(img);
             }
 
             private static Tensor ApplyGridTransform(Tensor img, Tensor grid, InterpolationMode mode, IList<float> fill = null)

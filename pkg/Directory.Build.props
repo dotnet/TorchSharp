@@ -24,7 +24,7 @@
     <Authors>(see main package)</Authors>
     <PackageTags></PackageTags>
     <Copyright>(see main package)</Copyright>
-    <Owners>T.NET Foundation and Contributors</Owners>
+    <Owners>The .NET Foundation and Contributors</Owners>
     <PackageLicenseFile>LICENSE-LIBTORCH.txt</PackageLicenseFile>
     <PackageDescription>(see main package)</PackageDescription>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>

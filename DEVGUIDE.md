@@ -103,8 +103,8 @@ For this reason, we do the following
 1. The head, referenceable packages that deliver a functioning runtime are any of:
 
        libtorch-cpu
-       libtorch-cuda-11.1-linux-x64
-       libtorch-cuda-11.1-win-x64
+       libtorch-cuda-11.3-linux-x64
+       libtorch-cuda-11.3-win-x64
 
 2. These packages are combo packages that reference multiple parts.  The parts are **not** independently useful.
    Some parts deliver a single vast file via `primary` and `fragment` packages.  A build task is then used to "stitch" these files back together
@@ -164,16 +164,25 @@ version of PyTorch then quite a lot of careful work needs to be done.
        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
 
-       dotnet build src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-       dotnet build src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
-       dotnet build src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+       dotnet build src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
+       dotnet build src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
+       dotnet build src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
 
    Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done in CI.
+
+   At this point you must **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
+   [libtorch-cpu](src\Redist\libtorch-cpu\libtorch-cpu.proj) and [libtorch-cuda](src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj).
+
+   Check the contents of the unzip of the archive, e.g.
+
+       bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.9.0\libtorch\lib
+
+   You must also precisely refactor the CUDA binaries into multiple parts so each package ends up under ~300MB.
 
 3. Add the SHA files:
 
        git add src\Redist\libtorch-cpu\*.sha
-       git add src\Redist\libtorch-cuda-11.1\*.sha
+       git add src\Redist\libtorch-cuda-11.3\*.sha
 
    After this you may as well submit to CI just to see what happens, though keep going with the other steps below as well.
 
@@ -200,34 +209,25 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
        dotnet build
 
-6. You must also **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
-   [libtorch-cpu](src\Redist\libtorch-cpu\libtorch-cpu.proj) and [libtorch-cuda](src\Redist\libtorch-cuda-11.1\libtorch-cuda-11.1.proj).
-
-   Check the contents of the unzip of the archive, e.g.
-
-       bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.9.0\libtorch\lib
-
-   You must also precisely refactor the CUDA binaries into multiple parts so each package ends up under ~300MB.
-
-7. You must also adjust the set of binaries referenced for tests, see various files under `tests` and `NativeAssemblyReference` in
+6. You must also adjust the set of binaries referenced for tests, see various files under `tests` and `NativeAssemblyReference` in
 `TorchSharp\Directory.Build.targets`.
 
-8. Run tests
+7. Run tests
 
        dotnet build test -c Debug
        dotnet build test -c Release
 
-9. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
+8. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
    get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` in [azure-pipelines.yml](azure-pipelines.yml):
 
-       <LibTorchPackageVersion>1.9.0.11</LibTorchPackageVersion>
+       <LibTorchPackageVersion>1.10.0.1</LibTorchPackageVersion>
 
        dotnet pack -c Debug /p:SkipCuda=true
        dotnet pack -c Release /p:SkipCuda=true
        dotnet pack -c Debug
        dotnet pack -c Release
 
-10. Submit to CI and debug problems
+9. Submit to CI and debug problems
 
-11. Remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in in [azure-pipelines.yml](azure-pipelines.yml)
+10. Remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in in [azure-pipelines.yml](azure-pipelines.yml)
 

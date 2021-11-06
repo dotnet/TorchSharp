@@ -2,6 +2,17 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+### NuGet Version 0.95.1
+
+This version integrates with LibTorch 1.10.0.
+
+__API Changes:__
+
+Added a 'strict' option to Module.load().
+
+See tracking issue #416 for a list of new 1.10.0 APIs.
+https://github.com/dotnet/TorchSharp/issues/416
+
 ### NuGet Version 0.93.9
 
 __Fixed Bugs:__

@@ -14,33 +14,53 @@ namespace TorchSharp
     {
         public class Categorical : torch.distributions.Distribution
         {
-
+            /// <summary>
+            /// The mean of the distribution.
+            /// </summary>
             public override Tensor mean => torch.full(ExtendedShape(), double.NaN, dtype: probs.dtype, device: probs.device);
 
+            /// <summary>
+            /// The variance of the distribution
+            /// </summary>
             public override Tensor variance => torch.full(ExtendedShape(), double.NaN, dtype: probs.dtype, device: probs.device);
 
-            public Categorical(Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="probs">Event probabilities</param>
+            /// <param name="logits">Even log-odds</param>
+            /// <param name="generator">An optional random number generator object.</param>
+            public Categorical(Tensor probs = null, Tensor logits = null, torch.Generator generator = null) : base(generator)
             {
-                var param = p is null ? l : p;
+                var param = probs is null ? logits : probs;
 
-                this._probs = (p is not null) ? p / p.sum(-1, keepdim: true) : null;
-                this._logits = (l is not null) ? (l - l.logsumexp(-1, keepdim:true)) : null;
+                this._probs = (probs is not null) ? probs / probs.sum(-1, keepdim: true) : null;
+                this._logits = (logits is not null) ? (logits - logits.logsumexp(-1, keepdim:true)) : null;
                 this.num_events = param.size(-1);
                 this.batch_shape = param.ndim > 1 ? param.shape.Take(param.shape.Length-1).ToArray() : new long[0];
             }
 
+            /// <summary>
+            /// Event probabilities
+            /// </summary>
             public Tensor probs {
                 get {
                     return _probs ?? LogitsToProbs(_logits, true);
                 }
             }
 
+            /// <summary>
+            /// Event log-odds
+            /// </summary>
             public Tensor logits {
                 get {
                     return _logits ?? ProbsToLogits(_probs);
                 }
             }
 
+            /// <summary>
+            ///  The shape of the input parameter.
+            /// </summary>
             public long[] param_shape {
                 get {
                     return _probs is null ? _logits.shape : _probs.shape;
@@ -51,6 +71,11 @@ namespace TorchSharp
             internal Tensor _logits;
             private long num_events;
 
+            /// <summary>
+            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+            ///  if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
                 var probs_2d = probs.reshape(-1, num_events);
@@ -58,6 +83,10 @@ namespace TorchSharp
                 return samples_2d.reshape(ExtendedShape(sample_shape));
             }
 
+            /// <summary>
+            /// Returns the log of the probability density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
                 value = value.@long().unsqueeze(-1);
@@ -66,6 +95,9 @@ namespace TorchSharp
                 return valLogPmf[1].gather(-1, value).squeeze(-1);
             }
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
             public override Tensor entropy()
             {
                 var min_real = torch.finfo(logits.dtype).min;
@@ -74,6 +106,14 @@ namespace TorchSharp
                 return -p_log_p.sum(-1);
             }
 
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
+            /// <returns></returns>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Categorical))

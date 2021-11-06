@@ -12,17 +12,33 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// A Multinomial distribution parameterized by `probs` or `logits` (but not both).
+        /// `total_count` must be broadcastable with `probs`/`logits`.
+        /// </summary>
         public class Multinomial : torch.distributions.Distribution
         {
-
+            /// <summary>
+            /// The mean of the distribution.
+            /// </summary>
             public override Tensor mean => total_count * probs;
 
+            /// <summary>
+            /// The variance of the distribution
+            /// </summary>
             public override Tensor variance => total_count * probs * (1 - probs);
 
-            public Multinomial(int total_count, Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator) 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="total_count">Number of Bernoulli trials</param>
+            /// <param name="probs">The probability of sampling '1'</param>
+            /// <param name="logits">The log-odds of sampling '1'</param>
+            /// <param name="generator">An optional random number generator object.</param>
+            public Multinomial(int total_count, Tensor probs = null, Tensor logits = null, torch.Generator generator = null) : base(generator) 
             {
                 this.total_count = total_count;
-                this.categorical = new Categorical(p, l);
+                this.categorical = new Categorical(probs, logits);
                 this.batch_shape = this.categorical.batch_shape;
                 var ps = this.categorical.param_shape;
                 this.event_shape = new long[] { ps[ps.Length-1] };
@@ -37,8 +53,14 @@ namespace TorchSharp
                 this.event_shape = new long[] { ps[ps.Length - 1] };
             }
 
+            /// <summary>
+            /// Event probabilities
+            /// </summary>
             public Tensor probs => categorical.probs;
 
+            /// <summary>
+            /// Event log-odds
+            /// </summary>
             public Tensor logits => categorical.logits;
 
 
@@ -47,6 +69,11 @@ namespace TorchSharp
             private int total_count;
             private Categorical categorical;
 
+            /// <summary>
+            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+            ///  if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
                 var cShape = new List<long>(); cShape.Add(total_count); cShape.AddRange(sample_shape);
@@ -62,6 +89,10 @@ namespace TorchSharp
                 return counts.type_as(probs);
             }
 
+            /// <summary>
+            /// Returns the log of the probability density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
                 var bcast = torch.broadcast_tensors(logits, value);
@@ -74,6 +105,13 @@ namespace TorchSharp
                 return log_factorial_n - log_factorial_xs + log_powers;
             }
 
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Multinomial))
@@ -94,6 +132,10 @@ namespace TorchSharp
                 return newDistribution;
             }
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
+            /// <returns></returns>
             public override Tensor entropy()
             {
                 throw new NotImplementedException();

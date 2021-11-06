@@ -12,11 +12,19 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// A Binomial distribution parameterized by total_count and either probs or logits (but not both).
+        /// </summary>
         public class Binomial : torch.distributions.Distribution
         {
-
+            /// <summary>
+            /// The mean of the distribution.
+            /// </summary>
             public override Tensor mean => total_count * probs;
 
+            /// <summary>
+            /// The variance of the distribution
+            /// </summary>
             public override Tensor variance => total_count * probs * (1 - probs);
 
             public Binomial(Tensor total_count, Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
@@ -30,11 +38,18 @@ namespace TorchSharp
                 this.total_count = broadcast[0].type_as(p ?? l);
             }
 
+            /// <summary>
+            /// Event probabilities
+            /// </summary>
             public Tensor probs {
                 get {
                     return _probs ?? LogitsToProbs(_logits, true);
                 }
             }
+
+            /// <summary>
+            /// Event log-odds
+            /// </summary>
             public Tensor logits {
                 get {
                     return _logits ?? ProbsToLogits(_probs);
@@ -45,12 +60,21 @@ namespace TorchSharp
             private Tensor _logits;
             private Tensor total_count;
 
+            /// <summary>
+            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+            ///  if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
                 return torch.binomial(total_count.expand(shape), probs.expand(shape), generator);
             }
 
+            /// <summary>
+            /// Returns the log of the probability density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
                 var log_factorial_n = torch.lgamma(total_count + 1);
@@ -61,11 +85,21 @@ namespace TorchSharp
                 return value * logits - log_factorial_k - log_factorial_nmk - normalize_term;
             }
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
             public override Tensor entropy()
             {
                 return torch.nn.functional.binary_cross_entropy_with_logits(logits, probs, reduction: nn.Reduction.None);
             }
 
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Binomial))

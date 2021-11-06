@@ -12,9 +12,14 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// A Fisher-Snedecor distribution parameterized by `df1` and `df2`.
+        /// </summary>
         public class FisherSnedecor : torch.distributions.Distribution
         {
-
+            /// <summary>
+            /// The mean of the distribution.
+            /// </summary>
             public override Tensor mean {
                 get {
                     var df2 = this.df2.clone();
@@ -23,6 +28,9 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// The variance of the distribution
+            /// </summary>
             public override Tensor variance {
                 get {
                     var df2 = this.df2.clone();
@@ -31,6 +39,12 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="df1">Degrees of freedom parameter 1</param>
+            /// <param name="df2">Degrees of freedom parameter 2</param>
+            /// <param name="generator">An optional random number generator object.</param>
             public FisherSnedecor(Tensor df1, Tensor df2, torch.Generator generator = null) : base(generator)
             {
                 var bcast = torch.broadcast_tensors(df1, df2);
@@ -46,6 +60,11 @@ namespace TorchSharp
             private Gamma gamma1;
             private Gamma gamma2;
 
+            /// <summary>
+            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+            ///  if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
@@ -59,6 +78,10 @@ namespace TorchSharp
                 return Y.clamp_(min: tiny);
             }
 
+            /// <summary>
+            /// Returns the log of the probability density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
                 var ct1 = this.df1 * 0.5;
@@ -70,6 +93,13 @@ namespace TorchSharp
                 return t1 + t2 - t3;
             }
 
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is FisherSnedecor))
@@ -91,6 +121,9 @@ namespace TorchSharp
                 return newDistribution;
             }
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
             public override Tensor entropy()
             {
                 throw new NotImplementedException();

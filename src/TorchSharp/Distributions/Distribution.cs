@@ -29,16 +29,6 @@ namespace TorchSharp
                 public long[] event_shape { get; protected set; }
 
                 /// <summary>
-                /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
-                /// `batch_shape`. This method calls `~torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
-                /// memory for the expanded distribution instance.
-                /// </summary>
-                /// <param name="batch_shape">Tthe desired expanded size.</param>
-                /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-                /// <returns></returns>
-                public abstract Distribution expand(long[] batch_shape, Distribution instance = null);
-
-                /// <summary>
                 /// The mean of the distribution.
                 /// </summary>
                 public abstract Tensor mean { get; }
@@ -79,6 +69,22 @@ namespace TorchSharp
                 public abstract Tensor log_prob(Tensor value);
 
                 /// <summary>
+                /// Returns entropy of distribution, batched over batch_shape.
+                /// </summary>
+                /// <returns></returns>
+                public abstract Tensor entropy();
+
+                /// <summary>
+                /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+                /// `batch_shape`. This method calls `torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+                /// memory for the expanded distribution instance.
+                /// </summary>
+                /// <param name="batch_shape">Tthe desired expanded size.</param>
+                /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
+                /// <returns></returns>
+                public abstract Distribution expand(long[] batch_shape, Distribution instance = null);
+
+                /// <summary>
                 /// Returns the cumulative density/mass function evaluated at `value`.
                 /// </summary>
                 /// <param name="value"></param>
@@ -111,12 +117,6 @@ namespace TorchSharp
                 {
                     throw new NotImplementedException();
                 }
-
-                /// <summary>
-                /// Returns entropy of distribution, batched over batch_shape.
-                /// </summary>
-                /// <returns></returns>
-                public abstract Tensor entropy();
 
                 /// <summary>
                 /// Returns perplexity of distribution, batched over batch_shape.

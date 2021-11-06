@@ -117,8 +117,8 @@ namespace TorchSharp
         /// <summary>
         /// Load the tensor using a .NET-specific format.
         /// </summary>
-        /// <param name="tensor"></param>
-        /// <param name="reader"></param>
+        /// <param name="tensor">The tensor into which to load serialized data.</param>
+        /// <param name="reader">A BinaryReader instance</param>
         public static void Load(this Tensor tensor, System.IO.BinaryReader reader)
         {
             // First, read the type
@@ -152,11 +152,11 @@ namespace TorchSharp
         /// <summary>
         /// Creating a tensor form an array of data.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="rawArray"></param>
-        /// <param name="dimensions"></param>
-        /// <param name="doCopy"></param>
-        /// <param name="requiresGrad"></param>
+        /// <typeparam name="T">The .NET element type.</typeparam>
+        /// <param name="rawArray">Input data.</param>
+        /// <param name="dimensions">The shape of the tensor that is created.</param>
+        /// <param name="doCopy">Perform a copy rather than using the array as backing storage for the tensor.</param>
+        /// <param name="requiresGrad">If true, the tensor must track its gradients.</param>
         /// <returns></returns>
         public static Tensor ToTensor<T>(this T[] rawArray, long[] dimensions, bool doCopy = false, bool requiresGrad = false)
         {
@@ -198,10 +198,10 @@ namespace TorchSharp
         /// <summary>
         /// Creating a tensor from a scalar value.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="scalar"></param>
-        /// <param name="device"></param>
-        /// <param name="requiresGrad"></param>
+        /// <typeparam name="T">The .NET element type.</typeparam>
+        /// <param name="scalar">Scalar input value</param>
+        /// <param name="device">The device to place the tensor on.</param>
+        /// <param name="requiresGrad">If true, the tensor must track its gradients.</param>
         /// <returns></returns>
         public static Tensor ToTensor<T>(this T scalar, torch.Device? device = null, bool requiresGrad = false) where T : struct
         {
@@ -226,18 +226,77 @@ namespace TorchSharp
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static (float Real,float Imaginary) ToComplexFloat32(this Tensor value) => value.ToScalar().ToComplexFloat32();
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static System.Numerics.Complex ToComplexFloat64(this Tensor value) => value.ToScalar().ToComplexFloat64();
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static float ToSingle(this Tensor value) => value.ToScalar().ToSingle();
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static double ToDouble(this Tensor value) => value.ToScalar().ToDouble();
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static sbyte ToSByte(this Tensor value) => value.ToScalar().ToSByte();
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static byte ToByte(this Tensor value) => value.ToScalar().ToByte();
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static short ToInt16(this Tensor value) => value.ToScalar().ToInt16();
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static int ToInt32(this Tensor value) => value.ToScalar().ToInt32();
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static long ToInt64(this Tensor value) => value.ToScalar().ToInt64();
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static bool ToBoolean(this Tensor value) => value.ToScalar().ToBoolean();
 
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static (float Real, float Imaginary) ToComplex32(this Tensor value) => value.ToScalar().ToComplexFloat32();
+
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
         public static System.Numerics.Complex ToComplex64(this Tensor value) => value.ToScalar().ToComplexFloat64();
 
         /// <summary>
@@ -256,6 +315,18 @@ namespace TorchSharp
 
         // Vision-related operations
 
+        /// <summary>
+        /// Crop the given image tensor at specified location and output size.
+        /// If the image is torch Tensor, it is expected to have […, H, W] shape, where … means an
+        /// arbitrary number of leading dimensions.
+        /// If image size is smaller than output size along any edge, image is padded with 0 and then cropped.
+        /// </summary>
+        /// <param name="image">The input tensor.</param>
+        /// <param name="top">Vertical component of the top left corner of the crop box.</param>
+        /// <param name="left">Horizontal component of the top left corner of the crop box.</param>
+        /// <param name="height">Height of the crop box.</param>
+        /// <param name="width">Width of the crop box.</param>
+        /// <returns></returns>
         public static Tensor crop(this Tensor image, int top, int left, int height, int width)
         {
             var dims = image.Dimensions;

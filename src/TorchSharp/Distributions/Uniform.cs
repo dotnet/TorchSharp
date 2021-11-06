@@ -12,13 +12,27 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// Generates uniformly distributed random samples from the half-open interval [low, high[.
+        /// </summary>
         public class Uniform : torch.distributions.Distribution
         {
-
+            /// <summary>
+            /// The mean of the distribution.
+            /// </summary>
             public override Tensor mean => (high - low) / 2;
 
+            /// <summary>
+            /// The variance of the distribution
+            /// </summary>
             public override Tensor variance => (high - low).pow(2) / 12;
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="low">Lower bound (inclusive)</param>
+            /// <param name="high">Upper bound (exclusive)</param>
+            /// <param name="generator">An optional random number generator object.</param>
             public Uniform(Tensor low, Tensor high, torch.Generator generator = null) : base(generator, low.size())
             {
                 var lowHigh = torch.broadcast_tensors(low, high);
@@ -29,6 +43,11 @@ namespace TorchSharp
             private Tensor high;
             private Tensor low;
 
+            /// <summary>
+            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+            ///  if the distribution parameters are batched.
+            /// </summary>
+            /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
@@ -36,6 +55,10 @@ namespace TorchSharp
                 return low + rand * (high - low);
             }
 
+            /// <summary>
+            /// Returns the log of the probability density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
                 var lb = low.le(value).type_as(low);
@@ -43,21 +66,39 @@ namespace TorchSharp
                 return torch.log(lb.mul(ub)) - torch.log(high - low);
             }
 
+            /// <summary>
+            /// Returns the cumulative density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
                 return (value - low) / (high - low).clamp(0, 1);
             }
 
+            /// <summary>
+            /// Returns the inverse cumulative density/mass function evaluated at `value`.
+            /// </summary>
+            /// <param name="value"></param>
             public override Tensor icdf(Tensor value)
             {
                 return value * (high - low) + low;
             }
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
             public override Tensor entropy()
             {
                 return (high - low).log();
             }
 
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Uniform))

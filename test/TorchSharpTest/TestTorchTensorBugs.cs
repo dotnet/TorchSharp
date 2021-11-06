@@ -286,14 +286,11 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue399_4()
         {
-            // This test is added because 'flip()' may, in the future, be implemented returning a view.
-            // In that case, this will start failing and tell us we have to support negative strides.
-
             using var contig = torch.arange(12, int32).reshape(3, 4).contiguous();
             using var flipped = contig.t().flip(1);
             var strides = flipped.stride();
 
-            Assert.True(flipped.is_contiguous());
+            Assert.False(flipped.is_contiguous());
             Assert.Equal<int>(flipped.contiguous().data<int>(), flipped.data<int>());
             Assert.Equal<int>(flipped.contiguous().data<int>().ToArray(), flipped.data<int>().ToArray());
         }

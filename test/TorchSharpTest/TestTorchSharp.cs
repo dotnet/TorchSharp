@@ -48,11 +48,15 @@ namespace TorchSharp
             // This will often succeed but not reliably
             int n = 25;
             for (int i = 0; i < n; i++) {
-                Console.WriteLine("ExplicitDisposal: Loop iteration {0}", i);
-
                 using (var x = torch.empty(new long[] { 64000, 1000 }, device: torch.CPU)) { }
             }
-            Console.WriteLine("Hello World!");
+            if (torch.cuda.is_available())
+            {
+                for (int i = 0; i < n; i++) {
+                    using (var x = torch.empty(new long[] { 64000, 1000 }, device: torch.CUDA)) { }
+                }
+            }
+            Assert.True(true); // Just make sure we got here.
         }
 
         [Fact]

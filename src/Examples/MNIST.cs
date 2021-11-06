@@ -84,7 +84,7 @@ namespace TorchSharp.Examples
 
             var optimizer = torch.optim.Adam(model.parameters());
 
-            var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.7, last_epoch: 5);
+            var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.75);
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
