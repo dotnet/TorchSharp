@@ -45,8 +45,8 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                // If there are no modules, just return a clone of the input.
-                if (_modules.Count == 0) return tensor.clone();
+                // If there are no modules, just return a fresh handle to the input.
+                if (_modules.Count == 0) return tensor.alias();
 
                 // The loop-based logic below only works for n > 1, so here's another special case.
                 if (_modules.Count == 1) return _modules[0].forward(tensor);
