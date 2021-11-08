@@ -90,6 +90,47 @@ total_acc += moved.item<long>();
 
 The most essential places to do explicit memory management is in any function that might be involved with data preparation or the model computation, since the tensors are big and repeatedly used.
 
+Some additional examples, in F# this time:
+
+```fsharp
+
+let myTensorFunction0(input: Tensor) =
+    input.alias()
+
+let myTensorFunction1() =
+    if today then 
+       table[4].alias()  
+    else
+       table[5].alias()  
+
+let myTensorFunction2(input: Tensor) =
+    input.add(tensor(1))
+
+let myTensorFunction3(input: Tensor) =
+    use tmp = input.add(tensor(1))
+    tmp.add(tensor(1))
+
+let myTensorFunction4(input: Tensor) =
+    use tmp1 = input.add(tensor(1))
+    use tmp2 = input.add(tensor(1))
+    tmp2.add(tensor(1))
+
+let myTensorFunction5(go: bool, input: Tensor) =
+    if go then
+        use tmp1 = input.add(tensor(1))
+        use tmp2 = input.add(tensor(1))
+        tmp2.add(tensor(1))
+    else
+        input.alias()
+    
+let myTensorFunction5(go: bool, input: Tensor) =
+    if go then 
+        use tmp1 = input.add_(tensor(1))  // NOTE: even for in-place mutations
+        use tmp2 = input.add_(tensor(1))  // NOTE: even for in-place mutations
+        tmp2.add(tensor(1))
+    else
+        input.alias()
+```
 
 ### Use 'Sequential' when possible.
 
