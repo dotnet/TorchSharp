@@ -444,6 +444,58 @@ namespace TorchSharp
 
             var result = output.ToSingle();
         }
+
+        [Fact]
+        public void EvalSequence2()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(
+                lin1,
+                ReLU(),
+                lin2);
+
+            var x = torch.randn(new long[] { 64, 1000 }, requiresGrad: true);
+            var eval = seq.forward(x);
+        }
+
+        [Fact]
+        public void CreateSequence2()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(
+                lin1,
+                ReLU(),
+                lin2);
+            var parameters = seq.parameters();
+            var parametersCount = parameters.Count();
+            Assert.Equal(4, parametersCount);
+
+            var namedParams = seq.parameters();
+            var namedParamsCount = namedParams.Count();
+            Assert.Equal(4, namedParamsCount);
+        }
+
+        [Fact]
+        public void EvalLossSequence2()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(
+                lin1,
+                ReLU(),
+                lin2);
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var eval = seq.forward(x);
+            var loss = mse_loss(Reduction.Sum);
+            var output = loss(eval, y);
+
+            var result = output.ToSingle();
+        }
         #endregion
 
         #region Loss Functions

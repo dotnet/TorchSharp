@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using TorchSharp.torchvision;
 using static TorchSharp.torch;
 
 namespace TorchSharp
@@ -35,6 +36,9 @@ namespace TorchSharp
                 _modules.Add(submodule);
                 _names.Add(name);
             }
+
+            public void Add(torch.nn.Module module)
+                => Add(new Random().NextDouble().ToString()[2..], module);
 
             internal Sequential(IntPtr handle) : base(handle, IntPtr.Zero)
             {
@@ -86,6 +90,18 @@ namespace TorchSharp
             extern static IntPtr THSNN_Sequential_ctor();
 
             /// <summary>
+            /// Get empty sequential
+            /// </summary>
+            /// <returns></returns>
+            static public Sequential Sequential()
+            {
+                var handle = THSNN_Sequential_ctor();
+                if(handle == IntPtr.Zero) {torch.CheckForErrors();}
+
+                return new Sequential(handle);
+            }
+
+            /// <summary>
             /// A sequential container. Modules will be added to it in the order they are passed in the constructor.
             /// Alternatively, an OrderedDict of modules can be passed in. The forward() method of Sequential accepts any input and forwards it to the first module it contains.
             /// It then “chains” outputs to inputs sequentially for each subsequent module, finally returning the output of the last module.
@@ -96,11 +112,25 @@ namespace TorchSharp
             /// <returns></returns>
             static public Sequential Sequential(params (string name, torch.nn.Module submodule)[] modules)
             {
-                var handle = THSNN_Sequential_ctor();
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                var res = new Sequential(handle);
+                var res = Sequential();
                 foreach (var module in modules)
                     res.Add(module.name, module.submodule);
+                return res;
+            }
+
+            /// <summary>
+            /// A sequential container. Modules will be added to it in the order they are passed in the constructor.
+            /// It then “chains” outputs to inputs sequentially for each subsequent module, finally returning the output of the last module.
+            /// The value a Sequential provides over manually calling a sequence of modules is that it allows treating the whole container as a single module,
+            /// such that performing a transformation on the Sequential applies to each of the modules it stores (which are each a registered submodule of the Sequential).
+            /// </summary>
+            /// <param name="modules">An ordered list of the contained modules.</param>
+            /// <returns></returns>
+            static public Sequential Sequential(params torch.nn.Module[] modules)
+            {
+                var res = Sequential();
+                foreach(var m in modules)
+                    res.Add(new Random().NextDouble().ToString()[2..], m);
                 return res;
             }
 
@@ -114,15 +144,27 @@ namespace TorchSharp
             /// <param name="modules">An ordered list of the contained modules.</param>
             static public Sequential Sequential(IEnumerable<(string name, torch.nn.Module submodule)> modules)
             {
-                var handle = THSNN_Sequential_ctor();
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                var res = new Sequential(handle);
+                var res = Sequential();
                 foreach (var module in modules)
                     res.Add(module.name, module.submodule);
                 return res;
             }
 
+            /// <summary>
+            /// A sequential container. Modules will be added to it in the order they are passed in the constructor.
+            /// It then “chains” outputs to inputs sequentially for each subsequent module, finally returning the output of the last module.
+            /// The value a Sequential provides over manually calling a sequence of modules is that it allows treating the whole container as a single module,
+            /// such that performing a transformation on the Sequential applies to each of the modules it stores (which are each a registered submodule of the Sequential).
+            /// </summary>
+            /// <param name="modules">An ordered list of the contained modules.</param>
+            /// <returns></returns>
+            static public Sequential Sequential(IEnumerable<torch.nn.Module> modules)
+            {
+                var res = Sequential();
+                foreach(var module in modules)
+                    res.Add(new Random().NextDouble().ToString()[2..], module);
+                return res;
+            }
         }
-
     }
 }
