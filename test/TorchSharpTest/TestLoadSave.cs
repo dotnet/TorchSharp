@@ -48,10 +48,10 @@ namespace TorchSharp
         public void TestSaveLoadSequential()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var conv = Sequential(Conv2d(100, 10, 5));
+            var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             var params0 = conv.parameters();
             conv.save(".model.ts");
-            var loaded = Sequential(Conv2d(100, 10, 5));
+            var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             loaded.load(".model.ts");
             var params1 = loaded.parameters();
             File.Delete(".model.ts");
