@@ -1412,6 +1412,24 @@ namespace TorchSharp
             Assert.True(seq.has_parameter("test.dict.second"));
         }
 
+        [Fact]
+        public void TestCustomModule4()
+        {
+            var module = new TestModule1(torch.randn(new long[] { 2, 2 }), true);
+
+            var seq = Sequential(module);
+
+            Assert.True(module.has_parameter("test"));
+            Assert.True(module.has_parameter("list.0"));
+            Assert.True(module.has_parameter("dict.first"));
+            Assert.True(module.has_parameter("dict.second"));
+
+            Assert.True(seq.has_parameter("testnn_testmodule1.test"));
+            Assert.True(seq.has_parameter("testnn_testmodule1.list.0"));
+            Assert.True(seq.has_parameter("testnn_testmodule1.dict.first"));
+            Assert.True(seq.has_parameter("testnn_testmodule1.dict.second"));
+        }
+
         private class TestModule1 : Module
         {
             public TestModule1(Tensor tensor, bool withGrad)

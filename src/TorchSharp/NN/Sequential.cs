@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using TorchSharp.torchvision;
+
 using static TorchSharp.torch;
 
 namespace TorchSharp
@@ -38,7 +38,14 @@ namespace TorchSharp
             }
 
             public void Add(torch.nn.Module module)
-                => Add(new Random().NextDouble().ToString()[2..], module);
+            {
+                //if (module.GetType() == typeof(nn.Module)) throw new Exception(module.GetType().ToString());
+                //throw new Exception(module.GetType().ToString());
+
+                var type = module.GetType().ToString().Split('.')[^1].TrimEnd(Enumerable.Range('0', 10).Select(x => (char)x).ToArray()).ToLower().Replace('+', '_');
+                //throw new Exception(type + (_countType.ContainsKey(type) ? ++_countType[type] : _countType[type] = 1));
+                Add(type + (_countType.ContainsKey(type) ? ++_countType[type] : _countType[type] = 1), module);
+            }
 
             internal Sequential(IntPtr handle) : base(handle, IntPtr.Zero)
             {
@@ -78,6 +85,7 @@ namespace TorchSharp
 
             private List<torch.nn.Module> _modules = new List<nn.Module>();
             private List<string> _names = new List<string>();
+            private Dictionary<string, int> _countType = new Dictionary<string, int>();
         }
     }
 
@@ -130,7 +138,7 @@ namespace TorchSharp
             {
                 var res = Sequential();
                 foreach(var m in modules)
-                    res.Add(new Random().NextDouble().ToString()[2..], m);
+                    res.Add(m);
                 return res;
             }
 
@@ -162,7 +170,7 @@ namespace TorchSharp
             {
                 var res = Sequential();
                 foreach(var module in modules)
-                    res.Add(new Random().NextDouble().ToString()[2..], module);
+                    res.Add(module);
                 return res;
             }
         }
