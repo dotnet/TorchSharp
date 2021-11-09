@@ -45,6 +45,21 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSaveLoadSequential()
+        {
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var conv = Sequential(Conv2d(100, 10, 5));
+            var params0 = conv.parameters();
+            conv.save(".model.ts");
+            var loaded = Sequential(Conv2d(100, 10, 5));
+            loaded.load(".model.ts");
+            var params1 = loaded.parameters();
+            File.Delete(".model.ts");
+
+            Assert.Equal(params0, params1);
+        }
+
+        [Fact]
         public void TestSaveLoadCustomWithParameters()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
