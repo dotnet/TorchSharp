@@ -30,7 +30,7 @@ namespace TorchSharp.Examples
     /// </remarks>
     public class MNIST
     {
-        private static int _epochs = 4;
+        private static int _epochs = 1;
         private static int _trainBatchSize = 64;
         private static int _testBatchSize = 128;
 
@@ -95,6 +95,7 @@ namespace TorchSharp.Examples
                 Test(model, nll_loss(reduction: torch.nn.Reduction.Sum), device, test, test.Size);
 
                 Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
+                scheduler.step();
             }
 
             sw.Stop();
