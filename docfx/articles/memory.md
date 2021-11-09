@@ -40,11 +40,11 @@ __Note__: Even with this approach, it is a good idea to place a call to `GC.Coll
 
 ### Returning Fresh References
 
-It is important to understand that all TorchSharp tensors are simple wrappers around a C++ tensor. The 'Handle' property on `Tensor` is a pointer to a C++ `shared_ptr<at::Tensor>`. When a Tensor is created and returned to .NET, the reference count is incremented. When you call `Dispose()` on the tensor, it is decremented.
+It is important to understand that all TorchSharp "tensors" (type Tensor) are actually "tensor aliases", referring to a C++ tensor. When a C++ tensor is created and returned to .NET as a tensor alias, and the reference count on the C++ tensor is incremented. When you call `Dispose()` on the TorchSharp tensor alias (that is, type Tensor), it is decremented. If the tensor alias is finalized instead, the decrement happens implicitly.
 
-To enable this technique, all Tensor operations should return a fresh reference to a Tensor, if not a fresh Tensor. This is true even for in-place, destructive operations like `add_()`, which overwrites the underlying native tensor with data, but still returns a Tensor with a handle that is different from the one going in.
+To enable this technique, all operations that return one or more TorchSharp `Tensor`s should return "fresh" Tensor aliases (though that doesn't always mean freshly copied C++ tensors). This is true even for in-place, destructive operations like `add_()`, which overwrites the underlying native tensor with data, but still returns a fresh tensor alias to that same tensor.  
 
-Thus, when you write methods and functions that take and produce Tensor, for example in the `forward()` method of a model, you should always make sure to return a fresh reference. Most of the time, this happens automatically, because your code will be calling runtime code, but there are cases when it's not.
+Thus, when you write methods and functions that take and produce type Tensor, for example in the `forward()` method of a model, you should always make sure to return a fresh alias. Most of the time, this happens automatically, because the last action of your code will normally be to call another tensor function, which itself will be returning a fresh alias, but there are cases when it's not, especially when returning input tensors or tensors stored in some lookaside table.
 
 For example, consider a function that returns its input if its one-dimensional, otherwise it returns a reshaped version:
 
@@ -57,7 +57,7 @@ Tensor flatten(Tensor input) {
 }
 ```
 
-The `alias()` function avoids doing a clone of the tensor, but still returns a fresh tensor.
+The `alias()` function avoids doing a clone of the tensor, but still returns a fresh tensor. I you simply return `input`, the caller won't know whether both input and output should be disposed, so the protocol is to always return a fresh tensor.
 
 ### Disposing Tensor
 
