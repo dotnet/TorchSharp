@@ -39,12 +39,7 @@ namespace TorchSharp
 
             public void Add(torch.nn.Module module)
             {
-                Debug.Assert(!handle.IsInvalid);
-                if (module.BoxedModule == null)
-                    throw new InvalidOperationException("A Sequential or loaded module may not be added to a Sequential");
-
-                var type = module.GetType().ToString().Split('.')[^1].TrimEnd(Enumerable.Range('0', 10).Select(x => (char)x).ToArray()).ToLower().Replace('+', '_');
-                Add(type + (_countType.ContainsKey(type) ? ++_countType[type] : _countType[type] = 1), module);
+                Add(_modules.Count.ToString(), module);
             }
 
             internal Sequential(IntPtr handle) : base(handle, IntPtr.Zero)
@@ -90,6 +85,12 @@ namespace TorchSharp
 
             }
 
+            protected override void Dispose(bool disposing)
+            {
+                foreach (var m in _modules) { m.Dispose(); }
+                base.Dispose(disposing);
+            }
+
             // Currently, Sequential is implemented entirely in managed code, but if we go back to
             // using the native forward() implementation, this collection is still necessary.
             // The module handles are held in the native runtime, which calls back into managed code,
@@ -97,7 +98,6 @@ namespace TorchSharp
 
             private List<torch.nn.Module> _modules = new List<nn.Module>();
             private List<string> _names = new List<string>();
-            private Dictionary<string, int> _countType = new Dictionary<string, int>();
         }
     }
 
@@ -130,6 +130,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <returns></returns>
+            /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
             static public Sequential Sequential(params (string name, torch.nn.Module submodule)[] modules)
             {
                 var res = Sequential();
@@ -146,6 +147,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <returns></returns>
+            /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
             static public Sequential Sequential(params torch.nn.Module[] modules)
             {
                 var res = Sequential();
@@ -162,6 +164,7 @@ namespace TorchSharp
             /// such that performing a transformation on the Sequential applies to each of the modules it stores (which are each a registered submodule of the Sequential).
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
+            /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
             static public Sequential Sequential(params System.Tuple<string, torch.nn.Module>[] modules)
             {
                 var res = Sequential();
@@ -178,6 +181,7 @@ namespace TorchSharp
             /// such that performing a transformation on the Sequential applies to each of the modules it stores (which are each a registered submodule of the Sequential).
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
+            /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
             static public Sequential Sequential(IEnumerable<(string name, torch.nn.Module submodule)> modules)
             {
                 var res = Sequential();
@@ -194,6 +198,7 @@ namespace TorchSharp
             /// such that performing a transformation on the Sequential applies to each of the modules it stores (which are each a registered submodule of the Sequential).
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
+            /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
             static public Sequential Sequential(IEnumerable<System.Tuple<string, torch.nn.Module>> modules)
             {
                 var res = Sequential();
@@ -210,6 +215,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <returns></returns>
+            /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
             static public Sequential Sequential(IEnumerable<torch.nn.Module> modules)
             {
                 var res = Sequential();
