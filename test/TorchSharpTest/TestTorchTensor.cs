@@ -232,6 +232,16 @@ namespace TorchSharp
             Assert.Equal(IntPtr.Zero, t1.Handle);
         }
 
+        [Fact(Skip="Sensitive to parallelism in the xUnit test driver")]
+        public void TestUsings()
+        {
+            var tCount = Tensor.TotalCount;
+
+            using (var t = torch.randn(5)) { }
+
+            Assert.Equal(tCount, Tensor.TotalCount);
+        }
+
         [Fact]
         public void TestDataBool()
         {

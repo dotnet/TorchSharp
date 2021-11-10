@@ -6,7 +6,8 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __API Changes:__
 
-
+Added a Sequential factory method to create Sequential from a list of anonymous submodules.
+Added TotalCount and PeakCount static properties to Tensor, useful for diagnostic purposes.
 
 __Fixed Bugs:__
 
