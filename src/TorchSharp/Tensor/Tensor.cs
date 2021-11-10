@@ -19,9 +19,14 @@ namespace TorchSharp
         {
             internal IntPtr handle;
 
+            static long _totalCount = 0;
+            static long _peakCount = 0;
+
             internal Tensor(IntPtr handle)
             {
                 this.handle = handle;
+                System.Threading.Interlocked.Increment(ref _totalCount);
+                _peakCount = Math.Max(_totalCount, _peakCount);
             }
 
             /// <summary>
@@ -69,6 +74,7 @@ namespace TorchSharp
             void Dispose(bool disposing)
             {
                 if (handle != IntPtr.Zero) {
+                    System.Threading.Interlocked.Decrement(ref _totalCount);
                     THSTensor_dispose(handle);
                     handle = IntPtr.Zero;
                 }
@@ -84,6 +90,36 @@ namespace TorchSharp
                     handle = IntPtr.Zero;
                 }
             }
+
+            /// <summary>
+            /// The total number of allocated tensors.
+            /// </summary>
+            /// <remarks>
+            /// Only tensors that are realized in managed code will be counted, so tensors
+            /// resulting from computations that remain in native code will not be counted
+            /// in this property.
+            /// 
+            /// Further, two tensors may alias each other, pointing at the same underlying data.
+            /// 
+            /// Therefore, this property is mostly useful for diagnostic purposes, to
+            /// make sure that there is no drift in tensor count from epoch to epoch,
+            /// for example.
+            /// </remarks>
+            public static long TotalCount => _totalCount;
+
+            /// <summary>
+            /// The peak number of allocated tensors.
+            /// </summary>
+            /// <remarks>
+            /// Only tensors that are realized in managed code will be counted, so tensors
+            /// resulting from computations that remain in native code will not be counted
+            /// in this property.
+            ///
+            /// Further, two tensors may alias each other, pointing at the same underlying data.
+            /// 
+            /// Therefore, this property is mostly useful for diagnostic purposes.
+            /// </remarks>
+            public static long PeakCount => _peakCount;
 
             /// <summary>
             /// 

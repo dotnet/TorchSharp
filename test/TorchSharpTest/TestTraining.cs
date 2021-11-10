@@ -147,8 +147,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -157,7 +157,7 @@ namespace TorchSharp
 
                 output.backward();
 
-                optimizer.step();
+                using var _ = optimizer.step();
             }
             Assert.True(finalLoss < initialLoss);
         }
