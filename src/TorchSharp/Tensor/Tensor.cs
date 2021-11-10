@@ -144,6 +144,28 @@ namespace TorchSharp
 
             public bool is_cuda { get { return device.type == DeviceType.CUDA; } }
 
+
+            [DllImport("LibTorchSharp")]
+            internal static extern IntPtr THSTensor_alias(IntPtr handle);
+
+            /// <summary>
+            /// Create a new reference to the same underlying native tensor.
+            /// </summary>
+            /// <returns>A fresh reference to the underlying native tensor.</returns>
+            /// <remkars>
+            /// This is useful for function implementations where a caller may expect the input and output to be
+            /// distinct; in such situations, there's a risk that the tensor is disposed twice, with bad consequences.
+            /// With 'alias(),' the reference count to the underlying native tensor is increased, meaning that the
+            /// input and output can (and should) be disposed or finalized independently of each other.
+            /// </remkars>
+            public Tensor alias()
+            {
+                var res = THSTensor_alias(handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+
             [DllImport("LibTorchSharp")]
             internal static extern IntPtr THSTensor_data(IntPtr handle);
 

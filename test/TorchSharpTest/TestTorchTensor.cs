@@ -208,6 +208,31 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestAlias()
+        {
+            var t = torch.randn(5);
+            var t1 = t.alias();
+
+            Assert.NotEqual(t.Handle, t1.Handle);
+            t[0] = torch.tensor(3.14f);
+            Assert.Equal(3.14f, t1[0].item<float>());
+        }
+
+        [Fact]
+        public void TestAliasDispose()
+        {
+            var t = torch.randn(5);
+            var t1 = t.alias();
+
+            Assert.NotEqual(t.Handle, t1.Handle);
+            t.Dispose();
+            Assert.Equal(IntPtr.Zero, t.Handle);
+            Assert.NotEqual(IntPtr.Zero, t1.Handle);
+            t1.Dispose();
+            Assert.Equal(IntPtr.Zero, t1.Handle);
+        }
+
+        [Fact]
         public void TestDataBool()
         {
             var x = torch.ones(5, torch.@bool);

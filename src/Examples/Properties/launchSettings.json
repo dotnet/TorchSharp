@@ -2,7 +2,7 @@
   "profiles": {
     "Examples": {
       "commandName": "Project",
-      "commandLineArgs": "ResNet50 2 1800",
+      "commandLineArgs": "VGG11 16 1800",
       "nativeDebugging": true
     }
   }
