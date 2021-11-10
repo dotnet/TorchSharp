@@ -1,10 +1,12 @@
 # Memory Management
 
-Two approaches are available for memory management. Technique 1 is the default and simplest way to program.
+Two approaches are available for memory management. Technique 1 is the default and simplest way to program. It is the recommended starting point.
 
 - If having trouble with CPU memory you may have to resort to technique 2.
 
 - If having trouble with GPU memory you may have to resort to technique 2.
+
+In both cases, you may want to experiment with using a smaller batch size -- temporary tensor values produced by computation on the training data is the main memory problem, and they are in most cases proportional to the batch size. A smaller batch size means more batches, which will take longer, but can often speed up training convergence.
 
 Note DiffSharp (which uses TorchSharp) relies on techniques 1.
 
