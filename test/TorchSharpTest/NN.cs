@@ -472,9 +472,14 @@ namespace TorchSharp
             var parametersCount = parameters.Count();
             Assert.Equal(4, parametersCount);
 
-            var namedParams = seq.parameters();
+            var namedParams = seq.named_parameters();
             var namedParamsCount = namedParams.Count();
             Assert.Equal(4, namedParamsCount);
+
+            Assert.Equal("0.weight", namedParams[0].name);
+            Assert.Equal("0.bias",   namedParams[1].name);
+            Assert.Equal("2.weight", namedParams[2].name);
+            Assert.Equal("2.bias",   namedParams[3].name);
         }
 
         [Fact]
@@ -1424,10 +1429,10 @@ namespace TorchSharp
             Assert.True(module.has_parameter("dict.first"));
             Assert.True(module.has_parameter("dict.second"));
 
-            Assert.True(seq.has_parameter("testnn_testmodule1.test"));
-            Assert.True(seq.has_parameter("testnn_testmodule1.list.0"));
-            Assert.True(seq.has_parameter("testnn_testmodule1.dict.first"));
-            Assert.True(seq.has_parameter("testnn_testmodule1.dict.second"));
+            Assert.True(seq.has_parameter("0.test"));
+            Assert.True(seq.has_parameter("0.list.0"));
+            Assert.True(seq.has_parameter("0.dict.first"));
+            Assert.True(seq.has_parameter("0.dict.second"));
         }
 
         private class TestModule1 : Module
