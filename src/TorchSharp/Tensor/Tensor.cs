@@ -19,9 +19,14 @@ namespace TorchSharp
         {
             internal IntPtr handle;
 
+            static long _totalCount = 0;
+            static long _peakCount = 0;
+
             internal Tensor(IntPtr handle)
             {
                 this.handle = handle;
+                System.Threading.Interlocked.Increment(ref _totalCount);
+                _peakCount = Math.Max(_totalCount, _peakCount);
             }
 
             /// <summary>
@@ -69,6 +74,7 @@ namespace TorchSharp
             void Dispose(bool disposing)
             {
                 if (handle != IntPtr.Zero) {
+                    System.Threading.Interlocked.Decrement(ref _totalCount);
                     THSTensor_dispose(handle);
                     handle = IntPtr.Zero;
                 }
@@ -84,6 +90,36 @@ namespace TorchSharp
                     handle = IntPtr.Zero;
                 }
             }
+
+            /// <summary>
+            /// The total number of allocated tensors.
+            /// </summary>
+            /// <remarks>
+            /// Only tensors that are realized in managed code will be counted, so tensors
+            /// resulting from computations that remain in native code will not be counted
+            /// in this property.
+            /// 
+            /// Further, two tensors may alias each other, pointing at the same underlying data.
+            /// 
+            /// Therefore, this property is mostly useful for diagnostic purposes, to
+            /// make sure that there is no drift in tensor count from epoch to epoch,
+            /// for example.
+            /// </remarks>
+            public static long TotalCount => _totalCount;
+
+            /// <summary>
+            /// The peak number of allocated tensors.
+            /// </summary>
+            /// <remarks>
+            /// Only tensors that are realized in managed code will be counted, so tensors
+            /// resulting from computations that remain in native code will not be counted
+            /// in this property.
+            ///
+            /// Further, two tensors may alias each other, pointing at the same underlying data.
+            /// 
+            /// Therefore, this property is mostly useful for diagnostic purposes.
+            /// </remarks>
+            public static long PeakCount => _peakCount;
 
             /// <summary>
             /// 
@@ -143,6 +179,28 @@ namespace TorchSharp
             public bool is_complex() => torch.is_complex(dtype);
 
             public bool is_cuda { get { return device.type == DeviceType.CUDA; } }
+
+
+            [DllImport("LibTorchSharp")]
+            internal static extern IntPtr THSTensor_alias(IntPtr handle);
+
+            /// <summary>
+            /// Create a new reference to the same underlying native tensor.
+            /// </summary>
+            /// <returns>A fresh reference to the underlying native tensor.</returns>
+            /// <remkars>
+            /// This is useful for function implementations where a caller may expect the input and output to be
+            /// distinct; in such situations, there's a risk that the tensor is disposed twice, with bad consequences.
+            /// With 'alias(),' the reference count to the underlying native tensor is increased, meaning that the
+            /// input and output can (and should) be disposed or finalized independently of each other.
+            /// </remkars>
+            public Tensor alias()
+            {
+                var res = THSTensor_alias(handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
 
             [DllImport("LibTorchSharp")]
             internal static extern IntPtr THSTensor_data(IntPtr handle);

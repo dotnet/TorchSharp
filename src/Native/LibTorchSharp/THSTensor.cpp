@@ -14,6 +14,11 @@ Tensor THSTensor_all(const Tensor tensor)
     CATCH_TENSOR(tensor->all());
 }
 
+Tensor THSTensor_alias(const Tensor tensor)
+{
+    CATCH_TENSOR(*tensor);
+}
+
 Tensor THSTensor_all_along_dimension(const Tensor tensor, const int64_t dim, bool keepdim)
 {
     CATCH_TENSOR(tensor->all(dim, keepdim));

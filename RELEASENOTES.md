@@ -2,6 +2,17 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+### NuGet Version 0.95.2
+
+__API Changes:__
+
+Added a Sequential factory method to create Sequential from a list of anonymous submodules.
+Added TotalCount and PeakCount static properties to Tensor, useful for diagnostic purposes.
+
+__Fixed Bugs:__
+
+#432 Sequential does not dispose of intermediary tensors.
+
 ### NuGet Version 0.95.1
 
 This version integrates with LibTorch 1.10.0.

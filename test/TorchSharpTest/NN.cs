@@ -444,6 +444,63 @@ namespace TorchSharp
 
             var result = output.ToSingle();
         }
+
+        [Fact]
+        public void EvalSequence2()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(
+                lin1,
+                ReLU(),
+                lin2);
+
+            var x = torch.randn(new long[] { 64, 1000 }, requiresGrad: true);
+            var eval = seq.forward(x);
+        }
+
+        [Fact]
+        public void CreateSequence2()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(
+                lin1,
+                ReLU(),
+                lin2);
+            var parameters = seq.parameters();
+            var parametersCount = parameters.Count();
+            Assert.Equal(4, parametersCount);
+
+            var namedParams = seq.named_parameters();
+            var namedParamsCount = namedParams.Count();
+            Assert.Equal(4, namedParamsCount);
+
+            Assert.Equal("0.weight", namedParams[0].name);
+            Assert.Equal("0.bias",   namedParams[1].name);
+            Assert.Equal("2.weight", namedParams[2].name);
+            Assert.Equal("2.bias",   namedParams[3].name);
+        }
+
+        [Fact]
+        public void EvalLossSequence2()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(
+                lin1,
+                ReLU(),
+                lin2);
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var eval = seq.forward(x);
+            var loss = mse_loss(Reduction.Sum);
+            var output = loss(eval, y);
+
+            var result = output.ToSingle();
+        }
         #endregion
 
         #region Loss Functions
@@ -1358,6 +1415,24 @@ namespace TorchSharp
             Assert.True(seq.has_parameter("test.list.0"));
             Assert.True(seq.has_parameter("test.dict.first"));
             Assert.True(seq.has_parameter("test.dict.second"));
+        }
+
+        [Fact]
+        public void TestCustomModule4()
+        {
+            var module = new TestModule1(torch.randn(new long[] { 2, 2 }), true);
+
+            var seq = Sequential(module);
+
+            Assert.True(module.has_parameter("test"));
+            Assert.True(module.has_parameter("list.0"));
+            Assert.True(module.has_parameter("dict.first"));
+            Assert.True(module.has_parameter("dict.second"));
+
+            Assert.True(seq.has_parameter("0.test"));
+            Assert.True(seq.has_parameter("0.list.0"));
+            Assert.True(seq.has_parameter("0.dict.first"));
+            Assert.True(seq.has_parameter("0.dict.second"));
         }
 
         private class TestModule1 : Module
