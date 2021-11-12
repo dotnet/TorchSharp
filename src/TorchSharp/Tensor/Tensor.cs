@@ -88,12 +88,26 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSTensor_free(IntPtr handle);
 
-            public void free()
+            /// <summary>
+            /// Decouple the managed tensor from its underlying native tensor.
+            ///
+            /// This is primarily useful when returning a tensor to native code in a callback,
+            /// or when having created a managed tensor from a passed-in native handle.
+            /// 
+            /// See the torch.nn.Module.Module(string name) constructor for an example of its use.
+            /// </summary>
+            /// <returns></returns>
+            public IntPtr DecoupleFromNativeHandle()
             {
-                if (handle != IntPtr.Zero) {
-                    THSTensor_free(handle);
-                    handle = IntPtr.Zero;
-                }
+                GC.SuppressFinalize(this);
+
+                if (handle == IntPtr.Zero)
+                    throw new InvalidOperationException("Tensor invalid -- empty handle.");
+
+                System.Threading.Interlocked.Decrement(ref _totalCount);
+                var h = handle;
+                handle = IntPtr.Zero;
+                return h;
             }
 
             /// <summary>

@@ -104,9 +104,7 @@ namespace TorchSharp
                     IntPtr res = (closure == null) ?
                         THSNN_Optimizer_step(handle, null) :
                         THSNN_Optimizer_step(handle, () => {
-                            var res = closure();
-                            GC.SuppressFinalize(res);
-                            return res.Handle;
+                            return closure().DecoupleFromNativeHandle();
                         });
 
                     if (res == IntPtr.Zero)

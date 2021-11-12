@@ -590,17 +590,12 @@ namespace TorchSharp
                         var input = new Tensor(t);
                         var output = forward(input);
 
-                        // handles must live on - we don't own them
-                        GC.SuppressFinalize(input);
+                        // handles must live on - we don't own them, but
+                        // the managed objects should go away.
 
-                        // TODO: Figure out what do do here:
-                        //
-                        // Suppressing the output finalization leads to a memory leak, since the
-                        // native handle is never destroyed. Ideally, we could decrement the ref
-                        // count and then suppress finalization.
-                        //GC.SuppressFinalize(output);
+                        input.DecoupleFromNativeHandle();
 
-                        return output.Handle;
+                        return output.DecoupleFromNativeHandle();
                     };
 
                     var res = THSNN_custom_module(name, forwardNative, out var boxedHandle);

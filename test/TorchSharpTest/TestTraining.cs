@@ -837,7 +837,7 @@ namespace TorchSharp
 
                 Func<Tensor> closure = () => {
                     using var eval = seq.forward(x);
-                    using var output = loss(eval, y);
+                    var output = loss(eval, y);
 
                     finalLoss = output.ToSingle();
 
@@ -887,7 +887,7 @@ namespace TorchSharp
 
                 Func<Tensor> closure = () => {
                     using var eval = seq.forward(x);
-                    using var output = loss(eval, y);
+                    var output = loss(eval, y);
 
                     finalLoss = output.ToSingle();
 
