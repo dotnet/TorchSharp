@@ -403,9 +403,12 @@ namespace TorchSharp
             public override void zero_grad()
             {
                 foreach (var (_, p) in _parameters) {
-                    if (p.grad() is null) continue;
 
-                    p.grad().zero_();
+                    using var grad = p.grad();
+
+                    if (grad is null) continue;
+
+                    grad.zero_().Dispose();
                 }
             }
 
@@ -451,46 +454,39 @@ namespace TorchSharp
                     loss = closure();
                 }
 
-                List<Tensor> paramsWithGrads = new List<Tensor>();
-                List<Tensor> grads = new List<Tensor>();
-                List<Tensor> square_avgs = new List<Tensor>();
-                List<Tensor> acc_deltas = new List<Tensor>();
-
-                foreach (var (name, p) in _parameters) {
-
-                    if (p.grad() is null) continue;
-
-                    if (p.grad().is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
-
-                    paramsWithGrads.Add(p);
-                    grads.Add(p.grad());
-
-                    var state = _state[name];
-
-                    square_avgs.Add(state.square_avg);
-                    acc_deltas.Add(state.acc_delta);
-
-                    state.step += 1;
-                }
-
                 using (var _ = torch.no_grad()) {
 
-                    for (int i = 0; i < grads.Count; i++) {
+                    foreach (var (name, param) in _parameters) {
 
-                        var grad = grads[i];
-                        var param = paramsWithGrads[i];
-                        var square_avg = square_avgs[i];
-                        var acc_delta = acc_deltas[i];
+                        using var grad = param.grad();
 
-                        if (_weight_decay != 0) {
-                            grad = grad.add(param, alpha: _weight_decay);
-                        }
+                        if (grad is null) continue;
 
-                        square_avg.mul_(_rho).addcmul_(grad, grad, 1 - _rho);
-                        var std = square_avg.add(_eps).sqrt_();
-                        var delta = acc_delta.add(_eps).sqrt_().div_(std).mul_(grad);
-                        param.add_(delta, alpha: -LearningRate);
-                        acc_delta.mul_(_rho).addcmul_(delta, delta, 1 - _rho);
+                        if (grad.is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
+
+                        var state = _state[name];
+
+                        var square_avg = state.square_avg;
+                        var acc_delta = state.acc_delta;
+
+                        using var grad0 = (_weight_decay != 0)
+                            ? grad.add(param, alpha: _weight_decay)
+                            : grad.alias();
+
+                        square_avg.mul_(_rho).Dispose();
+                        square_avg.addcmul_(grad0, grad0, 1 - _rho).Dispose();
+
+                        using var t2 = square_avg.add(_eps);
+                        using var std = t2.sqrt_();
+
+                        using var t3 = acc_delta.add(_eps);
+                        t3.sqrt_().Dispose();
+                        t3.div_(std).Dispose();
+                        using var delta = t3.mul_(grad0);
+
+                        param.add_(delta, alpha: -LearningRate).Dispose();
+                        acc_delta.mul_(_rho).Dispose();
+                        acc_delta.addcmul_(delta, delta, 1 - _rho).Dispose();
                     }
                 }
 
@@ -550,43 +546,42 @@ namespace TorchSharp
                     loss = closure();
                 }
 
-                List<Tensor> paramsWithGrads = new List<Tensor>();
-                List<Tensor> grads = new List<Tensor>();
-                List<Tensor> exp_avgs = new List<Tensor>();
-                List<Tensor> exp_infs = new List<Tensor>();
-
-                List<string> names = new List<string>();
-
                 using (var _ = torch.no_grad()) {
 
                     foreach (var (name, param) in _parameters) {
 
-                        if (param.grad() is null) continue;
+                        using var grad = param.grad();
 
-                        if (param.grad().is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
+                        if (grad is null) continue;
+
+                        if (grad.is_sparse) throw new ArgumentException("Adamax does not support sparse gradients");
 
                         var state = _state[name];
 
                         state.step += 1;
 
-                        var grad = param.grad();
                         var exp_avg = state.exp_avg;
                         var exp_inf = state.exp_inf;
 
-                        if (_weight_decay != 0) {
-                            grad = grad.add(param, alpha: _weight_decay);
-                        }
+                        using var grad1 = (_weight_decay != 0)
+                            ? grad.add(param, alpha: _weight_decay)
+                            : grad.alias();
 
-                        exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
+                        exp_avg.mul_(_beta1).Dispose();
+                        exp_avg.add_(grad1, alpha: 1 - _beta1).Dispose();
 
-                        var norm_buf = torch.cat(new Tensor[] {
-                            exp_inf.mul_(_beta2).unsqueeze(0),
-                            grad.abs().add_(_eps).unsqueeze_(0) }, 0);
+                        exp_inf.mul_(_beta2).Dispose();
+                        using var t3 = exp_inf.unsqueeze(0);
+                        using var t4 = grad1.abs();
+                        t4.add_(_eps).Dispose();
+                        using var t6 = t4.unsqueeze_(0);
 
-                        torch.amax(norm_buf, new long[] { 0 }, false, exp_inf);
+                        using var norm_buf = torch.cat(new Tensor[] { t3, t6 }, 0);
+
+                        using var t7 = torch.amax(norm_buf, new long[] { 0 }, false, exp_inf);
 
                         var clr = LearningRate / (1 - Math.Pow(_beta1, state.step));
-                        param.addcdiv_(exp_avg, exp_inf, value: -clr);
+                        param.addcdiv_(exp_avg, exp_inf, value: -clr).Dispose();
                     }
                 }
 
@@ -651,34 +646,26 @@ namespace TorchSharp
                     loss = closure();
                 }
 
-                List<Tensor> paramsWithGrads = new List<Tensor>();
-                List<Tensor> grads = new List<Tensor>();
-
-                List<Tensor> exp_avgs = new List<Tensor>();
-                List<Tensor> exp_avg_sqs = new List<Tensor>();
-                List<double> mu_products = new List<double>();
-
-                List<string> names = new List<string>();
-
                 using (var _ = torch.no_grad()) {
 
                     foreach (var (name, param) in _parameters) {
 
-                        if (param.grad() is null) continue;
+                        using var grad = param.grad();
+
+                        if (grad is null) continue;
 
                         var state = _state[name];
 
                         state.step += 1;
 
-                        var grad = param.grad();
                         var exp_avg = state.exp_avg;
                         var exp_avg_sq = state.exp_avg_sq;
 
                         var bias_correction2 = 1 - Math.Pow(_beta2, state.step);
 
-                        if (_weight_decay != 0) {
-                            grad = grad.add(param, alpha: _weight_decay);
-                        }
+                        using var grad1 = (_weight_decay != 0)
+                            ? grad.add(param, alpha: _weight_decay)
+                            : grad.alias();
 
                         var mu = _beta1 * (1.0 - 0.5 * Math.Pow(0.96, state.step * _momentum_decay));
                         var mu_next = _beta1 * (1.0 - 0.5 * Math.Pow(0.96, (state.step + 1) * _momentum_decay));
@@ -686,12 +673,17 @@ namespace TorchSharp
                         var mu_product = state.mu_product * mu;
                         var mu_product_next = mu_product * mu * mu_next;
 
-                        exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
-                        exp_avg_sq.mul_(_beta2).addcmul_(grad, grad, value: 1 - _beta2);
+                        using var t0 = exp_avg.mul_(_beta1);
+                        using var t1 = t0.add_(grad1, alpha: 1 - _beta1);
+                        using var t2 = exp_avg_sq.mul_(_beta2);
+                        t2.addcmul_(grad1, grad1, value: 1 - _beta2).Dispose();
 
-                        var denom = exp_avg_sq.div(bias_correction2).sqrt().add_(_eps);
-                        param.addcdiv_(grad, denom, value: -LearningRate * (1 - mu) / (1 - mu_product));
-                        param.addcdiv_(exp_avg, denom, value: -LearningRate * mu_next / (1 - mu_product_next));
+                        using var t4 = exp_avg_sq.div(bias_correction2);
+                        using var t5 = t4.sqrt_();
+                        using var denom = t5.add_(_eps);
+
+                        param.addcdiv_(grad1, denom, value: -LearningRate * (1 - mu) / (1 - mu_product)).Dispose();
+                        param.addcdiv_(exp_avg, denom, value: -LearningRate * mu_next / (1 - mu_product_next)).Dispose();
 
                         state.mu_product = mu_product;
                     }
@@ -757,50 +749,51 @@ namespace TorchSharp
                     loss = closure();
                 }
 
-                List<Tensor> paramsWithGrads = new List<Tensor>();
-                List<Tensor> grads = new List<Tensor>();
-
-                List<Tensor> exp_avgs = new List<Tensor>();
-                List<Tensor> exp_avg_sqs = new List<Tensor>();
-                List<double> mu_products = new List<double>();
-
-                List<string> names = new List<string>();
-
                 using (var _ = torch.no_grad()) {
 
                     foreach (var (name, param) in _parameters) {
 
-                        if (param.grad() is null) continue;
+                        using var grad = param.grad();
+
+                        if (grad is null) continue;
 
                         var state = _state[name];
 
                         state.step += 1;
 
-                        var grad = param.grad();
                         var exp_avg = state.exp_avg;
                         var exp_avg_sq = state.exp_avg_sq;
 
                         var bias_correction1 = 1 - Math.Pow(_beta1, state.step);
                         var bias_correction2 = 1 - Math.Pow(_beta2, state.step);
 
-                        if (_weight_decay != 0) {
-                            grad = grad.add(param, alpha: _weight_decay);
-                        }
+                        using var grad1 = (_weight_decay != 0)
+                            ? grad.add(param, alpha: _weight_decay)
+                            : grad.alias();
 
-                        exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
-                        exp_avg_sq.mul_(_beta2).addcmul_(grad, grad, value: 1 - _beta2);
+                        using var t0 = exp_avg.mul_(_beta1);
+                        t0.add_(grad1, alpha: 1 - _beta1).Dispose();
+                        using var t2 = exp_avg_sq.mul_(_beta2);
+                        t2.addcmul_(grad1, grad1, value: 1 - _beta2).Dispose();
 
-                        var bias_corrected_exp_avg = exp_avg / bias_correction1;
+                        using var bias_corrected_exp_avg = exp_avg / bias_correction1;
+
                         var rho_inf = 2 / (1 - _beta2) - 1;
                         var rho_t = rho_inf - 2 * state.step * Math.Pow(_beta2, state.step) / bias_correction2;
 
+                        using var t6 = bias_corrected_exp_avg * LearningRate;
+
                         if (rho_t > 5) {
                             var rect = Math.Sqrt((rho_t - 4) * (rho_t - 2) * rho_inf / ((rho_inf - 4) * (rho_inf - 2) * rho_t));
-                            var adaptive_lr = Math.Sqrt(bias_correction2) / exp_avg_sq.sqrt().add_(_eps);
-                            param.add_(bias_corrected_exp_avg * LearningRate * adaptive_lr * rect, alpha: -1.0);
+                            using var t4 = exp_avg_sq.sqrt();
+                            using var t5 = t4.add_(_eps);
+                            using var adaptive_lr = Math.Sqrt(bias_correction2) / t5;
+
+                            using var t7 = t6 * LearningRate * adaptive_lr * rect;
+                            param.add_(t7, alpha: -1.0).Dispose();
                         }
                         else {
-                            param.add_(bias_corrected_exp_avg * LearningRate, alpha: -1.0);
+                            param.add_(t6, alpha: -1.0).Dispose();
                         }
                     }
                 }
@@ -863,39 +856,34 @@ namespace TorchSharp
                     loss = closure();
                 }
 
-                List<Tensor> paramsWithGrads = new List<Tensor>();
-                List<Tensor> grads = new List<Tensor>();
-                List<Tensor> exp_avgs = new List<Tensor>();
-                List<Tensor> exp_infs = new List<Tensor>();
-
-                List<string> names = new List<string>();
-
                 using (var _ = torch.no_grad()) {
 
-                    foreach (var (name, p) in _parameters) {
+                    foreach (var (name, param) in _parameters) {
 
-                        if (p.grad() is null) continue;
+                        using var grad = param.grad();
 
-                        if (p.grad().is_sparse) throw new ArgumentException("ASGD does not support sparse gradients");
+                        if (grad is null) continue;
+
+                        if (grad.is_sparse) throw new ArgumentException("ASGD does not support sparse gradients");
 
                         var state = _state[name];
 
                         state.step += 1;
 
-                        var grad = p.grad();
+                        using var grad1 = (_weight_decay != 0)
+                            ? grad.add(param, alpha: _weight_decay)
+                            : grad.alias();
 
-                        if (_weight_decay != 0) {
-                            grad = grad.add(p, alpha: _weight_decay);
-                        }
-
-                        p.mul_(1 - _lambd * state.eta);
-                        p.add_(grad, alpha: -state.eta);
+                        param.mul_(1 - _lambd * state.eta).Dispose();
+                        param.add_(grad1, alpha: -state.eta).Dispose();
 
                         if (state.mu != 1) {
-                            state.ax.add_(p.sub(state.ax).mul(state.mu));
+                            using var t2 = param.sub(state.ax);
+                            using var t3 = t2.mul(state.mu);
+                            state.ax.add_(t3).Dispose();
                         }
                         else {
-                            state.ax.copy_(p);
+                            state.ax.copy_(param).Dispose();
                         }
 
                         state.eta = LearningRate / Math.Pow((1 + _lambd * LearningRate * state.step), _alpha);
@@ -953,47 +941,53 @@ namespace TorchSharp
                     loss = closure();
                 }
 
-                List<Tensor> paramsWithGrads = new List<Tensor>();
-                List<Tensor> grads = new List<Tensor>();
-                List<Tensor> exp_avgs = new List<Tensor>();
-                List<Tensor> exp_infs = new List<Tensor>();
-
-                List<string> names = new List<string>();
-
                 using (var _ = torch.no_grad()) {
 
                     foreach (var (name, p) in _parameters) {
 
-                        if (p.grad() is null) continue;
+                        using var grad = p.grad();
 
-                        if (p.grad().is_sparse) throw new ArgumentException("Rprop does not support sparse gradients");
+                        if (grad is null) continue;
 
-                        var grad = p.grad();
+                        if (grad.is_sparse) throw new ArgumentException("Rprop does not support sparse gradients");
 
                         if (!_state.TryGetValue(name, out var state)) {
+
                             state = new State();
                             _state[name] = state;
                             state.step = 0;
                             state.prev = torch.zeros_like(p);
-                            state.step_size = grad.new_empty(grad.shape).fill_(LearningRate);
+                            using var t0 = grad.new_empty(grad.shape);
+                            state.step_size = t0.fill_(LearningRate);
                         }
 
                         state.step += 1;
 
-                        if (_max_step != 0) {
-                            grad = grad.add(p, alpha: _max_step);
-                        }
+                        using var grad1 = (_max_step != 0)
+                            ? grad.add(p, alpha: _max_step)
+                            : grad.alias();
 
-                        var sign = grad.mul(state.prev).sign();
-                        sign.index_put_(_etaplus, sign.gt(0));
-                        sign.index_put_(_etaminus, sign.lt(0));
-                        sign.index_put_(1, sign.lt(0));
+                        using var t1 = grad1.mul(state.prev);
+                        using var sign = t1.sign();
+                        using var sgt = sign.gt(0);
+                        using var slt = sign.lt(0);
+                        sign.index_put_(_etaplus, sgt).Dispose();
+                        sign.index_put_(_etaminus, slt).Dispose();
+                        using var seq = sign.eq(0);
+                        sign.index_put_(1, seq).Dispose();
 
-                        state.step_size.mul_(sign).clamp_(_min_step, _max_step);
-                        grad = grad.clone();
-                        grad.index_put_(0, sign.eq(_etaminus));
+                        using var t5 = state.step_size.mul_(sign);
+                        t5.clamp_(_min_step, _max_step).Dispose();
 
-                        p.addcmul_(grad.sign(), state.step_size, -1);
+                        using var grad2 = grad1.clone();
+
+                        using var t7 = sign.eq(_etaminus);
+                        grad2.index_put_(0, t7).Dispose();
+
+                        using var t9 = grad2.sign();
+                        p.addcmul_(t9, state.step_size, -1).Dispose();
+
+                        state.prev.copy_(grad1).Dispose();
                     }
                 }
 
