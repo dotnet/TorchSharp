@@ -510,7 +510,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static Tensor solve(Tensor input, Tensor other)
             {
-                var res = THSLinalg_solve(input.Handle, other.handle);
+                var res = THSLinalg_solve(input.Handle, other.Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);

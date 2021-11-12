@@ -78,8 +78,6 @@ namespace TorchSharp
                 {
                     this.handle = new HType(handle, ownsHandle);
                     this.boxedModule = boxedHandle.HasValue ? new BoxedModule(boxedHandle.Value) : null;
-                    //Debug.Assert (!this.handle.IsInvalid);
-                    //Debug.Assert (!this.boxedHandle.IsInvalid);
                 }
 
                 ~Module()

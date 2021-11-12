@@ -115,16 +115,27 @@ Tensor THSTensor_randint(
     const int device_type, const int device_index,
     const bool requires_grad)
 {
-    Tensor tensor;
-    CATCH(
+    try {
+        torch_last_err = 0;
         auto options = at::TensorOptions()
-        .dtype(at::ScalarType(scalar_type))
-        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
-        .requires_grad(requires_grad);
+            .dtype(at::ScalarType(scalar_type))
+            .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+            .requires_grad(requires_grad);
 
-        tensor = new torch::Tensor(gen == nullptr ? torch::randint(low, high, at::ArrayRef<int64_t>(sizes, length), options) : torch::randint(low, high, at::ArrayRef<int64_t>(sizes, length), *gen, options));
-    )
-    return tensor;
+        auto result = (gen == nullptr)
+            ? torch::randint(low, high, at::ArrayRef<int64_t>(sizes, length), options)
+            : torch::randint(low, high, at::ArrayRef<int64_t>(sizes, length), *gen, options);
+
+        return ResultTensor(result);
+    }
+    catch (const c10::Error e) {
+        torch_last_err = strdup(e.what());
+    }
+    catch (const std::runtime_error e) {
+        torch_last_err = strdup(e.what());
+    }
+
+    return nullptr;
 }
 
 Tensor THSTensor_randint_out(const Generator gen, const int64_t low, const int64_t high, const int64_t* sizes, const int length, const Tensor out)

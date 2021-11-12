@@ -106,7 +106,7 @@ namespace TorchSharp
                         THSNN_Optimizer_step(handle, () => {
                             var res = closure();
                             GC.SuppressFinalize(res);
-                            return res.handle;
+                            return res.Handle;
                         });
 
                     if (res == IntPtr.Zero)
