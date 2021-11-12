@@ -288,7 +288,7 @@ namespace TorchSharp
 
         public static Tensor _standard_gamma(Tensor input, torch.Generator generator = null)
         {
-            var res = THSTensor_standard_gamma_(input.handle, (generator is null) ? IntPtr.Zero : generator.Handle);
+            var res = THSTensor_standard_gamma_(input.Handle, (generator is null) ? IntPtr.Zero : generator.Handle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Tensor(res);
         }
@@ -297,7 +297,7 @@ namespace TorchSharp
 
         public static Tensor _sample_dirichlet(Tensor input, torch.Generator generator = null)
         {
-            var res = THSTensor_sample_dirichlet_(input.handle, (generator is null) ? IntPtr.Zero : generator.Handle);
+            var res = THSTensor_sample_dirichlet_(input.Handle, (generator is null) ? IntPtr.Zero : generator.Handle);
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Tensor(res);
         }

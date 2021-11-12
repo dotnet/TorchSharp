@@ -24,7 +24,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cholesky(bool upper = false)
             {
-                var res = THSTensor_cholesky(handle, upper);
+                var res = THSTensor_cholesky(Handle, upper);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -39,7 +39,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cholesky_inverse(bool upper = false)
             {
-                var res = THSTensor_cholesky_inverse(handle, upper);
+                var res = THSTensor_cholesky_inverse(Handle, upper);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -55,7 +55,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cholesky_solve(Tensor input2, bool upper = false)
             {
-                var res = THSTensor_cholesky_solve(handle, input2.Handle, upper);
+                var res = THSTensor_cholesky_solve(Handle, input2.Handle, upper);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -69,7 +69,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor cross(Scalar other, long dim)
             {
-                var res = THSTensor_cross(handle, other.Handle, dim);
+                var res = THSTensor_cross(Handle, other.Handle, dim);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -100,7 +100,7 @@ namespace TorchSharp
             /// </remarks>
             public Tensor matmul(Tensor target)
             {
-                var res = THSTensor_matmul(handle, target.Handle);
+                var res = THSTensor_matmul(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -115,7 +115,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor mm(Tensor target)
             {
-                var res = THSTensor_mm(handle, target.Handle);
+                var res = THSTensor_mm(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -130,7 +130,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor mv(Tensor target)
             {
-                var res = THSTensor_mv(handle, target.Handle);
+                var res = THSTensor_mv(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -143,7 +143,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor matrix_exp()
             {
-                var res = THSTensor_matrix_exp(handle);
+                var res = THSTensor_matrix_exp(Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -159,7 +159,7 @@ namespace TorchSharp
             /// <remarks>Input tensor must be of shape (*, m, m) where * is zero or more batch dimensions.</remarks>
             public Tensor matrix_power(int n)
             {
-                var res = THSLinalg_matrix_power(handle, n);
+                var res = THSLinalg_matrix_power(Handle, n);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -179,7 +179,7 @@ namespace TorchSharp
             public Tensor vdot(Tensor target)
             {
                 if (shape.Length != 1 || target.shape.Length != 1 || shape[0] != target.shape[0]) throw new InvalidOperationException("vdot arguments must have the same shape.");
-                var res = THSTensor_vdot(handle, target.Handle);
+                var res = THSTensor_vdot(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
