@@ -36,9 +36,10 @@ namespace TorchSharp.torchvision
             {
                 if (brightness_factor == 1.0)
                     // Special case -- no change.
-                    return img;
+                    return img.alias();
 
-                return Blend(img, torch.zeros_like(img), brightness_factor);
+                using var zeros = torch.zeros_like(img);
+                return Blend(img, zeros, brightness_factor);
             }
 
             /// <summary>
@@ -54,10 +55,13 @@ namespace TorchSharp.torchvision
             {
                 if (contrast_factor == 1.0)
                     // Special case -- no change.
-                    return img;
+                    return img.alias();
 
                 var dtype = torch.is_floating_point(img) ? img.dtype : torch.float32;
-                var mean = torch.mean(transforms.functional.rgb_to_grayscale(img).to_type(dtype), new long[] { -3, -2, -1 }, keepDimension: true);
+                using var t0 = transforms.functional.rgb_to_grayscale(img);
+                using var t1 = t0.to_type(dtype);
+                using var mean = torch.mean(t1, new long[] { -3, -2, -1 }, keepDimension: true);
+
                 return Blend(img, mean, contrast_factor);
             }
 
@@ -76,12 +80,17 @@ namespace TorchSharp.torchvision
             public static Tensor adjust_gamma(Tensor img, double gamma, double gain = 1.0)
             {
                 var dtype = img.dtype;
-                if (!torch.is_floating_point(img))
+                if (!torch.is_floating_point(img)) {
                     img = transforms.functional.convert_image_dtype(img, torch.float32);
+                } else {
+                    img = img.alias();
+                }
 
-                img = (gain * img.pow(gamma)).clamp(0, 1);
+                using var t0 = img.pow(gamma);
+                using var t1 = gain * t0;
+                using var t2 = t1.clamp(0, 1);
 
-                return convert_image_dtype(img, dtype);
+                return convert_image_dtype(t2, dtype);
             }
 
             /// <summary>
@@ -108,29 +117,24 @@ namespace TorchSharp.torchvision
             {
                 if (hue_factor == 0.0)
                     // Special case -- no change.
-                    return img;
+                    return img.alias();
+
+                if (img.shape.Length < 4 || img.shape[img.shape.Length - 3] == 1)
+                    // Grayscale, or not a batch of images. Nothing to do.
+                    return img.alias();
 
                 if (degrees)
                     hue_factor = hue_factor / 360.0;
-                
-                if (img.shape.Length < 4 || img.shape[img.shape.Length - 3] == 1)
-                    return img;
 
-                var orig_dtype = img.dtype;
-                if (!torch.is_floating_point(img))
-                    img = img.to_type(torch.float32) / 255.0;
-
-                var HSV = RGBtoHSV(img);
-
-                HSV.h = (HSV.h + hue_factor) % 1.0;
-
-                var img_hue_adj = HSVtoRGB(HSV.h, HSV.s, HSV.v);
-
-                if (orig_dtype.IsIntegral())
-                    img_hue_adj = (img_hue_adj * 255.0).to_type(orig_dtype);
-
-                return img_hue_adj;
+                var res = THSVision_AdjustHue(img.Handle, hue_factor);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
             }
+
+            /* Tensor THSVision_AdjustHue(const Tensor i, const double hue_factor) */
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSVision_AdjustHue(IntPtr img, double hue_factor);
+
 
             /// <summary>
             /// Adjust the color saturation of an image.
@@ -145,9 +149,10 @@ namespace TorchSharp.torchvision
             {
                 if (saturation_factor == 1.0)
                     // Special case -- no change.
-                    return img;
+                    return img.alias();
 
-                return Blend(img, transforms.functional.rgb_to_grayscale(img), saturation_factor);
+                using var t0 = transforms.functional.rgb_to_grayscale(img);
+                return Blend(img, t0, saturation_factor);
             }
 
             /// <summary>
@@ -162,9 +167,10 @@ namespace TorchSharp.torchvision
             public static Tensor adjust_sharpness(Tensor img, double sharpness)
             {
                 if (img.shape[img.shape.Length - 1] <= 2 || img.shape[img.shape.Length - 2] <= 2)
-                    return img;
+                    return img.alias();
 
-                return Blend(img, BlurredDegenerateImage(img), sharpness);
+                using var t0 = BlurredDegenerateImage(img);
+                return Blend(img, t0, sharpness);
             }
 
             /// <summary>
@@ -198,11 +204,13 @@ namespace TorchSharp.torchvision
                 var matrix = GetInverseAffineMatrix((0.0f, 0.0f), angle, (translate[0], translate[1]), scale, (shear[0], shear[1]));
 
                 var dtype = torch.is_floating_point(img) ? img.dtype : ScalarType.Float32;
-                var theta = torch.tensor(matrix, dtype: dtype, device: img.device).reshape(1, 2, 3);
+
+                using var t0 = torch.tensor(matrix, dtype: dtype, device: img.device);
+                using var theta = t0.reshape(1, 2, 3);
 
                 var end_ = img.shape.Length;
 
-                var grid = GenerateAffineGrid(theta, img.shape[end_ - 1], img.shape[end_ - 2], img.shape[end_ - 1], img.shape[end_ - 2]);
+                using var grid = GenerateAffineGrid(theta, img.shape[end_ - 1], img.shape[end_ - 2], img.shape[end_ - 1], img.shape[end_ - 2]);
                 return ApplyGridTransform(img, grid, InterpolationMode.Nearest, fill: fills);
             }
 
@@ -233,16 +241,29 @@ namespace TorchSharp.torchvision
                 var bound = input.IsIntegral() ? 255.0f : 1.0f;
                 var dtype = input.IsIntegral() ? ScalarType.Float32 : input.dtype;
 
-                var minimum = input.amin(new long[] { -2, -1 }, keepDim: true).to(dtype);
-                var maximum = input.amax(new long[] { -2, -1 }, keepDim: true).to(dtype);
+                using var t0 = input.amin(new long[] { -2, -1 }, keepDim: true);
+                using var t1 = input.amax(new long[] { -2, -1 }, keepDim: true);
 
-                var eq_idxs = (minimum == maximum).nonzero_as_list()[0];
-                minimum.index_put_(0, eq_idxs);
-                maximum.index_put_(bound, eq_idxs);
+                using var minimum = t0.to(dtype);
+                using var maximum = t1.to(dtype);
 
-                var scale = torch.tensor(bound, float32) / (maximum - minimum);
+                using var t2 = (minimum == maximum);
+                var t3 = t2.nonzero_as_list();
+                var eq_idxs = t3[0];
 
-                return ((input - minimum) * scale).clamp(0, bound).to(input.dtype);
+                using var t4 = minimum.index_put_(0, eq_idxs);
+                using var t5 = maximum.index_put_(bound, eq_idxs);
+
+                using var t6 = (maximum - minimum);
+                using var t7 = torch.tensor(bound, float32);
+
+                using var scale = t7 / t6;
+
+                using var t8 = (input - minimum);
+                using var t9 = t8 * scale;
+                using var t10 = t9.clamp(0, bound);
+
+                return t10.to(input.dtype);
             }
 
             /// <summary>
@@ -282,7 +303,7 @@ namespace TorchSharp.torchvision
             public static Tensor convert_image_dtype(Tensor image, ScalarType dtype = ScalarType.Float32)
             {
                 if (image.dtype == dtype)
-                    return image;
+                    return image.alias();
 
                 var output_max = MaxValue(dtype);
 
@@ -298,7 +319,7 @@ namespace TorchSharp.torchvision
                     }
 
                     var eps = 1e-3;
-                    var result = image.mul(output_max + 1.0 - eps);
+                    using var result = image.mul(output_max + 1.0 - eps);
                     return result.to_type(dtype);
 
                 } else {
@@ -307,17 +328,18 @@ namespace TorchSharp.torchvision
                     var input_max = MaxValue(image.dtype);
 
                     if (torch.is_floating_point(dtype)) {
-                        return image.to_type(dtype) / input_max;
+                        using var t0 = image.to_type(dtype);
+                        return t0 / input_max;
                     }
 
                     if (input_max > output_max) {
                         var factor = (input_max + 1) / (output_max + 1);
-                        image = torch.div(image, factor);
-                        return image.to_type(dtype);
+                        using var t0 = torch.div(image, factor);
+                        return t0.to_type(dtype);
                     } else {
                         var factor = (output_max + 1) / (input_max + 1);
-                        image = image.to_type(dtype);
-                        return image * factor;
+                        using var t0 = image.to_type(dtype);
+                        return t0 * factor;
                     }
                 }
             }
@@ -367,8 +389,10 @@ namespace TorchSharp.torchvision
                     return EqualizeSingleImage(input);
                 }
 
-                var images = Enumerable.Range(0,(int)input.shape[0]).Select(i => EqualizeSingleImage(input[i]));
-                return torch.stack(images);
+                var images = Enumerable.Range(0, (int)input.shape[0]).Select(i => EqualizeSingleImage(input[i])).ToList();
+                var result = torch.stack(images);
+                foreach (var img in images) { img.Dispose(); }
+                return result;
             }
 
             /// <summary>
@@ -384,11 +408,12 @@ namespace TorchSharp.torchvision
             /// <returns></returns>
             public static Tensor erase(Tensor img, int top, int left, int height, int width, Tensor value, bool inplace = false)
             {
-                if (!inplace)
-                    img = img.clone();
-
-                img[TensorIndex.Ellipsis, top..(top + height), left..(left + width)] = value;
-                return img;
+                if (!inplace) {
+                    using var t0 = img.clone();
+                    return t0.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, top..(top + height), left..(left + width) });
+                } else {
+                    return img.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, top..(top + height), left..(left + width) });
+                }
             }
 
             /// <summary>
@@ -409,17 +434,16 @@ namespace TorchSharp.torchvision
                         0.3f * ((kernelSize[0] - 1) * 0.5f - 1) + 0.8f,
                         0.3f * ((kernelSize[1] - 1) * 0.5f - 1) + 0.8f,
                     };
-                }
-                else if (sigma.Count == 1) {
+                } else if (sigma.Count == 1) {
                     sigma = new float[] {
                         sigma[0],
                         sigma[0],
                     };
                 }
-                var kernel = GetGaussianKernel2d(kernelSize, sigma, dtype, input.device);
-                kernel = kernel.expand(input.shape[input.shape.Length - 3], 1, kernel.shape[0], kernel.shape[1]);
+                using var t0 = GetGaussianKernel2d(kernelSize, sigma, dtype, input.device);
+                using var kernel = t0.expand(input.shape[input.shape.Length - 3], 1, t0.shape[0], t0.shape[1]);
 
-                var img = SqueezeIn(input, new ScalarType[] { kernel.dtype }, out var needCast, out var needSqueeze, out var out_dtype);
+                using var img0 = SqueezeIn(input, new ScalarType[] { kernel.dtype }, out var needCast, out var needSqueeze, out var out_dtype);
 
                 // The padding needs to be adjusted to make sure that the output is the same size as the input.
 
@@ -430,10 +454,10 @@ namespace TorchSharp.torchvision
 
                 var padding = new long[] { k0d2, k1d2, k0sm1 - k0d2, k1sm1 - k1d2 };
 
-                img = TorchSharp.torch.nn.functional.pad(img, padding, PaddingModes.Reflect);
-                img = torch.nn.functional.conv2d(img, kernel, groups: img.shape[img.shape.Length - 3]);
+                using var img1 = TorchSharp.torch.nn.functional.pad(img0, padding, PaddingModes.Reflect);
+                using var img2 = torch.nn.functional.conv2d(img1, kernel, groups: img1.shape[img1.shape.Length - 3]);
 
-                return SqueezeOut(img, needCast, needSqueeze, out_dtype);
+                return SqueezeOut(img2, needCast, needSqueeze, out_dtype);
             }
 
             /// <summary>
@@ -470,10 +494,11 @@ namespace TorchSharp.torchvision
             /// <returns></returns>
             public static Tensor invert(Tensor input)
             {
+                using var t0 = -input;
                 if (input.IsIntegral()) {
-                    return -input + 255;
+                    return t0 + 255;
                 } else {
-                    return -input + 1.0;
+                    return t0 + 1.0;
                 }
             }
 
@@ -492,10 +517,11 @@ namespace TorchSharp.torchvision
                 if (means.Length != input.shape[1])
                     throw new ArgumentException("The number of channels is not equal to the number of means and standard deviations");
 
-                var mean = means.ToTensor(new long[] { 1, means.Length, 1, 1 }).to(input.dtype, input.device);     // Assumes NxCxHxW
-                var stdev = stdevs.ToTensor(new long[] { 1, stdevs.Length, 1, 1 }).to(input.dtype, input.device);  // Assumes NxCxHxW
+                using var mean = means.ToTensor(new long[] { 1, means.Length, 1, 1 }).to(input.dtype, input.device);     // Assumes NxCxHxW
+                using var stdev = stdevs.ToTensor(new long[] { 1, stdevs.Length, 1, 1 }).to(input.dtype, input.device);  // Assumes NxCxHxW
+                using var t0 = input - mean;
 
-                return (input - mean) / stdev;
+                return t0 / stdev;
             }
 
             /// <summary>
@@ -537,7 +563,7 @@ namespace TorchSharp.torchvision
                 var oh = img.shape[_end - 2];
 
                 var dtype = torch.is_floating_point(img) ? img.dtype : ScalarType.Float32;
-                var grid = PerspectiveGrid(coeffs, ow, oh, dtype: dtype, device: img.device);
+                using var grid = PerspectiveGrid(coeffs, ow, oh, dtype: dtype, device: img.device);
 
                 return ApplyGridTransform(img, grid, interpolation, fill);
             }
@@ -551,8 +577,8 @@ namespace TorchSharp.torchvision
             public static Tensor posterize(Tensor input, int bits)
             {
                 if (input.dtype != ScalarType.Byte) throw new ArgumentException("Only torch.byte image tensors are supported");
-                var mask = -(1 << (8 - bits));
-                return input & torch.tensor((byte)mask);
+                using var mask = torch.tensor((byte)-(1 << (8 - bits)));
+                return input & mask;
             }
 
             /// <summary>
@@ -598,11 +624,11 @@ namespace TorchSharp.torchvision
                     throw new NotImplementedException("Interpolation mode != 'Nearest'");
                 }
 
-                var img = SqueezeIn(input, new ScalarType[] { ScalarType.Float32, ScalarType.Float64 }, out var needCast, out var needSqueeze, out var dtype);
+                using var img0 = SqueezeIn(input, new ScalarType[] { ScalarType.Float32, ScalarType.Float64 }, out var needCast, out var needSqueeze, out var dtype);
 
-                img = torch.nn.functional.interpolate(img, new long[] { h, w }, mode: interpolation, align_corners: null);
+                using var img1 = torch.nn.functional.interpolate(img0, new long[] { h, w }, mode: interpolation, align_corners: null);
 
-                return SqueezeOut(img, needCast, needSqueeze, dtype);
+                return SqueezeOut(img1, needCast, needSqueeze, dtype);
             }
 
             /// <summary>
@@ -618,7 +644,8 @@ namespace TorchSharp.torchvision
             /// <returns></returns>
             public static Tensor resized_crop(Tensor input, int top, int left, int height, int width, int newHeight, int newWidth)
             {
-                return resize(crop(input, top, left, height, width), newHeight, newWidth);
+                using var t0 = crop(input, top, left, height, width);
+                return resize(t0, newHeight, newWidth);
             }
 
             /// <summary>
@@ -635,11 +662,12 @@ namespace TorchSharp.torchvision
                 int cDim = (int)input.Dimensions - 3;
                 if (input.shape[cDim] == 1)
                     // Already grayscale...
-                    return input;
+                    return input.alias();
 
                 var rgb = input.unbind(cDim);
-                var img = (rgb[0] * 0.2989 + rgb[1] * 0.587 + rgb[2] * 0.114).unsqueeze(cDim);
-                return num_output_channels == 3 ? img.expand(input.shape) : img;
+                using var img = (rgb[0] * 0.2989 + rgb[1] * 0.587 + rgb[2] * 0.114).unsqueeze(cDim);
+                foreach (var c in rgb) { c.Dispose(); }
+                return num_output_channels == 3 ? img.expand(input.shape) : img.alias();
             }
 
             /// <summary>
@@ -666,7 +694,8 @@ namespace TorchSharp.torchvision
             public static Tensor solarize(Tensor input, double threshold)
             {
                 using (var inverted = invert(input))
-                    return torch.where(input < threshold, input, inverted);
+                using (var filter = input < threshold)
+                    return torch.where(filter, input, inverted);
             }
 
             /// <summary>
@@ -683,8 +712,9 @@ namespace TorchSharp.torchvision
                 var (w, h) = GetImageSize(img);
                 var (ow, oh) = expand ? ComputeOutputSize(matrix, w, h) : (w, h);
                 var dtype = torch.is_floating_point(img) ? img.dtype : torch.float32;
-                var theta = torch.tensor(matrix, dtype: dtype, device: img.device).reshape(1, 2, 3);
-                var grid = GenerateAffineGrid(theta, w, h, ow, oh);
+                using var t0 = torch.tensor(matrix, dtype: dtype, device: img.device);
+                using var theta = t0.reshape(1, 2, 3);
+                using var grid = GenerateAffineGrid(theta, w, h, ow, oh);
 
                 return ApplyGridTransform(img, grid, interpolation, fill);
             }
@@ -692,98 +722,76 @@ namespace TorchSharp.torchvision
             private static Tensor Blend(Tensor img1, Tensor img2, double ratio)
             {
                 var bound = img1.IsIntegral() ? 255.0 : 1.0;
-                return (img1 * ratio + img2 * (1.0 - ratio)).clamp(0, bound).to(img2.dtype);
+                using var t0 = img1 * ratio;
+                using var t2 = img2 * (1.0 - ratio);
+                using var t3 = (t0 + t2);
+                using var t4 = t3.clamp(0, bound);
+                return t4.to(img2.dtype);
             }
 
             private static Tensor BlurredDegenerateImage(Tensor input)
             {
                 var device = input.device;
                 var dtype = input.IsIntegral() ? ScalarType.Float32 : input.dtype;
-                var kernel = torch.ones(3, 3, device: device);
-                kernel[1, 1] = torch.tensor(5.0f);
-                kernel /= kernel.sum();
-                kernel = kernel.expand(input.shape[input.shape.Length - 3], 1, kernel.shape[0], kernel.shape[1]);
+                using var kernel = torch.ones(3, 3, device: device);
+                using var t0 = torch.tensor(5.0f);
+                kernel[1, 1] = t0;
 
-                var result_tmp = SqueezeIn(input, new ScalarType[] { ScalarType.Float32, ScalarType.Float64 }, out var needCast, out var needSqueeze, out var out_dtype);
-                result_tmp = torch.nn.functional.conv2d(result_tmp, kernel, groups: result_tmp.shape[result_tmp.shape.Length - 3]);
-                result_tmp = SqueezeOut(result_tmp, needCast, needSqueeze, out_dtype);
+                using var t1 = kernel.sum();
+                using var t2 = kernel / t1;
+                using var t3 = t2.expand(input.shape[input.shape.Length - 3], 1, kernel.shape[0], kernel.shape[1]);
 
-                var result = input.clone();
-                result.index_put_(result_tmp, TensorIndex.Ellipsis, TensorIndex.Slice(1, -1), TensorIndex.Slice(1, -1));
-                return result;
+                using var t4 = SqueezeIn(input, new ScalarType[] { ScalarType.Float32, ScalarType.Float64 }, out var needCast, out var needSqueeze, out var out_dtype);
+                using var t5 = torch.nn.functional.conv2d(t4, t3, groups: t4.shape[t4.shape.Length - 3]);
+                using var result_tmp = SqueezeOut(t5, needCast, needSqueeze, out_dtype);
+
+                using var result = input.clone();
+                return result.index_put_(result_tmp, TensorIndex.Ellipsis, TensorIndex.Slice(1, -1), TensorIndex.Slice(1, -1));
             }
 
             private static Tensor GetGaussianKernel1d(long size, float sigma)
             {
                 var ksize_half = (size - 1) * 0.5f;
-                var x = torch.linspace(-ksize_half, ksize_half, size);
-                var pdf = -(x / sigma).pow(2) * 0.5f;
+                using var x = torch.linspace(-ksize_half, ksize_half, size);
+                using var t0 = x / sigma;
+                using var t1 = -t0;
+                using var t2 = t1.pow(2);
 
-                return pdf / pdf.sum();
+                using var pdf = t2 * 0.5f;
+                using var sum = pdf.sum();
+
+                return pdf / sum;
             }
 
             private static Tensor GetGaussianKernel2d(IList<long> kernelSize, IList<float> sigma, ScalarType dtype, torch.Device device)
             {
-                var kernel_X = GetGaussianKernel1d(kernelSize[0], sigma[0]).to(dtype, device)[TensorIndex.None, TensorIndex.Slice()];
-                var kernel_Y = GetGaussianKernel1d(kernelSize[1], sigma[1]).to(dtype, device)[TensorIndex.Slice(), TensorIndex.None];
+                using var tX1 = GetGaussianKernel1d(kernelSize[0], sigma[0]);
+                using var tX2 = tX1.to(dtype, device);
+                using var kernel_X = tX2[TensorIndex.None, TensorIndex.Slice()];
+
+                using var tY1 = GetGaussianKernel1d(kernelSize[1], sigma[1]);
+                using var tY2 = tY1.to(dtype, device);
+                using var kernel_Y = tY2[TensorIndex.Slice(), TensorIndex.None];
+
                 return kernel_Y.mm(kernel_X);
             }
 
-            // HSV / RGB conversion requires some heavy math, and generates lots of temporaries.
-            // Therefore, it's worth doing it all in the native code, and just collect the results
-            // in the .NET bindings code.
-
-            /* Tensor THSVision_RGBtoHSV(const Tensor img, Tensor* saturation, Tensor* value) */
+            // EXPORT_API(Tensor) THSVision_ApplyGridTransform(Tensor img, Tensor grid, const int8_t m, const float* fill, const int64_t fill_length);
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSVision_RGBtoHSV(IntPtr img, out IntPtr saturation, out IntPtr value);
-
-            /* Tensor THSVision_HSVtoRGB(const Tensor h, const Tensor s, const Tensor v); */
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSVision_HSVtoRGB(IntPtr hue, IntPtr saturation, IntPtr value);
-
-            private static (Tensor h, Tensor s, Tensor v) RGBtoHSV(Tensor img)
-            {
-                var h = THSVision_RGBtoHSV(img.handle, out var saturation, out var value);
-                if (h == IntPtr.Zero) { torch.CheckForErrors(); }
-                return (new Tensor(h), new Tensor(saturation), new Tensor(value));
-            }
-
-            private static Tensor HSVtoRGB(Tensor h, Tensor s, Tensor v)
-            {
-                var img = THSVision_HSVtoRGB(h.handle, s.handle, v.handle);
-                if (img == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(img);
-            }
+            extern static IntPtr THSVision_ApplyGridTransform(IntPtr img, IntPtr grid, sbyte mode, IntPtr fill, long fill_length);
 
             private static Tensor ApplyGridTransform(Tensor img, Tensor grid, InterpolationMode mode, IList<float> fill = null)
             {
                 img = SqueezeIn(img, new ScalarType[] { grid.dtype }, out var needCast, out var needSqueeze, out var out_dtype);
 
-                if (img.shape[0] > 1) {
-                    grid = grid.expand(img.shape[0], grid.shape[1], grid.shape[2], grid.shape[3]);
-                }
+                var fillLength = (fill != null) ? fill.Count : 0;
+                var fillArray = (fill != null) ? fill.ToArray() : null;
 
-                if (fill != null) {
-                    var dummy = torch.ones(img.shape[0], 1, img.shape[2], img.shape[3], dtype: img.dtype, device: img.device);
-                    img = torch.cat(new Tensor[] { img, dummy }, dimension: 1);
-                }
-
-                img = nn.functional.grid_sample(img, grid, mode: (GridSampleMode)mode, padding_mode: GridSamplePaddingMode.Zeros, align_corners: false);
-
-
-                if (fill != null) {
-                    var mask = img[TensorIndex.Colon, TensorIndex.Slice(-1, null), TensorIndex.Colon, TensorIndex.Colon];
-                    img = img[TensorIndex.Colon, TensorIndex.Slice(null, -1), TensorIndex.Colon, TensorIndex.Colon];
-                    mask = mask.expand_as(img);
-
-                    var len_fill = fill.Count;
-                    var fill_img = torch.tensor(fill, dtype: img.dtype, device: img.device).view(1, len_fill, 1, 1).expand_as(img);
-
-                    if (mode == InterpolationMode.Nearest) {
-                        mask = mask < 0.5;
-                        img[mask] = fill_img[mask];
-                    } else {
-                        img = img * mask + (-mask + 1.0) * fill_img;
+                unsafe {
+                    fixed (float* pfill = fillArray) {
+                        var res = THSVision_ApplyGridTransform(img.Handle, grid.Handle, (sbyte)mode, (IntPtr)pfill, fillLength);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        img = new Tensor(res);
                     }
                 }
 
@@ -791,36 +799,38 @@ namespace TorchSharp.torchvision
                 return img;
             }
 
+            /* Tensor THSVision_GenerateAffineGrid(Tensor theta, const int64_t w, const int64_t h, const int64_t ow, const int64_t oh); */
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSVision_GenerateAffineGrid(IntPtr theta, long w, long h, long ow, long oh);
+
+
             private static Tensor GenerateAffineGrid(Tensor theta, long w, long h, long ow, long oh)
             {
-                var d = 0.5;
-                var base_grid = torch.empty(1, oh, ow, 3, dtype: theta.dtype, device: theta.device);
-                var x_grid = torch.linspace(-ow * 0.5 + d, ow * 0.5 + d - 1, steps: ow, device: theta.device);
-                base_grid[TensorIndex.Ellipsis, 0].copy_(x_grid);
-                var y_grid = torch.linspace(-oh * 0.5 + d, oh * 0.5 + d - 1, steps: oh, device: theta.device).unsqueeze_(-1);
-                base_grid[TensorIndex.Ellipsis, 1].copy_(y_grid);
-                base_grid[TensorIndex.Ellipsis, 2].fill_(1);
-
-                var rescaled_theta = theta.transpose(1, 2) / torch.tensor(new float[] { 0.5f * w, 0.5f * h }, dtype: theta.dtype, device: theta.device);
-                var output_grid = base_grid.view(1, oh * ow, 3).bmm(rescaled_theta);
-                return output_grid.view(1, oh, ow, 2);
+                var img = THSVision_GenerateAffineGrid(theta.Handle, w, h, ow, oh);
+                if (img == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(img);
             }
+
+            /* Tensor THSVision_ComputeOutputSize(const float* matrix, const int64_t matrix_length, const int64_t w, const int64_t h); */
+            [DllImport("LibTorchSharp")]
+            extern static void THSVision_ComputeOutputSize(IntPtr matrix, long matrix_length, long w, long h, out int first, out int second);
 
             private static (int, int) ComputeOutputSize(IList<float> matrix, long w, long h)
             {
-                var pts = torch.tensor(new float[] { -0.5f * w, -0.5f * h, 1.0f, -0.5f * w, 0.5f * h, 1.0f, 0.5f * w, 0.5f * h, 1.0f, 0.5f * w, -0.5f * h, 1.0f }, 4, 3);
-                var theta = torch.tensor(matrix, dtype: torch.float32).reshape(1, 2, 3);
-                var new_pts = pts.view(1, 4, 3).bmm(theta.transpose(1, 2)).view(4, 2);
+                if (matrix == null)
+                    throw new ArgumentNullException("matrix");
 
-                Tensor min_vals = new_pts.min(dimension: 0).values;
-                Tensor max_vals = new_pts.max(dimension: 0).values;
+                var fillLength = matrix.Count;
+                var fillArray = matrix.ToArray();
 
-                var tol = 1f - 4;
-                var cmax = torch.ceil((max_vals / tol).trunc_() * tol);
-                var cmin = torch.floor((min_vals / tol).trunc_() * tol);
-
-                var size = cmax - cmin;
-                return (size[0].ToInt32(), size[1].ToInt32());
+                unsafe {
+                    fixed (float* pfill = fillArray) {
+                        int first, second;
+                        THSVision_ComputeOutputSize((IntPtr)pfill, fillLength, w, h, out first, out second);
+                        torch.CheckForErrors();
+                        return (first, second);
+                    }
+                }
             }
 
             private static IList<float> GetInverseAffineMatrix((float, float) center, float angle, (float, float) translate, float scale, (float, float) shear)
@@ -855,32 +865,29 @@ namespace TorchSharp.torchvision
                 return (img.shape[hOffset + 1], img.shape[hOffset]);
             }
 
+            /* Tensor THSVision_PerspectiveGrid(const float* coeffs, const int64_t coeffs_length, const int64_t ow, const int64_t oh, const int8_t scalar_type, const int device_type, const int device_index); */
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSVision_PerspectiveGrid(IntPtr coeffs, long coeffs_length, long ow, long oh, sbyte dtype, int device_type, int device_index);
+
             private static Tensor PerspectiveGrid(IList<float> coeffs, long ow, long oh, ScalarType dtype, Device device)
             {
-                var theta1 = torch.tensor(new float[] { coeffs[0], coeffs[1], coeffs[2], coeffs[3], coeffs[4], coeffs[5] }, dtype: dtype, device: device).view(1, 2, 3);
-                var theta2 = torch.tensor(new float[] { coeffs[6], coeffs[7], 1.0f, coeffs[6], coeffs[7], 1.0f }, dtype: dtype, device: device).view(1, 2, 3);
+                if (coeffs == null)
+                    throw new ArgumentNullException("coeffs");
+                var fillLength = coeffs.Count;
+                var fillArray = coeffs.ToArray();
 
-                var d = 0.5f;
-                var base_grid = torch.empty(1, oh, ow, 3, dtype: dtype, device: device);
-                var x_grid = torch.linspace(d, ow * 1.0 + d - 1.0, steps: ow, device: device);
-                base_grid[TensorIndex.Ellipsis, 0].copy_(x_grid);
-
-                var y_grid = torch.linspace(d, oh * 1.0 + d - 1.0, steps: oh, device: device).unsqueeze_(-1);
-                base_grid[TensorIndex.Ellipsis, 1].copy_(y_grid);
-                base_grid[TensorIndex.Ellipsis, 2].fill_(1);
-
-                var rescaled_theta1 = theta1.transpose(1, 2) / torch.tensor(new float[] { 0.5f * ow, 0.5f * oh }, dtype: dtype, device: device);
-
-                var output_grid1 = base_grid.view(1, oh * ow, 3).bmm(rescaled_theta1);
-                var output_grid2 = base_grid.view(1, oh * ow, 3).bmm(theta2.transpose(1, 2));
-                var output_grid = output_grid1 / output_grid2 - 1.0f;
-
-                return output_grid.view(1, oh, ow, 2);
+                unsafe {
+                    fixed (float* pfill = fillArray) {
+                        var res = THSVision_PerspectiveGrid((IntPtr)pfill, fillLength, ow, oh, (sbyte)dtype, (int)device.type, device.index);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
+                    }
+                }
             }
 
             private static IList<float> GetPerspectiveCoefficients(IList<IList<int>> startpoints, IList<IList<int>> endpoints)
             {
-                var a_matrix = torch.zeros(2 * startpoints.Count, 8, dtype: torch.float32);
+                using var a_matrix = torch.zeros(2 * startpoints.Count, 8, dtype: torch.float32);
 
                 for (int i = 0; i < startpoints.Count; i++) {
                     var p1 = endpoints[i];
@@ -889,38 +896,44 @@ namespace TorchSharp.torchvision
                     a_matrix[2 * i + 1, TensorIndex.Colon] = torch.tensor(new int[] { 0, 0, 0, p1[0], p1[1], 1, -p2[1] * p1[0], -p2[1] * p1[1] }, dtype: torch.float32);
                 }
 
-                var b_matrix = torch.tensor(startpoints.SelectMany(sp => sp).ToArray(), dtype: torch.float32).view(8);
+                using var b_matrix = torch.tensor(startpoints.SelectMany(sp => sp).ToArray(), dtype: torch.float32).view(8);
 
                 var a_str = a_matrix.ToString(true);
                 var b_str = b_matrix.ToString(true);
 
-                var res = torch.linalg.lstsq(a_matrix, b_matrix).Solution;
-                return res.data<float>().ToArray();
+                var t0 = torch.linalg.lstsq(a_matrix, b_matrix);
+
+                var t1 = t0.Solution.data<float>().ToArray();
+
+                t0.Solution.Dispose();
+                t0.Rank.Dispose();
+                t0.Residuals.Dispose();
+                t0.SingularValues.Dispose();
+
+                return t1;
             }
 
             private static Tensor EqualizeSingleImage(Tensor img)
             {
                 var channels = new Tensor[] { img[0], img[1], img[2] };
-                return torch.stack(channels.Select(c => ScaleChannel(c)));
+
+                var t0 = channels.Select(c => ScaleChannel(c)).ToList();
+                var t1 = torch.stack(t0);
+                foreach (var c in channels) { c.Dispose(); }
+                foreach (var c in t0) { c.Dispose(); }
+                return t1;
             }
+
+            /* Tensor THSVision_ScaleChannel(Tensor ic); */
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSVision_ScaleChannel(IntPtr img);
+
 
             private static Tensor ScaleChannel(Tensor img_chan)
             {
-                var hist = img_chan.is_cuda ?
-                    torch.histc(img_chan.to(torch.float32), bins: 256, min: 0, max: 255) :
-                    torch.bincount(img_chan.view(-1), minlength: 256);
-
-                var nonzero_hist = hist[hist != 0];
-
-                var step = torch.div(nonzero_hist[TensorIndex.Slice(null, -1)].sum(), 255, rounding_mode: RoundingMode.floor);
-
-                if (step.count_nonzero().ToInt32() == 0)
-                    return img_chan;
-
-                var lut = torch.div(torch.cumsum(hist, 0) + torch.div(step, 2, rounding_mode: RoundingMode.floor), step, rounding_mode: RoundingMode.floor);
-                lut = torch.nn.functional.pad(lut, new long[] { 1, 0 })[TensorIndex.Slice(null,-1)].clamp(0, 255);
-
-                return lut[img_chan.to(torch.int64)].to(torch.uint8);
+                var res = THSVision_ScaleChannel(img_chan.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
 
             internal static Tensor SqueezeIn(Tensor img, IList<ScalarType> req_dtypes, out bool needCast, out bool needSqueeze, out ScalarType dtype)
@@ -930,6 +943,8 @@ namespace TorchSharp.torchvision
                 if (img.Dimensions < 4) {
                     img = img.unsqueeze(0);
                     needSqueeze = true;
+                } else {
+                    img = img.alias();
                 }
 
                 dtype = img.dtype;
@@ -937,7 +952,11 @@ namespace TorchSharp.torchvision
 
                 if (!req_dtypes.Contains(dtype)) {
                     needCast = true;
-                    img = img.to_type(req_dtypes[0]);
+                    var t0 = img.to_type(req_dtypes[0]);
+                    img.Dispose();
+                    img = t0;
+                } else {
+                    img = img.alias();
                 }
 
                 return img;
@@ -947,13 +966,20 @@ namespace TorchSharp.torchvision
             {
                 if (needSqueeze) {
                     img = img.squeeze(0);
+                } else {
+                    img = img.alias();
                 }
 
                 if (needCast) {
-                    if (TensorExtensionMethods.IsIntegral(dtype))
-                        img = img.round();
+                    if (TensorExtensionMethods.IsIntegral(dtype)) {
+                        var t0 = img.round();
+                        img.Dispose();
+                        img = t0;
+                    }
 
-                    img = img.to_type(dtype);
+                    var t1 = img.to_type(dtype);
+                    img.Dispose();
+                    img = t1;
                 }
 
                 return img;

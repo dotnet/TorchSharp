@@ -244,11 +244,16 @@ namespace TorchSharp
         [Fact]
         public void EvaluateLeakyRelu()
         {
-            var rel = LeakyReLU();
+            var rel = LeakyReLU(0.1);
             var input = torch.randn(new long[] { 64, 8 });
             var output = rel.forward(input);
             var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
+
+            var singleton = torch.tensor(15.0f);
+            Assert.Equal(15.0f, rel.forward(singleton).item<float>());
+            singleton = torch.tensor(-15.0f);
+            Assert.Equal(-1.50f, rel.forward(singleton).item<float>());
         }
 
         [Fact]

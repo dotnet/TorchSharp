@@ -226,13 +226,13 @@ namespace TorchSharp
 
             Assert.NotEqual(t.Handle, t1.Handle);
             t.Dispose();
-            Assert.Equal(IntPtr.Zero, t.Handle);
+            Assert.Throws<InvalidOperationException>(() => t.Handle);
             Assert.NotEqual(IntPtr.Zero, t1.Handle);
             t1.Dispose();
-            Assert.Equal(IntPtr.Zero, t1.Handle);
+            Assert.Throws<InvalidOperationException>(() => t1.Handle);
         }
 
-        [Fact(Skip="Sensitive to parallelism in the xUnit test driver")]
+        [Fact(Skip = "Sensitive to parallelism in the xUnit test driver")]
         public void TestUsings()
         {
             var tCount = Tensor.TotalCount;
@@ -365,7 +365,7 @@ namespace TorchSharp
             Assert.Throws<System.ArgumentException>(() => x.data<int>());
             Assert.Throws<System.ArgumentException>(() => x.data<long>());
             Assert.Throws<System.ArgumentException>(() => x.data<float>());
-            Assert.Throws<System.ArgumentException>(() => x.data<(float,float)>());
+            Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
             Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
             x.data<double>();
         }
@@ -2121,16 +2121,16 @@ namespace TorchSharp
         public void TestIndexSlice2()
         {
             using (var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-                var t1 = i[ 0..2, 0];
+                var t1 = i[0..2, 0];
                 Assert.Equal(0, t1[0].ToInt32());
                 Assert.Equal(6, t1[1].ToInt32());
 
                 // one slice
-                var t2 = i[ 1..2, 0 ];
+                var t2 = i[1..2, 0];
                 Assert.Equal(6, t2[0].ToInt32());
 
                 // two slice
-                var t3 = i[ 1..2, 1..3];
+                var t3 = i[1..2, 1..3];
                 Assert.Equal(5, t3[0, 0].ToInt32());
                 Assert.Equal(4, t3[0, 1].ToInt32());
 
@@ -3362,7 +3362,7 @@ namespace TorchSharp
         public void ClampTest2()
         {
             var data = torch.rand(3, 3, 3) * 10;
-            var cl = data.clamp(torch.ones(3,3,3), torch.ones(3,3,3) * 5);
+            var cl = data.clamp(torch.ones(3, 3, 3), torch.ones(3, 3, 3) * 5);
 
             Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
         }
@@ -3721,10 +3721,10 @@ namespace TorchSharp
         public void CovarianceTest()
         {
             var data = new float[] { 0, 2, 1, 1, 2, 0 };
-            var expected = new float[] { 1, -1, -1, 1};
+            var expected = new float[] { 1, -1, -1, 1 };
             var res = torch.tensor(data).reshape(3, 2).T;
             var cov1 = res.cov();
-            Assert.True(cov1.allclose(torch.tensor(expected).reshape(2,2)));
+            Assert.True(cov1.allclose(torch.tensor(expected).reshape(2, 2)));
         }
 
         [Fact]
@@ -4445,10 +4445,10 @@ namespace TorchSharp
             //var res7 = torch.randint(100, new long[] { 20, 10 }, complex32);
             //Assert.Equal(new long[] { 200 }, res7.Shape);
 
-            var res10 = torch.randint(100, ( 20, 10 ), complex64);
+            var res10 = torch.randint(100, (20, 10), complex64);
             Assert.Equal(new long[] { 20, 10 }, res10.shape);
 
-            var res11 = torch.randint(10, ( 20, 10 ), complex128);
+            var res11 = torch.randint(10, (20, 10), complex128);
             Assert.Equal(new long[] { 20, 10 }, res11.shape);
         }
 
@@ -4722,7 +4722,7 @@ namespace TorchSharp
         {
             var a = torch.randn(new long[] { 3, 2, 2 }, float64);
             a = a.matmul(a.swapdims(-2, -1));   // Worked this in to get it tested. Alias for 'transpose'
-            var (l,info) = linalg.cholesky_ex(a);
+            var (l, info) = linalg.cholesky_ex(a);
 
             Assert.True(a.allclose(l.matmul(l.swapaxes(-2, -1))));
         }
@@ -5826,13 +5826,26 @@ namespace TorchSharp
         {
             {
                 using (var input = torch.stack(new Tensor[] { torch.zeros(1, 2, 2), torch.ones(1, 2, 2), torch.zeros(1, 2, 2) }, dimension: -3)) {
-                    var poster = torchvision.transforms.AdjustHue(0).forward(input);
 
-                    var istr = input.ToString(true);
-                    var pstr = poster.ToString(true);
+                    {
+                        var poster = torchvision.transforms.functional.adjust_hue(input, 0.0);
 
-                    Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
-                    Assert.True(poster.allclose(input));
+                        var istr = input.ToString(true);
+                        var pstr = poster.ToString(true);
+
+                        Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
+                        Assert.True(poster.allclose(input));
+                    }
+
+                    {
+                        var poster = torchvision.transforms.functional.adjust_hue(input, 0.15);
+
+                        var istr = input.ToString(true);
+                        var pstr = poster.ToString(true);
+
+                        Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
+                        Assert.False(poster.allclose(input));
+                    }
                 }
             }
         }
@@ -5850,18 +5863,32 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void AutocontrastTensor()
+        public void EqualizeTensor()
         {
+            var eq = torchvision.transforms.Equalize();
             {
-                using (var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8)) {
-                    var poster = torchvision.transforms.AutoContrast().forward(input);
+                using (var input = torch.randint(0, 256, new long[] { 3, 25, 50 }, dtype: torch.uint8)) {
+                    var poster = eq.forward(input);
 
-                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
+                    Assert.Equal(new long[] { 3, 25, 50 }, poster.shape);
                 }
             }
             {
+                using (var input = torch.randint(0, 256, new long[] { 16, 3, 25, 50 }, dtype: torch.uint8)) {
+                    var poster = eq.forward(input);
+
+                    Assert.Equal(new long[] { 16, 3, 25, 50 }, poster.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void AutocontrastTensor()
+        {
+            var ac = torchvision.transforms.AutoContrast();
+            {
                 using (var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8)) {
-                    var poster = torchvision.transforms.AutoContrast().forward(input);
+                    var poster = ac.forward(input);
 
                     Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
                 }
@@ -5898,9 +5925,12 @@ namespace TorchSharp
         [Fact]
         public void GaussianBlurTest()
         {
+            var gb4 = torchvision.transforms.GaussianBlur(4);
+            var gb5 = torchvision.transforms.GaussianBlur(5);
+
             {
                 using (var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8)) {
-                    var poster = torchvision.transforms.GaussianBlur(4).forward(input);
+                    var poster = gb4.forward(input);
 
                     Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
 
@@ -5909,7 +5939,7 @@ namespace TorchSharp
             {
                 using (var input = torch.rand(16, 3, 25, 25)) {
                     // Test even-number kernel size.
-                    var poster = torchvision.transforms.GaussianBlur(4).forward(input);
+                    var poster = gb4.forward(input);
 
                     Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
                 }
@@ -5917,14 +5947,14 @@ namespace TorchSharp
             {
                 using (var input = torch.rand(16, 3, 25, 25)) {
                     // Test odd-number kernel size.
-                    var poster = torchvision.transforms.GaussianBlur(5).forward(input);
+                    var poster = gb5.forward(input);
 
                     Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
                 }
             }
             {
                 using (var input = torch.rand(16, 3, 25, 25)) {
-                    var random = torchvision.transforms.Randomize(torchvision.transforms.GaussianBlur(4), 0.5);
+                    var random = torchvision.transforms.Randomize(gb4, 0.5);
                     var poster = random.forward(input);
 
                     Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
