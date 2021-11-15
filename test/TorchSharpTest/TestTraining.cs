@@ -289,8 +289,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -323,9 +323,9 @@ namespace TorchSharp
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+            for (int i = 0; i < 15; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -359,8 +359,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -394,8 +394,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -429,8 +429,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -464,8 +464,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -501,8 +501,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -534,8 +534,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -567,8 +567,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -604,8 +604,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -637,8 +637,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -670,8 +670,8 @@ namespace TorchSharp
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -707,8 +707,8 @@ namespace TorchSharp
             double lastLR = learning_rate;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -750,8 +750,8 @@ namespace TorchSharp
             double lastLR = learning_rate;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -794,8 +794,8 @@ namespace TorchSharp
             double lastLR = learning_rate;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -836,7 +836,7 @@ namespace TorchSharp
             for (int i = 0; i < 10; i++) {
 
                 Func<Tensor> closure = () => {
-                    var eval = seq.forward(x);
+                    using var eval = seq.forward(x);
                     var output = loss(eval, y);
 
                     finalLoss = output.ToSingle();
@@ -886,7 +886,7 @@ namespace TorchSharp
             for (int i = 0; i < 10; i++) {
 
                 Func<Tensor> closure = () => {
-                    var eval = seq.forward(x);
+                    using var eval = seq.forward(x);
                     var output = loss(eval, y);
 
                     finalLoss = output.ToSingle();

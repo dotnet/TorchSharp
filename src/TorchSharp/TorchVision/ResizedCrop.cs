@@ -17,7 +17,8 @@ namespace TorchSharp.torchvision
 
         public Tensor forward(Tensor input)
         {
-            return resizer.forward(cropper.forward(input));
+            using var cr = cropper.forward(input);
+            return resizer.forward(cr);
         }
 
         private ITransform cropper;

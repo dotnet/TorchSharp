@@ -47,7 +47,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pstrides = strides, ppadding = paddingArray, pdilation = dilationArray) {
                             var res =
-                                THSTensor_conv1d(input.handle, weight.Handle, biasHandle,
+                                THSTensor_conv1d(input.Handle, weight.Handle, biasHandle,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddingArray.Length,
                                     (IntPtr)pdilation, dilationArray.Length,
@@ -90,7 +90,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pstrides = strides, ppadding = padding, pdilation = dilation) {
                             var res =
-                                THSTensor_conv2d(input.handle, weight.Handle, biasHandle,
+                                THSTensor_conv2d(input.Handle, weight.Handle, biasHandle,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, padding.Length,
                                     (IntPtr)pdilation, dilation.Length,
@@ -132,7 +132,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pstrides = strides, ppadding = padding, pdilation = dilation) {
                             var res =
-                                THSTensor_conv3d(input.handle, weight.Handle, biasHandle,
+                                THSTensor_conv3d(input.Handle, weight.Handle, biasHandle,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, padding.Length,
                                     (IntPtr)pdilation, dilation.Length,
@@ -178,7 +178,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pstrides = strides, ppadding = paddings, poutputPadding = outputPaddings, pdilation = dilations) {
                             var res =
-                                THSTensor_conv_transpose1d(input.handle, weight.Handle, biasHandle,
+                                THSTensor_conv_transpose1d(input.Handle, weight.Handle, biasHandle,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
                                     (IntPtr)poutputPadding, outputPaddings.Length,
@@ -225,7 +225,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pstrides = strides, ppadding = padding, poutputPadding = outputPadding, pdilation = dilation) {
                             var res =
-                                THSTensor_conv_transpose2d(input.handle, weight.Handle, biasHandle,
+                                THSTensor_conv_transpose2d(input.Handle, weight.Handle, biasHandle,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, padding.Length,
                                     (IntPtr)poutputPadding, outputPadding.Length,
@@ -272,7 +272,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pstrides = strides, ppadding = padding, poutputPadding = outputPadding, pdilation = dilation) {
                             var res =
-                                THSTensor_conv_transpose3d(input.handle, weight.Handle, biasHandle,
+                                THSTensor_conv_transpose3d(input.Handle, weight.Handle, biasHandle,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, padding.Length,
                                     (IntPtr)poutputPadding, outputPadding.Length,
@@ -312,7 +312,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
                             var res =
-                                THSTensor_max_pool1d(input.handle,
+                                THSTensor_max_pool1d(input.Handle,
                                     (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
@@ -354,7 +354,7 @@ namespace TorchSharp
                     using (var pa = new PinnedArray<IntPtr>()) {
                         unsafe {
                             fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings, pdilation = dilations) {
-                                THSTensor_max_pool1d_with_indices(input.handle,
+                                THSTensor_max_pool1d_with_indices(input.Handle,
                                     pa.CreateArray,
                                     (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
@@ -396,7 +396,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
                             var res =
-                                THSTensor_max_pool2d(input.handle,
+                                THSTensor_max_pool2d(input.Handle,
                                     (IntPtr)pkernelSize, kernelSize.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, padding.Length,
@@ -437,7 +437,7 @@ namespace TorchSharp
                     using (var pa = new PinnedArray<IntPtr>()) {
                         unsafe {
                             fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
-                                THSTensor_max_pool2d_with_indices(input.handle,
+                                THSTensor_max_pool2d_with_indices(input.Handle,
                                     pa.CreateArray,
                                     (IntPtr)pkernelSize, kernelSize.Length,
                                     (IntPtr)pstrides, strides.Length,
@@ -479,7 +479,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
                             var res =
-                                THSTensor_max_pool3d(input.handle,
+                                THSTensor_max_pool3d(input.Handle,
                                     (IntPtr)pkernelSize, kernelSize.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, padding.Length,
@@ -520,7 +520,7 @@ namespace TorchSharp
                     using (var pa = new PinnedArray<IntPtr>()) {
                         unsafe {
                             fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
-                                THSTensor_max_pool3d_with_indices(input.handle,
+                                THSTensor_max_pool3d_with_indices(input.Handle,
                                     pa.CreateArray,
                                     (IntPtr)pkernelSize, kernelSize.Length,
                                     (IntPtr)pstrides, strides.Length,
@@ -549,7 +549,7 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* poutputSize = outputSize) {
-                            var res = THSTensor_maxunpool2d(input.handle, indices.Handle,
+                            var res = THSTensor_maxunpool2d(input.Handle, indices.Handle,
                                 (IntPtr)poutputSize, outputSize.Length);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
@@ -574,7 +574,7 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* poutputSize = outputSize, pstrides = strides, ppadding = padding) {
-                            var res = THSTensor_maxunpool3d(input.handle, indices.Handle,
+                            var res = THSTensor_maxunpool3d(input.Handle, indices.Handle,
                                 (IntPtr)poutputSize, outputSize.Length,
                                 (IntPtr)pstrides, strides.Length,
                                 (IntPtr)ppadding, padding.Length);
@@ -611,7 +611,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
                             var res =
-                                THSTensor_avg_pool1d(input.handle,
+                                THSTensor_avg_pool1d(input.Handle,
                                     (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
@@ -652,7 +652,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
                             var res =
-                                THSTensor_avg_pool2d(input.handle,
+                                THSTensor_avg_pool2d(input.Handle,
                                     (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
@@ -693,7 +693,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
                             var res =
-                                THSTensor_avg_pool3d(input.handle,
+                                THSTensor_avg_pool3d(input.Handle,
                                     (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
@@ -727,7 +727,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
                             var res =
-                                THSTensor_avg_pool2d_backward(input.handle, originalInput.Handle,
+                                THSTensor_avg_pool2d_backward(input.Handle, originalInput.Handle,
                                     (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
@@ -762,7 +762,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
                             var res =
-                                THSTensor_avg_pool3d_backward(input.handle, originalInput.Handle,
+                                THSTensor_avg_pool3d_backward(input.Handle, originalInput.Handle,
                                     (IntPtr)pkernelSize, kernelSizes.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, paddings.Length,
@@ -791,7 +791,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* poutputSize = outputSizes) {
                             var res =
-                                THSTensor_adaptive_avg_pool1d(input.handle, (IntPtr)poutputSize, outputSizes.Length);
+                                THSTensor_adaptive_avg_pool1d(input.Handle, (IntPtr)poutputSize, outputSizes.Length);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }
@@ -813,7 +813,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* poutputSize = outputSizes) {
                             var res =
-                                THSTensor_adaptive_avg_pool2d(input.handle, (IntPtr)poutputSize, outputSizes.Length);
+                                THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, outputSizes.Length);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }
@@ -834,7 +834,7 @@ namespace TorchSharp
                     unsafe {
                         fixed (long* poutputSize = outputSizes) {
                             var res =
-                                THSTensor_adaptive_avg_pool3d(input.handle, (IntPtr)poutputSize, outputSizes.Length);
+                                THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, outputSizes.Length);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }
@@ -873,7 +873,7 @@ namespace TorchSharp
                         fixed (long* poutputSizes = outputSizes) {
                             fixed (double* pscaleFactors = scaleFactors) {
                                 var res =
-                                    THSTensor_upsample_nearest1d(input.handle,
+                                    THSTensor_upsample_nearest1d(input.Handle,
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
                                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -900,7 +900,7 @@ namespace TorchSharp
                         fixed (long* poutputSizes = outputSizes, pinputSizes = inputSizes) {
                             fixed (double* pscaleFactors = scaleFactors) {
                                 var res =
-                                    THSTensor_upsample_nearest1d_backward(grad_output.handle,
+                                    THSTensor_upsample_nearest1d_backward(grad_output.Handle,
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pinputSizes, inputSizes.Length,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
@@ -931,7 +931,7 @@ namespace TorchSharp
                         fixed (long* poutputSizes = outputSizes) {
                             fixed (double* pscaleFactors = scaleFactors) {
                                 var res =
-                                    THSTensor_upsample_nearest2d(input.handle,
+                                    THSTensor_upsample_nearest2d(input.Handle,
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
                                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -955,7 +955,7 @@ namespace TorchSharp
                         fixed (long* poutputSizes = outputSizes, pinputSizes = inputSizes) {
                             fixed (double* pscaleFactors = scaleFactors) {
                                 var res =
-                                    THSTensor_upsample_nearest2d_backward(grad_output.handle,
+                                    THSTensor_upsample_nearest2d_backward(grad_output.Handle,
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pinputSizes, inputSizes.Length,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
@@ -980,7 +980,7 @@ namespace TorchSharp
                         fixed (long* poutputSizes = outputSizes, pinputSizes = inputSizes) {
                             fixed (double* pscaleFactors = scaleFactors) {
                                 var res =
-                                    THSTensor_upsample_nearest3d_backward(grad_output.handle,
+                                    THSTensor_upsample_nearest3d_backward(grad_output.Handle,
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pinputSizes, inputSizes.Length,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
@@ -1011,7 +1011,7 @@ namespace TorchSharp
                         fixed (long* poutputSizes = outputSizes) {
                             fixed (double* pscaleFactors = scaleFactors) {
                                 var res =
-                                    THSTensor_upsample_nearest3d(input.handle,
+                                    THSTensor_upsample_nearest3d(input.Handle,
                                         (IntPtr)poutputSizes, outputSizesLength,
                                         (IntPtr)pscaleFactors, scaleFactorsLength);
                                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

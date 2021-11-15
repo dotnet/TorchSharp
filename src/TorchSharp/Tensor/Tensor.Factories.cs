@@ -665,6 +665,9 @@ namespace TorchSharp
                 dtype = get_default_dtype();
             }
 
+            ValidateIntegerRange(low, dtype.Value, nameof(low));
+            ValidateIntegerRange(high - 1, dtype.Value, nameof(high));
+
             var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle; 
 
             if (dtype == ScalarType.ComplexFloat32) {
@@ -732,7 +735,7 @@ namespace TorchSharp
         ///          Once implicit conversion support is broadly available, some of these overloads can be removed.</remarks>
         static public Tensor randint(long low, long high, long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
-            return randint(low, high, size, dtype, device, requiresGrad, generator);
+            return randint(low, high, new Size(size), dtype, device, requiresGrad, generator);
         }
 
         /// <summary>
@@ -749,7 +752,7 @@ namespace TorchSharp
         ///          Once implicit conversion support is broadly available, some of these overloads can be removed.</remarks>
         static public Tensor randint(int low, int high, int[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
-            return randint(low, high, size, dtype, device, requiresGrad, generator);
+            return randint(low, high, new Size(size), dtype, device, requiresGrad, generator);
         }
 
         /// <summary>
@@ -763,7 +766,7 @@ namespace TorchSharp
         /// <param name="generator">An optional random number genertor object.</param>
         static public Tensor randint(int high, int[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
-            return randint(0, high, size, dtype, device, requiresGrad, generator);
+            return randint(0, high, new Size(size), dtype, device, requiresGrad, generator);
         }
 
         /// <summary>
@@ -2264,6 +2267,30 @@ namespace TorchSharp
             }
             if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Tensor(handle);
+        }
+
+        private static void ValidateIntegerRange(long value, ScalarType dtype, string argument)
+        {
+            switch (dtype) {
+            case ScalarType.Byte:
+                if (value < byte.MinValue || value > byte.MaxValue)
+                    throw new ArgumentOutOfRangeException(argument, value, $"The value is outside the range of {dtype}");
+                break;
+            case ScalarType.Int8:
+                if (value < sbyte.MinValue || value > sbyte.MaxValue)
+                    throw new ArgumentOutOfRangeException(argument, value, $"The value is outside the range of {dtype}");
+                break;
+            case ScalarType.Int16:
+                if (value < short.MinValue || value > short.MaxValue)
+                    throw new ArgumentOutOfRangeException(argument, value, $"The value is outside the range of {dtype}");
+                break;
+            case ScalarType.Int32:
+                if (value < int.MinValue || value > int.MaxValue)
+                    throw new ArgumentOutOfRangeException(argument, value, $"The value is outside the range of {dtype}");
+                break;
+            default:
+                break;
+            }
         }
 
         [DllImport("LibTorchSharp")]

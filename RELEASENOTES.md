@@ -2,6 +2,18 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+### NuGet Version 0.95.3
+
+__API Changes:__
+
+The previously unused Tensor.free() method was renamed 'DecoupleFromNativeHandle()' and is meant to be used in native interop scenarios.
+Tensor.Handle will now validate that the internal handle is not 'Zero', and throw an exception when it is. This will catch situations where a disposed tensor is accessed.
+
+__Fixed Bugs:__
+
+There were a number of functions in torchvision, as well as a number of optimizers, that did not properly dispose of temporary and intermediate tensor values, leading to "memory leaks" in the absence of explicit GC.Collect() calls.
+A couple of randint() overloads caused infinite recursion, crashing the process.
+
 ### NuGet Version 0.95.2
 
 __API Changes:__
