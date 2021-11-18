@@ -64,7 +64,7 @@ namespace TorchSharp
                 this.index = index;
             }
 
-            public DisposeScopeManager.DisposeScope NewDisposeScope() => DisposeScopeManager.Singleton.NewDisposeScope(this);
+            public DisposeScopeManager.DisposeScope NewDisposeScope() => DisposeScopeManager.NewDisposeScope(this);
 
             /// <summary>
             /// Return the device descriptor using the input format.

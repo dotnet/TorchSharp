@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace TorchSharp
 {
@@ -12,9 +13,15 @@ namespace TorchSharp
     public class DisposeScopeManager
     {
         [ThreadStatic] public static DisposeScopeManager Singleton;
+        internal static int _disposedTensorCount;
 
         internal Dictionary<string, Stack<DisposeScope>> DisposeScopeStacks { get; } = new();
         internal DisposeScope NewDisposeScope(torch.Tensor tensor) => NewDisposeScope(tensor.device);
+
+        public static int DisposedTensorCount {
+            get => _disposedTensorCount;
+            set => _disposedTensorCount = value;
+        }
 
         internal static void TryRegisterInDisposeScope(torch.Tensor tensor)
         {
@@ -26,10 +33,10 @@ namespace TorchSharp
             }
         }
 
-        internal DisposeScope NewDisposeScope(torch.Device device)
+        internal static DisposeScope NewDisposeScope(torch.Device device)
         {
-            lock (this) {
-                var stack = GetStackForDevice(device);
+            lock (Singleton ??= new DisposeScopeManager()) {
+                var stack = Singleton.GetStackForDevice(device);
                 var disposeScope = new DisposeScope(device);
                 stack.Push(disposeScope);
                 return disposeScope;
@@ -181,6 +188,7 @@ namespace TorchSharp
                         var tensor = Tensors[i];
                         if (!tensorsToKeep.Any(x => ReferenceEquals(tensor, x))) {
                             if (tensor.handle != IntPtr.Zero) {
+                                Interlocked.Increment(ref _disposedTensorCount);
                                 tensor.Dispose();
                             }
 
@@ -220,12 +228,12 @@ namespace TorchSharp
                 lock (DisposeScopeManager.Singleton) {
                     foreach (var tensor in Tensors) {
                         if (tensor.handle != IntPtr.Zero) {
+                            Interlocked.Increment(ref _disposedTensorCount);
                             tensor.Dispose();
                         }
                     }
 
                     Tensors.Clear();
-
                     DisposeScopeManager.Singleton.RemoveDisposeScope(this);
                 }
             }
@@ -234,15 +242,19 @@ namespace TorchSharp
             {
                 lock (this) {
                     foreach (torch.Tensor tensor in tensorsToExclude) {
-                        if (!Tensors.Contains(tensor)) {
+                        if (!Tensors.Any(existing => ReferenceEquals(existing, tensor))) {
                             throw new InvalidOperationException("The tensor does not belong to this scope!");
                         }
                     }
 
-                    foreach (var tensor in tensorsToExclude) {
-                        Tensors.Remove(tensor);
-                        if (!excludeGlobally) {
-                            Singleton.MoveToOuterScope(this, tensor);
+                    for (var i = Tensors.Count - 1; i >= 0; i--) {
+                        var tensor = Tensors[i];
+                        if (tensorsToExclude.Any(x => ReferenceEquals(tensor, x))) {
+                            Tensors.RemoveAt(i);
+
+                            if (!excludeGlobally) {
+                                Singleton.MoveToOuterScope(this, tensor);
+                            }
                         }
                     }
                 }
