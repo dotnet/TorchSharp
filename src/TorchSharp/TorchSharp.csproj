@@ -30,6 +30,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>TensorTyped.tt</DependentUpon>
     </Compile>
+    <Compile Remove="Utils\torchu.cs" />
   </ItemGroup>
 
 

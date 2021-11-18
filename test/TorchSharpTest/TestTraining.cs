@@ -16,7 +16,6 @@ namespace TorchSharp
 {
     public class TestTraining
     {
-
         /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using gradient descent.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/examples_nn/two_layer_net_nn.html"/>.

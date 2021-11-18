@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-
+using System.Globalization;
 using static TorchSharp.torch;
 using static TorchSharp.TensorExtensionMethods;
 
@@ -16,6 +16,12 @@ namespace TorchSharp
 {
     public class TestTensor
     {
+        public TestTensor()
+        {
+            // Avoid comma issues on international machines (Swedish, for instance...)
+            CultureInfo.DefaultThreadCurrentCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+        }
+
         [Fact]
         public void TestScalarCreation()
         {

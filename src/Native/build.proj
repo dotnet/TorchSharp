@@ -17,12 +17,12 @@
   <PropertyGroup>
     <PlaceholderFile>$(PkgDir)_._</PlaceholderFile>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
     <GenerateVersionSourceFile>true</GenerateVersionSourceFile>
     <NativeVersionSourceFile>$(RootIntermediateOutputPath)version.c</NativeVersionSourceFile>
   </PropertyGroup>
- 
+
   <PropertyGroup  Condition="'$(OS)' == 'Windows_NT'">
     <GenerateNativeVersionInfo>true</GenerateNativeVersionInfo>
   </PropertyGroup>
@@ -31,7 +31,7 @@
           Condition="'$(OS)' != 'Windows_NT'">
 
     <PropertyGroup>
-      
+
       <StripArgs Condition="'$(StripNativeSymbols)' == 'True'">--stripsymbols</StripArgs>
       <BuildArgs>--configuration $(NativeConfiguration) --arch $(TargetArchitecture) $(StripArgs) --libtorchpath $(LibTorchCmakePath)</BuildArgs>
     </PropertyGroup>
@@ -43,7 +43,7 @@
 
   <Target Name="BuildNativeWindows"
           Condition="'$(OS)' == 'Windows_NT'">
-          
+
     <PropertyGroup>
      <BuildArgs>$(NativeConfiguration) $(TargetArchitecture) --libtorchpath $(LibTorchCmakePath)</BuildArgs>
     </PropertyGroup>
@@ -55,7 +55,7 @@
   </Target>
 
   <Target Name="PreparePackageAssets">
-  
+
     <ItemGroup>
       <NativePackageAsset Include="$(NativeOutputPath)$(NativeLibPrefix)LibTorchSharp$(NativeLibExtension)"
                           RelativePath="TorchSharp\runtimes\$(PackageRid)\native" />
@@ -66,7 +66,7 @@
                                      AND '%(NativePackageAsset.Identity)' != '$(PlaceholderFile)'"
                           Include="@(NativePackageAsset->'%(RootDir)%(Directory)%(Filename)$(NativeLibSymbolExtension)')" />
     </ItemGroup>
-    
+
     <Copy SourceFiles="@(NativePackageAsset)"
           DestinationFolder="$(PackagePreparationPath)%(NativePackageAsset.RelativePath)"  />
 

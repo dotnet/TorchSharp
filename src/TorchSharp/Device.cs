@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace TorchSharp
 {
@@ -64,13 +64,16 @@ namespace TorchSharp
                 this.index = index;
             }
 
+            public DisposeScopeManager.DisposeScope NewDisposeScope() => DisposeScopeManager.Singleton.NewDisposeScope(this);
+
             /// <summary>
             /// Return the device descriptor using the input format.
             /// </summary>
             /// <returns></returns>
             public override string ToString()
             {
-                return type == DeviceType.CPU ? "cpu" : (index == -1) ? $"{type.ToString().ToLower()}" : $"{type.ToString().ToLower()}:{index}";
+                return type == DeviceType.CPU ? "cpu" :
+                    (index == -1) ? $"{type.ToString().ToLower()}" : $"{type.ToString().ToLower()}:{index}";
             }
 
             public static implicit operator Device(string description)

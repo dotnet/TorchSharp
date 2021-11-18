@@ -32,6 +32,7 @@ namespace TorchSharp
                 this.handle = handle;
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
+                DisposeScopeManager.TryRegisterInDisposeScope(this);
             }
 
             /// <summary>
@@ -42,7 +43,6 @@ namespace TorchSharp
             public override bool Equals(object? obj)
             {
                 return (obj is Tensor) && this.Equals((obj as Tensor)!);
-
             }
 
             /// <summary>
@@ -93,7 +93,7 @@ namespace TorchSharp
             ///
             /// This is primarily useful when returning a tensor to native code in a callback,
             /// or when having created a managed tensor from a passed-in native handle.
-            /// 
+            ///
             /// See the torch.nn.Module.Module(string name) constructor for an example of its use.
             /// </summary>
             /// <returns></returns>
@@ -117,9 +117,9 @@ namespace TorchSharp
             /// Only tensors that are realized in managed code will be counted, so tensors
             /// resulting from computations that remain in native code will not be counted
             /// in this property.
-            /// 
+            ///
             /// Further, two tensors may alias each other, pointing at the same underlying data.
-            /// 
+            ///
             /// Therefore, this property is mostly useful for diagnostic purposes, to
             /// make sure that there is no drift in tensor count from epoch to epoch,
             /// for example.
@@ -135,7 +135,7 @@ namespace TorchSharp
             /// in this property.
             ///
             /// Further, two tensors may alias each other, pointing at the same underlying data.
-            /// 
+            ///
             /// Therefore, this property is mostly useful for diagnostic purposes.
             /// </remarks>
             public static long PeakCount => _peakCount;
@@ -842,7 +842,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_vander(IntPtr handle, long N, bool increasing);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public Tensor vander(long N = -1, bool increasing = false)
             {
@@ -1607,7 +1607,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_view_as_complex(IntPtr tensor);
 
             /// <summary>
-            /// Returns a view of input as a complex tensor. 
+            /// Returns a view of input as a complex tensor.
             /// </summary>
             public Tensor view_as_complex()
             {
@@ -1621,7 +1621,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_view_as_real(IntPtr tensor);
 
             /// <summary>
-            /// Returns a view of input as a real tensor. 
+            /// Returns a view of input as a real tensor.
             /// </summary>
             public Tensor view_as_real()
             {
@@ -1635,7 +1635,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_all(IntPtr tensor);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <returns></returns>
             public Tensor all()
@@ -1650,7 +1650,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_all_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="dimension"></param>
             /// <param name="keepDim"></param>
@@ -1735,7 +1735,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_any(IntPtr tensor);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <returns></returns>
             public Tensor any()
@@ -1750,7 +1750,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_any_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="dimension"></param>
             /// <param name="keepDim"></param>
@@ -1767,7 +1767,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmax(IntPtr tensor);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <returns></returns>
             public Tensor argmax()
@@ -1782,7 +1782,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmax_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="dimension"></param>
             /// <param name="keepDim"></param>
@@ -1799,7 +1799,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmin(IntPtr tensor);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <returns></returns>
             public Tensor argmin()
@@ -1814,7 +1814,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmin_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="dimension"></param>
             /// <param name="keepDim"></param>
@@ -1878,7 +1878,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_copysign(IntPtr tensor, IntPtr other);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <returns></returns>
             public Tensor copysign(Tensor other)
@@ -2087,7 +2087,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_positive(IntPtr tensor);
 
             /// <summary>
-            /// Returns input. Throws a runtime error if input is a bool tensor. 
+            /// Returns input. Throws a runtime error if input is a bool tensor.
             /// </summary>
             /// <returns></returns>
             public Tensor positive()
@@ -3923,7 +3923,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_broadcast_to(IntPtr tensor, IntPtr psizes, int length);
 
             /// <summary>
-            /// Broadcasts input to the shape shape. Equivalent to calling input.expand(shape). 
+            /// Broadcasts input to the shape shape. Equivalent to calling input.expand(shape).
             /// </summary>
             public Tensor broadcast_to(params long[] shape)
             {
@@ -4027,7 +4027,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_randn_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
             /// <summary>
-            /// Returns a tensor with the same size as input that is filled with random numbers from a normal distribution with mean 0 and variance 1. 
+            /// Returns a tensor with the same size as input that is filled with random numbers from a normal distribution with mean 0 and variance 1.
             /// </summary>
             public Tensor randn_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
@@ -4817,7 +4817,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_nonzero(IntPtr tensor);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <returns></returns>
             public Tensor nonzero()
@@ -5382,6 +5382,8 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            public DisposeScopeManager.DisposeScope NewDisposeScope() => DisposeScopeManager.Singleton.NewDisposeScope(this);
         }
 
         /// <summary>
