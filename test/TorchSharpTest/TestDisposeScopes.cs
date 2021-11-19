@@ -161,7 +161,8 @@ namespace TorchSharp
             _testOutputHelper.WriteLine($"Undisposed Tensors without DisposeScope: {torch.Tensor.TotalCount - count}");
 
             count = torch.Tensor.TotalCount;
-            using (torch.NewDisposeScope()) {
+            using (var d = torch.NewDisposeScope()) {
+                d.DontReportOnExternalDisposes = true;
                 testTraining.TestTraining1();
             }
 
@@ -176,6 +177,7 @@ namespace TorchSharp
             // No dispose scope
             var testTraining = new TestTraining();
             using (var d = torch.NewDisposeScope()) {
+                d.DontReportOnExternalDisposes = true;
                 testTraining.TestTrainingConv2d();
                 _testOutputHelper.WriteLine($"Undisposed Tensors inside DisposeScope: {d.Disposables.Count}");
             }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -34,7 +35,7 @@ namespace TorchSharp
 
         public static long TotalAllocatedSize => Singleton.InnerTotalAllocatedSize;
 
-        internal static void TryUnregisterInDisposeScope(IDisposable disposable)=>
+        internal static void TryUnregisterInDisposeScope(IDisposable disposable) =>
             Singleton.InnerTryUnregisterInDisposeScope(disposable);
 
         internal static void TryRegisterInDisposeScope(IDisposable disposable) =>
@@ -46,6 +47,7 @@ namespace TorchSharp
                 foreach (var disposeScope in DisposeScopeStack) {
                     size += disposeScope.TotalAllocatedSize;
                 }
+
                 return size;
             }
         }
@@ -63,8 +65,14 @@ namespace TorchSharp
             if (disposable == CurrentlyDisposing) {
                 return;
             }
+
             foreach (var disposeScope in DisposeScopeStack) {
-                disposeScope.Disposables.Remove(disposable);
+                bool wasRemoved = disposeScope.Disposables.Remove(disposable);
+                if (wasRemoved && !disposeScope.DontReportOnExternalDisposes) {
+                    // File.AppendAllText(@"c:\slask\disp.txt",
+                    //     "\n\nWho did it:"+
+                    //     disposeScope.StackTrace.ToString().Substring(0, 1000));
+                }
             }
         }
 
@@ -118,7 +126,11 @@ namespace TorchSharp
             public DisposeScope(DisposeScopeManager disposeScopeManager)
             {
                 _disposeScopeManager = disposeScopeManager;
+                // StackTrace = new StackTrace();
             }
+
+            // public StackTrace StackTrace { get; set; }
+
             /// <summary>
             /// The disposables that are scheduled for disposing.
             /// </summary>
@@ -127,6 +139,8 @@ namespace TorchSharp
             public long TotalAllocatedSize =>
                 Disposables.OfType<torch.Tensor>().Sum(x => x.NumberOfElements * x.ElementSize);
 
+            public bool DontReportOnExternalDisposes { get; set; } = true;
+
             /// <summary>
             /// Includes a disposable in the scope - for tensors this is done automatically once the scope has been
             /// created. Use this method to add additional disposables that should be disposed, but you typically
@@ -134,7 +148,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="disposable">The disposable to keep in the scope</param>
             /// <returns></returns>
-            public T Include<T>(T disposable) where T:IDisposable
+            public T Include<T>(T disposable) where T : IDisposable
             {
                 lock (this) {
                     Disposables.Add(disposable);
@@ -154,14 +168,15 @@ namespace TorchSharp
                 return exclude;
             }
 
-            public (T1 first, T2 second) Exclude<T1,T2>(T1 first, T2 second) where T1:IDisposable where T2:IDisposable
+            public (T1 first, T2 second) Exclude<T1, T2>(T1 first, T2 second)
+                where T1 : IDisposable where T2 : IDisposable
             {
                 Exclude(new IDisposable[] { first, second }, false);
                 return (first, second);
             }
 
-            public (T1 first, T2 second, T3 third) Exclude<T1,T2,T3>(T1 first, T2 second, T3 third)
-                where T1:IDisposable where T2:IDisposable where T3:IDisposable
+            public (T1 first, T2 second, T3 third) Exclude<T1, T2, T3>(T1 first, T2 second, T3 third)
+                where T1 : IDisposable where T2 : IDisposable where T3 : IDisposable
             {
                 Exclude(new IDisposable[] { first, second, third }, false);
                 return (first, second, third);
@@ -171,21 +186,21 @@ namespace TorchSharp
             /// Excludes a set of tensors/disposables from the all dispose scopes, see overloaded methods. See Exclude
             /// if you wish to move it to the outer dispose scope.
             /// </summary>
-            public T ExcludeGlobally<T>(T exclude)  where T:IDisposable
+            public T ExcludeGlobally<T>(T exclude) where T : IDisposable
             {
                 Exclude(new IDisposable[] { exclude }, true);
                 return exclude;
             }
 
-            public (T1 first, T2 second) ExcludeGlobally<T1,T2>(T1 first, T2 second)
-                where T1:IDisposable where T2:IDisposable
+            public (T1 first, T2 second) ExcludeGlobally<T1, T2>(T1 first, T2 second)
+                where T1 : IDisposable where T2 : IDisposable
             {
                 Exclude(new IDisposable[] { first, second }, true);
                 return (first, second);
             }
 
-            public (T1 first, T2 second, T3 third) ExcludeGlobally<T1,T2,T3>(T1 first, T2 second, T3 third)
-                where T1:IDisposable where T2:IDisposable where T3:IDisposable
+            public (T1 first, T2 second, T3 third) ExcludeGlobally<T1, T2, T3>(T1 first, T2 second, T3 third)
+                where T1 : IDisposable where T2 : IDisposable where T3 : IDisposable
             {
                 Exclude(new IDisposable[] { first, second, third }, true);
                 return (first, second, third);
@@ -220,21 +235,21 @@ namespace TorchSharp
                 return keep;
             }
 
-            public T DisposeEverythingBut<T>(T keep) where T:IDisposable
+            public T DisposeEverythingBut<T>(T keep) where T : IDisposable
             {
                 DisposeEverythingBut(new IDisposable[] { keep });
                 return keep;
             }
 
-            public (T1 first, T2 second) DisposeEverythingBut<T1,T2>(T1 first, T2 second)
-                where T1: IDisposable where T2:IDisposable
+            public (T1 first, T2 second) DisposeEverythingBut<T1, T2>(T1 first, T2 second)
+                where T1 : IDisposable where T2 : IDisposable
             {
                 DisposeEverythingBut(new IDisposable[] { first, second });
                 return (first, second);
             }
 
-            public (T1 first, T2 second, T3 third) DisposeEverythingBut<T1,T2,T3>(T1 first, T2 second, T3 third)
-                where T1:IDisposable where T2:IDisposable where T3:IDisposable
+            public (T1 first, T2 second, T3 third) DisposeEverythingBut<T1, T2, T3>(T1 first, T2 second, T3 third)
+                where T1 : IDisposable where T2 : IDisposable where T3 : IDisposable
             {
                 DisposeEverythingBut(new IDisposable[] { first, second, third });
                 return (first, second, third);
@@ -257,26 +272,21 @@ namespace TorchSharp
                 }
             }
 
-            private IDisposable _currentlyDisposing=null;
             private void DoDispose(IDisposable disposable)
             {
-                _currentlyDisposing = disposable;
-                if (disposable is torch.Tensor tensor)
-                {
-                    if (!tensor.IsDisposed)
-                    {
+                _disposeScopeManager.CurrentlyDisposing = disposable;
+                if (disposable is torch.Tensor tensor) {
+                    if (!tensor.IsDisposed) {
                         Interlocked.Increment(ref _disposedCount);
                         Interlocked.Increment(ref _disposedTensorCount);
                         tensor.Dispose();
                     }
-                }
-                else
-                {
+                } else {
                     Interlocked.Increment(ref _disposedCount);
                     disposable.Dispose();
                 }
 
-                _currentlyDisposing = null;
+                _disposeScopeManager.CurrentlyDisposing = null;
                 Disposables.Remove(disposable);
             }
 

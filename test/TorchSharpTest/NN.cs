@@ -2591,7 +2591,6 @@ namespace TorchSharp
                 Assert.Equal(h0.shape, hN.shape);
                 Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
             }
-
         }
 
         [Fact]
