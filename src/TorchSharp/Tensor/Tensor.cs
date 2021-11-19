@@ -2980,9 +2980,25 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_ldexp(IntPtr right, IntPtr left);
 
+            /// <summary>
+            /// Multiplies input by pow(2,other).
+            /// </summary>
+            /// <param name="other">A tensor of exponents, typically integers</param>
+            /// <returns></returns>
+            /// <remarks>Typically this function is used to construct floating point numbers by multiplying mantissas in input with integral powers of two created from the exponents in other.</remarks>
             public Tensor ldexp(Tensor other)
             {
                 var res = THSTensor_ldexp(Handle, other.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_ldexp_(IntPtr right, IntPtr left);
+
+            public Tensor ldexp_(Tensor other)
+            {
+                var res = THSTensor_ldexp_(Handle, other.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -3008,6 +3024,8 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            public Tensor less_equal_(Tensor target) => le_(target);
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_le_scalar(IntPtr tensor, IntPtr trg);
@@ -3437,6 +3455,26 @@ namespace TorchSharp
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
             }
 
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_kthvalue(IntPtr tensor, long k, long dim, bool keepdim, out IntPtr _out);
+
+            /// <summary>
+            /// Returns a namedtuple (values, indices) where values is the k th smallest element of each row of the input tensor in the given dimension dim. And indices is the index location of each element found.
+            /// If dim is not given, the last dimension of the input is chosen.
+            /// </summary>
+            /// <param name="input">The input tensor.</param>
+            /// <param name="k">k for the k-th smallest element</param>
+            /// <param name="dim">The dimension to find the kth value along</param>
+            /// <param name="keepdim">Whether the output tensor has dim retained or not.</param>
+            /// <returns></returns>
+            public static (Tensor, Tensor) kthvalue(Tensor input, long k, long? dim, bool keepdim = false)
+            {
+                var values = THSTensor_kthvalue(input.Handle, k, dim.HasValue ? dim.Value : -1, keepdim, out var indices);
+                if (values == IntPtr.Zero || indices == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(values), new Tensor(indices));
+            }
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_max(IntPtr tensor);

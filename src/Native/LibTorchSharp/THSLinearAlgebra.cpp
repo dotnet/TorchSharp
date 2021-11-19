@@ -264,6 +264,15 @@ Tensor THSTensor_kron(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->kron(*right));
 }
 
+Tensor THSTensor_kthvalue(const Tensor input, int64_t k, int64_t dim, bool keepdim, Tensor* out)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = input->kthvalue(k, dim, keepdim););
+    *out = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+
+}
+
 Tensor THSTensor_lcm(const Tensor tensor, const Tensor other)
 {
     CATCH_TENSOR(tensor->lcm(*other));
