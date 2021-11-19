@@ -127,45 +127,38 @@ namespace TorchSharp
                 }
 
                 // Inner scope was disposed
-                Assert.Equal(torch.Tensor.TotalCount, innerCount);
+                Assert.Equal(DisposeScopeManager.Singleton.TotalCount, innerCount);
             }
 
             // It was all disposed
-            Assert.Equal(torch.Tensor.TotalCount, preTotalCount);
+            Assert.Equal(DisposeScopeManager.Singleton.TotalCount, preTotalCount);
         }
 
         [Fact]
         public void DisposeScopeWorksForTestTraining1()
         {
-            var count = torch.Tensor.TotalCount;
-            // No dispose scope
-            var testTraining = new TestTraining();
-            testTraining.TestTraining1();
-            _testOutputHelper.WriteLine($"Undisposed Tensors without DisposeScope: {torch.Tensor.TotalCount - count}");
-
-            count = torch.Tensor.TotalCount;
+            var count = DisposeScopeManager.Singleton.TotalCount;
             using (var d = torch.NewDisposeScope()) {
-                d.DontReportOnExternalDisposes = true;
+                var testTraining = new TestTraining();
                 testTraining.TestTraining1();
             }
 
-            _testOutputHelper.WriteLine($"Undisposed Tensors with DisposeScope: {torch.Tensor.TotalCount - count}");
-            Assert.Equal(torch.Tensor.TotalCount, count);
+            _testOutputHelper.WriteLine($"Undisposed Tensors with DisposeScope: {DisposeScopeManager.Singleton.TotalCount - count}");
+            Assert.Equal(count,DisposeScopeManager.Singleton.TotalCount);
         }
 
         [Fact]
         public void DisposeScopeWorksForTestTrainingConv2d()
         {
-            var count = torch.Tensor.TotalCount;
-            // No dispose scope
-            var testTraining = new TestTraining();
+            var count = DisposeScopeManager.Singleton.TotalCount;
             using (var d = torch.NewDisposeScope()) {
-                d.DontReportOnExternalDisposes = true;
+                var testTraining = new TestTraining();
                 testTraining.TestTrainingConv2d();
                 _testOutputHelper.WriteLine($"Undisposed Tensors inside DisposeScope: {d.Disposables.Count}");
             }
 
-            _testOutputHelper.WriteLine($"Undisposed Tensors after DisposeScope: {torch.Tensor.TotalCount - count}");
+            Assert.Equal(count,DisposeScopeManager.Singleton.TotalCount);
+            _testOutputHelper.WriteLine($"Undisposed Tensors after DisposeScope: {DisposeScopeManager.Singleton.TotalCount - count}");
         }
     }
 }
