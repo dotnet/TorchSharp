@@ -183,13 +183,11 @@ namespace TorchSharp
             {
                 lock (this) {
                     foreach (var disposable in exclude) {
-                        if (!Disposables.Contains(disposable)) {
-                            throw new InvalidOperationException("The disposable does not belong to this scope!");
-                        }
-
-                        Disposables.Remove(disposable);
-                        if (!excludeGlobally) {
-                            Singleton.MoveToOuterScope(this, disposable);
+                        if (Disposables.Contains(disposable)) {
+                            Disposables.Remove(disposable);
+                            if (!excludeGlobally) {
+                                Singleton.MoveToOuterScope(this, disposable);
+                            }
                         }
                     }
                 }
