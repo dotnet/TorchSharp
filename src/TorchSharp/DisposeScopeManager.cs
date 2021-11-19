@@ -70,7 +70,7 @@ namespace TorchSharp
             if (disposable == CurrentlyDisposing) {
                 return;
             }
-
+            Interlocked.Increment(ref _disposedCount);
             foreach (var disposeScope in DisposeScopeStack) {
                 disposeScope.Disposables.Remove(disposable);
             }
@@ -128,8 +128,6 @@ namespace TorchSharp
 
             public long TotalAllocatedSize =>
                 Disposables.OfType<torch.Tensor>().Sum(x => x.NumberOfElements * x.ElementSize);
-
-            public bool DontReportOnExternalDisposes { get; set; } = true;
 
             /// <summary>
             /// Includes a disposable in the scope - for tensors this is done automatically once the scope has been
