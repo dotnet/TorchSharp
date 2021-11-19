@@ -7,213 +7,220 @@ namespace TorchSharp
 {
     /// <summary>
     /// Manages dispose scopes, that can make automatic tensor disposal easier. Note that the
-    /// DisposeManager isn't "thread safe", since all CPU Devices are the same, the Dispose manager
-    /// would pick up tensors from other threads. Therefore, each thread gets it's own DisposeScopeManager.
+    /// DisposeManager is thread local. The DisposeScopeManager can also manage other disposables, such as training
+    /// batches and the like.
     /// </summary>
     public class DisposeScopeManager
     {
+        static DisposeScopeManager()
+        {
+            torch.Tensor.OnTensorCreateCallback.Add(TryRegisterInDisposeScope);
+            torch.Tensor.OnTensorDisposeCallback.Add(TryUnregisterInDisposeScope);
+        }
+
         [ThreadStatic] public static DisposeScopeManager Singleton;
         internal static int _disposedTensorCount;
+        internal static int _disposedCount;
 
-        internal Dictionary<string, Stack<DisposeScope>> DisposeScopeStacks { get; } = new();
-        internal DisposeScope NewDisposeScope(torch.Tensor tensor) => NewDisposeScope(tensor.device);
+        internal Stack<DisposeScope> DisposeScopeStack { get; } = new();
+        internal IDisposable CurrentlyDisposing { get; set; }
 
-        public static int DisposedTensorCount {
-            get => _disposedTensorCount;
-            set => _disposedTensorCount = value;
-        }
+        public static int DisposedTensorCount => _disposedTensorCount;
+        public static int DisposedCount => _disposedCount;
 
-        internal static void TryRegisterInDisposeScope(torch.Tensor tensor)
+        internal static void TryUnregisterInDisposeScope(IDisposable disposable)
         {
             lock (Singleton ??= new DisposeScopeManager()) {
-                var stack = Singleton.GetStackForDevice(tensor);
-                if (stack?.Count > 0) {
-                    stack.Peek().Include(tensor);
-                }
+                Singleton.InnerTryUnregisterInDisposeScope(disposable);
             }
         }
 
-        internal static DisposeScope NewDisposeScope(torch.Device device)
+        internal static void TryRegisterInDisposeScope(IDisposable disposable)
         {
             lock (Singleton ??= new DisposeScopeManager()) {
-                var stack = Singleton.GetStackForDevice(device);
-                var disposeScope = new DisposeScope(device);
-                stack.Push(disposeScope);
-                return disposeScope;
+                Singleton.InnerTryRegisterInDisposeScope(disposable);
             }
+        }
+
+        private void InnerTryRegisterInDisposeScope(IDisposable disposable)
+        {
+            if (DisposeScopeStack.Count > 0) {
+                DisposeScopeStack.Peek().Include(disposable);
+            }
+        }
+
+        private void InnerTryUnregisterInDisposeScope(IDisposable disposable)
+        {
+            // It's us! We're disposing of it.
+            if (disposable == CurrentlyDisposing) {
+                return;
+            }
+            foreach (var disposeScope in DisposeScopeStack) {
+                disposeScope.Disposables.Remove(disposable);
+            }
+        }
+
+        internal static DisposeScope NewDisposeScope()
+        {
+            lock (Singleton ??= new DisposeScopeManager()) {
+                return Singleton.InnerNewDisposeScope();
+            }
+        }
+
+        private DisposeScope InnerNewDisposeScope()
+        {
+            var disposeScope = new DisposeScope(this);
+            DisposeScopeStack.Push(disposeScope);
+            return disposeScope;
         }
 
         internal void RemoveDisposeScope(DisposeScope disposeScope)
         {
             lock (this) {
-                var stack = GetStackForDevice(disposeScope.Device);
-                if (stack.Count == 0) {
-                    throw new InvalidOperationException($"Device {disposeScope.Device} has no DisposeScopes! ");
+                if (DisposeScopeStack.Count == 0) {
+                    throw new InvalidOperationException($"There are no DisposeScopes! ");
                 }
 
-                if (stack.Peek() != disposeScope) {
+                if (DisposeScopeStack.Peek() != disposeScope) {
                     throw new InvalidOperationException(
-                        $"DisposeScope for {disposeScope.Tensors} disposed out of order!");
+                        $"DisposeScope for {disposeScope.Disposables} disposed out of order!");
                 }
 
-                stack.Pop();
+                DisposeScopeStack.Pop();
             }
         }
 
-        internal void MoveToOuterScope(DisposeScope disposeScope, torch.Tensor tensor)
+        internal void MoveToOuterScope(DisposeScope disposeScope, IDisposable disposable)
         {
             lock (this) {
-                var stack = GetStackForDevice(disposeScope.Device);
-                var array = stack.ToArray();
+                var array = DisposeScopeStack.ToArray();
                 for (var i = array.Length - 1; i >= 1; i--) {
                     if (array[i] == disposeScope) {
-                        array[i - 1].Include(tensor);
+                        array[i - 1].Include(disposable);
                         return;
                     }
                 }
             }
         }
 
-        private Stack<DisposeScope> GetStackForDevice(torch.Device device) =>
-            GetStackForDevice(device.type, device.index);
-
-        private Stack<DisposeScope> GetStackForDevice(torch.Tensor tensor) =>
-            GetStackForDevice(tensor.device_type, tensor.device_index);
-
-        private Stack<DisposeScope> GetStackForDevice(DeviceType deviceType, int deviceIndex)
-        {
-            var key = deviceType == DeviceType.CPU ? "CPU" : deviceType + "/" + deviceIndex;
-
-            if (!DisposeScopeStacks.TryGetValue(key, out var stack)) {
-                stack = new Stack<DisposeScope>();
-                DisposeScopeStacks.Add(key, stack);
-            }
-
-            return stack;
-        }
-
         public class DisposeScope : IDisposable
         {
-            public DisposeScope(torch.Device device)
+            private readonly DisposeScopeManager _disposeScopeManager;
+
+            public DisposeScope(DisposeScopeManager disposeScopeManager)
             {
-                Device = device;
+                _disposeScopeManager = disposeScopeManager;
             }
+            /// <summary>
+            /// The disposables that are scheduled for disposing.
+            /// </summary>
+            public HashSet<IDisposable> Disposables { get; } = new();
 
             /// <summary>
-            /// The device that the dispose scope refers to.
+            /// Includes a disposable in the scope - for tensors this is done automatically once the scope has been
+            /// created. Use this method to add additional disposables that should be disposed, but you typically
+            /// don't need to call this method.
             /// </summary>
-            public torch.Device Device { get; }
-
-            /// <summary>
-            /// The tensors that are scheduled for disposing.
-            /// </summary>
-            public List<torch.Tensor> Tensors { get; } = new();
-
-            /// <summary>
-            /// Includes a tensor in the scope - this is done automatically once the scope has been created.
-            /// Use this method to add additional tensors that should be disposed.
-            /// </summary>
-            /// <param name="tensor">The tensor to be disposed</param>
+            /// <param name="disposable">The disposable to keep in the scope</param>
             /// <returns></returns>
-            public torch.Tensor Include(torch.Tensor tensor)
+            public T Include<T>(T disposable) where T:IDisposable
             {
                 lock (this) {
-                    Tensors.Add(tensor);
+                    Disposables.Add(disposable);
                 }
 
-                return tensor;
+                return disposable;
             }
 
             /// <summary>
-            /// Excludes a set of tensors from the current dispose scope, and moves it up to the outer dispose scope,
-            /// if one exists. See overloaded methods. If you wish to exclude a tensor from all sccopes, use
-            /// ExcludeGlobally.
+            /// Excludes a set of tensors/disposables from the current dispose scope, and moves it up to the outer
+            /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all sccopes,
+            /// use ExcludeGlobally.
             /// </summary>
-            public torch.Tensor Exclude(torch.Tensor tensorToExclude) =>
-                Exclude(new[] { tensorToExclude }, false)[0];
-
-            public (torch.Tensor first, torch.Tensor second) Exclude(torch.Tensor first, torch.Tensor second)
+            public T Exclude<T>(T exclude) where T : IDisposable
             {
-                Exclude(new[] { first, second }, false);
+                Exclude(new IDisposable[] { exclude }, false);
+                return exclude;
+            }
+
+            public (T1 first, T2 second) Exclude<T1,T2>(T1 first, T2 second) where T1:IDisposable where T2:IDisposable
+            {
+                Exclude(new IDisposable[] { first, second }, false);
                 return (first, second);
             }
 
-            public (torch.Tensor first, torch.Tensor second, torch.Tensor third) Exclude(torch.Tensor first,
-                torch.Tensor second, torch.Tensor third)
+            public (T1 first, T2 second, T3 third) Exclude<T1,T2,T3>(T1 first, T2 second, T3 third)
+                where T1:IDisposable where T2:IDisposable where T3:IDisposable
             {
-                Exclude(new[] { first, second, third }, false);
+                Exclude(new IDisposable[] { first, second, third }, false);
                 return (first, second, third);
             }
 
             /// <summary>
-            /// Excludes a set of tensors from the all dispose scopes, see overloaded methods. See Exclude if you
-            /// wish to move it to the outer dispose scope.
+            /// Excludes a set of tensors/disposables from the all dispose scopes, see overloaded methods. See Exclude
+            /// if you wish to move it to the outer dispose scope.
             /// </summary>
-            public torch.Tensor ExcludeGlobally(torch.Tensor tensorToExclude) =>
-                Exclude(new[] { tensorToExclude }, true)[0];
-
-            public (torch.Tensor first, torch.Tensor second) ExcludeGlobally(torch.Tensor first, torch.Tensor second)
+            public T ExcludeGlobally<T>(T exclude)  where T:IDisposable
             {
-                Exclude(new[] { first, second }, true);
+                Exclude(new IDisposable[] { exclude }, true);
+                return exclude;
+            }
+
+            public (T1 first, T2 second) ExcludeGlobally<T1,T2>(T1 first, T2 second)
+                where T1:IDisposable where T2:IDisposable
+            {
+                Exclude(new IDisposable[] { first, second }, true);
                 return (first, second);
             }
 
-            public (torch.Tensor first, torch.Tensor second, torch.Tensor third) ExcludeGlobally(torch.Tensor first,
-                torch.Tensor second, torch.Tensor third)
+            public (T1 first, T2 second, T3 third) ExcludeGlobally<T1,T2,T3>(T1 first, T2 second, T3 third)
+                where T1:IDisposable where T2:IDisposable where T3:IDisposable
             {
-                Exclude(new[] { first, second, third }, true);
+                Exclude(new IDisposable[] { first, second, third }, true);
                 return (first, second, third);
             }
 
-
             /// <summary>
-            /// As an intermediate step, you can dispose all the tensors currently scheduled for dispose, to clear
-            /// up some memory without creating a new scope. Note that this doesn't permanently exclude the
+            /// As an intermediate step, you can dispose all the tensors/disposables currently scheduled for dispose, to
+            /// clear up some memory without creating a new scope. Note that this doesn't permanently exclude the
             /// tensors from disposing, use Exclude for that. Also, excluded tensors don't need to be included
             /// here.
             /// </summary>
-            public torch.Tensor[] DisposeEverythingBut(params torch.Tensor[] tensorsToKeep)
+            public IDisposable[] DisposeEverythingBut(params IDisposable[] keep)
             {
                 lock (this) {
-                    // This code looks odd, but sometimes a tensor has been disposed somewhere else, and once it's
-                    // disposed, we can't use the Equals method on it anymore. Therefore we must resort to
-                    // ReferenceEquals instead.
-                    foreach (torch.Tensor tensor in tensorsToKeep) {
-                        if (!Tensors.Any(x => ReferenceEquals(tensor, x))) {
-                            throw new InvalidOperationException("The tensor does not belong to this scope!");
+                    foreach (var disposable in keep) {
+                        if (!Disposables.Contains(disposable)) {
+                            throw new InvalidOperationException("The disposable does not belong to this scope!");
                         }
                     }
 
-                    for (var i = Tensors.Count - 1; i >= 0; i--) {
-                        var tensor = Tensors[i];
-                        if (!tensorsToKeep.Any(x => ReferenceEquals(tensor, x))) {
-                            if (tensor.handle != IntPtr.Zero) {
-                                Interlocked.Increment(ref _disposedTensorCount);
-                                tensor.Dispose();
-                            }
-
-                            Tensors.RemoveAt(i);
-                        }
+                    var toDispose = Disposables.Where(disposable => !keep.Contains(disposable)).ToList();
+                    foreach (var disposable in toDispose) {
+                        DoDispose(disposable);
                     }
                 }
 
-                return tensorsToKeep;
+                return keep;
             }
 
-            public torch.Tensor DisposeEverythingBut(torch.Tensor tensorToKeep) =>
-                DisposeEverythingBut(new[] { tensorToKeep })[0];
-
-            public (torch.Tensor first, torch.Tensor second) DisposeEverythingBut(torch.Tensor first,
-                torch.Tensor second)
+            public T DisposeEverythingBut<T>(T keep) where T:IDisposable
             {
-                DisposeEverythingBut(new[] { first, second });
+                DisposeEverythingBut(new IDisposable[] { keep });
+                return keep;
+            }
+
+            public (T1 first, T2 second) DisposeEverythingBut<T1,T2>(T1 first, T2 second)
+                where T1: IDisposable where T2:IDisposable
+            {
+                DisposeEverythingBut(new IDisposable[] { first, second });
                 return (first, second);
             }
 
-            public (torch.Tensor first, torch.Tensor second, torch.Tensor third) DisposeEverythingBut(
-                torch.Tensor first, torch.Tensor second, torch.Tensor third)
+            public (T1 first, T2 second, T3 third) DisposeEverythingBut<T1,T2,T3>(T1 first, T2 second, T3 third)
+                where T1:IDisposable where T2:IDisposable where T3:IDisposable
             {
-                DisposeEverythingBut(new[] { first, second, third });
+                DisposeEverythingBut(new IDisposable[] { first, second, third });
                 return (first, second, third);
             }
 
@@ -225,41 +232,54 @@ namespace TorchSharp
 
             private void ReleaseUnmanagedResources()
             {
-                lock (DisposeScopeManager.Singleton) {
-                    foreach (var tensor in Tensors) {
-                        if (tensor.handle != IntPtr.Zero) {
-                            Interlocked.Increment(ref _disposedTensorCount);
-                            tensor.Dispose();
-                        }
+                lock (Singleton) {
+                    foreach (var disposable in Disposables) {
+                        DoDispose(disposable);
                     }
 
-                    Tensors.Clear();
-                    DisposeScopeManager.Singleton.RemoveDisposeScope(this);
+                    Singleton.RemoveDisposeScope(this);
                 }
             }
 
-            private torch.Tensor[] Exclude(torch.Tensor[] tensorsToExclude, bool excludeGlobally)
+            private IDisposable _currentlyDisposing=null;
+            private void DoDispose(IDisposable disposable)
+            {
+                _currentlyDisposing = disposable;
+                if (disposable is torch.Tensor tensor)
+                {
+                    if (!tensor.IsDisposed)
+                    {
+                        Interlocked.Increment(ref _disposedCount);
+                        Interlocked.Increment(ref _disposedTensorCount);
+                        tensor.Dispose();
+                    }
+                }
+                else
+                {
+                    Interlocked.Increment(ref _disposedCount);
+                    disposable.Dispose();
+                }
+
+                _currentlyDisposing = null;
+                Disposables.Remove(disposable);
+            }
+
+            private IDisposable[] Exclude(IDisposable[] exclude, bool excludeGlobally)
             {
                 lock (this) {
-                    foreach (torch.Tensor tensor in tensorsToExclude) {
-                        if (!Tensors.Any(existing => ReferenceEquals(existing, tensor))) {
-                            throw new InvalidOperationException("The tensor does not belong to this scope!");
+                    foreach (var disposable in exclude) {
+                        if (!Disposables.Contains(disposable)) {
+                            throw new InvalidOperationException("The disposable does not belong to this scope!");
                         }
-                    }
 
-                    for (var i = Tensors.Count - 1; i >= 0; i--) {
-                        var tensor = Tensors[i];
-                        if (tensorsToExclude.Any(x => ReferenceEquals(tensor, x))) {
-                            Tensors.RemoveAt(i);
-
-                            if (!excludeGlobally) {
-                                Singleton.MoveToOuterScope(this, tensor);
-                            }
+                        Disposables.Remove(disposable);
+                        if (!excludeGlobally) {
+                            Singleton.MoveToOuterScope(this, disposable);
                         }
                     }
                 }
 
-                return tensorsToExclude;
+                return exclude;
             }
 
             ~DisposeScope()

@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -27,12 +28,20 @@ namespace TorchSharp
             static long _totalCount = 0;
             static long _peakCount = 0;
 
+            public static List<Action<Tensor>> OnTensorCreateCallback { get; } =
+                new List<Action<Tensor>>();
+            public static List<Action<Tensor>> OnTensorDisposeCallback { get; } =
+                new List<Action<Tensor>>();
+
             internal Tensor(IntPtr handle)
             {
                 this.handle = handle;
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
-                DisposeScopeManager.TryRegisterInDisposeScope(this);
+
+                foreach (var callback in OnTensorCreateCallback) {
+                    callback(this);
+                }
             }
 
             /// <summary>
@@ -49,15 +58,17 @@ namespace TorchSharp
             ///  TBD
             /// </summary>
             /// <returns></returns>
-            public override int GetHashCode()
-            {
-                return base.GetHashCode();
-            }
+            public override int GetHashCode() => base.GetHashCode();
 
             /// <summary>
             /// A friendly name for the tensor. This is useful for debugging purposes.
             /// </summary>
             public string? name { get; set; }
+
+            /// <summary>
+            /// Helper method to determine if a tensor is disposed or not.
+            /// </summary>
+            public bool IsDisposed => handle == IntPtr.Zero;
 
             /// <summary>
             ///   Finalize the tensor. Releases the tensor and its associated data.
@@ -66,6 +77,9 @@ namespace TorchSharp
 
             public void Dispose()
             {
+                foreach (var callback in OnTensorDisposeCallback) {
+                    callback(this);
+                }
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }
@@ -78,7 +92,7 @@ namespace TorchSharp
             /// </summary>
             void Dispose(bool disposing)
             {
-                if (handle != IntPtr.Zero) {
+                if (!IsDisposed) {
                     System.Threading.Interlocked.Decrement(ref _totalCount);
                     THSTensor_dispose(handle);
                     handle = IntPtr.Zero;
@@ -2840,6 +2854,14 @@ namespace TorchSharp
 
             public bool Equals(Tensor target)
             {
+                if (handle == IntPtr.Zero || target.handle == IntPtr.Zero) {
+                    return (object)this == (object)target;
+                }
+
+                if (dtype != target.dtype) {
+                    return false;
+                }
+
                 var res = THSTensor_equal(Handle, target.Handle);
                 torch.CheckForErrors();
                 return res;
@@ -5382,8 +5404,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            public DisposeScopeManager.DisposeScope NewDisposeScope() => DisposeScopeManager.Singleton.NewDisposeScope(this);
         }
 
         /// <summary>
@@ -5579,5 +5599,12 @@ namespace TorchSharp
 
         public static ScalarType cfloat = ScalarType.ComplexFloat32;
         public static ScalarType cdouble = ScalarType.ComplexFloat64;
+
+        /// <summary>
+        /// Creates a new dispose scope for the current thread. Any tensor created within the dispose scope will
+        /// be automatically disposed once the dispose scope is disposed.
+        /// </summary>
+        /// <returns></returns>
+        public static DisposeScopeManager.DisposeScope NewDisposeScope() => DisposeScopeManager.NewDisposeScope();
     }
 }
