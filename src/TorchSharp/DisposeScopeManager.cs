@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 
@@ -12,15 +13,18 @@ namespace TorchSharp
     /// </summary>
     public class DisposeScopeManager
     {
+        internal static int _disposedTensorCount;
+        internal static int _disposedCount;
+
         static DisposeScopeManager()
         {
             torch.Tensor.OnTensorCreateCallback.Add(TryRegisterInDisposeScope);
             torch.Tensor.OnTensorDisposeCallback.Add(TryUnregisterInDisposeScope);
         }
 
-        [ThreadStatic] public static DisposeScopeManager Singleton;
-        internal static int _disposedTensorCount;
-        internal static int _disposedCount;
+        [ThreadStatic] private static DisposeScopeManager _singleton;
+
+        public static DisposeScopeManager Singleton = (_singleton ??= new DisposeScopeManager());
 
         internal Stack<DisposeScope> DisposeScopeStack { get; } = new();
         internal IDisposable CurrentlyDisposing { get; set; }
@@ -28,17 +32,21 @@ namespace TorchSharp
         public static int DisposedTensorCount => _disposedTensorCount;
         public static int DisposedCount => _disposedCount;
 
-        internal static void TryUnregisterInDisposeScope(IDisposable disposable)
-        {
-            lock (Singleton ??= new DisposeScopeManager()) {
-                Singleton.InnerTryUnregisterInDisposeScope(disposable);
-            }
-        }
+        public static long TotalAllocatedSize => Singleton.InnerTotalAllocatedSize;
 
-        internal static void TryRegisterInDisposeScope(IDisposable disposable)
-        {
-            lock (Singleton ??= new DisposeScopeManager()) {
-                Singleton.InnerTryRegisterInDisposeScope(disposable);
+        internal static void TryUnregisterInDisposeScope(IDisposable disposable)=>
+            Singleton.InnerTryUnregisterInDisposeScope(disposable);
+
+        internal static void TryRegisterInDisposeScope(IDisposable disposable) =>
+            Singleton.InnerTryRegisterInDisposeScope(disposable);
+
+        private long InnerTotalAllocatedSize {
+            get {
+                long size = 0;
+                foreach (var disposeScope in DisposeScopeStack) {
+                    size += disposeScope.TotalAllocatedSize;
+                }
+                return size;
             }
         }
 
@@ -116,6 +124,9 @@ namespace TorchSharp
             /// </summary>
             public HashSet<IDisposable> Disposables { get; } = new();
 
+            public long TotalAllocatedSize =>
+                Disposables.OfType<torch.Tensor>().Sum(x => x.NumberOfElements * x.ElementSize);
+
             /// <summary>
             /// Includes a disposable in the scope - for tensors this is done automatically once the scope has been
             /// created. Use this method to add additional disposables that should be disposed, but you typically
@@ -179,6 +190,11 @@ namespace TorchSharp
                 Exclude(new IDisposable[] { first, second, third }, true);
                 return (first, second, third);
             }
+
+            /// <summary>
+            /// Disposes everything currenly in the dispose scope.
+            /// </summary>
+            public void DisposeEverything() => DisposeEverythingBut();
 
             /// <summary>
             /// As an intermediate step, you can dispose all the tensors/disposables currently scheduled for dispose, to
