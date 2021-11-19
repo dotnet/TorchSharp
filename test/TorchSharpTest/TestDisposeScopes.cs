@@ -1,4 +1,7 @@
-﻿using Xunit;
+﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace TorchSharp
@@ -10,33 +13,6 @@ namespace TorchSharp
         public TestDisposeScopes(ITestOutputHelper testOutputHelper)
         {
             _testOutputHelper = testOutputHelper;
-        }
-
-        [Fact]
-        public void MemoryManagementExample()
-        {
-            // This test replicates the code from the memory management documentation at TorchSharp
-            torch.Tensor sum;
-            _testOutputHelper.WriteLine($"Total tensors: {torch.Tensor.TotalCount}"); // Writes 0
-            using (var d = torch.NewDisposeScope()) {
-                var predictedLabels = torch.rand(5, 5);
-                var labels = torch.tensor(new int[] { 1, 0, 1, 0, 1 });
-                var am = predictedLabels.argmax(1);
-                var eq = am == labels;
-
-                _testOutputHelper.WriteLine($"Total tensors temporary dispose: {torch.Tensor.TotalCount}"); // Writes 4
-
-                // If the process is long, you can dispose mid stream;
-                d.DisposeEverythingBut(eq);
-
-                // This last value is excluded from the DisposeScope, so it can be used outside.
-                sum = d.Exclude(eq.sum());
-                _testOutputHelper.WriteLine($"Total tensors before dispose: {torch.Tensor.TotalCount}"); // Writes 2
-            }
-
-            _testOutputHelper.WriteLine($"Total tensors after dispose: {torch.Tensor.TotalCount}"); // Writes 1
-            _testOutputHelper.WriteLine($"Tensors disposed: {DisposeScopeManager.DisposedTensorCount}"); // Writes 4
-            _testOutputHelper.WriteLine($"sum:{sum.ToSingle()}");
         }
 
         [Fact]
@@ -87,58 +63,65 @@ namespace TorchSharp
         public void TensorsAreDisposedCorrectly()
         {
             torch.Tensor data = torch.rand(10, 10);
-            var preTotalCount = torch.Tensor.TotalCount;
+
+            var disposables = new List<torch.Tensor>();
             using (var d = torch.NewDisposeScope()) {
                 var newValue = data * data + data;
-                Assert.True(torch.Tensor.TotalCount > preTotalCount);
+                disposables = d.Disposables.OfType<torch.Tensor>().ToList();
+                foreach (var disposable in disposables)
+                {
+                    Assert.False(disposable.IsDisposed);
+                }
             }
 
             // They were all disposed
-            Assert.Equal(torch.Tensor.TotalCount, preTotalCount);
+            foreach (var disposable in disposables)
+            {
+                Assert.True(disposable.IsDisposed);
+            }
         }
 
         [Fact]
         public void TensorsThatShouldNotBeDisposedArent()
         {
             torch.Tensor data = torch.rand(10, 10);
-            var preTotalCount = torch.Tensor.TotalCount;
+            torch.Tensor undisposed = null;
             using (var d = torch.NewDisposeScope()) {
-                var newValue = d.Exclude(data * data + data);
-                Assert.True(torch.Tensor.TotalCount > preTotalCount);
+                undisposed = d.Exclude(data * data + data);
+                Assert.False(undisposed.IsDisposed);
             }
 
             // One was kept
-            Assert.Equal(torch.Tensor.TotalCount, preTotalCount + 1);
+            Assert.False(undisposed.IsDisposed);
         }
 
         [Fact]
         public void TensorsCanBeDisposedInTheMiddleOfTheProcess()
         {
             torch.Tensor data = torch.rand(10, 10);
-            var preTotalCount = torch.Tensor.TotalCount;
+            torch.Tensor t1, t2;
             using (var d = torch.NewDisposeScope()) {
-                var t1 = data * data + data;
-                var t2 = data + data - t1;
-                Assert.True(torch.Tensor.TotalCount > preTotalCount + 1);
+                t1 = data * data + data;
+                t2 = data + data - t1;
                 t2 = d.DisposeEverythingBut(t2);
-                Assert.Equal(torch.Tensor.TotalCount, preTotalCount + 1);
+                Assert.True(t1.IsDisposed);
                 t2 = t2 + data;
             }
 
-            // It was all disposed
-            Assert.Equal(torch.Tensor.TotalCount, preTotalCount);
+            Assert.True(t2.IsDisposed);
+            Assert.False(data.IsDisposed);
         }
 
         [Fact]
         public void DisposeScopesCanBeNestled()
         {
             torch.Tensor data = torch.rand(10, 10);
-            var preTotalCount = torch.Tensor.TotalCount;
+            var preTotalCount = DisposeScopeManager.Singleton.TotalCount;
 
             using (torch.NewDisposeScope()) {
                 var t1 = data * data + data;
 
-                var innerCount = torch.Tensor.TotalCount;
+                var innerCount = DisposeScopeManager.Singleton.TotalCount;
                 using (torch.NewDisposeScope()) {
                     var t2 = data + data - t1;
                 }

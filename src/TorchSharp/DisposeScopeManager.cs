@@ -1,3 +1,5 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,8 +16,8 @@ namespace TorchSharp
     /// </summary>
     public class DisposeScopeManager
     {
-        internal static int _disposedTensorCount;
-        internal static int _disposedCount;
+        private int _createdCount;
+        private int _disposedCount;
 
         static DisposeScopeManager()
         {
@@ -30,8 +32,9 @@ namespace TorchSharp
         internal Stack<DisposeScope> DisposeScopeStack { get; } = new();
         internal IDisposable CurrentlyDisposing { get; set; }
 
-        public static int DisposedTensorCount => _disposedTensorCount;
-        public static int DisposedCount => _disposedCount;
+        public int CreatedCount => _createdCount;
+        public int DisposedCount => _disposedCount;
+        public int TotalCount => _createdCount - _disposedCount;
 
         public static long TotalAllocatedSize => Singleton.InnerTotalAllocatedSize;
 
@@ -54,6 +57,8 @@ namespace TorchSharp
 
         private void InnerTryRegisterInDisposeScope(IDisposable disposable)
         {
+            Interlocked.Increment(ref _createdCount);
+
             if (DisposeScopeStack.Count > 0) {
                 DisposeScopeStack.Peek().Include(disposable);
             }
@@ -67,12 +72,7 @@ namespace TorchSharp
             }
 
             foreach (var disposeScope in DisposeScopeStack) {
-                bool wasRemoved = disposeScope.Disposables.Remove(disposable);
-                if (wasRemoved && !disposeScope.DontReportOnExternalDisposes) {
-                    // File.AppendAllText(@"c:\slask\disp.txt",
-                    //     "\n\nWho did it:"+
-                    //     disposeScope.StackTrace.ToString().Substring(0, 1000));
-                }
+                disposeScope.Disposables.Remove(disposable);
             }
         }
 
@@ -93,15 +93,8 @@ namespace TorchSharp
         internal void RemoveDisposeScope(DisposeScope disposeScope)
         {
             lock (this) {
-                if (DisposeScopeStack.Count == 0) {
-                    throw new InvalidOperationException($"There are no DisposeScopes! ");
-                }
-
-                if (DisposeScopeStack.Peek() != disposeScope) {
-                    throw new InvalidOperationException(
-                        $"DisposeScope for {disposeScope.Disposables} disposed out of order!");
-                }
-
+                Debug.Assert(DisposeScopeStack.Count > 0);
+                Debug.Assert(DisposeScopeStack.Peek() == disposeScope);
                 DisposeScopeStack.Pop();
             }
         }
@@ -126,10 +119,7 @@ namespace TorchSharp
             public DisposeScope(DisposeScopeManager disposeScopeManager)
             {
                 _disposeScopeManager = disposeScopeManager;
-                // StackTrace = new StackTrace();
             }
-
-            // public StackTrace StackTrace { get; set; }
 
             /// <summary>
             /// The disposables that are scheduled for disposing.
@@ -180,6 +170,24 @@ namespace TorchSharp
             {
                 Exclude(new IDisposable[] { first, second, third }, false);
                 return (first, second, third);
+            }
+
+            public IDisposable[] Exclude(IDisposable[] exclude, bool excludeGlobally)
+            {
+                lock (this) {
+                    foreach (var disposable in exclude) {
+                        if (!Disposables.Contains(disposable)) {
+                            throw new InvalidOperationException("The disposable does not belong to this scope!");
+                        }
+
+                        Disposables.Remove(disposable);
+                        if (!excludeGlobally) {
+                            Singleton.MoveToOuterScope(this, disposable);
+                        }
+                    }
+                }
+
+                return exclude;
             }
 
             /// <summary>
@@ -275,37 +283,20 @@ namespace TorchSharp
             private void DoDispose(IDisposable disposable)
             {
                 _disposeScopeManager.CurrentlyDisposing = disposable;
-                if (disposable is torch.Tensor tensor) {
-                    if (!tensor.IsDisposed) {
-                        Interlocked.Increment(ref _disposedCount);
-                        Interlocked.Increment(ref _disposedTensorCount);
-                        tensor.Dispose();
-                    }
-                } else {
-                    Interlocked.Increment(ref _disposedCount);
-                    disposable.Dispose();
-                }
-
-                _disposeScopeManager.CurrentlyDisposing = null;
-                Disposables.Remove(disposable);
-            }
-
-            private IDisposable[] Exclude(IDisposable[] exclude, bool excludeGlobally)
-            {
-                lock (this) {
-                    foreach (var disposable in exclude) {
-                        if (!Disposables.Contains(disposable)) {
-                            throw new InvalidOperationException("The disposable does not belong to this scope!");
+                try {
+                    if (disposable is torch.Tensor tensor) {
+                        if (!tensor.IsDisposed) {
+                            tensor.Dispose();
                         }
-
-                        Disposables.Remove(disposable);
-                        if (!excludeGlobally) {
-                            Singleton.MoveToOuterScope(this, disposable);
-                        }
+                    } else {
+                        disposable.Dispose();
                     }
-                }
 
-                return exclude;
+                    Interlocked.Increment(ref _disposeScopeManager._disposedCount);
+                    Disposables.Remove(disposable);
+                } finally {
+                    _disposeScopeManager.CurrentlyDisposing = null;
+                }
             }
 
             ~DisposeScope()

@@ -1,6 +1,14 @@
 ## TorchSharp Release Notes
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
+## NuGet Version 0.95.4
+
+__API Changes:__
+
+Added DisposeScopeManager and torch.NewDisposeScope() to facilitate a new solution for managing disposing of  tensors with fewer usings.
+
+__Fixed Bugs:__
+
 
 ### NuGet Version 0.95.3
 
@@ -77,7 +85,7 @@ Added '_' to the torch.nn.init functions. They overwrite the input tensor, so th
 
 __Fixed Bugs:__
 
-#399 Data<T>() returns span that must be indexed using strides. 
+#399 Data<T>() returns span that must be indexed using strides.
 
 This was a major bug, affecting any code that pulled data out of a tensor view.
 
