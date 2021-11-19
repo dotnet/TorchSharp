@@ -47,8 +47,10 @@ namespace TorchSharp
         private long InnerTotalAllocatedSize {
             get {
                 long size = 0;
-                foreach (var disposeScope in DisposeScopeStack) {
-                    size += disposeScope.TotalAllocatedSize;
+                lock (this) {
+                    foreach (var disposeScope in DisposeScopeStack) {
+                        size += disposeScope.TotalAllocatedSize;
+                    }
                 }
 
                 return size;
@@ -59,8 +61,10 @@ namespace TorchSharp
         {
             Interlocked.Increment(ref _createdCount);
 
-            if (DisposeScopeStack.Count > 0) {
-                DisposeScopeStack.Peek().Include(disposable);
+            lock (this) {
+                if (DisposeScopeStack.Count > 0) {
+                    DisposeScopeStack.Peek().Include(disposable);
+                }
             }
         }
 
@@ -70,24 +74,29 @@ namespace TorchSharp
             if (disposable == CurrentlyDisposing) {
                 return;
             }
+
             Interlocked.Increment(ref _disposedCount);
-            foreach (var disposeScope in DisposeScopeStack) {
-                disposeScope.Disposables.Remove(disposable);
+            lock (this) {
+                foreach (var disposeScope in DisposeScopeStack) {
+                    disposeScope.Disposables.Remove(disposable);
+                }
             }
         }
 
         internal static DisposeScope NewDisposeScope()
         {
-            lock (Singleton ??= new DisposeScopeManager()) {
+            lock (Singleton) {
                 return Singleton.InnerNewDisposeScope();
             }
         }
 
         private DisposeScope InnerNewDisposeScope()
         {
-            var disposeScope = new DisposeScope(this);
-            DisposeScopeStack.Push(disposeScope);
-            return disposeScope;
+            lock (this) {
+                var disposeScope = new DisposeScope(this);
+                DisposeScopeStack.Push(disposeScope);
+                return disposeScope;
+            }
         }
 
         internal void RemoveDisposeScope(DisposeScope disposeScope)
@@ -270,7 +279,7 @@ namespace TorchSharp
             private void ReleaseUnmanagedResources()
             {
                 lock (Singleton) {
-                    foreach (var disposable in Disposables) {
+                    foreach (var disposable in Disposables.ToArray()) {
                         DoDispose(disposable);
                     }
 
@@ -278,22 +287,24 @@ namespace TorchSharp
                 }
             }
 
-            private void DoDispose(IDisposable disposable)
+            private void DoDispose(IDisposable disposable, bool removeFromDisposables = true)
             {
-                _disposeScopeManager.CurrentlyDisposing = disposable;
-                try {
-                    if (disposable is torch.Tensor tensor) {
-                        if (!tensor.IsDisposed) {
-                            tensor.Dispose();
+                lock (this) {
+                    _disposeScopeManager.CurrentlyDisposing = disposable;
+                    try {
+                        if (disposable is torch.Tensor tensor) {
+                            if (!tensor.IsDisposed) {
+                                tensor.Dispose();
+                            }
+                        } else {
+                            disposable.Dispose();
                         }
-                    } else {
-                        disposable.Dispose();
-                    }
 
-                    Interlocked.Increment(ref _disposeScopeManager._disposedCount);
-                    Disposables.Remove(disposable);
-                } finally {
-                    _disposeScopeManager.CurrentlyDisposing = null;
+                        Interlocked.Increment(ref _disposeScopeManager._disposedCount);
+                        Disposables.Remove(disposable);
+                    } finally {
+                        _disposeScopeManager.CurrentlyDisposing = null;
+                    }
                 }
             }
 
