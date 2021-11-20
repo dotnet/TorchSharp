@@ -30,7 +30,7 @@ namespace TorchSharp
             internal delegate void TensorEvent(Tensor tensor);
             internal static event TensorEvent? OnTensorCreated;
             internal static event TensorEvent? BeforeTensorDisposed;
-            internal DisposeScopeManager.DisposeScope? OwningDisposeScope { get; set; }
+            internal DisposeScope? OwningDisposeScope { get; set; }
 
             internal Tensor(IntPtr handle)
             {
@@ -5617,6 +5617,6 @@ namespace TorchSharp
         /// Creates a new dispose scope for the current thread. Any tensor created within the dispose scope will
         /// be automatically disposed once the dispose scope is disposed.
         /// </summary>
-        public static DisposeScopeManager.DisposeScope NewDisposeScope() => DisposeScopeManager.NewDisposeScope();
+        public static DisposeScope NewDisposeScope() => NewDisposeScope();
     }
 }
