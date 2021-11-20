@@ -28,7 +28,9 @@ namespace TorchSharp
         /// <summary>
         /// The disposables that are scheduled for disposing.
         /// </summary>
-        internal HashSet<IDisposable> Disposables { get; private set; } = new();
+        /// TODO: There is a ReferenceEqualityComparer coming in .NET 6, use that!
+        internal HashSet<IDisposable> Disposables { get; private set; } =
+            new HashSet<IDisposable>(ReferenceEqualityComparer<IDisposable>.Default);
 
         /// <summary>
         /// A view of the disposables in the scope - this list will not be kept in synch with the disposables
@@ -85,8 +87,7 @@ namespace TorchSharp
         public void MoveToOuter(IEnumerable<IDisposable> disposables)
         {
             foreach (var disposable in disposables) {
-                if (Disposables.Contains(disposable)) {
-                    Disposables.Remove(disposable);
+                if (Disposables.Remove(disposable)) {
                     AddToParent(disposable);
                 }
             }
@@ -121,8 +122,7 @@ namespace TorchSharp
         public void Detach(IEnumerable<IDisposable> disposables)
         {
             foreach (var disposable in disposables) {
-                if (Disposables.Contains(disposable)) {
-                    Disposables.Remove(disposable);
+                if (Disposables.Remove(disposable)) {
                     if (disposable is torch.Tensor tensor) {
                         tensor.OwningDisposeScope = null;
                     }
@@ -144,7 +144,7 @@ namespace TorchSharp
         public void DisposeEverythingBut(IEnumerable<IDisposable> keep)
         {
             var oldList = Disposables;
-            Disposables = keep.ToHashSet();
+            Disposables = keep.ToHashSet(ReferenceEqualityComparer<IDisposable>.Default);
             foreach (var disposable in oldList) {
                 if (!Disposables.Contains(disposable)) {
                     disposable.Dispose();
@@ -186,16 +186,12 @@ namespace TorchSharp
         {
             _disposeScopeManager.DisposedInScopeCount++;
             Disposables.Remove(disposable);
-        }
-
-        public bool Contains(IDisposable disposable)
-        {
-            if (disposable is torch.Tensor tensor && tensor.IsInvalid) {
-                return false;
+            if (disposable is torch.Tensor tensor) {
+                tensor.OwningDisposeScope = null;
             }
-
-            return Disposables.Contains(disposable);
         }
+
+        public bool Contains(IDisposable disposable) => Disposables.Contains(disposable);
 
         private void AddToParent(IDisposable disposable)
         {
