@@ -30,12 +30,14 @@ namespace TorchSharp
             internal delegate void TensorEvent(Tensor tensor);
             internal static event TensorEvent? OnTensorCreated;
             internal static event TensorEvent? BeforeTensorDisposed;
+            internal DisposeScopeManager.DisposeScope? OwningDisposeScope { get; set; }
 
             internal Tensor(IntPtr handle)
             {
                 this.handle = handle;
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
+                OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
                 OnTensorCreated?.Invoke(this);
             }
 
@@ -65,17 +67,13 @@ namespace TorchSharp
             public string? name { get; set; }
 
             /// <summary>
-            /// Is true if the tensor has been disposed, false otherwise.
-            /// </summary>
-            public bool IsDisposed => handle == IntPtr.Zero;
-
-            /// <summary>
             ///   Finalize the tensor. Releases the tensor and its associated data.
             /// </summary>
             ~Tensor() => Dispose(false);
 
             public void Dispose()
             {
+                OwningDisposeScope?.WasDisposed(this);
                 BeforeTensorDisposed?.Invoke(this);
                 Dispose(true);
                 GC.SuppressFinalize(this);
@@ -94,6 +92,31 @@ namespace TorchSharp
                     THSTensor_dispose(handle);
                     handle = IntPtr.Zero;
                 }
+            }
+
+            /// <summary>
+            /// Is true if the tensor has been disposed, false otherwise.
+            /// </summary>
+            public bool IsInvalid => handle == IntPtr.Zero;
+
+            /// <summary>
+            /// Moves tensor to the outer dipose scopescope
+            /// </summary>
+            /// <returns>The same tensor that the method was called on</returns>
+            public torch.Tensor MoveToOuterDisposeScope()
+            {
+                OwningDisposeScope?.MoveToOuter(this);
+                return this;
+            }
+
+            /// <summary>
+            /// Detatches the tensor completely from the DisposeScope system.
+            /// </summary>
+            /// <returns>The same tensor that the method was called on</returns>
+            public torch.Tensor DetatchFromDisposeScope()
+            {
+                OwningDisposeScope?.Detach(this);
+                return this;
             }
 
             [DllImport("LibTorchSharp")]
@@ -2851,14 +2874,6 @@ namespace TorchSharp
 
             public bool Equals(Tensor target)
             {
-                if (handle == IntPtr.Zero || target.handle == IntPtr.Zero) {
-                    return (object)this == (object)target;
-                }
-
-                if (dtype != target.dtype) {
-                    return false;
-                }
-
                 var res = THSTensor_equal(Handle, target.Handle);
                 torch.CheckForErrors();
                 return res;
