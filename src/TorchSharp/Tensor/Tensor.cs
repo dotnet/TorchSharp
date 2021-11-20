@@ -27,22 +27,16 @@ namespace TorchSharp
             static long _totalCount = 0;
             static long _peakCount = 0;
 
-
-            public static List<Action<Tensor>> OnTensorCreateCallback { get; } =
-                new List<Action<Tensor>>();
-
-            public static List<Action<Tensor>> OnTensorDisposeCallback { get; } =
-                new List<Action<Tensor>>();
+            internal delegate void TensorEvent(Tensor tensor);
+            internal static event TensorEvent? OnTensorCreated;
+            internal static event TensorEvent? BeforeTensorDisposed;
 
             internal Tensor(IntPtr handle)
             {
                 this.handle = handle;
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
-
-                foreach (var callback in OnTensorCreateCallback) {
-                    callback(this);
-                }
+                OnTensorCreated?.Invoke(this);
             }
 
             /// <summary>
@@ -82,10 +76,7 @@ namespace TorchSharp
 
             public void Dispose()
             {
-                foreach (var callback in OnTensorDisposeCallback) {
-                    callback(this);
-                }
-
+                BeforeTensorDisposed?.Invoke(this);
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }
@@ -5610,7 +5601,6 @@ namespace TorchSharp
         /// Creates a new dispose scope for the current thread. Any tensor created within the dispose scope will
         /// be automatically disposed once the dispose scope is disposed.
         /// </summary>
-        /// <returns></returns>
         public static DisposeScopeManager.DisposeScope NewDisposeScope() => DisposeScopeManager.NewDisposeScope();
     }
 }
