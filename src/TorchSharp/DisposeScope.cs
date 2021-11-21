@@ -161,6 +161,7 @@ namespace TorchSharp
         {
             foreach (var disposable in disposables) {
                 if (Disposables.Remove(disposable)) {
+                    _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount++;
                     if (disposable is torch.Tensor tensor) {
                         tensor.OwningDisposeScope = null;
                     }
@@ -185,6 +186,14 @@ namespace TorchSharp
             Disposables = keep.ToHashSet(ReferenceEqualityComparer<IDisposable>.Default);
             foreach (var disposable in oldList) {
                 if (!Disposables.Contains(disposable)) {
+                    if (disposable is torch.Tensor tensor) {
+                        // No need to have the disposable call back to the scope
+                        tensor.OwningDisposeScope = null;
+                        if (!tensor.IsInvalid) {
+                            _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
+                        }
+                    }
+
                     disposable.Dispose();
                 }
             }
@@ -243,11 +252,7 @@ namespace TorchSharp
         /// </summary>
         public void Dispose()
         {
-            foreach (var disposable in Disposables.ToList()) {
-                disposable.Dispose();
-            }
-
-            Disposables.Clear();
+            DisposeEverything();
             _disposeScopeManager.RemoveDisposeScope(this);
         }
 
@@ -260,7 +265,7 @@ namespace TorchSharp
         /// <param name="disposable">The disposable that was disposed</param>
         public void WasDisposed(IDisposable disposable)
         {
-            _disposeScopeManager.DisposedInScopeCount++;
+            _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
             Disposables.Remove(disposable);
             if (disposable is torch.Tensor tensor) {
                 tensor.OwningDisposeScope = null;
@@ -278,6 +283,8 @@ namespace TorchSharp
         {
             if (OuterScope != null) {
                 OuterScope.Disposables.Add(disposable);
+            } else {
+                _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount++;
             }
 
             if (disposable is torch.Tensor tensor) {

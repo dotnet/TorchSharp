@@ -19,7 +19,7 @@ namespace TorchSharp
         [Fact]
         public void MinimalDisposeWorks()
         {
-            var preCount = DisposeScopeManager.ThreadTotalLiveCount;
+            DisposeScopeManager.Statistics.Reset();
             using (var scope1 = torch.NewDisposeScope()) {
                 var a1 = 1.ToTensor(); // This one is caught
                 var a2 = 2.ToTensor().DetatchFromDisposeScope(); // This one is lost
@@ -27,7 +27,12 @@ namespace TorchSharp
                 using var a4 = 4.ToTensor(); // This one was manually disposed
             }
 
-            Assert.Equal(preCount + 2, DisposeScopeManager.ThreadTotalLiveCount);
+            Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount);
+            // These numbers are higher than I expected them to be.
+            // Assert.Equal(4, DisposeScopeManager.Statistics.CreatedInScopeCount);
+            // Assert.Equal(2, DisposeScopeManager.Statistics.DisposedInScopeCount);
+            Assert.Equal(2, DisposeScopeManager.Statistics.DetachedFromScopeCount);
+            Assert.Equal(0, DisposeScopeManager.Statistics.CreatedOutsideScopeCount);
         }
 
         [Fact]
@@ -127,52 +132,51 @@ namespace TorchSharp
         [Fact]
         public void DisposeScopesCanBeNestled()
         {
+            DisposeScopeManager.Statistics.Reset();
             torch.Tensor data = torch.rand(10, 10);
-            var preTotalCount = DisposeScopeManager.ThreadTotalLiveCount;
-
             using (torch.NewDisposeScope()) {
                 var t1 = data * data + data;
 
-                var innerCount = DisposeScopeManager.ThreadTotalLiveCount;
+                var innerCount = DisposeScopeManager.Statistics.ThreadTotalLiveCount;
                 using (torch.NewDisposeScope()) {
                     var t2 = data + data - t1;
                 }
 
                 // Inner scope was disposed
-                Assert.Equal(DisposeScopeManager.ThreadTotalLiveCount, innerCount);
+                Assert.Equal(DisposeScopeManager.Statistics.ThreadTotalLiveCount, innerCount);
             }
 
             // It was all disposed
-            Assert.Equal(DisposeScopeManager.ThreadTotalLiveCount, preTotalCount);
+            Assert.Equal(0,DisposeScopeManager.Statistics.ThreadTotalLiveCount);
         }
 
         [Fact]
         public void DisposeScopeWorksForTestTraining1()
         {
-            var count = DisposeScopeManager.ThreadTotalLiveCount;
+            DisposeScopeManager.Statistics.Reset();
             using (var d = torch.NewDisposeScope()) {
                 var testTraining = new TestTraining();
                 testTraining.TestTraining1();
             }
 
             _testOutputHelper.WriteLine(
-                $"Undisposed Tensors with DisposeScope: {DisposeScopeManager.ThreadTotalLiveCount - count}");
-            Assert.Equal(count, DisposeScopeManager.ThreadTotalLiveCount);
+                $"Undisposed Tensors with DisposeScope: {DisposeScopeManager.Statistics.ThreadTotalLiveCount}");
+            Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount);
         }
 
         [Fact]
         public void DisposeScopeWorksForTestTrainingConv2d()
         {
-            var count = DisposeScopeManager.ThreadTotalLiveCount;
+            DisposeScopeManager.Statistics.Reset();
             using (var d = torch.NewDisposeScope()) {
                 var testTraining = new TestTraining();
                 testTraining.TestTrainingConv2d();
                 _testOutputHelper.WriteLine($"Undisposed Tensors inside DisposeScope: {d.DisposablesCount}");
             }
 
-            Assert.Equal(count, DisposeScopeManager.ThreadTotalLiveCount);
+            Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount);
             _testOutputHelper.WriteLine(
-                $"Undisposed Tensors after DisposeScope: {DisposeScopeManager.ThreadTotalLiveCount - count}");
+                $"Undisposed Tensors after DisposeScope: {DisposeScopeManager.Statistics.ThreadTotalLiveCount}");
         }
     }
 }

@@ -14,27 +14,21 @@ namespace TorchSharp
     public class DisposeScopeManager
     {
         [ThreadStatic] private static DisposeScopeManager _threadSingleton;
+        internal ThreadDisposeScopeStatistics StatisticsInstance { get; } = new ThreadDisposeScopeStatistics();
 
         internal static DisposeScopeManager ThreadSingleton => (_threadSingleton ??= new DisposeScopeManager());
         internal Stack<DisposeScope> DisposeScopeStack { get; } = new();
-        public long CreatedOutsideScopeCount { get; private set; }
-        public long CreatedInScopeCount { get; private set; }
-        public long DisposedInScopeCount { get; internal set; }
 
-        /// <summary>
-        /// The number of disposables that are currently live on the current thread. It's aproximate, see
-        /// Tensor.TotalCount.
-        /// </summary>
-        public static long ThreadTotalLiveCount => ThreadSingleton.CreatedInScopeCount - ThreadSingleton.DisposedInScopeCount;
+        public static ThreadDisposeScopeStatistics Statistics => ThreadSingleton.StatisticsInstance;
 
         internal DisposeScope RegisterOnCurrentDisposeScope(IDisposable disposable)
         {
             if (DisposeScopeStack.Count == 0) {
-                CreatedOutsideScopeCount++;
+                StatisticsInstance.CreatedOutsideScopeCount++;
                 return null;
             }
 
-            CreatedInScopeCount++;
+            StatisticsInstance.CreatedInScopeCount++;
             var current = DisposeScopeStack.Peek();
             current.Include(disposable);
             return current;
@@ -45,18 +39,18 @@ namespace TorchSharp
             return ThreadSingleton.InnerNewDisposeScope();
         }
 
-        private DisposeScope InnerNewDisposeScope()
-        {
-            var disposeScope = new DisposeScope(this);
-            DisposeScopeStack.Push(disposeScope);
-            return disposeScope;
-        }
-
         internal void RemoveDisposeScope(DisposeScope disposeScope)
         {
             Debug.Assert(DisposeScopeStack.Count > 0);
             Debug.Assert(DisposeScopeStack.Peek() == disposeScope);
             DisposeScopeStack.Pop();
+        }
+
+        private DisposeScope InnerNewDisposeScope()
+        {
+            var disposeScope = new DisposeScope(this);
+            DisposeScopeStack.Push(disposeScope);
+            return disposeScope;
         }
     }
 }
