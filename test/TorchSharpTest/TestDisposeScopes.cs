@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
@@ -14,6 +15,34 @@ namespace TorchSharp
         public TestDisposeScopes(ITestOutputHelper testOutputHelper)
         {
             _testOutputHelper = testOutputHelper;
+        }
+
+        [Fact]
+        public void PerformanceOfCreatingHashSetTest()
+        {
+            int numberOfItems = 20;
+            int numberOfTries = 100000;
+            var list = Enumerable.Range(0,numberOfItems).ToList();
+
+            for (int j = 0; j < 3; j++) {
+                _testOutputHelper.WriteLine($"Creating {numberOfTries} Lists with {numberOfItems} entries:");
+                var sw = Stopwatch.StartNew();
+                for (int i = 0; i < numberOfTries; i++) {
+                    list.ToList();
+                }
+                sw.Stop();
+                _testOutputHelper.WriteLine($"  Elapsed: {sw.Elapsed.TotalSeconds:0.00}s");
+
+                _testOutputHelper.WriteLine($"Creating  {numberOfTries} HashSets with {numberOfItems} entries:");
+                sw.Restart();
+                for (int i = 0; i < numberOfTries; i++) {
+                    list.ToHashSet();
+                }
+                sw.Stop();
+                _testOutputHelper.WriteLine($"  Elapsed: {sw.Elapsed.TotalSeconds:0.00}s");
+                _testOutputHelper.WriteLine("");
+                _testOutputHelper.WriteLine("");
+            }
         }
 
         [Fact]

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace TorchSharp
+namespace TorchSharp.Utils
 {
     /// <summary>
     /// A generic object comparerer that would only use object's reference,
@@ -13,24 +13,8 @@ namespace TorchSharp
         where T : class
     {
         private static IEqualityComparer<T> _defaultComparer;
-
-        public new static IEqualityComparer<T> Default
-        {
-            get { return _defaultComparer ??= new ReferenceEqualityComparer<T>(); }
-        }
-
-        #region IEqualityComparer<T> Members
-
-        public override bool Equals(T x, T y)
-        {
-            return ReferenceEquals(x, y);
-        }
-
-        public override int GetHashCode(T obj)
-        {
-            return RuntimeHelpers.GetHashCode(obj);
-        }
-
-        #endregion
+        public new static IEqualityComparer<T> Default => _defaultComparer ??= new ReferenceEqualityComparer<T>();
+        public override bool Equals(T x, T y) => ReferenceEquals(x, y);
+        public override int GetHashCode(T obj) => RuntimeHelpers.GetHashCode(obj);
     }
 }

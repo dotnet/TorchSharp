@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TorchSharp.Utils;
 
 namespace TorchSharp
 {
@@ -180,12 +181,12 @@ namespace TorchSharp
         /// tensors from disposing, use Exclude for that. Also, excluded tensors don't need to be included
         /// here.
         /// </summary>
-        public void DisposeEverythingBut(IEnumerable<IDisposable> keep)
+        public void DisposeEverythingBut(IEnumerable<IDisposable> inKeep)
         {
-            var oldList = Disposables;
-            Disposables = keep.ToHashSet(ReferenceEqualityComparer<IDisposable>.Default);
-            foreach (var disposable in oldList) {
-                if (!Disposables.Contains(disposable)) {
+            // Avoiding multiple enumerations
+            var keep = inKeep.ToList();
+            foreach (var disposable in Disposables) {
+                if (!keep.Contains(disposable)) {
                     if (disposable is torch.Tensor tensor) {
                         // No need to have the disposable call back to the scope
                         tensor.OwningDisposeScope = null;
