@@ -186,15 +186,18 @@ namespace TorchSharp
             // Avoiding multiple enumerations
             var keep = inKeep.ToList();
             foreach (var disposable in Disposables) {
-                if (!keep.Contains(disposable)) {
+                if (!keep.Any(x => ReferenceEquals(disposable, x))) {
                     if (disposable is torch.Tensor tensor) {
                         // No need to have the disposable call back to the scope
                         tensor.OwningDisposeScope = null;
                         if (!tensor.IsInvalid) {
                             _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
                         }
+                    } else {
+                        _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
                     }
 
+                    Disposables.Remove(disposable);
                     disposable.Dispose();
                 }
             }

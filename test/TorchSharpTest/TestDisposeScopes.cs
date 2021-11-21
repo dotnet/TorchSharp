@@ -1,5 +1,6 @@
 ﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace TorchSharp
         {
             int numberOfItems = 20;
             int numberOfTries = 100000;
-            var list = Enumerable.Range(0,numberOfItems).ToList();
+            var list = Enumerable.Range(0, numberOfItems).ToList();
 
             for (int j = 0; j < 3; j++) {
                 _testOutputHelper.WriteLine($"Creating {numberOfTries} Lists with {numberOfItems} entries:");
@@ -30,6 +31,7 @@ namespace TorchSharp
                 for (int i = 0; i < numberOfTries; i++) {
                     list.ToList();
                 }
+
                 sw.Stop();
                 _testOutputHelper.WriteLine($"  Elapsed: {sw.Elapsed.TotalSeconds:0.00}s");
 
@@ -38,6 +40,7 @@ namespace TorchSharp
                 for (int i = 0; i < numberOfTries; i++) {
                     list.ToHashSet();
                 }
+
                 sw.Stop();
                 _testOutputHelper.WriteLine($"  Elapsed: {sw.Elapsed.TotalSeconds:0.00}s");
                 _testOutputHelper.WriteLine("");
@@ -54,6 +57,11 @@ namespace TorchSharp
                 var a2 = 2.ToTensor().DetatchFromDisposeScope(); // This one is lost
                 var a3 = 3.ToTensor().MoveToOuterDisposeScope(); // This one is lost also
                 using var a4 = 4.ToTensor(); // This one was manually disposed
+                var disposables = scope1.DisposablesView;
+                Assert.True(Contains(disposables, a1));
+                Assert.False(Contains(disposables, a2));
+                Assert.False(Contains(disposables, a3));
+                Assert.True(Contains(disposables, a4));
             }
 
             Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount);
@@ -62,6 +70,30 @@ namespace TorchSharp
             // Assert.Equal(2, DisposeScopeManager.Statistics.DisposedInScopeCount);
             Assert.Equal(2, DisposeScopeManager.Statistics.DetachedFromScopeCount);
             Assert.Equal(0, DisposeScopeManager.Statistics.CreatedOutsideScopeCount);
+        }
+
+        [Fact]
+        public void DisposeEverythingButWorks()
+        {
+            using (var scope = torch.NewDisposeScope()) {
+                var a1 = 1.ToTensor();
+                var a2 = 2.ToTensor();
+                var a3 = 3.ToTensor();
+                var a4 = 4.ToTensor();
+
+                var disposables = scope.DisposablesView;
+                Assert.True(Contains(disposables, a1));
+                Assert.True(Contains(disposables, a2));
+                Assert.True(Contains(disposables, a3));
+                Assert.True(Contains(disposables, a4));
+
+                scope.DisposeEverythingBut(a4);
+                disposables = scope.DisposablesView;
+                Assert.False(Contains(disposables, a1));
+                Assert.False(Contains(disposables, a2));
+                Assert.False(Contains(disposables, a3));
+                Assert.True(Contains(disposables, a4));
+            }
         }
 
         [Fact]
@@ -111,7 +143,6 @@ namespace TorchSharp
         public void TensorsAreDisposedCorrectly()
         {
             torch.Tensor data = torch.rand(10, 10);
-
             var disposables = new List<torch.Tensor>();
             using (var d = torch.NewDisposeScope()) {
                 var newValue = data * data + data;
@@ -176,7 +207,7 @@ namespace TorchSharp
             }
 
             // It was all disposed
-            Assert.Equal(0,DisposeScopeManager.Statistics.ThreadTotalLiveCount);
+            Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount);
         }
 
         [Fact]
@@ -207,5 +238,8 @@ namespace TorchSharp
             _testOutputHelper.WriteLine(
                 $"Undisposed Tensors after DisposeScope: {DisposeScopeManager.Statistics.ThreadTotalLiveCount}");
         }
+
+        // Assert Contains causes problems!
+        private bool Contains<T>(IReadOnlyList<T> list, T item) => list.Any(x => ReferenceEquals(x, item));
     }
 }
