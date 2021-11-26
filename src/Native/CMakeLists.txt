@@ -47,6 +47,7 @@ if(WIN32)
     add_compile_options(/Zc:inline)
     add_compile_options(/fp:precise)
     add_compile_options(/EHsc)
+    add_compile_options(/MP)
 
     if ("$ENV{__BuildArch}" STREQUAL "x86")
         add_compile_options(/Gz)
