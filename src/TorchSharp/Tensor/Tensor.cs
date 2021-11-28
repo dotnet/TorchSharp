@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using Microsoft.Win32.SafeHandles;
 
 #nullable enable
 namespace TorchSharp
@@ -15,21 +16,15 @@ namespace TorchSharp
         /// <summary>
         /// Represents a TorchSharp tensor.
         /// </summary>
-        public partial class Tensor : IDisposable
+        public partial class Tensor : SafeHandleZeroOrMinusOneIsInvalid
         {
-            /// <summary>
-            /// A handle to the underlying native tensor.
-            /// This field should only be used in rare circumstances. Instead, use the 'Handle' property, which
-            /// validates that the handle is not zero.
-            /// </summary>
-            internal IntPtr handle;
-
             static long _totalCount = 0;
             static long _peakCount = 0;
 
             internal Tensor(IntPtr handle)
+                : base(ownsHandle: true)
             {
-                this.handle = handle;
+                SetHandle(handle);
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
             }
@@ -46,43 +41,22 @@ namespace TorchSharp
             }
 
             /// <summary>
-            ///  TBD
-            /// </summary>
-            /// <returns></returns>
-            public override int GetHashCode()
-            {
-                return base.GetHashCode();
-            }
-
-            /// <summary>
             /// A friendly name for the tensor. This is useful for debugging purposes.
             /// </summary>
             public string? name { get; set; }
 
-            /// <summary>
-            ///   Finalize the tensor. Releases the tensor and its associated data.
-            /// </summary>
-            ~Tensor() => Dispose(false);
-
-            public void Dispose()
-            {
-                Dispose(true);
-                GC.SuppressFinalize(this);
-            }
-
             [DllImport("LibTorchSharp")]
             extern static void THSTensor_dispose(IntPtr handle);
 
-            /// <summary>
-            ///   Implements the .NET Dispose pattern.
-            /// </summary>
-            void Dispose(bool disposing)
+            protected override bool ReleaseHandle()
             {
-                if (handle != IntPtr.Zero) {
+                if (!IsInvalid)
+                {
                     System.Threading.Interlocked.Decrement(ref _totalCount);
                     THSTensor_dispose(handle);
                     handle = IntPtr.Zero;
                 }
+                return true;
             }
 
             [DllImport("LibTorchSharp")]
@@ -144,7 +118,7 @@ namespace TorchSharp
             /// Get the handle for the tensor, validating that it's not null.
             /// </summary>
             /// <remarks>
-            /// This property validates the handle. If you **aboslutely** need to get the handle without validation,
+            /// This property validates the handle. If you **absolutely** need to get the handle without validation,
             /// use the 'handle' field.
             /// </remarks>
             public IntPtr Handle {
