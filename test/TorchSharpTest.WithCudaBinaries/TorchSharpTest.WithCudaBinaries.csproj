@@ -20,6 +20,7 @@
     <Compile Include="..\TorchSharpTest\TestTorchTensor.cs" Link="TestTorchTensor.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchTensorBugs.cs" Link="TestTorchTensorBugs.cs" />
     <Compile Include="..\TorchSharpTest\TestTraining.cs" Link="TestTraining.cs" />
+    <Compile Include="..\TorchSharpTest\TestDisposeScopes.cs" Link="TestDisposeScopes.cs" />
   </ItemGroup>
 
   <ItemGroup>

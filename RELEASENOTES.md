@@ -1,6 +1,14 @@
 ## TorchSharp Release Notes
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
+## NuGet Version 0.95.4
+
+__API Changes:__
+
+Added DisposeScopeManager and torch.NewDisposeScope() to facilitate a new solution for managing disposing of  tensors with fewer usings.
+
+__Fixed Bugs:__
+
 
 ### NuGet Version 0.95.3
 
