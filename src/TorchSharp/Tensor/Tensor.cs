@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -27,11 +28,14 @@ namespace TorchSharp
             static long _totalCount = 0;
             static long _peakCount = 0;
 
+            internal DisposeScope? OwningDisposeScope { get; set; }
+
             internal Tensor(IntPtr handle)
             {
                 this.handle = handle;
                 System.Threading.Interlocked.Increment(ref _totalCount);
                 _peakCount = Math.Max(_totalCount, _peakCount);
+                OwningDisposeScope = DisposeScopeManager.ThreadSingleton.RegisterOnCurrentDisposeScope(this);
             }
 
             /// <summary>
@@ -66,6 +70,7 @@ namespace TorchSharp
 
             public void Dispose()
             {
+                OwningDisposeScope?.WasDisposed(this);
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }
@@ -83,6 +88,32 @@ namespace TorchSharp
                     THSTensor_dispose(handle);
                     handle = IntPtr.Zero;
                 }
+            }
+
+            /// <summary>
+            /// Is true if the tensor has been disposed, false otherwise.
+            /// </summary>
+            public bool IsInvalid => handle == IntPtr.Zero;
+
+            /// <summary>
+            /// Moves tensor to the outer DisposeScope. If there is no outer DisposeScope, it's detached from the
+            /// DisposeScope system.
+            /// </summary>
+            /// <returns>The same tensor that the method was called on</returns>
+            public torch.Tensor MoveToOuterDisposeScope()
+            {
+                OwningDisposeScope?.MoveToOuter(this);
+                return this;
+            }
+
+            /// <summary>
+            /// Detatches the tensor completely from the DisposeScope system.
+            /// </summary>
+            /// <returns>The same tensor that the method was called on</returns>
+            public torch.Tensor DetatchFromDisposeScope()
+            {
+                OwningDisposeScope?.Detach(this);
+                return this;
             }
 
             [DllImport("LibTorchSharp")]
@@ -5121,9 +5152,11 @@ namespace TorchSharp
             /// <param name="withData">Boolean, used to discriminate.</param>
             /// <param name="fltFormat">The format string to use for floating point values.</param>
             /// <param name="width">The width of each line of the output string.</param>
+            /// <param name="cultureInfo">The CulturInfo to use when formatting the text</param>
             /// <returns></returns>
-            public string ToString(bool withData, string fltFormat = "g5", int width = 100)
+            public string ToString(bool withData, string fltFormat = "g5", int width = 100, CultureInfo? cultureInfo = null)
             {
+                var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
                 if (!withData) return this.ToString();
 
                 var builder = new StringBuilder(this.ToString());
@@ -5131,12 +5164,12 @@ namespace TorchSharp
                 if (Dimensions == 0) {
 
                     builder.Append(", value = ");
-                    PrintValue(builder, dtype, this.ToScalar(), fltFormat);
+                    PrintValue(builder, dtype, this.ToScalar(), fltFormat, actualCulturInfo);
 
                 } else if (Dimensions == 1) {
 
                     var row = new List<string>();
-                    BuildRow(row, this, width, fltFormat);
+                    BuildRow(row, this, width, fltFormat, actualCulturInfo);
 
                     var appendEllipsis = row.Count < shape[0];
 
@@ -5146,18 +5179,18 @@ namespace TorchSharp
                 } else if (Dimensions == 2) {
 
                     builder.AppendLine().AppendLine();
-                    PrintTwoDimensions(fltFormat, width, builder, this);
+                    PrintTwoDimensions(fltFormat, width, builder, this, actualCulturInfo);
 
                 } else {
                     builder.AppendLine();
                     var indices = new List<TensorIndex>();
-                    RecursivePrintDimensions(0, indices, fltFormat, width, builder);
+                    RecursivePrintDimensions(0, indices, fltFormat, width, builder, actualCulturInfo);
                 }
 
                 return builder.ToString();
             }
 
-            private void RecursivePrintDimensions(int dim, IEnumerable<TensorIndex> indices, string fltFormat, int width, StringBuilder builder)
+            private void RecursivePrintDimensions(int dim, IEnumerable<TensorIndex> indices, string fltFormat, int width, StringBuilder builder, CultureInfo cultureInfo)
             {
                 if (dim == Dimensions - 3) {
                     // We're at the third-last dimension. This is where we can print out the last two dimensions.
@@ -5168,13 +5201,13 @@ namespace TorchSharp
                         var str = IndicesToString(idxs);
                         builder.AppendLine().AppendLine($"{str} =");
                         var slice = this.index(idxs);
-                        PrintTwoDimensions(fltFormat, width, builder, slice);
+                        PrintTwoDimensions(fltFormat, width, builder, slice, cultureInfo);
                     }
                 } else {
 
                     for (int i = 0; i < shape[dim]; i++) {
 
-                        RecursivePrintDimensions(dim + 1, indices.Append(TensorIndex.Single(i)), fltFormat, width, builder);
+                        RecursivePrintDimensions(dim + 1, indices.Append(TensorIndex.Single(i)), fltFormat, width, builder, cultureInfo);
                     }
                 }
             }
@@ -5195,7 +5228,7 @@ namespace TorchSharp
                 return builder.Append(']').ToString();
             }
 
-            private static void PrintTwoDimensions(string fltFormat, int width, StringBuilder builder, Tensor t)
+            private static void PrintTwoDimensions(string fltFormat, int width, StringBuilder builder, Tensor t, CultureInfo cultureInfo)
             {
                 // TODO: This code will align the first digits of each column, taking a leading '-' into account.
                 //       An alternative would be to align periods, or to align the last character of each column.
@@ -5210,7 +5243,7 @@ namespace TorchSharp
 
                 for (int i = 0; i < rowCount; i++) {
                     var row = new List<string>();
-                    BuildRow(row, t[i], width, fltFormat);
+                    BuildRow(row, t[i], width, fltFormat, cultureInfo);
                     rows.Add(row);
                 }
 
@@ -5255,7 +5288,7 @@ namespace TorchSharp
                 builder.AppendLine();
             }
 
-            private static void BuildRow(List<string> row, Tensor t, int width, string fltFormat)
+            private static void BuildRow(List<string> row, Tensor t, int width, string fltFormat, CultureInfo cultureInfo)
             {
                 var type = t.dtype;
                 var endingWidth = ellipsis.Length + 1;
@@ -5263,7 +5296,7 @@ namespace TorchSharp
                 for (int i = 0; i < t.shape[0]; i++) {
 
                     var builder = new StringBuilder();
-                    PrintValue(builder, type, t[i].ToScalar(), fltFormat);
+                    PrintValue(builder, type, t[i].ToScalar(), fltFormat, cultureInfo);
 
                     var str = builder.ToString();
 
@@ -5276,7 +5309,7 @@ namespace TorchSharp
                 }
             }
 
-            private static void PrintValue(StringBuilder builder, ScalarType type, Scalar value, string fltFormat)
+            private static void PrintValue(StringBuilder builder, ScalarType type, Scalar value, string fltFormat, CultureInfo cultureInfo)
             {
                 switch (type) {
                 case ScalarType.Byte:
@@ -5298,33 +5331,33 @@ namespace TorchSharp
                     builder.Append(value.ToBoolean());
                     break;
                 case ScalarType.Float16:
-                    builder.Append(value.ToSingle().ToString(fltFormat));
+                    builder.Append(value.ToSingle().ToString(fltFormat, cultureInfo));
                     break;
                 case ScalarType.Float32:
-                    builder.Append(value.ToSingle().ToString(fltFormat));
+                    builder.Append(value.ToSingle().ToString(fltFormat, cultureInfo));
                     break;
                 case ScalarType.Float64:
-                    builder.Append(value.ToDouble().ToString(fltFormat));
+                    builder.Append(value.ToDouble().ToString(fltFormat, cultureInfo));
                     break;
                 case ScalarType.ComplexFloat32:
                     var val1 = value.ToComplexFloat32();
                     if (val1.Real != 0.0f || val1.Imaginary == 0.0f) {
-                        builder.Append(val1.Real.ToString(fltFormat));
+                        builder.Append(val1.Real.ToString(fltFormat, cultureInfo));
                         if (val1.Imaginary != 0.0f)
                             builder.Append('+');
                     }
                     if (val1.Imaginary != 0.0f)
-                        builder.Append(val1.Imaginary.ToString(fltFormat)).Append('i');
+                        builder.Append(val1.Imaginary.ToString(fltFormat, cultureInfo)).Append('i');
                     break;
                 case ScalarType.ComplexFloat64:
                     var val2 = value.ToComplexFloat64();
                     if (val2.Real != 0.0f || val2.Imaginary == 0.0f) {
-                        builder.Append(val2.Real.ToString(fltFormat));
+                        builder.Append(val2.Real.ToString(fltFormat, cultureInfo));
                         if (val2.Imaginary != 0.0f)
                             builder.Append('+');
                     }
                     if (val2.Imaginary != 0.0f)
-                        builder.Append(val2.Imaginary.ToString(fltFormat)).Append('i');
+                        builder.Append(val2.Imaginary.ToString(fltFormat, cultureInfo)).Append('i');
                     break;
                 }
             }
@@ -5577,5 +5610,11 @@ namespace TorchSharp
 
         public static ScalarType cfloat = ScalarType.ComplexFloat32;
         public static ScalarType cdouble = ScalarType.ComplexFloat64;
+
+        /// <summary>
+        /// Creates a new dispose scope for the current thread. Any tensor created within the dispose scope will
+        /// be automatically disposed once the dispose scope is disposed.
+        /// </summary>
+        public static DisposeScope NewDisposeScope() => DisposeScopeManager.NewDisposeScope();
     }
 }
