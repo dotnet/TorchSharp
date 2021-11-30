@@ -102,7 +102,7 @@ namespace TorchSharp
             /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <returns></returns>
-            static public Conv2d Conv3d(long inputChannel, long outputChannel, (long, long, long) kernelSize, (long, long, long)? stride = null, (long, long, long)? padding = null, (long, long, long)? dilation = null, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
+            static public Conv3d Conv3d(long inputChannel, long outputChannel, (long, long, long) kernelSize, (long, long, long)? stride = null, (long, long, long)? padding = null, (long, long, long)? dilation = null, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
             {
                 if (stride == null) stride = (1, 1, 1);
                 if (padding == null) padding = (0, 0, 0);
