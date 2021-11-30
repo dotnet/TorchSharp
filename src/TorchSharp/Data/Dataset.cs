@@ -8,7 +8,6 @@ namespace TorchSharp.Data
     public interface Dataset: IDisposable
     {
         public long Count();
-        public (Tensor, Tensor) GetTensor(object index);
-        public IEnumerable<object> GetDataEnumerable();
+        public (Tensor, Tensor) GetTensor(int index);
     }
 }
