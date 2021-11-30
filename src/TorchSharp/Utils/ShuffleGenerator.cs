@@ -1,6 +1,6 @@
 using System;
 
-namespace TorchSharp.Data
+namespace TorchSharp.Utils
 {
     public class ShuffleGenerator
     {
