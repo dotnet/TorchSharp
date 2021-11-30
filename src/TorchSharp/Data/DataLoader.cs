@@ -55,7 +55,7 @@ namespace TorchSharp.Data
             private Tensor dataTensor;
             private Tensor labelTensor;
 
-            private bool isFinished() => !shuffleGenerator.hasNext();
+            private bool isFinished() => shuffle ? !shuffleGenerator.hasNext() : currentVal >= dataset.Count;
 
             private int getNextValue() => shuffle ? shuffleGenerator.next() : currentVal++;
 
