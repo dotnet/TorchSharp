@@ -75,7 +75,7 @@ namespace TorchSharp
                 /// <summary>
                 ///   Implements the .NET Dispose pattern.
                 /// </summary>
-                protected void Dispose(bool disposing)
+                protected virtual void Dispose(bool disposing)
                 {
                     if (disposing && handle != null && !handle.IsInvalid) {
                         handle.Dispose();
@@ -454,41 +454,48 @@ namespace TorchSharp
 
                 using (var _ = torch.no_grad()) {
 
-                    foreach (var (name, param) in _parameters) {
+                    using (var d = torch.NewDisposeScope()) {
 
-                        using var grad = param.grad();
+                        foreach (var (name, param) in _parameters) {
 
-                        if (grad is null) continue;
+                            var grad = param.grad();
 
-                        if (grad.is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
+                            if (grad is null) continue;
 
-                        var state = _state[name];
+                            if (grad.is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
 
-                        var square_avg = state.square_avg;
-                        var acc_delta = state.acc_delta;
+                            var state = _state[name];
 
-                        using var grad0 = (_weight_decay != 0)
-                            ? grad.add(param, alpha: _weight_decay)
-                            : grad.alias();
+                            var square_avg = state.square_avg;
+                            var acc_delta = state.acc_delta;
 
-                        square_avg.mul_(_rho).Dispose();
-                        square_avg.addcmul_(grad0, grad0, 1 - _rho).Dispose();
+                            grad = (_weight_decay != 0)
+                                ? grad.add(param, alpha: _weight_decay)
+                                : grad.alias();
 
-                        using var t2 = square_avg.add(_eps);
-                        using var std = t2.sqrt_();
+                            square_avg.mul_(_rho).addcmul_(grad, grad, 1 - _rho);
 
-                        using var t3 = acc_delta.add(_eps);
-                        t3.sqrt_().Dispose();
-                        t3.div_(std).Dispose();
-                        using var delta = t3.mul_(grad0);
+                            var std = square_avg.add(_eps).sqrt_();
+                            var delta = acc_delta.add(_eps).sqrt_().div_(std).mul_(grad);
 
-                        param.add_(delta, alpha: -LearningRate).Dispose();
-                        acc_delta.mul_(_rho).Dispose();
-                        acc_delta.addcmul_(delta, delta, 1 - _rho).Dispose();
+                            param.add_(delta, alpha: -LearningRate);
+                            acc_delta.mul_(_rho).addcmul_(delta, delta, 1 - _rho);
+                        }
+
+                        d.DisposeEverything();
                     }
                 }
 
                 return loss;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                foreach (var (name, state) in _state) {
+                    state.square_avg.Dispose();
+                    state.acc_delta.Dispose();
+                }
             }
 
             private class State
@@ -546,44 +553,53 @@ namespace TorchSharp
 
                 using (var _ = torch.no_grad()) {
 
-                    foreach (var (name, param) in _parameters) {
+                    using (var d = torch.NewDisposeScope()) {
 
-                        using var grad = param.grad();
+                        foreach (var (name, param) in _parameters) {
 
-                        if (grad is null) continue;
+                            var grad = param.grad();
 
-                        if (grad.is_sparse) throw new ArgumentException("Adamax does not support sparse gradients");
+                            if (grad is null) continue;
 
-                        var state = _state[name];
+                            if (grad.is_sparse) throw new ArgumentException("Adamax does not support sparse gradients");
 
-                        state.step += 1;
+                            var state = _state[name];
 
-                        var exp_avg = state.exp_avg;
-                        var exp_inf = state.exp_inf;
+                            state.step += 1;
 
-                        using var grad1 = (_weight_decay != 0)
-                            ? grad.add(param, alpha: _weight_decay)
-                            : grad.alias();
+                            var exp_avg = state.exp_avg;
+                            var exp_inf = state.exp_inf;
 
-                        exp_avg.mul_(_beta1).Dispose();
-                        exp_avg.add_(grad1, alpha: 1 - _beta1).Dispose();
+                            grad = (_weight_decay != 0)
+                                ? grad.add(param, alpha: _weight_decay)
+                                : grad.alias();
 
-                        exp_inf.mul_(_beta2).Dispose();
-                        using var t3 = exp_inf.unsqueeze(0);
-                        using var t4 = grad1.abs();
-                        t4.add_(_eps).Dispose();
-                        using var t6 = t4.unsqueeze_(0);
+                            exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
 
-                        using var norm_buf = torch.cat(new Tensor[] { t3, t6 }, 0);
+                            var norm_buf = torch.cat(new Tensor[] {
+                            exp_inf.mul_(_beta2).unsqueeze(0),
+                            grad.abs().add_(_eps).unsqueeze_(0) }, 0);
 
-                        using var t7 = torch.amax(norm_buf, new long[] { 0 }, false, exp_inf);
+                            torch.amax(norm_buf, new long[] { 0 }, false, exp_inf);
 
-                        var clr = LearningRate / (1 - Math.Pow(_beta1, state.step));
-                        param.addcdiv_(exp_avg, exp_inf, value: -clr).Dispose();
+                            var clr = LearningRate / (1 - Math.Pow(_beta1, state.step));
+                            param.addcdiv_(exp_avg, exp_inf, value: -clr);
+                        }
+
+                        d.DisposeEverything();
                     }
                 }
 
                 return loss;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                foreach (var (name, state) in _state) {
+                    state.exp_avg.Dispose();
+                    state.exp_inf.Dispose();
+                }
             }
 
             private class State
@@ -646,54 +662,64 @@ namespace TorchSharp
 
                 using (var _ = torch.no_grad()) {
 
-                    foreach (var (name, param) in _parameters) {
+                    using (var d = torch.NewDisposeScope()) {
 
-                        using var grad = param.grad();
+                        foreach (var (name, param) in _parameters) {
 
-                        if (grad is null) continue;
+                            var grad = param.grad();
 
-                        var state = _state[name];
+                            if (grad is null) continue;
 
-                        state.step += 1;
+                            var state = _state[name];
 
-                        var exp_avg = state.exp_avg;
-                        var exp_avg_sq = state.exp_avg_sq;
+                            state.step += 1;
 
-                        var bias_correction2 = 1 - Math.Pow(_beta2, state.step);
+                            var exp_avg = state.exp_avg;
+                            var exp_avg_sq = state.exp_avg_sq;
 
-                        using var grad1 = (_weight_decay != 0)
-                            ? grad.add(param, alpha: _weight_decay)
-                            : grad.alias();
+                            var bias_correction2 = 1 - Math.Pow(_beta2, state.step);
 
-                        var mu = _beta1 * (1.0 - 0.5 * Math.Pow(0.96, state.step * _momentum_decay));
-                        var mu_next = _beta1 * (1.0 - 0.5 * Math.Pow(0.96, (state.step + 1) * _momentum_decay));
+                            grad = (_weight_decay != 0)
+                                ? grad.add(param, alpha: _weight_decay)
+                                : grad.alias();
 
-                        var mu_product = state.mu_product * mu;
-                        var mu_product_next = mu_product * mu * mu_next;
+                            var mu = _beta1 * (1.0 - 0.5 * Math.Pow(0.96, state.step * _momentum_decay));
+                            var mu_next = _beta1 * (1.0 - 0.5 * Math.Pow(0.96, (state.step + 1) * _momentum_decay));
 
-                        using var t0 = exp_avg.mul_(_beta1);
-                        using var t1 = t0.add_(grad1, alpha: 1 - _beta1);
-                        using var t2 = exp_avg_sq.mul_(_beta2);
-                        t2.addcmul_(grad1, grad1, value: 1 - _beta2).Dispose();
+                            var mu_product = state.mu_product * mu;
+                            var mu_product_next = mu_product * mu * mu_next;
 
-                        using var t4 = exp_avg_sq.div(bias_correction2);
-                        using var t5 = t4.sqrt_();
-                        using var denom = t5.add_(_eps);
+                            exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
+                            exp_avg_sq.mul_(_beta2).addcmul_(grad, grad, value: 1 - _beta2);
 
-                        param.addcdiv_(grad1, denom, value: -LearningRate * (1 - mu) / (1 - mu_product)).Dispose();
-                        param.addcdiv_(exp_avg, denom, value: -LearningRate * mu_next / (1 - mu_product_next)).Dispose();
+                            var denom = exp_avg_sq.div(bias_correction2).sqrt_().add_(_eps);
 
-                        state.mu_product = mu_product;
+                            param.addcdiv_(grad, denom, value: -LearningRate * (1 - mu) / (1 - mu_product));
+                            param.addcdiv_(exp_avg, denom, value: -LearningRate * mu_next / (1 - mu_product_next));
+
+                            state.mu_product = mu_product;
+                        }
+
+                        d.DisposeEverything();
                     }
                 }
 
                 return loss;
             }
 
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                foreach (var (name, state) in _state) {
+                    state.exp_avg.Dispose();
+                    state.exp_avg_sq.Dispose();
+                }
+            }
+
             private class State
             {
                 public int step;
-                public double mu_product; 
+                public double mu_product;
                 public Tensor exp_avg;
                 public Tensor exp_avg_sq;
             }
@@ -749,54 +775,62 @@ namespace TorchSharp
 
                 using (var _ = torch.no_grad()) {
 
-                    foreach (var (name, param) in _parameters) {
+                    using (var d = torch.NewDisposeScope()) {
 
-                        using var grad = param.grad();
+                        foreach (var (name, param) in _parameters) {
 
-                        if (grad is null) continue;
+                            var grad = param.grad();
 
-                        var state = _state[name];
+                            if (grad is null) continue;
 
-                        state.step += 1;
+                            var state = _state[name];
 
-                        var exp_avg = state.exp_avg;
-                        var exp_avg_sq = state.exp_avg_sq;
+                            state.step += 1;
 
-                        var bias_correction1 = 1 - Math.Pow(_beta1, state.step);
-                        var bias_correction2 = 1 - Math.Pow(_beta2, state.step);
+                            var exp_avg = state.exp_avg;
+                            var exp_avg_sq = state.exp_avg_sq;
 
-                        using var grad1 = (_weight_decay != 0)
-                            ? grad.add(param, alpha: _weight_decay)
-                            : grad.alias();
+                            var bias_correction1 = 1 - Math.Pow(_beta1, state.step);
+                            var bias_correction2 = 1 - Math.Pow(_beta2, state.step);
 
-                        using var t0 = exp_avg.mul_(_beta1);
-                        t0.add_(grad1, alpha: 1 - _beta1).Dispose();
-                        using var t2 = exp_avg_sq.mul_(_beta2);
-                        t2.addcmul_(grad1, grad1, value: 1 - _beta2).Dispose();
+                            grad = (_weight_decay != 0)
+                                ? grad.add(param, alpha: _weight_decay)
+                                : grad.alias();
 
-                        using var bias_corrected_exp_avg = exp_avg / bias_correction1;
+                            exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
+                            exp_avg_sq.mul_(_beta2).addcmul_(grad, grad, value: 1 - _beta2);
 
-                        var rho_inf = 2 / (1 - _beta2) - 1;
-                        var rho_t = rho_inf - 2 * state.step * Math.Pow(_beta2, state.step) / bias_correction2;
+                            var bias_corrected_exp_avg = exp_avg / bias_correction1;
 
-                        using var t6 = bias_corrected_exp_avg * LearningRate;
+                            var rho_inf = 2 / (1 - _beta2) - 1;
+                            var rho_t = rho_inf - 2 * state.step * Math.Pow(_beta2, state.step) / bias_correction2;
 
-                        if (rho_t > 5) {
-                            var rect = Math.Sqrt((rho_t - 4) * (rho_t - 2) * rho_inf / ((rho_inf - 4) * (rho_inf - 2) * rho_t));
-                            using var t4 = exp_avg_sq.sqrt();
-                            using var t5 = t4.add_(_eps);
-                            using var adaptive_lr = Math.Sqrt(bias_correction2) / t5;
+                            var t6 = bias_corrected_exp_avg * LearningRate;
 
-                            using var t7 = t6 * LearningRate * adaptive_lr * rect;
-                            param.add_(t7, alpha: -1.0).Dispose();
+                            if (rho_t > 5) {
+                                var rect = Math.Sqrt((rho_t - 4) * (rho_t - 2) * rho_inf / ((rho_inf - 4) * (rho_inf - 2) * rho_t));
+                                var adaptive_lr = Math.Sqrt(bias_correction2) / exp_avg_sq.sqrt().add_(_eps);
+
+                                param.add_(t6 * LearningRate * adaptive_lr * rect, alpha: -1.0);
+                            } else {
+                                param.add_(t6, alpha: -1.0);
+                            }
                         }
-                        else {
-                            param.add_(t6, alpha: -1.0).Dispose();
-                        }
+
+                        d.DisposeEverything();
                     }
                 }
 
                 return loss;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                foreach (var (name, state) in _state) {
+                    state.exp_avg.Dispose();
+                    state.exp_avg_sq.Dispose();
+                }
             }
 
             private class State
@@ -856,40 +890,50 @@ namespace TorchSharp
 
                 using (var _ = torch.no_grad()) {
 
-                    foreach (var (name, param) in _parameters) {
+                    using (var d = torch.NewDisposeScope()) {
 
-                        using var grad = param.grad();
+                        foreach (var (name, param) in _parameters) {
 
-                        if (grad is null) continue;
+                            var grad = param.grad();
 
-                        if (grad.is_sparse) throw new ArgumentException("ASGD does not support sparse gradients");
+                            if (grad is null) continue;
 
-                        var state = _state[name];
+                            if (grad.is_sparse) throw new ArgumentException("ASGD does not support sparse gradients");
 
-                        state.step += 1;
+                            var state = _state[name];
 
-                        using var grad1 = (_weight_decay != 0)
-                            ? grad.add(param, alpha: _weight_decay)
-                            : grad.alias();
+                            state.step += 1;
 
-                        param.mul_(1 - _lambd * state.eta).Dispose();
-                        param.add_(grad1, alpha: -state.eta).Dispose();
+                            grad = (_weight_decay != 0)
+                                ? grad.add(param, alpha: _weight_decay)
+                                : grad.alias();
 
-                        if (state.mu != 1) {
-                            using var t2 = param.sub(state.ax);
-                            using var t3 = t2.mul(state.mu);
-                            state.ax.add_(t3).Dispose();
+                            param.mul_(1 - _lambd * state.eta);
+                            param.add_(grad, alpha: -state.eta);
+
+                            if (state.mu != 1) {
+                                state.ax.add_(param.sub(state.ax).mul(state.mu));
+                            } else {
+                                state.ax.copy_(param);
+                            }
+
+                            state.eta = LearningRate / Math.Pow((1 + _lambd * LearningRate * state.step), _alpha);
+                            state.mu = 1 / Math.Max(1, state.step - _t0);
                         }
-                        else {
-                            state.ax.copy_(param).Dispose();
-                        }
 
-                        state.eta = LearningRate / Math.Pow((1 + _lambd * LearningRate * state.step), _alpha);
-                        state.mu = 1 / Math.Max(1, state.step - _t0);
+                        d.DisposeEverything();
                     }
                 }
 
                 return loss;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                foreach (var (name, state) in _state) {
+                    state.ax.Dispose();
+                }
             }
 
             private class State
@@ -929,6 +973,14 @@ namespace TorchSharp
                 _etaplus = etaplus;
                 _min_step = min_step;
                 _max_step = max_step;
+
+                foreach (var (name, p) in _parameters) {
+                    var state = new State();
+                    _state[name] = state;
+                    state.step = 0;
+                    state.prev = torch.zeros_like(p);
+                    state.step_size = p.new_empty(p.shape).fill_(LearningRate);
+                }
             }
 
             public override Tensor step(Func<Tensor> closure = null)
@@ -941,55 +993,54 @@ namespace TorchSharp
 
                 using (var _ = torch.no_grad()) {
 
-                    foreach (var (name, p) in _parameters) {
+                    using (var d = torch.NewDisposeScope()) {
 
-                        using var grad = p.grad();
+                        foreach (var (name, p) in _parameters) {
 
-                        if (grad is null) continue;
+                            var grad = p.grad();
 
-                        if (grad.is_sparse) throw new ArgumentException("Rprop does not support sparse gradients");
+                            if (grad is null) continue;
 
-                        if (!_state.TryGetValue(name, out var state)) {
+                            if (grad.is_sparse) throw new ArgumentException("Rprop does not support sparse gradients");
 
-                            state = new State();
-                            _state[name] = state;
-                            state.step = 0;
-                            state.prev = torch.zeros_like(p);
-                            using var t0 = grad.new_empty(grad.shape);
-                            state.step_size = t0.fill_(LearningRate);
+                            var state = _state[name];
+
+                            state.step += 1;
+
+                            grad = (_max_step != 0)
+                                ? grad.add(p, alpha: _max_step)
+                                : grad.alias();
+
+                            var sign = grad.mul(state.prev).sign();
+                            sign[sign.gt(0)] = (Tensor)_etaplus;
+                            sign[sign.lt(0)] = (Tensor)_etaminus;
+                            sign[sign.eq(0)] = (Tensor)1;
+
+                            state.step_size.mul_(sign).clamp_(_min_step, _max_step);
+
+                            grad = grad.clone();
+
+                            grad.index_put_(0, sign.eq(_etaminus));
+
+                            p.addcmul_(grad.sign(), state.step_size, -1);
+
+                            state.prev.copy_(grad);
                         }
 
-                        state.step += 1;
-
-                        using var grad1 = (_max_step != 0)
-                            ? grad.add(p, alpha: _max_step)
-                            : grad.alias();
-
-                        using var t1 = grad1.mul(state.prev);
-                        using var sign = t1.sign();
-                        using var sgt = sign.gt(0);
-                        using var slt = sign.lt(0);
-                        sign.index_put_(_etaplus, sgt).Dispose();
-                        sign.index_put_(_etaminus, slt).Dispose();
-                        using var seq = sign.eq(0);
-                        sign.index_put_(1, seq).Dispose();
-
-                        using var t5 = state.step_size.mul_(sign);
-                        t5.clamp_(_min_step, _max_step).Dispose();
-
-                        using var grad2 = grad1.clone();
-
-                        using var t7 = sign.eq(_etaminus);
-                        grad2.index_put_(0, t7).Dispose();
-
-                        using var t9 = grad2.sign();
-                        p.addcmul_(t9, state.step_size, -1).Dispose();
-
-                        state.prev.copy_(grad1).Dispose();
+                        d.DisposeEverything();
                     }
                 }
 
                 return loss;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                foreach (var (name, state) in _state) {
+                    state.prev.Dispose();
+                    state.step_size.Dispose();
+                }
             }
 
             private class State
