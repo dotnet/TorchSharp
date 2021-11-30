@@ -6,7 +6,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp.Data
 {
-    public class DataLoader: IEnumerable<(Tensor, Tensor)>
+    public class DataLoader: IEnumerable<Dictionary<string, Tensor>>
     {
         private Dataset dataset;
         private int batchSize;
@@ -28,13 +28,13 @@ namespace TorchSharp.Data
             this.device = device ?? CPU;
         }
 
-        public IEnumerator<(Tensor, Tensor)> GetEnumerator() => new DataLoaderEnumerator(dataset, batchSize, shuffle, device);
+        public IEnumerator<Dictionary<string, Tensor>> GetEnumerator() => new DataLoaderEnumerator(dataset, batchSize, shuffle, device);
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public long Count => (dataset.Count - 1) / batchSize + 1;
 
-        private class DataLoaderEnumerator : IEnumerator<(Tensor, Tensor)>
+        private class DataLoaderEnumerator : IEnumerator<Dictionary<string, Tensor>>
         {
             private Dataset dataset;
             private int batchSize;
@@ -52,9 +52,6 @@ namespace TorchSharp.Data
                 reset();
             }
 
-            private Tensor dataTensor;
-            private Tensor labelTensor;
-
             private bool isFinished() => shuffle ? !shuffleGenerator.hasNext() : currentVal >= dataset.Count;
 
             private int getNextValue() => shuffle ? shuffleGenerator.next() : currentVal++;
@@ -68,22 +65,25 @@ namespace TorchSharp.Data
             public bool MoveNext()
             {
                 if (isFinished()) return false;
-                (dataTensor, labelTensor) = dataset.GetTensor(getNextValue());
-                dataTensor.unsqueeze_(0);
+                Current = dataset.GetTensor(getNextValue());
+                var currentKeys = Current.Keys;
+                foreach (var x in currentKeys)
+                    Current[x].unsqueeze_(0);
+                Dictionary<string, Tensor> dic;
                 for (var i = 1; i < batchSize; i++)
                 {
                     if (isFinished())
                         break;
-                    var (data, label) = dataset.GetTensor(getNextValue());
-                    dataTensor = cat(new List<Tensor> {dataTensor, data.unsqueeze(0)}, 0);
-                    labelTensor = cat(new List<Tensor> {labelTensor, label}, 0);
+                    dic = dataset.GetTensor(getNextValue());
+                    foreach (var x in currentKeys)
+                        Current[x] = cat(new List<Tensor>() {dic[x].unsqueeze(0), Current[x]}, 0);
                 }
                 return true;
             }
 
             public void Reset() => reset();
 
-            public (Tensor, Tensor) Current => (dataTensor.to(device), labelTensor.to(device));
+            public Dictionary<string, Tensor> Current { get; private set; }
 
             object IEnumerator.Current => Current;
 
