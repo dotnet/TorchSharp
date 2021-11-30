@@ -1126,18 +1126,28 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28, 28 };
             Tensor t = torch.rand(shape);
-            var conv = Conv2d(3, 64, 3);
-            var output = conv.forward(t);
-            Assert.Equal(16, output.shape[0]);
-            Assert.Equal(64, output.shape[1]);
-            Assert.Equal(26, output.shape[2]);
-            Assert.Equal(26, output.shape[3]);
+            {
+                var conv = Conv2d(3, 64, 3);
+                var output = conv.forward(t);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(26, output.shape[2]);
+                Assert.Equal(26, output.shape[3]);
+            }
+            {
+                var conv = Conv2d(3, 64, (3, 3));
+                var output = conv.forward(t);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(26, output.shape[2]);
+                Assert.Equal(26, output.shape[3]);
+            }
         }
 
         [Fact]
         public void TestConv2dGetWeight()
         {
-            var conv = Conv2d(3, 64, 3);
+            var conv = Conv2d(3, 64, (3, 3));
             var weight = conv.Weight;
             var bias = conv.Bias;
             Assert.NotNull(weight);
@@ -1170,12 +1180,23 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28, 28 };
             Tensor t = torch.rand(shape);
-            var conv = Conv2d(3, 64, 3, stride: 2);
-            var output = conv.forward(t);
-            Assert.Equal(16, output.shape[0]);
-            Assert.Equal(64, output.shape[1]);
-            Assert.Equal(13, output.shape[2]);
-            Assert.Equal(13, output.shape[3]);
+
+            {
+                var conv = Conv2d(3, 64, 3, stride: 2);
+                var output = conv.forward(t);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(13, output.shape[2]);
+                Assert.Equal(13, output.shape[3]);
+            }
+            {
+                var conv = Conv2d(3, 64, (3, 3), stride: (2, 2));
+                var output = conv.forward(t);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(13, output.shape[2]);
+                Assert.Equal(13, output.shape[3]);
+            }
         }
 
         [Fact]
@@ -1190,7 +1211,7 @@ namespace TorchSharp
                 Assert.Equal(28, output.shape[2]);
                 Assert.Equal(28, output.shape[3]);
             }
-            using (var conv = Conv2d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Reflect))
+            using (var conv = Conv2d(3, 64, (3, 3), padding: (1,1), paddingMode: PaddingModes.Reflect))
             using (var output = conv.forward(t)) {
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
@@ -1204,6 +1225,13 @@ namespace TorchSharp
                 Assert.Equal(28, output.shape[2]);
                 Assert.Equal(28, output.shape[3]);
             }
+            using (var conv = Conv2d(3, 64, (3,3), padding: Padding.Same))
+            using (var output = conv.forward(t)) {
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(28, output.shape[2]);
+                Assert.Equal(28, output.shape[3]);
+            }
         }
 
         [Fact]
@@ -1211,13 +1239,24 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
             Tensor t = torch.rand(shape);
-            var conv = Conv3d(3, 64, 3);
-            var output = conv.forward(t);
-            Assert.Equal(16, output.shape[0]);
-            Assert.Equal(64, output.shape[1]);
-            Assert.Equal(26, output.shape[2]);
-            Assert.Equal(26, output.shape[3]);
-            Assert.Equal(26, output.shape[4]);
+            {
+                var conv = Conv3d(3, 64, 3);
+                var output = conv.forward(t);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(26, output.shape[2]);
+                Assert.Equal(26, output.shape[3]);
+                Assert.Equal(26, output.shape[4]);
+            }
+            {
+                var conv = Conv3d(3, 64, (3,3,3));
+                var output = conv.forward(t);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(26, output.shape[2]);
+                Assert.Equal(26, output.shape[3]);
+                Assert.Equal(26, output.shape[4]);
+            }
         }
 
         [Fact]
@@ -1256,13 +1295,24 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
             Tensor t = torch.rand(shape);
-            var conv = Conv3d(3, 64, 3, stride: 2);
-            var output = conv.forward(t);
-            Assert.Equal(16, output.shape[0]);
-            Assert.Equal(64, output.shape[1]);
-            Assert.Equal(13, output.shape[2]);
-            Assert.Equal(13, output.shape[3]);
-            Assert.Equal(13, output.shape[4]);
+            {
+                var conv = Conv3d(3, 64, 3, stride: 2);
+                var output = conv.forward(t);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(13, output.shape[2]);
+                Assert.Equal(13, output.shape[3]);
+                Assert.Equal(13, output.shape[4]);
+            }
+            {
+                var conv = Conv3d(3, 64, (3,3,3), stride: (2,2,2));
+                var output = conv.forward(t);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(13, output.shape[2]);
+                Assert.Equal(13, output.shape[3]);
+                Assert.Equal(13, output.shape[4]);
+            }
         }
 
         [Fact]
@@ -1280,7 +1330,7 @@ namespace TorchSharp
                     Assert.Equal(28, output.shape[3]);
                     Assert.Equal(28, output.shape[4]);
                 }
-                using (var conv = Conv3d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Replicate))
+                using (var conv = Conv3d(3, 64, (3,3,3), padding: (1,1,1), paddingMode: PaddingModes.Replicate))
                 using (var output = conv.forward(t)) {
                     Assert.Equal(16, output.shape[0]);
                     Assert.Equal(64, output.shape[1]);
@@ -1289,6 +1339,14 @@ namespace TorchSharp
                     Assert.Equal(28, output.shape[4]);
                 }
                 using (var conv = Conv3d(3, 64, 3, padding: Padding.Same))
+                using (var output = conv.forward(t)) {
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(28, output.shape[2]);
+                    Assert.Equal(28, output.shape[3]);
+                    Assert.Equal(28, output.shape[4]);
+                }
+                using (var conv = Conv3d(3, 64, (3,3,3), padding: Padding.Same))
                 using (var output = conv.forward(t)) {
                     Assert.Equal(16, output.shape[0]);
                     Assert.Equal(64, output.shape[1]);
