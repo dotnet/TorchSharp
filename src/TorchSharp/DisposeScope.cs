@@ -270,7 +270,7 @@ namespace TorchSharp
         /// method.
         /// </summary>
         /// <param name="disposable">The disposable that was disposed</param>
-        public void WasDisposed(IDisposable disposable)
+        public void MarkAsDisposed(IDisposable disposable)
         {
             _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
             Disposables.Remove(disposable);

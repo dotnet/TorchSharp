@@ -70,7 +70,7 @@ namespace TorchSharp
 
             public void Dispose()
             {
-                OwningDisposeScope?.WasDisposed(this);
+                OwningDisposeScope?.MarkAsDisposed(this);
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }
