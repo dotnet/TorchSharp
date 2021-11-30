@@ -81,6 +81,8 @@ let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) 
 
     for labels,texts,offsets in trainData do
 
+        use d = torch.NewDisposeScope()
+
         optimizer.zero_grad()
 
         let predicted_labels = model.forward(texts, offsets)
@@ -99,8 +101,6 @@ let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) 
 
         batch <- batch + 1
 
-    GC.Collect()
-
 let evaluate (testData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (model:TextClassificationModel) =
 
     model.Eval()
@@ -109,6 +109,8 @@ let evaluate (testData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (mod
     let mutable total_count = 0L
 
     for labels,texts,offsets in testData do
+
+        use d = torch.NewDisposeScope()
 
         let predicted_labels = model.forward(texts, offsets)
         let loss = criterion predicted_labels labels

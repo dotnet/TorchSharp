@@ -145,7 +145,7 @@ namespace TorchSharp.Examples
             public override Tensor forward(Tensor t)
             {
                 var x = layers.forward(t);
-                using var y = shortcut.forward(t);
+                var y = shortcut.forward(t);
                 return x.add_(y).relu_();
             }
 

@@ -2722,7 +2722,6 @@ namespace TorchSharp
             for (int i = 0; i < 1024; i++) {
                 var x = torch.zeros(new long[] { 1024, 1024 }, float64);
                 x.Dispose();
-                //System.GC.Collect();
             }
         }
 
@@ -2743,7 +2742,6 @@ namespace TorchSharp
                     var x = torch.tensor(i * j * 3.1415);
                     x.Dispose();
                 }
-                //System.GC.Collect();
             }
         }
 
@@ -2755,7 +2753,6 @@ namespace TorchSharp
                     var x = (i * j * 3.1415).ToScalar();
                     x.Dispose();
                 }
-                //System.GC.Collect();
             }
         }
 

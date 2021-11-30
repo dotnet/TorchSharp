@@ -97,22 +97,21 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: MNISTReader) epoch =
     printfn $"Epoch: {epoch}..."
 
     for (input,labels) in dataLoader do
+
+        use d = torch.NewDisposeScope()
+
         optimizer.zero_grad()
 
-        begin  // This is introduced in order to let a few tensors go out of scope before GC
-            use estimate = input --> model
-            use output = loss estimate labels
+        let estimate = input --> model
+        let output = loss estimate labels
 
-            output.backward()
-            optimizer.step() |> ignore
+        output.backward()
+        optimizer.step() |> ignore
 
-            if batchID % logInterval = 0 then
-                printfn $"\rTrain: epoch {epoch} [{batchID * batchSize} / {size}] Loss: {output.ToSingle():F4}"
+        if batchID % logInterval = 0 then
+            printfn $"\rTrain: epoch {epoch} [{batchID * batchSize} / {size}] Loss: {output.ToSingle():F4}"
 
-            batchID <- batchID + 1
-        end
-
-        GC.Collect()
+        batchID <- batchID + 1
 
 let test (model:Model) (dataLoader:MNISTReader) =
     model.Eval()
@@ -124,16 +123,16 @@ let test (model:Model) (dataLoader:MNISTReader) =
 
     for (input,labels) in dataLoader do
 
+        use d = torch.NewDisposeScope()
+
         begin  // This is introduced in order to let a few tensors go out of scope before GC
-            use estimate = input --> model
-            use output = loss estimate labels
+            let estimate = input --> model
+            let output = loss estimate labels
             testLoss <- testLoss + output.ToSingle()
 
             let pred = estimate.argmax(1L)
             correct <- correct + pred.eq(labels).sum().ToInt32()
         end
-
-        GC.Collect()
 
     printfn $"Size: {sz}, Total: {sz}"
     printfn $"\rTest set: Average loss {(testLoss / sz):F4} | Accuracy {(float32 correct / sz):P2}"
@@ -148,10 +147,15 @@ let trainingLoop (model:Model) epochs dataset trainData testData =
     let sw = Stopwatch()
     sw.Start()
 
-    for epoch = 1 to epochs do
-        train model optimizer trainData epoch
-        test model testData
-    
+    begin
+        for epoch = 1 to epochs do
+            use d = torch.NewDisposeScope()
+
+            train model optimizer trainData epoch
+            test model testData
+
+    end
+
     sw.Stop()
 
     printfn $"Elapsed time: {sw.Elapsed.TotalSeconds:F1} s."

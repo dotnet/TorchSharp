@@ -98,11 +98,14 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: CIFARReader) epoch =
     printfn $"Epoch: {epoch}..."
 
     for (input,labels) in dataLoader.Data() do
+
+        use d = torch.NewDisposeScope()
+
         optimizer.zero_grad()
 
         begin
-            use estimate = input --> model
-            use output = loss estimate labels
+            let estimate = input --> model
+            let output = loss estimate labels
 
             output.backward()
             optimizer.step() |> ignore
@@ -121,8 +124,6 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: CIFARReader) epoch =
             batchID <- batchID + 1
         end
 
-        GC.Collect()
-
 let test (model:Model) (dataLoader:CIFARReader) =
     model.Eval()
 
@@ -134,8 +135,11 @@ let test (model:Model) (dataLoader:CIFARReader) =
 
     for (input,labels) in dataLoader.Data() do
 
-        use estimate = input --> model
-        use output = loss estimate labels
+        use d = torch.NewDisposeScope()
+
+        let estimate = input --> model
+        let output = loss estimate labels
+
         testLoss <- testLoss + output.ToSingle()
         batchCount <- batchCount + 1L
 
@@ -151,7 +155,6 @@ let test (model:Model) (dataLoader:CIFARReader) =
 let trainingLoop (model:Model) epochs trainData testData =
     
         use optimizer = Adam(model.parameters(), 0.001)
-        //NN.Optimizer.StepLR(optimizer, 1u, 0.7, last_epoch=5) |> ignore
     
         let sw = Stopwatch()
         sw.Start()
@@ -159,7 +162,6 @@ let trainingLoop (model:Model) epochs trainData testData =
         for epoch = 1 to epochs do
             train model optimizer trainData epoch
             test model testData
-            GC.Collect()
 
         sw.Stop()
     
