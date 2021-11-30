@@ -60,8 +60,8 @@ namespace TorchSharp.Examples
 
         public override Tensor forward(Tensor input)
         {
-            using (var f = features.forward(input))
-            using (var avg = avgPool.forward(f))
+            var f = features.forward(input);
+            var avg = avgPool.forward(f);
 
             using (var x = avg.reshape(new long[] { avg.shape[0], 256 * 2 * 2 }))
                 return classifier.forward(x);

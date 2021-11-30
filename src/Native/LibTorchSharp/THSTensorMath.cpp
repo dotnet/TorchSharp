@@ -475,6 +475,11 @@ Tensor THSTensor_ldexp(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->ldexp(*right));
 }
 
+Tensor THSTensor_ldexp_(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->ldexp_(*right));
+}
+
 Tensor THSTensor_le(const Tensor left, const Tensor right)
 {
     CATCH_TENSOR(left->le(*right));
@@ -599,6 +604,11 @@ Tensor THSTensor_logical_xor_(const Tensor tensor, const Tensor other)
 Tensor THSTensor_logit(const Tensor tensor, const double* eps)
 {
     CATCH_TENSOR((eps == nullptr) ? tensor->logit() : tensor->logit(*eps));
+}
+
+Tensor THSTensor_logit_(const Tensor tensor, const double* eps)
+{
+    CATCH_TENSOR((eps == nullptr) ? tensor->logit_() : tensor->logit_(*eps));
 }
 
 Tensor THSTensor_lt(const Tensor left, const Tensor right)

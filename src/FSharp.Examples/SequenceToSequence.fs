@@ -140,6 +140,8 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
 
     model.Train()
 
+    use d = torch.NewDisposeScope()
+
     let mutable total_loss = 0.0f
     let mutable src_mask = model.GenerateSquareSubsequentMask(bptt)
 
@@ -153,25 +155,20 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
 
         begin
             let data,targets = get_batch trainData i
-            use data = data
-            use targets = targets
 
             if data.shape.[0] <> bptt then
-                src_mask.Dispose()
                 src_mask <- model.GenerateSquareSubsequentMask(data.shape.[0])
 
             optimizer.zero_grad()
 
-            use output = model.forward(data, src_mask)
-            use loss = criterion (output.view(-1L, ntokens)) targets
+            let output = model.forward(data, src_mask)
+            let loss = criterion (output.view(-1L, ntokens)) targets
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5) |> ignore
             optimizer.step() |> ignore
 
             total_loss <- total_loss + loss.cpu().item<float32>()
         end 
-
-        GC.Collect()
 
         if (batch % logInterval = 0) && (batch > 0) then
             let cur_loss = (total_loss / (float32 logInterval)).ToString("0.00")
@@ -181,10 +178,14 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
         batch <- batch + 1
         i <- i + bptt
 
+        d.DisposeEverythingBut(src_mask) |> ignore
+
 
 let evaluate (model:TransformerModel) (evalData:torch.Tensor) ntokens =
 
     model.Eval()
+
+    use d = torch.NewDisposeScope()
 
     let mutable total_loss = 0.0f
     let mutable src_mask = model.GenerateSquareSubsequentMask(bptt)
@@ -199,24 +200,24 @@ let evaluate (model:TransformerModel) (evalData:torch.Tensor) ntokens =
 
         begin
             let data,targets = get_batch evalData i
-            use data = data
-            use targets = targets
 
             if data.shape.[0] <> bptt then
-                src_mask.Dispose()
                 src_mask <- model.GenerateSquareSubsequentMask(data.shape.[0])
 
-            use output = model.forward(data, src_mask)
-            use loss = criterion (output.view(-1L, ntokens)) targets
+            let output = model.forward(data, src_mask)
+            let loss = criterion (output.view(-1L, ntokens)) targets
             total_loss <- total_loss + (float32 data.shape.[0]) * loss.cpu().item<float32>()
         end 
-
-        GC.Collect()
 
         batch <- batch + 1L
         i <- i + bptt
 
+        d.DisposeEverythingBut(src_mask) |> ignore
+
+    src_mask.Dispose();
+
     total_loss / (float32 evalData.shape.[0])
+
 
 let run epochs =
 

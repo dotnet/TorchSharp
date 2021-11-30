@@ -128,26 +128,28 @@ namespace TorchSharp.Examples
         {
             int correct = 0;
 
-            foreach (var (data, target) in dataLoader) {
+            using (var d = torch.NewDisposeScope()) {
 
-                data.requires_grad = true;
+                foreach (var (data, target) in dataLoader) {
 
-                using (var output = model.forward(data))
-                using (var loss = criterion(output, target)) {
+                    data.requires_grad = true;
 
-                    model.zero_grad();
-                    loss.backward();
+                    using (var output = model.forward(data))
+                    using (var loss = criterion(output, target)) {
 
-                    var perturbed = Attack(data, ε, data.grad());
+                        model.zero_grad();
+                        loss.backward();
 
-                    using (var final = model.forward(perturbed)) {
+                        var perturbed = Attack(data, ε, data.grad());
 
-                        correct += final.argmax(1).eq(target).sum().ToInt32();
+                        using (var final = model.forward(perturbed)) {
+
+                            correct += final.argmax(1).eq(target).sum().ToInt32();
+                        }
                     }
+
+                    d.DisposeEverything();
                 }
-
-
-                GC.Collect();
             }
 
             return (double)correct / size;

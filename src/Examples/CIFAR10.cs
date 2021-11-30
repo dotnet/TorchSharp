@@ -88,7 +88,7 @@ namespace TorchSharp.Examples
                 model = ResNet.ResNet18(_numClasses, device);
                 break;
             case "resnet34":
-                _testBatchSize /= 4; 
+                _testBatchSize /= 4;
                 model = ResNet.ResNet34(_numClasses, device);
                 break;
             case "resnet50":
@@ -132,7 +132,6 @@ namespace TorchSharp.Examples
 
                     Train(model, optimizer, nll_loss(), train.Data(), epoch, _trainBatchSize, train.Size);
                     Test(model, nll_loss(), test.Data(), test.Size);
-                    GC.Collect();
 
                     epchSW.Stop();
                     Console.WriteLine($"Elapsed time for this epoch: {epchSW.Elapsed.TotalSeconds} s.");
@@ -164,13 +163,15 @@ namespace TorchSharp.Examples
 
             Console.WriteLine($"Epoch: {epoch}...");
 
-            foreach (var (data, target) in dataLoader) {
+            using (var d = torch.NewDisposeScope()) {
 
-                optimizer.zero_grad();
+                foreach (var (data, target) in dataLoader) {
 
-                using var prediction = model.forward(data);
-                using var lsm = log_softmax(prediction, 1);
-                using (var output = loss(lsm, target)) {
+                    optimizer.zero_grad();
+
+                    var prediction = model.forward(data);
+                    var lsm = log_softmax(prediction, 1);
+                    var output = loss(lsm, target);
 
                     output.backward();
 
@@ -178,11 +179,8 @@ namespace TorchSharp.Examples
 
                     total += target.shape[0];
 
-                    using (var predicted = prediction.argmax(1))
-                    using (var eq = predicted.eq(target))
-                    using (var sum = eq.sum()) {
-                        correct += sum.ToInt64();
-                    }
+                    var predicted = prediction.argmax(1);
+                    correct += predicted.eq(target).sum().ToInt64();
 
                     if (batchId % _logInterval == 0) {
                         var count = Math.Min(batchId * batchSize, size);
@@ -190,9 +188,9 @@ namespace TorchSharp.Examples
                     }
 
                     batchId++;
-                }
 
-                GC.Collect();
+                    d.DisposeEverything();
+                }
             }
         }
 
@@ -208,23 +206,22 @@ namespace TorchSharp.Examples
             long correct = 0;
             int batchCount = 0;
 
-            foreach (var (data, target) in dataLoader) {
+            using (var d = torch.NewDisposeScope()) {
 
-                using var prediction = model.forward(data);
-                using var lsm = log_softmax(prediction, 1);
-                using (var output = loss(lsm, target)) {
+                foreach (var (data, target) in dataLoader) {
+
+                    var prediction = model.forward(data);
+                    var lsm = log_softmax(prediction, 1);
+                    var output = loss(lsm, target);
 
                     testLoss += output.ToSingle();
                     batchCount += 1;
 
-                    using (var predicted = prediction.argmax(1))
-                    using (var eq = predicted.eq(target))
-                    using (var sum = eq.sum()) {
-                        correct += sum.ToInt64();
-                    }
-                }
+                    var predicted = prediction.argmax(1);
+                    correct += predicted.eq(target).sum().ToInt64();
 
-                GC.Collect();
+                    d.DisposeEverything();
+                }
             }
 
             Console.WriteLine($"\rTest set: Average loss {(testLoss / batchCount).ToString("0.0000")} | Accuracy {((float)correct / size).ToString("0.0000")}");

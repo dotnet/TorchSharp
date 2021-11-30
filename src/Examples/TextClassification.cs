@@ -66,33 +66,41 @@ namespace TorchSharp.Examples
                 var optimizer = torch.optim.SGD(model.parameters(), lr);
                 var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.2, last_epoch: 5);
 
-                foreach (var epoch in Enumerable.Range(1, epochs)) {
+                // This data set is small enough that we can get away with
+                // collecting memory only once per epoch.
 
-                    var sw = new Stopwatch();
-                    sw.Start();
+                using (var d = torch.NewDisposeScope()) {
 
-                    train(epoch, reader.GetBatches(tokenizer, vocab, batch_size), model, loss, optimizer);
+                    foreach (var epoch in Enumerable.Range(1, epochs)) {
 
-                    sw.Stop();
+                        var sw = new Stopwatch();
+                        sw.Start();
 
-                    Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {scheduler.LearningRate:0.0000} | time: {sw.Elapsed.TotalSeconds:0.0}s\n");
-                    scheduler.step();
+                        train(epoch, reader.GetBatches(tokenizer, vocab, batch_size), model, loss, optimizer);
+
+                        sw.Stop();
+
+                        Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {scheduler.LearningRate:0.0000} | time: {sw.Elapsed.TotalSeconds:0.0}s\n");
+                        scheduler.step();
+                    }
                 }
 
-                using (var test_reader = TorchText.Data.AG_NEWSReader.AG_NEWS("test", (Device)device, _dataLocation)) {
+                using (var d = torch.NewDisposeScope()) {
 
-                    var sw = new Stopwatch();
-                    sw.Start();
+                    using (var test_reader = TorchText.Data.AG_NEWSReader.AG_NEWS("test", (Device)device, _dataLocation)) {
 
-                    var accuracy = evaluate(test_reader.GetBatches(tokenizer, vocab, eval_batch_size), model, loss);
+                        var sw = new Stopwatch();
+                        sw.Start();
 
-                    sw.Stop();
+                        var accuracy = evaluate(test_reader.GetBatches(tokenizer, vocab, eval_batch_size), model, loss);
 
-                    Console.WriteLine($"\nEnd of training: test accuracy: {accuracy:0.00} | eval time: {sw.Elapsed.TotalSeconds:0.0}s\n");
-                    scheduler.step();
+                        sw.Stop();
+
+                        Console.WriteLine($"\nEnd of training: test accuracy: {accuracy:0.00} | eval time: {sw.Elapsed.TotalSeconds:0.0}s\n");
+                        scheduler.step();
+                    }
                 }
             }
-
         }
 
         static void train(int epoch, IEnumerable<(Tensor, Tensor, Tensor)> train_data, TextClassificationModel model, Loss criterion, torch.optim.Optimizer optimizer)
@@ -126,13 +134,9 @@ namespace TorchSharp.Examples
                     var accuracy = total_acc / total_count;
                     Console.WriteLine($"epoch: {epoch} | batch: {batch} / {batch_count} | accuracy: {accuracy:0.00}");
                 }
+
                 batch += 1;
             }
-
-            // This data set is small enough that we can get away with
-            // collecting memory only once per epoch.
-
-            GC.Collect();
         }
 
         static double evaluate(IEnumerable<(Tensor, Tensor, Tensor)> test_data, TextClassificationModel model, Loss criterion)
@@ -186,8 +190,7 @@ namespace TorchSharp.Examples
 
         public override Tensor forward(Tensor input, Tensor offsets)
         {
-            using var t = embedding.forward(input, offsets);
-            return fc.forward(t);
+            return fc.forward(embedding.forward(input, offsets));
         }
 
         public new TextClassificationModel to(Device device)
