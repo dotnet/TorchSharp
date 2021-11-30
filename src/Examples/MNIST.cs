@@ -91,11 +91,14 @@ namespace TorchSharp.Examples
 
             for (var epoch = 1; epoch <= _epochs; epoch++) {
 
-                Train(model, optimizer, nll_loss(reduction: Reduction.Mean), device, train, epoch, train.BatchSize, train.Size);
-                Test(model, nll_loss(reduction: torch.nn.Reduction.Sum), device, test, test.Size);
+                using (var d = torch.NewDisposeScope()) {
 
-                Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
-                scheduler.step();
+                    Train(model, optimizer, nll_loss(reduction: Reduction.Mean), device, train, epoch, train.BatchSize, train.Size);
+                    Test(model, nll_loss(reduction: torch.nn.Reduction.Sum), device, test, test.Size);
+
+                    Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
+                    scheduler.step();
+                }
             }
 
             sw.Stop();
@@ -136,21 +139,21 @@ namespace TorchSharp.Examples
 
             public override Tensor forward(Tensor input)
             {
-                using var l11 = conv1.forward(input);
-                using var l12 = relu1.forward(l11);
+                var l11 = conv1.forward(input);
+                var l12 = relu1.forward(l11);
 
-                using var l21 = conv2.forward(l12);
-                using var l22 = relu2.forward(l21);
-                using var l23 = pool1.forward(l22);
-                using var l24 = dropout1.forward(l23);
+                var l21 = conv2.forward(l12);
+                var l22 = relu2.forward(l21);
+                var l23 = pool1.forward(l22);
+                var l24 = dropout1.forward(l23);
 
-                using var x = flatten.forward(l24);
+                var x = flatten.forward(l24);
 
-                using var l31 = fc1.forward(x);
-                using var l32 = relu3.forward(l31);
-                using var l33 = dropout2.forward(l32);
+                var l31 = fc1.forward(x);
+                var l32 = relu3.forward(l31);
+                var l33 = dropout2.forward(l32);
 
-                using var l41 = fc2.forward(l33);
+                var l41 = fc2.forward(l33);
 
                 return logsm.forward(l41);
             }
@@ -172,23 +175,27 @@ namespace TorchSharp.Examples
             int batchId = 1;
 
             Console.WriteLine($"Epoch: {epoch}...");
-            foreach (var (data, target) in dataLoader) {
-                optimizer.zero_grad();
 
-                var prediction = model.forward(data);
-                var output = loss(prediction, target);
+            using (var d = torch.NewDisposeScope()) {
 
-                output.backward();
+                foreach (var (data, target) in dataLoader) {
+                    optimizer.zero_grad();
 
-                optimizer.step();
+                    var prediction = model.forward(data);
+                    var output = loss(prediction, target);
 
-                if (batchId % _logInterval == 0) {
-                    Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle():F4}");
+                    output.backward();
+
+                    optimizer.step();
+
+                    if (batchId % _logInterval == 0) {
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle():F4}");
+                    }
+
+                    batchId++;
+
+                    d.DisposeEverything();
                 }
-
-                batchId++;
-
-                GC.Collect();
             }
         }
 
@@ -204,17 +211,18 @@ namespace TorchSharp.Examples
             double testLoss = 0;
             int correct = 0;
 
-            foreach (var (data, target) in dataLoader) {
-                var prediction = model.forward(data);
-                var output = loss(prediction, target);
-                testLoss += output.ToSingle();
+            using (var d = torch.NewDisposeScope()) {
 
-                var pred = prediction.argmax(1);
-                correct += pred.eq(target).sum().ToInt32();
+                foreach (var (data, target) in dataLoader) {
+                    var prediction = model.forward(data);
+                    var output = loss(prediction, target);
+                    testLoss += output.ToSingle();
 
-                pred.Dispose();
+                    var pred = prediction.argmax(1);
+                    correct += pred.eq(target).sum().ToInt32();
 
-                GC.Collect();
+                    d.DisposeEverything();
+                }
             }
 
             Console.WriteLine($"Size: {size}, Total: {size}");

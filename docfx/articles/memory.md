@@ -1,10 +1,10 @@
 # Memory Management
 
-Two approaches are available for memory management. Technique 1 is the default and simplest way to program. It is the recommended starting point.
+Three approaches are available for memory management. Technique 1 is the default and simplest way to program. It is the recommended starting point.
 
-- If having trouble with CPU memory you may have to resort to technique 2.
+- If having trouble with CPU memory you may have to resort to technique 2 or 3.
 
-- If having trouble with GPU memory you may have to resort to technique 2.
+- If having trouble with GPU memory you may have to resort to technique 2 or 3.
 
 In both cases, you may want to experiment with using a smaller batch size -- temporary tensor values produced by computation on the training data is the main memory problem, and they are in most cases proportional to the batch size. A smaller batch size means more batches, which will take longer, but can often speed up training convergence.
 
@@ -25,7 +25,7 @@ In this technique all tensors (CPU and GPU) are implicitly disposed via .NET fin
 👎 Native operations that allocate temporaries, whether on CPU or GPU, may fail -- the GC scheme implemented by TorchSharp only works when the allocation is initiated by .NET code.
 
 
-## Technique 2. Explicit disposal
+## Technique 2. Explicit disposal via 'using var x = ...' (C#) or 'use x = ...' (F#)
 
 This technique is more cumbersome, but will result in better performance and have a higher memory ceiling. For many non-trivial models, it is more or less required in order to train on a GPU.
 
@@ -139,6 +139,134 @@ let myTensorFunction5(go: bool, input: Tensor) =
 Rather than passing tensor arguments between neural network layers inside a custom module's `forward()`, you should rely on the 'Sequential' layer collection, which will be efficient at memory management.
 
 It may not be ideal when first experimenting with a model and trying to debug it, but once you are done with that and move on to a full training data set, it is advisable.
+
+## Technique 3: torch.NewDisposeScope()
+
+This approach, which was added in TorchSharp 0.95.4, makes it easier to dispose of tensors, without the non-determinism of technique 1, or the many temporaries of technique 2. It has most of the advantages of technique 2, and the code elegance of technique 1.
+
+👍 Specific lifetime management of all resources, but in groups.
+
+👍 Temporaries __are__ covered by this approach.
+
+👎 You don't have fine-grained control over when each tensor is reclaimed. All tensors created while a scope is in effect are disposed at once.
+
+👎 It's a new code pattern, not widely used with other libraries.
+
+Let's look at an example, similar to the earlier, technique 2 example:
+
+```C#
+using (var d = torch.NewDisposeScope()) {
+
+    total_acc += (predicted_labels.argmax(1) == labels).sum().cpu().item<long>();
+
+    ...
+}
+```
+
+What happens here, is that all tensors that are created while `d` is alive will be disposed when `d` is disposed. This includes temporaries, so you don't have to do anything special to get them to be disposed. (There's a problem with this simplistic example, which will be discussed later.)
+
+In F#, it would look like:
+
+```F#
+use d = torch.NewDisposeScope()
+
+total_acc <- total_acc + (predicted_labels.argmax(1) == labels).sum().cpu().item<long>()
+```
+
+If you need to dispose some tensors before the scope is disposed, you can use `DisposeEverything()`, or `DisposeEverythingBut(...)` if you want to exclude a few tensors from disposal. These can be useful when tensor lifetimes aren't cleanly nested in dynamic scopes. 
+
+
+It's important to note that these scopes are dynamic -- if any functions are called, the tensors inside them are also registered and disposed, unless there's a nested scope within those functions.
+
+It is advisable to place a dispose scope around your training and test code, and in any library code that can be called from contexts that do not have dispose scopes.
+
+### Passing Tensors Out of Scopes
+
+Any tensor that needs to survive the dynamic dispose scope must be either removed from management completely, or promoted to a nesting (outer) scope.
+
+For example, if a tensor variable `tensor` is overwritten in a scope, there are two problems:
+
+1. The tensor held in `tensor` will be overwritten. Since it's not created within the scope, the scope will not dispose of it. A nesting scope must be added to managed the lifetime of all tensors kept in `tensor`:
+
+```C#
+using (var d0 = torch.NewDisposeScope()) {
+
+    var tensor = torch.zeros(...)
+
+    for ( ... ) {
+        ...
+        using (var d1 = torch.NewDisposeScope()) {
+
+            var x = ...;
+            tensor += x.log();
+            ...
+        }
+    }
+}
+```
+
+2. The new tensor that is placed in `tensor` will be disposed when the scope is exited. Since the static scope of `tensor` is not the same as the dynamic scope where it is created, there's a problem.
+
+This is probably not what you intended, so the tensor needs to be either detached, or moved to an outer scope (if one exists).
+
+For example:
+
+```C#
+using (var d0 = torch.NewDisposeScope()) {
+
+    var tensor = torch.zeros(...)
+
+    for ( ... ) {
+        ...
+        using (var d1 = torch.NewDisposeScope()) {
+
+            var x = ...;
+            tensor = (tensor + x.log()).MoveToOuterDisposeScope();
+            ...
+        }
+    }
+}
+```
+
+Sometimes, less is more -- a simple solution is to have fewer nested scopes:
+
+```C#
+using (var d0 = torch.NewDisposeScope()) {
+
+    var tensor = torch.zeros(...)
+
+    for ( ... ) {
+        ...
+        var x = ...;
+        tensor += x.log();
+        ...
+    }
+}
+```
+
+but sometimes, you still have to move the tensor out, for example when you return a tensor from a method:
+
+```C#
+public Tensor foo() {
+    using (var d0 = torch.NewDisposeScope()) {
+
+        var tensor = torch.zeros(...)
+
+        foreach ( ... ) {
+            ...
+            var x = ...;
+            tensor += x.log();
+            ...
+        }
+
+        return tensor.MoveToOuterDisposeScope();
+    }
+}
+```
+
+These examples show how to move a tensor up one level in the stack of scopes. To completely remove a tensor from scoped management, use `DetatchFromDisposeScope()` instead of `MoveToOuterDisposeScope()`.
+
+Even with this technique, it is a good practice to use `Sequential` when possible.
 
 ## Links and resources
 

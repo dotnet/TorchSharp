@@ -102,75 +102,78 @@ namespace TorchSharp.Examples
         {
             model.Train();
 
-            var total_loss = 0.0f;
+            using (var d = torch.NewDisposeScope()) {
 
-            var src_mask = model.GenerateSquareSubsequentMask(bptt);
+                var total_loss = 0.0f;
 
-            var batch = 0;
-            var log_interval = 200;
+                var batch = 0;
+                var log_interval = 200;
 
-            var tdlen = train_data.shape[0];
+                var src_mask = model.GenerateSquareSubsequentMask(bptt);
 
-            for (int i = 0; i < tdlen - 1; batch++, i += bptt) {
+                var tdlen = train_data.shape[0];
 
-                var (data, targets) = GetBatch(train_data, i, bptt);
-                optimizer.zero_grad();
 
-                if (data.shape[0] != bptt) {
-                    src_mask.Dispose();
-                    src_mask = model.GenerateSquareSubsequentMask(data.shape[0]);
-                }
+                for (int i = 0; i < tdlen - 1; batch++, i += bptt) {
 
-                using (var output = model.forward(data, src_mask)) {
-                    var loss = criterion(output.view(-1, ntokens), targets);
-                    loss.backward();
-                    torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
-                    optimizer.step();
+                    var (data, targets) = GetBatch(train_data, i, bptt);
+                    optimizer.zero_grad();
 
-                    total_loss += loss.to(torch.CPU).item<float>();
-                }
+                    if (data.shape[0] != bptt) {
+                        src_mask = model.GenerateSquareSubsequentMask(data.shape[0]);
+                    }
 
-                GC.Collect();
+                    using (var output = model.forward(data, src_mask)) {
+                        var loss = criterion(output.view(-1, ntokens), targets);
+                        loss.backward();
+                        torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
+                        optimizer.step();
 
-                if (batch % log_interval == 0 && batch > 0) {
-                    var cur_loss = total_loss / log_interval;
-                    Console.WriteLine($"epoch: {epoch} | batch: {batch} / {tdlen / bptt} | loss: {cur_loss:0.00}");
-                    total_loss = 0;
+                        total_loss += loss.to(torch.CPU).item<float>();
+                    }
+
+                    if (batch % log_interval == 0 && batch > 0) {
+                        var cur_loss = total_loss / log_interval;
+                        Console.WriteLine($"epoch: {epoch} | batch: {batch} / {tdlen / bptt} | loss: {cur_loss:0.00}");
+                        total_loss = 0;
+                    }
+
+                    d.DisposeEverythingBut(src_mask);
                 }
             }
-
-            src_mask.Dispose();
         }
 
         private static double evaluate(Tensor eval_data, TransformerModel model, Loss criterion, int bptt, int ntokens, torch.optim.Optimizer optimizer)
         {
             model.Eval();
 
-            var total_loss = 0.0f;
-            var src_mask = model.GenerateSquareSubsequentMask(bptt);
-            var batch = 0;
+            using (var d = torch.NewDisposeScope()) {
 
-            for (int i = 0; i < eval_data.shape[0] - 1; batch++, i += bptt) {
+                var src_mask = model.GenerateSquareSubsequentMask(bptt);
 
-                var (data, targets) = GetBatch(eval_data, i, bptt);
-                if (data.shape[0] != bptt) {
-                    src_mask.Dispose();
-                    src_mask = model.GenerateSquareSubsequentMask(data.shape[0]);
+                var total_loss = 0.0f;
+                var batch = 0;
+
+
+                for (int i = 0; i < eval_data.shape[0] - 1; batch++, i += bptt) {
+
+                    var (data, targets) = GetBatch(eval_data, i, bptt);
+                    if (data.shape[0] != bptt) {
+                        src_mask = model.GenerateSquareSubsequentMask(data.shape[0]);
+                    }
+                    using (var output = model.forward(data, src_mask)) {
+                        var loss = criterion(output.view(-1, ntokens), targets);
+                        total_loss += data.shape[0] * loss.to(torch.CPU).item<float>();
+                    }
+
+                    data.Dispose();
+                    targets.Dispose();
+
+                    d.DisposeEverythingBut(src_mask);
                 }
-                using (var output = model.forward(data, src_mask)) {
-                    var loss = criterion(output.view(-1, ntokens), targets);
-                    total_loss += data.shape[0] * loss.to(torch.CPU).item<float>();
-                }
 
-                data.Dispose();
-                targets.Dispose();
-
-                GC.Collect();
+                return total_loss / eval_data.shape[0];
             }
-
-            src_mask.Dispose();
-
-            return total_loss / eval_data.shape[0];
         }
 
         static Tensor ProcessInput(IEnumerable<string> iter, Func<string, IEnumerable<string>> tokenizer, TorchText.Vocab.Vocab vocab)
@@ -191,8 +194,7 @@ namespace TorchSharp.Examples
         static Tensor Batchify(Tensor data, int batch_size)
         {
             var nbatch = data.shape[0] / batch_size;
-            using var d2 = data.narrow(0, 0, nbatch * batch_size).view(batch_size, -1).t();
-            return d2.contiguous();
+            return data.narrow(0, 0, nbatch * batch_size).view(batch_size, -1).t().contiguous();
         }
 
         static (Tensor, Tensor) GetBatch(Tensor source, int index, int bptt)
@@ -229,7 +231,7 @@ namespace TorchSharp.Examples
 
             public Tensor GenerateSquareSubsequentMask(long size)
             {
-                using var mask = (torch.ones(new long[] { size, size }) == 1).triu().transpose(0, 1);
+                var mask = (torch.ones(new long[] { size, size }) == 1).triu().transpose(0, 1);
                 return mask.to_type(ScalarType.Float32)
                     .masked_fill(mask == 0, float.NegativeInfinity)
                     .masked_fill(mask == 1, 0.0f).to(device);
@@ -251,8 +253,8 @@ namespace TorchSharp.Examples
 
             public override Tensor forward(Tensor t, Tensor mask)
             {
-                using var src = pos_encoder.forward(encoder.forward(t) * MathF.Sqrt(ninputs));
-                using var enc = transformer_encoder.forward(src, mask);
+                var src = pos_encoder.forward(encoder.forward(t) * MathF.Sqrt(ninputs));
+                var enc = transformer_encoder.forward(src, mask);
                 return decoder.forward(enc);
             }
 
