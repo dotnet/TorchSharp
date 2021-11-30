@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TorchSharp.Utils;
 
+#nullable enable
 namespace TorchSharp
 {
     /// <summary>
@@ -17,7 +18,7 @@ namespace TorchSharp
 
         public DisposeScope(DisposeScopeManager disposeScopeManager)
         {
-            _disposeScopeManager = disposeScopeManager;
+            _disposeScopeManager = disposeScopeManager ?? throw new ArgumentNullException(nameof(disposeScopeManager));
             if (disposeScopeManager.DisposeScopeStack.Count > 0) {
                 OuterScope = disposeScopeManager.DisposeScopeStack.Peek();
             }
@@ -26,7 +27,7 @@ namespace TorchSharp
         /// <summary>
         /// The outer scope with relation to this scope.
         /// </summary>
-        internal DisposeScope OuterScope { get; set; }
+        internal DisposeScope? OuterScope { get; }
 
         /// <summary>
         /// The disposables that are scheduled for disposing.
@@ -269,7 +270,7 @@ namespace TorchSharp
         /// method.
         /// </summary>
         /// <param name="disposable">The disposable that was disposed</param>
-        public void WasDisposed(IDisposable disposable)
+        public void MarkAsDisposed(IDisposable disposable)
         {
             _disposeScopeManager.StatisticsInstance.DisposedInScopeCount++;
             Disposables.Remove(disposable);
