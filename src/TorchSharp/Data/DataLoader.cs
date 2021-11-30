@@ -1,6 +1,4 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
-using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -15,6 +13,13 @@ namespace TorchSharp.Data
         private bool shuffle;
         private Device device;
 
+        /// <summary>
+        /// Create pytorch style dataloader
+        /// </summary>
+        /// <param name="dataset"></param>
+        /// <param name="batchSize"></param>
+        /// <param name="shuffle"></param>
+        /// <param name="device"></param>
         public DataLoader(Dataset dataset, int batchSize, bool shuffle = false, Device device = null)
         {
             this.dataset = dataset;
