@@ -41,6 +41,7 @@ namespace TorchSharp.Data
             private Device device;
             private bool shuffle;
             private ShuffleGenerator shuffleGenerator;
+            private int currentVal = 0;
 
             public DataLoaderEnumerator(Dataset dataset, int batchSize, bool shuffle, Device device)
             {
@@ -56,11 +57,12 @@ namespace TorchSharp.Data
 
             private bool isFinished() => !shuffleGenerator.hasNext();
 
-            private int getNextValue() => shuffleGenerator.next();
+            private int getNextValue() => shuffle ? shuffleGenerator.next() : currentVal++;
 
             private void reset()
             {
                 shuffleGenerator = new ShuffleGenerator(dataset.Count);
+                currentVal = 0;
             }
 
             public bool MoveNext()
