@@ -152,16 +152,18 @@ This approach, which was added in TorchSharp 0.95.4, makes it easier to dispose 
 
 👎 It's a new code pattern, not widely used with other libraries.
 
-Let's look at an example:
+Let's look at an example, similar to the earlier, technique 2 example:
 
 ```C#
 using (var d = torch.NewDisposeScope()) {
 
     total_acc += (predicted_labels.argmax(1) == labels).sum().cpu().item<long>();
+
+    ...
 }
 ```
 
-What happens here, is that all tensors that are created while `d` is alive will be disposed when `d` is disposed. This includes temporaries, so you don't have to do anything special to get them to be disposed.
+What happens here, is that all tensors that are created while `d` is alive will be disposed when `d` is disposed. This includes temporaries, so you don't have to do anything special to get them to be disposed. (There's a problem with this simplistic example, which will be discussed later.)
 
 In F#, it would look like:
 
@@ -171,32 +173,95 @@ use d = torch.NewDisposeScope()
 total_acc <- total_acc + (predicted_labels.argmax(1) == labels).sum().cpu().item<long>()
 ```
 
-If you need to dispose some tensors before the scope is disposed, you can use `DisposeEverything()`, or `DisposeEverythingBut(...)` if you want to exclude a few tensors from disposal. These can be useful when tensor lifetimes aren't cleanly nested in dynamic scopes.
+If you need to dispose some tensors before the scope is disposed, you can use `DisposeEverything()`, or `DisposeEverythingBut(...)` if you want to exclude a few tensors from disposal. These can be useful when tensor lifetimes aren't cleanly nested in dynamic scopes. 
+
 
 It's important to note that these scopes are dynamic -- if any functions are called, the tensors inside them are also registered and disposed, unless there's a nested scope within those functions.
 
 It is advisable to place a dispose scope around your training and test code, and in any library code that can be called from contexts that do not have dispose scopes.
 
-### DisposeScope and function return values
+### Passing Tensors Out of Scopes
 
-If you return a tensor from within a dispose scope, and that tensor was created while the scope was in effect, the returned tensor will be disposed, too. This is probably not what you intended, so the tensor needs to be either detached, or moved to an outer scope (if one exists).
+Any tensor that needs to survive the dynamic dispose scope must be either removed from management completely, or promoted to a nesting (outer) scope.
 
-For example:
+For example, if a tensor variable `tensor` is overwritten in a scope, there are two problems:
+
+1. The tensor held in `tensor` will be overwritten. Since it's not created within the scope, the scope will not dispose of it. A nesting scope must be added to managed the lifetime of all tensors kept in `tensor`:
 
 ```C#
-public Tensor foo(Tensor predicted_labels) {
-    using (var d = torch.NewDisposeScope()) {
-        return (predicted_labels.argmax(1) == labels).sum().MoveToOuterDisposeScope();
+using (var d0 = torch.NewDisposeScope()) {
+
+    var tensor = torch.zeros(...)
+
+    for ( ... ) {
+        ...
+        using (var d1 = torch.NewDisposeScope()) {
+
+            var x = ...;
+            tensor += x.log();
+            ...
+        }
     }
 }
 ```
 
-or:
+2. The new tensor that is placed in `tensor` will be disposed when the scope is exited. Since the static scope of `tensor` is not the same as the dynamic scope where it is created, there's a problem.
 
-```F#
-let foo (predicted_labels) = 
-    use d = torch.NewDisposeScope()
-    (predicted_labels.argmax(1) == labels).sum().MoveToOuterDisposeScope()
+This is probably not what you intended, so the tensor needs to be either detached, or moved to an outer scope (if one exists).
+
+For example:
+
+```C#
+using (var d0 = torch.NewDisposeScope()) {
+
+    var tensor = torch.zeros(...)
+
+    for ( ... ) {
+        ...
+        using (var d1 = torch.NewDisposeScope()) {
+
+            var x = ...;
+            tensor = (tensor + x.log()).MoveToOuterDisposeScope();
+            ...
+        }
+    }
+}
+```
+
+Sometimes, less is more -- a simple solution is to have fewer nested scopes:
+
+```C#
+using (var d0 = torch.NewDisposeScope()) {
+
+    var tensor = torch.zeros(...)
+
+    for ( ... ) {
+        ...
+        var x = ...;
+        tensor += x.log();
+        ...
+    }
+}
+```
+
+but sometimes, you still have to move the tensor out, for example when you return a tensor from a method:
+
+```C#
+public Tensor foo() {
+    using (var d0 = torch.NewDisposeScope()) {
+
+        var tensor = torch.zeros(...)
+
+        foreach ( ... ) {
+            ...
+            var x = ...;
+            tensor += x.log();
+            ...
+        }
+
+        return tensor.MoveToOuterDisposeScope();
+    }
+}
 ```
 
 These examples show how to move a tensor up one level in the stack of scopes. To completely remove a tensor from scoped management, use `DetatchFromDisposeScope()` instead of `MoveToOuterDisposeScope()`.
