@@ -45,6 +45,7 @@ namespace TorchSharp.Data
                 this.batchSize = batchSize;
                 this.device = device;
                 this.shuffle = shuffle;
+                reset();
             }
 
             private Tensor dataTensor;
@@ -54,30 +55,32 @@ namespace TorchSharp.Data
             {
                 throw new NotImplementedException();
             }
-            private int getRandomValue()
+            private int getNextValue()
+            {
+                throw new NotImplementedException();
+            }
+
+            private void reset()
             {
                 throw new NotImplementedException();
             }
             public bool MoveNext()
             {
                 if (isFinished()) return false;
-                (dataTensor, labelTensor) = dataset.GetTensor(getRandomValue());
+                (dataTensor, labelTensor) = dataset.GetTensor(getNextValue());
                 dataTensor.unsqueeze_(0);
                 for (var i = 1; i < batchSize; i++)
                 {
                     if (isFinished())
                         break;
-                    var tmp = dataset.GetTensor(getRandomValue());
-                    dataTensor = cat(new List<Tensor> {dataTensor, tmp.Item1.unsqueeze(0)}, 0);
-                    labelTensor = cat(new List<Tensor> {labelTensor, tmp.Item2}, 0);
+                    var (data, label) = dataset.GetTensor(getNextValue());
+                    dataTensor = cat(new List<Tensor> {dataTensor, data.unsqueeze(0)}, 0);
+                    labelTensor = cat(new List<Tensor> {labelTensor, label}, 0);
                 }
                 return true;
             }
 
-            public void Reset()
-            {
-
-            }
+            public void Reset() => reset();
 
             public (Tensor, Tensor) Current => (dataTensor.to(device), labelTensor.to(device));
 
