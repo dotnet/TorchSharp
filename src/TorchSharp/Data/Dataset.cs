@@ -7,7 +7,7 @@ namespace TorchSharp.Data
 {
     public interface Dataset: IDisposable
     {
-        public long Count();
+        public long Count { get; }
         public (Tensor, Tensor) GetTensor(int index);
     }
 }

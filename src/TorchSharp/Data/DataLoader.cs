@@ -31,46 +31,43 @@ namespace TorchSharp.Data
             return GetEnumerator();
         }
 
-        public long Count => (dataset.Count() - 1) / batchSize + 1;
+        public long Count => (dataset.Count - 1) / batchSize + 1;
 
         private class DataLoaderEnumerator : IEnumerator<(Tensor, Tensor)>
         {
             private Dataset dataset;
-            private IEnumerator<object> load;
             private int batchSize;
             private Device device;
+            private bool shuffle;
             public DataLoaderEnumerator(Dataset dataset, int batchSize, bool shuffle, Device device)
             {
                 this.dataset = dataset;
                 this.batchSize = batchSize;
                 this.device = device;
-
-                if (shuffle)
-                {
-                    var r = new Random();
-                    load = dataset.GetDataEnumerable()
-                        .Select(x => new {Number = r.Next(), Item = x})
-                        .OrderBy(x => x.Number)
-                        .Select(x => x.Item)
-                        .GetEnumerator();
-                }
-                else load = dataset.GetDataEnumerable().GetEnumerator();
+                this.shuffle = shuffle;
             }
 
             private Tensor dataTensor;
             private Tensor labelTensor;
-            private (Tensor, Tensor) tmp;
 
+            private bool isFinished()
+            {
+                throw new NotImplementedException();
+            }
+            private int getRandomValue()
+            {
+                throw new NotImplementedException();
+            }
             public bool MoveNext()
             {
-                if (!load.MoveNext()) return false;
-                (dataTensor, labelTensor) = dataset.GetTensor(load.Current);
+                if (isFinished()) return false;
+                (dataTensor, labelTensor) = dataset.GetTensor(getRandomValue());
                 dataTensor.unsqueeze_(0);
                 for (var i = 1; i < batchSize; i++)
                 {
-                    if (!load.MoveNext())
+                    if (isFinished())
                         break;
-                    tmp = dataset.GetTensor(load.Current);
+                    var tmp = dataset.GetTensor(getRandomValue());
                     dataTensor = cat(new List<Tensor> {dataTensor, tmp.Item1.unsqueeze(0)}, 0);
                     labelTensor = cat(new List<Tensor> {labelTensor, tmp.Item2}, 0);
                 }
@@ -79,7 +76,7 @@ namespace TorchSharp.Data
 
             public void Reset()
             {
-                load.Reset();
+
             }
 
             public (Tensor, Tensor) Current => (dataTensor.to(device), labelTensor.to(device));
@@ -88,7 +85,6 @@ namespace TorchSharp.Data
 
             public void Dispose()
             {
-                load.Dispose();
                 dataset.Dispose();
             }
         }
