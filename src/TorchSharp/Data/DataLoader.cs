@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
 using System.Collections;
@@ -21,15 +22,10 @@ namespace TorchSharp.Data
             this.shuffle = shuffle;
             this.device = device ?? CPU;
         }
-        public IEnumerator<(Tensor, Tensor)> GetEnumerator()
-        {
-            return new DataLoaderEnumerator(dataset, batchSize, shuffle, device);
-        }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        public IEnumerator<(Tensor, Tensor)> GetEnumerator() => new DataLoaderEnumerator(dataset, batchSize, shuffle, device);
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public long Count => (dataset.Count - 1) / batchSize + 1;
 
@@ -39,6 +35,7 @@ namespace TorchSharp.Data
             private int batchSize;
             private Device device;
             private bool shuffle;
+
             public DataLoaderEnumerator(Dataset dataset, int batchSize, bool shuffle, Device device)
             {
                 this.dataset = dataset;
@@ -55,6 +52,7 @@ namespace TorchSharp.Data
             {
                 throw new NotImplementedException();
             }
+
             private int getNextValue()
             {
                 throw new NotImplementedException();
@@ -64,6 +62,7 @@ namespace TorchSharp.Data
             {
                 throw new NotImplementedException();
             }
+
             public bool MoveNext()
             {
                 if (isFinished()) return false;
