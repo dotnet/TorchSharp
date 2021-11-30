@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+#nullable enable
 namespace TorchSharp
 {
     /// <summary>
@@ -13,7 +14,7 @@ namespace TorchSharp
     /// </summary>
     public class DisposeScopeManager
     {
-        [ThreadStatic] private static DisposeScopeManager _threadSingleton;
+        [ThreadStatic] private static DisposeScopeManager? _threadSingleton;
         internal ThreadDisposeScopeStatistics StatisticsInstance { get; } = new ThreadDisposeScopeStatistics();
 
         internal static DisposeScopeManager ThreadSingleton => (_threadSingleton ??= new DisposeScopeManager());
@@ -21,7 +22,7 @@ namespace TorchSharp
 
         public static ThreadDisposeScopeStatistics Statistics => ThreadSingleton.StatisticsInstance;
 
-        internal DisposeScope RegisterOnCurrentDisposeScope(IDisposable disposable)
+        internal DisposeScope? RegisterOnCurrentDisposeScope(IDisposable disposable)
         {
             if (DisposeScopeStack.Count == 0) {
                 StatisticsInstance.CreatedOutsideScopeCount++;
