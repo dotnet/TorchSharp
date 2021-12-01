@@ -147,6 +147,33 @@ EXPORT_API(Tensor)   THSNN_BatchNorm2d_forward(const NNModule module, const Tens
 EXPORT_API(NNModule) THSNN_BatchNorm3d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_BatchNorm3d_forward(const NNModule module, const Tensor tensor);
 
+EXPORT_API(Tensor)   THSNN_BatchNorm1d_bias(const NNModule module);
+EXPORT_API(void)     THSNN_BatchNorm1d_set_bias(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor)   THSNN_BatchNorm1d_weight(const NNModule module);
+EXPORT_API(void)     THSNN_BatchNorm1d_set_weight(const NNModule module, const Tensor weight);
+
+EXPORT_API(Tensor)   THSNN_BatchNorm2d_bias(const NNModule module);
+EXPORT_API(void)     THSNN_BatchNorm2d_set_bias(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor)   THSNN_BatchNorm2d_weight(const NNModule module);
+EXPORT_API(void)     THSNN_BatchNorm2d_set_weight(const NNModule module, const Tensor weight);
+
+EXPORT_API(Tensor)   THSNN_BatchNorm3d_bias(const NNModule module);
+EXPORT_API(void)     THSNN_BatchNorm3d_set_bias(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor)   THSNN_BatchNorm3d_weight(const NNModule module);
+EXPORT_API(void)     THSNN_BatchNorm3d_set_weight(const NNModule module, const Tensor weight);
+
+EXPORT_API(void)     THSNN_BatchNorm1d_reset_stats(const NNModule module);
+EXPORT_API(void)     THSNN_BatchNorm2d_reset_stats(const NNModule module);
+EXPORT_API(void)     THSNN_BatchNorm3d_reset_stats(const NNModule module);
+
+EXPORT_API(Tensor)   THSNN_BatchNorm1d_get_mean(const NNModule module);
+EXPORT_API(Tensor)   THSNN_BatchNorm2d_get_mean(const NNModule module);
+EXPORT_API(Tensor)   THSNN_BatchNorm3d_get_mean(const NNModule module);
+
+EXPORT_API(Tensor)     THSNN_BatchNorm1d_get_var(const NNModule module);
+EXPORT_API(Tensor)     THSNN_BatchNorm2d_get_var(const NNModule module);
+EXPORT_API(Tensor)     THSNN_BatchNorm3d_get_var(const NNModule module);
+
 EXPORT_API(NNModule) THSNN_InstanceNorm1d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_InstanceNorm1d_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_InstanceNorm2d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule);

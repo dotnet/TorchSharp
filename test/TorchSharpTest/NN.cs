@@ -2012,6 +2012,49 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestBatchNorm1DWeightAndBias()
+        {
+            var ones = torch.ones(new long[] { 16, 3, 28 });
+
+            using (var norm = BatchNorm1d(3, track_running_stats: false)) {
+                var pooled = norm.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+
+                var w = norm.weight;
+                var b = norm.bias;
+
+                Assert.NotNull(w);
+                Assert.NotNull(b);
+
+                Assert.Null(norm.running_mean);
+                Assert.Null(norm.running_var);
+
+                Assert.Equal(new long[] { 3 }, w.shape);
+                Assert.Equal(new long[] { 3 }, b.shape);
+            }
+        }
+
+        [Fact]
+        public void TestBatchNorm1DRunningStats()
+        {
+            var ones = torch.ones(new long[] { 16, 3, 28 });
+
+            using (var norm = BatchNorm1d(3, track_running_stats:true)) {
+                var pooled = norm.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+
+                var m = norm.running_mean;
+                var v = norm.running_var;
+
+                Assert.NotNull(m);
+                Assert.NotNull(v);
+
+                if (m is not null) Assert.Equal(new long[] { 3 }, m.shape);
+                if (v is not null) Assert.Equal(new long[] { 3 }, v.shape);
+            }
+        }
+
+        [Fact]
         public void TestBatchNorm2D()
         {
             var ones = torch.ones(new long[] { 16, 3, 28, 28 });
@@ -2024,6 +2067,49 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestBatchNorm2dWeightAndBias()
+        {
+            var ones = torch.ones(new long[] { 16, 3, 28, 28 });
+
+            using (var norm = BatchNorm2d(3, track_running_stats: false)) {
+                var pooled = norm.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+
+                var w = norm.weight;
+                var b = norm.bias;
+
+                Assert.NotNull(w);
+                Assert.NotNull(b);
+
+                Assert.Null(norm.running_mean);
+                Assert.Null(norm.running_var);
+
+                Assert.Equal(new long[] { 3 }, w.shape);
+                Assert.Equal(new long[] { 3 }, b.shape);
+            }
+        }
+
+        [Fact]
+        public void TestBatchNorm2dRunningStats()
+        {
+            var ones = torch.ones(new long[] { 16, 3, 28, 28 });
+
+            using (var norm = BatchNorm2d(3, track_running_stats: true)) {
+                var pooled = norm.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+
+                var m = norm.running_mean;
+                var v = norm.running_var;
+
+                Assert.NotNull(m);
+                Assert.NotNull(v);
+
+                if (m is not null) Assert.Equal(new long[] { 3 }, m.shape);
+                if (v is not null) Assert.Equal(new long[] { 3 }, v.shape);
+            }
+        }
+
+        [Fact]
         public void TestBatchNorm3D()
         {
             var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
@@ -2032,6 +2118,49 @@ namespace TorchSharp
                 Assert.Equal(ones.shape, pooled.shape);
                 Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2, 2 })));
                 Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+            }
+        }
+
+        [Fact]
+        public void TestBatchNorm3dWeightAndBias()
+        {
+            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
+
+            using (var norm = BatchNorm3d(3, track_running_stats: false)) {
+                var pooled = norm.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+
+                var w = norm.weight;
+                var b = norm.bias;
+
+                Assert.NotNull(w);
+                Assert.NotNull(b);
+
+                Assert.Null(norm.running_mean);
+                Assert.Null(norm.running_var);
+
+                Assert.Equal(new long[] { 3 }, w.shape);
+                Assert.Equal(new long[] { 3 }, b.shape);
+            }
+        }
+
+        [Fact]
+        public void TestBatchNorm3dRunningStats()
+        {
+            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
+
+            using (var norm = BatchNorm3d(3, track_running_stats: true)) {
+                var pooled = norm.forward(ones);
+                Assert.Equal(ones.shape, pooled.shape);
+
+                var m = norm.running_mean;
+                var v = norm.running_var;
+
+                Assert.NotNull(m);
+                Assert.NotNull(v);
+
+                if (m is not null) Assert.Equal(new long[] { 3 }, m.shape);
+                if (v is not null) Assert.Equal(new long[] { 3 }, v.shape);
             }
         }
 

@@ -157,3 +157,45 @@ Tensor THSNN_LocalResponseNorm_forward(const NNModule module, const Tensor tenso
 {
     CATCH_TENSOR((*module)->as<torch::nn::LocalResponseNorm>()->forward(*tensor));
 }
+
+#define BATCHNORM_STATS(type) \
+void THSNN_##type##_reset_stats(const NNModule module)\
+{\
+    CATCH((*module)->as<torch::nn::##type##>()->reset_running_stats(););\
+}\
+Tensor THSNN_##type##_get_mean(const NNModule module)\
+{\
+    CATCH(\
+        auto m = (*module)->as<torch::nn::##type##>()->running_mean;\
+        return m.defined() ? ResultTensor(m) : nullptr;\
+    );\
+    return nullptr;\
+}\
+Tensor THSNN_##type##_get_var(const NNModule module)\
+{\
+    CATCH(\
+        auto v = (*module)->as<torch::nn::##type##>()->running_var;\
+        return v.defined() ? ResultTensor(v) : nullptr;\
+    );\
+    return nullptr;\
+}\
+Tensor THSNN_##type##_bias(const NNModule module)\
+{\
+    return get_bias<torch::nn::##type##>(module);\
+}\
+void THSNN_##type##_set_bias(const NNModule module, const Tensor bias)\
+{\
+    set_bias<torch::nn::##type##>(module, bias);\
+}\
+Tensor THSNN_##type##_weight(const NNModule module)\
+{\
+    return get_weight<torch::nn::##type##>(module);\
+}\
+void THSNN_##type##_set_weight(const NNModule module, const Tensor weight)\
+{\
+    set_weight<torch::nn::##type##>(module, weight);\
+}
+
+BATCHNORM_STATS(BatchNorm1d)
+BATCHNORM_STATS(BatchNorm2d)
+BATCHNORM_STATS(BatchNorm3d)

@@ -3,6 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
+#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -27,6 +28,67 @@ namespace TorchSharp
                 var res = THSNN_BatchNorm1d_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_BatchNorm1d_bias(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_BatchNorm1d_set_bias(torch.nn.Module.HType module, IntPtr bias);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_BatchNorm1d_weight(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_BatchNorm1d_set_weight(torch.nn.Module.HType module, IntPtr weight);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_BatchNorm1d_reset_stats(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_BatchNorm1d_get_mean(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_BatchNorm1d_get_var(torch.nn.Module.HType module);
+
+            public Tensor bias {
+                get {
+                    var res = THSNN_BatchNorm1d_bias(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+                set {
+                    THSNN_BatchNorm1d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                }
+            }
+
+            public Tensor weight {
+                get {
+                    var res = THSNN_BatchNorm1d_weight(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+                set {
+                    THSNN_BatchNorm1d_set_weight(handle, value.Handle);
+                    torch.CheckForErrors();
+                }
+            }
+
+            public Tensor? running_mean {
+                get {
+                    var res = THSNN_BatchNorm1d_get_mean(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
+                    return new Tensor(res);
+                }
+            }
+
+            public Tensor? running_var {
+                get {
+                    var res = THSNN_BatchNorm1d_get_var(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
+                    return new Tensor(res);
+                }
+            }
+
+            public void reset_running_stats()
+            {
+                THSNN_BatchNorm1d_reset_stats(handle);
+                torch.CheckForErrors();
             }
         }
     }
