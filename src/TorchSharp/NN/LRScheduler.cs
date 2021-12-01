@@ -6,6 +6,11 @@ using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
+// All LR schedulers in this file are directly based on the Pytorch implementation at:
+//
+// https://github.com/pytorch/pytorch/blob/master/torch/optim/lr_scheduler.py
+//
+
 namespace TorchSharp
 {
     public static partial class torch
