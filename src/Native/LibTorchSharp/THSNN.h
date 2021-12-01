@@ -359,6 +359,11 @@ EXPORT_API(Optimizer) THSNN_LBFGS_ctor(const Tensor* parameters, const int len, 
 EXPORT_API(Optimizer) THSNN_RMSprop_ctor(const Tensor* parameters, const int length, const double learning_rate, const double alpha, const double eps, const double weight_decay, const double momentum, const bool centered);
 EXPORT_API(Optimizer) THSNN_SGD_ctor(const Tensor* parameters, const int length, const double learning_rate, const double momentum, const double dampening, const double weight_decay, const bool nesterov);
 
+EXPORT_API(void) THSNN_Adam_set_betas(const Optimizer optimizer, double beta1, double beta2);
+EXPORT_API(void) THSNN_AdamW_set_betas(const Optimizer optimizer, double beta1, double beta2);
+EXPORT_API(void) THSNN_RMSprop_set_momentum(const Optimizer optimizer, double momentum);
+EXPORT_API(void) THSNN_SGD_set_momentum(const Optimizer optimizer, double momentum);
+
 EXPORT_API(void)   THSNN_Optimizer_zero_grad(const Optimizer optimizer);
 EXPORT_API(void)   THSNN_Optimizer_getParameters(const Optimizer optimizer, Tensor* (*allocator)(size_t length));
 EXPORT_API(Tensor) THSNN_Optimizer_step(const Optimizer optimizer, Tensor(*loss_closure)());
