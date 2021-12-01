@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
+
 namespace TorchSharp
 {
     public class TestDataLoader
@@ -39,6 +40,7 @@ namespace TorchSharp
             Assert.Equal(iterator.Current["data"], torch.tensor(rawArray: new[]{1, 1}, dimensions: new[]{2L}));
             Assert.Equal(iterator.Current["label"], torch.tensor(rawArray: new[]{13, 13}, dimensions: new[]{2L}));
             Assert.Equal(iterator.Current["index"], torch.tensor(rawArray: new[]{0, 1}, dimensions: new[]{2L}));
+            iterator.Dispose();
         }
     }
 }
