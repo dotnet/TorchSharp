@@ -158,44 +158,131 @@ Tensor THSNN_LocalResponseNorm_forward(const NNModule module, const Tensor tenso
     CATCH_TENSOR((*module)->as<torch::nn::LocalResponseNorm>()->forward(*tensor));
 }
 
-#define BATCHNORM_STATS(type) \
-void THSNN_##type##_reset_stats(const NNModule module)\
-{\
-    CATCH((*module)->as<torch::nn::##type##>()->reset_running_stats(););\
-}\
-Tensor THSNN_##type##_get_mean(const NNModule module)\
-{\
-    CATCH(\
-        auto m = (*module)->as<torch::nn::##type##>()->running_mean;\
-        return m.defined() ? ResultTensor(m) : nullptr;\
-    );\
-    return nullptr;\
-}\
-Tensor THSNN_##type##_get_var(const NNModule module)\
-{\
-    CATCH(\
-        auto v = (*module)->as<torch::nn::##type##>()->running_var;\
-        return v.defined() ? ResultTensor(v) : nullptr;\
-    );\
-    return nullptr;\
-}\
-Tensor THSNN_##type##_bias(const NNModule module)\
-{\
-    return get_bias<torch::nn::##type##>(module);\
-}\
-void THSNN_##type##_set_bias(const NNModule module, const Tensor bias)\
-{\
-    set_bias<torch::nn::##type##>(module, bias);\
-}\
-Tensor THSNN_##type##_weight(const NNModule module)\
-{\
-    return get_weight<torch::nn::##type##>(module);\
-}\
-void THSNN_##type##_set_weight(const NNModule module, const Tensor weight)\
-{\
-    set_weight<torch::nn::##type##>(module, weight);\
+void THSNN_BatchNorm1d_reset_stats(const NNModule module)
+{
+    CATCH((*module)->as<torch::nn::BatchNorm1d>()->reset_running_stats(););
 }
 
-BATCHNORM_STATS(BatchNorm1d)
-BATCHNORM_STATS(BatchNorm2d)
-BATCHNORM_STATS(BatchNorm3d)
+Tensor THSNN_BatchNorm1d_get_mean(const NNModule module)
+{
+    CATCH(
+        auto m = (*module)->as<torch::nn::BatchNorm1d>()->running_mean;
+        return m.defined() ? ResultTensor(m) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_BatchNorm1d_get_var(const NNModule module)
+{
+    CATCH(
+        auto v = (*module)->as<torch::nn::BatchNorm1d>()->running_var;
+        return v.defined() ? ResultTensor(v) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_BatchNorm1d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::BatchNorm1d>(module);
+}
+
+void THSNN_BatchNorm1d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::BatchNorm1d>(module, bias);
+}
+
+Tensor THSNN_BatchNorm1d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::BatchNorm1d>(module);
+}
+
+void THSNN_BatchNorm1d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::BatchNorm1d>(module, weight);
+}
+
+void THSNN_BatchNorm2d_reset_stats(const NNModule module)
+{
+    CATCH((*module)->as<torch::nn::BatchNorm2d>()->reset_running_stats(););
+}
+
+Tensor THSNN_BatchNorm2d_get_mean(const NNModule module)
+{
+    CATCH(
+        auto m = (*module)->as<torch::nn::BatchNorm2d>()->running_mean;
+    return m.defined() ? ResultTensor(m) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_BatchNorm2d_get_var(const NNModule module)
+{
+    CATCH(
+        auto v = (*module)->as<torch::nn::BatchNorm2d>()->running_var;
+    return v.defined() ? ResultTensor(v) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_BatchNorm2d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::BatchNorm2d>(module);
+}
+
+void THSNN_BatchNorm2d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::BatchNorm2d>(module, bias);
+}
+
+Tensor THSNN_BatchNorm2d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::BatchNorm2d>(module);
+}
+
+void THSNN_BatchNorm2d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::BatchNorm2d>(module, weight);
+}
+
+void THSNN_BatchNorm3d_reset_stats(const NNModule module)
+{
+    CATCH((*module)->as<torch::nn::BatchNorm3d>()->reset_running_stats(););
+}
+
+Tensor THSNN_BatchNorm3d_get_mean(const NNModule module)
+{
+    CATCH(
+        auto m = (*module)->as<torch::nn::BatchNorm3d>()->running_mean;
+    return m.defined() ? ResultTensor(m) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_BatchNorm3d_get_var(const NNModule module)
+{
+    CATCH(
+        auto v = (*module)->as<torch::nn::BatchNorm3d>()->running_var;
+    return v.defined() ? ResultTensor(v) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_BatchNorm3d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::BatchNorm3d>(module);
+}
+
+void THSNN_BatchNorm3d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::BatchNorm3d>(module, bias);
+}
+
+Tensor THSNN_BatchNorm3d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::BatchNorm3d>(module);
+}
+
+void THSNN_BatchNorm3d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::BatchNorm3d>(module, weight);
+}
