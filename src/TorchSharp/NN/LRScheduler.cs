@@ -40,21 +40,16 @@ namespace TorchSharp
                         _last_epoch += 1;
 
                         // NOTE: It is super-important to use the 'LearningRate' property once per step(), since
-                        //       for most LR schedulers, it will modify the internal state.
+                        //       for many LR schedulers, it will modify the internal state.
                         var lr = LearningRate;
 
                         _optimizer.LearningRate = lr;
-                        Print(_last_lr != lr);
+                        if (_verbose && _last_lr != lr)
+                            Console.WriteLine($"Adjusting learning rate to {lr}");
                         _last_lr = lr;
                     }
 
                     public double get_learning_rate() => LearningRate;
-
-                    private void Print(bool changed)
-                    {
-                        if (_verbose && changed)
-                            Console.WriteLine($"Adjusting learning rate to {LearningRate}");
-                    }
 
                     public virtual double LearningRate => _optimizer.LearningRate;
 
@@ -373,6 +368,142 @@ namespace TorchSharp
                     }
 
                     /// <summary>
+                    /// Sets the learning rate of each parameter group according to cyclical learning rate policy(CLR).
+                    ///
+                    /// The policy cycles the learning rate between two boundaries with a constant frequency, as detailed in
+                    /// the paper `Cyclical Learning Rates for Training Neural Networks`_.
+                    /// 
+                    /// The distance between the two boundaries can be scaled on a per-iteration or per-cycle basis.
+                    /// </summary>
+                    public class CyclicLR : LRScheduler
+                    {
+                        public enum Mode
+                        {
+                            Triangular,
+                            Triangular2,
+                            ExpRange
+                        }
+                        public enum ScaleMode
+                        {
+                            Cycle,
+                            Iterations
+                        }
+
+                        /// <summary>
+                        /// Constructor
+                        /// </summary>
+                        public CyclicLR(ILearningRateController optimizer,
+                            double base_lr,
+                            double max_lr,
+                            int step_size_up = 2000,
+                            int step_size_down = -1,
+                            Mode mode = Mode.Triangular,
+                            double gamma = 1.0,
+                            Func<double, double> scale_fn = null,
+                            ScaleMode scale_mode = ScaleMode.Cycle,
+                            bool cycle_momentum = true,
+                            double base_momentum = 0.8,
+                            double max_momentum = 0.9,
+                            int last_epoch = -1,
+                            bool verbose = false) : base(optimizer, last_epoch, verbose)
+                        {
+                            if (optimizer == null) throw new ArgumentNullException("optimizer");
+
+                            double down = (step_size_down == -1) ? step_size_up : step_size_down;
+                            _total_size = step_size_up + down;
+                            _step_ratio = step_size_up / _total_size;
+
+                            _max_lr = max_lr;
+                            _base_lr = base_lr;
+                            if (_last_epoch == -1) {
+                                optimizer.LearningRate = base_lr;
+                            }
+
+                            _mode = mode;
+                            _gamma = gamma;
+                            _cycle_momentum = cycle_momentum;
+
+                            if (cycle_momentum) {
+                                _momentum = optimizer as IMomentum;
+                                if (_momentum == null && cycle_momentum) throw new ArgumentException($"optimizer must support momentum with `cycle_momentum` option enabled");
+
+                                if (_last_epoch == -1) {
+                                    _momentum.Momentum = base_momentum;
+                                }
+
+                                _base_momentum = base_momentum;
+                                _max_momentum = max_momentum;
+                            }
+
+
+                            if (scale_fn == null) {
+                                switch (mode) {
+                                case Mode.Triangular:
+                                    _scale_func = x => 1.0;
+                                    _scale_mode = ScaleMode.Cycle;
+                                    break;
+                                case Mode.Triangular2:
+                                    _scale_func = x => 1.0 / (Math.Pow(2, x - 1));
+                                    _scale_mode = ScaleMode.Cycle;
+                                    break;
+                                case Mode.ExpRange:
+                                    _scale_func = x => Math.Pow(this._gamma, x);
+                                    _scale_mode = ScaleMode.Cycle;
+                                    break;
+                                }
+                            } else {
+                                _scale_func = scale_fn;
+                                _scale_mode = scale_mode;
+                            }
+
+                            step();
+                        }
+
+                        public override double LearningRate {
+                            get {
+                                var cycle = Math.Floor(1.0 + _last_epoch / _total_size);
+                                var x = 1.0 + _last_epoch / _total_size - cycle;
+
+                                var scale_factor = (x <= _step_ratio) ? x / _step_ratio : (x - 1) / (_step_ratio - 1);
+                                var base_height = (_max_lr - _base_lr) * scale_factor;
+
+                                var computed_lr = (_scale_mode == ScaleMode.Cycle)
+                                    ? _base_lr + base_height * _scale_func(cycle)
+                                    : _base_lr + base_height * _scale_func(_last_epoch);
+
+                                if (_cycle_momentum) {
+
+                                    base_height = (_max_momentum - _base_momentum) * scale_factor;
+
+                                    _momentum.Momentum = (_scale_mode == ScaleMode.Cycle)
+                                        ? _max_momentum + base_height * _scale_func(cycle)
+                                        : _max_momentum + base_height * _scale_func(_last_epoch);
+
+                                }
+
+                                return computed_lr;
+                            }
+                        }
+
+                        private double _total_size;
+                        private double _step_ratio;
+
+                        private double _max_lr;
+
+                        private Func<double, double> _scale_func;
+                        private ScaleMode _scale_mode;
+
+                        private bool _cycle_momentum;
+
+                        private double _base_momentum;
+                        private double _max_momentum;
+
+                        private IMomentum _momentum;
+                        private Mode _mode;
+                        private double _gamma;
+                    }
+
+                    /// <summary>
                     /// Sets the learning rate of each parameter group according to the 1cycle learning rate policy.
                     /// </summary>
                     public class OneCycleLR : LRScheduler
@@ -403,9 +534,13 @@ namespace TorchSharp
                         {
                             if (optimizer == null) throw new ArgumentNullException("optimizer");
 
-                            _momentum = optimizer as IMomentum;
-                            _betas = optimizer as IBetas;
-                            if (_momentum == null && _betas == null) throw new ArgumentException($"optimizer must support momentum with `cycle_momentum` option enabled");
+                            _cycle_momentum = cycle_momentum;
+
+                            if (cycle_momentum) {
+                                _momentum = optimizer as IMomentum;
+                                _betas = optimizer as IBetas;
+                                if (_momentum == null && _betas == null) throw new ArgumentException($"optimizer must support momentum with `cycle_momentum` option enabled");
+                            }
 
                             if (pct_start < 0 || pct_start > 1) throw new ArgumentException($"Expected float between 0 and 1 for pct_start, but got {pct_start}");
 
@@ -419,8 +554,6 @@ namespace TorchSharp
                                 if (steps_per_epoch <= 0) throw new ArgumentException($"Expected positive integer steps_per_epoch, but got {steps_per_epoch}");
                                 _total_steps = epochs * steps_per_epoch;
                             }
-
-                            _cycle_momentum = cycle_momentum;
 
                             var initial_lr = max_lr / div_factor;
 
@@ -805,6 +938,74 @@ namespace TorchSharp
                     int last_epoch = -1, bool verbose = false)
                 {
                     return new impl.OneCycleLR(optimizer, max_lr, total_steps, epochs, steps_per_epoch, pct_start, anneal_strategy, cycle_momentum, base_momentum, max_momentum, div_factor, final_div_factor, three_phase, last_epoch, verbose);
+                }
+
+                /// <summary>
+                /// Sets the learning rate of each parameter group according to
+                /// cyclical learning rate policy(CLR). The policy cycles the learning
+                /// rate between two boundaries with a constant frequency, as detailed in
+                /// the paper `Cyclical Learning Rates for Training Neural Networks`_.
+                /// The distance between the two boundaries can be scaled on a per-iteration
+                /// or per-cycle basis.
+                ///
+                /// Cyclical learning rate policy changes the learning rate after every batch.
+                /// `step` should be called after a batch has been used for training.
+                ///
+                /// This class has three built-in policies, as put forth in the paper:
+                ///    * "triangular": A basic triangular cycle without amplitude scaling.
+                ///    * "triangular2": A basic triangular cycle that scales initial amplitude by half each cycle.
+                ///    * "exp_range": A cycle that scales initial amplitude by gamma^(cycle iterations).
+                ///    }`
+                /// at each cycle iteration.
+                /// /// </summary>
+                /// <param name="optimizer">Wrapped optimizer.</param>
+                /// <param name="base_lr">Initial learning rate which is the lower boundary in the cycle</param>
+                /// <param name="max_lr">
+                /// Upper learning rate boundaries in the cycle for each parameter group.
+                /// Functionally, it defines the cycle amplitude(max_lr - base_lr).
+                /// The lr at any cycle is the sum of base_lr and some scaling of the amplitude; therefore 
+                /// max_lr may not actually be reached depending on the scaling function.
+                /// </param>
+                /// <param name="step_size_up">Number of training iterations in the increasing half of a cycle.</param>
+                /// <param name="step_size_down">
+                /// Number of training iterations in the decreasing half of a cycle.
+                /// If step_size_down is -1, it is set to step_size_up.
+                /// </param>
+                /// <param name="mode">Values correspond to policies detailed above. If scale_fn is non-null, this argument is ignored.</param>
+                /// <param name="gamma">Constant in 'exp_range' scaling function</param>
+                /// <param name="scale_fn">Custom scaling policy defined by a single argument lambda function. If specified, then 'mode' is ignored.</param>
+                /// <param name="scale_mode">Defines whether scale_fn is evaluated on cycle number or cycle iterations(training iterations since start of cycle)</param>
+                /// <param name="cycle_momentum">If true, momentum is cycled inversely to learning rate between 'base_momentum' and 'max_momentum'.</param>
+                /// <param name="base_momentum">Lower momentum boundaries in the cycle. Note that momentum is cycled inversely to learning rate</param>
+                /// <param name="max_momentum">
+                /// Upper momentum boundaries in the cycle.
+                /// Functionally, it defines the cycle amplitude(max_momentum - base_momentum).
+                /// The momentum at any cycle is the difference of max_momentum and some scaling of the amplitude; therefore
+                /// base_momentum may not actually be reached depending on the scaling function.
+                /// </param>
+                /// <param name="last_epoch">
+                /// The index of the last batch. This parameter is used when resuming a training job.Since `step()` should be invoked after each
+                /// batch instead of after each epoch, this number represents the total number of *batches* computed, not the total number of epochs computed.
+                /// When last_epoch = -1, the schedule is started from the beginning.
+                /// </param>
+                /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
+                /// <returns>A scheduler</returns>
+                public static LRScheduler CyclicLR(ILearningRateController optimizer,
+                            double base_lr,
+                            double max_lr,
+                            int step_size_up = 2000,
+                            int step_size_down = -1,
+                            impl.CyclicLR.Mode mode = impl.CyclicLR.Mode.Triangular,
+                            double gamma = 1.0,
+                            Func<double, double> scale_fn = null,
+                            impl.CyclicLR.ScaleMode scale_mode = impl.CyclicLR.ScaleMode.Cycle,
+                            bool cycle_momentum = true,
+                            double base_momentum = 0.8,
+                            double max_momentum = 0.9,
+                            int last_epoch = -1,
+                            bool verbose = false)
+                {
+                    return new impl.CyclicLR(optimizer, base_lr, max_lr, step_size_up, step_size_down, mode, gamma, scale_fn, scale_mode, cycle_momentum, base_momentum, max_momentum, last_epoch, verbose);
                 }
             }
         }
