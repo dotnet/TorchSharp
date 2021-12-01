@@ -192,7 +192,26 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            public static ModuleDict ModuleDict() => new ModuleDict();
+            /// <summary>
+            /// Create a ModuleDict instance from an array of modules.
+            /// </summary>
+            /// <param name="modules">A list of (name,module) tuples.</param>
+            /// <returns></returns>
+            /// <remarks>
+            /// ModuleDict can be indexed like a regular dictionary, but the modules it
+            /// contains are properly registered, and will be visible by all Module methods.
+            ///
+            /// ModuleDict is an ordered dictionary that respects the order of insertion, and
+            /// in update(), the order of the merged OrderedDict or another ModuleDict (the argument to update()).
+            /// </remarks>
+            public static ModuleDict ModuleDict(params (string, Module)[] modules)
+            {
+                var result = new ModuleDict();
+                foreach (var (n, m) in modules) {
+                    result.Add((n, m));
+                }
+                return result;
+            }
         }
     }
 }
