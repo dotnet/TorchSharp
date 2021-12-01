@@ -253,12 +253,21 @@ namespace TorchSharp
                 var gru = GRU(2, 2, 2);
                 gru.to(DeviceType.CUDA);
                 var params0 = gru.parameters();
+                Assert.Equal(DeviceType.CUDA, params0[0].device_type);
+
                 gru.save(".model.ts");
+
+                // Make sure the model is still on the GPU when we come back.
+
+                Assert.Equal(DeviceType.CUDA, params0[0].device_type);
 
                 var loadedGru = GRU(2, 2, 2);
                 loadedGru.to(DeviceType.CUDA);
                 loadedGru.load(".model.ts");
                 var params1 = loadedGru.parameters();
+
+                Assert.Equal(DeviceType.CUDA, params1[0].device_type);
+
                 File.Delete(".model.ts");
                 Assert.Equal(params0, params1);
             }
