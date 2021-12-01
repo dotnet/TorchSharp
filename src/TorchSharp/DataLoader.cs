@@ -85,7 +85,7 @@ namespace TorchSharp
                                     break;
                                 dic = dataset.GetTensor(getNextValue());
                                 foreach (var x in currentKeys)
-                                    Current[x] = cat(new List<Tensor>() {dic[x].unsqueeze(0), Current[x]}, 0);
+                                    Current[x] = cat(new List<Tensor>() {Current[x], dic[x].unsqueeze(0)}, 0);
                             }
 
                             return true;
