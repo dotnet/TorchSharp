@@ -88,7 +88,7 @@ namespace TorchSharp.Examples
                 var val_loss = evaluate(valid_data, model, loss, bptt, ntokens, optimizer);
                 sw.Stop();
 
-                Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {scheduler.LearningRate:0.00} | time: {sw.Elapsed.TotalSeconds:0.0}s | loss: {val_loss:0.00}\n");
+                Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {optimizer.LearningRate:0.00} | time: {sw.Elapsed.TotalSeconds:0.0}s | loss: {val_loss:0.00}\n");
                 scheduler.step();
             }
 
@@ -241,9 +241,9 @@ namespace TorchSharp.Examples
             {
                 var initrange = 0.1;
 
-                init.uniform_(encoder.Weight, -initrange, initrange);
-                init.zeros_(decoder.Bias);
-                init.uniform_(decoder.Weight, -initrange, initrange);
+                init.uniform_(encoder.weight, -initrange, initrange);
+                init.zeros_(decoder.bias);
+                init.uniform_(decoder.weight, -initrange, initrange);
             }
 
             public override Tensor forward(Tensor t)
