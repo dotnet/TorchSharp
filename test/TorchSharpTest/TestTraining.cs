@@ -126,6 +126,27 @@ namespace TorchSharp
             Assert.NotNull(optimizer);
         }
 
+        [Fact]
+        public void TestAdamBetas()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00001;
+
+            var optimizer = torch.optim.Adam(seq.parameters(), learning_rate);
+            var (beta1, beta2) = optimizer.Betas;
+            Assert.Equal(0.9, beta1);
+            Assert.Equal(0.99, beta2);
+
+            optimizer.Betas = (0.85, 0.975);
+
+            (beta1, beta2) = optimizer.Betas;
+            Assert.Equal(0.85, beta1);
+            Assert.Equal(0.975, beta2);
+        }
+
         /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using Adam optimizer.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
@@ -194,6 +215,43 @@ namespace TorchSharp
             Assert.True(finalLoss < initialLoss);
         }
 
+        [Fact]
+        public void TestTrainingAdamOneCycleLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.Adam(seq.parameters(), amsgrad: true);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
+            }
+
+            Assert.True(finalLoss < initialLoss);
+        }
+
         /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using Adam optimizer.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
@@ -227,6 +285,43 @@ namespace TorchSharp
 
                 optimizer.step();
             }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamWOneCycleLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.AdamW(seq.parameters(), amsgrad: true);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
+            }
+
             Assert.True(finalLoss < initialLoss);
         }
 
@@ -340,6 +435,44 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using Adamax optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingAdamaxOneCycleLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.Adamax(seq.named_parameters());
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 15);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 15; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using NAdam optimizer.
         /// </summary>
         [Fact]
@@ -375,6 +508,43 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using NAdam optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingNAdamOneCycleLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.NAdam(seq.named_parameters());
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
         /// </summary>
         [Fact]
@@ -405,6 +575,44 @@ namespace TorchSharp
                 output.backward();
 
                 optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingRAdamOneCycleLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.RAdam(seq.named_parameters());
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 1.5, total_steps: 10);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
             }
             Assert.True(finalLoss < initialLoss);
         }
@@ -512,6 +720,46 @@ namespace TorchSharp
                 output.backward();
 
                 optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using RMSprop optimizer.
+        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
+        /// </summary>
+        [Fact]
+        public void TestTrainingRMSOneCycleLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
             }
             Assert.True(finalLoss < initialLoss);
         }
@@ -811,6 +1059,44 @@ namespace TorchSharp
                     Assert.True(scheduler.LearningRate < lastLR);
                 }
                 lastLR = scheduler.LearningRate;
+            }
+
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingSGDOneCycleLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, 0.0004, total_steps: 10);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
             }
 
             Assert.True(finalLoss < initialLoss);

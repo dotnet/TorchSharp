@@ -100,6 +100,7 @@ Optimizer THSNN_SGD_ctor(const Tensor* parameters, const int length, const doubl
     return new std::shared_ptr<torch::optim::Optimizer>(std::make_shared<torch::optim::SGD>(torch::optim::SGD(params, opts)));
 }
 
+
 // Scheduler integration
 
 template<typename OptionsType>
@@ -113,6 +114,36 @@ void SetLearningRate(const Optimizer optimizer, const double lr)
     {
         options = dynamic_cast<OptionsType*>(&(pg->options()));
         options->lr(lr);
+    }
+}
+
+template<typename OptionsType>
+void SetMomentum(const Optimizer optimizer, const double momentum)
+{
+    auto options = dynamic_cast<OptionsType*>(&(*optimizer)->defaults());
+    options->momentum(momentum);
+
+    auto& pgs = (*optimizer)->param_groups();
+    for (auto pg = pgs.begin(); pg < pgs.end(); ++pg)
+    {
+        options = dynamic_cast<OptionsType*>(&(pg->options()));
+        options->momentum(momentum);
+    }
+}
+
+template<typename OptionsType>
+void SetBetas(const Optimizer optimizer, const double beta1, const double beta2)
+{
+    auto betas = std::make_tuple(beta1, beta2);
+
+    auto options = dynamic_cast<OptionsType*>(&(*optimizer)->defaults());
+    options->betas(betas);
+
+    auto& pgs = (*optimizer)->param_groups();
+    for (auto pg = pgs.begin(); pg < pgs.end(); ++pg)
+    {
+        options = dynamic_cast<OptionsType*>(&(pg->options()));
+        options->betas(betas);
     }
 }
 
@@ -149,4 +180,24 @@ void THSNN_SGD_set_lr(const Optimizer optimizer, const double lr)
 void THSNN_Optimizer_dispose(const Optimizer optimizer)
 {
     delete optimizer; // NOTE: this reduces the ref count on the shared_ptr
+}
+
+void THSNN_Adam_set_betas(const Optimizer optimizer, double beta1, double beta2)
+{
+    SetBetas<torch::optim::AdamOptions>(optimizer, beta1, beta2);
+}
+
+void THSNN_AdamW_set_betas(const Optimizer optimizer, double beta1, double beta2)
+{
+    SetBetas<torch::optim::AdamWOptions>(optimizer, beta1, beta2);
+}
+
+void THSNN_RMSprop_set_momentum(const Optimizer optimizer, double momentum)
+{
+    SetMomentum<torch::optim::RMSpropOptions>(optimizer, momentum);
+}
+
+void THSNN_SGD_set_momentum(const Optimizer optimizer, double momentum)
+{
+    SetMomentum<torch::optim::SGDOptions>(optimizer, momentum);
 }
