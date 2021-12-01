@@ -1,4 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -12,7 +14,7 @@ namespace TorchSharp
         {
             public static partial class data
             {
-                public class DataLoader : IEnumerable<Dictionary<string, Tensor>>
+                public class DataLoader : IEnumerable<Dictionary<string, Tensor>>, IDisposable
                 {
                     private Dataset dataset;
                     private int batchSize;
@@ -99,6 +101,11 @@ namespace TorchSharp
                         {
                             dataset.Dispose();
                         }
+                    }
+
+                    public void Dispose()
+                    {
+                        dataset.Dispose();
                     }
                 }
             }
