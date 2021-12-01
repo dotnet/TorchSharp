@@ -227,5 +227,39 @@ namespace TorchSharp
                 Assert.Equal(size * epochs, i * 32);
             }
         }
+
+        [Fact]
+        public void TestSaveLoadGruOnCpuWorks()
+        {
+            // Works on CPU
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var gru = GRU(2, 2, 2);
+            var params0 = gru.parameters();
+            gru.save(".model.ts");
+
+            var loadedGru = GRU(2, 2, 2);
+            loadedGru.load(".model.ts");
+            var params1 = loadedGru.parameters();
+            File.Delete(".model.ts");
+            Assert.Equal(params0, params1);
+        }
+
+        [Fact]
+        public void TestSaveLoadGruOnCudaFreezes()
+        {
+            // Fails on CUDA
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var gru = GRU(2, 2, 2);
+            gru.to(DeviceType.CUDA);
+            var params0 = gru.parameters();
+            gru.save(".model.ts");
+
+            var loadedGru = GRU(2, 2, 2);
+            loadedGru.to(DeviceType.CUDA);
+            loadedGru.load(".model.ts");
+            var params1 = loadedGru.parameters();
+            File.Delete(".model.ts");
+            Assert.Equal(params0, params1);
+        }
     }
 }
