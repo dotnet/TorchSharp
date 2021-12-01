@@ -39,6 +39,8 @@ namespace TorchSharp
                         _step_count += 1;
                         _last_epoch += 1;
 
+                        // NOTE: It is super-important to use the 'LearningRate' property once per step(), since
+                        //       for most LR schedulers, it will modify the internal state.
                         var lr = LearningRate;
 
                         _optimizer.LearningRate = lr;
