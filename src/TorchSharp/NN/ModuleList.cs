@@ -122,6 +122,13 @@ namespace TorchSharp
     {
         public static partial class nn
         {
+            /// <summary>
+            /// Create a ModuleList instance from an array of modules.
+            /// </summary>
+            /// <param name="modules">A list of modules.</param>
+            /// <remarks>
+            /// ModuleList can be indexed like a regular list, but modules it contains are properly registered, and will be visible by all Module methods.
+            /// </remarks>
             public static ModuleList ModuleList(params Module[] modules) => new ModuleList(modules);
         }
     }

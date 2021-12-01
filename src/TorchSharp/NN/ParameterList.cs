@@ -123,6 +123,13 @@ namespace TorchSharp
     {
         public static partial class nn
         {
+            /// <summary>
+            /// Create a ParameterList instance from an array of parameter tensors.
+            /// </summary>
+            /// <param name="parameters">A list of modules.</param>
+            /// <remarks>
+            /// ParameterList can be indexed like a regular list, but the parameters it contains are properly registered.
+            /// </remarks>
             public static ParameterList ParameterList(params Parameter[] parameters) => new ParameterList(parameters);
         }
     }

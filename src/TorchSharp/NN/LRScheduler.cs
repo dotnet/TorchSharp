@@ -39,14 +39,19 @@ namespace TorchSharp
                         }
                     }
 
+                    /// <summary>
+                    /// Advance the learning rate schedule.                 
+                    /// </summary>
+                    /// <remarks>Typically, this is done once per epoch or once every N batches.</remarks>
                     public virtual void step()
                     {
                         _step_count += 1;
                         _last_epoch += 1;
 
-                        // NOTE: It is super-important to use the 'LearningRate' property once per step(), since
-                        //       for many LR schedulers, it will modify the internal state.
-                        var lr = LearningRate;
+                        // NOTE: It is super-important to use the 'get_lr()' method once per step(), since
+                        //       for many LR schedulers, it will modify the internal state of the scheduler,
+                        //       as well as that of the controlled optimizer.
+                        var lr = get_lr();
 
                         _optimizer.LearningRate = lr;
                         if (_verbose && _last_lr != lr)
@@ -54,9 +59,10 @@ namespace TorchSharp
                         _last_lr = lr;
                     }
 
-                    public double get_learning_rate() => LearningRate;
-
-                    public virtual double LearningRate => _optimizer.LearningRate;
+                    /// <summary>
+                    /// Compute the current learning rate for the scheduler.
+                    /// </summary>
+                    protected virtual double get_lr() => _optimizer.LearningRate;
 
                     protected ILearningRateController _optimizer;
                     protected int _last_epoch = -1;
@@ -90,10 +96,12 @@ namespace TorchSharp
                             step();
                         }
 
-                        public override double LearningRate {
-                            get {
-                                return _base_lr * _lr_lambda(_last_epoch);
-                            }
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override double get_lr()
+                        {
+                            return _base_lr * _lr_lambda(_last_epoch);
                         }
 
                         private Func<int, double> _lr_lambda;
@@ -121,12 +129,14 @@ namespace TorchSharp
                             step();
                         }
 
-                        public override double LearningRate {
-                            get {
-                                return (_last_epoch > 0)
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override double get_lr()
+                        {
+                            return (_last_epoch > 0)
                                     ? _optimizer.LearningRate * _lr_lambda(_last_epoch)
                                     : _optimizer.LearningRate;
-                            }
                         }
 
                         private Func<int, double> _lr_lambda;
@@ -157,12 +167,14 @@ namespace TorchSharp
                             step();
                         }
 
-                        public override double LearningRate {
-                            get {
-                                return (_last_epoch == 0) || (_last_epoch % _step_size != 0)
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override double get_lr()
+                        {
+                            return (_last_epoch == 0) || (_last_epoch % _step_size != 0)
                                     ? _optimizer.LearningRate
                                     : _optimizer.LearningRate * _gamma;
-                            }
                         }
 
                         private int _step_size;
@@ -194,13 +206,15 @@ namespace TorchSharp
                             step();
                         }
 
-                        public override double LearningRate {
-                            get {
-                                var idx = _milestones.IndexOf(_last_epoch);
-                                return idx == -1
-                                    ? _optimizer.LearningRate
-                                    : _optimizer.LearningRate * Math.Pow(_gamma, _milestones[idx]);
-                            }
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override double get_lr()
+                        {
+                            var idx = _milestones.IndexOf(_last_epoch);
+                            return idx == -1
+                                ? _optimizer.LearningRate
+                                : _optimizer.LearningRate * Math.Pow(_gamma, _milestones[idx]);
                         }
 
                         private IList<int> _milestones;
@@ -230,12 +244,14 @@ namespace TorchSharp
                             step();
                         }
 
-                        public override double LearningRate {
-                            get {
-                                return (_last_epoch == 0)
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override double get_lr()
+                        {
+                            return (_last_epoch == 0)
                                     ? _optimizer.LearningRate
                                     : _optimizer.LearningRate * _gamma;
-                            }
                         }
 
                         private double _gamma;
@@ -266,15 +282,17 @@ namespace TorchSharp
                             step();
                         }
 
-                        public override double LearningRate {
-                            get {
-                                if (_last_epoch == 0) {
-                                    return _optimizer.LearningRate * _factor;
-                                } else if (_last_epoch == _total_iters) {
-                                    return _optimizer.LearningRate * (1.0 / _factor);
-                                } else {
-                                    return _optimizer.LearningRate;
-                                }
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override double get_lr()
+                        {
+                            if (_last_epoch == 0) {
+                                return _optimizer.LearningRate * _factor;
+                            } else if (_last_epoch == _total_iters) {
+                                return _optimizer.LearningRate * (1.0 / _factor);
+                            } else {
+                                return _optimizer.LearningRate;
                             }
                         }
 
@@ -311,16 +329,18 @@ namespace TorchSharp
                             step();
                         }
 
-                        public override double LearningRate {
-                            get {
-                                if (_last_epoch == 0) {
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override double get_lr()
+                        {
+                            if (_last_epoch == 0) {
                                     return _optimizer.LearningRate * _start_factor;
                                 } else if (_last_epoch > _total_iters) {
                                     return _optimizer.LearningRate;
                                 } else {
                                     return (_total_iters * _start_factor + (_last_epoch - 1) * (_end_factor - _start_factor));
                                 }
-                            }
                         }
 
                         private double _start_factor;
@@ -353,9 +373,12 @@ namespace TorchSharp
                             step();
                         }
 
-                        public override double LearningRate {
-                            get {
-                                if (_last_epoch == 0) {
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override double get_lr()
+                        {
+                            if (_last_epoch == 0) {
                                     return _optimizer.LearningRate;
                                 } else if ((_last_epoch - 1 - _T_max) % (2 * _T_max) == 0) {
                                     return _optimizer.LearningRate + (_base_lr - _eta_min) *
@@ -365,7 +388,6 @@ namespace TorchSharp
                                            (1 + Math.Cos(Math.PI * (_last_epoch - 1) / _T_max)) *
                                            (_optimizer.LearningRate - _eta_min) + _eta_min;
                                 }
-                            }
                         }
 
                         private double _T_max;
@@ -464,9 +486,12 @@ namespace TorchSharp
                             step();
                         }
 
-                        public override double LearningRate {
-                            get {
-                                var cycle = Math.Floor(1.0 + _last_epoch / _total_size);
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override double get_lr()
+                        {
+                            var cycle = Math.Floor(1.0 + _last_epoch / _total_size);
                                 var x = 1.0 + _last_epoch / _total_size - cycle;
 
                                 var scale_factor = (x <= _step_ratio) ? x / _step_ratio : (x - 1) / (_step_ratio - 1);
@@ -487,7 +512,6 @@ namespace TorchSharp
                                 }
 
                                 return computed_lr;
-                            }
                         }
 
                         private double _total_size;
@@ -597,9 +621,12 @@ namespace TorchSharp
                             step();
                         }
 
-                        public override double LearningRate {
-                            get {
-                                var step_num = _last_epoch;
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override double get_lr()
+                        {
+                            var step_num = _last_epoch;
                                 if (step_num > _total_steps) {
                                     throw new InvalidOperationException($"Tried to step {step_num + 1} times. The specified number of total steps is {_total_steps}");
                                 }
@@ -633,7 +660,6 @@ namespace TorchSharp
                                     }
                                 }
                                 return computed_lr;
-                            }
                         }
 
                         private Func<double, double, double, double> _annealing_func;
