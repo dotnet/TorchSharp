@@ -23,7 +23,7 @@ namespace TorchSharp
         {
             var lin = Linear(1000, 100);
             Assert.NotNull(lin);
-            Assert.True(!(lin.Bias is null));
+            Assert.True(!(lin.bias is null));
             //var name = lin.GetName();
 
             var ps = lin.parameters();
@@ -37,10 +37,10 @@ namespace TorchSharp
             var ps = lin.parameters();
             var nps = ps.Length;
             Assert.Equal(1, nps);
-            Assert.True(lin.Bias is null);
+            Assert.True(lin.bias is null);
 
             var lin2 = Linear(1000, 100, true);
-            Assert.True(!(lin2.Bias is null));
+            Assert.True(!(lin2.bias is null));
         }
 
         [Fact]
@@ -48,10 +48,10 @@ namespace TorchSharp
         {
             var lin = Linear(1000, 100, true);
             var bias = torch.ones(new long[] { 1000 });
-            lin.Bias = bias;
-            Assert.True(!(lin.Bias is null));
+            lin.bias = bias;
+            Assert.True(!(lin.bias is null));
 
-            Assert.Equal(lin.Bias?.NumberOfElements, bias.NumberOfElements);
+            Assert.Equal(lin.bias?.NumberOfElements, bias.NumberOfElements);
         }
 
         [Fact]
@@ -59,11 +59,11 @@ namespace TorchSharp
         {
             var lin = Linear(1000, 100, true);
 
-            Assert.Equal(2, lin.Weight.shape.Length);
-            Assert.Equal(100, lin.Weight.shape[0]);
-            Assert.Equal(1000, lin.Weight.shape[1]);
-            Assert.True(1 == lin.Bias?.shape.Length);
-            Assert.Equal(100, lin.Bias?.shape[0]);
+            Assert.Equal(2, lin.weight.shape.Length);
+            Assert.Equal(100, lin.weight.shape[0]);
+            Assert.Equal(1000, lin.weight.shape[1]);
+            Assert.True(1 == lin.bias?.shape.Length);
+            Assert.Equal(100, lin.bias?.shape[0]);
         }
 
         [Fact]
@@ -101,8 +101,8 @@ namespace TorchSharp
         public void TestLinearWithBias()
         {
             var lin = Linear(1000, 100, true);
-            var bias = lin.Bias!;
-            var weight = lin.Weight.t();
+            var bias = lin.bias!;
+            var weight = lin.weight.t();
             var input = torch.randn(new long[] { 1, 1000 });
             var forward = lin.forward(input);
             var matmul = input.matmul(weight).add(bias);
@@ -133,9 +133,9 @@ namespace TorchSharp
         public void TestLinearNoBias()
         {
             var lin = Linear(1000, 100, false);
-            Assert.False(!(lin.Bias is null));
+            Assert.False(!(lin.bias is null));
 
-            var weight = lin.Weight.transpose(0, 1);
+            var weight = lin.weight.transpose(0, 1);
             var input = torch.randn(new long[] { 1, 1000 });
             var forward = lin.forward(input);
             var matmul = input.matmul(weight);
@@ -167,10 +167,10 @@ namespace TorchSharp
         {
             var lin = Linear(1000, 100, true);
             var bias = torch.randn(new long[] { 100 });
-            lin.Bias = bias;
+            lin.bias = bias;
 
             for (int i = 0; i < 100; i++) {
-                Assert.Equal(lin.Bias.data<float>()[i], bias.data<float>()[i]);
+                Assert.Equal(lin.bias.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
@@ -181,15 +181,15 @@ namespace TorchSharp
             var bias = torch.randn(new long[] { 100 });
             var weights = torch.randn(new long[] { 100, 1000 });
 
-            lin.Bias = bias;
-            lin.Weight = weights;
+            lin.bias = bias;
+            lin.weight = weights;
 
-            Assert.Equal(lin.Weight.shape.Length, weights.shape.Length);
-            Assert.Equal(lin.Weight.shape[0], weights.shape[0]);
-            Assert.Equal(lin.Weight.shape[1], weights.shape[1]);
+            Assert.Equal(lin.weight.shape.Length, weights.shape.Length);
+            Assert.Equal(lin.weight.shape[0], weights.shape[0]);
+            Assert.Equal(lin.weight.shape[1], weights.shape[1]);
 
             for (int i = 0; i < 100; i++) {
-                Assert.Equal(lin.Bias.data<float>()[i], bias.data<float>()[i]);
+                Assert.Equal(lin.bias.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
@@ -199,14 +199,14 @@ namespace TorchSharp
             var lin = Linear(1000, 1000, true);
             var bias = torch.randn(new long[] { 100 });
             var weights = torch.randn(new long[] { 1000, 1000 });
-            lin.Bias = bias;
-            lin.Weight = weights;
+            lin.bias = bias;
+            lin.weight = weights;
 
             var parameters = lin.parameters().ToArray();
 
-            Assert.Equal(lin.Weight.shape.Length, parameters[0].shape.Length);
-            Assert.Equal(lin.Weight.shape[0], parameters[0].shape[0]);
-            Assert.Equal(lin.Weight.shape[1], parameters[0].shape[1]);
+            Assert.Equal(lin.weight.shape.Length, parameters[0].shape.Length);
+            Assert.Equal(lin.weight.shape[0], parameters[0].shape[0]);
+            Assert.Equal(lin.weight.shape[1], parameters[0].shape[1]);
         }
         #endregion
 
@@ -897,8 +897,8 @@ namespace TorchSharp
             var inputs = new Tensor[] { input };
             var scaler = new double[] { 0.2544529, 0.3184713, 0.2597403, 0.3246753, 0.3144654, 0.3322259, 0.3436426, 0.3215434, 0.308642, 0.3154574, 0.3448276 }.ToTensor(new long[] { 1, 11 }).to_type(ScalarType.Float32).with_requires_grad();
             var linear = Linear(11, 1, true);
-            linear.Bias = new double[] { 373.8864 }.ToTensor(new long[] { 1, 1 }).to_type(ScalarType.Float32).with_requires_grad();
-            linear.Weight = new double[] { 300.2818, -0.5905267, 286.2787, 0.1970505, 0.9004903, 0.1373157, 55.85495, 11.43741, 1.525748, 0.4299785, 239.9356 }.ToTensor(new long[] { 1, 11 }).to_type(ScalarType.Float32).with_requires_grad();
+            linear.bias = new double[] { 373.8864 }.ToTensor(new long[] { 1, 1 }).to_type(ScalarType.Float32).with_requires_grad();
+            linear.weight = new double[] { 300.2818, -0.5905267, 286.2787, 0.1970505, 0.9004903, 0.1373157, 55.85495, 11.43741, 1.525748, 0.4299785, 239.9356 }.ToTensor(new long[] { 1, 11 }).to_type(ScalarType.Float32).with_requires_grad();
 
             var afterCat = torch.cat(inputs, 1);
             var afterScaler = afterCat * scaler;
@@ -912,8 +912,8 @@ namespace TorchSharp
             output.backward();
 
             var scalerGrad = scaler.grad();
-            var weightGrad = linear.Weight.grad();
-            var biasGrad = linear.Bias.grad();
+            var weightGrad = linear.weight.grad();
+            var biasGrad = linear.bias.grad();
             Assert.True(scalerGrad is not null && scalerGrad.shape.Length == 2);
             Assert.True(weightGrad is not null && weightGrad.shape.Length == 2);
             Assert.True(biasGrad is not null && biasGrad.shape.Length == 2);
@@ -1056,8 +1056,8 @@ namespace TorchSharp
         public void TestConv1dGetWeight()
         {
             var conv = Conv1d(3, 64, 3);
-            var weight = conv.Weight;
-            var bias = conv.Bias;
+            var weight = conv.weight;
+            var bias = conv.bias;
             Assert.NotNull(weight);
             Assert.NotNull(bias);
             Assert.Equal(new long[] { 64, 3, 3 }, weight.shape);
@@ -1068,18 +1068,18 @@ namespace TorchSharp
         {
             var conv = Conv1d(3, 64, 3);
 
-            conv.Bias = torch.randn(new long[] { 64 });
+            conv.bias = torch.randn(new long[] { 64 });
             var weights = torch.randn(new long[] { 64, 3, 3 });
 
-            var weight = conv.Weight;
-            var bias = conv.Bias;
+            var weight = conv.weight;
+            var bias = conv.bias;
 
             Assert.NotNull(weight);
             Assert.NotNull(bias);
             Assert.Equal(new long[] { 64, 3, 3 }, weight.shape);
 
             for (int i = 0; i < 64; i++) {
-                Assert.Equal(conv.Bias.data<float>()[i], bias.data<float>()[i]);
+                Assert.Equal(conv.bias.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
@@ -1148,8 +1148,8 @@ namespace TorchSharp
         public void TestConv2dGetWeight()
         {
             var conv = Conv2d(3, 64, (3, 3));
-            var weight = conv.Weight;
-            var bias = conv.Bias;
+            var weight = conv.weight;
+            var bias = conv.bias;
             Assert.NotNull(weight);
             Assert.NotNull(bias);
             Assert.Equal(new long[] { 64, 3, 3, 3 }, weight.shape);
@@ -1160,18 +1160,18 @@ namespace TorchSharp
         {
             var conv = Conv2d(3, 64, 3);
 
-            conv.Bias = torch.randn(new long[] { 64 });
+            conv.bias = torch.randn(new long[] { 64 });
             var weights = torch.randn(new long[] { 64, 3, 3, 3 });
 
-            var weight = conv.Weight;
-            var bias = conv.Bias;
+            var weight = conv.weight;
+            var bias = conv.bias;
 
             Assert.NotNull(weight);
             Assert.NotNull(bias);
             Assert.Equal(new long[] { 64, 3, 3, 3 }, weight.shape);
 
             for (int i = 0; i < 64; i++) {
-                Assert.Equal(conv.Bias.data<float>()[i], bias.data<float>()[i]);
+                Assert.Equal(conv.bias.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
@@ -1263,8 +1263,8 @@ namespace TorchSharp
         public void TestConv3dGetWeight()
         {
             var conv = Conv3d(3, 64, 3);
-            var weight = conv.Weight;
-            var bias = conv.Bias;
+            var weight = conv.weight;
+            var bias = conv.bias;
             Assert.NotNull(weight);
             Assert.NotNull(bias);
             Assert.Equal(new long[] { 64, 3, 3, 3, 3 }, weight.shape);
@@ -1275,18 +1275,18 @@ namespace TorchSharp
         {
             var conv = Conv3d(3, 64, 3);
 
-            conv.Bias = torch.randn(new long[] { 64 });
+            conv.bias = torch.randn(new long[] { 64 });
             var weights = torch.randn(new long[] { 64, 3, 3, 3 });
 
-            var weight = conv.Weight;
-            var bias = conv.Bias;
+            var weight = conv.weight;
+            var bias = conv.bias;
 
             Assert.NotNull(weight);
             Assert.NotNull(bias);
             Assert.Equal(new long[] { 64, 3, 3, 3, 3 }, weight.shape);
 
             for (int i = 0; i < 64; i++) {
-                Assert.Equal(conv.Bias.data<float>()[i], bias.data<float>()[i]);
+                Assert.Equal(conv.bias.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
@@ -2261,11 +2261,11 @@ namespace TorchSharp
             using (var emb = Embedding(1000, 12)) {
                 var weights = torch.randn(new long[] { 1000, 12 });
 
-                emb.Weight = weights;
+                emb.weight = weights;
 
-                Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
-                Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
-                Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
+                Assert.Equal(emb.weight.shape.Length, weights.shape.Length);
+                Assert.Equal(emb.weight.shape[0], weights.shape[0]);
+                Assert.Equal(emb.weight.shape[1], weights.shape[1]);
             }
         }
 
@@ -2276,9 +2276,9 @@ namespace TorchSharp
             var weights = torch.randn(new long[] { 1000, 12 });
 
             using (var emb = Embedding_from_pretrained(weights)) {
-                Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
-                Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
-                Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
+                Assert.Equal(emb.weight.shape.Length, weights.shape.Length);
+                Assert.Equal(emb.weight.shape[0], weights.shape[0]);
+                Assert.Equal(emb.weight.shape[1], weights.shape[1]);
             }
         }
 
@@ -2319,11 +2319,11 @@ namespace TorchSharp
             var ones = torch.ones(new long[] { 16 }, torch.int32);
             using (var emb = EmbeddingBag(1000, 12)) {
                 var weights = torch.randn(new long[] { 1000, 12 });
-                emb.Weight = weights;
+                emb.weight = weights;
 
-                Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
-                Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
-                Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
+                Assert.Equal(emb.weight.shape.Length, weights.shape.Length);
+                Assert.Equal(emb.weight.shape[0], weights.shape[0]);
+                Assert.Equal(emb.weight.shape[1], weights.shape[1]);
             }
         }
 
@@ -2334,9 +2334,9 @@ namespace TorchSharp
             var weights = torch.randn(new long[] { 1000, 12 });
 
             using (var emb = EmbeddingBag_from_pretrained(weights)) {
-                Assert.Equal(emb.Weight.shape.Length, weights.shape.Length);
-                Assert.Equal(emb.Weight.shape[0], weights.shape[0]);
-                Assert.Equal(emb.Weight.shape[1], weights.shape[1]);
+                Assert.Equal(emb.weight.shape.Length, weights.shape.Length);
+                Assert.Equal(emb.weight.shape[0], weights.shape[0]);
+                Assert.Equal(emb.weight.shape[1], weights.shape[1]);
             }
         }
 

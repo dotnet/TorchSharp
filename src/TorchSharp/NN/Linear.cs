@@ -38,7 +38,7 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Linear_set_bias(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Tensor? Bias {
+            public Tensor? bias {
                 get {
                     var res = THSNN_Linear_bias(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -54,7 +54,7 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Linear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Tensor Weight {
+            public Tensor weight {
                 get {
                     var res = THSNN_Linear_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
