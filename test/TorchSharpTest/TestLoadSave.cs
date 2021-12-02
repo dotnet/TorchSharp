@@ -259,6 +259,7 @@ namespace TorchSharp
 
                 // Make sure the model is still on the GPU when we come back.
 
+                params0 = gru.parameters();
                 Assert.Equal(DeviceType.CUDA, params0[0].device_type);
 
                 var loadedGru = GRU(2, 2, 2);

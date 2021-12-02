@@ -701,20 +701,22 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_to_device(IntPtr handle, int device_type, int device_index);
+            static extern IntPtr THSTensor_to_device(IntPtr handle, int device_type, int device_index, bool copy);
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type);
+            static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type, bool copy);
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_to_type_and_device(IntPtr handle, sbyte scalar_type, int device_type, int device_index);
+            static extern IntPtr THSTensor_to_type_and_device(IntPtr handle, sbyte scalar_type, int device_type, int device_index, bool copy);
 
             /// <summary>
             /// Cast the tensor to the given element type.
             /// </summary>
-            public Tensor to_type(ScalarType type)
+            /// <param name="type">The target type</param>
+            /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
+            public Tensor to_type(ScalarType type, bool copy = false)
             {
-                var res = THSTensor_to_type(Handle, (sbyte)type);
+                var res = THSTensor_to_type(Handle, (sbyte)type, copy);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -746,11 +748,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
             /// <param name="deviceIndex">The optional device index.</param>
+            /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <returns></returns>
-            public Tensor to(DeviceType deviceType, int deviceIndex = -1)
+            public Tensor to(DeviceType deviceType, int deviceIndex = -1, bool copy = false)
             {
                 torch.InitializeDeviceType(deviceType);
-                var res = THSTensor_to_device(Handle, (int)deviceType, deviceIndex);
+                var res = THSTensor_to_device(Handle, (int)deviceType, deviceIndex, copy);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -759,13 +762,14 @@ namespace TorchSharp
             /// <summary>
             /// Moves the tensor data and casts it to the given element type.
             /// </summary>
-            /// <param name="type"></param>
-            /// <param name="device"></param>
+            /// <param name="type">The target type</param>
+            /// <param name="device">The target device</param>
+            /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <returns></returns>
-            public Tensor to(ScalarType type, torch.Device device)
+            public Tensor to(ScalarType type, torch.Device device, bool copy = false)
             {
                 torch.InitializeDevice(device);
-                var res = THSTensor_to_type_and_device(Handle, (sbyte)type, (int)device.type, device.index);
+                var res = THSTensor_to_type_and_device(Handle, (sbyte)type, (int)device.type, device.index, copy);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 //var res = THSTensor_to_type(Handle, (sbyte)type);
