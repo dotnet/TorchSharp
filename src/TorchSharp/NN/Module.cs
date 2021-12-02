@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
 using static TorchSharp.Utils.LEB128Codec;
+using System.Diagnostics;
 
 namespace TorchSharp
 {
@@ -120,11 +121,25 @@ namespace TorchSharp
                 /// <returns></returns>
                 public Module to(DeviceType deviceType, int deviceIndex = -1)
                 {
-                    torch.InitializeDeviceType(deviceType);
-                    THSNN_Module_to_device(handle, (int)deviceType, deviceIndex);
-                    torch.CheckForErrors();
+                    if (deviceType != DeviceType.CUDA) deviceIndex = -1;
+
+                    if (deviceType != _deviceType || deviceIndex != _deviceIndex) {
+
+                        torch.InitializeDeviceType(deviceType);
+                        THSNN_Module_to_device(handle, (int)deviceType, deviceIndex);
+                        torch.CheckForErrors();
+
+                        _deviceType = deviceType;
+                        _deviceIndex = deviceIndex;
+                    }
+
+                    Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
+
                     return this;
                 }
+
+                private DeviceType _deviceType = DeviceType.CPU;
+                private int _deviceIndex = -1;
 
                 /// <summary>
                 /// Moves the parameters and buffers.
@@ -487,11 +502,20 @@ namespace TorchSharp
                 /// <returns></returns>
                 public Module save(string location)
                 {
+                    var dt = _deviceType;
+                    var di = _deviceIndex;
+
                     cpu();
 
-                    using (var stream = System.IO.File.OpenWrite(location))
-                    using (var writer = new System.IO.BinaryWriter(stream))
-                        save(writer);
+                    try {
+                        using (var stream = System.IO.File.OpenWrite(location))
+                        using (var writer = new System.IO.BinaryWriter(stream))
+                            save(writer);
+                    }
+                    finally {
+                        to(dt, di);
+                    }
+
                     return this;
                 }
 
@@ -528,9 +552,20 @@ namespace TorchSharp
                 /// <returns></returns>
                 public Module load(string location, bool strict = true)
                 {
-                    using (var stream = System.IO.File.OpenRead(location))
-                    using (var reader = new System.IO.BinaryReader(stream))
-                        load(reader, strict);
+                    var dt = _deviceType;
+                    var di = _deviceIndex;
+
+                    cpu();
+
+                    try {
+                        using (var stream = System.IO.File.OpenRead(location))
+                        using (var reader = new System.IO.BinaryReader(stream))
+                            load(reader, strict);
+                    }
+                    finally {
+                        to(dt, di);
+                    }
+
                     return this;
                 }
 
