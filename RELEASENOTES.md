@@ -1,6 +1,7 @@
 ## TorchSharp Release Notes
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
+
 ## NuGet Version 0.95.4
 
 __API Changes:__
