@@ -1526,6 +1526,11 @@ Tensor THSTensor_to_dense(Tensor tensor)
     CATCH_TENSOR(tensor->to_dense());
 }
 
+Tensor THSTensor_set_(Tensor tensor, const Tensor source)
+{
+    CATCH_TENSOR(tensor->set_(*source));
+}
+
 Tensor THSTensor_to_device(const Tensor tensor, const int device_type, const int device_index)
 {
     CATCH_RETURN_Tensor(

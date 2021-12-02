@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Data.Common;
 
 #nullable enable
 namespace TorchSharp
@@ -723,6 +724,22 @@ namespace TorchSharp
             /// Returns this tensor cast to the type of the given tensor.
             /// </summary>
             public Tensor type_as(Tensor tensor) => to_type(tensor.dtype);
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_set_(IntPtr tensor, IntPtr source);
+
+            /// <summary>
+            /// Overwrite an existing tensor with the concents of another tensor.
+            /// </summary>
+            /// <param name="source">The source tensor</param>
+            /// <returns></returns>
+            public Tensor set_(Tensor source)
+            {
+                var res = THSTensor_set_(Handle, source.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
 
             /// <summary>
             /// Moves the tensor data to a specific device.

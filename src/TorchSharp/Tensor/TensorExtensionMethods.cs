@@ -105,6 +105,13 @@ namespace TorchSharp
         /// <param name="writer"></param>
         public static void Save(this Tensor tensor, System.IO.BinaryWriter writer)
         {
+            bool copied = false;
+
+            if (tensor.device_type != DeviceType.CPU) {
+                tensor = tensor.to(torch.CPU);
+                copied = true;
+            }
+
             // First, write the type
             writer.Encode((int)tensor.dtype); // 4 bytes
                                                 // Then, the shape.
@@ -112,6 +119,8 @@ namespace TorchSharp
             foreach (var s in tensor.shape) writer.Encode(s); // n * 8 bytes
                                                                 // Then, the data
             writer.Write(tensor.bytes); // ElementSize * NumberofElements
+
+            if (copied) tensor.Dispose();
         }
 
         /// <summary>

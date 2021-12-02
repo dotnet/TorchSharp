@@ -229,7 +229,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestSaveLoadGruOnCpuWorks()
+        public void TestSaveLoadGruOnCPU()
         {
             // Works on CPU
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
@@ -245,7 +245,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestSaveLoadGruOnCudaFreezes()
+        public void TestSaveLoadGruOnCUDA()
         {
             if (torch.cuda.is_available()) {
                 // Fails on CUDA
