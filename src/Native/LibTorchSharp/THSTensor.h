@@ -1047,6 +1047,8 @@ EXPORT_API(Tensor) THSTensor_scatter_(const Tensor tensor, const int64_t dim, co
 EXPORT_API(Tensor) THSTensor_scatter_add(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 EXPORT_API(Tensor) THSTensor_scatter_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 
+EXPORT_API(Tensor) THSTensor_set_(Tensor tensor, const Tensor source);
+
 EXPORT_API(Tensor) THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad);
 
 EXPORT_API(void) THSTensor_set1(const Tensor tensor, int64_t index, Scalar value);
@@ -1144,11 +1146,11 @@ EXPORT_API(Tensor) THSTensor_trapezoid_dx(const Tensor y, const double dx, int64
 
 EXPORT_API(Tensor) THSTensor_to_dense(Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_to_device(const Tensor tensor, const int device_type, const int device_index);
+EXPORT_API(Tensor) THSTensor_to_device(const Tensor tensor, const int device_type, const int device_index, const bool copy);
 
-EXPORT_API(Tensor) THSTensor_to_type(const Tensor tensor, int8_t scalar_type);
+EXPORT_API(Tensor) THSTensor_to_type(const Tensor tensor, int8_t scalar_type, const bool copy);
 
-EXPORT_API(Tensor) THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index);
+EXPORT_API(Tensor) THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index, const bool copy);
 
 EXPORT_API(void) THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dim, const bool largest, const bool sorted);
 

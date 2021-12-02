@@ -229,7 +229,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestSaveLoadGruOnCpuWorks()
+        public void TestSaveLoadGruOnCPU()
         {
             // Works on CPU
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
@@ -245,7 +245,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestSaveLoadGruOnCudaFreezes()
+        public void TestSaveLoadGruOnCUDA()
         {
             if (torch.cuda.is_available()) {
                 // Fails on CUDA
@@ -259,6 +259,7 @@ namespace TorchSharp
 
                 // Make sure the model is still on the GPU when we come back.
 
+                params0 = gru.parameters();
                 Assert.Equal(DeviceType.CUDA, params0[0].device_type);
 
                 var loadedGru = GRU(2, 2, 2);

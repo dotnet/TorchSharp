@@ -502,19 +502,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public Module save(string location)
                 {
-                    var dt = _deviceType;
-                    var di = _deviceIndex;
-
-                    cpu();
-
-                    try {
-                        using (var stream = System.IO.File.OpenWrite(location))
-                        using (var writer = new System.IO.BinaryWriter(stream))
-                            save(writer);
-                    }
-                    finally {
-                        to(dt, di);
-                    }
+                    using (var stream = System.IO.File.OpenWrite(location))
+                    using (var writer = new System.IO.BinaryWriter(stream))
+                        save(writer);
 
                     return this;
                 }
