@@ -731,7 +731,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_set_(IntPtr tensor, IntPtr source);
 
             /// <summary>
-            /// Overwrite an existing tensor with the concents of another tensor.
+            /// Overwrite an existing tensor with the contents of another tensor.
             /// </summary>
             /// <param name="source">The source tensor</param>
             /// <returns></returns>
