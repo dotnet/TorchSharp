@@ -85,7 +85,7 @@ namespace TorchSharp
         public static Device CPU = new Device(DeviceType.CPU, -1);
 
         /// <summary>
-        /// Convenience declaration of a CPU device accessible everywhere.
+        /// Convenience declaration of a CUDA device accessible everywhere.
         /// </summary>
         public static Device CUDA = new Device(DeviceType.CUDA, -1);
 
