@@ -59,29 +59,13 @@ namespace TorchSharp.Utils
 
         static bool Coprime(long u, long v) => Gcd(u, v) == 1;
 
-        static long Gcd(long u, long v)
+        private static long Gcd(long a, long b)
         {
-            int shift;
-            if (u == 0) return v;
-            if (v == 0) return u;
-            for (shift = 0; ((u | v) & 1) == 0; ++shift) {
-                u >>= 1;
-                v >>= 1;
-            }
+            while (a != 0 && b != 0)
+                if (a > b) a %= b;
+                else b %= a;
 
-            while ((u & 1) == 0)
-                u >>= 1;
-
-            do {
-                while ((v & 1) == 0)
-                    v >>= 1;
-                if (u > v)
-                    (v, u) = (u, v);
-
-                v -= u;
-            } while (v != 0);
-
-            return u << shift;
+            return a | b;
         }
 
         private static long NextLong(Random r, long l)
