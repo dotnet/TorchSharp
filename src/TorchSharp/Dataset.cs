@@ -16,7 +16,7 @@ namespace TorchSharp
                     {
                     }
 
-                    public abstract int Count { get; }
+                    public abstract long Count { get; }
 
                     public abstract Dictionary<string, Tensor> GetTensor(int index);
                 }
