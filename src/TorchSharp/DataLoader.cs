@@ -82,6 +82,8 @@ namespace TorchSharp
                                     Current[x] = cat(new List<Tensor>() {Current[x], dic[x].unsqueeze(0)}, 0);
                             }
 
+                            foreach (var x in currentKeys)
+                                Current[x].to(device);
                             return true;
                         }
 
