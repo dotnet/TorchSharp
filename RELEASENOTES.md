@@ -6,37 +6,41 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __API Changes:__
 
-Added OneCycleLR and CyclicLR schedulers
-Added DisposeScopeManager and torch.NewDisposeScope() to facilitate a new solution for managing disposing of  tensors with fewer usings.
-Added Tensor.set_()
+Added OneCycleLR and CyclicLR schedulers<br/>
+Added DisposeScopeManager and torch.NewDisposeScope() to facilitate a new solution for managing disposing of  tensors with fewer usings.<br/>
+Added Tensor.set_()<br/>
 Added 'copy' argument to Tensor.to()
+
+__NOTES__: <br/>
+The 'Weight' and 'Bias' properties on some modules have been renamed 'weight' and 'bias'.<br/>
+The 'LRScheduler.LearningRate' property has been removed. To log the learning rate, get it from the optimizer that is in use.
 
 __Fixed Bugs:__
 
-#476 BatchNorm does not expose bias,weight,running_mean,running_var
-#475 Loading Module that's on CUDA
-#372 Module.save moves Module to CPU
-#468 How to set Conv2d kernel_size=(2,300)
+#476 BatchNorm does not expose bias,weight,running_mean,running_var<br/>
+#475 Loading Module that's on CUDA<br/>
+#372 Module.save moves Module to CPU<br/>
+#468 How to set Conv2d kernel_size=(2,300)<br/>
 #450 Smoother disposing
 
 ### NuGet Version 0.95.3
 
 __API Changes:__
 
-The previously unused Tensor.free() method was renamed 'DecoupleFromNativeHandle()' and is meant to be used in native interop scenarios.
-Tensor.Handle will now validate that the internal handle is not 'Zero', and throw an exception when it is. This will catch situations where a disposed tensor is accessed.
+The previously unused Tensor.free() method was renamed 'DecoupleFromNativeHandle()' and is meant to be used in native interop scenarios.<br/>
+Tensor.Handle will now validate that the internal handle is not 'Zero', and throw an exception when it is. This will catch situations where a disposed tensor is accessed.<br/>
 
 __Fixed Bugs:__
 
-There were a number of functions in torchvision, as well as a number of optimizers, that did not properly dispose of temporary and intermediate tensor values, leading to "memory leaks" in the absence of explicit GC.Collect() calls.
+There were a number of functions in torchvision, as well as a number of optimizers, that did not properly dispose of temporary and intermediate tensor values, leading to "memory leaks" in the absence of explicit GC.Collect() calls.<br/>
 A couple of randint() overloads caused infinite recursion, crashing the process.
 
 ### NuGet Version 0.95.2
 
 __API Changes:__
 
-Added a Sequential factory method to create Sequential from a list of anonymous submodules.
-Added TotalCount and PeakCount static properties to Tensor, useful for diagnostic purposes.
+Added a Sequential factory method to create Sequential from a list of anonymous submodules.<br/>
+Added TotalCount and PeakCount static properties to Tensor, useful for diagnostic purposes.<br/>
 
 __Fixed Bugs:__
 
@@ -61,7 +65,7 @@ __Fixed Bugs:__
 
 __API Changes:__
 
-Added the NAdam and RAdam optimizers.
+Added the NAdam and RAdam optimizers.<br/>
 Added several missing and new learning rate schedulers.
 
 
@@ -69,7 +73,7 @@ Added several missing and new learning rate schedulers.
 
 __Fixed Bugs:__
 
-#413 Random Distributions Should Take a Generator Argument
+#413 Random Distributions Should Take a Generator Argument<br/>
 #414 LRScheduler -- not calling the optimizer to step()
 
 __API Changes:__
@@ -80,14 +84,14 @@ Added Module.Create<T>() to create a model and load weights.
 
 __Fixed Bugs:__
 
-#407 rand() and randn() must check that the data type is floating-point.
+#407 rand() and randn() must check that the data type is floating-point.<br/>
 #410 Support for passing random number generators to rand(), randn(), and randint()
 
 
 __API Changes:__
 
-Added some overloads to make F# usage more convenient.
-Added convenience overloads to a number of random distribution factories.
+Added some overloads to make F# usage more convenient.<br/>
+Added convenience overloads to a number of random distribution factories.<br/>
 Added '_' to the torch.nn.init functions. They overwrite the input tensor, so they should have the in-place indicator.
 
 ### NuGet Version 0.93.5
@@ -100,18 +104,18 @@ This was a major bug, affecting any code that pulled data out of a tensor view.
 
 __API Changes:__
 
-Tensor.Data<T>() -> Tensor.data<T>()
-Tensor.DataItem<T>() -> Tensor.item<T>()
-Tensor.Bytes() -> Tensor.bytes
-Tensor.SetBytes() -> Tensor.bytes
+Tensor.Data<T>() -> Tensor.data<T>()<br/>
+Tensor.DataItem<T>() -> Tensor.item<T>()<br/>
+Tensor.Bytes() -> Tensor.bytes<br/>
+Tensor.SetBytes() -> Tensor.bytes<br/>
 
 ### NuGet Version 0.93.4
 
 This release introduces a couple of new NuGet packages, which bundle the native libraries that you need:
 
-TorchSharp-cpu
-TorchSharp-cuda-linux
-TorchSharp-cuda-windows
+TorchSharp-cpu<br/>
+TorchSharp-cuda-linux<br/>
+TorchSharp-cuda-windows<br/>
 
 ### NuGet Version 0.93.1
 
@@ -123,10 +127,10 @@ With this release, releases will have explicit control over the patch version nu
 
 __Fixed Bugs:__
 
-Fixed incorrectly implemented Module APIs related to parameter / module registration.
-Changed Module.state_dict() and Module.load() to 'virtual,' so that saving and restoring state may be customized.
-#353 Missing torch.minimum (with an alternative raising exception)
-#327 Tensor.Data<T> should do a type check
+Fixed incorrectly implemented Module APIs related to parameter / module registration.<br/>
+Changed Module.state_dict() and Module.load() to 'virtual,' so that saving and restoring state may be customized.<br/>
+#353 Missing torch.minimum (with an alternative raising exception)<br/>
+#327 Tensor.Data<T> should do a type check<br/>
 #358 Implement ModuleList / ModuleDict / Parameter / ParameterList / ParameterDict
 
 __API Changes:__
