@@ -58,19 +58,13 @@ namespace TorchSharp
                             this.batchSize = batchSize;
                             this.device = device;
                             this.shuffle = shuffle;
-                            reset();
+                            Reset();
                         }
 
                         private bool isFinished() =>
                             shuffle ? !shuffleGenerator.HasNext() : currentVal >= dataset.Count;
 
                         private int getNextValue() => shuffle ? shuffleGenerator.Next() : currentVal++;
-
-                        private void reset()
-                        {
-                            shuffleGenerator = new ShuffleGenerator(dataset.Count);
-                            currentVal = 0;
-                        }
 
                         public bool MoveNext()
                         {
@@ -91,7 +85,11 @@ namespace TorchSharp
                             return true;
                         }
 
-                        public void Reset() => reset();
+                        public void Reset()
+                        {
+                            shuffleGenerator = new ShuffleGenerator(dataset.Count);
+                            currentVal = 0;
+                        }
 
                         public Dictionary<string, Tensor> Current { get; private set; }
 
