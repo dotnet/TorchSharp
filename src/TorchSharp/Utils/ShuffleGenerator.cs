@@ -1,8 +1,11 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+
+//Algorithm from https://github.com/lemire/Code-used-on-Daniel-Lemire-s-blog/blob/master/2017/09/18_2/VisitInDisorder.java
 using System;
 
 namespace TorchSharp.Utils
 {
-    public class ShuffleGenerator
+    class ShuffleGenerator
     {
         int maxrange;
         int prime;
@@ -14,23 +17,18 @@ namespace TorchSharp.Utils
         {
             var min = size / 2;
             maxrange = size;
-            prime = selectCoPrimeResev(min, size);
+            prime = SelectCoPrimeResev(min, size);
             offset = new Random().Next(size);
             index = 0;
             runningvalue = offset;
         }
 
-        private int getCurrentValue()
-        {
-            return (int) (((long) index * prime + offset) % (maxrange));
-        }
-
-        public bool hasNext()
+        public bool HasNext()
         {
             return index < maxrange;
         }
 
-        public int next()
+        public int Next()
         {
             runningvalue += prime;
             if (runningvalue >= maxrange) runningvalue -= maxrange;
@@ -40,13 +38,13 @@ namespace TorchSharp.Utils
 
         private const int MAX_COUNT = int.MaxValue;
 
-        static int selectCoPrimeResev(int min, int target)
+        static int SelectCoPrimeResev(int min, int target)
         {
             var count = 0;
             var selected = 0;
             var rand = new Random();
             for (var val = min; val < target; ++val) {
-                if (coprime(val, target)) {
+                if (Coprime(val, target)) {
                     count += 1;
                     if ((count == 1) || (rand.Next(count) < 1)) {
                         selected = val;
@@ -59,9 +57,9 @@ namespace TorchSharp.Utils
             return selected;
         }
 
-        static bool coprime(int u, int v) => gcd(u, v) == 1;
+        static bool Coprime(int u, int v) => Gcd(u, v) == 1;
 
-        static int gcd(int u, int v)
+        static int Gcd(int u, int v)
         {
             int shift;
             if (u == 0) return v;
