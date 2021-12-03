@@ -3,7 +3,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using TorchSharp.Utils;
 
 namespace TorchSharp
@@ -72,6 +71,7 @@ namespace TorchSharp
 
                         public bool MoveNext()
                         {
+                            DisposeCurrent();
                             if (IsFinished()) return false;
                             Current = dataset.GetTensor(GetNextValue());
                             var currentKeys = Current.Keys;
@@ -93,6 +93,7 @@ namespace TorchSharp
 
                         public void Reset()
                         {
+                            DisposeCurrent();
                             shuffleGenerator = seed is null ? new ShuffleGenerator(dataset.Count) : new ShuffleGenerator(dataset.Count, seed);
                             currentVal = 0;
                         }
@@ -103,7 +104,15 @@ namespace TorchSharp
 
                         public void Dispose()
                         {
+                            DisposeCurrent();
                             dataset.Dispose();
+                        }
+
+                        private void DisposeCurrent()
+                        {
+                            if (Current is null) return;
+                            foreach(var x in Current.Values)
+                                x.Dispose();
                         }
                     }
 
