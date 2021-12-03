@@ -23,7 +23,7 @@ __Fixed Bugs:__
 #468 How to set Conv2d kernel_size=(2,300)<br/>
 #450 Smoother disposing
 
-### NuGet Version 0.95.3
+## NuGet Version 0.95.3
 
 __API Changes:__
 
@@ -35,7 +35,7 @@ __Fixed Bugs:__
 There were a number of functions in torchvision, as well as a number of optimizers, that did not properly dispose of temporary and intermediate tensor values, leading to "memory leaks" in the absence of explicit GC.Collect() calls.<br/>
 A couple of randint() overloads caused infinite recursion, crashing the process.
 
-### NuGet Version 0.95.2
+## NuGet Version 0.95.2
 
 __API Changes:__
 
@@ -46,7 +46,7 @@ __Fixed Bugs:__
 
 #432 Sequential does not dispose of intermediary tensors.
 
-### NuGet Version 0.95.1
+## NuGet Version 0.95.1
 
 This version integrates with LibTorch 1.10.0.
 
@@ -57,7 +57,7 @@ Added a 'strict' option to Module.load().
 See tracking issue #416 for a list of new 1.10.0 APIs.
 https://github.com/dotnet/TorchSharp/issues/416
 
-### NuGet Version 0.93.9
+## NuGet Version 0.93.9
 
 __Fixed Bugs:__
 
@@ -69,7 +69,7 @@ Added the NAdam and RAdam optimizers.<br/>
 Added several missing and new learning rate schedulers.
 
 
-### NuGet Version 0.93.8
+## NuGet Version 0.93.8
 
 __Fixed Bugs:__
 
@@ -80,7 +80,7 @@ __API Changes:__
 
 Added Module.Create<T>() to create a model and load weights.
 
-### NuGet Version 0.93.6
+## NuGet Version 0.93.6
 
 __Fixed Bugs:__
 
@@ -94,7 +94,7 @@ Added some overloads to make F# usage more convenient.<br/>
 Added convenience overloads to a number of random distribution factories.<br/>
 Added '_' to the torch.nn.init functions. They overwrite the input tensor, so they should have the in-place indicator.
 
-### NuGet Version 0.93.5
+## NuGet Version 0.93.5
 
 __Fixed Bugs:__
 
@@ -109,7 +109,7 @@ Tensor.DataItem<T>() -> Tensor.item<T>()<br/>
 Tensor.Bytes() -> Tensor.bytes<br/>
 Tensor.SetBytes() -> Tensor.bytes<br/>
 
-### NuGet Version 0.93.4
+## NuGet Version 0.93.4
 
 This release introduces a couple of new NuGet packages, which bundle the native libraries that you need:
 
@@ -117,11 +117,11 @@ TorchSharp-cpu<br/>
 TorchSharp-cuda-linux<br/>
 TorchSharp-cuda-windows<br/>
 
-### NuGet Version 0.93.1
+## NuGet Version 0.93.1
 
 With this release, the native libtorch package version was updated to 1.9.0.11, and that required rebuilding this package.
 
-### NuGet Version 0.93.0
+## NuGet Version 0.93.0
 
 With this release, releases will have explicit control over the patch version number.
 
@@ -141,7 +141,7 @@ __Documentation Changes:__
 
 Added an article on creating custom modules.
 
-### NuGet Version 0.92.52220
+## NuGet Version 0.92.52220
 
 This was the first release since moving TorchSharp to the .NET Foundation organization. Most of the new functionality is related to continuing the API changes that were started in the previous release, and fixing some bugs.
 
