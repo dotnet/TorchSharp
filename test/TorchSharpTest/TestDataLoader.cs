@@ -29,7 +29,7 @@ namespace TorchSharp
 
             Assert.Equal(d["data"], torch.tensor(1));
             Assert.Equal(d["label"], torch.tensor(13));
-            Assert.Equal(d["index"], torch.tensor(0));
+            Assert.Equal(d["index"], torch.tensor(0L));
         }
 
         [Fact]
@@ -39,9 +39,9 @@ namespace TorchSharp
             using var dataloader = new torch.utils.data.DataLoader(dataset, 2, false, torch.CPU);
             var iterator = dataloader.GetEnumerator();
             iterator.MoveNext();
-            Assert.Equal(iterator.Current["data"], torch.tensor(rawArray: new[]{1, 1}, dimensions: new[]{2L}));
-            Assert.Equal(iterator.Current["label"], torch.tensor(rawArray: new[]{13, 13}, dimensions: new[]{2L}));
-            Assert.Equal(iterator.Current["index"], torch.tensor(rawArray: new[]{0, 1}, dimensions: new[]{2L}));
+            Assert.Equal(iterator.Current["data"], torch.tensor(rawArray: new[]{1L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int32));
+            Assert.Equal(iterator.Current["label"], torch.tensor(rawArray: new[]{13L, 13L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int32));
+            Assert.Equal(iterator.Current["index"], torch.tensor(rawArray: new[]{0L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int64));
             iterator.Dispose();
         }
     }
