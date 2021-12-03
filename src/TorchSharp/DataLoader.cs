@@ -20,6 +20,7 @@ namespace TorchSharp
                     private int batchSize;
                     private bool shuffle;
                     private Device device;
+                    private int? seed;
 
                     /// <summary>
                     /// Create pytorch style dataloader
@@ -28,16 +29,18 @@ namespace TorchSharp
                     /// <param name="batchSize"></param>
                     /// <param name="shuffle"></param>
                     /// <param name="device"></param>
-                    public DataLoader(Dataset dataset, int batchSize, bool shuffle = false, Device device = null)
+                    /// <param name="seed"></param>
+                    public DataLoader(Dataset dataset, int batchSize, bool shuffle = false, Device device = null, int? seed = null)
                     {
                         this.dataset = dataset;
                         this.batchSize = batchSize;
                         this.shuffle = shuffle;
                         this.device = device ?? CPU;
+                        this.seed = seed;
                     }
 
                     public IEnumerator<Dictionary<string, Tensor>> GetEnumerator() =>
-                        new DataLoaderEnumerator(dataset, batchSize, shuffle, device);
+                        new DataLoaderEnumerator(dataset, batchSize, shuffle, device, seed);
 
                     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -51,13 +54,14 @@ namespace TorchSharp
                         private bool shuffle;
                         private ShuffleGenerator shuffleGenerator;
                         private int currentVal = 0;
-
-                        public DataLoaderEnumerator(Dataset dataset, int batchSize, bool shuffle, Device device)
+                        private int? seed;
+                        public DataLoaderEnumerator(Dataset dataset, int batchSize, bool shuffle, Device device, int? seed)
                         {
                             this.dataset = dataset;
                             this.batchSize = batchSize;
                             this.device = device;
                             this.shuffle = shuffle;
+                            this.seed = seed;
                             Reset();
                         }
 
@@ -89,7 +93,7 @@ namespace TorchSharp
 
                         public void Reset()
                         {
-                            shuffleGenerator = new ShuffleGenerator(dataset.Count);
+                            shuffleGenerator = seed is null ? new ShuffleGenerator(dataset.Count) : new ShuffleGenerator(dataset.Count, seed);
                             currentVal = 0;
                         }
 

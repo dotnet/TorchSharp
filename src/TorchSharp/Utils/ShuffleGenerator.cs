@@ -13,9 +13,9 @@ namespace TorchSharp.Utils
         long offset;
         long runningvalue;
         private Random rand;
-        public ShuffleGenerator(long size)
+        public ShuffleGenerator(long size, int? seed = null)
         {
-            rand = new Random();
+            rand = seed is null ? new Random() : new Random(seed.Value);
             var min = size / 2;
             maxrange = size;
             prime = SelectCoPrimeResev(min, size);
