@@ -64,7 +64,7 @@ namespace TorchSharp
                         private bool isFinished() =>
                             shuffle ? !shuffleGenerator.HasNext() : currentVal >= dataset.Count;
 
-                        private int getNextValue() => shuffle ? shuffleGenerator.Next() : currentVal++;
+                        private long getNextValue() => shuffle ? shuffleGenerator.Next() : currentVal++;
 
                         public bool MoveNext()
                         {

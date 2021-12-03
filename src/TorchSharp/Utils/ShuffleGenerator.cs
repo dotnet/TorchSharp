@@ -7,18 +7,19 @@ namespace TorchSharp.Utils
 {
     class ShuffleGenerator
     {
-        int maxrange;
-        int prime;
-        int index;
-        int offset;
-        int runningvalue;
-
-        public ShuffleGenerator(int size)
+        long maxrange;
+        long prime;
+        long index;
+        long offset;
+        long runningvalue;
+        private Random rand;
+        public ShuffleGenerator(long size)
         {
+            rand = new Random();
             var min = size / 2;
             maxrange = size;
             prime = SelectCoPrimeResev(min, size);
-            offset = new Random().Next(size);
+            offset = NextLong(rand, size);
             index = 0;
             runningvalue = offset;
         }
@@ -28,7 +29,7 @@ namespace TorchSharp.Utils
             return index < maxrange;
         }
 
-        public int Next()
+        public long Next()
         {
             runningvalue += prime;
             if (runningvalue >= maxrange) runningvalue -= maxrange;
@@ -36,17 +37,16 @@ namespace TorchSharp.Utils
             return runningvalue;
         }
 
-        private const int MAX_COUNT = int.MaxValue;
+        private const long MAX_COUNT = long.MaxValue;
 
-        static int SelectCoPrimeResev(int min, int target)
+        long SelectCoPrimeResev(long min, long target)
         {
-            var count = 0;
-            var selected = 0;
-            var rand = new Random();
+            var count = 0L;
+            var selected = 0L;
             for (var val = min; val < target; ++val) {
                 if (Coprime(val, target)) {
                     count += 1;
-                    if ((count == 1) || (rand.Next(count) < 1)) {
+                    if ((count == 1) || (NextLong(rand, count) < 1)) {
                         selected = val;
                     }
                 }
@@ -57,9 +57,9 @@ namespace TorchSharp.Utils
             return selected;
         }
 
-        static bool Coprime(int u, int v) => Gcd(u, v) == 1;
+        static bool Coprime(long u, long v) => Gcd(u, v) == 1;
 
-        static int Gcd(int u, int v)
+        static long Gcd(long u, long v)
         {
             int shift;
             if (u == 0) return v;
@@ -82,6 +82,19 @@ namespace TorchSharp.Utils
             } while (v != 0);
 
             return u << shift;
+        }
+
+        private static long NextLong(Random r, long l)
+        {
+            var bytebuffer = new byte[8];
+            r.NextBytes(bytebuffer);
+            var t = 0L;
+            foreach (var b in bytebuffer) {
+                t <<= 8;
+                t += b;
+            }
+
+            return t % l;
         }
     }
 }
