@@ -10,7 +10,7 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// This class is used to represent a dropout module for 2d/3d convolutational layers.
+        /// Computes the pairwise distance between vectors using the p-norm.
         /// </summary>
         public class PairwiseDistance : torch.nn.Module
         {
@@ -45,6 +45,15 @@ namespace TorchSharp
             }
             public static partial class functional
             {
+                /// <summary>
+                /// Computes the pairwise distance between vectors using the p-norm.
+                /// </summary>
+                /// <param name="input1">(N,D) or (D) where N = batch dimension and D = vector dimension</param>
+                /// <param name="input2">(N, D) or (D), same shape as the Input1</param>
+                /// <param name="p">The norm degree. Default: 2</param>
+                /// <param name="eps">Small value to avoid division by zero.</param>
+                /// <param name="keep_dim">Determines whether or not to keep the vector dimension.</param>
+                /// <returns></returns>
                 static public Tensor pairwise_distance(Tensor input1, Tensor input2, double p = 2.0, double eps = 1e-6, bool keep_dim = false)
                 {
                     using (var f = nn.PairwiseDistance(p, eps, keep_dim)) {

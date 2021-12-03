@@ -1526,24 +1526,29 @@ Tensor THSTensor_to_dense(Tensor tensor)
     CATCH_TENSOR(tensor->to_dense());
 }
 
-Tensor THSTensor_to_device(const Tensor tensor, const int device_type, const int device_index)
+Tensor THSTensor_set_(Tensor tensor, const Tensor source)
+{
+    CATCH_TENSOR(tensor->set_(*source));
+}
+
+Tensor THSTensor_to_device(const Tensor tensor, const int device_type, const int device_index, const bool copy)
 {
     CATCH_RETURN_Tensor(
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
-    res = ResultTensor(tensor->to(device));
+        res = ResultTensor(tensor->to(device, false, copy));
     );
 }
 
-Tensor THSTensor_to_type(const Tensor tensor, int8_t scalar_type)
+Tensor THSTensor_to_type(const Tensor tensor, int8_t scalar_type, const bool copy)
 {
-    CATCH_TENSOR(tensor->toType(at::ScalarType(scalar_type)));
+    CATCH_TENSOR(tensor->to(at::ScalarType(scalar_type), false, copy));
 }
 
-Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index)
+Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index, const bool copy)
 {
     CATCH_RETURN_Tensor(
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
-    res = ResultTensor(tensor->to(device, at::ScalarType(scalar_type)));
+        res = ResultTensor(tensor->to(device, at::ScalarType(scalar_type), false, copy));
     );
 }
 

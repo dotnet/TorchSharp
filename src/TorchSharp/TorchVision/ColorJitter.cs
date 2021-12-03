@@ -67,9 +67,9 @@ namespace TorchSharp.torchvision
         /// The image is expected to have […, 3, H, W] shape, where … means an arbitrary number of leading dimensions.
         /// </summary>
         /// <param name="brightness">How much to jitter brightness. Should be non-negative.
-        /// The brightness_factor used is chosen uniformly from [max(0, 1 - saturation), 1 + saturation]</param>
+        /// The brightness_factor used is chosen uniformly from [max(0, 1 - brightness), 1 + brightness]</param>
         /// <param name="contrast">How much to jitter contrast. Should be non-negative.
-        /// The contrast_factor used is chosen uniformly from [max(0, 1 - saturation), 1 + saturation]</param>
+        /// The contrast_factor used is chosen uniformly from [max(0, 1 - contrast), 1 + contrast]</param>
         /// <param name="saturation">How much to jitter saturation. Should be non-negative.
         /// The saturation_factor used is chosen uniformly from [max(0, 1 - saturation), 1 + saturation] </param>
         /// <param name="hue">How much to jitter hue. Should be between 0 and 0.5.</param>

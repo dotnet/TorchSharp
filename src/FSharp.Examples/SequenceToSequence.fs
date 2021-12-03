@@ -90,9 +90,9 @@ type TransformerModel(ntokens, device:torch.Device) as this =
     do
         let initrange = 0.1
 
-        init.uniform_(encoder.Weight, -initrange, initrange) |> ignore
-        init.zeros_(decoder.Bias) |> ignore
-        init.uniform_(decoder.Weight, -initrange, initrange) |> ignore
+        init.uniform_(encoder.weight, -initrange, initrange) |> ignore
+        init.zeros_(decoder.bias) |> ignore
+        init.uniform_(decoder.weight, -initrange, initrange) |> ignore
 
         this.RegisterComponents()
 
@@ -260,7 +260,7 @@ let run epochs =
         let val_loss = evaluate model valid_data ntokens
         sw.Stop()
 
-        let lrStr = scheduler.LearningRate.ToString("0.00")
+        let lrStr = optimizer.LearningRate.ToString("0.00")
         let elapsed = sw.Elapsed.TotalSeconds.ToString("0.0")
         let lossStr = val_loss.ToString("0.00")
 

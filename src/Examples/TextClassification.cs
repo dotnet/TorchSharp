@@ -80,7 +80,7 @@ namespace TorchSharp.Examples
 
                         sw.Stop();
 
-                        Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {scheduler.LearningRate:0.0000} | time: {sw.Elapsed.TotalSeconds:0.0}s\n");
+                        Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {optimizer.LearningRate:0.0000} | time: {sw.Elapsed.TotalSeconds:0.0}s\n");
                         scheduler.step();
                     }
                 }
@@ -178,9 +178,9 @@ namespace TorchSharp.Examples
         {
             var initrange = 0.5;
 
-            init.uniform_(embedding.Weight, -initrange, initrange);
-            init.uniform_(fc.Weight, -initrange, initrange);
-            init.zeros_(fc.Bias);
+            init.uniform_(embedding.weight, -initrange, initrange);
+            init.uniform_(fc.weight, -initrange, initrange);
+            init.zeros_(fc.bias);
         }
 
         public override Tensor forward(Tensor t)

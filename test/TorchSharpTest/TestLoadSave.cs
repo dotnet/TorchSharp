@@ -227,5 +227,51 @@ namespace TorchSharp
                 Assert.Equal(size * epochs, i * 32);
             }
         }
+
+        [Fact]
+        public void TestSaveLoadGruOnCPU()
+        {
+            // Works on CPU
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var gru = GRU(2, 2, 2);
+            var params0 = gru.parameters();
+            gru.save(".model.ts");
+
+            var loadedGru = GRU(2, 2, 2);
+            loadedGru.load(".model.ts");
+            var params1 = loadedGru.parameters();
+            File.Delete(".model.ts");
+            Assert.Equal(params0, params1);
+        }
+
+        [Fact]
+        public void TestSaveLoadGruOnCUDA()
+        {
+            if (torch.cuda.is_available()) {
+                // Fails on CUDA
+                if (File.Exists(".model.ts")) File.Delete(".model.ts");
+                var gru = GRU(2, 2, 2);
+                gru.to(DeviceType.CUDA);
+                var params0 = gru.parameters();
+                Assert.Equal(DeviceType.CUDA, params0[0].device_type);
+
+                gru.save(".model.ts");
+
+                // Make sure the model is still on the GPU when we come back.
+
+                params0 = gru.parameters();
+                Assert.Equal(DeviceType.CUDA, params0[0].device_type);
+
+                var loadedGru = GRU(2, 2, 2);
+                loadedGru.to(DeviceType.CUDA);
+                loadedGru.load(".model.ts");
+                var params1 = loadedGru.parameters();
+
+                Assert.Equal(DeviceType.CUDA, params1[0].device_type);
+
+                File.Delete(".model.ts");
+                Assert.Equal(params0, params1);
+            }
+        }
     }
 }

@@ -193,8 +193,25 @@ namespace TorchSharp
         public static partial class nn
         {
 
-
-            public static ParameterDict ParameterDict() => new ParameterDict();
+            /// <summary>
+            /// Create a ParameterList instance from an array of parameter tensors.
+            /// </summary>
+            /// <param name="parameters">A tuple of (name,parameter).</param>
+            /// <remarks>
+            /// ParameterDict can be indexed like a regular dictionary, but the parameters it
+            /// contains are properly registered, and will be visible by all Module methods.
+            ///
+            /// ParameterDict is an ordered dictionary that respects the order of insertion, and
+            /// in update(), the order of the merged OrderedDict or another ParameterDict (the argument to update()).
+            /// </remarks>
+            public static ParameterDict ParameterDict(params (string, Parameter)[] parameters)
+            {
+                var result = new ParameterDict();
+                foreach (var (n, p) in parameters) {
+                    result.Add(n, p);
+                }
+                return result;
+            }
         }
     }
 }

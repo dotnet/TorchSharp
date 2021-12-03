@@ -37,6 +37,12 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_Unflatten_ctor(long dim, IntPtr shape, long shape_len, out IntPtr pBoxedModule);
 
+            /// <summary>
+            /// Unflattens a tensor dim expanding it to a desired shape. For use with Sequential.
+            /// </summary>
+            /// <param name="dim">Dimension to be unflattened</param>
+            /// <param name="unflattenedSize">New shape of the unflattened dimension</param>
+            /// <returns></returns>
             static public Unflatten Unflatten(long dim, long[] unflattenedSize)
             {
                 unsafe {

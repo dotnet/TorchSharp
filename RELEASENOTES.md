@@ -1,14 +1,23 @@
 ## TorchSharp Release Notes
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
+
 ## NuGet Version 0.95.4
 
 __API Changes:__
 
+Added OneCycleLR and CyclicLR schedulers
 Added DisposeScopeManager and torch.NewDisposeScope() to facilitate a new solution for managing disposing of  tensors with fewer usings.
+Added Tensor.set_()
+Added 'copy' argument to Tensor.to()
 
 __Fixed Bugs:__
 
+#476 BatchNorm does not expose bias,weight,running_mean,running_var
+#475 Loading Module that's on CUDA
+#372 Module.save moves Module to CPU
+#468 How to set Conv2d kernel_size=(2,300)
+#450 Smoother disposing
 
 ### NuGet Version 0.95.3
 
