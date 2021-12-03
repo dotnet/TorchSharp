@@ -61,23 +61,23 @@ namespace TorchSharp
                             Reset();
                         }
 
-                        private bool isFinished() =>
+                        private bool IsFinished() =>
                             shuffle ? !shuffleGenerator.HasNext() : currentVal >= dataset.Count;
 
-                        private long getNextValue() => shuffle ? shuffleGenerator.Next() : currentVal++;
+                        private long GetNextValue() => shuffle ? shuffleGenerator.Next() : currentVal++;
 
                         public bool MoveNext()
                         {
-                            if (isFinished()) return false;
-                            Current = dataset.GetTensor(getNextValue());
+                            if (IsFinished()) return false;
+                            Current = dataset.GetTensor(GetNextValue());
                             var currentKeys = Current.Keys;
                             foreach (var x in currentKeys)
                                 Current[x].unsqueeze_(0);
                             Dictionary<string, Tensor> dic;
                             for (var i = 1; i < batchSize; i++) {
-                                if (isFinished())
+                                if (IsFinished())
                                     break;
-                                dic = dataset.GetTensor(getNextValue());
+                                dic = dataset.GetTensor(GetNextValue());
                                 foreach (var x in currentKeys)
                                     Current[x] = cat(new List<Tensor>() {Current[x], dic[x].unsqueeze(0)}, 0);
                             }
