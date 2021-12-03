@@ -44,5 +44,18 @@ namespace TorchSharp
             Assert.Equal(iterator.Current["index"], torch.tensor(rawArray: new[]{0L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int64));
             iterator.Dispose();
         }
+
+        [Fact]
+        public void CustomSeedTest()
+        {
+            using var dataset = new TestDataset();
+            using var dataloader = new torch.utils.data.DataLoader(dataset, 2, true, seed: 1);
+            using var dataloader2 = new torch.utils.data.DataLoader(dataset, 2, true, seed: 1);
+            var iterator = dataloader.GetEnumerator();
+            var iterator2 = dataloader2.GetEnumerator();
+            iterator.MoveNext();
+            iterator2.MoveNext();
+            Assert.Equal(iterator.Current, iterator2.Current);
+        }
     }
 }
