@@ -11,7 +11,7 @@ namespace TorchSharp
     {
         private class TestDataset : torch.utils.data.Dataset
         {
-            public override int Count { get; } = 10;
+            public override long Count { get; } = 10;
             public override Dictionary<string, torch.Tensor> GetTensor(int index)
             {
                 return new() {{"data", torch.tensor(1)}, {"label", torch.tensor(13)}, {"index", torch.tensor(index)}};
