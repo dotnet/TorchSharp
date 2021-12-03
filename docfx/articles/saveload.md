@@ -21,7 +21,7 @@ Python pickling is intimately coupled to Python and its runtime object model. It
 
 In order to share models between .NET applications, Python pickling is not at all necessary, and even for moving model state from Python to .NET, it is overkill. The state of a model is a simple dictionary where the keys are strings and the values are tensors.
 
-Therefore, TorchSharp in its current form, implements its own very simple model serialization format, which allows models originating in either .NET or Python to be loaded using .NET, as long as the model was saved using the special format.
+Therefore, TorchSharp, in its current form, implements its own very simple model serialization format, which allows models originating in either .NET or Python to be loaded using .NET, as long as the model was saved using the special format.
 
 The MNIST and AdversarialExampleGeneration examples in this repo rely on saving and restoring model state -- the latter example relies on a pre-trained model from MNST.
 
@@ -35,12 +35,6 @@ In C#, saving a model looks like this:
 model.save("model_weights.dat");
 ```
 
-It's important to note that calling 'save' will move the model to the CPU, where it remains after the call. If you need to continue to use the model after saving it, you will have to explicitly move it back:
-
-```C#
-model.to(Device.CUDA);
-```
-
 And loading it again is done by:
 
 ```C#
@@ -48,7 +42,7 @@ model = [...];
 model.load("model_weights.dat");
 ```
 
-The model should be created on the CPU before loading weights, then moved to the target device.
+For efficient memory management, the model should be created on the CPU before loading weights, then moved to the target device. 
 
 ><br/>It is __critical__ that all submodules and buffers in a custom module or composed by a Sequential object have exactly the same name in the original and target models, since that is how persisted tensors are associated with the model into which they are loaded.<br/><br/>The CustomModule 'RegisterComponents' will automatically find all fields that are either modules or tensors, register the former as modules, and the latter as buffers. It registers all of these using the name of the field, just like the PyTorch Module base class does.<br/><br/>
 
