@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TorchSharp.Utils;
 
 namespace TorchSharp
@@ -87,21 +88,15 @@ namespace TorchSharp
                         {
                             DisposeCurrent();
                             if (IsFinished()) return false;
-                            Current = dataset.GetTensor(GetNextValue());
-                            var currentKeys = Current.Keys;
-                            foreach (var x in currentKeys)
-                                Current[x].unsqueeze_(0);
-                            Dictionary<string, Tensor> dic;
-                            for (var i = 1; i < batchSize; i++) {
-                                if (IsFinished())
-                                    break;
-                                dic = dataset.GetTensor(GetNextValue());
-                                foreach (var x in currentKeys)
-                                    Current[x] = cat(new List<Tensor>() {Current[x], dic[x].unsqueeze(0)}, 0);
+                            List<Dictionary<string, Tensor>> dic = new();
+                            for (var i = 0; i < batchSize; i++) {
+                                if (IsFinished()) break;
+                                dic.Add(dataset.GetTensor(GetNextValue()));
                             }
 
-                            foreach (var x in currentKeys)
-                                Current[x].to(device);
+                            Current = new();
+                            foreach (var x in dic[0].Keys)
+                                Current[x] = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0).to(device);
                             return true;
                         }
 
