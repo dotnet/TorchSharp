@@ -28,7 +28,7 @@ namespace TorchSharp
                     /// Get tensor via index
                     /// </summary>
                     /// <param name="index">Index for tensor</param>
-                    /// <returns>Tensor for index</returns>
+                    /// <returns>Tensor for index. You should return dictionary for catenate random amount of tensors.</returns>
                     public abstract Dictionary<string, Tensor> GetTensor(long index);
                 }
             }
