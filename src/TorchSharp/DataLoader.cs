@@ -13,6 +13,9 @@ namespace TorchSharp
         {
             public static partial class data
             {
+                /// <summary>
+                /// This class makes easier to create batch. Data set must implement Dataset interface
+                /// </summary>
                 public class DataLoader : IEnumerable<Dictionary<string, Tensor>>, IDisposable
                 {
                     private Dataset dataset;

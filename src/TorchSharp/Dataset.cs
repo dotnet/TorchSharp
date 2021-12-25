@@ -10,6 +10,9 @@ namespace TorchSharp
         {
             public static partial class data
             {
+                /// <summary>
+                /// Interface for Dataloader
+                /// </summary>
                 public abstract class Dataset : IDisposable
                 {
                     public virtual void Dispose()
