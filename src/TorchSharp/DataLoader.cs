@@ -22,13 +22,13 @@ namespace TorchSharp
                     private int? seed;
 
                     /// <summary>
-                    /// Create pytorch style dataloader
+                    /// Pytorch style dataloader
                     /// </summary>
-                    /// <param name="dataset"></param>
-                    /// <param name="batchSize"></param>
-                    /// <param name="shuffle"></param>
-                    /// <param name="device"></param>
-                    /// <param name="seed"></param>
+                    /// <param name="dataset">Dataset for create batch</param>
+                    /// <param name="batchSize">Size of batch</param>
+                    /// <param name="shuffle">true if shuffle dataset, false for not</param>
+                    /// <param name="device">device for output tensor</param>
+                    /// <param name="seed">Seed for generating shuffle</param>
                     public DataLoader(Dataset dataset, int batchSize, bool shuffle = false, Device device = null, int? seed = null)
                     {
                         this.dataset = dataset;
@@ -38,11 +38,18 @@ namespace TorchSharp
                         this.seed = seed;
                     }
 
+                    /// <summary>
+                    /// Generate enumerator
+                    /// </summary>
+                    /// <returns>Enumerator for batch</returns>
                     public IEnumerator<Dictionary<string, Tensor>> GetEnumerator() =>
                         new DataLoaderEnumerator(dataset, batchSize, shuffle, device, seed);
 
                     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+                    /// <summary>
+                    /// Size of batch
+                    /// </summary>
                     public long Count => (dataset.Count - 1) / batchSize + 1;
 
                     private class DataLoaderEnumerator : IEnumerator<Dictionary<string, Tensor>>
@@ -69,6 +76,10 @@ namespace TorchSharp
 
                         private long GetNextValue() => shuffle ? shuffleGenerator.Next() : currentVal++;
 
+                        /// <summary>
+                        /// Get next batch
+                        /// </summary>
+                        /// <returns>true if batch created, false if batch has finished</returns>
                         public bool MoveNext()
                         {
                             DisposeCurrent();
@@ -91,6 +102,9 @@ namespace TorchSharp
                             return true;
                         }
 
+                        /// <summary>
+                        /// Reset enumerator
+                        /// </summary>
                         public void Reset()
                         {
                             DisposeCurrent();
@@ -98,6 +112,9 @@ namespace TorchSharp
                             currentVal = 0;
                         }
 
+                        /// <summary>
+                        /// Current tensor
+                        /// </summary>
                         public Dictionary<string, Tensor> Current { get; private set; }
 
                         object IEnumerator.Current => Current;

@@ -16,8 +16,16 @@ namespace TorchSharp
                     {
                     }
 
+                    /// <summary>
+                    /// Size of dataset
+                    /// </summary>
                     public abstract long Count { get; }
 
+                    /// <summary>
+                    /// Get tensor via index
+                    /// </summary>
+                    /// <param name="index">Index for tensor</param>
+                    /// <returns>Tensor for index</returns>
                     public abstract Dictionary<string, Tensor> GetTensor(long index);
                 }
             }
