@@ -23,7 +23,23 @@ namespace TorchSharp
                     private int batchSize;
                     private bool shuffle;
                     private Device device;
-                    private int? seed;
+                    private IEnumerable<long> shuffler;
+
+                    /// <summary>
+                    /// Pytorch style dataloader
+                    /// </summary>
+                    /// <param name="dataset">Dataset for create batch</param>
+                    /// <param name="batchSize">Size of batch</param>
+                    /// <param name="device">device for output tensor</param>
+                    /// <param name="shuffler">Shuffler for dataloader</param>
+                    public DataLoader(Dataset dataset, int batchSize, IEnumerable<long> shuffler, Device device = null)
+                    {
+                        this.dataset = dataset;
+                        this.batchSize = batchSize;
+                        this.shuffle = true;
+                        this.device = device ?? CPU;
+                        this.shuffler = shuffler;
+                    }
 
                     /// <summary>
                     /// Pytorch style dataloader
@@ -39,7 +55,7 @@ namespace TorchSharp
                         this.batchSize = batchSize;
                         this.shuffle = shuffle;
                         this.device = device ?? CPU;
-                        this.seed = seed;
+                        this.shuffler = seed is null ? new FastShuffler(dataset.Count) : new FastShuffler(dataset.Count, seed);
                     }
 
                     /// <summary>
@@ -47,7 +63,7 @@ namespace TorchSharp
                     /// </summary>
                     /// <returns>Enumerator for batch</returns>
                     public IEnumerator<Dictionary<string, Tensor>> GetEnumerator() =>
-                        new DataLoaderEnumerator(dataset, batchSize, shuffle, device, seed);
+                        new DataLoaderEnumerator(dataset, batchSize, shuffle, device, shuffler);
 
                     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -62,23 +78,30 @@ namespace TorchSharp
                         private int batchSize;
                         private Device device;
                         private bool shuffle;
-                        private ShuffleGenerator shuffleGenerator;
-                        private int currentVal = 0;
-                        private int? seed;
-                        public DataLoaderEnumerator(Dataset dataset, int batchSize, bool shuffle, Device device, int? seed)
+                        private IEnumerable<long> shuffleEnumerable;
+                        private IEnumerator<long> shuffler;
+                        private long currentVal = 0;
+                        public DataLoaderEnumerator(Dataset dataset, int batchSize, bool shuffle, Device device, IEnumerable<long> shuffleEnumerable)
                         {
                             this.dataset = dataset;
                             this.batchSize = batchSize;
                             this.device = device;
                             this.shuffle = shuffle;
-                            this.seed = seed;
+                            this.shuffleEnumerable = shuffleEnumerable;
                             Reset();
                         }
-
-                        private bool IsFinished() =>
-                            shuffle ? !shuffleGenerator.HasNext() : currentVal >= dataset.Count;
-
-                        private long GetNextValue() => shuffle ? shuffleGenerator.Next() : currentVal++;
+                        private bool MoveNextValue()
+                        {
+                            if (shuffle) {
+                                if (shuffler.MoveNext()) return false;
+                                currentVal = shuffler.Current;
+                                return true;
+                            }
+                            else {
+                                currentVal++;
+                                return currentVal < dataset.Count;
+                            }
+                        }
 
                         /// <summary>
                         /// Get next batch
@@ -87,11 +110,12 @@ namespace TorchSharp
                         public bool MoveNext()
                         {
                             DisposeCurrent();
-                            if (IsFinished()) return false;
+                            if (!MoveNextValue()) return false;
                             List<Dictionary<string, Tensor>> dic = new();
-                            for (var i = 0; i < batchSize; i++) {
-                                if (IsFinished()) break;
-                                dic.Add(dataset.GetTensor(GetNextValue()));
+                            dic.Add(dataset.GetTensor(currentVal));
+                            for (var i = 1; i < batchSize; i++) {
+                                if (!MoveNextValue()) break;
+                                dic.Add(dataset.GetTensor(currentVal));
                             }
 
                             Current = new();
@@ -106,8 +130,8 @@ namespace TorchSharp
                         public void Reset()
                         {
                             DisposeCurrent();
-                            shuffleGenerator = seed is null ? new ShuffleGenerator(dataset.Count) : new ShuffleGenerator(dataset.Count, seed);
-                            currentVal = 0;
+                            if(shuffle) shuffler = shuffleEnumerable.GetEnumerator();
+                            currentVal = -1;
                         }
 
                         /// <summary>

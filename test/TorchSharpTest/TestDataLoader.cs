@@ -38,10 +38,10 @@ namespace TorchSharp
             using var dataset = new TestDataset();
             using var dataloader = new torch.utils.data.DataLoader(dataset, 2, false, torch.CPU);
             var iterator = dataloader.GetEnumerator();
-            iterator.MoveNext();
+            Assert.True(iterator.MoveNext());
             Assert.Equal(iterator.Current["data"], torch.tensor(rawArray: new[]{1L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int32));
             Assert.Equal(iterator.Current["label"], torch.tensor(rawArray: new[]{13L, 13L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int32));
-            Assert.Equal(iterator.Current["index"], torch.tensor(rawArray: new[]{0L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int64));
+            Assert.Equal(iterator.Current["index"].ToString(true), torch.tensor(rawArray: new[]{0L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int64).ToString(true));
             iterator.Dispose();
         }
 
