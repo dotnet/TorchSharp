@@ -59,7 +59,7 @@ namespace TorchSharp.Utils
                 current = -1;
                 indexs.Clear();
                 for (var i = 0L; i < size; i++) {
-                    var rndidx = GetRandomLong();
+                    var rndidx = GetRandomLong(i);
                     if (rndidx == i)
                         indexs[i] = i;
                     else {
@@ -78,10 +78,10 @@ namespace TorchSharp.Utils
                 /* Ignore */
             }
 
-            private long GetRandomLong()
+            private long GetRandomLong(long l)
             {
                 unchecked {
-                    return ((long) r.Next() << 32) + (uint) r.Next();
+                    return (((long) r.Next() << 32) + (uint) r.Next()) % (l + 1);
                 }
             }
         }
