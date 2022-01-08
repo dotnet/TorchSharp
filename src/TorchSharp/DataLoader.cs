@@ -93,7 +93,7 @@ namespace TorchSharp
                         private bool MoveNextValue()
                         {
                             if (shuffle) {
-                                if (shuffler.MoveNext()) return false;
+                                if (!shuffler.MoveNext()) return false;
                                 currentVal = shuffler.Current;
                                 return true;
                             }
