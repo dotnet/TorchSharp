@@ -55,7 +55,7 @@ namespace TorchSharp
                         this.batchSize = batchSize;
                         this.shuffle = shuffle;
                         this.device = device ?? CPU;
-                        this.shuffler = seed is null ? new FastShuffler(dataset.Count) : new FastShuffler(dataset.Count, seed);
+                        this.shuffler = seed is null ? new FisherYatesShuffler(dataset.Count) : new FisherYatesShuffler(dataset.Count, seed);
                     }
 
                     /// <summary>
