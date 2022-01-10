@@ -144,7 +144,6 @@ namespace TorchSharp
                         public void Dispose()
                         {
                             DisposeCurrent();
-                            dataset.Dispose();
                         }
 
                         private void DisposeCurrent()
