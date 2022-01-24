@@ -407,5 +407,14 @@ namespace TorchSharp
             Assert.Throws<ArgumentException>(() => torch.randn(3, 4, dtype: torch.int64));
             Assert.Throws<ArgumentException>(() => torch.randn(3, 4, dtype: torch.@bool));
         }
+
+        [Fact]
+        public void ValidateIssue496()
+        {
+            var c2 = torch.nn.Conv2d(3, 16, kernelSize: (1, 7), stride: (1, 1), padding: (0, 3));
+            var Win = torch.rand(16, 3, 8, 8);
+            var s = c2.forward(Win).shape;
+            Assert.Equal(new long[] {16, 16, 8, 8}, s);
+        }
     }
 }
