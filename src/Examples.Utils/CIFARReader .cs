@@ -108,11 +108,11 @@ namespace TorchSharp.Examples
         public IEnumerable<(Tensor, Tensor)> Data()
         {
             for (var i = 0; i < data.Count; i++) {
-                yield return (data[i], labels[i]);
-
+                var tfdata = data[i];
                 foreach (var tfrm in _transforms) {
-                    yield return (tfrm.forward(data[i]), labels[i]);
+                    tfdata = tfrm.forward(tfdata);
                 }
+                yield return (tfdata, labels[i]);
             }
         }
 
