@@ -96,7 +96,7 @@ namespace TorchSharp.Examples
         }
 
         public int Size { get {
-                return _size * (_transforms.Count + 1);
+                return _size;
             } }
         private int _size = 0;
 
