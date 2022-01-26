@@ -174,7 +174,7 @@ namespace TorchSharp
             }
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/TorchSharp/issues/499")]
         public void TestLinearEditWeightsAndBias()
         {
             var lin = Linear(1000, 1000, true);
@@ -184,12 +184,26 @@ namespace TorchSharp
             lin.bias = bias;
             lin.weight = weights;
 
-            Assert.Equal(lin.weight.shape.Length, weights.shape.Length);
-            Assert.Equal(lin.weight.shape[0], weights.shape[0]);
-            Assert.Equal(lin.weight.shape[1], weights.shape[1]);
+            var w1 = lin.weight;
+            var b1 = lin.bias;
+
+            Assert.Equal(w1.shape.Length, weights.shape.Length);
+            Assert.Equal(w1.shape[0], weights.shape[0]);
+            Assert.Equal(w1.shape[1], weights.shape[1]);
 
             for (int i = 0; i < 100; i++) {
-                Assert.Equal(lin.bias.data<float>()[i], bias.data<float>()[i]);
+                Assert.Equal(b1.data<float>()[i], bias.data<float>()[i]);
+            }
+
+            var w2 = lin.parameters()[0];
+            var b2 = lin.parameters()[1];
+
+            Assert.Equal(weights.shape.Length, w2.shape.Length);
+            Assert.Equal(weights.shape[0], w2.shape[0]);
+            Assert.Equal(weights.shape[1], w2.shape[1]);
+
+            for (int i = 0; i < 100; i++) {
+                Assert.Equal(b2.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
