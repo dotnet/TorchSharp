@@ -47,6 +47,10 @@ namespace TorchSharp
             private static extern IntPtr THSNN_BatchNorm1d_get_mean(torch.nn.Module.HType module);
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_BatchNorm1d_get_var(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_BatchNorm1d_set_mean(torch.nn.Module.HType module, IntPtr weight);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_BatchNorm1d_set_var(torch.nn.Module.HType module, IntPtr weight);
 
             public Tensor bias {
                 get {
@@ -80,6 +84,11 @@ namespace TorchSharp
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
                     return new Tensor(res);
                 }
+                set {
+                    THSNN_BatchNorm1d_set_mean(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
+                }
             }
 
             public Tensor? running_var {
@@ -87,6 +96,11 @@ namespace TorchSharp
                     var res = THSNN_BatchNorm1d_get_var(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
                     return new Tensor(res);
+                }
+                set {
+                    THSNN_BatchNorm1d_set_var(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
                 }
             }
 
