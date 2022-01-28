@@ -70,7 +70,7 @@ void THSNN_Module_register_module(const NNModule module, const char* name, const
 void THSNN_Module_register_parameter(const NNModule module, const char* name, const Tensor tensor, bool requires_grad)
 {
     CATCH(
-        (*module)->register_parameter(name, *tensor, requires_grad);
+        (*module)->register_parameter(name, (tensor == nullptr) ? at::Tensor() : *tensor, requires_grad);
     );
 }
 

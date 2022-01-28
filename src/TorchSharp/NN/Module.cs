@@ -240,6 +240,7 @@ namespace TorchSharp
                 {
                     THSNN_Module_train(handle);
                     torch.CheckForErrors();
+                    foreach (var (_, m) in named_children()) { m.Train(); }
                 }
 
                 [DllImport("LibTorchSharp")]
@@ -249,6 +250,7 @@ namespace TorchSharp
                 {
                     THSNN_Module_eval(handle);
                     torch.CheckForErrors();
+                    foreach (var (_,m) in named_children()) { m.Eval(); }
                 }
 
                 [DllImport("LibTorchSharp")]
@@ -439,8 +441,7 @@ namespace TorchSharp
 
                 public virtual void register_parameter(string name, Tensor tensor, bool requires_grad = true)
                 {
-                    if (tensor is null || tensor.handle == IntPtr.Zero) throw new ArgumentNullException("A null tensor cannot be registered as a parameter.");
-                    THSNN_Module_register_parameter(handle, name, tensor.handle, requires_grad);
+                    THSNN_Module_register_parameter(handle, name, tensor is null ? IntPtr.Zero : tensor.handle, requires_grad);
                     torch.CheckForErrors();
                 }
 
