@@ -416,5 +416,32 @@ namespace TorchSharp
             var s = c2.forward(Win).shape;
             Assert.Equal(new long[] {16, 16, 8, 8}, s);
         }
+
+        [Fact]
+        public void ValidateIssue500()
+        {
+            using (var pool = BatchNorm1d(28)) {
+                pool.Eval();
+                pool.forward(torch.ones(1, 28));
+            }
+            using (var pool = BatchNorm1d(28))
+            using (var seq = Sequential(pool)) {
+                seq.Eval();
+                seq.forward(torch.ones(1, 28));
+            }
+            using (var seq = new Module500()) {
+                seq.Eval();
+                seq.forward(torch.ones(1, 28));
+            }
+        }
+
+        class Module500 : Module
+        {
+            private Module bn1 = BatchNorm1d(28);
+
+            public Module500() : base(nameof(TestModule)) { RegisterComponents(); }
+
+            public override torch.Tensor forward(torch.Tensor t) => bn1.forward(t);
+        }
     }
 }

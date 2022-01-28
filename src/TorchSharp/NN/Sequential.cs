@@ -125,6 +125,16 @@ namespace TorchSharp
                 base.Dispose(disposing);
             }
 
+            public override void Train()
+            {
+                foreach (var m in _modules) { m.Train(); }
+            }
+
+            public override void Eval()
+            {
+                foreach (var m in _modules) { m.Eval(); }
+            }
+
             // Currently, Sequential is implemented entirely in managed code, but if we go back to
             // using the native forward() implementation, this collection is still necessary.
             // The module handles are held in the native runtime, which calls back into managed code,

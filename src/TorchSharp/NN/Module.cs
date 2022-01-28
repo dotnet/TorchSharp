@@ -246,6 +246,7 @@ namespace TorchSharp
                 {
                     THSNN_Module_train(handle);
                     torch.CheckForErrors();
+                    foreach (var (_, m) in named_children()) { m.Train(); }
                 }
 
                 [DllImport("LibTorchSharp")]
@@ -255,6 +256,7 @@ namespace TorchSharp
                 {
                     THSNN_Module_eval(handle);
                     torch.CheckForErrors();
+                    foreach (var (_,m) in named_children()) { m.Eval(); }
                 }
 
                 [DllImport("LibTorchSharp")]

@@ -24,7 +24,6 @@ namespace TorchSharp
             var lin = Linear(1000, 100);
             Assert.NotNull(lin);
             Assert.True(!(lin.bias is null));
-            //var name = lin.GetName();
 
             var ps = lin.parameters();
             Assert.Equal(2, ps.Count());
