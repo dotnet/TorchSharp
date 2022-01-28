@@ -104,12 +104,12 @@ namespace TorchSharp
                 }
             }
 
-            protected override void state_dict(Dictionary<string, Tensor> res)
+            protected override void state_dict(string prefix, Dictionary<string, Tensor> res)
             {
                 var v = running_var;
                 var m = running_mean;
-                if (v is not null) res.Add("running_var", v);
-                if (m is not null) res.Add("running_mean", m);
+                if (v is not null) res.Add(String.IsNullOrEmpty(prefix) ? "running_var" : $"{prefix}.running_var", v);
+                if (m is not null) res.Add(String.IsNullOrEmpty(prefix) ? "running_mean" : $"{prefix}.running_mean", m);
             }
 
             public void reset_running_stats()

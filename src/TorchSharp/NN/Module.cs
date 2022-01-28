@@ -370,20 +370,20 @@ namespace TorchSharp
                 public Dictionary<string, Tensor> state_dict()
                 {
                     var res = new Dictionary<string, Tensor>();
-                    state_dict(res);
+                    state_dict("", res);
                     return res;
                 }
 
-                protected virtual void state_dict(Dictionary<string, Tensor> res)
+                protected virtual void state_dict(string prefix, Dictionary<string, Tensor> res)
                 {
                     foreach (var p in named_parameters()) {
-                        res.Add(p.Item1, p.Item2);
+                        res.TryAdd(p.Item1, p.Item2);
                     }
                     foreach (var p in named_buffers()) {
-                        res.Add(p.Item1, p.Item2);
+                        res.TryAdd(p.Item1, p.Item2);
                     }
-                    foreach (var p in _internal_submodules.Values) {
-                        p.state_dict(res);
+                    foreach (var (n,p) in _internal_submodules) {
+                        p.state_dict(String.IsNullOrEmpty(prefix) ? $"{n}" : $"{prefix}.{n}", res);
                     }
                 }
 
