@@ -46,6 +46,7 @@ namespace TorchSharp
                 set {
                     THSNN_Bilinear_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
                 }
             }
             [DllImport("LibTorchSharp")]
@@ -62,6 +63,7 @@ namespace TorchSharp
                 set {
                     THSNN_Bilinear_set_weight(handle, value.Handle);
                     torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight", value);
                 }
             }
         }

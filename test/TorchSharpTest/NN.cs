@@ -27,7 +27,7 @@ namespace TorchSharp
             //var name = lin.GetName();
 
             var ps = lin.parameters();
-            Assert.Equal(2, ps.Length);
+            Assert.Equal(2, ps.Count());
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace TorchSharp
         {
             var lin = Linear(1000, 100, false);
             var ps = lin.parameters();
-            var nps = ps.Length;
+            var nps = ps.Count();
             Assert.Equal(1, nps);
             Assert.True(lin.bias is null);
 
@@ -48,10 +48,11 @@ namespace TorchSharp
         {
             var lin = Linear(1000, 100, true);
             var bias = torch.ones(new long[] { 1000 });
+            var bCount = bias.NumberOfElements;
             lin.bias = bias;
             Assert.True(!(lin.bias is null));
 
-            Assert.Equal(lin.bias?.NumberOfElements, bias.NumberOfElements);
+            Assert.Equal(lin.bias?.NumberOfElements, bCount);
         }
 
         [Fact]
@@ -167,22 +168,22 @@ namespace TorchSharp
         {
             var lin = Linear(1000, 100, true);
             var bias = torch.randn(new long[] { 100 });
-            lin.bias = bias;
+            lin.bias = bias.clone();
 
             for (int i = 0; i < 100; i++) {
                 Assert.Equal(lin.bias.data<float>()[i], bias.data<float>()[i]);
             }
         }
 
-        [Fact(Skip = "https://github.com/dotnet/TorchSharp/issues/499")]
+        [Fact]
         public void TestLinearEditWeightsAndBias()
         {
             var lin = Linear(1000, 1000, true);
             var bias = torch.randn(new long[] { 100 });
             var weights = torch.randn(new long[] { 100, 1000 });
 
-            lin.bias = bias;
-            lin.weight = weights;
+            lin.bias = bias.clone();
+            lin.weight = weights.clone();
 
             var w1 = lin.weight;
             var b1 = lin.bias;
@@ -195,8 +196,9 @@ namespace TorchSharp
                 Assert.Equal(b1.data<float>()[i], bias.data<float>()[i]);
             }
 
-            var w2 = lin.parameters()[0];
-            var b2 = lin.parameters()[1];
+            var np = lin.named_parameters().ToArray();
+            var w2 = np[0].parameter;
+            var b2 = np[1].parameter;
 
             Assert.Equal(weights.shape.Length, w2.shape.Length);
             Assert.Equal(weights.shape[0], w2.shape[0]);
@@ -491,7 +493,7 @@ namespace TorchSharp
             var parametersCount = parameters.Count();
             Assert.Equal(4, parametersCount);
 
-            var namedParams = seq.named_parameters();
+            var namedParams = seq.named_parameters().ToArray();
             var namedParamsCount = namedParams.Count();
             Assert.Equal(4, namedParamsCount);
 
@@ -980,10 +982,10 @@ namespace TorchSharp
             var modF = new CondModel("modF", false);
 
             var psT = modT.parameters();
-            Assert.Equal(4, psT.Length);
+            Assert.Equal(4, psT.Count());
 
             var psF = modF.parameters();
-            Assert.Equal(4, psF.Length);
+            Assert.Equal(4, psF.Count());
 
             var x = torch.randn(new long[] { 64, 1000 }, requiresGrad: true);
             var y = torch.randn(new long[] { 64, 10 }, requiresGrad: true);
@@ -1426,7 +1428,7 @@ namespace TorchSharp
             Assert.True(module.has_parameter("dict.second"));
 
             var ps = module.parameters();
-            var n = ps.Length;
+            var n = ps.Count();
             Assert.Equal(4, n);
         }
 
@@ -1455,7 +1457,7 @@ namespace TorchSharp
         {
             var module = new TestModule2(torch.randn(new long[] { 2, 2 }), true);
 
-            var ps = module.named_parameters();
+            var ps = module.named_parameters().ToArray();
             Assert.Equal(16, ps.Length);
 
             Assert.True(module.has_parameter("submodule.test"));
@@ -2016,12 +2018,28 @@ namespace TorchSharp
         [Fact]
         public void TestBatchNorm1D()
         {
-            var ones = torch.ones(new long[] { 16, 3, 28 });
-            using (var pool = BatchNorm1d(3)) {
-                var pooled = pool.forward(ones);
-                Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16 })));
-                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2 })));
+            {
+                var ones = torch.ones(new long[] { 16, 3, 28 });
+                using (var pool = BatchNorm1d(3)) {
+                    var pooled = pool.forward(ones);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2 })));
+                }
+            }
+            {
+                var ones = torch.ones(new long[] { 1, 3, 28 });
+                using (var pool = BatchNorm1d(3)) {
+                    var pooled = pool.forward(ones);
+                    Assert.Equal(ones.shape, pooled.shape);
+                }
+            }
+            {
+                var ones = torch.ones(new long[] { 16, 28 });
+                using (var pool = BatchNorm1d(28)) {
+                    var pooled = pool.forward(ones);
+                    Assert.Equal(ones.shape, pooled.shape);
+                }
             }
         }
 
@@ -2071,12 +2089,21 @@ namespace TorchSharp
         [Fact]
         public void TestBatchNorm2D()
         {
-            var ones = torch.ones(new long[] { 16, 3, 28, 28 });
-            using (var pool = BatchNorm2d(3)) {
-                var pooled = pool.forward(ones);
-                Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2 })));
-                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+            {
+                var ones = torch.ones(new long[] { 16, 3, 28, 28 });
+                using (var pool = BatchNorm2d(3)) {
+                    var pooled = pool.forward(ones);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+                }
+            }
+            {
+                var ones = torch.ones(new long[] { 1, 3, 28, 28 });
+                using (var pool = BatchNorm2d(3)) {
+                    var pooled = pool.forward(ones);
+                    Assert.Equal(ones.shape, pooled.shape);
+                }
             }
         }
 
@@ -2275,7 +2302,7 @@ namespace TorchSharp
             using (var emb = Embedding(1000, 12)) {
                 var weights = torch.randn(new long[] { 1000, 12 });
 
-                emb.weight = weights;
+                emb.weight = weights.clone();
 
                 Assert.Equal(emb.weight.shape.Length, weights.shape.Length);
                 Assert.Equal(emb.weight.shape[0], weights.shape[0]);
@@ -2333,7 +2360,7 @@ namespace TorchSharp
             var ones = torch.ones(new long[] { 16 }, torch.int32);
             using (var emb = EmbeddingBag(1000, 12)) {
                 var weights = torch.randn(new long[] { 1000, 12 });
-                emb.weight = weights;
+                emb.weight = weights.clone();
 
                 Assert.Equal(emb.weight.shape.Length, weights.shape.Length);
                 Assert.Equal(emb.weight.shape[0], weights.shape[0]);
@@ -2903,6 +2930,59 @@ namespace TorchSharp
             using (var rnn = RNNCell(10, 20, NonLinearities.ReLU)) {
                 var hN = rnn.forward(input, h0);
                 Assert.Equal(h0.shape, hN.shape);
+            }
+        }
+
+        [Fact]
+        public void TestLRNNEditWeightsAndBias()
+        {
+            var lin = RNN(10, 20, 2, NonLinearities.ReLU);
+            var bias = torch.randn(new long[] { 100 });
+            var weights = torch.randn(new long[] { 100, 1000 });
+
+            var w1 = lin.get_weight_ih(1);
+
+            Assert.Equal(2, w1.shape.Length);
+            Assert.Equal(20, w1.shape[0]);
+            Assert.Equal(20, w1.shape[1]);
+
+            var w2 = lin.parameters().ToArray()[0];
+
+            Assert.Equal(2, w2.shape.Length);
+            Assert.Equal(20, w2.shape[0]);
+            Assert.Equal(10, w2.shape[1]);
+        }
+
+        [Fact]
+        public void TestLRNNCellEditWeightsAndBias()
+        {
+            var lin = RNNCell(10, 20, NonLinearities.ReLU);
+            var bias = torch.randn(new long[] { 100 });
+            var weights = torch.randn(new long[] { 100, 1000 });
+
+            lin.bias_ih = bias.clone();
+            lin.weight_ih = weights.clone();
+
+            var w1 = lin.weight_ih;
+            var b1 = lin.bias_ih;
+
+            Assert.Equal(w1.shape.Length, weights.shape.Length);
+            Assert.Equal(w1.shape[0], weights.shape[0]);
+            Assert.Equal(w1.shape[1], weights.shape[1]);
+
+            for (int i = 0; i < 100; i++) {
+                Assert.Equal(b1.data<float>()[i], bias.data<float>()[i]);
+            }
+
+            var w2 = lin.parameters().ToArray()[0];
+            var b2 = lin.parameters().ToArray()[2];
+
+            Assert.Equal(weights.shape.Length, w2.shape.Length);
+            Assert.Equal(weights.shape[0], w2.shape[0]);
+            Assert.Equal(weights.shape[1], w2.shape[1]);
+
+            for (int i = 0; i < 100; i++) {
+                Assert.Equal(b2.data<float>()[i], bias.data<float>()[i]);
             }
         }
 

@@ -756,6 +756,47 @@ Tensor THSNN_RNN_forward(const NNModule module, const Tensor input1, const Tenso
     return output;
 }
 
+Tensor THSNN_RNN_bias_ih(const NNModule module, const int64_t idx)
+{
+    return get_bias_ih<torch::nn::RNN>(module, idx);
+}
+
+void THSNN_RNN_set_bias_ih(const NNModule module, const Tensor bias, const int64_t idx)
+{
+    set_bias_ih<torch::nn::RNN>(module, bias, idx);
+}
+
+Tensor THSNN_RNN_weight_ih(const NNModule module, const int64_t idx)
+{
+    return get_weight_ih<torch::nn::RNN>(module, idx);
+}
+
+void THSNN_RNN_set_weight_ih(const NNModule module, const Tensor weight, const int64_t idx)
+{
+    set_weight_ih<torch::nn::RNN>(module, weight, idx);
+}
+
+Tensor THSNN_RNN_bias_hh(const NNModule module, const int64_t idx)
+{
+    return get_bias_hh<torch::nn::RNN>(module, idx);
+}
+
+void THSNN_RNN_set_bias_hh(const NNModule module, const Tensor bias, const int64_t idx)
+{
+    set_bias_hh<torch::nn::RNN>(module, bias, idx);
+}
+
+Tensor THSNN_RNN_weight_hh(const NNModule module, const int64_t idx)
+{
+    return get_weight_hh<torch::nn::RNN>(module, idx);
+}
+
+void THSNN_RNN_set_weight_hh(const NNModule module, const Tensor weight, const int64_t idx)
+{
+    set_weight_hh<torch::nn::RNN>(module, weight, idx);
+}
+
+
 NNModule THSNN_GRU_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
@@ -802,9 +843,9 @@ Tensor THSNN_LSTM_forward(const NNModule module, const Tensor input1, const Tens
     Tensor output;
     CATCH(
         auto result = (*module)->as<torch::nn::LSTM>()->forward(*input1, second_arg);
-    output = new torch::Tensor(std::get<0>(result));
-    *h_n = new torch::Tensor(std::get<0>(std::get<1>(result)));
-    *c_n = new torch::Tensor(std::get<1>(std::get<1>(result)));
+        output = new torch::Tensor(std::get<0>(result));
+        *h_n = new torch::Tensor(std::get<0>(std::get<1>(result)));
+        *c_n = new torch::Tensor(std::get<1>(std::get<1>(result)));
     );
     return output;
 }
@@ -826,6 +867,46 @@ Tensor THSNN_RNNCell_forward(const NNModule module, const Tensor input1, const T
     CATCH_TENSOR((*module)->as<torch::nn::RNNCell>()->forward(*input1, (h0 ? *h0 : at::Tensor())));
 }
 
+Tensor THSNN_RNNCell_bias_ih(const NNModule module)
+{
+    return get_bias_ih<torch::nn::RNNCell>(module);
+}
+
+void THSNN_RNNCell_set_bias_ih(const NNModule module, const Tensor bias)
+{
+    set_bias_ih<torch::nn::RNNCell>(module, bias);
+}
+
+Tensor THSNN_RNNCell_weight_ih(const NNModule module)
+{
+    return get_weight_ih<torch::nn::RNNCell>(module);
+}
+
+void THSNN_RNNCell_set_weight_ih(const NNModule module, const Tensor weight)
+{
+    set_weight_ih<torch::nn::RNNCell>(module, weight);
+}
+
+Tensor THSNN_RNNCell_bias_hh(const NNModule module)
+{
+    return get_bias_hh<torch::nn::RNNCell>(module);
+}
+
+void THSNN_RNNCell_set_bias_hh(const NNModule module, const Tensor bias)
+{
+    set_bias_hh<torch::nn::RNNCell>(module, bias);
+}
+
+Tensor THSNN_RNNCell_weight_hh(const NNModule module)
+{
+    return get_weight_hh<torch::nn::RNNCell>(module);
+}
+
+void THSNN_RNNCell_set_weight_hh(const NNModule module, const Tensor weight)
+{
+    set_weight_hh<torch::nn::RNNCell>(module, weight);
+}
+
 NNModule THSNN_GRUCell_ctor(const int64_t input_size, const int64_t hidden_size, const bool bias, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
@@ -839,6 +920,46 @@ NNModule THSNN_GRUCell_ctor(const int64_t input_size, const int64_t hidden_size,
 Tensor  THSNN_GRUCell_forward(const NNModule module, const Tensor input1, const Tensor h0)
 {
     CATCH_TENSOR((*module)->as<torch::nn::GRUCell>()->forward(*input1, (h0 ? *h0 : at::Tensor())));
+}
+
+Tensor THSNN_GRUCell_bias_ih(const NNModule module)
+{
+    return get_bias_ih<torch::nn::GRUCell>(module);
+}
+
+void THSNN_GRUCell_set_bias_ih(const NNModule module, const Tensor bias)
+{
+    set_bias_ih<torch::nn::GRUCell>(module, bias);
+}
+
+Tensor THSNN_GRUCell_weight_ih(const NNModule module)
+{
+    return get_weight_ih<torch::nn::GRUCell>(module);
+}
+
+void THSNN_GRUCell_set_weight_ih(const NNModule module, const Tensor weight)
+{
+    set_weight_ih<torch::nn::GRUCell>(module, weight);
+}
+
+Tensor THSNN_GRUCell_bias_hh(const NNModule module)
+{
+    return get_bias_hh<torch::nn::GRUCell>(module);
+}
+
+void THSNN_GRUCell_set_bias_hh(const NNModule module, const Tensor bias)
+{
+    set_bias_hh<torch::nn::GRUCell>(module, bias);
+}
+
+Tensor THSNN_GRUCell_weight_hh(const NNModule module)
+{
+    return get_weight_hh<torch::nn::GRUCell>(module);
+}
+
+void THSNN_GRUCell_set_weight_hh(const NNModule module, const Tensor weight)
+{
+    set_weight_hh<torch::nn::GRUCell>(module, weight);
 }
 
 NNModule THSNN_LSTMCell_ctor(const int64_t input_size, const int64_t hidden_size, const bool bias, NNAnyModule* outAsAnyModule)
@@ -861,7 +982,48 @@ Tensor THSNN_LSTMCell_forward(const NNModule module, const Tensor input1, const 
         output = new torch::Tensor(std::get<0>(result));
         *c_n = new torch::Tensor(std::get<1>(result));
     );
+
     return output;
+}
+
+Tensor THSNN_LSTMCell_bias_ih(const NNModule module)
+{
+    return get_bias_ih<torch::nn::LSTMCell>(module);
+}
+
+void THSNN_LSTMCell_set_bias_ih(const NNModule module, const Tensor bias)
+{
+    set_bias_ih<torch::nn::LSTMCell>(module, bias);
+}
+
+Tensor THSNN_LSTMCell_weight_ih(const NNModule module)
+{
+    return get_weight_ih<torch::nn::LSTMCell>(module);
+}
+
+void THSNN_LSTMCell_set_weight_ih(const NNModule module, const Tensor weight)
+{
+    set_weight_ih<torch::nn::LSTMCell>(module, weight);
+}
+
+Tensor THSNN_LSTMCell_bias_hh(const NNModule module)
+{
+    return get_bias_hh<torch::nn::LSTMCell>(module);
+}
+
+void THSNN_LSTMCell_set_bias_hh(const NNModule module, const Tensor bias)
+{
+    set_bias_hh<torch::nn::LSTMCell>(module, bias);
+}
+
+Tensor THSNN_LSTMCell_weight_hh(const NNModule module)
+{
+    return get_weight_hh<torch::nn::LSTMCell>(module);
+}
+
+void THSNN_LSTMCell_set_weight_hh(const NNModule module, const Tensor weight)
+{
+    set_weight_hh<torch::nn::LSTMCell>(module, weight);
 }
 
 

@@ -125,6 +125,123 @@ void set_bias(const NNModule module, const Tensor bias)
     );
 }
 
+template <typename T>
+Tensor get_weight_ih(const NNModule module)
+{
+    CATCH_TENSOR((*module)->as<T>()->weight_ih);
+}
+
+template <typename T>
+Tensor get_weight_hh(const NNModule module)
+{
+    CATCH_TENSOR((*module)->as<T>()->weight_hh);
+}
+
+template <typename T>
+void set_weight_ih(const NNModule module, const Tensor weights)
+{
+    CATCH(
+        (*module)->as<T>()->weight_ih = *weights;
+    );
+}
+
+template <typename T>
+void set_weight_hh(const NNModule module, const Tensor weights)
+{
+    CATCH(
+        (*module)->as<T>()->weight_hh = *weights;
+    );
+}
+
+template <typename T>
+Tensor get_bias_ih(const NNModule module)
+{
+    CATCH_TENSOR((*module)->as<T>()->bias_ih);
+}
+
+template <typename T>
+Tensor get_bias_hh(const NNModule module)
+{
+    CATCH_TENSOR((*module)->as<T>()->bias_hh);
+}
+
+template <typename T>
+void set_bias_ih(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<T>()->bias_ih = *bias;
+    );
+}
+
+template <typename T>
+void set_bias_hh(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<T>()->bias_hh = *bias;
+    );
+}
+
+#define WIH_BASE 0
+#define WHH_BASE 1
+#define BIH_BASE 2
+#define BHH_BASE 3
+
+template <typename T>
+Tensor get_weight_ih(const NNModule module, const int64_t idx)
+{
+    CATCH_TENSOR((*module)->as<T>()->all_weights()[WIH_BASE + idx * 4]);
+}
+
+template <typename T>
+Tensor get_weight_hh(const NNModule module, const int64_t idx)
+{
+    CATCH_TENSOR((*module)->as<T>()->all_weights()[WHH_BASE + idx * 4]);
+}
+
+template <typename T>
+void set_weight_ih(const NNModule module, const Tensor weights, const int64_t idx)
+{
+    CATCH(
+        (*module)->as<T>()->all_weights()[WIH_BASE + idx * 4] = *weights;
+    );
+}
+
+template <typename T>
+void set_weight_hh(const NNModule module, const Tensor weights, const int64_t idx)
+{
+    CATCH(
+        (*module)->as<T>()->all_weights()[WHH_BASE + idx * 4] = *weights;
+    );
+}
+
+template <typename T>
+Tensor get_bias_ih(const NNModule module, const int64_t idx)
+{
+    CATCH_TENSOR((*module)->as<T>()->all_weights()[BIH_BASE + idx * 4]);
+}
+
+template <typename T>
+Tensor get_bias_hh(const NNModule module, const int64_t idx)
+{
+    CATCH_TENSOR((*module)->as<T>()->all_weights()[BHH_BASE + idx * 4]);
+}
+
+template <typename T>
+void set_bias_ih(const NNModule module, const Tensor bias, const int64_t idx)
+{
+    CATCH(
+        (*module)->as<T>()->all_weights()[BIH_BASE + idx * 4] = *bias;
+    );
+}
+
+template <typename T>
+void set_bias_hh(const NNModule module, const Tensor bias, const int64_t idx)
+{
+    CATCH(
+        (*module)->as<T>()->all_weights()[BHH_BASE + idx * 4] = *bias;
+    );
+}
+
 template<typename TImpl>
 NNModule create_module(NNAnyModule* outAsAnyModule)
 {

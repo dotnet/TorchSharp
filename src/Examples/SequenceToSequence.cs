@@ -126,7 +126,7 @@ namespace TorchSharp.Examples
                     using (var output = model.forward(data, src_mask)) {
                         var loss = criterion(output.view(-1, ntokens), targets);
                         loss.backward();
-                        torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
+                        torch.nn.utils.clip_grad_norm_(model.parameters().ToArray(), 0.5);
                         optimizer.step();
 
                         total_loss += loss.to(torch.CPU).item<float>();

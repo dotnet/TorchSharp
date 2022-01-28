@@ -98,6 +98,7 @@ namespace TorchSharp
                 set {
                     THSNN_EmbeddingBag_set_weight(handle, value.Handle);
                     torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight", value);
                 }
             }
         }

@@ -39,6 +39,76 @@ namespace TorchSharp
                 if (hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(hN), new Tensor(cN));
             }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_LSTMCell_bias_ih(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_LSTMCell_set_bias_ih(torch.nn.Module.HType module, IntPtr tensor);
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_LSTMCell_bias_hh(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_LSTMCell_set_bias_hh(torch.nn.Module.HType module, IntPtr tensor);
+
+            public Tensor? bias_ih {
+                get {
+                    var res = THSNN_LSTMCell_bias_ih(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return ((res == IntPtr.Zero) ? null : new Tensor(res));
+                }
+                set {
+                    THSNN_LSTMCell_set_bias_ih(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias_ih", value);
+                }
+            }
+
+            public Tensor? bias_hh {
+                get {
+                    var res = THSNN_LSTMCell_bias_hh(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return ((res == IntPtr.Zero) ? null : new Tensor(res));
+                }
+                set {
+                    THSNN_LSTMCell_set_bias_hh(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias_hh", value);
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_LSTMCell_weight_ih(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_LSTMCell_set_weight_ih(torch.nn.Module.HType module, IntPtr tensor);
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_LSTMCell_weight_hh(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_LSTMCell_set_weight_hh(torch.nn.Module.HType module, IntPtr tensor);
+
+            public Tensor weight_ih {
+                get {
+                    var res = THSNN_LSTMCell_weight_ih(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+                set {
+                    THSNN_LSTMCell_set_weight_ih(handle, value.Handle);
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight_ih", value);
+                }
+            }
+
+            public Tensor weight_hh {
+                get {
+                    var res = THSNN_LSTMCell_weight_hh(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+                set {
+                    THSNN_LSTMCell_set_weight_hh(handle, value.Handle);
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight_hh", value);
+                }
+            }
         }
     }
 

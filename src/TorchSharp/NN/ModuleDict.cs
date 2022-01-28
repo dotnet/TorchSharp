@@ -70,7 +70,11 @@ namespace TorchSharp
 
             public (string, Module) this[int index] {
                 get => _list[index];
-                set => _list[index] = value;
+                set {
+                    var name = value.Item1;
+                    _list[index] = value;
+                    _dict[name] = value.Item2;
+                }
             }
 
             public bool IsReadOnly => false;
@@ -81,7 +85,14 @@ namespace TorchSharp
 
             public int Count => _dict.Count;
 
-            public Module this[string key] { get => _dict[key]; set => _dict[key] = value; }
+            public Module this[string key] {
+                get => _dict[key];
+                set {
+                    _dict[key] = value;
+                    var idx = _list.FindIndex(kv => kv.Item1.Equals(key));
+                    _list[idx] = (key, value);
+                }
+            }
 
             public void Add((string, Module) item)
             {

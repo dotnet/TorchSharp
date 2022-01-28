@@ -6,6 +6,7 @@ using static TorchSharp.torch.nn;
 
 namespace TorchSharp
 {
+    using System.Linq;
     using Modules;
 
     namespace Modules
@@ -31,6 +32,11 @@ namespace TorchSharp
                     register_parameter($"{i}", _list[i]);
                 }
                 _registered = true;
+            }
+
+            public override IEnumerable<(string name, Parameter parameter)> named_parameters(bool recurse = true)
+            {
+                return Enumerable.Range(0, _list.Count).Select(i => ($"{i}", _list[i]));
             }
 
             private bool _registered = false;

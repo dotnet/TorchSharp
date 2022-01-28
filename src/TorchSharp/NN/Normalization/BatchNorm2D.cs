@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+
 using static TorchSharp.torch;
 
 #nullable enable
@@ -54,6 +56,7 @@ namespace TorchSharp
                 set {
                     THSNN_BatchNorm2d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
                 }
             }
 
@@ -66,6 +69,7 @@ namespace TorchSharp
                 set {
                     THSNN_BatchNorm2d_set_weight(handle, value.Handle);
                     torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight", value);
                 }
             }
 
@@ -89,6 +93,14 @@ namespace TorchSharp
             {
                 THSNN_BatchNorm2d_reset_stats(handle);
                 torch.CheckForErrors();
+            }
+
+            protected override void state_dict(Dictionary<string, Tensor> res)
+            {
+                var v = running_var;
+                var m = running_mean;
+                if (v is not null) res.Add("running_var", v);
+                if (m is not null) res.Add("running_mean", m);
             }
         }
     }
