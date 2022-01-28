@@ -135,6 +135,18 @@ namespace TorchSharp
                 foreach (var m in _modules) { m.Eval(); }
             }
 
+            public override nn.Module to(ScalarType dtype)
+            {
+                foreach (var m in _modules) { m.to(dtype); }
+                return this;
+            }
+
+            public override nn.Module to(DeviceType deviceType, int deviceIndex = -1)
+            {
+                foreach (var m in _modules) { m.to(deviceType, deviceIndex); }
+                return this;
+            }
+
             // Currently, Sequential is implemented entirely in managed code, but if we go back to
             // using the native forward() implementation, this collection is still necessary.
             // The module handles are held in the native runtime, which calls back into managed code,

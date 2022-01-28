@@ -125,7 +125,7 @@ namespace TorchSharp
                 /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
                 /// <param name="deviceIndex">The optional device index.</param>
                 /// <returns></returns>
-                public Module to(DeviceType deviceType, int deviceIndex = -1)
+                public virtual Module to(DeviceType deviceType, int deviceIndex = -1)
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
@@ -134,6 +134,31 @@ namespace TorchSharp
                         torch.InitializeDeviceType(deviceType);
                         THSNN_Module_to_device(handle, (int)deviceType, deviceIndex);
                         torch.CheckForErrors();
+
+                        foreach (var (_, sm) in named_children()) sm.to(deviceType, deviceIndex);
+
+                        foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
+
+                            var name = field.Name;
+                            var value = field.GetValue(this);
+
+                            Tensor tensor = value as Tensor;
+                            Modules.Parameter param = value as Modules.Parameter;
+
+                            if (param is not null) {  // This test must come before the Tensor test
+                                if (deviceType != param.device_type || deviceIndex != param.device_index) {
+                                    var p = new Modules.Parameter(param.to(deviceType, deviceIndex), param.requires_grad);
+                                    field.SetValue(this, p);
+                                    ConditionallyRegisterParameter(name, p);
+                                }
+                            } else if (tensor is not null) {
+                                if (deviceType != tensor.device_type || deviceIndex != tensor.device_index) {
+                                    var t = tensor.to(deviceType, deviceIndex);
+                                    field.SetValue(this, t);
+                                    ConditionallyRegisterBuffer(name, t);
+                                }
+                            }
+                        }
 
                         _deviceType = deviceType;
                         _deviceIndex = deviceIndex;
@@ -172,10 +197,36 @@ namespace TorchSharp
                 /// Convert the parameters and buffers.
                 /// </summary>
                 /// <returns></returns>
-                public Module to(ScalarType dtype)
+                public virtual Module to(ScalarType dtype)
                 {
                     THSNN_Module_to_dtype(handle, (sbyte)dtype);
                     torch.CheckForErrors();
+
+                    foreach (var (_, sm) in named_children()) sm.to(dtype);
+
+                    foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
+
+                        var name = field.Name;
+                        var value = field.GetValue(this);
+
+                        Tensor tensor = value as Tensor;
+                        Modules.Parameter param = value as Modules.Parameter;
+
+                        if (param is not null) {  // This test must come before the Tensor test
+                            if (dtype != param.dtype) {
+                                var p = new Modules.Parameter(param.to(dtype), param.requires_grad);
+                                field.SetValue(this, p);
+                                ConditionallyRegisterParameter(name, p);
+                            }
+                        } else if (tensor is not null) {
+                            if (dtype != tensor.dtype) {
+                                var t = tensor.to(dtype);
+                                field.SetValue(this, t);
+                                ConditionallyRegisterBuffer(name, t);
+                            }
+                        }
+                    }
+
                     return this;
                 }
 
@@ -256,7 +307,7 @@ namespace TorchSharp
                 {
                     THSNN_Module_eval(handle);
                     torch.CheckForErrors();
-                    foreach (var (_,m) in named_children()) { m.Eval(); }
+                    foreach (var (_, m) in named_children()) { m.Eval(); }
                 }
 
                 [DllImport("LibTorchSharp")]
@@ -439,14 +490,19 @@ namespace TorchSharp
 
                 public virtual void register_module(string name, Module submodule)
                 {
-                    if (submodule is null || submodule.handle.IsInvalid) throw new ArgumentNullException("A null module cannot be registered.");
-                    if (_internal_submodules.ContainsKey(name)) {
-                        throw new InvalidOperationException($"Sub-module {name} is already registered.");
+                    if (submodule is null || submodule.handle.IsInvalid) {
+                        if (_internal_submodules.ContainsKey(name)) {
+                            _internal_submodules.Remove(name);
+                        }
+                    } else {
+                        if (_internal_submodules.ContainsKey(name)) {
+                            throw new InvalidOperationException($"Sub-module {name} is already registered.");
+                        }
+
+                        submodule.RegisterComponents();
+
+                        _internal_submodules.Add(name, submodule);
                     }
-
-                    submodule.RegisterComponents();
-
-                    _internal_submodules.Add(name, submodule);
                 }
 
                 protected void ConditionallyRegisterParameter(string name, Tensor value)
@@ -464,6 +520,21 @@ namespace TorchSharp
                             _internal_params[name] = p;
                         } else {
                             _internal_params.Add(name, p);
+                        }
+                    }
+                }
+
+                protected void ConditionallyRegisterBuffer(string name, Tensor value)
+                {
+                    if (value is null) {
+                        if (_internal_buffers.ContainsKey(name)) {
+                            _internal_buffers.Remove(name);
+                        }
+                    } else {
+                        if (_internal_buffers.ContainsKey(name)) {
+                            _internal_buffers[name] = value;
+                        } else {
+                            _internal_buffers.Add(name, value);
                         }
                     }
                 }
@@ -562,8 +633,7 @@ namespace TorchSharp
                         using (var stream = System.IO.File.OpenRead(location))
                         using (var reader = new System.IO.BinaryReader(stream))
                             load(reader, strict);
-                    }
-                    finally {
+                    } finally {
                         to(dt, di);
                     }
 
@@ -675,7 +745,7 @@ namespace TorchSharp
 
                 protected Utils.OrderedDict<string, Module> _internal_submodules = new Utils.OrderedDict<string, Module>();
                 protected Utils.OrderedDict<string, Tensor> _internal_buffers = new Utils.OrderedDict<string, Tensor>();
-                protected Utils.OrderedDict<string,Modules.Parameter> _internal_params = new Utils.OrderedDict<string, Modules.Parameter>();
+                protected Utils.OrderedDict<string, Modules.Parameter> _internal_params = new Utils.OrderedDict<string, Modules.Parameter>();
 
                 /// Keeps the callback delegate alive
                 private ForwardFunctionC forwardNative;

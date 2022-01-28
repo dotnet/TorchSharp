@@ -1558,6 +1558,104 @@ namespace TorchSharp
             private ModuleList list = new ModuleList();
             private ModuleDict dict = new ModuleDict();
         }
+
+        [Fact]
+        public void TestDatatypeTo()
+        {
+            var mod = new TestModule3();
+            mod.ValidateDtype(torch.float32);
+            mod.to(torch.float64);
+            mod.ValidateDtype(torch.float64);
+
+            var lin1 = Linear(10, 10);
+            var lin2 = Linear(25, 25);
+            var seq = Sequential(lin1, lin2);
+
+            Assert.Equal(torch.float32, lin1.weight.dtype);
+            Assert.Equal(torch.float32, lin2.weight.dtype);
+            if (lin1.bias is not null) Assert.Equal(torch.float32, lin1.bias.dtype);
+            if (lin2.bias is not null) Assert.Equal(torch.float32, lin2.bias.dtype);
+
+            seq.to(torch.float64);
+
+            Assert.Equal(torch.float64, lin1.weight.dtype);
+            Assert.Equal(torch.float64, lin2.weight.dtype);
+            if (lin1.bias is not null) Assert.Equal(torch.float64, lin1.bias.dtype);
+            if (lin2.bias is not null) Assert.Equal(torch.float64, lin2.bias.dtype);
+        }
+
+        [Fact]
+        public void TestDeviceTo()
+        {
+            if (torch.cuda.is_available()) {
+
+                var mod = new TestModule3();
+                mod.ValidateDeviceType(DeviceType.CPU);
+                mod.cuda();
+                mod.ValidateDeviceType(DeviceType.CUDA);
+
+                var lin1 = Linear(10, 10);
+                var lin2 = Linear(25, 25);
+                var seq = Sequential(lin1, lin2);
+
+                Assert.Equal(DeviceType.CPU, lin1.weight.device_type);
+                Assert.Equal(DeviceType.CPU, lin2.weight.device_type);
+                if (lin1.bias is not null) Assert.Equal(DeviceType.CPU, lin1.bias.device_type);
+                if (lin2.bias is not null) Assert.Equal(DeviceType.CPU, lin2.bias.device_type);
+
+                seq.cuda();
+
+                Assert.Equal(DeviceType.CUDA, lin1.weight.device_type);
+                Assert.Equal(DeviceType.CUDA, lin2.weight.device_type);
+                if (lin1.bias is not null) Assert.Equal(DeviceType.CUDA, lin1.bias.device_type);
+                if (lin2.bias is not null) Assert.Equal(DeviceType.CUDA, lin2.bias.device_type);
+            }
+        }
+
+        private class TestModule3 : Module
+        {
+            public TestModule3(): base(nameof(TestModule3)) { RegisterComponents(); }
+
+            public override Tensor forward(Tensor t)
+            {
+                return mod2.forward(mod1.forward(t));
+            }
+
+            public void ValidateDtype(ScalarType dtype)
+            {
+                Assert.Equal(dtype, mod1.weight.dtype);
+                Assert.Equal(dtype, mod2.weight.dtype);
+                if (mod1.bias is not null) Assert.Equal(dtype, mod1.bias.dtype);
+                if (mod2.bias is not null) Assert.Equal(dtype, mod2.bias.dtype);
+
+                Assert.Equal(dtype, p1.dtype);
+                Assert.Equal(dtype, b1.dtype);
+
+                foreach (var p in parameters()) {
+                    Assert.Equal(dtype, p.dtype);
+                }
+            }
+
+            public void ValidateDeviceType(DeviceType device)
+            {
+                Assert.Equal(device, mod1.weight.device_type);
+                Assert.Equal(device, mod2.weight.device_type);
+                if (mod1.bias is not null) Assert.Equal(device, mod1.bias.device_type);
+                if (mod2.bias is not null) Assert.Equal(device, mod2.bias.device_type);
+
+                Assert.Equal(device, p1.device_type);
+                Assert.Equal(device, b1.device_type);
+
+                foreach (var p in parameters()) {
+                    Assert.Equal(device, p.device_type);
+                }
+            }
+
+            private Tensor b1 = torch.zeros(5, 5, 5);
+            private Modules.Linear mod1 = Linear(10, 10);
+            private Modules.Linear mod2 = Linear(10, 10);
+            private Parameter p1 = new Parameter(torch.zeros(5, 5, 5), true);
+        }
         #endregion
 
         #region Pooling
