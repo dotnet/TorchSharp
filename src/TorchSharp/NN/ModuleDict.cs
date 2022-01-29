@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
+using System.Dynamic;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -94,6 +95,26 @@ namespace TorchSharp
                 }
             }
 
+            public override bool TryGetMember(GetMemberBinder binder, out object result)
+            {
+                var ok = _dict.TryGetValue(binder.Name, out var res);
+                result = ok ? res : null;
+                return ok;
+            }
+
+            public override bool TrySetMember(SetMemberBinder binder, object value)
+            {
+                var name = binder.Name;
+                var submodule = value as Module;
+                if (submodule is not null) {
+                    this[name] = submodule;
+                } else if (_dict.ContainsKey(name)) {
+                    Remove(name);
+                }
+
+                return false;
+            }
+
             public void Add((string, Module) item)
             {
                 _dict.Add(item.Item1, item.Item2);
@@ -129,17 +150,22 @@ namespace TorchSharp
 
             public void Insert(int index, (string, Module) item)
             {
+                _dict.Add(item.Item1, item.Item2);
                 _list.Insert(index, item);
             }
 
             public bool Remove((string, Module) item)
             {
+                _dict.Remove(item.Item1);
                 return _list.Remove(item);
             }
 
             public void RemoveAt(int index)
             {
+                if (index >= _list.Count) throw new IndexOutOfRangeException();
+                var (n, p) = _list[index];
                 _list.RemoveAt(index);
+                _dict.Remove(n);
             }
 
             public bool ContainsKey(string key)

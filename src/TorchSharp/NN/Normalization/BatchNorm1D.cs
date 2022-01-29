@@ -104,17 +104,6 @@ namespace TorchSharp
                 }
             }
 
-            protected override Dictionary<string, Tensor> state_dict(Dictionary<string, Tensor>? destination = null, string? prefix = null)
-            {
-                if (destination == null)
-                    destination = new Dictionary<string, Tensor>();
-                var v = running_var;
-                var m = running_mean;
-                if (v is not null) destination.Add(String.IsNullOrEmpty(prefix) ? "running_var" : $"{prefix}.running_var", v);
-                if (m is not null) destination.Add(String.IsNullOrEmpty(prefix) ? "running_mean" : $"{prefix}.running_mean", m);
-                return destination;
-            }
-
             public void reset_running_stats()
             {
                 THSNN_BatchNorm1d_reset_stats(handle);

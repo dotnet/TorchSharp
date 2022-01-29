@@ -96,17 +96,22 @@ namespace TorchSharp.Utils
 
         public void Insert(int index, (TKey, TValue) item)
         {
+            _dict.Add(item.Item1, item.Item2);
             _list.Insert(index, item);
         }
 
         public bool Remove((TKey, TValue) item)
         {
+            _dict.Remove(item.Item1);
             return _list.Remove(item);
         }
 
         public void RemoveAt(int index)
         {
+            if (index >= _list.Count) throw new IndexOutOfRangeException();
+            var (n, p) = _list[index];
             _list.RemoveAt(index);
+            _dict.Remove(n);
         }
 
         public bool ContainsKey(TKey key)
@@ -117,7 +122,9 @@ namespace TorchSharp.Utils
         public bool Remove(TKey key)
         {
             var value = _dict[key];
-            return _dict.Remove(key) && _list.Remove((key, value));
+            var idx = _list.FindIndex(kv => kv.Item1.Equals(key));
+            _list.RemoveAt(idx);
+            return _dict.Remove(key);
         }
 
         public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)

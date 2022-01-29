@@ -2133,6 +2133,14 @@ namespace TorchSharp
             {
                 var ones = torch.ones(new long[] { 16, 3, 28 });
                 using (var pool = BatchNorm1d(3)) {
+
+                    var sd = pool.state_dict();
+                    Assert.Equal(5, sd.Count);
+                    var np = pool.named_parameters();
+                    Assert.Equal(2, np.Count());
+                    var nb = pool.named_buffers();
+                    Assert.Equal(3, nb.Count());
+
                     var pooled = pool.forward(ones);
                     Assert.Equal(ones.shape, pooled.shape);
                     Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16 })));

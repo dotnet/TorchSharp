@@ -95,6 +95,19 @@ namespace TorchSharp
                 }
             }
 
+            public override bool has_parameter(string target)
+            {
+                return _dict.ContainsKey(target);
+            }
+
+            public override Parameter get_parameter(string target)
+            {
+                if (_dict.TryGetValue(target, out var result)) {
+                    return result;
+                }
+                return null;
+            }
+
             public override bool TryGetMember(GetMemberBinder binder, out object result)
             {
                 var ok = _dict.TryGetValue(binder.Name, out var res);
@@ -151,6 +164,7 @@ namespace TorchSharp
 
             public void Insert(int index, (string, Parameter) item)
             {
+                _dict.Add(item.Item1, item.Item2);
                 _list.Insert(index, item);
             }
 
@@ -176,7 +190,9 @@ namespace TorchSharp
             public bool Remove(string key)
             {
                 var value = _dict[key];
-                return _dict.Remove(key) && _list.Remove((key, value));
+                var idx = _list.FindIndex(kv => kv.Item1.Equals(key));
+                _list.RemoveAt(idx);
+                return _dict.Remove(key);
             }
 
             public bool TryGetValue(string key, [MaybeNullWhen(false)] out Parameter value)

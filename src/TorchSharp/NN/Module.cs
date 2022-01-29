@@ -85,6 +85,9 @@ namespace TorchSharp
                         foreach (var np in _named_parameters()) {
                             register_parameter(np.name, np.parameter);
                         }
+                        foreach (var np in _named_buffers()) {
+                            register_buffer(np.name, np.buffer);
+                        }
                     }
                 }
 
@@ -421,7 +424,7 @@ namespace TorchSharp
                 /// <param name="destination">An optional dictionary where the state should be accumulated.</param>
                 /// <param name="prefix">A prefix string to use when entering the name of entries into the dictionary.</param>
                 /// <returns></returns>
-                protected virtual Dictionary<string, Tensor> state_dict(Dictionary<string, Tensor> destination = null, string prefix = null)
+                public virtual Dictionary<string, Tensor> state_dict(Dictionary<string, Tensor> destination = null, string prefix = null)
                 {
                     if (destination == null)
                         destination = new Dictionary<string, Tensor>();
@@ -458,6 +461,25 @@ namespace TorchSharp
                         strArray = sa.Array;
                     }
                     return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Modules.Parameter(x))).ToArray();
+
+                }
+
+                [DllImport("LibTorchSharp")]
+                private static extern void THSNN_Module_get_named_buffers(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
+
+                protected (string name, Tensor buffer)[] _named_buffers()
+                {
+                    IntPtr[] ptrArray;
+                    IntPtr[] strArray;
+
+                    using (var pa = new PinnedArray<IntPtr>())
+                    using (var sa = new PinnedArray<IntPtr>()) {
+                        THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
+                        torch.CheckForErrors();
+                        ptrArray = pa.Array;
+                        strArray = sa.Array;
+                    }
+                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
 
                 }
 
@@ -507,15 +529,15 @@ namespace TorchSharp
                     return named_parameters(recurse).Select(np => np.parameter);
                 }
 
-                public bool has_parameter(string name)
+                public virtual bool has_parameter(string target)
                 {
-                    if (_internal_params.TryGetValue(name, out var parameter)) {
+                    if (_internal_params.TryGetValue(target, out var parameter)) {
                         return true;
                     }
-                    foreach (var child in named_children().Where(nc => name.StartsWith(nc.name))) {
+                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
                         var prefix = child.name + ".";
-                        var p = child.module.get_parameter(name.Remove(0, prefix.Length));
-                        if (p is not null) return true;
+                        if (child.module.has_parameter(target.Remove(0, prefix.Length)))
+                            return true;
                     }
                     return false;
                 }
@@ -525,15 +547,16 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="target">The fully-qualified string name of the Parameter to look for.</param>
                 /// <returns>The Parameter referenced by target</returns>
-                public Modules.Parameter get_parameter(string target)
+                public virtual Modules.Parameter get_parameter(string target)
                 {
                     if (_internal_params.TryGetValue(target, out var parameter)) {
                         return parameter;
                     }
                     foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
                         var prefix = child.name + ".";
-                        var p = child.module.get_parameter(name.Remove(0, prefix.Length));
-                        if (p is not null) return p;
+                        var p = child.module.get_parameter(target.Remove(0, prefix.Length));
+                        if (p is not null)
+                            return p;
                     }
                     return null;
                 }
