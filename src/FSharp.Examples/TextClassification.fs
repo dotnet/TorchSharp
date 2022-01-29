@@ -71,7 +71,7 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.Device)
 
 let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (model:TextClassificationModel) (optimizer:torch.optim.Optimizer) =
 
-    model.Train()
+    model.train()
 
     let mutable total_acc = 0.0
     let mutable total_count = 0L
@@ -103,7 +103,7 @@ let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) 
 
 let evaluate (testData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (model:TextClassificationModel) =
 
-    model.Eval()
+    model.eval()
 
     let mutable total_acc = 0.0
     let mutable total_count = 0L

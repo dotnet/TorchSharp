@@ -105,7 +105,7 @@ namespace TorchSharp.Examples
 
         static void train(int epoch, IEnumerable<(Tensor, Tensor, Tensor)> train_data, TextClassificationModel model, Loss criterion, torch.optim.Optimizer optimizer)
         {
-            model.Train();
+            model.train();
 
             double total_acc = 0.0;
             long total_count = 0;
@@ -141,7 +141,7 @@ namespace TorchSharp.Examples
 
         static double evaluate(IEnumerable<(Tensor, Tensor, Tensor)> test_data, TextClassificationModel model, Loss criterion)
         {
-            model.Eval();
+            model.eval();
 
             double total_acc = 0.0;
             long total_count = 0;

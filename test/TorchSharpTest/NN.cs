@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.IO;
+using System.Dynamic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Xunit;
@@ -957,10 +957,7 @@ namespace TorchSharp
             public CondModel(string name, bool isTrue) : base(name)
             {
                 _isTrue = isTrue;
-                register_module("fb", fb);
-                register_module("fbT1", fbT1);
-                register_module("fbF1", fbF1);
-                register_module("fbF2", fbF2);
+                RegisterComponents();
             }
 
             public override Tensor forward(Tensor input)
@@ -989,7 +986,7 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 }, requiresGrad: true);
             var y = torch.randn(new long[] { 64, 10 }, requiresGrad: true);
 
-            modT.Train();
+            modT.train();
 
             var eval = modT.forward(x);
             var loss = mse_loss(Reduction.Sum);
@@ -1008,7 +1005,7 @@ namespace TorchSharp
             Assert.Equal(2, gradCounts);
 
             //{ "grad can be implicitly created only for scalar outputs (_make_grads at ..\\..\\torch\\csrc\\autograd\\autograd.cpp:47)\n(no backtrace available)"}
-            modF.Train();
+            modF.train();
 
             eval = modF.forward(x);
             output = loss(eval, y);
@@ -2662,7 +2659,7 @@ namespace TorchSharp
             using (var K = torch.tensor(k_data, src_seq_len, batch_size, kembed_dim))
             using (var V = torch.tensor(v_data, src_seq_len, batch_size, vembed_dim))
             using (var Attn = torch.tensor(attn_data, batch_size, src_seq_len, src_seq_len)) {
-                mha.Eval();
+                mha.eval();
                 var (att_out, att_wts) = mha.forward(Q, K, V);
                 var t = att_wts.allclose(Attn, rtol: 0.5, atol: 0.5);
                 Assert.True(t);

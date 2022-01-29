@@ -138,7 +138,7 @@ let get_batch (source:torch.Tensor) (index:int64) =
 
 let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.Tensor) ntokens =
 
-    model.Train()
+    model.train()
 
     use d = torch.NewDisposeScope()
 
@@ -183,7 +183,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
 
 let evaluate (model:TransformerModel) (evalData:torch.Tensor) ntokens =
 
-    model.Eval()
+    model.eval()
 
     use d = torch.NewDisposeScope()
 

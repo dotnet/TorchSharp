@@ -155,7 +155,7 @@ namespace TorchSharp.Examples
             long batchSize,
             long size)
         {
-            model.Train();
+            model.train();
 
             int batchId = 1;
             long total = 0;
@@ -200,7 +200,7 @@ namespace TorchSharp.Examples
             IEnumerable<(Tensor, Tensor)> dataLoader,
             long size)
         {
-            model.Eval();
+            model.eval();
 
             double testLoss = 0;
             long correct = 0;

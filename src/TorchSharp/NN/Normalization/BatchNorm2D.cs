@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 using static TorchSharp.torch;
 
-#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -77,7 +76,7 @@ namespace TorchSharp
                 }
             }
 
-            public Tensor? running_mean {
+            public Tensor running_mean {
                 get {
                     var res = THSNN_BatchNorm2d_get_mean(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
@@ -90,7 +89,7 @@ namespace TorchSharp
                 }
             }
 
-            public Tensor? running_var {
+            public Tensor running_var {
                 get {
                     var res = THSNN_BatchNorm2d_get_var(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
@@ -109,12 +108,15 @@ namespace TorchSharp
                 torch.CheckForErrors();
             }
 
-            protected override void state_dict(string prefix, Dictionary<string, Tensor> res)
+            protected override Dictionary<string, Tensor> state_dict(Dictionary<string, Tensor> destination = null, string prefix = null)
             {
+                if (destination == null)
+                    destination = new Dictionary<string, Tensor>();
                 var v = running_var;
                 var m = running_mean;
-                if (v is not null) res.Add(String.IsNullOrEmpty(prefix) ? "running_var" : $"{prefix}.running_var", v);
-                if (m is not null) res.Add(String.IsNullOrEmpty(prefix) ? "running_mean" : $"{prefix}.running_mean", m);
+                if (v is not null) destination.Add(String.IsNullOrEmpty(prefix) ? "running_var" : $"{prefix}.running_var", v);
+                if (m is not null) destination.Add(String.IsNullOrEmpty(prefix) ? "running_mean" : $"{prefix}.running_mean", m);
+                return destination;
             }
         }
     }

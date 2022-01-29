@@ -421,16 +421,16 @@ namespace TorchSharp
         public void ValidateIssue500()
         {
             using (var pool = BatchNorm1d(28)) {
-                pool.Eval();
+                pool.eval();
                 pool.forward(torch.ones(1, 28));
             }
             using (var pool = BatchNorm1d(28))
             using (var seq = Sequential(pool)) {
-                seq.Eval();
+                seq.eval();
                 seq.forward(torch.ones(1, 28));
             }
             using (var seq = new Module500()) {
-                seq.Eval();
+                seq.eval();
                 seq.forward(torch.ones(1, 28));
             }
         }

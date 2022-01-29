@@ -125,14 +125,14 @@ namespace TorchSharp
                 base.Dispose(disposing);
             }
 
-            public override void Train()
+            public override void train()
             {
-                foreach (var m in _modules) { m.Train(); }
+                foreach (var m in _modules) { m.train(); }
             }
 
-            public override void Eval()
+            public override void eval()
             {
-                foreach (var m in _modules) { m.Eval(); }
+                foreach (var m in _modules) { m.eval(); }
             }
 
             public override nn.Module to(ScalarType dtype)

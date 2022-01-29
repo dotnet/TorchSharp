@@ -6,10 +6,11 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __API Changes:__
 
-__NOTE__: This release has breaking changes.
+__NOTE__: This release contains breaking changes.
 
 'Module.named_parameters()', 'parameters()', 'named_modules()', 'named_children()' all return IEnumerable instances instead of arrays.
 Adding weight and bias properties to the RNN modules.
+Lower-cased names: Module.Train --> Module.train and Module.Eval --> Module.eval
 
 __Fixed Bugs:__
 
