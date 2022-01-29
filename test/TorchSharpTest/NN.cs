@@ -1429,6 +1429,24 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestCustomModuleDynamic1()
+        {
+            dynamic module = new TestModule1(torch.randn(new long[] { 2, 2 }), true);
+            int x = module.list.Count;
+            Assert.Equal(1, x);
+            Assert.IsType<ParameterList>(module.list);
+        }
+
+        [Fact]
+        public void TestCustomModuleDynamic2()
+        {
+            dynamic module = new TestModule2(torch.randn(new long[] { 2, 2 }), true);
+            var x = module.dict.first;
+            Assert.NotNull(x);
+            Assert.IsType<TestModule1>(x);
+        }
+
+        [Fact]
         public void TestCustomModuleWithInPlaceModification()
         {
             var param = torch.randn(new long[] { 1000, 100 });
