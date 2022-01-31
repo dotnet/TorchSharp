@@ -48,7 +48,7 @@ namespace TorchSharp
             var lin = Linear(1000, 100, true);
             var bias = torch.ones(new long[] { 1000 });
             var bCount = bias.NumberOfElements;
-            lin.bias = bias;
+            lin.bias = bias.AsParameter();
             Assert.True(!(lin.bias is null));
 
             Assert.Equal(lin.bias?.NumberOfElements, bCount);
@@ -167,7 +167,7 @@ namespace TorchSharp
         {
             var lin = Linear(1000, 100, true);
             var bias = torch.randn(new long[] { 100 });
-            lin.bias = bias.clone();
+            lin.bias = bias.clone().AsParameter();
 
             for (int i = 0; i < 100; i++) {
                 Assert.Equal(lin.bias.data<float>()[i], bias.data<float>()[i]);
@@ -181,8 +181,8 @@ namespace TorchSharp
             var bias = torch.randn(new long[] { 100 });
             var weights = torch.randn(new long[] { 100, 1000 });
 
-            lin.bias = bias.clone();
-            lin.weight = weights.clone();
+            lin.bias = bias.clone().AsParameter();
+            lin.weight = weights.clone().AsParameter();
 
             var w1 = lin.weight;
             var b1 = lin.bias;
@@ -214,8 +214,8 @@ namespace TorchSharp
             var lin = Linear(1000, 1000, true);
             var bias = torch.randn(new long[] { 100 });
             var weights = torch.randn(new long[] { 1000, 1000 });
-            lin.bias = bias;
-            lin.weight = weights;
+            lin.bias = bias.AsParameter();
+            lin.weight = weights.AsParameter();
 
             var parameters = lin.parameters().ToArray();
 
@@ -912,8 +912,8 @@ namespace TorchSharp
             var inputs = new Tensor[] { input };
             var scaler = new double[] { 0.2544529, 0.3184713, 0.2597403, 0.3246753, 0.3144654, 0.3322259, 0.3436426, 0.3215434, 0.308642, 0.3154574, 0.3448276 }.ToTensor(new long[] { 1, 11 }).to_type(ScalarType.Float32).with_requires_grad();
             var linear = Linear(11, 1, true);
-            linear.bias = new double[] { 373.8864 }.ToTensor(new long[] { 1, 1 }).to_type(ScalarType.Float32).with_requires_grad();
-            linear.weight = new double[] { 300.2818, -0.5905267, 286.2787, 0.1970505, 0.9004903, 0.1373157, 55.85495, 11.43741, 1.525748, 0.4299785, 239.9356 }.ToTensor(new long[] { 1, 11 }).to_type(ScalarType.Float32).with_requires_grad();
+            linear.bias = new double[] { 373.8864 }.ToTensor(new long[] { 1, 1 }).to_type(ScalarType.Float32).with_requires_grad().AsParameter();
+            linear.weight = new double[] { 300.2818, -0.5905267, 286.2787, 0.1970505, 0.9004903, 0.1373157, 55.85495, 11.43741, 1.525748, 0.4299785, 239.9356 }.ToTensor(new long[] { 1, 11 }).to_type(ScalarType.Float32).with_requires_grad().AsParameter();
 
             var afterCat = torch.cat(inputs, 1);
             var afterScaler = afterCat * scaler;
@@ -1080,7 +1080,7 @@ namespace TorchSharp
         {
             var conv = Conv1d(3, 64, 3);
 
-            conv.bias = torch.randn(new long[] { 64 });
+            conv.bias = torch.randn(new long[] { 64 }).AsParameter();
             var weights = torch.randn(new long[] { 64, 3, 3 });
 
             var weight = conv.weight;
@@ -1172,7 +1172,7 @@ namespace TorchSharp
         {
             var conv = Conv2d(3, 64, 3);
 
-            conv.bias = torch.randn(new long[] { 64 });
+            conv.bias = torch.randn(new long[] { 64 }).AsParameter();
             var weights = torch.randn(new long[] { 64, 3, 3, 3 });
 
             var weight = conv.weight;
@@ -1287,7 +1287,7 @@ namespace TorchSharp
         {
             var conv = Conv3d(3, 64, 3);
 
-            conv.bias = torch.randn(new long[] { 64 });
+            conv.bias = torch.randn(new long[] { 64 }).AsParameter();
             var weights = torch.randn(new long[] { 64, 3, 3, 3 });
 
             var weight = conv.weight;
@@ -1429,24 +1429,6 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestCustomModuleDynamic1()
-        {
-            dynamic module = new TestModule1(torch.randn(new long[] { 2, 2 }), true);
-            int x = module.list.Count;
-            Assert.Equal(1, x);
-            Assert.IsType<ParameterList>(module.list);
-        }
-
-        [Fact]
-        public void TestCustomModuleDynamic2()
-        {
-            dynamic module = new TestModule2(torch.randn(new long[] { 2, 2 }), true);
-            var x = module.dict.first;
-            Assert.NotNull(x);
-            Assert.IsType<TestModule1>(x);
-        }
-
-        [Fact]
         public void TestCustomModuleWithInPlaceModification()
         {
             var param = torch.randn(new long[] { 1000, 100 });
@@ -1545,7 +1527,7 @@ namespace TorchSharp
                 throw new NotImplementedException();
             }
 
-            private Parameter test;
+            private Parameter test { get; set; }
             private ParameterList list = new ParameterList();
             private ParameterDict dict = new ParameterDict();
         }
@@ -1569,7 +1551,7 @@ namespace TorchSharp
                 throw new NotImplementedException();
             }
 
-            private Module submodule;
+            public Module submodule { get; set; }
             private ModuleList list = new ModuleList();
             private ModuleDict dict = new ModuleDict();
         }
@@ -1666,7 +1648,7 @@ namespace TorchSharp
                 }
             }
 
-            private Tensor b1 = torch.zeros(5, 5, 5);
+            public Tensor b1 = torch.zeros(5, 5, 5);
             private Modules.Linear mod1 = Linear(10, 10);
             private Modules.Linear mod2 = Linear(10, 10);
             private Parameter p1 = new Parameter(torch.zeros(5, 5, 5), true);
@@ -2422,7 +2404,7 @@ namespace TorchSharp
             using (var emb = Embedding(1000, 12)) {
                 var weights = torch.randn(new long[] { 1000, 12 });
 
-                emb.weight = weights.clone();
+                emb.weight = weights.clone().AsParameter();
 
                 Assert.Equal(emb.weight.shape.Length, weights.shape.Length);
                 Assert.Equal(emb.weight.shape[0], weights.shape[0]);
@@ -2480,7 +2462,7 @@ namespace TorchSharp
             var ones = torch.ones(new long[] { 16 }, torch.int32);
             using (var emb = EmbeddingBag(1000, 12)) {
                 var weights = torch.randn(new long[] { 1000, 12 });
-                emb.weight = weights.clone();
+                emb.weight = weights.clone().AsParameter();
 
                 Assert.Equal(emb.weight.shape.Length, weights.shape.Length);
                 Assert.Equal(emb.weight.shape[0], weights.shape[0]);
@@ -3080,8 +3062,8 @@ namespace TorchSharp
             var bias = torch.randn(new long[] { 100 });
             var weights = torch.randn(new long[] { 100, 1000 });
 
-            lin.bias_ih = bias.clone();
-            lin.weight_ih = weights.clone();
+            lin.bias_ih = bias.clone().AsParameter();
+            lin.weight_ih = weights.clone().AsParameter();
 
             var w1 = lin.weight_ih;
             var b1 = lin.bias_ih;

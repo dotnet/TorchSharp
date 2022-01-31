@@ -51,11 +51,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern void THSNN_BatchNorm3d_set_var(torch.nn.Module.HType module, IntPtr weight);
 
-            public Tensor bias {
+            public Parameter bias {
                 get {
                     var res = THSNN_BatchNorm3d_bias(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_BatchNorm3d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
@@ -64,11 +64,11 @@ namespace TorchSharp
                 }
             }
 
-            public Tensor weight {
+            public Parameter weight {
                 get {
                     var res = THSNN_BatchNorm3d_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_BatchNorm3d_set_weight(handle, value.Handle);
@@ -77,11 +77,11 @@ namespace TorchSharp
                 }
             }
 
-            public Tensor? running_mean {
+            public Parameter? running_mean {
                 get {
                     var res = THSNN_BatchNorm3d_get_mean(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_BatchNorm3d_set_mean(handle, (value is null ? IntPtr.Zero : value.Handle));
@@ -90,11 +90,11 @@ namespace TorchSharp
                 }
             }
 
-            public Tensor? running_var {
+            public Parameter? running_var {
                 get {
                     var res = THSNN_BatchNorm3d_get_var(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_BatchNorm3d_set_var(handle, (value is null ? IntPtr.Zero : value.Handle));

@@ -95,26 +95,6 @@ namespace TorchSharp
                 }
             }
 
-            public override bool TryGetMember(GetMemberBinder binder, out object result)
-            {
-                var ok = _dict.TryGetValue(binder.Name, out var res);
-                result = ok ? res : null;
-                return ok;
-            }
-
-            public override bool TrySetMember(SetMemberBinder binder, object value)
-            {
-                var name = binder.Name;
-                var submodule = value as Module;
-                if (submodule is not null) {
-                    this[name] = submodule;
-                } else if (_dict.ContainsKey(name)) {
-                    Remove(name);
-                }
-
-                return false;
-            }
-
             public void Add((string, Module) item)
             {
                 _dict.Add(item.Item1, item.Item2);

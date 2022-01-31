@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 using static TorchSharp.Utils.LEB128Codec;
+using System.Runtime.CompilerServices;
 
 #nullable enable
 namespace TorchSharp
@@ -16,6 +17,16 @@ namespace TorchSharp
     /// </summary>
     public static class TensorExtensionMethods
     {
+        /// <summary>
+        /// Convert to a parameter.
+        /// </summary>
+        /// <param name="tensor">A tensor.</param>
+        /// <returns></returns>
+        public static Modules.Parameter AsParameter(this Tensor tensor)
+        {
+            return new Modules.Parameter(tensor);
+        }
+
         /// <summary>
         /// Get a string representation of the tensor.
         /// </summary>

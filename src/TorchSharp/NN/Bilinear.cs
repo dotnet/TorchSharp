@@ -37,11 +37,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Bilinear_set_bias(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Tensor? bias {
+            public Parameter? bias {
                 get {
                     var res = THSNN_Bilinear_bias(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new Tensor(res));
+                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
                 }
                 set {
                     THSNN_Bilinear_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
@@ -54,11 +54,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Bilinear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Tensor weight {
+            public Parameter weight {
                 get {
                     var res = THSNN_Bilinear_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_Bilinear_set_weight(handle, value.Handle);
@@ -97,7 +97,7 @@ namespace TorchSharp
                 /// Applies a bilinear transformation to the incoming data
                 /// </summary>
                 /// <returns></returns>
-                static public Tensor bilinear(Tensor input1, Tensor input2, Tensor weight, Tensor? bias = null)
+                static public Tensor bilinear(Tensor input1, Tensor input2, Modules.Parameter weight, Modules.Parameter? bias = null)
                 {
                     var in1Features = input1.shape[^1];
                     var in2Features = input2.shape[^1];

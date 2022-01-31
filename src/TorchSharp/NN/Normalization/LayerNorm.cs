@@ -38,11 +38,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern void THSNN_LayerNorm_set_weight(torch.nn.Module.HType module, IntPtr weight);
 
-            public Tensor bias {
+            public Parameter bias {
                 get {
                     var res = THSNN_LayerNorm_bias(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_LayerNorm_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
@@ -51,11 +51,11 @@ namespace TorchSharp
                 }
             }
 
-            public Tensor weight {
+            public Parameter weight {
                 get {
                     var res = THSNN_LayerNorm_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_LayerNorm_set_weight(handle, value.Handle);

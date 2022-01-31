@@ -40,18 +40,18 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_RNN_bias_hh(torch.nn.Module.HType module, long idx);
 
-            public Tensor? get_bias_ih(long idx)
+            public Parameter? get_bias_ih(long idx)
             {
                 var res = THSNN_RNN_bias_ih(handle, idx);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return ((res == IntPtr.Zero) ? null : new Tensor(res));
+                return ((res == IntPtr.Zero) ? null : new Parameter(res));
             }
 
-            public Tensor? get_bias_hh(long idx)
+            public Parameter? get_bias_hh(long idx)
             {
                 var res = THSNN_RNN_bias_hh(handle, idx);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return ((res == IntPtr.Zero) ? null : new Tensor(res));
+                return ((res == IntPtr.Zero) ? null : new Parameter(res));
             }
 
 #if false   // Disabled until we can figure out how to set the native code parameters.
@@ -81,18 +81,18 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_RNN_weight_hh(torch.nn.Module.HType module, long idx);
 
-            public Tensor get_weight_ih(long idx)
+            public Parameter get_weight_ih(long idx)
             {
                 var res = THSNN_RNN_weight_ih(handle, idx);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return new Parameter(res);
             }
 
-            public Tensor get_weight_hh(long idx)
+            public Parameter get_weight_hh(long idx)
             {
                 var res = THSNN_RNN_weight_hh(handle, idx);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return new Parameter(res);
             }
 
 #if false   // Disabled until we can figure out how to set the native code parameters.

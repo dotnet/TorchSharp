@@ -26,7 +26,7 @@ namespace TorchSharp
             /// to fields will be registered, and will have their parameters converted and moved when you call to(),
             /// and saved to disk when calling save().
             /// </remarks>
-            public class Module : DynamicObject, IDisposable
+            public class Module : IDisposable
             {
                 /// <summary>
                 ///    Class wrapping PyTorch's module object reference.
@@ -141,7 +141,7 @@ namespace TorchSharp
 
                         foreach (var (_, sm) in named_children()) sm.to(deviceType, deviceIndex);
 
-                        foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
+                        foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).Where(f => !f.Name.Contains("__BackingField"))) {
 
                             var name = field.Name;
                             var value = field.GetValue(this);
@@ -159,6 +159,29 @@ namespace TorchSharp
                                 if (deviceType != tensor.device_type || deviceIndex != tensor.device_index) {
                                     var t = tensor.to(deviceType, deviceIndex);
                                     field.SetValue(this, t);
+                                    ConditionallyRegisterBuffer(name, t);
+                                }
+                            }
+                        }
+
+                        foreach (var property in this.GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
+
+                            var name = property.Name;
+                            var value = property.GetValue(this);
+
+                            Tensor tensor = value as Tensor;
+                            Modules.Parameter param = value as Modules.Parameter;
+
+                            if (param is not null) {  // This test must come before the Tensor test
+                                if (deviceType != param.device_type || deviceIndex != param.device_index) {
+                                    var p = new Modules.Parameter(param.to(deviceType, deviceIndex), param.requires_grad);
+                                    property.SetValue(this, p);
+                                    ConditionallyRegisterParameter(name, p);
+                                }
+                            } else if (tensor is not null) {
+                                if (deviceType != tensor.device_type || deviceIndex != tensor.device_index) {
+                                    var t = tensor.to(deviceType, deviceIndex);
+                                    property.SetValue(this, t);
                                     ConditionallyRegisterBuffer(name, t);
                                 }
                             }
@@ -208,7 +231,7 @@ namespace TorchSharp
 
                     foreach (var (_, sm) in named_children()) sm.to(dtype);
 
-                    foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
+                    foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).Where(f => !f.Name.Contains("__BackingField"))) {
 
                         var name = field.Name;
                         var value = field.GetValue(this);
@@ -226,6 +249,29 @@ namespace TorchSharp
                             if (dtype != tensor.dtype) {
                                 var t = tensor.to(dtype);
                                 field.SetValue(this, t);
+                                ConditionallyRegisterBuffer(name, t);
+                            }
+                        }
+                    }
+
+                    foreach (var property in this.GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
+
+                        var name = property.Name;
+                        var value = property.GetValue(this);
+
+                        Tensor tensor = value as Tensor;
+                        Modules.Parameter param = value as Modules.Parameter;
+
+                        if (param is not null) {  // This test must come before the Tensor test
+                            if (dtype != param.dtype) {
+                                var p = new Modules.Parameter(param.to(dtype), param.requires_grad);
+                                property.SetValue(this, p);
+                                ConditionallyRegisterParameter(name, p);
+                            }
+                        } else if (tensor is not null) {
+                            if (dtype != tensor.dtype) {
+                                var t = tensor.to(dtype);
+                                property.SetValue(this, t);
                                 ConditionallyRegisterBuffer(name, t);
                             }
                         }
@@ -263,41 +309,6 @@ namespace TorchSharp
                     foreach (var m in GetModulesInternal()) m.apply(fn);
                     fn(this);
                     return this;
-                }
-
-                public override bool TryInvoke(InvokeBinder binder, object[] args, out object result)
-                {
-                    if (args.Length == 1 && args[0] is Tensor) {
-                        result = this.forward(args[0] as Tensor);
-                        return true;
-                    }
-                    result = null;
-                    return false;
-                }
-
-                public override bool TryGetMember(GetMemberBinder binder, out object result)
-                {
-                    foreach (var (n,p) in named_parameters(false)) {
-                        if (n == binder.Name) {
-                            result = p;
-                            return true;
-                        }
-                    }
-                    foreach (var (n, b) in named_buffers(false)) {
-                        if (n == binder.Name) {
-                            result = b;
-                            return true;
-                        }
-                    }
-                    foreach (var (n, c) in named_children()) {
-                        if (n == binder.Name) {
-                            result = c;
-                            return true;
-                        }
-                    }
-
-                    result = null;
-                    return false;
                 }
 
                 /// <summary>
@@ -529,6 +540,19 @@ namespace TorchSharp
                     return named_parameters(recurse).Select(np => np.parameter);
                 }
 
+                public virtual bool has_buffer(string target)
+                {
+                    if (_internal_buffers.TryGetValue(target, out var parameter)) {
+                        return true;
+                    }
+                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
+                        var prefix = child.name + ".";
+                        if (child.module.has_buffer(target.Remove(0, prefix.Length)))
+                            return true;
+                    }
+                    return false;
+                }
+
                 public virtual bool has_parameter(string target)
                 {
                     if (_internal_params.TryGetValue(target, out var parameter)) {
@@ -576,10 +600,9 @@ namespace TorchSharp
                 public virtual void register_buffer(string name, Tensor tensor)
                 {
                     if (tensor is null || tensor.handle == IntPtr.Zero) throw new ArgumentNullException("A null tensor cannot be registered as a buffer.");
-                    if (_internal_buffers.ContainsKey(name)) {
+                    if (!_internal_buffers.TryAdd(name, tensor)) {
                         throw new InvalidOperationException($"Tensor {name} is already registered.");
                     }
-                    _internal_buffers.Add(name, tensor);
                 }
 
                 /// <summary>
@@ -595,10 +618,9 @@ namespace TorchSharp
                 public virtual void register_parameter(string name, Modules.Parameter param)
                 {
                     if (param is null || param.handle == IntPtr.Zero) throw new ArgumentNullException("A null tensor cannot be registered as a parameter.");
-                    if (_internal_params.ContainsKey(name)) {
+                    if (!_internal_params.TryAdd(name, param)) {
                         throw new InvalidOperationException($"Parameter {name} is already registered.");
                     }
-                    _internal_params.Add(name, param);
                 }
 
                 /// <summary>
@@ -840,9 +862,11 @@ namespace TorchSharp
                 {
                     if (_registered) return;
 
-                    foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
+                    foreach (var field in this.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).Where(f => !f.Name.Contains("__BackingField"))) {
 
                         var name = field.Name;
+                        if (_internal_submodules.ContainsKey(name) || _internal_params.ContainsKey(name) || _internal_buffers.ContainsKey(name)) continue;
+
                         var value = field.GetValue(this);
 
                         var module = value as Module;
@@ -857,6 +881,27 @@ namespace TorchSharp
                             register_buffer(name, tensor);
                         }
                     }
+
+                    foreach (var property in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+
+                        var name = property.Name;
+                        if (_internal_submodules.ContainsKey(name) || _internal_params.ContainsKey(name) || _internal_buffers.ContainsKey(name)) continue;
+
+                        var value = property.GetValue(this);
+
+                        var module = value as Module;
+                        Tensor tensor = value as Tensor;
+                        Modules.Parameter param = value as Modules.Parameter;
+
+                        if (module != null) {
+                            register_module(name, module);
+                        } else if (param is not null) {  // This test must come before the Tensor test
+                            register_parameter(name, param);
+                        } else if (tensor is not null) {
+                            register_buffer(name, tensor);
+                        }
+                    }
+
                     _registered = true;
                 }
 

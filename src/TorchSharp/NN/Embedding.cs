@@ -29,11 +29,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Embedding_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Tensor weight {
+            public Parameter weight {
                 get {
                     var res = THSNN_Embedding_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_Embedding_set_weight(handle, value.Handle);
