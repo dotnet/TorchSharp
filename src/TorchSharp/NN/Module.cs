@@ -260,7 +260,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public virtual Module apply(Action<Module> fn)
                 {
-                    foreach (var m in GetModulesInternal()) m.apply(fn);
+                    foreach (var (_,m) in _internal_submodules) m.apply(fn);
                     fn(this);
                     return this;
                 }
@@ -632,29 +632,6 @@ namespace TorchSharp
                             _internal_buffers.Add(name, value);
                         }
                     }
-                }
-
-                [DllImport("LibTorchSharp")]
-                private static extern long THSNN_Module_children_size(HType module);
-
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSNN_Module_child(HType module, int index);
-
-                /// Get the sub-modules of this module. The Module objects won't have the correct .NET types
-                /// so this is not made public.
-                internal virtual Module[] GetModulesInternal()
-                {
-                    var numModules = THSNN_Module_children_size(handle);
-                    torch.CheckForErrors();
-                    Module[] result = new Module[numModules];
-
-                    for (int i = 0; i < numModules; i++) {
-                        var childHandle = THSNN_Module_child(handle, i);
-                        torch.CheckForErrors();
-                        result[i] = new Module(childHandle, null, ownsHandle: false);
-                    }
-
-                    return result;
                 }
 
                 [DllImport("LibTorchSharp")]
