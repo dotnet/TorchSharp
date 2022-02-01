@@ -1527,7 +1527,7 @@ namespace TorchSharp
                 throw new NotImplementedException();
             }
 
-            private Parameter test { get; set; }
+            private Parameter test;
             private ParameterList list = new ParameterList();
             private ParameterDict dict = new ParameterDict();
         }
@@ -1551,7 +1551,7 @@ namespace TorchSharp
                 throw new NotImplementedException();
             }
 
-            public Module submodule { get; set; }
+            public Module submodule;
             private ModuleList list = new ModuleList();
             private ModuleDict dict = new ModuleDict();
         }
