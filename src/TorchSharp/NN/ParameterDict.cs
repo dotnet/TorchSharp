@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
+using System.Dynamic;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -70,7 +71,11 @@ namespace TorchSharp
 
             public (string, Parameter) this[int index] {
                 get => _list[index];
-                set => _list[index] = value;
+                set {
+                    var name = value.Item1;
+                    _list[index] = value;
+                    _dict[name] = value.Item2;
+                }
             }
 
             public bool IsReadOnly => false;
@@ -81,7 +86,27 @@ namespace TorchSharp
 
             public int Count => _dict.Count;
 
-            public Parameter this[string key] { get => _dict[key]; set => _dict[key] = value; }
+            public Parameter this[string key] {
+                get => _dict[key];
+                set {
+                    _dict[key] = value;
+                    var idx = _list.FindIndex(kv => kv.Item1.Equals(key));
+                    _list[idx] = (key, value);
+                }
+            }
+
+            public override bool has_parameter(string target)
+            {
+                return _dict.ContainsKey(target);
+            }
+
+            public override Parameter get_parameter(string target)
+            {
+                if (_dict.TryGetValue(target, out var result)) {
+                    return result;
+                }
+                return null;
+            }
 
             public void Add((string, Parameter) item)
             {
@@ -118,17 +143,22 @@ namespace TorchSharp
 
             public void Insert(int index, (string, Parameter) item)
             {
+                _dict.Add(item.Item1, item.Item2);
                 _list.Insert(index, item);
             }
 
             public bool Remove((string, Parameter) item)
             {
+                _dict.Remove(item.Item1);
                 return _list.Remove(item);
             }
 
             public void RemoveAt(int index)
             {
+                if (index >= _list.Count) throw new IndexOutOfRangeException();
+                var (n,p) = _list[index];
                 _list.RemoveAt(index);
+                _dict.Remove(n);
             }
 
             public bool ContainsKey(string key)
@@ -139,7 +169,9 @@ namespace TorchSharp
             public bool Remove(string key)
             {
                 var value = _dict[key];
-                return _dict.Remove(key) && _list.Remove((key, value));
+                var idx = _list.FindIndex(kv => kv.Item1.Equals(key));
+                _list.RemoveAt(idx);
+                return _dict.Remove(key);
             }
 
             public bool TryGetValue(string key, [MaybeNullWhen(false)] out Parameter value)
@@ -185,7 +217,7 @@ namespace TorchSharp
 
             private List<(string, Parameter)> _list = new List<(string, Parameter)>();
             private Dictionary<string, Parameter> _dict = new Dictionary<string, Parameter>();
-        };
+        }
     }
 
     public static partial class torch

@@ -16,7 +16,9 @@ namespace TorchSharp
     {
         public class Linear : torch.nn.Module
         {
-            internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            {
+            }
 
             public new static Linear Load(String modelPath)
             {
@@ -33,36 +35,39 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_Linear_bias(torch.nn.Module.HType module);
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Linear_set_bias(torch.nn.Module.HType module, IntPtr tensor);
-
-            public Tensor? bias {
+            public Parameter? bias {
                 get {
                     var res = THSNN_Linear_bias(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new Tensor(res));
+                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
                 }
                 set {
                     THSNN_Linear_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
                 }
             }
+
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_Linear_weight(torch.nn.Module.HType module);
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Linear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Tensor weight {
+            public Parameter weight {
                 get {
                     var res = THSNN_Linear_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_Linear_set_weight(handle, value.Handle);
                     torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight", value);
                 }
             }
         }

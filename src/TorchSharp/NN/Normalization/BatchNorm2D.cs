@@ -1,9 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+
 using static TorchSharp.torch;
 
-#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -44,44 +45,60 @@ namespace TorchSharp
             private static extern IntPtr THSNN_BatchNorm2d_get_mean(torch.nn.Module.HType module);
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_BatchNorm2d_get_var(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_BatchNorm2d_set_mean(torch.nn.Module.HType module, IntPtr weight);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_BatchNorm2d_set_var(torch.nn.Module.HType module, IntPtr weight);
 
-            public Tensor bias {
+            public Parameter bias {
                 get {
                     var res = THSNN_BatchNorm2d_bias(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_BatchNorm2d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
                 }
             }
 
-            public Tensor weight {
+            public Parameter weight {
                 get {
                     var res = THSNN_BatchNorm2d_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_BatchNorm2d_set_weight(handle, value.Handle);
                     torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight", value);
                 }
             }
 
-            public Tensor? running_mean {
+            public Parameter running_mean {
                 get {
                     var res = THSNN_BatchNorm2d_get_mean(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
-                    return new Tensor(res);
+                    return new Parameter(res);
+                }
+                set {
+                    THSNN_BatchNorm2d_set_mean(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
                 }
             }
 
-            public Tensor? running_var {
+            public Parameter running_var {
                 get {
                     var res = THSNN_BatchNorm2d_get_var(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
-                    return new Tensor(res);
+                    return new Parameter(res);
+                }
+                set {
+                    THSNN_BatchNorm2d_set_var(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
                 }
             }
 

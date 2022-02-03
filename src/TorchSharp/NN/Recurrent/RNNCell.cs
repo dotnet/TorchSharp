@@ -7,6 +7,7 @@ using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 
+#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -15,7 +16,9 @@ namespace TorchSharp
     {
         public class RNNCell : torch.nn.Module
         {
-            internal RNNCell(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal RNNCell(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            {
+            }
 
             public new static RNNCell Load(String modelPath)
             {
@@ -32,11 +35,83 @@ namespace TorchSharp
             /// <param name="input">Tensor of shape (batch, input_size) containing the features of the input sequence.</param>
             /// <param name="h0">Tensor of shape (batch, hidden_size) containing the initial hidden state for each element in the batch.</param>
             /// <returns></returns>
-            public override Tensor forward(Tensor input, Tensor h0 = null)
+            public override Tensor forward(Tensor input, Tensor? h0 = null)
             {
                 var hN = THSNN_RNNCell_forward(handle, input.Handle, h0?.Handle ?? IntPtr.Zero);
                 if (hN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(hN);
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_RNNCell_bias_ih(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_RNNCell_set_bias_ih(torch.nn.Module.HType module, IntPtr tensor);
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_RNNCell_bias_hh(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_RNNCell_set_bias_hh(torch.nn.Module.HType module, IntPtr tensor);
+
+            public Parameter? bias_ih {
+                get {
+                    var res = THSNN_RNNCell_bias_ih(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
+                }
+                set {
+                    THSNN_RNNCell_set_bias_ih(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias_ih", value);
+
+                }
+            }
+
+            public Parameter? bias_hh {
+                get {
+                    var res = THSNN_RNNCell_bias_hh(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
+                }
+                set {
+                    THSNN_RNNCell_set_bias_hh(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias_hh", value);
+
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_RNNCell_weight_ih(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_RNNCell_set_weight_ih(torch.nn.Module.HType module, IntPtr tensor);
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_RNNCell_weight_hh(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_RNNCell_set_weight_hh(torch.nn.Module.HType module, IntPtr tensor);
+
+            public Parameter weight_ih {
+                get {
+                    var res = THSNN_RNNCell_weight_ih(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Parameter(res);
+                }
+                set {
+                    THSNN_RNNCell_set_weight_ih(handle, value.Handle);
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight_ih", value);
+                }
+            }
+
+            public Parameter weight_hh {
+                get {
+                    var res = THSNN_RNNCell_weight_hh(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Parameter(res);
+                }
+                set {
+                    THSNN_RNNCell_set_weight_hh(handle, value.Handle);
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight_hh", value);
+                }
             }
         }
     }
