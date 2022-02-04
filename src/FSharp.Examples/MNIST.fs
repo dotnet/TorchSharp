@@ -105,7 +105,7 @@ let train (model:Model) (optimizer:Optimizer) (data: MNISTReader) epoch =
         optimizer.zero_grad()
 
         let estimate = dat["data"] --> model
-        let output = loss estimate dat["label"]
+        let output = loss estimate (dat["label"])
 
         output.backward()
         optimizer.step() |> ignore
@@ -130,7 +130,7 @@ let test (model:Model) (data:MNISTReader) =
 
         begin  // This is introduced in order to let a few tensors go out of scope before GC
             let estimate = dat["data"] --> model
-            let output = loss estimate dat["label"]
+            let output = loss estimate (dat["label"])
             testLoss <- testLoss + output.ToSingle()
 
             let pred = estimate.argmax(1L)
