@@ -8,7 +8,7 @@ using TorchSharp.torchvision;
 using static TorchSharp.torch;
 using static TorchSharp.torch.utils.data;
 
-namespace TorchSharp.Examples
+namespace TorchSharp.torchvision.dsets
 {
     /// <summary>
     /// Data reader utility for datasets that follow the MNIST data set's layout:
