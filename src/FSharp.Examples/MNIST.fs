@@ -104,8 +104,8 @@ let train (model:Model) (optimizer:Optimizer) (data: MNISTReader) epoch =
 
         optimizer.zero_grad()
 
-        let estimate = dat["data"] --> model
-        let output = loss estimate (dat["label"])
+        let estimate = dat.["data"] --> model
+        let output = loss estimate (dat.["label"])
 
         output.backward()
         optimizer.step() |> ignore
@@ -129,12 +129,12 @@ let test (model:Model) (data:MNISTReader) =
         use d = torch.NewDisposeScope()
 
         begin  // This is introduced in order to let a few tensors go out of scope before GC
-            let estimate = dat["data"] --> model
-            let output = loss estimate (dat["label"])
+            let estimate = dat.["data"] --> model
+            let output = loss estimate (dat.["label"])
             testLoss <- testLoss + output.ToSingle()
 
             let pred = estimate.argmax(1L)
-            correct <- correct + pred.eq(dat["label"]).sum().ToInt32()
+            correct <- correct + pred.eq(dat.["label"]).sum().ToInt32()
         end
 
     printfn $"Size: {sz}, Total: {sz}"

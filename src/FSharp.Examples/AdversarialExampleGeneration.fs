@@ -70,8 +70,8 @@ let test (model:MNIST.Model) (eps:float) (data:MNISTReader) size =
     for dat in dataLoader do
 
         use d = torch.NewDisposeScope()
-        let input = dat["data"]
-        let labels = dat["label"]
+        let input = dat.["data"]
+        let labels = dat.["label"]
 
         input.requires_grad <- true
         
