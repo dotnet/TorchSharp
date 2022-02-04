@@ -17,11 +17,11 @@ namespace TorchSharp.Examples
     /// </summary>
     /// <remarks>
     /// There are at least two interesting data sets to use with this example:
-    /// 
+    ///
     /// 1. The classic MNIST set of 60000 images of handwritten digits.
     ///
     ///     It is available at: http://yann.lecun.com/exdb/mnist/
-    ///     
+    ///
     /// 2. The 'fashion-mnist' data set, which has the exact same file names and format as MNIST, but is a harder
     ///    data set to train on. It's just as large as MNIST, and has the same 60/10 split of training and test
     ///    data.
@@ -71,9 +71,9 @@ namespace TorchSharp.Examples
 
             var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: (Device)device);
 
-            using (MNISTReader train_data = new MNISTReader(targetDir, "train", device: device, transform: normImage),
-                                test_data = new MNISTReader(targetDir, "t10k", device: device, transform: normImage)) {
-            }
+            using MNISTReader train_data = new MNISTReader(targetDir, "train", device: device, normImage),
+                test_data = new MNISTReader(targetDir, "t10k", device: device, normImage);
+            TrainingLoop("mnist", device, model, train_data, test_data);
         }
 
         internal static void TrainingLoop(string dataset, Device device, Model model, MNISTReader train_data, MNISTReader test_data)
@@ -179,7 +179,6 @@ namespace TorchSharp.Examples
             Console.WriteLine($"Epoch: {epoch}...");
 
             using (var d = torch.NewDisposeScope()) {
-
                 foreach (var data in dataLoader) {
                     optimizer.zero_grad();
 
@@ -191,7 +190,7 @@ namespace TorchSharp.Examples
                     optimizer.step();
 
                     if (batchId % _logInterval == 0) {
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * dataLoader.Count} / {size}] Loss: {output.ToSingle():F4}");
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * _trainBatchSize} / {size}] Loss: {output.ToSingle():F4}");
                     }
 
                     batchId++;

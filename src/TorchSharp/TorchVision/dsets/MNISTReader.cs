@@ -96,8 +96,8 @@ namespace TorchSharp.torchvision.dsets
         {
             var rdic = new Dictionary<string, Tensor>();
             if (transform is not null)
-                rdic.Add("data", transform.forward(data[(int)index]));
-            else rdic.Add("data", data[(int)index]);
+                rdic.Add("data", transform.forward(data[(int)index].unsqueeze(0).unsqueeze(0)).squeeze(0));
+            else rdic.Add("data", data[(int)index].unsqueeze(0));
             rdic.Add("label", labels[(int)index]);
             return rdic;
         }
