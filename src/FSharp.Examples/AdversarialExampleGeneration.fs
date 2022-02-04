@@ -9,8 +9,11 @@ open TorchSharp
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
 open type TorchSharp.Scalar
+open type TorchSharp.torchvision.dsets.MNISTReader
 
 open TorchSharp.Examples
+open TorchSharp.torchvision.dsets
+open type TorchSharp.torch.utils.data
 
 // FGSM Attack
 //
@@ -59,13 +62,16 @@ let attack (image:torch.Tensor) (eps:Scalar) (data_grad:torch.Tensor) =
     use sign = data_grad.sign()
     (image + eps * sign).clamp(0.0.ToScalar(), 1.0.ToScalar())
 
-let test (model:MNIST.Model) (eps:float) (dataLoader:MNISTReader) size =
+let test (model:MNIST.Model) (eps:float) (data:MNISTReader) size =
 
     let mutable correct = 0
 
-    for (input,labels) in dataLoader do
+    let dataLoader = new DataLoader(data, testBatchSize, false)
+    for dat in dataLoader do
 
         use d = torch.NewDisposeScope()
+        let input = dat["data"]
+        let labels = dat["label"]
 
         input.requires_grad <- true
         
@@ -97,7 +103,7 @@ let run epochs =
         testBatchSize <- testBatchSize * 4
 
     let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
-    use testData = new MNISTReader(targetDir, "t10k", testBatchSize, device=device, transform=normImage)
+    use testData = new MNISTReader(targetDir, "t10k", device=device, transform=normImage)
 
     let modelFile = dataset + ".model.bin"
 
@@ -107,7 +113,7 @@ let run epochs =
 
             let model = new MNIST.Model("model",device)
 
-            use train = new MNISTReader(targetDir, "train", trainBatchSize, device=device, shuffle=true, transform=normImage)
+            use train = new MNISTReader(targetDir, "train", device=device, transform=normImage)
             MNIST.trainingLoop model epochs dataset train testData |> ignore
 
             printfn "Moving on to the Adversarial model.\n"
@@ -126,5 +132,5 @@ let run epochs =
     let epsilons = [| 0.0; 0.05; 0.1; 0.15; 0.20; 0.25; 0.30; 0.35; 0.40; 0.45; 0.50|]
 
     for eps in epsilons do
-        let attacked = test model eps testData (float testData.Size)
+        let attacked = test model eps testData (float testData.Count)
         printfn $"Epsilon: {eps:F2}, accuracy: {attacked:P2}"

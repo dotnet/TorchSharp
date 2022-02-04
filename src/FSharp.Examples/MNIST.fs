@@ -8,9 +8,11 @@ open System.Diagnostics
 open TorchSharp
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
+open type TorchSharp.torch.utils.data
 open type TorchSharp.Scalar
 
 open TorchSharp.Examples
+open TorchSharp.torchvision.dsets
 
 // Simple MNIST Convolutional model.
 // 
@@ -86,24 +88,24 @@ type Model(name,device:torch.Device) as this =
 
 let loss x y = functional.nll_loss(reduction=Reduction.Mean).Invoke(x,y)
 
-let train (model:Model) (optimizer:Optimizer) (dataLoader: MNISTReader) epoch =
+let train (model:Model) (optimizer:Optimizer) (data: MNISTReader) epoch =
     model.train()
 
-    let size = dataLoader.Size
-    let batchSize = dataLoader.BatchSize
+    let size = data.Count
+    let batchSize = trainBatchSize
 
     let mutable batchID = 1
 
     printfn $"Epoch: {epoch}..."
-
-    for (input,labels) in dataLoader do
+    let dataLoader = new DataLoader(data, trainBatchSize, true)
+    for dat in dataLoader do
 
         use d = torch.NewDisposeScope()
 
         optimizer.zero_grad()
 
-        let estimate = input --> model
-        let output = loss estimate labels
+        let estimate = dat["data"] --> model
+        let output = loss estimate dat["label"]
 
         output.backward()
         optimizer.step() |> ignore
@@ -113,25 +115,26 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: MNISTReader) epoch =
 
         batchID <- batchID + 1
 
-let test (model:Model) (dataLoader:MNISTReader) =
+let test (model:Model) (data:MNISTReader) =
     model.eval()
 
-    let sz = float32 dataLoader.Size
+    let sz = float32 data.Count
 
     let mutable testLoss = 0.0f
     let mutable correct = 0
 
-    for (input,labels) in dataLoader do
+    let dataLoader = new DataLoader(data, testBatchSize, false)
+    for dat in dataLoader do
 
         use d = torch.NewDisposeScope()
 
         begin  // This is introduced in order to let a few tensors go out of scope before GC
-            let estimate = input --> model
-            let output = loss estimate labels
+            let estimate = dat["data"] --> model
+            let output = loss estimate dat["label"]
             testLoss <- testLoss + output.ToSingle()
 
             let pred = estimate.argmax(1L)
-            correct <- correct + pred.eq(labels).sum().ToInt32()
+            correct <- correct + pred.eq(dat["label"]).sum().ToInt32()
         end
 
     printfn $"Size: {sz}, Total: {sz}"
@@ -176,8 +179,8 @@ let run epochs =
         testBatchSize <- testBatchSize * 4
 
     let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
-    use train = new MNISTReader(targetDir, "train", trainBatchSize, device=device, shuffle=true, transform=normImage)
-    use test = new MNISTReader(targetDir, "t10k", testBatchSize, device=device, transform=normImage)
+    use train = new MNISTReader(targetDir, "train", device=device, transform=normImage)
+    use test = new MNISTReader(targetDir, "t10k", device=device, transform=normImage)
 
     let model = new Model("model", device)
     
