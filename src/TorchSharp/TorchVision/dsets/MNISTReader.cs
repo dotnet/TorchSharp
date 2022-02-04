@@ -44,7 +44,7 @@ namespace TorchSharp.torchvision.dsets
             using (var file = File.Open(dataPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var rdr = new System.IO.BinaryReader(file)) {
 
-                var reader = new Utils.BigEndianReader(rdr);
+                var reader = new BigEndianReader(rdr);
                 var x = reader.ReadInt32(); // Magic number
                 count = reader.ReadInt32();
 
@@ -58,7 +58,7 @@ namespace TorchSharp.torchvision.dsets
             using (var file = File.Open(labelPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var rdr = new System.IO.BinaryReader(file)) {
 
-                var reader = new Utils.BigEndianReader(rdr);
+                var reader = new BigEndianReader(rdr);
                 var x = reader.ReadInt32(); // Magic number
                 var lblcnt = reader.ReadInt32();
 
