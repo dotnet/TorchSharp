@@ -2,6 +2,22 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.96.0
+
+__API Changes:__
+
+__NOTE__: This release contains breaking changes.
+
+'Module.named_parameters()', 'parameters()', 'named_modules()', 'named_children()' all return IEnumerable instances instead of arrays.
+Adding weight and bias properties to the RNN modules.
+Lower-cased names: Module.Train --> Module.train and Module.Eval --> Module.eval
+
+__Fixed Bugs:__
+
+#500 BatchNorm1d throws exception during eval with batch size of 1
+#499 Setting Linear.weight is not reflected in 'parameters()'
+#496 Wrong output shape of torch.nn.Conv2d with 2d stride overload
+
 ## NuGet Version 0.95.4
 
 __API Changes:__
@@ -151,7 +167,7 @@ __Fixed Bugs:__
 
 __Added Features:__
 
-```
+'''
 torch.nn.MultiHeadAttention
 torch.linalg.cond
 torch.linalg.cholesky_ex
@@ -159,7 +175,7 @@ torch.linalg.inv_ex
 torch.amax/amin
 torch.matrix_exp
 torch.distributions.*   (about half the namespace)
-```
+'''
 
 __API Changes:__
 

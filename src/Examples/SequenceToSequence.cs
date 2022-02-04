@@ -100,7 +100,7 @@ namespace TorchSharp.Examples
 
         private static void train(int epoch, Tensor train_data, TransformerModel model, Loss criterion, int bptt, int ntokens, torch.optim.Optimizer optimizer)
         {
-            model.Train();
+            model.train();
 
             using (var d = torch.NewDisposeScope()) {
 
@@ -126,7 +126,7 @@ namespace TorchSharp.Examples
                     using (var output = model.forward(data, src_mask)) {
                         var loss = criterion(output.view(-1, ntokens), targets);
                         loss.backward();
-                        torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5);
+                        torch.nn.utils.clip_grad_norm_(model.parameters().ToArray(), 0.5);
                         optimizer.step();
 
                         total_loss += loss.to(torch.CPU).item<float>();
@@ -145,7 +145,7 @@ namespace TorchSharp.Examples
 
         private static double evaluate(Tensor eval_data, TransformerModel model, Loss criterion, int bptt, int ntokens, torch.optim.Optimizer optimizer)
         {
-            model.Eval();
+            model.eval();
 
             using (var d = torch.NewDisposeScope()) {
 

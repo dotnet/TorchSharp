@@ -87,7 +87,7 @@ type Model(name,device:torch.Device) as this =
 let loss x y = functional.nll_loss(reduction=Reduction.Mean).Invoke(x,y)
 
 let train (model:Model) (optimizer:Optimizer) (dataLoader: MNISTReader) epoch =
-    model.Train()
+    model.train()
 
     let size = dataLoader.Size
     let batchSize = dataLoader.BatchSize
@@ -114,7 +114,7 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: MNISTReader) epoch =
         batchID <- batchID + 1
 
 let test (model:Model) (dataLoader:MNISTReader) =
-    model.Eval()
+    model.eval()
 
     let sz = float32 dataLoader.Size
 

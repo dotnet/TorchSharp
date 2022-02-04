@@ -28,6 +28,41 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_LayerNorm_bias(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_LayerNorm_set_bias(torch.nn.Module.HType module, IntPtr bias);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_LayerNorm_weight(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_LayerNorm_set_weight(torch.nn.Module.HType module, IntPtr weight);
+
+            public Parameter bias {
+                get {
+                    var res = THSNN_LayerNorm_bias(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Parameter(res);
+                }
+                set {
+                    THSNN_LayerNorm_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
+                }
+            }
+
+            public Parameter weight {
+                get {
+                    var res = THSNN_LayerNorm_weight(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Parameter(res);
+                }
+                set {
+                    THSNN_LayerNorm_set_weight(handle, value.Handle);
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight", value);
+                }
+            }
         }
     }
 

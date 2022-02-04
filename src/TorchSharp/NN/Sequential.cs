@@ -24,7 +24,7 @@ namespace TorchSharp
                 [MarshalAs(UnmanagedType.LPStr)] string name,
                 torch.nn.BoxedModule.HType boxedSubModule);
 
-            public void Add(string name, torch.nn.Module submodule)
+            internal void Add(string name, torch.nn.Module submodule)
             {
                 Debug.Assert(!handle.IsInvalid);
                 if (submodule.BoxedModule == null)
@@ -37,11 +37,45 @@ namespace TorchSharp
                 _names.Add(name);
             }
 
-            public void Add(torch.nn.Module module)
+            internal void Add(torch.nn.Module module)
             {
-                Add(_modules.Count.ToString(), module);
+                var name = _modules.Count.ToString();
+                Add(name, module);
             }
 
+            public override IEnumerable<(string name, Parameter parameter)> named_parameters(bool recurse = true)
+            {
+                if (!recurse) yield break;
+
+                for (var i = 0; i < _names.Count; i++) {
+                    foreach (var (n,p) in _modules[i].named_parameters(true)) {
+                        yield return ($"{_names[i]}.{n}", p);
+                    }
+                }
+            }
+
+            public override IEnumerable<(string name, torch.nn.Module module)> named_children()
+            {
+                for (var i = 0; i < _names.Count; i++) {
+                    yield return ($"{_names[i]}", _modules[i]);
+                }
+            }
+
+            public override IEnumerable<(string name, torch.nn.Module module)> named_modules()
+            {
+                for (var i = 0; i < _names.Count; i++) {
+                    yield return ($"{_names[i]}", _modules[i]);
+                }
+
+                for (var i = 0; i < _names.Count; i++) {
+                    var sm = _modules[i];
+                    var name = _names[i];
+                    foreach (var (n, p) in sm.named_modules()) {
+                        yield return ($"{name}.{n}", p);
+                    }
+                }
+
+            }
             internal Sequential(IntPtr handle) : base(handle, IntPtr.Zero)
             {
             }
@@ -89,6 +123,28 @@ namespace TorchSharp
             {
                 foreach (var m in _modules) { m.Dispose(); }
                 base.Dispose(disposing);
+            }
+
+            public override void train()
+            {
+                foreach (var m in _modules) { m.train(); }
+            }
+
+            public override void eval()
+            {
+                foreach (var m in _modules) { m.eval(); }
+            }
+
+            public override nn.Module to(ScalarType dtype)
+            {
+                foreach (var m in _modules) { m.to(dtype); }
+                return this;
+            }
+
+            public override nn.Module to(DeviceType deviceType, int deviceIndex = -1)
+            {
+                foreach (var m in _modules) { m.to(deviceType, deviceIndex); }
+                return this;
             }
 
             // Currently, Sequential is implemented entirely in managed code, but if we go back to

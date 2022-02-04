@@ -407,5 +407,41 @@ namespace TorchSharp
             Assert.Throws<ArgumentException>(() => torch.randn(3, 4, dtype: torch.int64));
             Assert.Throws<ArgumentException>(() => torch.randn(3, 4, dtype: torch.@bool));
         }
+
+        [Fact]
+        public void ValidateIssue496()
+        {
+            var c2 = torch.nn.Conv2d(3, 16, kernelSize: (1, 7), stride: (1, 1), padding: (0, 3));
+            var Win = torch.rand(16, 3, 8, 8);
+            var s = c2.forward(Win).shape;
+            Assert.Equal(new long[] {16, 16, 8, 8}, s);
+        }
+
+        [Fact]
+        public void ValidateIssue500()
+        {
+            using (var pool = BatchNorm1d(28)) {
+                pool.eval();
+                pool.forward(torch.ones(1, 28));
+            }
+            using (var pool = BatchNorm1d(28))
+            using (var seq = Sequential(pool)) {
+                seq.eval();
+                seq.forward(torch.ones(1, 28));
+            }
+            using (var seq = new Module500()) {
+                seq.eval();
+                seq.forward(torch.ones(1, 28));
+            }
+        }
+
+        class Module500 : Module
+        {
+            private Module bn1 = BatchNorm1d(28);
+
+            public Module500() : base(nameof(TestModule)) { RegisterComponents(); }
+
+            public override torch.Tensor forward(torch.Tensor t) => bn1.forward(t);
+        }
     }
 }

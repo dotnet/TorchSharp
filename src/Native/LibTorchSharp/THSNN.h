@@ -170,9 +170,17 @@ EXPORT_API(Tensor)   THSNN_BatchNorm1d_get_mean(const NNModule module);
 EXPORT_API(Tensor)   THSNN_BatchNorm2d_get_mean(const NNModule module);
 EXPORT_API(Tensor)   THSNN_BatchNorm3d_get_mean(const NNModule module);
 
-EXPORT_API(Tensor)     THSNN_BatchNorm1d_get_var(const NNModule module);
-EXPORT_API(Tensor)     THSNN_BatchNorm2d_get_var(const NNModule module);
-EXPORT_API(Tensor)     THSNN_BatchNorm3d_get_var(const NNModule module);
+EXPORT_API(void)     THSNN_BatchNorm1d_set_mean(const NNModule module, const Tensor weight);
+EXPORT_API(void)     THSNN_BatchNorm2d_set_mean(const NNModule module, const Tensor weight);
+EXPORT_API(void)     THSNN_BatchNorm3d_set_mean(const NNModule module, const Tensor weight);
+
+EXPORT_API(Tensor)   THSNN_BatchNorm1d_get_var(const NNModule module);
+EXPORT_API(Tensor)   THSNN_BatchNorm2d_get_var(const NNModule module);
+EXPORT_API(Tensor)   THSNN_BatchNorm3d_get_var(const NNModule module);
+
+EXPORT_API(void)     THSNN_BatchNorm1d_set_var(const NNModule module, const Tensor weight);
+EXPORT_API(void)     THSNN_BatchNorm2d_set_var(const NNModule module, const Tensor weight);
+EXPORT_API(void)     THSNN_BatchNorm3d_set_var(const NNModule module, const Tensor weight);
 
 EXPORT_API(NNModule) THSNN_InstanceNorm1d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_InstanceNorm1d_forward(const NNModule module, const Tensor tensor);
@@ -183,6 +191,11 @@ EXPORT_API(Tensor)   THSNN_InstanceNorm3d_forward(const NNModule module, const T
 
 EXPORT_API(NNModule) THSNN_LayerNorm_ctor(const int64_t* norm_shape, const int64_t norm_shape_len, const double eps, const bool elementwise_affine, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_LayerNorm_forward(const NNModule module, const Tensor tensor);
+
+EXPORT_API(Tensor)   THSNN_LayerNorm_bias(const NNModule module);
+EXPORT_API(void)     THSNN_LayerNorm_set_bias(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor)   THSNN_LayerNorm_weight(const NNModule module);
+EXPORT_API(void)     THSNN_LayerNorm_set_weight(const NNModule module, const Tensor weight);
 
 EXPORT_API(NNModule) THSNN_GroupNorm_ctor(const int64_t num_groups, const int64_t num_channels, const double eps, const bool affine, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_GroupNorm_forward(const NNModule module, const Tensor tensor);
@@ -320,6 +333,41 @@ EXPORT_API(Tensor)   THSNN_GRUCell_forward(const NNModule module, const Tensor i
 EXPORT_API(NNModule) THSNN_LSTMCell_ctor(const int64_t input_size, const int64_t hidden_size, const bool bias, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_LSTMCell_forward(const NNModule module, const Tensor input1, const Tensor h0, const Tensor c0, Tensor* c_n);
 
+EXPORT_API(Tensor) THSNN_RNN_bias_ih(const NNModule module, const int64_t idx);
+EXPORT_API(void) THSNN_RNN_set_bias_ih(const NNModule module, const Tensor bias, const int64_t idx);
+EXPORT_API(Tensor) THSNN_RNN_weight_ih(const NNModule module, const int64_t idx);
+EXPORT_API(void) THSNN_RNN_set_weight_ih(const NNModule module, const Tensor weight, const int64_t idx);
+EXPORT_API(Tensor) THSNN_RNN_bias_hh(const NNModule module, const int64_t idx);
+EXPORT_API(void) THSNN_RNN_set_bias_hh(const NNModule module, const Tensor bias, const int64_t idx);
+EXPORT_API(Tensor) THSNN_RNN_weight_hh(const NNModule module, const int64_t idx);
+EXPORT_API(void) THSNN_RNN_set_weight_hh(const NNModule module, const Tensor weight, const int64_t idx);
+
+EXPORT_API(Tensor) THSNN_RNNCell_bias_ih(const NNModule module);
+EXPORT_API(void) THSNN_RNNCell_set_bias_ih(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor) THSNN_RNNCell_weight_ih(const NNModule module);
+EXPORT_API(void) THSNN_RNNCell_set_weight_ih(const NNModule module, const Tensor weight);
+EXPORT_API(Tensor) THSNN_RNNCell_bias_hh(const NNModule module);
+EXPORT_API(void) THSNN_RNNCell_set_bias_hh(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor) THSNN_RNNCell_weight_hh(const NNModule module);
+EXPORT_API(void) THSNN_RNNCell_set_weight_hh(const NNModule module, const Tensor weight);
+
+EXPORT_API(Tensor) THSNN_LSTMCell_bias_ih(const NNModule module);
+EXPORT_API(void) THSNN_LSTMCell_set_bias_ih(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor) THSNN_LSTMCell_weight_ih(const NNModule module);
+EXPORT_API(void) THSNN_LSTMCell_set_weight_ih(const NNModule module, const Tensor weight);
+EXPORT_API(Tensor) THSNN_LSTMCell_bias_hh(const NNModule module);
+EXPORT_API(void) THSNN_LSTMCell_set_bias_hh(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor) THSNN_LSTMCell_weight_hh(const NNModule module);
+EXPORT_API(void) THSNN_LSTMCell_set_weight_hh(const NNModule module, const Tensor weight);
+
+EXPORT_API(Tensor) THSNN_GRUCell_bias_ih(const NNModule module);
+EXPORT_API(void) THSNN_GRUCell_set_bias_ih(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor) THSNN_GRUCell_weight_ih(const NNModule module);
+EXPORT_API(void) THSNN_GRUCell_set_weight_ih(const NNModule module, const Tensor weight);
+EXPORT_API(Tensor) THSNN_GRUCell_bias_hh(const NNModule module);
+EXPORT_API(void) THSNN_GRUCell_set_bias_hh(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor) THSNN_GRUCell_weight_hh(const NNModule module);
+EXPORT_API(void) THSNN_GRUCell_set_weight_hh(const NNModule module, const Tensor weight);
 
 // Containers
 

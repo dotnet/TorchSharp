@@ -29,15 +29,16 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_ConvTranspose1d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Tensor? bias {
+            public Parameter? bias {
                 get {
                     var res = THSNN_ConvTranspose1d_bias(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new Tensor(res));
+                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
                 }
                 set {
                     THSNN_ConvTranspose1d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
                 }
             }
             [DllImport("LibTorchSharp")]
@@ -45,15 +46,16 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_ConvTranspose1d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Tensor weight {
+            public Parameter weight {
                 get {
                     var res = THSNN_ConvTranspose1d_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return new Parameter(res);
                 }
                 set {
                     THSNN_ConvTranspose1d_set_weight(handle, value.Handle);
                     torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight", value);
                 }
             }
         }

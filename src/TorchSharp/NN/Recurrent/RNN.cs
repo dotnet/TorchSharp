@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
-
+#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -14,7 +14,9 @@ namespace TorchSharp
     {
         public class RNN : torch.nn.Module
         {
-            internal RNN(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal RNN(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            {
+            }
 
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_RNN_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
@@ -26,12 +28,92 @@ namespace TorchSharp
             /// <param name="h0">Tensor of shape (num_layers * num_directions, batch, hidden_size)containing the initial hidden state for each element in the batch.
             /// Defaults to 0 if not provided. If the RNN is bidirectional, num_directions should be 2, else it should be 1.</param>
             /// <returns></returns>
-            public new (Tensor, Tensor) forward(Tensor input, Tensor h0 = null)
+            public new (Tensor, Tensor) forward(Tensor input, Tensor? h0 = null)
             {
                 var res = THSNN_RNN_forward(handle, input.Handle, h0?.Handle ?? IntPtr.Zero, out IntPtr hN);
                 if (res == IntPtr.Zero || hN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(res), new Tensor(hN));
             }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_RNN_bias_ih(torch.nn.Module.HType module, long idx);
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_RNN_bias_hh(torch.nn.Module.HType module, long idx);
+
+            public Parameter? get_bias_ih(long idx)
+            {
+                var res = THSNN_RNN_bias_ih(handle, idx);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return ((res == IntPtr.Zero) ? null : new Parameter(res));
+            }
+
+            public Parameter? get_bias_hh(long idx)
+            {
+                var res = THSNN_RNN_bias_hh(handle, idx);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return ((res == IntPtr.Zero) ? null : new Parameter(res));
+            }
+
+#if false   // Disabled until we can figure out how to set the native code parameters.
+
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_RNN_set_bias_ih(torch.nn.Module.HType module, IntPtr tensor, long idx);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_RNN_set_bias_hh(torch.nn.Module.HType module, IntPtr tensor, long idx);
+
+            public void set_bias_ih(Tensor? value, long idx)
+            {
+                THSNN_RNN_set_bias_ih(handle, (value is null ? IntPtr.Zero : value.Handle), idx);
+                torch.CheckForErrors();
+                ConditionallyRegisterParameter($"bias_ih_l{idx}", value);
+            }
+
+            public void set_bias_hh(Tensor? value, long idx)
+            {
+                THSNN_RNN_set_bias_hh(handle, (value is null ? IntPtr.Zero : value.Handle), idx);
+                torch.CheckForErrors();
+                ConditionallyRegisterParameter($"bias_hh_l{idx}", value);
+            }
+#endif
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_RNN_weight_ih(torch.nn.Module.HType module, long idx);
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSNN_RNN_weight_hh(torch.nn.Module.HType module, long idx);
+
+            public Parameter get_weight_ih(long idx)
+            {
+                var res = THSNN_RNN_weight_ih(handle, idx);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Parameter(res);
+            }
+
+            public Parameter get_weight_hh(long idx)
+            {
+                var res = THSNN_RNN_weight_hh(handle, idx);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Parameter(res);
+            }
+
+#if false   // Disabled until we can figure out how to set the native code parameters.
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_RNN_set_weight_ih(torch.nn.Module.HType module, IntPtr tensor, long idx);
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_RNN_set_weight_hh(torch.nn.Module.HType module, IntPtr tensor, long idx);
+            public void set_weight_ih(Tensor? value, long idx)
+            {
+                THSNN_RNN_set_weight_ih(handle, (value is null ? IntPtr.Zero : value.Handle), idx);
+                torch.CheckForErrors();
+                ConditionallyRegisterParameter($"weight_ih_l{idx}", value);
+            }
+
+            public void set_weight_hh(Tensor? value, long idx)
+            {
+                THSNN_RNN_set_weight_hh(handle, (value is null ? IntPtr.Zero : value.Handle), idx);
+                torch.CheckForErrors();
+                ConditionallyRegisterParameter($"weight_hh_l{idx}", value);
+            }
+#endif
         }
     }
 

@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Dynamic;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
@@ -79,6 +80,15 @@ namespace TorchSharp
                 {
                     this.handle = new HType(handle, ownsHandle);
                     this.boxedModule = boxedHandle.HasValue ? new BoxedModule(boxedHandle.Value) : null;
+
+                    if (handle != IntPtr.Zero) {
+                        foreach (var np in _named_parameters()) {
+                            register_parameter(np.name, np.parameter);
+                        }
+                        foreach (var np in _named_buffers()) {
+                            register_buffer(np.name, np.buffer);
+                        }
+                    }
                 }
 
                 ~Module()
@@ -119,7 +129,7 @@ namespace TorchSharp
                 /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
                 /// <param name="deviceIndex">The optional device index.</param>
                 /// <returns></returns>
-                public Module to(DeviceType deviceType, int deviceIndex = -1)
+                public virtual Module to(DeviceType deviceType, int deviceIndex = -1)
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
@@ -128,6 +138,31 @@ namespace TorchSharp
                         torch.InitializeDeviceType(deviceType);
                         THSNN_Module_to_device(handle, (int)deviceType, deviceIndex);
                         torch.CheckForErrors();
+
+                        foreach (var (_, sm) in named_children()) sm.to(deviceType, deviceIndex);
+
+                        foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
+
+                            var name = field.Name;
+                            var value = field.GetValue(this);
+
+                            Tensor tensor = value as Tensor;
+                            Modules.Parameter param = value as Modules.Parameter;
+
+                            if (param is not null) {  // This test must come before the Tensor test
+                                if (deviceType != param.device_type || deviceIndex != param.device_index) {
+                                    var p = new Modules.Parameter(param.to(deviceType, deviceIndex), param.requires_grad);
+                                    field.SetValue(this, p);
+                                    ConditionallyRegisterParameter(name, p);
+                                }
+                            } else if (tensor is not null) {
+                                if (deviceType != tensor.device_type || deviceIndex != tensor.device_index) {
+                                    var t = tensor.to(deviceType, deviceIndex);
+                                    field.SetValue(this, t);
+                                    ConditionallyRegisterBuffer(name, t);
+                                }
+                            }
+                        }
 
                         _deviceType = deviceType;
                         _deviceIndex = deviceIndex;
@@ -166,10 +201,36 @@ namespace TorchSharp
                 /// Convert the parameters and buffers.
                 /// </summary>
                 /// <returns></returns>
-                public Module to(ScalarType dtype)
+                public virtual Module to(ScalarType dtype)
                 {
                     THSNN_Module_to_dtype(handle, (sbyte)dtype);
                     torch.CheckForErrors();
+
+                    foreach (var (_, sm) in named_children()) sm.to(dtype);
+
+                    foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
+
+                        var name = field.Name;
+                        var value = field.GetValue(this);
+
+                        Tensor tensor = value as Tensor;
+                        Modules.Parameter param = value as Modules.Parameter;
+
+                        if (param is not null) {  // This test must come before the Tensor test
+                            if (dtype != param.dtype) {
+                                var p = new Modules.Parameter(param.to(dtype), param.requires_grad);
+                                field.SetValue(this, p);
+                                ConditionallyRegisterParameter(name, p);
+                            }
+                        } else if (tensor is not null) {
+                            if (dtype != tensor.dtype) {
+                                var t = tensor.to(dtype);
+                                field.SetValue(this, t);
+                                ConditionallyRegisterBuffer(name, t);
+                            }
+                        }
+                    }
+
                     return this;
                 }
 
@@ -199,7 +260,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public virtual Module apply(Action<Module> fn)
                 {
-                    foreach (var m in GetModulesInternal()) m.apply(fn);
+                    foreach (var (_,m) in _internal_submodules) m.apply(fn);
                     fn(this);
                     return this;
                 }
@@ -236,19 +297,21 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_train(HType module);
 
-                public virtual void Train()
+                public virtual void train()
                 {
                     THSNN_Module_train(handle);
                     torch.CheckForErrors();
+                    foreach (var (_, m) in named_children()) { m.train(); }
                 }
 
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_eval(HType module);
 
-                public virtual void Eval()
+                public virtual void eval()
                 {
                     THSNN_Module_eval(handle);
                     torch.CheckForErrors();
+                    foreach (var (_, m) in named_children()) { m.eval(); }
                 }
 
                 [DllImport("LibTorchSharp")]
@@ -271,10 +334,86 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 }
 
+                /// <summary>
+                /// Returns an enumerable of module buffers, yielding both the name of the buffer as well as the buffer itself.
+                /// </summary>
+                /// <param name="recurse">If true, then yields buffers of this module and all submodules. Otherwise, yields only buffers that are direct members of this module.</param>
+                /// <returns>(string, torch.Tensor) – Tuple containing the name and buffer</returns>
+                public virtual IEnumerable<(string name, Tensor buffer)> named_buffers(bool recurse = true)
+                {
+                    foreach (var nsm in _internal_buffers) {
+                        yield return nsm;
+                    }
+
+                    if (recurse) {
+                        foreach (var (name, sm) in _internal_submodules) {
+                            foreach (var (n, p) in sm.named_buffers(true)) {
+                                yield return ($"{name}.{n}", p);
+                            }
+                        }
+                    }
+                }
+
+                /// <summary>
+                /// Returns an enumerable of immediate children modules, yielding both the name of the module as well as the module itself.
+                /// </summary>
+                /// <returns>(string, Module) – Tuple containing a name and child module</returns>
+                public virtual IEnumerable<(string name, Module module)> named_children()
+                {
+                    return _internal_submodules;
+                }
+
+                /// <summary>
+                /// Returns an enumerable of all modules in the network, yielding both the name of the module as well as the module itself.
+                /// </summary>
+                /// <returns>(string, Module) – Tuple of name and module</returns>
+                public virtual IEnumerable<(string name, Module module)> named_modules()
+                {
+                    foreach (var nsm in _internal_submodules) {
+                        yield return nsm;
+                    }
+
+                    foreach (var (name, sm) in _internal_submodules) {
+                        foreach (var (n, p) in sm.named_modules()) {
+                            yield return ($"{name}.{n}", p);
+                        }
+                    }
+                }
+
+                /// <summary>
+                /// Returns a dictionary containing a whole state of the module.
+                /// 
+                /// Both parameters and persistent buffers(e.g.running averages) are included.Keys are corresponding parameter and buffer names.
+                /// Parameters and buffers set to null are not included.
+                /// </summary>
+                /// <param name="destination">An optional dictionary where the state should be accumulated.</param>
+                /// <param name="prefix">A prefix string to use when entering the name of entries into the dictionary.</param>
+                /// <returns></returns>
+                public virtual Dictionary<string, Tensor> state_dict(Dictionary<string, Tensor> destination = null, string prefix = null)
+                {
+                    if (destination == null)
+                        destination = new Dictionary<string, Tensor>();
+
+                    foreach (var p in named_parameters()) {
+                        var key = String.IsNullOrEmpty(prefix) ? $"{p.name}" : $"{prefix}.{p.name}";
+                        destination.TryAdd(key, p.Item2);
+                    }
+                    foreach (var p in named_buffers()) {
+                        var key = String.IsNullOrEmpty(prefix) ? $"{p.name}" : $"{prefix}.{p.name}";
+                        destination.TryAdd(key, p.Item2);
+                    }
+                    foreach (var (n,p) in _internal_submodules) {
+                        var key = String.IsNullOrEmpty(prefix) ? $"{n}" : $"{prefix}.{n}";
+                        p.state_dict(destination, key);
+                    }
+
+                    return destination;
+                }
+
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_get_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
-                public virtual (string name, Modules.Parameter parameter)[] named_parameters()
+                protected (string name, Modules.Parameter parameter)[] _named_parameters()
                 {
                     IntPtr[] ptrArray;
                     IntPtr[] strArray;
@@ -293,7 +432,7 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_get_named_buffers(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
-                public virtual (string name, Tensor parameter)[] named_buffers()
+                protected (string name, Tensor buffer)[] _named_buffers()
                 {
                     IntPtr[] ptrArray;
                     IntPtr[] strArray;
@@ -309,84 +448,30 @@ namespace TorchSharp
 
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_get_named_children(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
-                public virtual (string name, Module parameter)[] named_children()
+                /// <summary>
+                /// Returns an enumerable of module parameters, yielding both the name of the parameter as well as the parameter itself.
+                /// </summary>
+                /// <param name="recurse">If true, then yields parameters of this module and all submodules. Otherwise, yields only parameters that are direct members of this module.</param>
+                /// <returns>(string, Parameter) – Tuple containing the name and parameter</returns>
+                public virtual IEnumerable<(string name, Modules.Parameter parameter)> named_parameters(bool recurse = true)
                 {
-                    IntPtr[] ptrArray;
-                    IntPtr[] strArray;
-
-                    using (var pa = new PinnedArray<IntPtr>())
-                    using (var sa = new PinnedArray<IntPtr>()) {
-                        THSNN_Module_get_named_children(handle, pa.CreateArray, sa.CreateArray);
-                        torch.CheckForErrors();
-                        ptrArray = pa.Array;
-                        strArray = sa.Array;
+                    foreach (var nsm in _internal_params) {
+                        yield return nsm;
                     }
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Module(x, IntPtr.Zero))).ToArray();
 
+                    if (recurse) {
+                        foreach (var (name, sm) in _internal_submodules) {
+                            foreach (var (n, p) in sm.named_parameters(true)) {
+                                yield return ($"{name}.{n}", p);
+                            }
+                        }
+                    }
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_get_named_modules(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
-                public virtual (string name, Module parameter)[] named_modules()
-                {
-                    IntPtr[] ptrArray;
-                    IntPtr[] strArray;
-
-                    using (var pa = new PinnedArray<IntPtr>())
-                    using (var sa = new PinnedArray<IntPtr>()) {
-                        THSNN_Module_get_named_modules(handle, pa.CreateArray, sa.CreateArray);
-                        torch.CheckForErrors();
-                        ptrArray = pa.Array;
-                        strArray = sa.Array;
-                    }
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Module(x, IntPtr.Zero))).ToArray();
-
-                }
-
-
-                public virtual Dictionary<string, Tensor> state_dict()
-                {
-                    var ptrArray = new List<IntPtr>();
-                    var strArray = new List<IntPtr>();
-
-                    using (var pa = new PinnedArray<IntPtr>())
-                    using (var sa = new PinnedArray<IntPtr>()) {
-                        THSNN_Module_get_named_parameters(handle, pa.CreateArray, sa.CreateArray);
-                        torch.CheckForErrors();
-                        ptrArray.AddRange(pa.Array);
-                        strArray.AddRange(sa.Array);
-                    }
-
-                    var result = new Dictionary<string, Tensor>();
-                    for (var i = 0; i < ptrArray.Count; ++i) {
-                        result[Marshal.PtrToStringAnsi(strArray[i])] = new Modules.Parameter(ptrArray[i]);
-                    }
-
-                    ptrArray.Clear();
-                    strArray.Clear();
-
-                    using (var pa = new PinnedArray<IntPtr>())
-                    using (var sa = new PinnedArray<IntPtr>()) {
-                        THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
-                        torch.CheckForErrors();
-                        ptrArray.AddRange(pa.Array);
-                        strArray.AddRange(sa.Array);
-                    }
-
-                    for (var i = 0; i < ptrArray.Count; ++i) {
-                        result[Marshal.PtrToStringAnsi(strArray[i])] = new Tensor(ptrArray[i]);
-                    }
-
-                    return result;
-                }
-
 
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_get_parameters(HType module, AllocatePinnedArray allocator, bool recurse);
 
-                public virtual Tensor[] parameters(bool recurse = true)
+                protected virtual Modules.Parameter[] _parameters(bool recurse = true)
                 {
                     IntPtr[] ptrArray;
 
@@ -399,85 +484,154 @@ namespace TorchSharp
                     return ptrArray.Select(x => new Modules.Parameter(x)).ToArray();
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern bool THSNN_Module_has_parameter(HType module, [MarshalAs(UnmanagedType.LPStr)] string name);
-
-                public bool has_parameter(string name)
+                /// <summary>
+                /// Returns an enumerable of module parameters.
+                /// </summary>
+                /// <param name="recurse">If true, then yields parameters of this module and all submodules. Otherwise, yields only parameters that are direct members of this module.</param>
+                /// <returns></returns>
+                public virtual IEnumerable<Modules.Parameter> parameters(bool recurse = true)
                 {
-                    var res = THSNN_Module_has_parameter(handle, name);
-                    torch.CheckForErrors();
-                    return res;
+                    return named_parameters(recurse).Select(np => np.parameter);
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSNN_Module_get_parameter(HType module, [MarshalAs(UnmanagedType.LPStr)] string name);
-
-                public Modules.Parameter get_parameter(string name)
+                public virtual bool has_buffer(string target)
                 {
-                    var parameter = THSNN_Module_get_parameter(handle, name);
-                    torch.CheckForErrors();
-
-                    if (parameter == IntPtr.Zero) {
-                        return null;
+                    if (_internal_buffers.TryGetValue(target, out var parameter)) {
+                        return true;
                     }
-
-                    return new Modules.Parameter(parameter);
+                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
+                        var prefix = child.name + ".";
+                        if (child.module.has_buffer(target.Remove(0, prefix.Length)))
+                            return true;
+                    }
+                    return false;
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_register_buffer(HType module, string name, IntPtr tensor);
+                public virtual bool has_parameter(string target)
+                {
+                    if (_internal_params.TryGetValue(target, out var parameter)) {
+                        return true;
+                    }
+                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
+                        var prefix = child.name + ".";
+                        if (child.module.has_parameter(target.Remove(0, prefix.Length)))
+                            return true;
+                    }
+                    return false;
+                }
 
+                /// <summary>
+                /// Returns the parameter given by target if it exists, otherwise throws an error.
+                /// </summary>
+                /// <param name="target">The fully-qualified string name of the Parameter to look for.</param>
+                /// <returns>The Parameter referenced by target</returns>
+                public virtual Modules.Parameter get_parameter(string target)
+                {
+                    if (_internal_params.TryGetValue(target, out var parameter)) {
+                        return parameter;
+                    }
+                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
+                        var prefix = child.name + ".";
+                        var p = child.module.get_parameter(target.Remove(0, prefix.Length));
+                        if (p is not null)
+                            return p;
+                    }
+                    return null;
+                }
+
+                /// <summary>
+                /// Adds a buffer to the module.
+                /// 
+                /// This is typically used to register a buffer that should not to be considered a model parameter.For example, BatchNorm’s running_mean is not a parameter,
+                /// but is part of the module’s state.Buffers, by default, are persistent and will be saved alongside parameters.
+                /// </summary>
+                /// <param name="name">Name of the buffer. The buffer can be accessed from this module using the given name</param>
+                /// <param name="tensor">
+                /// Buffer to be registered. If null, then operations that run on buffers, such as cuda(), are ignored.
+                /// If null, the buffer is not included in the module’s state_dict.</param>
+                /// <exception cref="ArgumentNullException"></exception>
+                /// <exception cref="InvalidOperationException"></exception>
                 public virtual void register_buffer(string name, Tensor tensor)
                 {
                     if (tensor is null || tensor.handle == IntPtr.Zero) throw new ArgumentNullException("A null tensor cannot be registered as a buffer.");
-                    THSNN_Module_register_buffer(handle, name, tensor.handle);
-                    torch.CheckForErrors();
-                }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_register_parameter(HType module, string name, IntPtr tensor, bool requires_grad);
-
-                public virtual void register_parameter(string name, Tensor tensor, bool requires_grad = true)
-                {
-                    if (tensor is null || tensor.handle == IntPtr.Zero) throw new ArgumentNullException("A null tensor cannot be registered as a parameter.");
-                    THSNN_Module_register_parameter(handle, name, tensor.handle, requires_grad);
-                    torch.CheckForErrors();
-                }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_register_module(HType module, string name, HType submodule);
-
-                public virtual void register_module(string name, Module submodule)
-                {
-                    if (submodule is null || submodule.handle.IsInvalid) throw new ArgumentNullException("A null module cannot be registered.");
-
-                    submodule.RegisterComponents();
-
-                    THSNN_Module_register_module(handle, name, submodule.handle);
-                    torch.CheckForErrors();
-                }
-
-                [DllImport("LibTorchSharp")]
-                private static extern long THSNN_Module_children_size(HType module);
-
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSNN_Module_child(HType module, int index);
-
-                /// Get the sub-modules of this module. The Module objects won't have the correct .NET types
-                /// so this is not made public.
-                internal virtual Module[] GetModulesInternal()
-                {
-                    var numModules = THSNN_Module_children_size(handle);
-                    torch.CheckForErrors();
-                    Module[] result = new Module[numModules];
-
-                    for (int i = 0; i < numModules; i++) {
-                        var childHandle = THSNN_Module_child(handle, i);
-                        torch.CheckForErrors();
-                        result[i] = new Module(childHandle, null, ownsHandle: false);
+                    if (!_internal_buffers.TryAdd(name, tensor)) {
+                        throw new InvalidOperationException($"Tensor {name} is already registered.");
                     }
+                }
 
-                    return result;
+                /// <summary>
+                /// Adds a parameter to the module.
+                /// </summary>
+                /// <param name="name">Name of the parameter. The parameter can be accessed from this module using the given name</param>
+                /// <param name="param">
+                /// Buffer to be registered.
+                /// If null, then operations that run on buffers, such as cuda(), are ignored.
+                /// If null, the buffer is not included in the module’s state_dict.</param>
+                /// <exception cref="ArgumentNullException"></exception>
+                /// <exception cref="InvalidOperationException"></exception>
+                public virtual void register_parameter(string name, Modules.Parameter param)
+                {
+                    if (param is null || param.handle == IntPtr.Zero) throw new ArgumentNullException("A null tensor cannot be registered as a parameter.");
+                    if (!_internal_params.TryAdd(name, param)) {
+                        throw new InvalidOperationException($"Parameter {name} is already registered.");
+                    }
+                }
+
+                /// <summary>
+                /// Register a submodule.
+                /// </summary>
+                /// <param name="name">Name of the submodule.</param>
+                /// <param name="submodule">The module to register.</param>
+                /// <exception cref="InvalidOperationException"></exception>
+                internal virtual void register_module(string name, Module submodule)
+                {
+                    if (submodule is null || submodule.handle.IsInvalid) {
+                        if (_internal_submodules.ContainsKey(name)) {
+                            _internal_submodules.Remove(name);
+                        }
+                    } else {
+                        if (_internal_submodules.ContainsKey(name)) {
+                            throw new InvalidOperationException($"Sub-module {name} is already registered.");
+                        }
+
+                        submodule.RegisterComponents();
+
+                        _internal_submodules.Add(name, submodule);
+                    }
+                }
+
+                protected void ConditionallyRegisterParameter(string name, Tensor value)
+                {
+                    if (value is null) {
+                        if (_internal_params.ContainsKey(name)) {
+                            _internal_params.Remove(name);
+                        }
+                    } else {
+                        var p = value is Modules.Parameter
+                            ? (Modules.Parameter)value
+                            : new Modules.Parameter(value, requires_grad: true);
+
+                        if (_internal_params.ContainsKey(name)) {
+                            _internal_params[name] = p;
+                        } else {
+                            _internal_params.Add(name, p);
+                        }
+                    }
+                }
+
+                protected void ConditionallyRegisterBuffer(string name, Tensor value)
+                {
+                    if (value is null) {
+                        if (_internal_buffers.ContainsKey(name)) {
+                            _internal_buffers.Remove(name);
+                        }
+                    } else {
+                        if (_internal_buffers.ContainsKey(name)) {
+                            _internal_buffers[name] = value;
+                        } else {
+                            _internal_buffers.Add(name, value);
+                        }
+                    }
                 }
 
                 [DllImport("LibTorchSharp")]
@@ -551,8 +705,7 @@ namespace TorchSharp
                         using (var stream = System.IO.File.OpenRead(location))
                         using (var reader = new System.IO.BinaryReader(stream))
                             load(reader, strict);
-                    }
-                    finally {
+                    } finally {
                         to(dt, di);
                     }
 
@@ -628,13 +781,23 @@ namespace TorchSharp
                     this.handle = new HType(res, true);
                     this.forwardNative = forwardNative;
                     this.boxedModule = new BoxedModule(boxedHandle);
+
+                    // In this case, the parameter registration was not done yet.
+
+                    foreach (var np in _named_parameters()) {
+                        register_parameter(np.name, np.parameter);
+                    }
                 }
 
                 protected virtual void RegisterComponents()
                 {
                     if (_registered) return;
 
-                    foreach (var field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
+                    foreach (var field in this.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+
+                        var name = field.Name;
+                        if (_internal_submodules.ContainsKey(name) || _internal_params.ContainsKey(name) || _internal_buffers.ContainsKey(name)) continue;
+
                         var value = field.GetValue(this);
 
                         var module = value as Module;
@@ -642,17 +805,22 @@ namespace TorchSharp
                         Modules.Parameter param = value as Modules.Parameter;
 
                         if (module != null) {
-                            register_module(field.Name, module);
+                            register_module(name, module);
                         } else if (param is not null) {  // This test must come before the Tensor test
-                            register_parameter(field.Name, tensor);
+                            register_parameter(name, param);
                         } else if (tensor is not null) {
-                            register_buffer(field.Name, tensor);
+                            register_buffer(name, tensor);
                         }
                     }
+
                     _registered = true;
                 }
 
                 private bool _registered = false;
+
+                protected Utils.OrderedDict<string, Module> _internal_submodules = new Utils.OrderedDict<string, Module>();
+                protected Utils.OrderedDict<string, Tensor> _internal_buffers = new Utils.OrderedDict<string, Tensor>();
+                protected Utils.OrderedDict<string, Modules.Parameter> _internal_params = new Utils.OrderedDict<string, Modules.Parameter>();
 
                 /// Keeps the callback delegate alive
                 private ForwardFunctionC forwardNative;

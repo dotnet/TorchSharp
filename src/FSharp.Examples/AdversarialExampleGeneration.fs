@@ -121,7 +121,7 @@ let run epochs =
 
     model.``to``(device) |> ignore
 
-    model.Eval()
+    model.eval()
 
     let epsilons = [| 0.0; 0.05; 0.1; 0.15; 0.20; 0.25; 0.30; 0.35; 0.40; 0.45; 0.50|]
 

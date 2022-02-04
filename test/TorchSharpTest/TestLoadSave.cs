@@ -68,19 +68,19 @@ namespace TorchSharp
             Assert.True(original.has_parameter("test"));
 
             var params0 = original.parameters();
-            Assert.True(params0[0].requires_grad);
+            Assert.True(params0.ToArray().ToArray()[0].requires_grad);
             original.save(".model.ts");
 
             var loaded = new TestModule1();
             Assert.True(loaded.has_parameter("test"));
 
             var params1 = loaded.parameters();
-            Assert.True(params1[0].requires_grad);
-            Assert.NotEqual(params0, params1);
+            Assert.True(params1.ToArray()[0].requires_grad);
+            Assert.NotEqual(params0.ToArray(), params1);
 
             loaded.load(".model.ts");
             var params2 = loaded.parameters();
-            Assert.True(params2[0].requires_grad);
+            Assert.True(params2.ToArray()[0].requires_grad);
 
             File.Delete(".model.ts");
 
@@ -252,20 +252,20 @@ namespace TorchSharp
                 if (File.Exists(".model.ts")) File.Delete(".model.ts");
                 var gru = GRU(2, 2, 2);
                 gru.to(DeviceType.CUDA);
-                var params0 = gru.parameters();
+                var params0 = gru.parameters().ToArray();
                 Assert.Equal(DeviceType.CUDA, params0[0].device_type);
 
                 gru.save(".model.ts");
 
                 // Make sure the model is still on the GPU when we come back.
 
-                params0 = gru.parameters();
+                params0 = gru.parameters().ToArray();
                 Assert.Equal(DeviceType.CUDA, params0[0].device_type);
 
                 var loadedGru = GRU(2, 2, 2);
                 loadedGru.to(DeviceType.CUDA);
                 loadedGru.load(".model.ts");
-                var params1 = loadedGru.parameters();
+                var params1 = loadedGru.parameters().ToArray();
 
                 Assert.Equal(DeviceType.CUDA, params1[0].device_type);
 

@@ -128,12 +128,12 @@ NNModule THSNN_LayerNorm_ctor(const int64_t* norm_shape, const int64_t norm_shap
 {
     CATCH_RETURN_NNModule(
         std::vector<int64_t> normalized_shape;
-    for (int64_t i = 0; i < norm_shape_len; ++i)
-    {
-        normalized_shape.push_back(norm_shape[i]);
-    }
-    auto opts = torch::nn::LayerNormOptions(normalized_shape).eps(eps).elementwise_affine(elementwise_affine);
-    res = create_module<torch::nn::LayerNormImpl>(opts, outAsAnyModule);
+        for (int64_t i = 0; i < norm_shape_len; ++i)
+        {
+            normalized_shape.push_back(norm_shape[i]);
+        }
+        auto opts = torch::nn::LayerNormOptions(normalized_shape).eps(eps).elementwise_affine(elementwise_affine);
+        res = create_module<torch::nn::LayerNormImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -141,6 +141,27 @@ Tensor THSNN_LayerNorm_forward(const NNModule module, const Tensor tensor)
 {
     CATCH_TENSOR((*module)->as<torch::nn::LayerNorm>()->forward(*tensor));
 }
+
+Tensor THSNN_LayerNorm_bias(const NNModule module)
+{
+    return get_bias<torch::nn::LayerNorm>(module);
+}
+
+void THSNN_LayerNorm_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::LayerNorm>(module, bias);
+}
+
+Tensor THSNN_LayerNorm_weight(const NNModule module)
+{
+    return get_weight<torch::nn::LayerNorm>(module);
+}
+
+void THSNN_LayerNorm_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::LayerNorm>(module, weight);
+}
+
 
 NNModule THSNN_LocalResponseNorm_ctor(const int64_t size, const double alpha, const double beta, const double k, NNAnyModule* outAsAnyModule)
 {
@@ -179,6 +200,20 @@ Tensor THSNN_BatchNorm1d_get_var(const NNModule module)
         return v.defined() ? ResultTensor(v) : nullptr;
     );
     return nullptr;
+}
+
+void THSNN_BatchNorm1d_set_mean(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::BatchNorm1d>()->running_mean = *bias;
+    );
+}
+
+void THSNN_BatchNorm1d_set_var(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::BatchNorm1d>()->running_var = *bias;
+    );
 }
 
 Tensor THSNN_BatchNorm1d_bias(const NNModule module)
@@ -224,6 +259,20 @@ Tensor THSNN_BatchNorm2d_get_var(const NNModule module)
     return nullptr;
 }
 
+void THSNN_BatchNorm2d_set_mean(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::BatchNorm2d>()->running_mean = *bias;
+    );
+}
+
+void THSNN_BatchNorm2d_set_var(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::BatchNorm2d>()->running_var = *bias;
+    );
+}
+
 Tensor THSNN_BatchNorm2d_bias(const NNModule module)
 {
     return get_bias<torch::nn::BatchNorm2d>(module);
@@ -265,6 +314,20 @@ Tensor THSNN_BatchNorm3d_get_var(const NNModule module)
     return v.defined() ? ResultTensor(v) : nullptr;
     );
     return nullptr;
+}
+
+void THSNN_BatchNorm3d_set_mean(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::BatchNorm3d>()->running_mean = *bias;
+    );
+}
+
+void THSNN_BatchNorm3d_set_var(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::BatchNorm3d>()->running_var = *bias;
+    );
 }
 
 Tensor THSNN_BatchNorm3d_bias(const NNModule module)

@@ -316,7 +316,7 @@ namespace TorchSharp
                 /// <param name="max_norm"></param>
                 /// <param name="norm_type"></param>
                 /// <returns></returns>
-                public static double clip_grad_norm_(IList<Tensor> tensors, double max_norm, double norm_type = 2.0)
+                public static double clip_grad_norm_(IEnumerable<Modules.Parameter> tensors, double max_norm, double norm_type = 2.0)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
                         IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());

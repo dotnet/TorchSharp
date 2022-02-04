@@ -454,8 +454,8 @@ NNModule THSNN_Conv2d_ctor_1(const int64_t inputChannel, const int64_t outputCha
     NNAnyModule* outAsAnyModule)
 {
     torch::nn::Conv2dOptions::padding_t padd =
-        (paddingX == -1) ? torch::kSame :
-        (paddingX == 0) ? torch::kValid :
+        (paddingX == -1) && (paddingY == 0) ? torch::kSame :
+        (paddingX == 0) && (paddingY == 0) ? torch::kValid :
         (torch::nn::Conv2dOptions::padding_t)torch::ExpandingArray<2>({ paddingX, paddingY });
 
     CATCH_RETURN_NNModule(
@@ -528,8 +528,8 @@ NNModule THSNN_Conv3d_ctor_1(const int64_t inputChannel, const int64_t outputCha
     NNAnyModule* outAsAnyModule)
 {
     torch::nn::Conv3dOptions::padding_t padd =
-        (paddingX == -1) ? torch::kSame :
-        (paddingX == 0) ? torch::kValid :
+        (paddingX == -1) && (paddingY == 0) && (paddingZ == 0) ? torch::kSame :
+        (paddingX == 0) && (paddingY == 0) && (paddingZ == 0) ? torch::kValid :
         (torch::nn::Conv3dOptions::padding_t)torch::ExpandingArray<3>({ paddingX, paddingY, paddingZ });
 
     CATCH_RETURN_NNModule(
