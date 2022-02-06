@@ -13,25 +13,35 @@ namespace TorchSharp.Examples
     {
         class SkiaImager : torchvision.io.IImager
         {
+            public torchvision.io.ImageFormat DetectFormat(byte[] bytes)
+            {
+                throw new NotImplementedException();
+            }
+            public Tensor DecodeImage(byte[] image, torchvision.io.ImageFormat format,  torchvision.io.ImageReadMode mode)
+            {
+                throw new NotImplementedException();
+            }
             public Tensor DecodeImage(byte[] image, torchvision.io.ImageReadMode mode)
             {
                 throw new NotImplementedException();
             }
-            public byte[] EncodeImage(Tensor image, torchvision.io.ImageReadMode mode)
+            public byte[] EncodeImage(Tensor image, torchvision.io.ImageFormat format)
             {
                 throw new NotImplementedException();
             }
         }
 
-        internal static async void Main(string[] args)
+        internal static void Main(string[] args)
         {
-            var filename = "image.png";
+            var filename = args[0];
 
-            torchvision.io.PrimaryImager = new SkiaImager();
+            torchvision.io.DefaultImager = new SkiaImager();
 
             var img = torchvision.io.read_image(filename);
 
-            var imgGray = await torchvision.io.read_image_async(filename, torchvision.io.ImageReadMode.GRAY);
+            Console.WriteLine($"Image has shape {img.shape}");
+
+            var imgGray = torchvision.io.read_image(filename, torchvision.io.ImageReadMode.GRAY);
 
             Console.WriteLine($"Image Tensor: {img}\n Gray Image Tensor: {imgGray}");
 
