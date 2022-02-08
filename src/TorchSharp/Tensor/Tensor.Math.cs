@@ -229,6 +229,17 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Perform the element-wise division of tensor1 by tensor2 and add it to input.
+            /// </summary>
+            /// <param name="tensor1">First tensor</param>
+            /// <param name="tensor2">Second tensor</param>
+            /// <returns></returns>
+            public Tensor addcdiv(Tensor tensor1, Tensor tensor2)
+            {
+                return addcdiv(tensor1, tensor2, 1);
+            }
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_addcdiv_(IntPtr tensor, IntPtr tensor1, IntPtr tensor2, IntPtr value);
 
@@ -245,6 +256,17 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Performs the in-place element-wise division of tensor1 by tensor2 and add it to input.
+            /// </summary>
+            /// <param name="tensor1">First tensor</param>
+            /// <param name="tensor2">Second tensor</param>
+            /// <returns></returns>
+            public Tensor addcdiv_(Tensor tensor1, Tensor tensor2)
+            {
+                return addcdiv_(tensor1, tensor2, 1);
             }
 
             [DllImport("LibTorchSharp")]
