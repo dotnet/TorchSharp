@@ -137,7 +137,7 @@ let run epochs =
 
     let model = new TextClassificationModel((int64 vocab.Count), emsize, 4L, device)
 
-    let optimizer = torch.optim.SGD(model.parameters(), lr)
+    let optimizer = torch.optim.SGD(model.named_parameters(), lr)
     let scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.2, last_epoch=5)
 
     let sw = Stopwatch()

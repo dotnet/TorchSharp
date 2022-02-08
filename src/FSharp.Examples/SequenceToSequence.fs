@@ -244,7 +244,7 @@ let run epochs =
 
     use model = new TransformerModel(ntokens, device)
     let lr = 2.50
-    let optimizer = SGD(model.parameters(), lr)
+    let optimizer = SGD(model.named_parameters(), lr)
     let scheduler = lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch=15)
 
     let totalTime = Stopwatch()
