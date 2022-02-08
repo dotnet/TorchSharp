@@ -63,7 +63,7 @@ namespace TorchSharp.Examples
 
                 var loss = cross_entropy_loss();
                 var lr = 5.0;
-                var optimizer = torch.optim.SGD(model.parameters(), lr);
+                var optimizer = torch.optim.SGD(model.named_parameters(), lr);
                 var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.2, last_epoch: 5);
 
                 // This data set is small enough that we can get away with

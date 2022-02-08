@@ -154,7 +154,7 @@ let test (model:Model) (dataLoader:CIFARReader) =
     
 let trainingLoop (model:Model) epochs trainData testData =
     
-        use optimizer = Adam(model.parameters(), 0.001)
+        use optimizer = Adam(model.named_parameters(), 0.001)
     
         let sw = Stopwatch()
         sw.Start()
