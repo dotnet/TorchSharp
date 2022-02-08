@@ -169,22 +169,17 @@ namespace TorchSharp
             ///
             /// Proposed by G.Hinton in his course.
             /// </summary>
-            /// <param name="parameters">Parameters to optimize</param>
+            /// <param name="named_parameters">Parameters to optimize</param>
             /// <param name="learningRate">Learning rate (default: 1e-2)</param>
-            /// <param name="alpha">Smoothing constant (default: 0.99)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
+            /// <param name="alpha">Smoothing constant (default: 0.99)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="momentum">Momentum factor (default: 0)</param>
             /// <param name="centered">if true, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
             /// <returns></returns>
-            public static RMSPropOptimizer RMSProp(IEnumerable<Parameter> parameters, double learningRate = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false)
+            public static RMSPropOptimizer RMSProp(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate = 0.01, double eps = 1e-8, double alpha = 0.99, double weight_decay = 0, double momentum = 0, bool centered = false)
             {
-                var parray = new PinnedArray<IntPtr>();
-                IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
-
-                var res = THSNN_RMSprop_ctor(paramsRef, parray.Array.Length, learningRate, alpha, eps, weight_decay, momentum, centered);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new RMSPropOptimizer(res, learningRate, momentum);
+                return new RMSPropOptimizer(named_parameters, learningRate, eps, alpha, weight_decay, momentum, centered);
             }
 
             [DllImport("LibTorchSharp")]
@@ -364,27 +359,19 @@ namespace TorchSharp
                 return new RpropOptimizer(named_parameters, lr, etaminus, etaplus, min_step, max_step);
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_SGD_ctor(IntPtr parameters, int len, double learningRate, double momentum, double dampening, double weight_decay, bool nesterov);
-
             /// <summary>
             /// Implements stochastic gradient descent (optionally with momentum).
             /// </summary>
-            /// <param name="parameters">Parameters to optimize</param>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
             /// <param name="learningRate">Learning rate</param>
             /// <param name="momentum">Momentum factor (default: 0)</param>
             /// <param name="dampening">Dampening for momentum (default: 0)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
             /// <returns></returns>
-            public static SGDOptimizer SGD(IEnumerable<Parameter> parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false)
+            public static SGDOptimizer SGD(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false)
             {
-                var parray = new PinnedArray<IntPtr>();
-                IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
-
-                var res = THSNN_SGD_ctor(paramsRef, parray.Array.Length, learningRate, momentum, dampening, weight_decay, nesterov);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new SGDOptimizer(res, learningRate, momentum);
+                return new SGDOptimizer(named_parameters, learningRate, momentum, dampening, weight_decay, nesterov);
             }
         }
     }
@@ -976,6 +963,121 @@ namespace TorchSharp
             private double _weight_decay;
         }
 
+        public class SGDOptimizer : OptimizerHelper, IMomentum
+        {
+            /// <summary>
+            /// Implements stochastic gradient descent (optionally with momentum).
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr">Learning rate</param>
+            /// <param name="momentum">Momentum factor (default: 0)</param>
+            /// <param name="dampening">Dampening for momentum (default: 0)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
+            /// <param name="maximize"></param>
+            /// <returns></returns>
+            public SGDOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false) : base(named_parameters, lr)
+            {
+                if (momentum < 0.0) throw new ArgumentException($"Invalid momentum value: {momentum}");
+                if (weight_decay < 0.0) throw new ArgumentException($"Invalid weight_decay value: {weight_decay}");
+                if (nesterov && (momentum <= 0 || dampening != 0)) throw new ArgumentException("Nesterov momentum requires a momentum and zero dampening");
+
+                LearningRate = lr;
+                InitialLearningRate = lr;
+                _momentum = momentum;
+                _dampening = dampening;
+                _weight_decay = weight_decay;
+                _nesterov = nesterov;
+                _maximize = maximize;
+
+                foreach (var (name, p) in named_parameters) {
+                    var state = new State();
+                    _state[name] = state;
+                    state.momentum_buffer = null;
+                }
+            }
+
+            public override Tensor step(Func<Tensor> closure = null)
+            {
+                Tensor loss = null;
+
+                if (closure != null) {
+                    using (var _ = torch.enable_grad())
+                        loss = closure();
+                }
+
+                using (var _ = torch.no_grad()) {
+
+                    using (var d = torch.NewDisposeScope()) {
+
+                        foreach (var (name, param) in _parameters) {
+
+                            var state = _state[name];
+
+                            var grad = param.grad();
+
+                            if (grad is null) continue;
+
+                            if (_weight_decay != 0) {
+                                grad = grad.add(param, alpha: _weight_decay);
+                            }
+
+                            if (_momentum != 0) {
+                                var buf = state.momentum_buffer;
+
+                                if (buf is null) {
+                                    buf = grad.clone().detach().DetatchFromDisposeScope();
+                                    state.momentum_buffer = buf;
+                                } else {
+                                    buf.mul_(_momentum).add_(grad, alpha: (1 - _dampening));
+                                }
+
+                                if (_nesterov) {
+                                    grad = grad.add(buf, alpha: _momentum);
+                                } else {
+                                    grad = buf;
+                                }
+
+                                state.momentum_buffer = buf;
+                            }
+
+                            var alpha = _maximize ? LearningRate : -LearningRate;
+                            param.add_(grad, alpha: alpha);
+
+                        }
+
+                        d.DisposeEverything();
+                    }
+                }
+
+                return loss;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                foreach (var (name, state) in _state) {
+                    if (state.momentum_buffer is not null) {
+                        state.momentum_buffer.Dispose();
+                    }
+                }
+            }
+
+            private class State
+            {
+                public Tensor momentum_buffer;
+            }
+
+            private Dictionary<string, State> _state = new Dictionary<string, State>();
+            private double _momentum;
+            private double _dampening;
+            private double _weight_decay;
+            private bool _nesterov;
+            private bool _maximize;
+
+            public double Momentum { get => _momentum; set => _momentum = value; }
+        }
+
         public class RpropOptimizer : OptimizerHelper, ILearningRateController
         {
             /// <summary>
@@ -1168,36 +1270,127 @@ namespace TorchSharp
 
         }
 
-        public class RMSPropOptimizer : Optimizer, ILearningRateController, IMomentum
+
+        public class RMSPropOptimizer : OptimizerHelper, IMomentum
         {
-            public RMSPropOptimizer(IntPtr handle, double lr, double momentum) : base(handle)
+            /// <summary>
+            /// Implements stochastic gradient descent (optionally with momentum).
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr">Learning rate</param>
+            /// <param name="alpha">Smoothing constant.</param>
+            /// <param name="momentum">Momentum factor (default: 0)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="centered">if ``True``, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
+            /// <returns></returns>
+            public RMSPropOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double eps = 1e-8, double alpha = 0.99, double weight_decay = 0, double momentum = 0.0, bool centered = false) : base(named_parameters, lr)
             {
-                _rate = lr;
-                _momentum = momentum;
+                if (lr < 0) throw new ArgumentException($"Invalid learning rate: {lr}");
+                if (eps < 0) throw new ArgumentException($"Invalid ε: {eps}");
+                if (alpha < 0) throw new ArgumentException($"Invalid alpha: {alpha}");
+                if (momentum < 0.0) throw new ArgumentException($"Invalid momentum value: {momentum}");
+                if (weight_decay < 0.0) throw new ArgumentException($"Invalid weight_decay value: {weight_decay}");
+
+                LearningRate = lr;
                 InitialLearningRate = lr;
+                _momentum = momentum;
+                _weight_decay = weight_decay;
+                _alpha = alpha;
+                _eps = eps;
+                _centered = centered;
+
+                foreach (var (name, p) in named_parameters) {
+                    var state = new State();
+                    _state[name] = state;
+                    state.step = 0;
+                    state.square_avg = torch.zeros_like(p);
+                    state.grad_avg = torch.zeros_like(p);
+                    state.momentum_buffer = torch.zeros_like(p);
+                }
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_RMSprop_set_lr(HType optimizer, double lr);
+            public override Tensor step(Func<Tensor> closure = null)
+            {
+                Tensor loss = null;
 
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_RMSprop_set_momentum(HType optimizer, double momentum);
+                if (closure != null) {
+                    using (var _ = torch.enable_grad())
+                        loss = closure();
+                }
 
-            public double LearningRate {
-                get { return _rate; }
-                set { THSNN_RMSprop_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
+                using (var _ = torch.no_grad()) {
+
+                    using (var d = torch.NewDisposeScope()) {
+
+                        foreach (var (name, param) in _parameters) {
+
+                            var state = _state[name];
+
+                            var grad = param.grad();
+
+                            if (grad is null) continue;
+
+                            state.step += 1;
+
+                            if (_weight_decay != 0) {
+                                grad = grad.add(param, alpha: _weight_decay);
+                            }
+
+                            state.square_avg.mul_(_alpha).addcmul_(grad, grad, value: 1 - _alpha);
+
+                            Tensor avg = null;
+
+                            if (_centered) {
+                                var grad_avg = state.grad_avg;
+                                grad_avg.mul_(_alpha).add_(grad, alpha: 1 - _alpha);
+                                avg = state.square_avg.addcmul(grad_avg, grad_avg, value: -1).sqrt_().add_(_eps);
+                            } else {
+                                avg = state.square_avg.sqrt().add_(_eps);
+                            }
+
+                            if (_momentum > 0) {
+                                var buf = state.momentum_buffer;
+                                buf.mul_(_momentum).addcdiv_(grad, avg);
+                                param.add_(buf, alpha: -LearningRate);
+                            } else {
+                                param.addcdiv_(grad, avg, -LearningRate);
+                            }
+                        }
+
+                        d.DisposeEverything();
+                    }
+                }
+
+                return loss;
             }
 
-            public double InitialLearningRate { get; set; }
-
-            private double _rate;
-
-            public double Momentum {
-                get => _momentum;
-                set { THSNN_RMSprop_set_momentum(handle, value); torch.CheckForErrors(); _momentum = value; }
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                foreach (var (name, state) in _state) {
+                    state.momentum_buffer.Dispose();
+                    state.square_avg.Dispose();
+                    state.grad_avg.Dispose();
+                }
             }
 
+            private class State
+            {
+                public int step;
+                public Tensor square_avg;
+                public Tensor momentum_buffer;
+                public Tensor grad_avg;
+            }
+
+            private Dictionary<string, State> _state = new Dictionary<string, State>();
             private double _momentum;
+            private double _alpha;
+            private double _eps;
+            private double _weight_decay;
+            private bool _centered;
+
+            public double Momentum { get => _momentum; set => _momentum = value; }
         }
 
         public class LBFGSOptimizer : Optimizer, ILearningRateController
@@ -1226,38 +1419,6 @@ namespace TorchSharp
             }
 
             private double _rate;
-        }
-
-        public class SGDOptimizer : Optimizer, ILearningRateController, IMomentum
-        {
-            public SGDOptimizer(IntPtr handle, double lr, double momentum) : base(handle)
-            {
-                _rate = lr;
-                _momentum = momentum;
-                InitialLearningRate = lr;
-            }
-
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_SGD_set_lr(HType optimizer, double lr);
-
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_SGD_set_momentum(HType optimizer, double momentum);
-
-            public double LearningRate {
-                get { return _rate; }
-                set { THSNN_SGD_set_lr(handle, value); torch.CheckForErrors(); _rate = value; }
-            }
-
-            public double InitialLearningRate { get; set; }
-
-            private double _rate;
-
-            public double Momentum {
-                get => _momentum;
-                set { THSNN_SGD_set_momentum(handle, value); torch.CheckForErrors(); _momentum = value; }
-            }
-
-            private double _momentum;
         }
     }
 }
