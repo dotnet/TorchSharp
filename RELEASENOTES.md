@@ -2,6 +2,16 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.96.1
+
+__API Changes:__
+
+__NOTE__: This release contains breaking changes.
+
+The APIs to create optimizers all take 'named_parameters' rather than 'parameters' now.
+
+__Fixed Bugs:__
+
 ## NuGet Version 0.96.0
 
 __API Changes:__

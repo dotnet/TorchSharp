@@ -174,7 +174,7 @@ namespace TorchSharp
             /// <param name="momentum">Momentum factor (default: 0)</param>
             /// <param name="centered">if true, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
             /// <returns></returns>
-            public static RMSPropOptimizer RMSProp(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate = 0.01, double eps = 1e-8, double alpha = 0.99, double weight_decay = 0, double momentum = 0, bool centered = false)
+            public static RMSPropOptimizer RMSProp(IEnumerable<(string name, Parameter parameter)> named_parameters, double learningRate = 0.01, double eps = 1e-8, double alpha = 0.99, double weight_decay = 0, double momentum = 0, bool centered = false)
             {
                 return new RMSPropOptimizer(named_parameters, learningRate, eps, alpha, weight_decay, momentum, centered);
             }
@@ -193,7 +193,7 @@ namespace TorchSharp
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
             /// <param name="maximize"></param>
             /// <returns></returns>
-            public static AdamOptimizer Adam(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
+            public static AdamOptimizer Adam(IEnumerable<(string name, Parameter parameter)> named_parameters, double learningRate = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
                 return new AdamOptimizer(named_parameters, learningRate, beta1, beta2, eps, weight_decay, amsgrad, maximize);
             }
@@ -212,7 +212,7 @@ namespace TorchSharp
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
             /// <param name="maximize"></param>
             /// <returns></returns>
-            public static AdamWOptimizer AdamW(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
+            public static AdamWOptimizer AdamW(IEnumerable<(string name, Parameter parameter)> named_parameters, double learningRate = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
                 return new AdamWOptimizer(named_parameters, learningRate, beta1, beta2, eps, weight_decay, amsgrad, maximize);
             }
@@ -229,7 +229,7 @@ namespace TorchSharp
             /// <param name="initial_accumulator_value"></param>
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-10)</param>
             /// <returns></returns>
-            public static AdagradOptimizer Adagrad(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
+            public static AdagradOptimizer Adagrad(IEnumerable<(string name, Parameter parameter)> named_parameters, double learningRate = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
             {
                 return new AdagradOptimizer(named_parameters, learningRate, lr_decay, weight_decay, initial_accumulator_value, eps);
             }
@@ -245,7 +245,7 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public static AdadeltaOptimizer Adadelta(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+            public static AdadeltaOptimizer Adadelta(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
             {
                 return new AdadeltaOptimizer(named_parameters, lr, rho, eps, weight_decay);
             }
@@ -263,7 +263,7 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="momentum_decay">Momentum decay</param>
-            public static NAdamOptimizer NAdam(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3)
+            public static NAdamOptimizer NAdam(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3)
             {
                 return new NAdamOptimizer(named_parameters, lr, beta1, beta2, eps, weight_decay, momentum_decay);
             }
@@ -280,7 +280,7 @@ namespace TorchSharp
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            public static RAdamOptimizer RAdam(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            public static RAdamOptimizer RAdam(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
             {
                 return new RAdamOptimizer(named_parameters, lr, beta1, beta2, eps, weight_decay);
             }
@@ -297,7 +297,7 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public static AdamaxOptimizer Adamax(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            public static AdamaxOptimizer Adamax(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
             {
                 return new AdamaxOptimizer(named_parameters, lr, beta1, beta2, eps, weight_decay);
             }
@@ -314,7 +314,7 @@ namespace TorchSharp
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public static ASGDOptimizer ASGD(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
+            public static ASGDOptimizer ASGD(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
             {
                 return new ASGDOptimizer(named_parameters, lr, lambd, alpha, t0, weight_decay);
             }
@@ -329,7 +329,7 @@ namespace TorchSharp
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
             /// <returns></returns>
-            public static RpropOptimizer Rprop(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+            public static RpropOptimizer Rprop(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
             {
                 return new RpropOptimizer(named_parameters, lr, etaminus, etaplus, min_step, max_step);
             }
@@ -337,16 +337,21 @@ namespace TorchSharp
             /// <summary>
             /// Implements stochastic gradient descent (optionally with momentum).
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
             /// <param name="learningRate">Learning rate</param>
             /// <param name="momentum">Momentum factor (default: 0)</param>
             /// <param name="dampening">Dampening for momentum (default: 0)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
             /// <returns></returns>
-            public static SGDOptimizer SGD(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false)
+            public static SGDOptimizer SGD(IEnumerable<Parameter> parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false)
             {
-                return new SGDOptimizer(named_parameters, learningRate, momentum, dampening, weight_decay, nesterov);
+                return new SGDOptimizer(parameters, learningRate, momentum, dampening, weight_decay, nesterov);
+            }
+
+            public static SGDOptimizer SGD(IEnumerable<ParameterGroup> parameters, double lr = 1e-3, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
+            {
+                return new SGDOptimizer(parameters, lr, momentum, dampening, weight_decay, nesterov);
             }
         }
     }
@@ -361,6 +366,7 @@ namespace TorchSharp
         /// <summary>
         /// Base class to help with a couple of the things that managed-code implementations need.
         /// </summary>
+
         public class OptimizerHelper : Optimizer, ILearningRateController
         {
             public OptimizerHelper(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate) : base(IntPtr.Zero)
@@ -389,6 +395,224 @@ namespace TorchSharp
             protected IEnumerable<(string name, Modules.Parameter parameter)> _parameters;
         }
 
+        public class NewOptimizerHelper : Optimizer, ILearningRateController
+        {
+            public NewOptimizerHelper() : base(IntPtr.Zero)
+            {
+            }
+
+            public override void zero_grad()
+            {
+                foreach (var g in _parameter_groups) {
+
+                    foreach (var p in g.Parameters) {
+
+                        using var grad = p.grad();
+
+                        if (grad is null) continue;
+
+                        grad.zero_().Dispose();
+                    }
+                }
+            }
+
+            public virtual void add_param_group(ParameterGroup param_group)
+            {
+                _parameter_groups.Add(param_group);
+            }
+
+            public double LearningRate { get => _defaults.LearningRate.Value; set => _defaults.LearningRate = value; }
+
+            public double InitialLearningRate { get => _defaults.InitialLearningRate; set => _defaults.InitialLearningRate = value; }
+
+            protected OptimizerOptions _defaults;
+            protected IList<ParameterGroup> _parameter_groups;
+        }
+
+        public class OptimizerOptions
+        {
+            public double? LearningRate { get; set; }
+            public double InitialLearningRate { get; set; }
+        }
+
+        public class ParameterGroup : ILearningRateController
+        {
+            public IEnumerable<Parameter> Parameters { get; set; }
+
+            public OptimizerOptions Options { get; set; }
+
+            public double LearningRate { get => Options.LearningRate.Value; set => Options.LearningRate = value; }
+            public double InitialLearningRate { get => Options.InitialLearningRate; set => Options.InitialLearningRate = value; }
+        }
+
+        public class SGDOptimizer : NewOptimizerHelper, IMomentum
+        {
+            /// <summary>
+            /// Implements stochastic gradient descent (optionally with momentum).
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr">Learning rate</param>
+            /// <param name="momentum">Momentum factor (default: 0)</param>
+            /// <param name="dampening">Dampening for momentum (default: 0)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
+            /// <param name="maximize"></param>
+            /// <returns></returns>
+            public SGDOptimizer(IEnumerable<Parameter> parameters, double lr = 1e-3, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
+                : this(new ParameterGroup[] { new ParameterGroup { Parameters = parameters.ToList() } }, lr, momentum, dampening, weight_decay, nesterov, maximize)
+            {
+            }
+
+            public SGDOptimizer(IEnumerable<ParameterGroup> parameters, double lr = 1e-3, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
+            {
+                if (momentum < 0.0) throw new ArgumentException($"Invalid momentum value: {momentum}");
+                if (weight_decay < 0.0) throw new ArgumentException($"Invalid weight_decay value: {weight_decay}");
+                if (nesterov && (momentum <= 0 || dampening != 0)) throw new ArgumentException("Nesterov momentum requires a momentum and zero dampening");
+
+                var options = new OptimizerOptions {
+                    LearningRate = lr,
+                    InitialLearningRate = lr,
+                    dampening = dampening,
+                    maximize = maximize,
+                    momentum = momentum,
+                    nesterov = nesterov,
+                    weight_decay = weight_decay
+                };
+
+                _defaults = options;
+                _parameter_groups = new List<ParameterGroup>();
+
+                foreach (var g in parameters) {
+                    add_param_group(g);
+                }
+            }
+
+            public override Tensor step(Func<Tensor> closure = null)
+            {
+                Tensor loss = null;
+
+                if (closure != null) {
+                    using (var _ = torch.enable_grad())
+                        loss = closure();
+                }
+
+                using (var _ = torch.no_grad()) {
+
+                    using (var d = torch.NewDisposeScope()) {
+
+                        foreach (var group in _parameter_groups) {
+
+                            var options = group.Options as OptimizerOptions;
+                            var momentum = options.momentum.Value;
+                            var dampening = options.dampening.Value;
+                            var weight_decay = options.weight_decay.Value;
+                            var nesterov = options.nesterov.Value;
+                            var maximize = options.maximize.Value;
+                            var lr = options.LearningRate.Value;
+
+                            foreach (var param in group.Parameters) {
+
+                                var state = _state[param];
+
+                                var grad = param.grad();
+
+                                if (grad is null) continue;
+
+                                if (weight_decay != 0) {
+                                    grad = grad.add(param, alpha: weight_decay);
+                                }
+
+                                if (momentum != 0) {
+                                    var buf = state.momentum_buffer;
+
+                                    if (buf is null) {
+                                        buf = grad.clone().detach().DetatchFromDisposeScope();
+                                        state.momentum_buffer = buf;
+                                    } else {
+                                        buf.mul_(momentum).add_(grad, alpha: (1 - dampening));
+                                    }
+
+                                    if (nesterov) {
+                                        grad = grad.add(buf, alpha: momentum);
+                                    } else {
+                                        grad = buf;
+                                    }
+
+                                    state.momentum_buffer = buf;
+                                }
+
+                                var alpha = maximize ? lr : -lr;
+                                param.add_(grad, alpha: alpha);
+
+                            }
+                        }
+
+                        d.DisposeEverything();
+                    }
+                }
+
+                return loss;
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                foreach (var (name, state) in _state) {
+                    if (state.momentum_buffer is not null) {
+                        state.momentum_buffer.Dispose();
+                    }
+                }
+                _state.Clear();
+            }
+
+            private class State
+            {
+                public Tensor momentum_buffer;
+            }
+
+            public override void add_param_group(ParameterGroup param_group)
+            {
+                var def = _defaults as OptimizerOptions;
+                if (param_group.Options is null) {
+                    param_group.Options = new OptimizerOptions();
+                }
+
+                var opt = param_group.Options as OptimizerOptions;
+
+                // Make sure all the options are set.
+                if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
+                if (!opt.momentum.HasValue) opt.momentum = def.momentum;
+                if (!opt.dampening.HasValue) opt.dampening = def.dampening;
+                if (!opt.weight_decay.HasValue) opt.weight_decay = def.weight_decay;
+                if (!opt.nesterov.HasValue) opt.nesterov = def.nesterov;
+                if (!opt.maximize.HasValue) opt.maximize = def.maximize;
+
+                opt.InitialLearningRate = opt.LearningRate.Value;
+
+                _parameter_groups.Add(param_group);
+
+                foreach (var p in param_group.Parameters) {
+                    var state = new State();
+                    _state[p] = state;
+                    state.momentum_buffer = null;
+                }
+            }
+
+            public class OptimizerOptions : Modules.OptimizerOptions
+            {
+                public double? momentum;
+                public double? dampening;
+                public double? weight_decay;
+                public bool? nesterov;
+                public bool? maximize;
+            }
+
+
+            private Dictionary<Parameter, State> _state = new Dictionary<Parameter, State>();
+
+            public double Momentum { get => (_defaults as OptimizerOptions).momentum.Value; set => (_defaults as OptimizerOptions).momentum = value; }
+        }
+
         public class AdadeltaOptimizer : OptimizerHelper, ILearningRateController
         {
             /// <summary>
@@ -399,7 +623,7 @@ namespace TorchSharp
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            public AdadeltaOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0) : base(named_parameters, lr)
+            public AdadeltaOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0) : base(named_parameters, lr)
             {
                 LearningRate = lr;
                 InitialLearningRate = lr;
@@ -497,7 +721,7 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public AdamaxOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0) : base(named_parameters, lr)
+            public AdamaxOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0) : base(named_parameters, lr)
             {
                 LearningRate = lr;
                 InitialLearningRate = lr;
@@ -609,7 +833,7 @@ namespace TorchSharp
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="momentum_decay">Momentum decay</param>
             /// <returns></returns>
-            public NAdamOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3) : base(named_parameters, lr)
+            public NAdamOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3) : base(named_parameters, lr)
             {
                 LearningRate = lr;
                 InitialLearningRate = lr;
@@ -729,7 +953,7 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public RAdamOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0) : base(named_parameters, lr)
+            public RAdamOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0) : base(named_parameters, lr)
             {
                 LearningRate = lr;
                 InitialLearningRate = lr;
@@ -848,7 +1072,7 @@ namespace TorchSharp
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public ASGDOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0) : base(named_parameters, lr)
+            public ASGDOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0) : base(named_parameters, lr)
             {
                 LearningRate = lr;
                 InitialLearningRate = lr;
@@ -938,121 +1162,6 @@ namespace TorchSharp
             private double _weight_decay;
         }
 
-        public class SGDOptimizer : OptimizerHelper, IMomentum
-        {
-            /// <summary>
-            /// Implements stochastic gradient descent (optionally with momentum).
-            /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
-            /// <param name="lr">Learning rate</param>
-            /// <param name="momentum">Momentum factor (default: 0)</param>
-            /// <param name="dampening">Dampening for momentum (default: 0)</param>
-            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
-            /// <param name="maximize"></param>
-            /// <returns></returns>
-            public SGDOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false) : base(named_parameters, lr)
-            {
-                if (momentum < 0.0) throw new ArgumentException($"Invalid momentum value: {momentum}");
-                if (weight_decay < 0.0) throw new ArgumentException($"Invalid weight_decay value: {weight_decay}");
-                if (nesterov && (momentum <= 0 || dampening != 0)) throw new ArgumentException("Nesterov momentum requires a momentum and zero dampening");
-
-                LearningRate = lr;
-                InitialLearningRate = lr;
-                _momentum = momentum;
-                _dampening = dampening;
-                _weight_decay = weight_decay;
-                _nesterov = nesterov;
-                _maximize = maximize;
-
-                foreach (var (name, p) in named_parameters) {
-                    var state = new State();
-                    _state[name] = state;
-                    state.momentum_buffer = null;
-                }
-            }
-
-            public override Tensor step(Func<Tensor> closure = null)
-            {
-                Tensor loss = null;
-
-                if (closure != null) {
-                    using (var _ = torch.enable_grad())
-                        loss = closure();
-                }
-
-                using (var _ = torch.no_grad()) {
-
-                    using (var d = torch.NewDisposeScope()) {
-
-                        foreach (var (name, param) in _parameters) {
-
-                            var state = _state[name];
-
-                            var grad = param.grad();
-
-                            if (grad is null) continue;
-
-                            if (_weight_decay != 0) {
-                                grad = grad.add(param, alpha: _weight_decay);
-                            }
-
-                            if (_momentum != 0) {
-                                var buf = state.momentum_buffer;
-
-                                if (buf is null) {
-                                    buf = grad.clone().detach().DetatchFromDisposeScope();
-                                    state.momentum_buffer = buf;
-                                } else {
-                                    buf.mul_(_momentum).add_(grad, alpha: (1 - _dampening));
-                                }
-
-                                if (_nesterov) {
-                                    grad = grad.add(buf, alpha: _momentum);
-                                } else {
-                                    grad = buf;
-                                }
-
-                                state.momentum_buffer = buf;
-                            }
-
-                            var alpha = _maximize ? LearningRate : -LearningRate;
-                            param.add_(grad, alpha: alpha);
-
-                        }
-
-                        d.DisposeEverything();
-                    }
-                }
-
-                return loss;
-            }
-
-            protected override void Dispose(bool disposing)
-            {
-                base.Dispose(disposing);
-                foreach (var (name, state) in _state) {
-                    if (state.momentum_buffer is not null) {
-                        state.momentum_buffer.Dispose();
-                    }
-                }
-            }
-
-            private class State
-            {
-                public Tensor momentum_buffer;
-            }
-
-            private Dictionary<string, State> _state = new Dictionary<string, State>();
-            private double _momentum;
-            private double _dampening;
-            private double _weight_decay;
-            private bool _nesterov;
-            private bool _maximize;
-
-            public double Momentum { get => _momentum; set => _momentum = value; }
-        }
-
         public class RpropOptimizer : OptimizerHelper, ILearningRateController
         {
             /// <summary>
@@ -1067,7 +1176,7 @@ namespace TorchSharp
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
             /// <returns></returns>
-            public RpropOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50) : base(named_parameters, lr)
+            public RpropOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50) : base(named_parameters, lr)
             {
                 LearningRate = lr;
                 InitialLearningRate = lr;
@@ -1173,7 +1282,7 @@ namespace TorchSharp
             /// <param name="initial_accumulator_value"></param>
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-10)</param>
             /// <returns></returns>
-            public AdagradOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10) : base(named_parameters, learningRate)
+            public AdagradOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double learningRate = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10) : base(named_parameters, learningRate)
             {
                 if (learningRate < 0) throw new ArgumentException($"Invalid learning rate: {learningRate}");
                 if (eps < 0) throw new ArgumentException($"Invalid ε: {eps}");
@@ -1283,7 +1392,7 @@ namespace TorchSharp
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm</param>
             /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
             /// <returns></returns>
-            public AdamOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false) : base(named_parameters, lr)
+            public AdamOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false) : base(named_parameters, lr)
             {
                 if (lr < 0) throw new ArgumentException($"Invalid learning rate: {lr}");
                 if (eps < 0) throw new ArgumentException($"Invalid ε: {eps}");
@@ -1423,7 +1532,7 @@ namespace TorchSharp
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm</param>
             /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
             /// <returns></returns>
-            public AdamWOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false) : base(named_parameters, lr)
+            public AdamWOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false) : base(named_parameters, lr)
             {
                 if (lr < 0) throw new ArgumentException($"Invalid learning rate: {lr}");
                 if (eps < 0) throw new ArgumentException($"Invalid ε: {eps}");
@@ -1555,7 +1664,7 @@ namespace TorchSharp
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="centered">if ``True``, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
             /// <returns></returns>
-            public RMSPropOptimizer(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double lr = 1e-3, double eps = 1e-8, double alpha = 0.99, double weight_decay = 0, double momentum = 0.0, bool centered = false) : base(named_parameters, lr)
+            public RMSPropOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-3, double eps = 1e-8, double alpha = 0.99, double weight_decay = 0, double momentum = 0.0, bool centered = false) : base(named_parameters, lr)
             {
                 if (lr < 0) throw new ArgumentException($"Invalid learning rate: {lr}");
                 if (eps < 0) throw new ArgumentException($"Invalid ε: {eps}");
