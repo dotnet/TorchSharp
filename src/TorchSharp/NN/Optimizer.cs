@@ -116,7 +116,7 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Optimizer_getParameters(HType module, AllocatePinnedArray allocator);
 
-                public IEnumerable<Tensor> parameters()
+                public virtual IEnumerable<Parameter> parameters()
                 {
                     IntPtr[] ptrArray;
 
@@ -125,7 +125,7 @@ namespace TorchSharp
                         torch.CheckForErrors();
                         ptrArray = pa.Array;
                     }
-                    return ptrArray.Select(x => new Tensor(x));
+                    return ptrArray.Select(x => new Parameter(x));
                 }
             }
 
@@ -307,16 +307,33 @@ namespace TorchSharp
             ///
             /// It has been proposed in Acceleration of stochastic approximation by averaging.
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
             /// <param name="lr ">Learning rate</param>
             /// <param name="lambd">Decay term (default: 1e-4)</param>
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public static ASGDOptimizer ASGD(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
+            public static ASGD ASGD(IEnumerable<Parameter> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
             {
-                return new ASGDOptimizer(named_parameters, lr, lambd, alpha, t0, weight_decay);
+                return new Modules.ASGD(parameters, lr, lambd, alpha, t0, weight_decay);
+            }
+
+            /// <summary>
+            /// Implements Averaged Stochastic Gradient Descent.
+            ///
+            /// It has been proposed in Acceleration of stochastic approximation by averaging.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="lambd">Decay term (default: 1e-4)</param>
+            /// <param name="alpha">Power for eta update (default: 0.75)</param>
+            /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public static ASGD ASGD(IEnumerable<ParamsGroup<ASGD.Options>> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
+            {
+                return new Modules.ASGD(parameters, lr, lambd, alpha, t0, weight_decay);
             }
 
             /// <summary>
@@ -343,15 +360,27 @@ namespace TorchSharp
             /// <param name="dampening">Dampening for momentum (default: 0)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
+            /// <param name="maximize"></param>
             /// <returns></returns>
-            public static SGDOptimizer SGD(IEnumerable<Parameter> parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false)
+            public static Modules.SGD SGD(IEnumerable<Parameter> parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
             {
-                return new SGDOptimizer(parameters, learningRate, momentum, dampening, weight_decay, nesterov);
+                return new Modules.SGD(parameters, learningRate, momentum, dampening, weight_decay, nesterov, maximize);
             }
 
-            public static SGDOptimizer SGD(IEnumerable<ParameterGroup> parameters, double lr = 1e-3, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
+            /// <summary>
+            /// Implements stochastic gradient descent (optionally with momentum).
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="learningRate">Learning rate</param>
+            /// <param name="momentum">Momentum factor (default: 0)</param>
+            /// <param name="dampening">Dampening for momentum (default: 0)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
+            /// <param name="maximize"></param>
+            /// <returns></returns>
+            public static Modules.SGD SGD(IEnumerable<ParamsGroup<SGD.Options>> parameters, double learningRate, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
             {
-                return new SGDOptimizer(parameters, lr, momentum, dampening, weight_decay, nesterov);
+                return new Modules.SGD(parameters, learningRate, momentum, dampening, weight_decay, nesterov, maximize);
             }
         }
     }
@@ -388,6 +417,11 @@ namespace TorchSharp
                 }
             }
 
+            public override IEnumerable<Parameter> parameters()
+            {
+                return _parameters.Select(p => p.parameter);
+            }
+
             public double LearningRate { get; set; }
 
             public double InitialLearningRate { get; set; }
@@ -416,7 +450,12 @@ namespace TorchSharp
                 }
             }
 
-            public virtual void add_param_group(ParameterGroup param_group)
+            public override IEnumerable<Parameter> parameters()
+            {
+                return _parameter_groups.SelectMany(pg => pg.Parameters);
+            }
+
+            public virtual void add_param_group(ParamsGroup param_group)
             {
                 _parameter_groups.Add(param_group);
             }
@@ -426,7 +465,7 @@ namespace TorchSharp
             public double InitialLearningRate { get => _defaults.InitialLearningRate; set => _defaults.InitialLearningRate = value; }
 
             protected OptimizerOptions _defaults;
-            protected IList<ParameterGroup> _parameter_groups;
+            protected IList<ParamsGroup> _parameter_groups;
         }
 
         public class OptimizerOptions
@@ -435,7 +474,7 @@ namespace TorchSharp
             public double InitialLearningRate { get; set; }
         }
 
-        public class ParameterGroup : ILearningRateController
+        public class ParamsGroup : ILearningRateController
         {
             public IEnumerable<Parameter> Parameters { get; set; }
 
@@ -445,7 +484,22 @@ namespace TorchSharp
             public double InitialLearningRate { get => Options.InitialLearningRate; set => Options.InitialLearningRate = value; }
         }
 
-        public class SGDOptimizer : NewOptimizerHelper, IMomentum
+        public class ParamsGroup<TOptions> : ParamsGroup where TOptions : OptimizerOptions
+        {
+            public ParamsGroup()
+            {
+            }
+
+            public ParamsGroup(IEnumerable<Parameter> parameters, TOptions options = null)
+            {
+                base.Options = options;
+            }
+
+            public new OptimizerOptions Options { get => base.Options; set => base.Options = value; }
+
+        }
+
+        public class SGD : NewOptimizerHelper, IMomentum
         {
             /// <summary>
             /// Implements stochastic gradient descent (optionally with momentum).
@@ -458,18 +512,29 @@ namespace TorchSharp
             /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
             /// <param name="maximize"></param>
             /// <returns></returns>
-            public SGDOptimizer(IEnumerable<Parameter> parameters, double lr = 1e-3, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
-                : this(new ParameterGroup[] { new ParameterGroup { Parameters = parameters.ToList() } }, lr, momentum, dampening, weight_decay, nesterov, maximize)
+            public SGD(IEnumerable<Parameter> parameters, double lr = 1e-3, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
+                : this(new ParamsGroup<Options>[] { new ParamsGroup<Options> { Parameters = parameters.ToList() } }, lr, momentum, dampening, weight_decay, nesterov, maximize)
             {
             }
 
-            public SGDOptimizer(IEnumerable<ParameterGroup> parameters, double lr = 1e-3, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
+            /// <summary>
+            /// Implements stochastic gradient descent (optionally with momentum).
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr">Learning rate</param>
+            /// <param name="momentum">Momentum factor (default: 0)</param>
+            /// <param name="dampening">Dampening for momentum (default: 0)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
+            /// <param name="maximize"></param>
+            /// <returns></returns>
+            public SGD(IEnumerable<ParamsGroup<Options>> parameters, double lr = 1e-3, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
             {
                 if (momentum < 0.0) throw new ArgumentException($"Invalid momentum value: {momentum}");
                 if (weight_decay < 0.0) throw new ArgumentException($"Invalid weight_decay value: {weight_decay}");
                 if (nesterov && (momentum <= 0 || dampening != 0)) throw new ArgumentException("Nesterov momentum requires a momentum and zero dampening");
 
-                var options = new OptimizerOptions {
+                var options = new Options {
                     LearningRate = lr,
                     InitialLearningRate = lr,
                     dampening = dampening,
@@ -480,7 +545,7 @@ namespace TorchSharp
                 };
 
                 _defaults = options;
-                _parameter_groups = new List<ParameterGroup>();
+                _parameter_groups = new List<ParamsGroup>();
 
                 foreach (var g in parameters) {
                     add_param_group(g);
@@ -502,7 +567,7 @@ namespace TorchSharp
 
                         foreach (var group in _parameter_groups) {
 
-                            var options = group.Options as OptimizerOptions;
+                            var options = group.Options as Options;
                             var momentum = options.momentum.Value;
                             var dampening = options.dampening.Value;
                             var weight_decay = options.weight_decay.Value;
@@ -570,14 +635,14 @@ namespace TorchSharp
                 public Tensor momentum_buffer;
             }
 
-            public override void add_param_group(ParameterGroup param_group)
+            public override void add_param_group(ParamsGroup param_group)
             {
-                var def = _defaults as OptimizerOptions;
+                var def = _defaults as Options;
                 if (param_group.Options is null) {
-                    param_group.Options = new OptimizerOptions();
+                    param_group.Options = new Options();
                 }
 
-                var opt = param_group.Options as OptimizerOptions;
+                var opt = param_group.Options as Options;
 
                 // Make sure all the options are set.
                 if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
@@ -598,7 +663,7 @@ namespace TorchSharp
                 }
             }
 
-            public class OptimizerOptions : Modules.OptimizerOptions
+            public class Options : Modules.OptimizerOptions
             {
                 public double? momentum;
                 public double? dampening;
@@ -610,7 +675,7 @@ namespace TorchSharp
 
             private Dictionary<Parameter, State> _state = new Dictionary<Parameter, State>();
 
-            public double Momentum { get => (_defaults as OptimizerOptions).momentum.Value; set => (_defaults as OptimizerOptions).momentum = value; }
+            public double Momentum { get => (_defaults as Options).momentum.Value; set => (_defaults as Options).momentum = value; }
         }
 
         public class AdadeltaOptimizer : OptimizerHelper, ILearningRateController
@@ -1058,36 +1123,53 @@ namespace TorchSharp
             }
         }
 
-        public class ASGDOptimizer : OptimizerHelper, ILearningRateController
+        public class ASGD : NewOptimizerHelper, ILearningRateController
         {
             /// <summary>
             /// Implements ASGD algorithm (a variant of Adam based on infinity norm).
             ///
             /// It has been proposed in Adam: A Method for Stochastic Optimization.
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
             /// <param name="lr ">Learning rate</param>
             /// <param name="lambd">Decay term (default: 1e-4)</param>
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public ASGDOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0) : base(named_parameters, lr)
+            public ASGD(IEnumerable<Parameter> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
+                : this(new ParamsGroup<Options>[] { new ParamsGroup<Options> { Parameters = parameters.ToList() } }, lr, lambd, alpha, t0, weight_decay)
             {
-                LearningRate = lr;
-                InitialLearningRate = lr;
-                _lambd = lambd;
-                _alpha = alpha;
-                _t0 = t0;
-                _weight_decay = weight_decay;
+            }
 
-                foreach (var (name, p) in named_parameters) {
-                    var state = new State();
-                    _state[name] = state;
-                    state.step = 0;
-                    state.eta = lr;
-                    state.mu = 1;
-                    state.ax = torch.zeros_like(p);
+            /// <summary>
+            /// Implements ASGD algorithm (a variant of Adam based on infinity norm).
+            ///
+            /// It has been proposed in Adam: A Method for Stochastic Optimization.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="lambd">Decay term (default: 1e-4)</param>
+            /// <param name="alpha">Power for eta update (default: 0.75)</param>
+            /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public ASGD(IEnumerable<ParamsGroup<Options>> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
+            {
+                var options = new Options {
+                    LearningRate = lr,
+                    InitialLearningRate = lr,
+                    lambd = lambd,
+                    alpha = alpha,
+                    t0 = t0,
+                    weight_decay = weight_decay
+                };
+
+                _defaults = options;
+                _parameter_groups = new List<ParamsGroup>();
+
+                foreach (var g in parameters) {
+                    add_param_group(g);
                 }
             }
 
@@ -1103,33 +1185,43 @@ namespace TorchSharp
 
                     using (var d = torch.NewDisposeScope()) {
 
-                        foreach (var (name, param) in _parameters) {
+                        foreach (var group in _parameter_groups) {
 
-                            var grad = param.grad();
+                            var options = group.Options as Options;
+                            var lambd = options.lambd.Value;
+                            var alpha = options.alpha.Value;
+                            var weight_decay = options.weight_decay.Value;
+                            var t0 = options.t0.Value;
+                            var lr = options.LearningRate.Value;
 
-                            if (grad is null) continue;
+                            foreach (var param in group.Parameters) {
 
-                            if (grad.is_sparse) throw new ArgumentException("ASGD does not support sparse gradients");
+                                var grad = param.grad();
 
-                            var state = _state[name];
+                                if (grad is null) continue;
 
-                            state.step += 1;
+                                if (grad.is_sparse) throw new ArgumentException("ASGD does not support sparse gradients");
 
-                            grad = (_weight_decay != 0)
-                                ? grad.add(param, alpha: _weight_decay)
-                                : grad.alias();
+                                var state = _state[param];
 
-                            param.mul_(1 - _lambd * state.eta);
-                            param.add_(grad, alpha: -state.eta);
+                                state.step += 1;
 
-                            if (state.mu != 1) {
-                                state.ax.add_(param.sub(state.ax).mul(state.mu));
-                            } else {
-                                state.ax.copy_(param);
+                                grad = (weight_decay != 0)
+                                    ? grad.add(param, alpha: weight_decay)
+                                    : grad.alias();
+
+                                param.mul_(1 - lambd * state.eta);
+                                param.add_(grad, alpha: -state.eta);
+
+                                if (state.mu != 1) {
+                                    state.ax.add_(param.sub(state.ax).mul(state.mu));
+                                } else {
+                                    state.ax.copy_(param);
+                                }
+
+                                state.eta = lr / Math.Pow((1 + lambd * lr * state.step), alpha);
+                                state.mu = 1 / Math.Max(1, state.step - t0);
                             }
-
-                            state.eta = LearningRate / Math.Pow((1 + _lambd * LearningRate * state.step), _alpha);
-                            state.mu = 1 / Math.Max(1, state.step - _t0);
                         }
 
                         d.DisposeEverything();
@@ -1145,6 +1237,7 @@ namespace TorchSharp
                 foreach (var (name, state) in _state) {
                     state.ax.Dispose();
                 }
+                _state.Clear();
             }
 
             private class State
@@ -1155,11 +1248,45 @@ namespace TorchSharp
                 public Tensor ax;
             }
 
-            private Dictionary<string, State> _state = new Dictionary<string, State>();
-            private double _lambd;
-            private double _alpha;
-            private double _t0;
-            private double _weight_decay;
+            public override void add_param_group(ParamsGroup param_group)
+            {
+                var def = _defaults as Options;
+                if (param_group.Options is null) {
+                    param_group.Options = new Options();
+                }
+
+                var opt = param_group.Options as Options;
+
+                // Make sure all the options are set.
+                if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
+                if (!opt.lambd.HasValue) opt.lambd = def.lambd;
+                if (!opt.alpha.HasValue) opt.alpha = def.alpha;
+                if (!opt.weight_decay.HasValue) opt.weight_decay = def.weight_decay;
+                if (!opt.t0.HasValue) opt.t0 = def.t0;
+
+                opt.InitialLearningRate = opt.LearningRate.Value;
+
+                _parameter_groups.Add(param_group);
+
+                foreach (var p in param_group.Parameters) {
+                    var state = new State();
+                    _state[p] = state;
+                    state.step = 0;
+                    state.eta = param_group.LearningRate;
+                    state.mu = 1;
+                    state.ax = torch.zeros_like(p);
+                }
+            }
+
+            public class Options : OptimizerOptions
+            {
+                public double? lambd;
+                public double? alpha;
+                public double? weight_decay;
+                public double? t0;
+            }
+
+            private Dictionary<Parameter, State> _state = new Dictionary<Parameter, State>();
         }
 
         public class RpropOptimizer : OptimizerHelper, ILearningRateController

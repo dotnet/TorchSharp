@@ -8,6 +8,7 @@ open System.Diagnostics
 open System.Collections.Generic
 
 open TorchSharp
+open TorchSharp.Modules
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
 
@@ -244,7 +245,17 @@ let run epochs =
 
     use model = new TransformerModel(ntokens, device)
     let lr = 2.50
-    let optimizer = SGD(model.parameters(), lr)
+
+    let pgs = [|
+        ParamsGroup<SGD.Options>(Parameters = model.parameters(), Options = SGD.Options(momentum = 1.0, dampening = 0.5));
+        ParamsGroup<SGD.Options>(model.parameters(), SGD.Options(momentum = 1.0, dampening = 0.5))
+    |]
+
+    let optimizer = SGD([|
+        ParamsGroup<SGD.Options>(Parameters = model.parameters(), Options = SGD.Options(LearningRate = 0.005, momentum = 1.0, dampening = 0.5));
+        ParamsGroup<SGD.Options>(model.parameters(), SGD.Options(momentum = 1.0, dampening = 0.5))
+    |], lr)
+
     let scheduler = lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch=15)
 
     let totalTime = Stopwatch()
