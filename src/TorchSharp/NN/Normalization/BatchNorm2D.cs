@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 using static TorchSharp.torch;
 
+#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -46,6 +47,8 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_BatchNorm2d_get_var(torch.nn.Module.HType module);
             [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_BatchNorm2d_get_batches(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
             private static extern void THSNN_BatchNorm2d_set_mean(torch.nn.Module.HType module, IntPtr weight);
             [DllImport("LibTorchSharp")]
             private static extern void THSNN_BatchNorm2d_set_var(torch.nn.Module.HType module, IntPtr weight);
@@ -76,7 +79,7 @@ namespace TorchSharp
                 }
             }
 
-            public Parameter running_mean {
+            public Tensor? running_mean {
                 get {
                     var res = THSNN_BatchNorm2d_get_mean(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
@@ -85,11 +88,11 @@ namespace TorchSharp
                 set {
                     THSNN_BatchNorm2d_set_mean(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
-                    ConditionallyRegisterParameter("bias", value);
+                    ConditionallyRegisterBuffer("running_mean", value);
                 }
             }
 
-            public Parameter running_var {
+            public Tensor? running_var {
                 get {
                     var res = THSNN_BatchNorm2d_get_var(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
@@ -98,7 +101,15 @@ namespace TorchSharp
                 set {
                     THSNN_BatchNorm2d_set_var(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
-                    ConditionallyRegisterParameter("bias", value);
+                    ConditionallyRegisterBuffer("running_var", value);
+                }
+            }
+
+            public Tensor? num_batches_tracked {
+                get {
+                    var res = THSNN_BatchNorm2d_get_batches(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
+                    return new Parameter(res);
                 }
             }
 

@@ -54,6 +54,17 @@ namespace TorchSharp
                 }
             }
 
+            public override IEnumerable<(string name, Tensor buffer)> named_buffers(bool recurse = true)
+            {
+                if (!recurse) yield break;
+
+                for (var i = 0; i < _names.Count; i++) {
+                    foreach (var (n, p) in _modules[i].named_buffers(true)) {
+                        yield return ($"{_names[i]}.{n}", p);
+                    }
+                }
+            }
+
             public override IEnumerable<(string name, torch.nn.Module module)> named_children()
             {
                 for (var i = 0; i < _names.Count; i++) {

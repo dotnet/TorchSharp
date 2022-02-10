@@ -521,6 +521,25 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Returns the buffer given by target if it exists, otherwise throws an error.
+                /// </summary>
+                /// <param name="target">The fully-qualified string name of the buffer to look for.</param>
+                /// <returns>The tensor referenced by target</returns>
+                public virtual Tensor get_buffer(string target)
+                {
+                    if (_internal_buffers.TryGetValue(target, out var parameter)) {
+                        return parameter;
+                    }
+                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
+                        var prefix = child.name + ".";
+                        var p = child.module.get_buffer(target.Remove(0, prefix.Length));
+                        if (p is not null)
+                            return p;
+                    }
+                    return null;
+                }
+
+                /// <summary>
                 /// Returns the parameter given by target if it exists, otherwise throws an error.
                 /// </summary>
                 /// <param name="target">The fully-qualified string name of the Parameter to look for.</param>
