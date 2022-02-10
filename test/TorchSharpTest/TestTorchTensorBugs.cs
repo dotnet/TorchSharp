@@ -457,7 +457,7 @@ namespace TorchSharp
             var rv = model.get_buffer("stack.1.running_var").clone();
             var nm = model.get_buffer("stack.1.num_batches_tracked").clone();
 
-            model.load(@".\bug510.dat");
+            model.load("bug510.dat");
 
             var w0_ = model.get_parameter("stack.0.weight");
             var w1_ = model.get_parameter("stack.1.weight");
