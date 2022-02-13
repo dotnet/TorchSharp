@@ -496,12 +496,12 @@ namespace TorchSharp
 
                 public virtual bool has_buffer(string target)
                 {
-                    if (_internal_buffers.TryGetValue(target, out var parameter)) {
+                    if (_internal_buffers.TryGetValue(target, out var buffer)) {
                         return true;
                     }
-                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
-                        var prefix = child.name + ".";
-                        if (child.module.has_buffer(target.Remove(0, prefix.Length)))
+                    var splits = target.Split('.');
+                    foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                        if (child.module.has_buffer(target.Remove(0, splits[0].Length+1)))
                             return true;
                     }
                     return false;
@@ -512,9 +512,9 @@ namespace TorchSharp
                     if (_internal_params.TryGetValue(target, out var parameter)) {
                         return true;
                     }
-                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
-                        var prefix = child.name + ".";
-                        if (child.module.has_parameter(target.Remove(0, prefix.Length)))
+                    var splits = target.Split('.');
+                    foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                        if (child.module.has_parameter(target.Remove(0, splits[0].Length + 1)))
                             return true;
                     }
                     return false;
@@ -527,12 +527,13 @@ namespace TorchSharp
                 /// <returns>The tensor referenced by target</returns>
                 public virtual Tensor get_buffer(string target)
                 {
-                    if (_internal_buffers.TryGetValue(target, out var parameter)) {
-                        return parameter;
+                    if (target is null) throw new ArgumentNullException("target");
+                    if (_internal_buffers.TryGetValue(target, out var buffer)) {
+                        return buffer;
                     }
-                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
-                        var prefix = child.name + ".";
-                        var p = child.module.get_buffer(target.Remove(0, prefix.Length));
+                    var splits = target.Split('.');
+                    foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                        var p = child.module.get_buffer(target.Remove(0, splits[0].Length + 1));
                         if (p is not null)
                             return p;
                     }
@@ -549,9 +550,9 @@ namespace TorchSharp
                     if (_internal_params.TryGetValue(target, out var parameter)) {
                         return parameter;
                     }
-                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
-                        var prefix = child.name + ".";
-                        var p = child.module.get_parameter(target.Remove(0, prefix.Length));
+                    var splits = target.Split('.');
+                    foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                        var p = child.module.get_parameter(target.Remove(0, splits[0].Length + 1));
                         if (p is not null)
                             return p;
                     }

@@ -83,7 +83,7 @@ namespace TorchSharp
                 get {
                     var res = THSNN_BatchNorm3d_get_mean(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
-                    return new Parameter(res);
+                    return new Tensor(res);
                 }
                 set {
                     THSNN_BatchNorm3d_set_mean(handle, (value is null ? IntPtr.Zero : value.Handle));
@@ -96,7 +96,7 @@ namespace TorchSharp
                 get {
                     var res = THSNN_BatchNorm3d_get_var(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
-                    return new Parameter(res);
+                    return new Tensor(res);
                 }
                 set {
                     THSNN_BatchNorm3d_set_var(handle, (value is null ? IntPtr.Zero : value.Handle));
@@ -109,7 +109,7 @@ namespace TorchSharp
                 get {
                     var res = THSNN_BatchNorm3d_get_batches(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
-                    return new Parameter(res);
+                    return new Tensor(res);
                 }
             }
 
