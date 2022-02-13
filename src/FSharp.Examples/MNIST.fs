@@ -141,7 +141,7 @@ let trainingLoop (model:Model) epochs dataset trainData testData =
 
     let epochs = if device.``type`` = DeviceType.CUDA then epochs * 4 else epochs
 
-    let optimizer = Adam(model.named_parameters())
+    let optimizer = Adam(model.parameters())
     lr_scheduler.StepLR(optimizer, 1, 0.7, last_epoch=5) |> ignore
 
     let sw = Stopwatch()

@@ -120,7 +120,7 @@ namespace TorchSharp.Examples
 
             using (var train = new CIFARReader(targetDir, false, _trainBatchSize, shuffle: true, device: device, transforms: new torchvision.ITransform[] { }))
             using (var test = new CIFARReader(targetDir, true, _testBatchSize, device: device))
-            using (var optimizer = torch.optim.Adam(model.named_parameters(), 0.001)) {
+            using (var optimizer = torch.optim.Adam(model.parameters(), 0.001)) {
 
                 Stopwatch totalSW = new Stopwatch();
                 totalSW.Start();

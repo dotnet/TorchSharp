@@ -123,7 +123,7 @@ namespace TorchSharp
 
             double learning_rate = 0.00001;
 
-            var optimizer = torch.optim.Adam(seq.named_parameters(), learning_rate);
+            var optimizer = torch.optim.Adam(seq.parameters(), learning_rate);
 
             Assert.NotNull(optimizer);
         }
@@ -137,7 +137,7 @@ namespace TorchSharp
 
             double learning_rate = 0.00001;
 
-            var optimizer = torch.optim.Adam(seq.named_parameters(), learning_rate);
+            var optimizer = torch.optim.Adam(seq.parameters(), learning_rate);
             var (beta1, beta2) = optimizer.Betas;
             Assert.Equal(0.9, beta1);
             Assert.Equal(0.99, beta2);
@@ -163,7 +163,7 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.Adam(seq.named_parameters());
+            var optimizer = torch.optim.Adam(seq.parameters());
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -195,7 +195,7 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.Adam(seq.named_parameters(), amsgrad: true);
+            var optimizer = torch.optim.Adam(seq.parameters(), amsgrad: true);
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -227,7 +227,7 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.Adam(seq.named_parameters(), amsgrad: true);
+            var optimizer = torch.optim.Adam(seq.parameters(), amsgrad: true);
             var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
 
             var loss = mse_loss(Reduction.Sum);
@@ -268,7 +268,7 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.AdamW(seq.named_parameters());
+            var optimizer = torch.optim.AdamW(seq.parameters());
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -300,7 +300,7 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.AdamW(seq.named_parameters(), amsgrad: true);
+            var optimizer = torch.optim.AdamW(seq.parameters(), amsgrad: true);
             var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
 
             var loss = mse_loss(Reduction.Sum);
@@ -665,16 +665,15 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var pgs = new[]
+            var pgs = new ASGD.ParamGroup[]
             {
-                new ParamsGroup<ASGD.Options>(lin1.parameters(), new () { LearningRate = 0.005f }),
-                new ParamsGroup<ASGD.Options>(lin2.parameters())
+                new (lin1.parameters(), new () { LearningRate = 0.005f }),
+                new (lin2.parameters())
             };
 
-
-            var optimizer = torch.optim.ASGD(new ParamsGroup<ASGD.Options>[]
+            var optimizer = torch.optim.ASGD(new ASGD.ParamGroup[]
             {
-                new () { Parameters = lin1.parameters(), Options = { LearningRate = 0.005f } },
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
                 new () { Parameters = lin2.parameters() }
             });
 
@@ -749,7 +748,7 @@ namespace TorchSharp
             var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = torch.optim.RMSProp(seq.named_parameters(), learning_rate);
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate);
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -786,7 +785,7 @@ namespace TorchSharp
             var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = torch.optim.RMSProp(seq.named_parameters(), learning_rate);
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate);
             var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
 
             var loss = mse_loss(Reduction.Sum);
@@ -822,7 +821,7 @@ namespace TorchSharp
             var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = torch.optim.RMSProp(seq.named_parameters(), learning_rate, alpha: 0.75);
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, alpha: 0.75);
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -855,7 +854,46 @@ namespace TorchSharp
             var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = torch.optim.RMSProp(seq.named_parameters(), learning_rate, centered: true);
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, centered: true);
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingRMSCenteredParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+
+            var optimizer = torch.optim.RMSProp(
+                new RMSProp.ParamGroup[] {
+                    new(lin1.parameters()),
+                    new(lin2.parameters(), lr: learning_rate*10) },
+                learning_rate, centered: true);
+
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -987,9 +1025,10 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var pgs = new Modules.ParamsGroup<SGD.Options>[] {
-                new () { Parameters = lin1.parameters(), Options = { LearningRate = 0.005f } },
-                new () { Parameters = lin2.parameters() } };
+            var pgs = new SGD.ParamGroup[] {
+                new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
+                new (lin2.parameters(), lr: 0.00003, dampening: 0.05, momentum: 0.25)
+            };
 
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
@@ -1332,7 +1371,7 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 3, 28, 28 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.Adam(seq.named_parameters());
+            var optimizer = torch.optim.Adam(seq.parameters());
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -1376,7 +1415,7 @@ namespace TorchSharp
 
                     seq.to((Device)device);
 
-                    var optimizer = torch.optim.Adam(seq.named_parameters());
+                    var optimizer = torch.optim.Adam(seq.parameters());
                     var loss = mse_loss(Reduction.Sum);
 
                     using (Tensor x = torch.randn(new long[] { 64, 3, 28, 28 }, device: (Device)device),
