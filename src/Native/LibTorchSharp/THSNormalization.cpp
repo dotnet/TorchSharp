@@ -115,7 +115,7 @@ NNModule THSNN_InstanceNorm3d_ctor(const int64_t features, const double eps, con
         .affine(affine)
         .track_running_stats(track_running_stats);
 
-    res = create_module<torch::nn::InstanceNorm3dImpl>(opts, outAsAnyModule);
+        res = create_module<torch::nn::InstanceNorm3dImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -170,7 +170,7 @@ NNModule THSNN_LocalResponseNorm_ctor(const int64_t size, const double alpha, co
         .alpha(alpha)
         .beta(beta)
         .k(k);
-    res = create_module<torch::nn::LocalResponseNormImpl>(opts, outAsAnyModule);
+        res = create_module<torch::nn::LocalResponseNormImpl>(opts, outAsAnyModule);
     );
 }
 
@@ -320,7 +320,7 @@ Tensor THSNN_BatchNorm3d_get_mean(const NNModule module)
 {
     CATCH(
         auto m = (*module)->as<torch::nn::BatchNorm3d>()->running_mean;
-    return m.defined() ? ResultTensor(m) : nullptr;
+        return m.defined() ? ResultTensor(m) : nullptr;
     );
     return nullptr;
 }
@@ -329,7 +329,7 @@ Tensor THSNN_BatchNorm3d_get_var(const NNModule module)
 {
     CATCH(
         auto v = (*module)->as<torch::nn::BatchNorm3d>()->running_var;
-    return v.defined() ? ResultTensor(v) : nullptr;
+        return v.defined() ? ResultTensor(v) : nullptr;
     );
     return nullptr;
 }
@@ -338,7 +338,7 @@ Tensor THSNN_BatchNorm3d_get_batches(const NNModule module)
 {
     CATCH(
         auto v = (*module)->as<torch::nn::BatchNorm3d>()->num_batches_tracked;
-    return v.defined() ? ResultTensor(v) : nullptr;
+        return v.defined() ? ResultTensor(v) : nullptr;
     );
     return nullptr;
 }

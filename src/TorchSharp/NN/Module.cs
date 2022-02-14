@@ -499,10 +499,13 @@ namespace TorchSharp
                     if (_internal_buffers.TryGetValue(target, out var buffer)) {
                         return true;
                     }
+
                     var splits = target.Split('.');
-                    foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
-                        if (child.module.has_buffer(target.Remove(0, splits[0].Length+1)))
-                            return true;
+                    if (splits.Length > 1) {
+                        foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                            if (child.module.has_buffer(target.Remove(0, splits[0].Length + 1)))
+                                return true;
+                        }
                     }
                     return false;
                 }
@@ -512,10 +515,13 @@ namespace TorchSharp
                     if (_internal_params.TryGetValue(target, out var parameter)) {
                         return true;
                     }
+
                     var splits = target.Split('.');
-                    foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
-                        if (child.module.has_parameter(target.Remove(0, splits[0].Length + 1)))
-                            return true;
+                    if (splits.Length > 1) {
+                        foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                            if (child.module.has_parameter(target.Remove(0, splits[0].Length + 1)))
+                                return true;
+                        }
                     }
                     return false;
                 }
@@ -531,11 +537,14 @@ namespace TorchSharp
                     if (_internal_buffers.TryGetValue(target, out var buffer)) {
                         return buffer;
                     }
+
                     var splits = target.Split('.');
-                    foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
-                        var p = child.module.get_buffer(target.Remove(0, splits[0].Length + 1));
-                        if (p is not null)
-                            return p;
+                    if (splits.Length > 1) {
+                        foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                            var p = child.module.get_buffer(target.Remove(0, splits[0].Length + 1));
+                            if (p is not null)
+                                return p;
+                        }
                     }
                     return null;
                 }
@@ -550,11 +559,14 @@ namespace TorchSharp
                     if (_internal_params.TryGetValue(target, out var parameter)) {
                         return parameter;
                     }
+
                     var splits = target.Split('.');
-                    foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
-                        var p = child.module.get_parameter(target.Remove(0, splits[0].Length + 1));
-                        if (p is not null)
-                            return p;
+                    if (splits.Length > 1) {
+                        foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                            var p = child.module.get_parameter(target.Remove(0, splits[0].Length + 1));
+                            if (p is not null)
+                                return p;
+                        }
                     }
                     return null;
                 }
