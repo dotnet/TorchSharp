@@ -4,6 +4,12 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.96.1
 
+__Fixed Bugs:__
+
+#510 Module.Load throws Mismatched state_dict sizes exception on BatchNorm1d<br/>
+
+## NuGet Version 0.96.1
+
 __API Changes:__
 
 __NOTE__: This release contains breaking changes.
@@ -18,15 +24,15 @@ __API Changes:__
 
 __NOTE__: This release contains breaking changes.
 
-'Module.named_parameters()', 'parameters()', 'named_modules()', 'named_children()' all return IEnumerable instances instead of arrays.
-Adding weight and bias properties to the RNN modules.
+'Module.named_parameters()', 'parameters()', 'named_modules()', 'named_children()' all return IEnumerable instances instead of arrays.<br/>
+Adding weight and bias properties to the RNN modules.<br/>
 Lower-cased names: Module.Train --> Module.train and Module.Eval --> Module.eval
 
 __Fixed Bugs:__
 
-#500 BatchNorm1d throws exception during eval with batch size of 1
-#499 Setting Linear.weight is not reflected in 'parameters()'
-#496 Wrong output shape of torch.nn.Conv2d with 2d stride overload
+#500 BatchNorm1d throws exception during eval with batch size of 1<br/>
+#499 Setting Linear.weight is not reflected in 'parameters()'<br/>
+#496 Wrong output shape of torch.nn.Conv2d with 2d stride overload<br/>
 
 ## NuGet Version 0.95.4
 
