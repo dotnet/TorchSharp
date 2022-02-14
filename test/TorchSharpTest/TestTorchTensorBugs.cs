@@ -443,5 +443,63 @@ namespace TorchSharp
 
             public override torch.Tensor forward(torch.Tensor t) => bn1.forward(t);
         }
+
+        [Fact]
+        public void ValidateIssue510()
+        {
+            var model = new Module510(1, 32);
+            model.forward(torch.randn(16, 1, 32));
+
+            var w0 = model.get_parameter("stack.0.weight").clone();
+            var w1 = model.get_parameter("stack.1.weight").clone();
+            var b1 = model.get_parameter("stack.1.bias").clone();
+            var rm = model.get_buffer("stack.1.running_mean").clone();
+            var rv = model.get_buffer("stack.1.running_var").clone();
+            var nm = model.get_buffer("stack.1.num_batches_tracked").clone();
+
+            model.load("bug510.dat");
+
+            var w0_ = model.get_parameter("stack.0.weight");
+            var w1_ = model.get_parameter("stack.1.weight");
+            var b1_ = model.get_parameter("stack.1.bias");
+            var rm_ = model.get_buffer("stack.1.running_mean");
+            var rv_ = model.get_buffer("stack.1.running_var");
+            var nm_ = model.get_buffer("stack.1.num_batches_tracked");
+
+            Assert.NotEqual(w0, w0_);
+            Assert.NotEqual(w1, w1_);
+            Assert.NotEqual(b1, b1_);
+            Assert.NotEqual(rm, rm_);
+            Assert.NotEqual(rv, rv_);
+            Assert.Equal(1, nm.item<long>());
+            Assert.Equal(0, nm_.item<long>());
+        }
+
+        internal class Module510 : Module
+        {
+            private readonly Module stack;
+
+            public Module510(int in_channels, int out_channels, int kernel_size=3, int stride = 1, int padding = 0) : base(String.Empty)
+            {
+                var temp = BatchNorm1d(out_channels);               
+                this.stack = Sequential(
+                    Conv1d(in_channels, out_channels, 3, stride: stride, padding: padding, bias: false),
+                    temp,
+                    ReLU(inPlace: true)
+                );
+
+                temp.weight = Parameter(torch.randn(temp.weight.shape));
+                temp.bias = Parameter(torch.randn(temp.bias.shape));
+                if (temp.running_mean is not null) temp.running_mean = torch.randn(temp.running_mean.shape);
+                if (temp.running_var is not null) temp.running_var = torch.randn(temp.running_var.shape);
+
+                this.RegisterComponents();
+            }
+
+            public override torch.Tensor forward(torch.Tensor t)
+            {
+                return this.stack.forward(t);
+            }
+        }
     }
 }
