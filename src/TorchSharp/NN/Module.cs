@@ -615,7 +615,7 @@ namespace TorchSharp
                 /// <param name="name">Name of the submodule.</param>
                 /// <param name="submodule">The module to register.</param>
                 /// <exception cref="InvalidOperationException"></exception>
-                internal virtual void register_module(string name, Module submodule)
+                public virtual void register_module(string name, Module submodule)
                 {
                     if (submodule is null || submodule.handle.IsInvalid) {
                         if (_internal_submodules.ContainsKey(name)) {

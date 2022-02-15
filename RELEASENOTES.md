@@ -4,19 +4,17 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.96.1
 
+__API Changes:__
+
+__NOTE__: This release contains breaking changes.<br/>
+
+The APIs to create optimizers all take 'named_parameters' rather than 'parameters' now.<br/>
+
 __Fixed Bugs:__
 
 #510 Module.Load throws Mismatched state_dict sizes exception on BatchNorm1d<br/>
+#515 what's reason for making register_module internal?<br/>
 
-## NuGet Version 0.96.1
-
-__API Changes:__
-
-__NOTE__: This release contains breaking changes.
-
-The APIs to create optimizers all take 'named_parameters' rather than 'parameters' now.
-
-__Fixed Bugs:__
 
 ## NuGet Version 0.96.0
 

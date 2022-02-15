@@ -278,16 +278,33 @@ namespace TorchSharp
             ///
             /// It has been proposed in Adaptive Subgradient Methods for Online Learning and Stochastic Optimization.
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize</param>
+            /// <param name="parameters">Parameters to optimize</param>
             /// <param name="learningRate">learning rate (default: 1e-2)</param>
             /// <param name="lr_decay">learning rate decay (default: 0)</param>
             /// <param name="weight_decay">weight decay (L2 penalty) (default: 0)</param>
             /// <param name="initial_accumulator_value"></param>
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-10)</param>
             /// <returns></returns>
-            public static AdagradOptimizer Adagrad(IEnumerable<(string name, Parameter parameter)> named_parameters, double learningRate = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
+            public static Adagrad Adagrad(IEnumerable<Parameter> parameters, double learningRate = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
             {
-                return new AdagradOptimizer(named_parameters, learningRate, lr_decay, weight_decay, initial_accumulator_value, eps);
+                return new Adagrad(parameters, learningRate, lr_decay, weight_decay, initial_accumulator_value, eps);
+            }
+
+            /// <summary>
+            /// Implements Adagrad algorithm.
+            ///
+            /// It has been proposed in Adaptive Subgradient Methods for Online Learning and Stochastic Optimization.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize</param>
+            /// <param name="learningRate">learning rate (default: 1e-2)</param>
+            /// <param name="lr_decay">learning rate decay (default: 0)</param>
+            /// <param name="weight_decay">weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="initial_accumulator_value"></param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-10)</param>
+            /// <returns></returns>
+            public static Adagrad Adagrad(IEnumerable<Adagrad.ParamGroup> parameters, double learningRate = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
+            {
+                return new Adagrad(parameters, learningRate, lr_decay, weight_decay, initial_accumulator_value, eps);
             }
 
             /// <summary>
@@ -295,15 +312,31 @@ namespace TorchSharp
             ///
             /// It has been proposed in ADADELTA: An Adaptive Learning Rate Method.
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
             /// <param name="lr ">Learning rate</param>
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public static AdadeltaOptimizer Adadelta(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+            public static Adadelta Adadelta(IEnumerable<Parameter> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
             {
-                return new AdadeltaOptimizer(named_parameters, lr, rho, eps, weight_decay);
+                return new Adadelta(parameters, lr, rho, eps, weight_decay);
+            }
+
+            /// <summary>
+            /// Implements Adadelta algorithm.
+            ///
+            /// It has been proposed in ADADELTA: An Adaptive Learning Rate Method.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public static Adadelta Adadelta(IEnumerable<Adadelta.ParamGroup> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+            {
+                return new Adadelta(parameters, lr, rho, eps, weight_decay);
             }
 
             /// <summary>
@@ -319,9 +352,27 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="momentum_decay">Momentum decay</param>
-            public static NAdamOptimizer NAdam(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3)
+            public static NAdam NAdam(IEnumerable<Parameter> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3)
             {
-                return new NAdamOptimizer(named_parameters, lr, beta1, beta2, eps, weight_decay, momentum_decay);
+                return new NAdam(named_parameters, lr, beta1, beta2, eps, weight_decay, momentum_decay);
+            }
+
+            /// <summary>
+            /// Implements NAdam algorithm.
+            ///
+            /// For further details regarding the algorithm we refer to Incorporating Nesterov Momentum into Adam.
+            /// https://openreview.net/forum?id=OM0jvwB8jIp57ZJjtNEZ
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="momentum_decay">Momentum decay</param>
+            public static NAdam NAdam(IEnumerable<NAdam.ParamGroup> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3)
+            {
+                return new NAdam(parameters, lr, beta1, beta2, eps, weight_decay, momentum_decay);
             }
 
             /// <summary>
@@ -330,15 +381,32 @@ namespace TorchSharp
             /// For further details regarding the algorithm we refer to 'On the variance of the adaptive learning rate and beyond.'
             /// https://arxiv.org/abs/1908.03265
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize.</param>
             /// <param name="lr ">Learning rate</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            public static RAdamOptimizer RAdam(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            public static RAdam RAdam(IEnumerable<Parameter> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
             {
-                return new RAdamOptimizer(named_parameters, lr, beta1, beta2, eps, weight_decay);
+                return new RAdam(parameters, lr, beta1, beta2, eps, weight_decay);
+            }
+
+            /// <summary>
+            /// Implements RAdam algorithm.
+            ///
+            /// For further details regarding the algorithm we refer to 'On the variance of the adaptive learning rate and beyond.'
+            /// https://arxiv.org/abs/1908.03265
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            public static RAdam RAdam(IEnumerable<RAdam.ParamGroup> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            {
+                return new RAdam(parameters, lr, beta1, beta2, eps, weight_decay);
             }
 
             /// <summary>
@@ -346,16 +414,33 @@ namespace TorchSharp
             ///
             /// It has been proposed in Adam: A Method for Stochastic Optimization.
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize.</param>
             /// <param name="lr ">Learning rate</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public static AdamaxOptimizer Adamax(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            public static Adamax Adamax(IEnumerable<Parameter> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
             {
-                return new AdamaxOptimizer(named_parameters, lr, beta1, beta2, eps, weight_decay);
+                return new Adamax(parameters, lr, beta1, beta2, eps, weight_decay);
+            }
+
+            /// <summary>
+            /// Implements Adamax algorithm (a variant of Adam based on infinity norm).
+            ///
+            /// It has been proposed in Adam: A Method for Stochastic Optimization.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public static Adamax Adamax(IEnumerable<Adamax.ParamGroup> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            {
+                return new Adamax(parameters, lr, beta1, beta2, eps, weight_decay);
             }
 
             /// <summary>
@@ -402,9 +487,9 @@ namespace TorchSharp
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
             /// <returns></returns>
-            public static RpropOptimizer Rprop(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+            public static Rprop Rprop(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
             {
-                return new RpropOptimizer(named_parameters, lr, etaminus, etaplus, min_step, max_step);
+                return new Rprop(named_parameters, lr, etaminus, etaplus, min_step, max_step);
             }
 
             /// <summary>
@@ -587,6 +672,7 @@ namespace TorchSharp
             /// <returns></returns>
             public SGD(IEnumerable<ParamGroup> parameters, double lr, double momentum = 0.0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
             {
+                if (lr < 0.0) throw new ArgumentException($"Invalid learning rate: {lr}");
                 if (momentum < 0.0) throw new ArgumentException($"Invalid momentum value: {momentum}");
                 if (weight_decay < 0.0) throw new ArgumentException($"Invalid weight_decay value: {weight_decay}");
                 if (nesterov && (momentum <= 0 || dampening != 0)) throw new ArgumentException("Nesterov momentum requires a momentum and zero dampening");
@@ -748,30 +834,49 @@ namespace TorchSharp
             public double Momentum { get => (_defaults as Options).momentum.Value; set => (_defaults as Options).momentum = value; }
         }
 
-        public class AdadeltaOptimizer : OptimizerHelper, ILearningRateController
+        public class Adadelta : NewOptimizerHelper, ILearningRateController
         {
             /// <summary>
             /// Constructor
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize.</param>
             /// <param name="lr ">Learning rate</param>
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            public AdadeltaOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0) : base(named_parameters, lr)
+            public Adadelta(IEnumerable<Parameter> parameters, double lr, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+                : this(new ParamGroup[] { new ParamGroup { Parameters = parameters } }, lr, rho, eps, weight_decay)
             {
-                LearningRate = lr;
-                InitialLearningRate = lr;
-                _rho = rho;
-                _eps = eps;
-                _weight_decay = weight_decay;
+            }
 
-                foreach (var (name, p) in named_parameters) {
-                    var state = new State();
-                    _state[name] = state;
-                    state.step = 0;
-                    state.square_avg = torch.zeros_like(p);
-                    state.acc_delta = torch.zeros_like(p);
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            public Adadelta(IEnumerable<ParamGroup> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+            {
+                if (lr < 0.0) throw new ArgumentException($"Invalid learning rate: {lr}");
+                if (rho < 0.0 || rho > 1.0) throw new ArgumentException($"Invalid rho value: {rho}");
+                if (eps < 0.0) throw new ArgumentException($"Invalid eps value: {eps}");
+                if (weight_decay < 0.0) throw new ArgumentException($"Invalid weight_decay value: {weight_decay}");
+
+                var options = new Options {
+                    LearningRate = lr,
+                    InitialLearningRate = lr,
+                    rho = rho,
+                    eps = eps,
+                    weight_decay = weight_decay
+                };
+
+                _defaults = options;
+                _parameter_groups = new List<Modules.ParamGroup>();
+
+                foreach (var g in parameters) {
+                    add_param_group(g);
                 }
             }
 
@@ -787,30 +892,39 @@ namespace TorchSharp
 
                     using (var d = torch.NewDisposeScope()) {
 
-                        foreach (var (name, param) in _parameters) {
+                        foreach (var group in _parameter_groups) {
 
-                            var grad = param.grad();
+                            var options = group.Options as Options;
+                            var rho = options.rho.Value;
+                            var eps = options.eps.Value;
+                            var weight_decay = options.weight_decay.Value;
+                            var lr = options.LearningRate.Value;
 
-                            if (grad is null) continue;
+                            foreach (var param in group.Parameters) {
 
-                            if (grad.is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
+                                var grad = param.grad();
 
-                            var state = _state[name];
+                                if (grad is null) continue;
 
-                            var square_avg = state.square_avg;
-                            var acc_delta = state.acc_delta;
+                                if (grad.is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
 
-                            grad = (_weight_decay != 0)
-                                ? grad.add(param, alpha: _weight_decay)
-                                : grad.alias();
+                                var state = _state[param.handle];
 
-                            square_avg.mul_(_rho).addcmul_(grad, grad, 1 - _rho);
+                                var square_avg = state.square_avg;
+                                var acc_delta = state.acc_delta;
 
-                            var std = square_avg.add(_eps).sqrt_();
-                            var delta = acc_delta.add(_eps).sqrt_().div_(std).mul_(grad);
+                                grad = (weight_decay != 0)
+                                    ? grad.add(param, alpha: weight_decay)
+                                    : grad.alias();
 
-                            param.add_(delta, alpha: -LearningRate);
-                            acc_delta.mul_(_rho).addcmul_(delta, delta, 1 - _rho);
+                                square_avg.mul_(rho).addcmul_(grad, grad, 1 - rho);
+
+                                var std = square_avg.add(eps).sqrt_();
+                                var delta = acc_delta.add(eps).sqrt_().div_(std).mul_(grad);
+
+                                param.add_(delta, alpha: -lr);
+                                acc_delta.mul_(rho).addcmul_(delta, delta, 1 - rho);
+                            }
                         }
 
                         d.DisposeEverything();
@@ -836,41 +950,109 @@ namespace TorchSharp
                 public Tensor acc_delta;
             }
 
-            private Dictionary<string, State> _state = new Dictionary<string, State>();
-            private double _rho;
-            private double _eps;
-            private double _weight_decay;
+            public override void add_param_group(Modules.ParamGroup param_group)
+            {
+                var def = _defaults as Options;
+                if (param_group.Options is null) {
+                    param_group.Options = new Options();
+                }
+
+                var opt = param_group.Options as Options;
+
+                // Make sure all the options are set.
+                if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
+                if (!opt.rho.HasValue) opt.rho = def.rho;
+                if (!opt.eps.HasValue) opt.eps = def.eps;
+                if (!opt.weight_decay.HasValue) opt.weight_decay = def.weight_decay;
+
+                opt.InitialLearningRate = opt.LearningRate.Value;
+
+                _parameter_groups.Add(param_group);
+
+                foreach (var p in param_group.Parameters) {
+                    var state = new State();
+                    _state[p.Handle] = state;
+                    state.step = 0;
+                    state.square_avg = torch.zeros_like(p);
+                    state.acc_delta = torch.zeros_like(p);
+                }
+            }
+
+            public class Options : OptimizerOptions
+            {
+                public double? rho;
+                public double? eps;
+                public double? weight_decay;
+            }
+
+            public class ParamGroup : ParamGroup<Options>
+            {
+                public ParamGroup() { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, Options options) : base(parameters, options) { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+                    : base(parameters, new Adadelta.Options { LearningRate = lr, rho = rho, eps = eps, weight_decay = weight_decay })
+                {
+                }
+            }
+
+            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
-        public class AdamaxOptimizer : OptimizerHelper, ILearningRateController, IBetas
+        public class Adamax : NewOptimizerHelper, ILearningRateController, IBetas
         {
             /// <summary>
             /// Implements Adamax algorithm (a variant of Adam based on infinity norm).
             ///
             /// It has been proposed in Adam: A Method for Stochastic Optimization.
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
             /// <param name="lr ">Learning rate</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public AdamaxOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0) : base(named_parameters, lr)
+            public Adamax(IEnumerable<Parameter> parameters, double lr, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+                : this(new ParamGroup[] { new ParamGroup { Parameters = parameters } }, lr, beta1, beta2, eps, weight_decay)
             {
-                LearningRate = lr;
-                InitialLearningRate = lr;
-                _beta1 = beta1;
-                _beta2 = beta2;
-                _eps = eps;
-                _weight_decay = weight_decay;
+            }
 
-                foreach (var (name, p) in named_parameters) {
-                    var state = new State();
-                    _state[name] = state;
-                    state.step = 0;
-                    state.exp_avg = torch.zeros_like(p);
-                    state.exp_inf = torch.zeros_like(p);
+            /// <summary>
+            /// Implements Adamax algorithm (a variant of Adam based on infinity norm).
+            ///
+            /// It has been proposed in Adam: A Method for Stochastic Optimization.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public Adamax(IEnumerable<ParamGroup> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            {
+                if (lr < 0.0) throw new ArgumentException($"Invalid learning rate: {lr}");
+                if (beta1 < 0.0 || beta1 > 1.0) throw new ArgumentException($"Invalid beta1 value: {beta1}");
+                if (beta2 < 0.0 || beta2 > 1.0) throw new ArgumentException($"Invalid beta2 value: {beta2}");
+                if (eps < 0.0) throw new ArgumentException($"Invalid eps value: {eps}");
+                if (weight_decay < 0.0) throw new ArgumentException($"Invalid weight_decay value: {weight_decay}");
+
+                var options = new Options {
+                    LearningRate = lr,
+                    InitialLearningRate = lr,
+                    beta1 = beta1,
+                    beta2 = beta2,
+                    eps = eps,
+                    weight_decay = weight_decay
+                };
+
+                _defaults = options;
+                _parameter_groups = new List<Modules.ParamGroup>();
+
+                foreach (var g in parameters) {
+                    add_param_group(g);
                 }
             }
 
@@ -886,35 +1068,46 @@ namespace TorchSharp
 
                     using (var d = torch.NewDisposeScope()) {
 
-                        foreach (var (name, param) in _parameters) {
+                        foreach (var group in _parameter_groups) {
 
-                            var grad = param.grad();
+                            var options = group.Options as Options;
+                            var beta1 = options.beta1.Value;
+                            var beta2 = options.beta2.Value;
+                            var eps = options.eps.Value;
+                            var weight_decay = options.weight_decay.Value;
+                            var lr = options.LearningRate.Value;
 
-                            if (grad is null) continue;
+                            foreach (var param in group.Parameters) {
 
-                            if (grad.is_sparse) throw new ArgumentException("Adamax does not support sparse gradients");
+                                var grad = param.grad();
 
-                            var state = _state[name];
+                                if (grad is null) continue;
 
-                            state.step += 1;
+                                if (grad.is_sparse) throw new ArgumentException("Adamax does not support sparse gradients");
 
-                            var exp_avg = state.exp_avg;
-                            var exp_inf = state.exp_inf;
+                                var state = _state[param.handle];
 
-                            grad = (_weight_decay != 0)
-                                ? grad.add(param, alpha: _weight_decay)
-                                : grad.alias();
+                                state.step += 1;
 
-                            exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
+                                var exp_avg = state.exp_avg;
+                                var exp_inf = state.exp_inf;
 
-                            var norm_buf = torch.cat(new Tensor[] {
-                            exp_inf.mul_(_beta2).unsqueeze(0),
-                            grad.abs().add_(_eps).unsqueeze_(0) }, 0);
+                                grad = (weight_decay != 0)
+                                    ? grad.add(param, alpha: weight_decay)
+                                    : grad.alias();
 
-                            torch.amax(norm_buf, new long[] { 0 }, false, exp_inf);
+                                exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
 
-                            var clr = LearningRate / (1 - Math.Pow(_beta1, state.step));
-                            param.addcdiv_(exp_avg, exp_inf, value: -clr);
+                                var norm_buf = torch.cat(new Tensor[] {
+                                        exp_inf.mul_(beta2).unsqueeze(0),
+                                        grad.abs().add_(eps).unsqueeze_(0)
+                                    }, 0);
+
+                                torch.amax(norm_buf, new long[] { 0 }, false, exp_inf);
+
+                                var clr = lr / (1 - Math.Pow(beta1, state.step));
+                                param.addcdiv_(exp_avg, exp_inf, value: -clr);
+                            }
                         }
 
                         d.DisposeEverything();
@@ -933,11 +1126,6 @@ namespace TorchSharp
                 }
             }
 
-            public (double, double) Betas {
-                get => (_beta1, _beta2);
-                set { _beta1 = value.Item1; _beta2 = value.Item2; }
-            }
-
             private class State
             {
                 public int step;
@@ -945,14 +1133,69 @@ namespace TorchSharp
                 public Tensor exp_inf;
             }
 
-            private Dictionary<string, State> _state = new Dictionary<string, State>();
-            private double _beta1;
-            private double _beta2;
-            private double _eps;
-            private double _weight_decay;
+            public override void add_param_group(Modules.ParamGroup param_group)
+            {
+                var def = _defaults as Options;
+                if (param_group.Options is null) {
+                    param_group.Options = new Options();
+                }
+
+                var opt = param_group.Options as Options;
+
+                // Make sure all the options are set.
+                if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
+                if (!opt.beta1.HasValue) opt.beta1 = def.beta1;
+                if (!opt.beta2.HasValue) opt.beta2 = def.beta2;
+                if (!opt.eps.HasValue) opt.eps = def.eps;
+                if (!opt.weight_decay.HasValue) opt.weight_decay = def.weight_decay;
+
+                opt.InitialLearningRate = opt.LearningRate.Value;
+
+                _parameter_groups.Add(param_group);
+
+                foreach (var p in param_group.Parameters) {
+                    var state = new State();
+                    _state[p.Handle] = state;
+                    state.step = 0;
+                    state.exp_avg = torch.zeros_like(p);
+                    state.exp_inf = torch.zeros_like(p);
+                }
+            }
+
+            public class Options : OptimizerOptions
+            {
+                public double? beta1;
+                public double? beta2;
+                public double? eps;
+                public double? weight_decay;
+            }
+
+            public class ParamGroup : ParamGroup<Options>, IBetas
+            {
+                public ParamGroup() { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, Options options) : base(parameters, options) { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 1.0, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+                    : base(parameters, new Adamax.Options { LearningRate = lr, beta1 = beta1, beta2 = beta2, eps = eps, weight_decay = weight_decay })
+                {
+                }
+
+                public (double, double) Betas {
+                    get => ((Options as Options).beta1.Value, (Options as Options).beta2.Value);
+                    set { (Options as Options).beta1 = value.Item1; (Options as Options).beta2 = value.Item2; }
+                }
+            }
+
+            public (double, double) Betas {
+                get => ((_defaults as Options).beta1.Value, (_defaults as Options).beta2.Value);
+                set { (_defaults as Options).beta1 = value.Item1; (_defaults as Options).beta2 = value.Item2; }
+            }
+
+            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
-        public class NAdamOptimizer : OptimizerHelper, ILearningRateController, IBetas
+        public class NAdam : NewOptimizerHelper, ILearningRateController, IBetas
         {
             /// <summary>
             /// Implements NAdam algorithm.
@@ -960,7 +1203,25 @@ namespace TorchSharp
             /// For further details regarding the algorithm we refer to Incorporating Nesterov Momentum into Adam.
             /// https://openreview.net/forum?id=OM0jvwB8jIp57ZJjtNEZ
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="momentum_decay">Momentum decay</param>
+            public NAdam(IEnumerable<Parameter> parameters, double lr, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3)
+                : this(new ParamGroup[] { new ParamGroup { Parameters = parameters } }, lr, beta1, beta2, eps, weight_decay, momentum_decay)
+            {
+            }
+
+            /// <summary>
+            /// Implements NAdam algorithm.
+            ///
+            /// For further details regarding the algorithm we refer to Incorporating Nesterov Momentum into Adam.
+            /// https://openreview.net/forum?id=OM0jvwB8jIp57ZJjtNEZ
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
             /// <param name="lr ">Learning rate</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
@@ -968,23 +1229,30 @@ namespace TorchSharp
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="momentum_decay">Momentum decay</param>
             /// <returns></returns>
-            public NAdamOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3) : base(named_parameters, lr)
+            public NAdam(IEnumerable<ParamGroup> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3)
             {
-                LearningRate = lr;
-                InitialLearningRate = lr;
-                _beta1 = beta1;
-                _beta2 = beta2;
-                _eps = eps;
-                _weight_decay = weight_decay;
-                _momentum_decay = momentum_decay;
+                if (lr < 0.0) throw new ArgumentException($"Invalid learning rate: {lr}");
+                if (beta1 < 0.0 || beta1 > 1.0) throw new ArgumentException($"Invalid beta1 value: {beta1}");
+                if (beta2 < 0.0 || beta2 > 1.0) throw new ArgumentException($"Invalid beta2 value: {beta2}");
+                if (eps < 0.0) throw new ArgumentException($"Invalid eps value: {eps}");
+                if (weight_decay < 0.0) throw new ArgumentException($"Invalid weight_decay value: {weight_decay}");
+                if (momentum_decay < 0.0) throw new ArgumentException($"Invalid momentum_decay value: {momentum_decay}");
 
-                foreach (var (name, p) in named_parameters) {
-                    var state = new State();
-                    _state[name] = state;
-                    state.step = 0;
-                    state.mu_product = 1;
-                    state.exp_avg = torch.zeros_like(p);
-                    state.exp_avg_sq = torch.zeros_like(p);
+                var options = new Options {
+                    LearningRate = lr,
+                    InitialLearningRate = lr,
+                    beta1 = beta1,
+                    beta2 = beta2,
+                    eps = eps,
+                    weight_decay = weight_decay,
+                    momentum_decay = momentum_decay
+                };
+
+                _defaults = options;
+                _parameter_groups = new List<Modules.ParamGroup>();
+
+                foreach (var g in parameters) {
+                    add_param_group(g);
                 }
             }
 
@@ -1000,40 +1268,51 @@ namespace TorchSharp
 
                     using (var d = torch.NewDisposeScope()) {
 
-                        foreach (var (name, param) in _parameters) {
+                        foreach (var group in _parameter_groups) {
 
-                            var grad = param.grad();
+                            var options = group.Options as Options;
+                            var beta1 = options.beta1.Value;
+                            var beta2 = options.beta2.Value;
+                            var eps = options.eps.Value;
+                            var weight_decay = options.weight_decay.Value;
+                            var momentum_decay = options.momentum_decay.Value;
+                            var lr = options.LearningRate.Value;
 
-                            if (grad is null) continue;
+                            foreach (var param in group.Parameters) {
 
-                            var state = _state[name];
+                                var grad = param.grad();
 
-                            state.step += 1;
+                                if (grad is null) continue;
 
-                            var exp_avg = state.exp_avg;
-                            var exp_avg_sq = state.exp_avg_sq;
+                                var state = _state[param.handle];
 
-                            var bias_correction2 = 1 - Math.Pow(_beta2, state.step);
+                                state.step += 1;
 
-                            grad = (_weight_decay != 0)
-                                ? grad.add(param, alpha: _weight_decay)
-                                : grad.alias();
+                                var exp_avg = state.exp_avg;
+                                var exp_avg_sq = state.exp_avg_sq;
 
-                            var mu = _beta1 * (1.0 - 0.5 * Math.Pow(0.96, state.step * _momentum_decay));
-                            var mu_next = _beta1 * (1.0 - 0.5 * Math.Pow(0.96, (state.step + 1) * _momentum_decay));
+                                var bias_correction2 = 1 - Math.Pow(beta2, state.step);
 
-                            var mu_product = state.mu_product * mu;
-                            var mu_product_next = mu_product * mu * mu_next;
+                                grad = (weight_decay != 0)
+                                    ? grad.add(param, alpha: weight_decay)
+                                    : grad.alias();
 
-                            exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
-                            exp_avg_sq.mul_(_beta2).addcmul_(grad, grad, value: 1 - _beta2);
+                                var mu = beta1 * (1.0 - 0.5 * Math.Pow(0.96, state.step * momentum_decay));
+                                var mu_next = beta1 * (1.0 - 0.5 * Math.Pow(0.96, (state.step + 1) * momentum_decay));
 
-                            var denom = exp_avg_sq.div(bias_correction2).sqrt_().add_(_eps);
+                                var mu_product = state.mu_product * mu;
+                                var mu_product_next = mu_product * mu * mu_next;
 
-                            param.addcdiv_(grad, denom, value: -LearningRate * (1 - mu) / (1 - mu_product));
-                            param.addcdiv_(exp_avg, denom, value: -LearningRate * mu_next / (1 - mu_product_next));
+                                exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
+                                exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
 
-                            state.mu_product = mu_product;
+                                var denom = exp_avg_sq.div(bias_correction2).sqrt_().add_(eps);
+
+                                param.addcdiv_(grad, denom, value: -lr * (1 - mu) / (1 - mu_product));
+                                param.addcdiv_(exp_avg, denom, value: -lr * mu_next / (1 - mu_product_next));
+
+                                state.mu_product = mu_product;
+                            }
                         }
 
                         d.DisposeEverything();
@@ -1052,11 +1331,6 @@ namespace TorchSharp
                 }
             }
 
-            public (double, double) Betas {
-                get => (_beta1, _beta2);
-                set { _beta1 = value.Item1; _beta2 = value.Item2; }
-            }
-
             private class State
             {
                 public int step;
@@ -1065,15 +1339,71 @@ namespace TorchSharp
                 public Tensor exp_avg_sq;
             }
 
-            private Dictionary<string, State> _state = new Dictionary<string, State>();
-            private double _beta1;
-            private double _beta2;
-            private double _eps;
-            private double _weight_decay;
-            private double _momentum_decay;
+            public override void add_param_group(Modules.ParamGroup param_group)
+            {
+                var def = _defaults as Options;
+                if (param_group.Options is null) {
+                    param_group.Options = new Options();
+                }
+
+                var opt = param_group.Options as Options;
+
+                // Make sure all the options are set.
+                if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
+                if (!opt.beta1.HasValue) opt.beta1 = def.beta1;
+                if (!opt.beta2.HasValue) opt.beta2 = def.beta2;
+                if (!opt.eps.HasValue) opt.eps = def.eps;
+                if (!opt.weight_decay.HasValue) opt.weight_decay = def.weight_decay;
+                if (!opt.momentum_decay.HasValue) opt.momentum_decay = def.momentum_decay;
+
+                opt.InitialLearningRate = opt.LearningRate.Value;
+
+                _parameter_groups.Add(param_group);
+
+                foreach (var p in param_group.Parameters) {
+                    var state = new State();
+                    _state[p.Handle] = state;
+                    state.step = 0;
+                    state.exp_avg = torch.zeros_like(p);
+                    state.exp_avg_sq = torch.zeros_like(p);
+                }
+            }
+
+            public class Options : OptimizerOptions
+            {
+                public double? beta1;
+                public double? beta2;
+                public double? eps;
+                public double? weight_decay;
+                public double? momentum_decay;
+            }
+
+            public class ParamGroup : ParamGroup<Options>, IBetas
+            {
+                public ParamGroup() { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, Options options) : base(parameters, options) { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 1.0, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3)
+                    : base(parameters, new NAdam.Options { LearningRate = lr, beta1 = beta1, beta2 = beta2, eps = eps, weight_decay = weight_decay, momentum_decay = momentum_decay })
+                {
+                }
+
+                public (double, double) Betas {
+                    get => ((Options as Options).beta1.Value, (Options as Options).beta2.Value);
+                    set { (Options as Options).beta1 = value.Item1; (Options as Options).beta2 = value.Item2; }
+                }
+            }
+
+            public (double, double) Betas {
+                get => ((_defaults as Options).beta1.Value, (_defaults as Options).beta2.Value);
+                set { (_defaults as Options).beta1 = value.Item1; (_defaults as Options).beta2 = value.Item2; }
+            }
+
+            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
-        public class RAdamOptimizer : OptimizerHelper, ILearningRateController, IBetas
+        public class RAdam : NewOptimizerHelper, ILearningRateController, IBetas
         {
             /// <summary>
             /// Implements RAdam algorithm.
@@ -1081,28 +1411,53 @@ namespace TorchSharp
             /// For further details regarding the algorithm we refer to 'On the variance of the adaptive learning rate and beyond.'
             /// https://arxiv.org/abs/1908.03265
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
             /// <param name="lr ">Learning rate</param>
             /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
-            public RAdamOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0) : base(named_parameters, lr)
+            public RAdam(IEnumerable<Parameter> parameters, double lr, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+                : this(new ParamGroup[] { new ParamGroup { Parameters = parameters } }, lr, beta1, beta2, eps, weight_decay)
             {
-                LearningRate = lr;
-                InitialLearningRate = lr;
-                _beta1 = beta1;
-                _beta2 = beta2;
-                _eps = eps;
-                _weight_decay = weight_decay;
+            }
 
-                foreach (var (name, p) in named_parameters) {
-                    var state = new State();
-                    _state[name] = state;
-                    state.step = 0;
-                    state.exp_avg = torch.zeros_like(p);
-                    state.exp_avg_sq = torch.zeros_like(p);
+            /// <summary>
+            /// Implements RAdam algorithm.
+            ///
+            /// For further details regarding the algorithm we refer to 'On the variance of the adaptive learning rate and beyond.'
+            /// https://arxiv.org/abs/1908.03265
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public RAdam(IEnumerable<ParamGroup> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            {
+                if (lr < 0.0) throw new ArgumentException($"Invalid learning rate: {lr}");
+                if (beta1 < 0.0 || beta1 > 1.0) throw new ArgumentException($"Invalid beta1 value: {beta1}");
+                if (beta2 < 0.0 || beta2 > 1.0) throw new ArgumentException($"Invalid beta2 value: {beta2}");
+                if (eps < 0.0) throw new ArgumentException($"Invalid eps value: {eps}");
+                if (weight_decay < 0.0) throw new ArgumentException($"Invalid weight_decay value: {weight_decay}");
+
+                var options = new Options {
+                    LearningRate = lr,
+                    InitialLearningRate = lr,
+                    beta1 = beta1,
+                    beta2 = beta2,
+                    eps = eps,
+                    weight_decay = weight_decay
+                };
+
+                _defaults = options;
+                _parameter_groups = new List<Modules.ParamGroup>();
+
+                foreach (var g in parameters) {
+                    add_param_group(g);
                 }
             }
 
@@ -1118,43 +1473,53 @@ namespace TorchSharp
 
                     using (var d = torch.NewDisposeScope()) {
 
-                        foreach (var (name, param) in _parameters) {
+                        foreach (var group in _parameter_groups) {
 
-                            var grad = param.grad();
+                            var options = group.Options as Options;
+                            var beta1 = options.beta1.Value;
+                            var beta2 = options.beta2.Value;
+                            var eps = options.eps.Value;
+                            var weight_decay = options.weight_decay.Value;
+                            var lr = options.LearningRate.Value;
 
-                            if (grad is null) continue;
+                            foreach (var param in group.Parameters) {
 
-                            var state = _state[name];
+                                var grad = param.grad();
 
-                            state.step += 1;
+                                if (grad is null) continue;
 
-                            var exp_avg = state.exp_avg;
-                            var exp_avg_sq = state.exp_avg_sq;
+                                var state = _state[param.handle];
 
-                            var bias_correction1 = 1 - Math.Pow(_beta1, state.step);
-                            var bias_correction2 = 1 - Math.Pow(_beta2, state.step);
+                                state.step += 1;
 
-                            grad = (_weight_decay != 0)
-                                ? grad.add(param, alpha: _weight_decay)
-                                : grad.alias();
+                                var exp_avg = state.exp_avg;
+                                var exp_avg_sq = state.exp_avg_sq;
 
-                            exp_avg.mul_(_beta1).add_(grad, alpha: 1 - _beta1);
-                            exp_avg_sq.mul_(_beta2).addcmul_(grad, grad, value: 1 - _beta2);
+                                var bias_correction1 = 1 - Math.Pow(beta1, state.step);
+                                var bias_correction2 = 1 - Math.Pow(beta2, state.step);
 
-                            var bias_corrected_exp_avg = exp_avg / bias_correction1;
+                                grad = (weight_decay != 0)
+                                    ? grad.add(param, alpha: weight_decay)
+                                    : grad.alias();
 
-                            var rho_inf = 2 / (1 - _beta2) - 1;
-                            var rho_t = rho_inf - 2 * state.step * Math.Pow(_beta2, state.step) / bias_correction2;
+                                exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
+                                exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
 
-                            var t6 = bias_corrected_exp_avg * LearningRate;
+                                var bias_corrected_exp_avg = exp_avg / bias_correction1;
 
-                            if (rho_t > 5) {
-                                var rect = Math.Sqrt((rho_t - 4) * (rho_t - 2) * rho_inf / ((rho_inf - 4) * (rho_inf - 2) * rho_t));
-                                var adaptive_lr = Math.Sqrt(bias_correction2) / exp_avg_sq.sqrt().add_(_eps);
+                                var rho_inf = 2 / (1 - beta2) - 1;
+                                var rho_t = rho_inf - 2 * state.step * Math.Pow(beta2, state.step) / bias_correction2;
 
-                                param.add_(t6 * LearningRate * adaptive_lr * rect, alpha: -1.0);
-                            } else {
-                                param.add_(t6, alpha: -1.0);
+                                var t6 = bias_corrected_exp_avg * lr;
+
+                                if (rho_t > 5) {
+                                    var rect = Math.Sqrt((rho_t - 4) * (rho_t - 2) * rho_inf / ((rho_inf - 4) * (rho_inf - 2) * rho_t));
+                                    var adaptive_lr = Math.Sqrt(bias_correction2) / exp_avg_sq.sqrt().add_(eps);
+
+                                    param.add_(t6 * lr * adaptive_lr * rect, alpha: -1.0);
+                                } else {
+                                    param.add_(t6, alpha: -1.0);
+                                }
                             }
                         }
 
@@ -1181,16 +1546,66 @@ namespace TorchSharp
                 public Tensor exp_avg_sq;
             }
 
-            private Dictionary<string, State> _state = new Dictionary<string, State>();
-            private double _beta1;
-            private double _beta2;
-            private double _eps;
-            private double _weight_decay;
+            public override void add_param_group(Modules.ParamGroup param_group)
+            {
+                var def = _defaults as Options;
+                if (param_group.Options is null) {
+                    param_group.Options = new Options();
+                }
+
+                var opt = param_group.Options as Options;
+
+                // Make sure all the options are set.
+                if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
+                if (!opt.beta1.HasValue) opt.beta1 = def.beta1;
+                if (!opt.beta2.HasValue) opt.beta2 = def.beta2;
+                if (!opt.eps.HasValue) opt.eps = def.eps;
+                if (!opt.weight_decay.HasValue) opt.weight_decay = def.weight_decay;
+
+                opt.InitialLearningRate = opt.LearningRate.Value;
+
+                _parameter_groups.Add(param_group);
+
+                foreach (var p in param_group.Parameters) {
+                    var state = new State();
+                    _state[p.Handle] = state;
+                    state.step = 0;
+                    state.exp_avg = torch.zeros_like(p);
+                    state.exp_avg_sq = torch.zeros_like(p);
+                }
+            }
+
+            public class Options : OptimizerOptions
+            {
+                public double? beta1;
+                public double? beta2;
+                public double? eps;
+                public double? weight_decay;
+            }
+
+            public class ParamGroup : ParamGroup<Options>, IBetas
+            {
+                public ParamGroup() { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, Options options) : base(parameters, options) { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 1.0, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+                    : base(parameters, new RAdam.Options { LearningRate = lr, beta1 = beta1, beta2 = beta2, eps = eps, weight_decay = weight_decay })
+                {
+                }
+
+                public (double, double) Betas {
+                    get => ((Options as Options).beta1.Value, (Options as Options).beta2.Value);
+                    set { (Options as Options).beta1 = value.Item1; (Options as Options).beta2 = value.Item2; }
+                }
+            }
 
             public (double, double) Betas {
-                get => (_beta1, _beta2);
-                set { _beta1 = value.Item1; _beta2 = value.Item2; }
+                get => ((_defaults as Options).beta1.Value, (_defaults as Options).beta2.Value);
+                set { (_defaults as Options).beta1 = value.Item1; (_defaults as Options).beta2 = value.Item2; }
             }
+
+            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
         public class ASGD : NewOptimizerHelper, ILearningRateController
@@ -1226,6 +1641,8 @@ namespace TorchSharp
             /// <returns></returns>
             public ASGD(IEnumerable<ParamGroup<Options>> parameters, double lr = 0.01, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
             {
+                if (lr < 0.0) throw new ArgumentException($"Invalid learning rate: {lr}");
+
                 var options = new Options {
                     LearningRate = lr,
                     InitialLearningRate = lr,
@@ -1371,7 +1788,7 @@ namespace TorchSharp
             private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
-        public class RpropOptimizer : OptimizerHelper, ILearningRateController
+        public class Rprop : OptimizerHelper, ILearningRateController
         {
             /// <summary>
             /// Implements Rprop algorithm (a variant of Adam based on infinity norm).
@@ -1385,7 +1802,7 @@ namespace TorchSharp
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
             /// <returns></returns>
-            public RpropOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50) : base(named_parameters, lr)
+            public Rprop(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50) : base(named_parameters, lr)
             {
                 LearningRate = lr;
                 InitialLearningRate = lr;
@@ -1477,42 +1894,58 @@ namespace TorchSharp
             private double _max_step;
         }
 
-        public class AdagradOptimizer : OptimizerHelper
+        public class Adagrad : NewOptimizerHelper
         {
             /// <summary>
             /// Implements Adagrad algorithm.
             ///
             /// It has been proposed in Adaptive Subgradient Methods for Online Learning and Stochastic Optimization.
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize</param>
-            /// <param name="learningRate">learning rate (default: 1e-2)</param>
+            /// <param name="parameters">Parameters to optimize</param>
+            /// <param name="lr">learning rate (default: 1e-2)</param>
             /// <param name="lr_decay">learning rate decay (default: 0)</param>
             /// <param name="weight_decay">weight decay (L2 penalty) (default: 0)</param>
             /// <param name="initial_accumulator_value"></param>
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-10)</param>
             /// <returns></returns>
-            public AdagradOptimizer(IEnumerable<(string name, Parameter parameter)> named_parameters, double learningRate = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10) : base(named_parameters, learningRate)
+            public Adagrad(IEnumerable<Parameter> parameters, double lr = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
+                : this(new ParamGroup[] { new() { Parameters = parameters } }, lr, lr_decay, weight_decay, initial_accumulator_value, eps)
             {
-                if (learningRate < 0) throw new ArgumentException($"Invalid learning rate: {learningRate}");
+            }
+            /// <summary>
+            /// Implements Adagrad algorithm.
+            ///
+            /// It has been proposed in Adaptive Subgradient Methods for Online Learning and Stochastic Optimization.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize</param>
+            /// <param name="lr">learning rate (default: 1e-2)</param>
+            /// <param name="lr_decay">learning rate decay (default: 0)</param>
+            /// <param name="weight_decay">weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="initial_accumulator_value"></param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-10)</param>
+            /// <returns></returns>
+            public Adagrad(IEnumerable<ParamGroup> parameters, double lr = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
+            {
+                if (lr < 0) throw new ArgumentException($"Invalid learning rate: {lr}");
                 if (eps < 0) throw new ArgumentException($"Invalid ε: {eps}");
+                if (lr_decay < 0.0) throw new ArgumentException($"Invalid lr_decay value: {lr_decay}");
                 if (weight_decay < 0.0) throw new ArgumentException($"Invalid weight_decay value: {weight_decay}");
+                if (initial_accumulator_value < 0) throw new ArgumentException($"Invalid initial_accumulator_value: {initial_accumulator_value}");
 
-                LearningRate = learningRate;
-                InitialLearningRate = learningRate;
-                _lr_decay = lr_decay;
-                _initial_accumulator_value = initial_accumulator_value;
-                _weight_decay = weight_decay;
-                _eps = eps;
+                var options = new Options {
+                    LearningRate = lr,
+                    InitialLearningRate = lr,
+                    lr_decay = lr_decay,
+                    eps = eps,
+                    initial_accumulator_value = initial_accumulator_value,
+                    weight_decay = weight_decay
+                };
 
-                foreach (var (name, p) in named_parameters) {
+                _defaults = options;
+                _parameter_groups = new List<Modules.ParamGroup>();
 
-                    var state = new State();
-                    _state[name] = state;
-                    state.step = 0;
-                    var init_value = torch.is_complex(p.dtype)
-                        ? (Scalar)new System.Numerics.Complex(initial_accumulator_value, initial_accumulator_value)
-                        : (Scalar)initial_accumulator_value;
-                    state.sum = torch.full_like(p, init_value);
+                foreach (var g in parameters) {
+                    add_param_group(g);
                 }
             }
 
@@ -1529,30 +1962,40 @@ namespace TorchSharp
 
                     using (var d = torch.NewDisposeScope()) {
 
-                        foreach (var (name, param) in _parameters) {
+                        foreach (var group in _parameter_groups) {
 
-                            var state = _state[name];
+                            var options = group.Options as Options;
+                            var lr_decay = options.lr_decay.Value;
+                            var weight_decay = options.weight_decay.Value;
+                            var eps = options.eps.Value;
+                            var initial_accumulator_value = options.initial_accumulator_value.Value;
+                            var lr = options.LearningRate.Value;
 
-                            var grad = param.grad();
+                            foreach (var param in group.Parameters) {
 
-                            if (grad is null) continue;
+                                var state = _state[param.handle];
 
-                            state.step += 1;
+                                var grad = param.grad();
 
-                            if (_weight_decay != 0) {
-                                grad = grad.add(param, alpha: _weight_decay);
-                            }
+                                if (grad is null) continue;
 
-                            var clr = LearningRate / (1 + (state.step - 1) * _lr_decay);
+                                state.step += 1;
 
-                            if (grad.is_sparse) {
-                                throw new NotImplementedException("Adagrad optimization over sparse parameters");
-                            } else if (torch.is_complex(param)) {
-                                throw new NotImplementedException("Adagrad optimization over complex parameters");
-                            } else {
-                                state.sum.addcmul_(grad, grad, value: 1);
-                                var std = state.sum.sqrt().add_(_eps);
-                                param.addcdiv_(grad, std, value: -clr);
+                                if (weight_decay != 0) {
+                                    grad = grad.add(param, alpha: weight_decay);
+                                }
+
+                                var clr = lr / (1 + (state.step - 1) * lr_decay);
+
+                                if (grad.is_sparse) {
+                                    throw new NotImplementedException("Adagrad optimization over sparse parameters");
+                                } else if (torch.is_complex(param)) {
+                                    throw new NotImplementedException("Adagrad optimization over complex parameters");
+                                } else {
+                                    state.sum.addcmul_(grad, grad, value: 1);
+                                    var std = state.sum.sqrt().add_(eps);
+                                    param.addcdiv_(grad, std, value: -clr);
+                                }
                             }
 
                             d.DisposeEverything();
@@ -1577,12 +2020,58 @@ namespace TorchSharp
                 public Tensor sum;
             }
 
+            public override void add_param_group(Modules.ParamGroup param_group)
+            {
+                var def = _defaults as Options;
+                if (param_group.Options is null) {
+                    param_group.Options = new Options();
+                }
 
-            private Dictionary<string, State> _state = new Dictionary<string, State>();
-            private double _lr_decay;
-            private double _initial_accumulator_value;
-            private double _eps;
-            private double _weight_decay;
+                var opt = param_group.Options as Options;
+
+                // Make sure all the options are set.
+                if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
+                if (!opt.lr_decay.HasValue) opt.lr_decay = def.lr_decay;
+                if (!opt.eps.HasValue) opt.eps = def.eps;
+                if (!opt.weight_decay.HasValue) opt.weight_decay = def.weight_decay;
+                if (!opt.initial_accumulator_value.HasValue) opt.initial_accumulator_value = def.initial_accumulator_value;
+
+                opt.InitialLearningRate = opt.LearningRate.Value;
+
+                _parameter_groups.Add(param_group);
+
+                foreach (var p in param_group.Parameters) {
+                    var state = new State();
+                    _state[p.Handle] = state;
+                    state.step = 0;
+                    var init_value = torch.is_complex(p.dtype)
+                        ? (Scalar)new System.Numerics.Complex((param_group.Options as Options).initial_accumulator_value.Value, (param_group.Options as Options).initial_accumulator_value.Value)
+                        : (Scalar)(param_group.Options as Options).initial_accumulator_value.Value;
+                    state.sum = torch.full_like(p, init_value);
+                }
+            }
+
+            public class Options : OptimizerOptions
+            {
+                public double? lr_decay;
+                public double? initial_accumulator_value;
+                public double? eps;
+                public double? weight_decay;
+            }
+
+            public class ParamGroup : ParamGroup<Options>
+            {
+                public ParamGroup() { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, Options options) : base(parameters, options) { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 0.01, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
+                    : base(parameters, new Adagrad.Options { LearningRate = lr, lr_decay = lr_decay, initial_accumulator_value = initial_accumulator_value, weight_decay = weight_decay, eps = eps })
+                {
+                }
+            }
+
+            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
         public class Adam : NewOptimizerHelper, IBetas
