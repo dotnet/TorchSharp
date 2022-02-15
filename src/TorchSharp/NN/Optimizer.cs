@@ -134,6 +134,8 @@ namespace TorchSharp
                 double LearningRate { set; get; }
 
                 double InitialLearningRate { set; get; }
+
+                IEnumerable<ILearningRateController> ParamGroups { get; }
             }
 
             public interface IMomentum
@@ -480,16 +482,31 @@ namespace TorchSharp
             /// <summary>
             /// Implements the resilient backpropagation algorithm.
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
             /// <param name="lr ">Learning rate</param>
             /// <param name="etaminus">Multiplicative increase factor.</param>
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
             /// <returns></returns>
-            public static Rprop Rprop(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+            public static Rprop Rprop(IEnumerable<Parameter> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
             {
-                return new Rprop(named_parameters, lr, etaminus, etaplus, min_step, max_step);
+                return new Rprop(parameters, lr, etaminus, etaplus, min_step, max_step);
+            }
+
+            /// <summary>
+            /// Implements the resilient backpropagation algorithm.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="etaminus">Multiplicative increase factor.</param>
+            /// <param name="etaplus">Multiplicative decrease factor.</param>
+            /// <param name="min_step">Minimum allowed step size.</param>
+            /// <param name="max_step">Maximum allowed step size.</param>
+            /// <returns></returns>
+            public static Rprop Rprop(IEnumerable<Rprop.ParamGroup> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+            {
+                return new Rprop(parameters, lr, etaminus, etaplus, min_step, max_step);
             }
 
             /// <summary>
@@ -539,40 +556,7 @@ namespace TorchSharp
 
         public class OptimizerHelper : Optimizer, ILearningRateController
         {
-            public OptimizerHelper(IEnumerable<(string name, Modules.Parameter parameter)> named_parameters, double learningRate) : base(IntPtr.Zero)
-            {
-                LearningRate = learningRate;
-                InitialLearningRate = learningRate;
-                _parameters = named_parameters;
-            }
-
-            public override void zero_grad()
-            {
-                foreach (var (_, p) in _parameters) {
-
-                    using var grad = p.grad();
-
-                    if (grad is null) continue;
-
-                    grad.zero_().Dispose();
-                }
-            }
-
-            public override IEnumerable<Parameter> parameters()
-            {
-                return _parameters.Select(p => p.parameter);
-            }
-
-            public double LearningRate { get; set; }
-
-            public double InitialLearningRate { get; set; }
-
-            protected IEnumerable<(string name, Modules.Parameter parameter)> _parameters;
-        }
-
-        public class NewOptimizerHelper : Optimizer, ILearningRateController
-        {
-            public NewOptimizerHelper() : base(IntPtr.Zero)
+            public OptimizerHelper() : base(IntPtr.Zero)
             {
             }
 
@@ -591,6 +575,32 @@ namespace TorchSharp
                 }
             }
 
+            protected Tensor _step<T>(Action<T> body, Func<Tensor> loss_closure = null) where T:ParamGroup
+            {
+                Tensor loss = null;
+
+                if (loss_closure != null) {
+                    using (var _ = torch.enable_grad())
+                        loss = loss_closure();
+                }
+
+                using (var _ = torch.no_grad()) {
+
+                    using (var d = torch.NewDisposeScope()) {
+
+                        foreach (var group in _parameter_groups) {
+
+                            body(group as T);
+
+                        }
+
+                        d.DisposeEverything();
+                    }
+                }
+
+                return loss;
+            }
+
             public override IEnumerable<Parameter> parameters()
             {
                 return _parameter_groups.SelectMany(pg => pg.Parameters);
@@ -604,6 +614,8 @@ namespace TorchSharp
             public double LearningRate { get => _defaults.LearningRate.Value; set => _defaults.LearningRate = value; }
 
             public double InitialLearningRate { get => _defaults.InitialLearningRate; set => _defaults.InitialLearningRate = value; }
+
+            public IEnumerable<ILearningRateController> ParamGroups { get => _parameter_groups; }
 
             protected OptimizerOptions _defaults;
             protected IList<ParamGroup> _parameter_groups;
@@ -623,6 +635,8 @@ namespace TorchSharp
 
             public double LearningRate { get => Options.LearningRate.Value; set => Options.LearningRate = value; }
             public double InitialLearningRate { get => Options.InitialLearningRate; set => Options.InitialLearningRate = value; }
+
+            public IEnumerable<ILearningRateController> ParamGroups { get => throw new InvalidOperationException("ParamGroups should not be called on a ParamGroup"); }
         }
 
         public class ParamGroup<TOptions> : ParamGroup where TOptions : OptimizerOptions
@@ -641,7 +655,7 @@ namespace TorchSharp
 
         }
 
-        public class SGD : NewOptimizerHelper, IMomentum
+        public class SGD : OptimizerHelper, IMomentum
         {
             /// <summary>
             /// Implements stochastic gradient descent (optionally with momentum).
@@ -697,69 +711,52 @@ namespace TorchSharp
 
             public override Tensor step(Func<Tensor> closure = null)
             {
-                Tensor loss = null;
+                return _step<ParamGroup>(group => {
 
-                if (closure != null) {
-                    using (var _ = torch.enable_grad())
-                        loss = closure();
-                }
+                    var options = group.Options;
+                    var momentum = options.momentum.Value;
+                    var dampening = options.dampening.Value;
+                    var weight_decay = options.weight_decay.Value;
+                    var nesterov = options.nesterov.Value;
+                    var maximize = options.maximize.Value;
+                    var lr = options.LearningRate.Value;
 
-                using (var _ = torch.no_grad()) {
+                    foreach (var param in group.Parameters) {
 
-                    using (var d = torch.NewDisposeScope()) {
+                        var state = _state[param.handle];
 
-                        foreach (var group in _parameter_groups) {
+                        var grad = param.grad();
 
-                            var options = group.Options as Options;
-                            var momentum = options.momentum.Value;
-                            var dampening = options.dampening.Value;
-                            var weight_decay = options.weight_decay.Value;
-                            var nesterov = options.nesterov.Value;
-                            var maximize = options.maximize.Value;
-                            var lr = options.LearningRate.Value;
+                        if (grad is null) continue;
 
-                            foreach (var param in group.Parameters) {
-
-                                var state = _state[param.handle];
-
-                                var grad = param.grad();
-
-                                if (grad is null) continue;
-
-                                if (weight_decay != 0) {
-                                    grad = grad.add(param, alpha: weight_decay);
-                                }
-
-                                if (momentum != 0) {
-                                    var buf = state.momentum_buffer;
-
-                                    if (buf is null) {
-                                        buf = grad.clone().detach().DetatchFromDisposeScope();
-                                        state.momentum_buffer = buf;
-                                    } else {
-                                        buf.mul_(momentum).add_(grad, alpha: (1 - dampening));
-                                    }
-
-                                    if (nesterov) {
-                                        grad = grad.add(buf, alpha: momentum);
-                                    } else {
-                                        grad = buf;
-                                    }
-
-                                    state.momentum_buffer = buf;
-                                }
-
-                                var alpha = maximize ? lr : -lr;
-                                param.add_(grad, alpha: alpha);
-
-                            }
+                        if (weight_decay != 0) {
+                            grad = grad.add(param, alpha: weight_decay);
                         }
 
-                        d.DisposeEverything();
-                    }
-                }
+                        if (momentum != 0) {
+                            var buf = state.momentum_buffer;
 
-                return loss;
+                            if (buf is null) {
+                                buf = grad.clone().detach().DetatchFromDisposeScope();
+                                state.momentum_buffer = buf;
+                            } else {
+                                buf.mul_(momentum).add_(grad, alpha: (1 - dampening));
+                            }
+
+                            if (nesterov) {
+                                grad = grad.add(buf, alpha: momentum);
+                            } else {
+                                grad = buf;
+                            }
+
+                            state.momentum_buffer = buf;
+                        }
+
+                        var alpha = maximize ? lr : -lr;
+                        param.add_(grad, alpha: alpha);
+
+                    }
+                }, closure);
             }
 
             protected override void Dispose(bool disposing)
@@ -834,7 +831,7 @@ namespace TorchSharp
             public double Momentum { get => (_defaults as Options).momentum.Value; set => (_defaults as Options).momentum = value; }
         }
 
-        public class Adadelta : NewOptimizerHelper, ILearningRateController
+        public class Adadelta : OptimizerHelper, ILearningRateController
         {
             /// <summary>
             /// Constructor
@@ -882,56 +879,40 @@ namespace TorchSharp
 
             public override Tensor step(Func<Tensor> closure = null)
             {
-                Tensor loss = null;
+                return _step<ParamGroup>(group => {
 
-                if (closure != null) {
-                    loss = closure();
-                }
+                    var options = group.Options as Options;
+                    var rho = options.rho.Value;
+                    var eps = options.eps.Value;
+                    var weight_decay = options.weight_decay.Value;
+                    var lr = options.LearningRate.Value;
 
-                using (var _ = torch.no_grad()) {
+                    foreach (var param in group.Parameters) {
 
-                    using (var d = torch.NewDisposeScope()) {
+                        var grad = param.grad();
 
-                        foreach (var group in _parameter_groups) {
+                        if (grad is null) continue;
 
-                            var options = group.Options as Options;
-                            var rho = options.rho.Value;
-                            var eps = options.eps.Value;
-                            var weight_decay = options.weight_decay.Value;
-                            var lr = options.LearningRate.Value;
+                        if (grad.is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
 
-                            foreach (var param in group.Parameters) {
+                        var state = _state[param.handle];
 
-                                var grad = param.grad();
+                        var square_avg = state.square_avg;
+                        var acc_delta = state.acc_delta;
 
-                                if (grad is null) continue;
+                        grad = (weight_decay != 0)
+                            ? grad.add(param, alpha: weight_decay)
+                            : grad.alias();
 
-                                if (grad.is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
+                        square_avg.mul_(rho).addcmul_(grad, grad, 1 - rho);
 
-                                var state = _state[param.handle];
+                        var std = square_avg.add(eps).sqrt_();
+                        var delta = acc_delta.add(eps).sqrt_().div_(std).mul_(grad);
 
-                                var square_avg = state.square_avg;
-                                var acc_delta = state.acc_delta;
-
-                                grad = (weight_decay != 0)
-                                    ? grad.add(param, alpha: weight_decay)
-                                    : grad.alias();
-
-                                square_avg.mul_(rho).addcmul_(grad, grad, 1 - rho);
-
-                                var std = square_avg.add(eps).sqrt_();
-                                var delta = acc_delta.add(eps).sqrt_().div_(std).mul_(grad);
-
-                                param.add_(delta, alpha: -lr);
-                                acc_delta.mul_(rho).addcmul_(delta, delta, 1 - rho);
-                            }
-                        }
-
-                        d.DisposeEverything();
+                        param.add_(delta, alpha: -lr);
+                        acc_delta.mul_(rho).addcmul_(delta, delta, 1 - rho);
                     }
-                }
-
-                return loss;
+                },closure);
             }
 
             protected override void Dispose(bool disposing)
@@ -1000,7 +981,7 @@ namespace TorchSharp
             private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
-        public class Adamax : NewOptimizerHelper, ILearningRateController, IBetas
+        public class Adamax : OptimizerHelper, ILearningRateController, IBetas
         {
             /// <summary>
             /// Implements Adamax algorithm (a variant of Adam based on infinity norm).
@@ -1058,63 +1039,47 @@ namespace TorchSharp
 
             public override Tensor step(Func<Tensor> closure = null)
             {
-                Tensor loss = null;
+                return _step<ParamGroup>(group => {
 
-                if (closure != null) {
-                    loss = closure();
-                }
+                    var options = group.Options as Options;
+                    var beta1 = options.beta1.Value;
+                    var beta2 = options.beta2.Value;
+                    var eps = options.eps.Value;
+                    var weight_decay = options.weight_decay.Value;
+                    var lr = options.LearningRate.Value;
 
-                using (var _ = torch.no_grad()) {
+                    foreach (var param in group.Parameters) {
 
-                    using (var d = torch.NewDisposeScope()) {
+                        var grad = param.grad();
 
-                        foreach (var group in _parameter_groups) {
+                        if (grad is null) continue;
 
-                            var options = group.Options as Options;
-                            var beta1 = options.beta1.Value;
-                            var beta2 = options.beta2.Value;
-                            var eps = options.eps.Value;
-                            var weight_decay = options.weight_decay.Value;
-                            var lr = options.LearningRate.Value;
+                        if (grad.is_sparse) throw new ArgumentException("Adamax does not support sparse gradients");
 
-                            foreach (var param in group.Parameters) {
+                        var state = _state[param.handle];
 
-                                var grad = param.grad();
+                        state.step += 1;
 
-                                if (grad is null) continue;
+                        var exp_avg = state.exp_avg;
+                        var exp_inf = state.exp_inf;
 
-                                if (grad.is_sparse) throw new ArgumentException("Adamax does not support sparse gradients");
+                        grad = (weight_decay != 0)
+                            ? grad.add(param, alpha: weight_decay)
+                            : grad.alias();
 
-                                var state = _state[param.handle];
+                        exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
 
-                                state.step += 1;
-
-                                var exp_avg = state.exp_avg;
-                                var exp_inf = state.exp_inf;
-
-                                grad = (weight_decay != 0)
-                                    ? grad.add(param, alpha: weight_decay)
-                                    : grad.alias();
-
-                                exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
-
-                                var norm_buf = torch.cat(new Tensor[] {
+                        var norm_buf = torch.cat(new Tensor[] {
                                         exp_inf.mul_(beta2).unsqueeze(0),
                                         grad.abs().add_(eps).unsqueeze_(0)
                                     }, 0);
 
-                                torch.amax(norm_buf, new long[] { 0 }, false, exp_inf);
+                        torch.amax(norm_buf, new long[] { 0 }, false, exp_inf);
 
-                                var clr = lr / (1 - Math.Pow(beta1, state.step));
-                                param.addcdiv_(exp_avg, exp_inf, value: -clr);
-                            }
-                        }
-
-                        d.DisposeEverything();
+                        var clr = lr / (1 - Math.Pow(beta1, state.step));
+                        param.addcdiv_(exp_avg, exp_inf, value: -clr);
                     }
-                }
-
-                return loss;
+                }, closure);
             }
 
             protected override void Dispose(bool disposing)
@@ -1195,7 +1160,7 @@ namespace TorchSharp
             private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
-        public class NAdam : NewOptimizerHelper, ILearningRateController, IBetas
+        public class NAdam : OptimizerHelper, ILearningRateController, IBetas
         {
             /// <summary>
             /// Implements NAdam algorithm.
@@ -1258,68 +1223,52 @@ namespace TorchSharp
 
             public override Tensor step(Func<Tensor> closure = null)
             {
-                Tensor loss = null;
+                return _step<ParamGroup>(group => {
 
-                if (closure != null) {
-                    loss = closure();
-                }
+                    var options = group.Options as Options;
+                    var beta1 = options.beta1.Value;
+                    var beta2 = options.beta2.Value;
+                    var eps = options.eps.Value;
+                    var weight_decay = options.weight_decay.Value;
+                    var momentum_decay = options.momentum_decay.Value;
+                    var lr = options.LearningRate.Value;
 
-                using (var _ = torch.no_grad()) {
+                    foreach (var param in group.Parameters) {
 
-                    using (var d = torch.NewDisposeScope()) {
+                        var grad = param.grad();
 
-                        foreach (var group in _parameter_groups) {
+                        if (grad is null) continue;
 
-                            var options = group.Options as Options;
-                            var beta1 = options.beta1.Value;
-                            var beta2 = options.beta2.Value;
-                            var eps = options.eps.Value;
-                            var weight_decay = options.weight_decay.Value;
-                            var momentum_decay = options.momentum_decay.Value;
-                            var lr = options.LearningRate.Value;
+                        var state = _state[param.handle];
 
-                            foreach (var param in group.Parameters) {
+                        state.step += 1;
 
-                                var grad = param.grad();
+                        var exp_avg = state.exp_avg;
+                        var exp_avg_sq = state.exp_avg_sq;
 
-                                if (grad is null) continue;
+                        var bias_correction2 = 1 - Math.Pow(beta2, state.step);
 
-                                var state = _state[param.handle];
+                        grad = (weight_decay != 0)
+                            ? grad.add(param, alpha: weight_decay)
+                            : grad.alias();
 
-                                state.step += 1;
+                        var mu = beta1 * (1.0 - 0.5 * Math.Pow(0.96, state.step * momentum_decay));
+                        var mu_next = beta1 * (1.0 - 0.5 * Math.Pow(0.96, (state.step + 1) * momentum_decay));
 
-                                var exp_avg = state.exp_avg;
-                                var exp_avg_sq = state.exp_avg_sq;
+                        var mu_product = state.mu_product * mu;
+                        var mu_product_next = mu_product * mu * mu_next;
 
-                                var bias_correction2 = 1 - Math.Pow(beta2, state.step);
+                        exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
+                        exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
 
-                                grad = (weight_decay != 0)
-                                    ? grad.add(param, alpha: weight_decay)
-                                    : grad.alias();
+                        var denom = exp_avg_sq.div(bias_correction2).sqrt_().add_(eps);
 
-                                var mu = beta1 * (1.0 - 0.5 * Math.Pow(0.96, state.step * momentum_decay));
-                                var mu_next = beta1 * (1.0 - 0.5 * Math.Pow(0.96, (state.step + 1) * momentum_decay));
+                        param.addcdiv_(grad, denom, value: -lr * (1 - mu) / (1 - mu_product));
+                        param.addcdiv_(exp_avg, denom, value: -lr * mu_next / (1 - mu_product_next));
 
-                                var mu_product = state.mu_product * mu;
-                                var mu_product_next = mu_product * mu * mu_next;
-
-                                exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
-                                exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
-
-                                var denom = exp_avg_sq.div(bias_correction2).sqrt_().add_(eps);
-
-                                param.addcdiv_(grad, denom, value: -lr * (1 - mu) / (1 - mu_product));
-                                param.addcdiv_(exp_avg, denom, value: -lr * mu_next / (1 - mu_product_next));
-
-                                state.mu_product = mu_product;
-                            }
-                        }
-
-                        d.DisposeEverything();
+                        state.mu_product = mu_product;
                     }
-                }
-
-                return loss;
+                }, closure);
             }
 
             protected override void Dispose(bool disposing)
@@ -1403,7 +1352,7 @@ namespace TorchSharp
             private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
-        public class RAdam : NewOptimizerHelper, ILearningRateController, IBetas
+        public class RAdam : OptimizerHelper, ILearningRateController, IBetas
         {
             /// <summary>
             /// Implements RAdam algorithm.
@@ -1463,71 +1412,55 @@ namespace TorchSharp
 
             public override Tensor step(Func<Tensor> closure = null)
             {
-                Tensor loss = null;
+                return _step<ParamGroup>(group => {
 
-                if (closure != null) {
-                    loss = closure();
-                }
+                    var options = group.Options as Options;
+                    var beta1 = options.beta1.Value;
+                    var beta2 = options.beta2.Value;
+                    var eps = options.eps.Value;
+                    var weight_decay = options.weight_decay.Value;
+                    var lr = options.LearningRate.Value;
 
-                using (var _ = torch.no_grad()) {
+                    foreach (var param in group.Parameters) {
 
-                    using (var d = torch.NewDisposeScope()) {
+                        var grad = param.grad();
 
-                        foreach (var group in _parameter_groups) {
+                        if (grad is null) continue;
 
-                            var options = group.Options as Options;
-                            var beta1 = options.beta1.Value;
-                            var beta2 = options.beta2.Value;
-                            var eps = options.eps.Value;
-                            var weight_decay = options.weight_decay.Value;
-                            var lr = options.LearningRate.Value;
+                        var state = _state[param.handle];
 
-                            foreach (var param in group.Parameters) {
+                        state.step += 1;
 
-                                var grad = param.grad();
+                        var exp_avg = state.exp_avg;
+                        var exp_avg_sq = state.exp_avg_sq;
 
-                                if (grad is null) continue;
+                        var bias_correction1 = 1 - Math.Pow(beta1, state.step);
+                        var bias_correction2 = 1 - Math.Pow(beta2, state.step);
 
-                                var state = _state[param.handle];
+                        grad = (weight_decay != 0)
+                            ? grad.add(param, alpha: weight_decay)
+                            : grad.alias();
 
-                                state.step += 1;
+                        exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
+                        exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
 
-                                var exp_avg = state.exp_avg;
-                                var exp_avg_sq = state.exp_avg_sq;
+                        var bias_corrected_exp_avg = exp_avg / bias_correction1;
 
-                                var bias_correction1 = 1 - Math.Pow(beta1, state.step);
-                                var bias_correction2 = 1 - Math.Pow(beta2, state.step);
+                        var rho_inf = 2 / (1 - beta2) - 1;
+                        var rho_t = rho_inf - 2 * state.step * Math.Pow(beta2, state.step) / bias_correction2;
 
-                                grad = (weight_decay != 0)
-                                    ? grad.add(param, alpha: weight_decay)
-                                    : grad.alias();
+                        var t6 = bias_corrected_exp_avg * lr;
 
-                                exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
-                                exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
+                        if (rho_t > 5) {
+                            var rect = Math.Sqrt((rho_t - 4) * (rho_t - 2) * rho_inf / ((rho_inf - 4) * (rho_inf - 2) * rho_t));
+                            var adaptive_lr = Math.Sqrt(bias_correction2) / exp_avg_sq.sqrt().add_(eps);
 
-                                var bias_corrected_exp_avg = exp_avg / bias_correction1;
-
-                                var rho_inf = 2 / (1 - beta2) - 1;
-                                var rho_t = rho_inf - 2 * state.step * Math.Pow(beta2, state.step) / bias_correction2;
-
-                                var t6 = bias_corrected_exp_avg * lr;
-
-                                if (rho_t > 5) {
-                                    var rect = Math.Sqrt((rho_t - 4) * (rho_t - 2) * rho_inf / ((rho_inf - 4) * (rho_inf - 2) * rho_t));
-                                    var adaptive_lr = Math.Sqrt(bias_correction2) / exp_avg_sq.sqrt().add_(eps);
-
-                                    param.add_(t6 * lr * adaptive_lr * rect, alpha: -1.0);
-                                } else {
-                                    param.add_(t6, alpha: -1.0);
-                                }
-                            }
+                            param.add_(t6 * lr * adaptive_lr * rect, alpha: -1.0);
+                        } else {
+                            param.add_(t6, alpha: -1.0);
                         }
-
-                        d.DisposeEverything();
                     }
-                }
-
-                return loss;
+                }, closure);
             }
 
             protected override void Dispose(bool disposing)
@@ -1608,7 +1541,7 @@ namespace TorchSharp
             private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
-        public class ASGD : NewOptimizerHelper, ILearningRateController
+        public class ASGD : OptimizerHelper, ILearningRateController
         {
             /// <summary>
             /// Implements ASGD algorithm (a variant of Adam based on infinity norm).
@@ -1662,60 +1595,44 @@ namespace TorchSharp
 
             public override Tensor step(Func<Tensor> closure = null)
             {
-                Tensor loss = null;
+                return _step<ParamGroup>(group => {
 
-                if (closure != null) {
-                    loss = closure();
-                }
+                    var options = group.Options as Options;
+                    var lambd = options.lambd.Value;
+                    var alpha = options.alpha.Value;
+                    var weight_decay = options.weight_decay.Value;
+                    var t0 = options.t0.Value;
+                    var lr = options.LearningRate.Value;
 
-                using (var _ = torch.no_grad()) {
+                    foreach (var param in group.Parameters) {
 
-                    using (var d = torch.NewDisposeScope()) {
+                        var grad = param.grad();
 
-                        foreach (var group in _parameter_groups) {
+                        if (grad is null) continue;
 
-                            var options = group.Options as Options;
-                            var lambd = options.lambd.Value;
-                            var alpha = options.alpha.Value;
-                            var weight_decay = options.weight_decay.Value;
-                            var t0 = options.t0.Value;
-                            var lr = options.LearningRate.Value;
+                        if (grad.is_sparse) throw new ArgumentException("ASGD does not support sparse gradients");
 
-                            foreach (var param in group.Parameters) {
+                        var state = _state[param.handle];
 
-                                var grad = param.grad();
+                        state.step += 1;
 
-                                if (grad is null) continue;
+                        grad = (weight_decay != 0)
+                            ? grad.add(param, alpha: weight_decay)
+                            : grad.alias();
 
-                                if (grad.is_sparse) throw new ArgumentException("ASGD does not support sparse gradients");
+                        param.mul_(1 - lambd * state.eta);
+                        param.add_(grad, alpha: -state.eta);
 
-                                var state = _state[param.handle];
-
-                                state.step += 1;
-
-                                grad = (weight_decay != 0)
-                                    ? grad.add(param, alpha: weight_decay)
-                                    : grad.alias();
-
-                                param.mul_(1 - lambd * state.eta);
-                                param.add_(grad, alpha: -state.eta);
-
-                                if (state.mu != 1) {
-                                    state.ax.add_(param.sub(state.ax).mul(state.mu));
-                                } else {
-                                    state.ax.copy_(param);
-                                }
-
-                                state.eta = lr / Math.Pow((1 + lambd * lr * state.step), alpha);
-                                state.mu = 1 / Math.Max(1, state.step - t0);
-                            }
+                        if (state.mu != 1) {
+                            state.ax.add_(param.sub(state.ax).mul(state.mu));
+                        } else {
+                            state.ax.copy_(param);
                         }
 
-                        d.DisposeEverything();
+                        state.eta = lr / Math.Pow((1 + lambd * lr * state.step), alpha);
+                        state.mu = 1 / Math.Max(1, state.step - t0);
                     }
-                }
-
-                return loss;
+                }, closure);
             }
 
             protected override void Dispose(bool disposing)
@@ -1795,80 +1712,95 @@ namespace TorchSharp
             ///
             /// It has been proposed in Adam: A Method for Stochastic Optimization.
             /// </summary>
-            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="parameters">Parameters to optimize.</param>
             /// <param name="lr ">Learning rate</param>
             /// <param name="etaminus">Multiplicative increase factor.</param>
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
             /// <returns></returns>
-            public Rprop(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50) : base(named_parameters, lr)
+            public Rprop(IEnumerable<Parameter> parameters, double lr = 0.01, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+                : this(new ParamGroup[] { new() { Parameters = parameters } }, lr, etaminus, etaplus, min_step, max_step)
             {
-                LearningRate = lr;
-                InitialLearningRate = lr;
-                _etaminus = etaminus;
-                _etaplus = etaplus;
-                _min_step = min_step;
-                _max_step = max_step;
+            }
 
-                foreach (var (name, p) in _parameters) {
-                    var state = new State();
-                    _state[name] = state;
-                    state.step = 0;
-                    state.prev = torch.zeros_like(p);
-                    state.step_size = p.new_empty(p.shape).fill_(LearningRate);
+            /// <summary>
+            /// Implements Rprop algorithm (a variant of Adam based on infinity norm).
+            ///
+            /// It has been proposed in Adam: A Method for Stochastic Optimization.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="etaminus">Multiplicative increase factor.</param>
+            /// <param name="etaplus">Multiplicative decrease factor.</param>
+            /// <param name="min_step">Minimum allowed step size.</param>
+            /// <param name="max_step">Maximum allowed step size.</param>
+            /// <returns></returns>
+            public Rprop(IEnumerable<ParamGroup> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+            {
+                if (lr < 0.0) throw new ArgumentException($"Invalid learning rate: {lr}");
+
+                var options = new Options {
+                    LearningRate = lr,
+                    InitialLearningRate = lr,
+                    etaminus = etaminus,
+                    etaplus = etaplus,
+                    min_step = min_step,
+                    max_step = max_step
+                };
+
+                _defaults = options;
+                _parameter_groups = new List<Modules.ParamGroup>();
+
+                foreach (var g in parameters) {
+                    add_param_group(g);
                 }
             }
 
             public override Tensor step(Func<Tensor> closure = null)
             {
-                Tensor loss = null;
+                return _step<ParamGroup>(group => {
 
-                if (closure != null) {
-                    loss = closure();
-                }
+                    var options = group.Options as Options;
+                    var etaminus = options.etaminus.Value;
+                    var etaplus = options.etaplus.Value;
+                    var min_step = options.min_step.Value;
+                    var max_step = options.max_step.Value;
+                    var lr = options.LearningRate.Value;
 
-                using (var _ = torch.no_grad()) {
+                    foreach (var param in group.Parameters) {
 
-                    using (var d = torch.NewDisposeScope()) {
+                        var grad = param.grad();
 
-                        foreach (var (name, p) in _parameters) {
+                        if (grad is null) continue;
 
-                            var grad = p.grad();
+                        if (grad.is_sparse) throw new ArgumentException("Rprop does not support sparse gradients");
 
-                            if (grad is null) continue;
+                        var state = _state[param.handle];
 
-                            if (grad.is_sparse) throw new ArgumentException("Rprop does not support sparse gradients");
+                        state.step += 1;
 
-                            var state = _state[name];
+                        grad = (max_step != 0)
+                            ? grad.add(param, alpha: max_step)
+                            : grad.alias();
 
-                            state.step += 1;
+                        var sign = grad.mul(state.prev).sign();
+                        sign[sign.gt(0)] = (Tensor)etaplus;
+                        sign[sign.lt(0)] = (Tensor)etaminus;
+                        sign[sign.eq(0)] = (Tensor)1;
 
-                            grad = (_max_step != 0)
-                                ? grad.add(p, alpha: _max_step)
-                                : grad.alias();
+                        state.step_size.mul_(sign).clamp_(min_step, max_step);
 
-                            var sign = grad.mul(state.prev).sign();
-                            sign[sign.gt(0)] = (Tensor)_etaplus;
-                            sign[sign.lt(0)] = (Tensor)_etaminus;
-                            sign[sign.eq(0)] = (Tensor)1;
+                        grad = grad.clone();
 
-                            state.step_size.mul_(sign).clamp_(_min_step, _max_step);
+                        grad.index_put_(0, sign.eq(etaminus));
 
-                            grad = grad.clone();
+                        param.addcmul_(grad.sign(), state.step_size, -1);
 
-                            grad.index_put_(0, sign.eq(_etaminus));
-
-                            p.addcmul_(grad.sign(), state.step_size, -1);
-
-                            state.prev.copy_(grad);
-                        }
-
-                        d.DisposeEverything();
+                        state.prev.copy_(grad);
                     }
-                }
 
-                return loss;
+                }, closure);
             }
 
             protected override void Dispose(bool disposing)
@@ -1887,14 +1819,60 @@ namespace TorchSharp
                 public Tensor step_size;
             }
 
-            private Dictionary<string, State> _state = new Dictionary<string, State>();
-            private double _etaminus;
-            private double _etaplus;
-            private double _min_step;
-            private double _max_step;
+            public override void add_param_group(Modules.ParamGroup param_group)
+            {
+                var def = _defaults as Options;
+                if (param_group.Options is null) {
+                    param_group.Options = new Options();
+                }
+
+                var opt = param_group.Options as Options;
+
+                // Make sure all the options are set.
+                if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
+                if (!opt.etaminus.HasValue) opt.etaminus = def.etaminus;
+                if (!opt.etaplus.HasValue) opt.etaplus = def.etaplus;
+                if (!opt.min_step.HasValue) opt.min_step = def.min_step;
+                if (!opt.max_step.HasValue) opt.max_step = def.max_step;
+
+                opt.InitialLearningRate = opt.LearningRate.Value;
+
+                _parameter_groups.Add(param_group);
+
+                foreach (var p in param_group.Parameters) {
+                    var state = new State();
+                    _state[p.Handle] = state;
+                    state.step = 0;
+                    state.prev = torch.zeros_like(p);
+                    state.step_size = p.new_empty(p.shape).fill_(LearningRate);
+                }
+            }
+
+            public class Options : OptimizerOptions
+            {
+                public double? etaminus;
+                public double? etaplus;
+                public double? min_step;
+                public double? max_step;
+            }
+
+            public class ParamGroup : ParamGroup<Options>
+            {
+                public ParamGroup() { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, Options options) : base(parameters, options) { }
+
+                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+                    : base(parameters, new Rprop.Options { LearningRate = lr, etaminus = etaminus, etaplus = etaplus, min_step = min_step, max_step = max_step })
+                {
+                }
+            }
+
+            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
+
         }
 
-        public class Adagrad : NewOptimizerHelper
+        public class Adagrad : OptimizerHelper
         {
             /// <summary>
             /// Implements Adagrad algorithm.
@@ -1951,59 +1929,44 @@ namespace TorchSharp
 
             public override Tensor step(Func<Tensor> closure = null)
             {
-                Tensor loss = null;
+                return _step<ParamGroup>(group => {
 
-                if (closure != null) {
-                    using (var _ = torch.enable_grad())
-                        loss = closure();
-                }
+                    var options = group.Options as Options;
+                    var lr_decay = options.lr_decay.Value;
+                    var weight_decay = options.weight_decay.Value;
+                    var eps = options.eps.Value;
+                    var initial_accumulator_value = options.initial_accumulator_value.Value;
+                    var lr = options.LearningRate.Value;
 
-                using (var _ = torch.no_grad()) {
+                    foreach (var param in group.Parameters) {
 
-                    using (var d = torch.NewDisposeScope()) {
+                        var state = _state[param.handle];
 
-                        foreach (var group in _parameter_groups) {
+                        var grad = param.grad();
 
-                            var options = group.Options as Options;
-                            var lr_decay = options.lr_decay.Value;
-                            var weight_decay = options.weight_decay.Value;
-                            var eps = options.eps.Value;
-                            var initial_accumulator_value = options.initial_accumulator_value.Value;
-                            var lr = options.LearningRate.Value;
+                        if (grad is null) continue;
 
-                            foreach (var param in group.Parameters) {
+                        state.step += 1;
 
-                                var state = _state[param.handle];
+                        if (weight_decay != 0) {
+                            grad = grad.add(param, alpha: weight_decay);
+                        }
 
-                                var grad = param.grad();
+                        var clr = lr / (1 + (state.step - 1) * lr_decay);
 
-                                if (grad is null) continue;
-
-                                state.step += 1;
-
-                                if (weight_decay != 0) {
-                                    grad = grad.add(param, alpha: weight_decay);
-                                }
-
-                                var clr = lr / (1 + (state.step - 1) * lr_decay);
-
-                                if (grad.is_sparse) {
-                                    throw new NotImplementedException("Adagrad optimization over sparse parameters");
-                                } else if (torch.is_complex(param)) {
-                                    throw new NotImplementedException("Adagrad optimization over complex parameters");
-                                } else {
-                                    state.sum.addcmul_(grad, grad, value: 1);
-                                    var std = state.sum.sqrt().add_(eps);
-                                    param.addcdiv_(grad, std, value: -clr);
-                                }
-                            }
-
-                            d.DisposeEverything();
+                        if (grad.is_sparse) {
+                            throw new NotImplementedException("Adagrad optimization over sparse parameters");
+                        } else if (torch.is_complex(param)) {
+                            throw new NotImplementedException("Adagrad optimization over complex parameters");
+                        } else {
+                            state.sum.addcmul_(grad, grad, value: 1);
+                            var std = state.sum.sqrt().add_(eps);
+                            param.addcdiv_(grad, std, value: -clr);
                         }
                     }
-                }
 
-                return loss;
+
+                }, closure);
             }
 
             protected override void Dispose(bool disposing)
@@ -2074,7 +2037,7 @@ namespace TorchSharp
             private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
-        public class Adam : NewOptimizerHelper, IBetas
+        public class Adam : OptimizerHelper, IBetas
         {
             /// <summary>
             /// Implements Adam algorithm.
@@ -2138,69 +2101,53 @@ namespace TorchSharp
 
             public override Tensor step(Func<Tensor> closure = null)
             {
-                Tensor loss = null;
+                return _step<ParamGroup>(group => {
 
-                if (closure != null) {
-                    using (var _ = torch.enable_grad())
-                        loss = closure();
-                }
+                    var options = group.Options as Options;
+                    var beta1 = options.beta1.Value;
+                    var beta2 = options.beta2.Value;
+                    var weight_decay = options.weight_decay.Value;
+                    var amsgrad = options.amsgrad.Value;
+                    var maximize = options.maximize.Value;
+                    var eps = options.eps.Value;
+                    var lr = options.LearningRate.Value;
 
-                using (var _ = torch.no_grad()) {
+                    foreach (var param in group.Parameters) {
 
-                    using (var d = torch.NewDisposeScope()) {
+                        var state = _state[param.handle];
 
-                        foreach (var group in _parameter_groups) {
+                        var grad = (maximize) ? -param.grad() : param.grad();
 
-                            var options = group.Options as Options;
-                            var beta1 = options.beta1.Value;
-                            var beta2 = options.beta2.Value;
-                            var weight_decay = options.weight_decay.Value;
-                            var amsgrad = options.amsgrad.Value;
-                            var maximize = options.maximize.Value;
-                            var eps = options.eps.Value;
-                            var lr = options.LearningRate.Value;
+                        if (grad is null) continue;
 
-                            foreach (var param in group.Parameters) {
+                        state.step += 1;
 
-                                var state = _state[param.handle];
+                        var bias_correction1 = 1 - Math.Pow(beta1, state.step);
+                        var bias_correction2 = 1 - Math.Pow(beta2, state.step);
 
-                                var grad = (maximize) ? -param.grad() : param.grad();
-
-                                if (grad is null) continue;
-
-                                state.step += 1;
-
-                                var bias_correction1 = 1 - Math.Pow(beta1, state.step);
-                                var bias_correction2 = 1 - Math.Pow(beta2, state.step);
-
-                                if (weight_decay != 0) {
-                                    grad = grad.add(param, alpha: weight_decay);
-                                }
-
-                                state.exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
-                                // When complex types are supported:
-                                //state.exp_avg_sq.mul_(_beta2).addcmul_(grad, grad.conj(), value: 1 - _beta2)
-                                state.exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
-
-                                Tensor denom = null;
-                                if (amsgrad) {
-                                    var t0 = state.max_exp_avg_sq;
-                                    state.max_exp_avg_sq = torch.maximum(t0, state.exp_avg_sq).DetatchFromDisposeScope();
-                                    t0.Dispose();
-                                    denom = (state.max_exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
-                                } else {
-                                    denom = (state.exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
-                                }
-
-                                var step_size = lr / bias_correction1;
-                                param.addcdiv_(state.exp_avg, denom, value: -step_size);
-                            }
+                        if (weight_decay != 0) {
+                            grad = grad.add(param, alpha: weight_decay);
                         }
-                        d.DisposeEverything();
-                    }
-                }
 
-                return loss;
+                        state.exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
+                        // When complex types are supported:
+                        //state.exp_avg_sq.mul_(_beta2).addcmul_(grad, grad.conj(), value: 1 - _beta2)
+                        state.exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
+
+                        Tensor denom = null;
+                        if (amsgrad) {
+                            var t0 = state.max_exp_avg_sq;
+                            state.max_exp_avg_sq = torch.maximum(t0, state.exp_avg_sq).DetatchFromDisposeScope();
+                            t0.Dispose();
+                            denom = (state.max_exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
+                        } else {
+                            denom = (state.exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
+                        }
+
+                        var step_size = lr / bias_correction1;
+                        param.addcdiv_(state.exp_avg, denom, value: -step_size);
+                    }
+                }, closure);
             }
 
             protected override void Dispose(bool disposing)
@@ -2292,7 +2239,7 @@ namespace TorchSharp
             private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
-        public class AdamW : NewOptimizerHelper, IBetas
+        public class AdamW : OptimizerHelper, IBetas
         {
             /// <summary>
             /// Implements AdamW algorithm.
@@ -2356,65 +2303,49 @@ namespace TorchSharp
 
             public override Tensor step(Func<Tensor> closure = null)
             {
-                Tensor loss = null;
+                return _step<ParamGroup>(group => {
 
-                if (closure != null) {
-                    using (var _ = torch.enable_grad())
-                        loss = closure();
-                }
+                    var options = group.Options as Options;
+                    var beta1 = options.beta1.Value;
+                    var beta2 = options.beta2.Value;
+                    var weight_decay = options.weight_decay.Value;
+                    var amsgrad = options.amsgrad.Value;
+                    var maximize = options.maximize.Value;
+                    var eps = options.eps.Value;
+                    var lr = options.LearningRate.Value;
 
-                using (var _ = torch.no_grad()) {
+                    foreach (var param in group.Parameters) {
 
-                    using (var d = torch.NewDisposeScope()) {
+                        var state = _state[param.handle];
 
-                        foreach (var group in _parameter_groups) {
+                        var grad = (maximize) ? -param.grad() : param.grad();
 
-                            var options = group.Options as Options;
-                            var beta1 = options.beta1.Value;
-                            var beta2 = options.beta2.Value;
-                            var weight_decay = options.weight_decay.Value;
-                            var amsgrad = options.amsgrad.Value;
-                            var maximize = options.maximize.Value;
-                            var eps = options.eps.Value;
-                            var lr = options.LearningRate.Value;
+                        if (grad is null) continue;
 
-                            foreach (var param in group.Parameters) {
+                        state.step += 1;
 
-                                var state = _state[param.handle];
+                        param.mul_(1 - LearningRate * weight_decay);
 
-                                var grad = (maximize) ? -param.grad() : param.grad();
+                        var bias_correction1 = 1 - Math.Pow(beta1, state.step);
+                        var bias_correction2 = 1 - Math.Pow(beta2, state.step);
 
-                                if (grad is null) continue;
+                        state.exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
+                        state.exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
 
-                                state.step += 1;
-
-                                param.mul_(1 - LearningRate * weight_decay);
-
-                                var bias_correction1 = 1 - Math.Pow(beta1, state.step);
-                                var bias_correction2 = 1 - Math.Pow(beta2, state.step);
-
-                                state.exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
-                                state.exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
-
-                                Tensor denom = null;
-                                if (amsgrad) {
-                                    var t0 = state.max_exp_avg_sq;
-                                    state.max_exp_avg_sq = torch.maximum(t0, state.exp_avg_sq).DetatchFromDisposeScope();
-                                    t0.Dispose();
-                                    denom = (state.max_exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
-                                } else {
-                                    denom = (state.exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
-                                }
-
-                                var step_size = lr / bias_correction1;
-                                param.addcdiv_(state.exp_avg, denom, value: -step_size);
-                            }
+                        Tensor denom = null;
+                        if (amsgrad) {
+                            var t0 = state.max_exp_avg_sq;
+                            state.max_exp_avg_sq = torch.maximum(t0, state.exp_avg_sq).DetatchFromDisposeScope();
+                            t0.Dispose();
+                            denom = (state.max_exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
+                        } else {
+                            denom = (state.exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
                         }
-                        d.DisposeEverything();
-                    }
-                }
 
-                return loss;
+                        var step_size = lr / bias_correction1;
+                        param.addcdiv_(state.exp_avg, denom, value: -step_size);
+                    }
+                }, closure);
             }
 
             protected override void Dispose(bool disposing)
@@ -2506,7 +2437,7 @@ namespace TorchSharp
             private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
 
-        public class RMSProp : NewOptimizerHelper, IMomentum
+        public class RMSProp : OptimizerHelper, IMomentum
         {
 
             /// <summary>
@@ -2568,68 +2499,51 @@ namespace TorchSharp
 
             public override Tensor step(Func<Tensor> closure = null)
             {
-                Tensor loss = null;
+                return _step<ParamGroup>(group => {
 
-                if (closure != null) {
-                    using (var _ = torch.enable_grad())
-                        loss = closure();
-                }
+                    var options = group.Options as Options;
+                    var momentum = options.momentum.Value;
+                    var alpha = options.alpha.Value;
+                    var weight_decay = options.weight_decay.Value;
+                    var centered = options.centered.Value;
+                    var eps = options.eps.Value;
+                    var lr = options.LearningRate.Value;
 
-                using (var _ = torch.no_grad()) {
+                    foreach (var param in group.Parameters) {
 
-                    using (var d = torch.NewDisposeScope()) {
+                        var state = _state[param.handle];
 
-                        foreach (var group in _parameter_groups) {
+                        var grad = param.grad();
 
-                            var options = group.Options as Options;
-                            var momentum = options.momentum.Value;
-                            var alpha = options.alpha.Value;
-                            var weight_decay = options.weight_decay.Value;
-                            var centered = options.centered.Value;
-                            var eps = options.eps.Value;
-                            var lr = options.LearningRate.Value;
+                        if (grad is null) continue;
 
-                            foreach (var param in group.Parameters) {
+                        state.step += 1;
 
-                                var state = _state[param.handle];
-
-                                var grad = param.grad();
-
-                                if (grad is null) continue;
-
-                                state.step += 1;
-
-                                if (weight_decay != 0) {
-                                    grad = grad.add(param, alpha: weight_decay);
-                                }
-
-                                state.square_avg.mul_(alpha).addcmul_(grad, grad, value: 1 - alpha);
-
-                                Tensor avg = null;
-
-                                if (centered) {
-                                    var grad_avg = state.grad_avg;
-                                    grad_avg.mul_(alpha).add_(grad, alpha: 1 - alpha);
-                                    avg = state.square_avg.addcmul(grad_avg, grad_avg, value: -1).sqrt_().add_(eps);
-                                } else {
-                                    avg = state.square_avg.sqrt().add_(eps);
-                                }
-
-                                if (momentum > 0) {
-                                    var buf = state.momentum_buffer;
-                                    buf.mul_(momentum).addcdiv_(grad, avg);
-                                    param.add_(buf, alpha: -lr);
-                                } else {
-                                    param.addcdiv_(grad, avg, -lr);
-                                }
-                            }
+                        if (weight_decay != 0) {
+                            grad = grad.add(param, alpha: weight_decay);
                         }
 
-                        d.DisposeEverything();
-                    }
-                }
+                        state.square_avg.mul_(alpha).addcmul_(grad, grad, value: 1 - alpha);
 
-                return loss;
+                        Tensor avg = null;
+
+                        if (centered) {
+                            var grad_avg = state.grad_avg;
+                            grad_avg.mul_(alpha).add_(grad, alpha: 1 - alpha);
+                            avg = state.square_avg.addcmul(grad_avg, grad_avg, value: -1).sqrt_().add_(eps);
+                        } else {
+                            avg = state.square_avg.sqrt().add_(eps);
+                        }
+
+                        if (momentum > 0) {
+                            var buf = state.momentum_buffer;
+                            buf.mul_(momentum).addcdiv_(grad, avg);
+                            param.add_(buf, alpha: -lr);
+                        } else {
+                            param.addcdiv_(grad, avg, -lr);
+                        }
+                    }
+                }, closure);
             }
 
             protected override void Dispose(bool disposing)
@@ -2708,7 +2622,9 @@ namespace TorchSharp
             public double Momentum { get => (_defaults as Options).momentum.Value; set => (_defaults as Options).momentum = value; }
         }
 
-        // The following optimizers are just wrappers for the native code implementations.
+        // The following optimizers are wrappers for the native code implementations.
+        //
+        // LBGFS does not allow for param groups, so there's no need to use anything but the native implementation.
 
         public class LBFGSOptimizer : Optimizer, ILearningRateController
         {
@@ -2716,6 +2632,7 @@ namespace TorchSharp
             {
                 _rate = lr;
                 InitialLearningRate = lr;
+                _paramGroups = new ParamGroup[] { new ParamGroup { Parameters = this.parameters(), Options = { LearningRate = lr, InitialLearningRate = lr } } };
             }
 
             [DllImport("LibTorchSharp")]
@@ -2728,6 +2645,9 @@ namespace TorchSharp
 
             public double InitialLearningRate { get; set; }
 
+            public IEnumerable<ILearningRateController> ParamGroups { get => _paramGroups; }
+
+            
             public override Tensor step(Func<Tensor> closure = null)
             {
                 if (closure == null)
@@ -2735,7 +2655,8 @@ namespace TorchSharp
                 return base.step(closure);
             }
 
-            private double _rate;
+            public double _rate;
+            private ParamGroup[] _paramGroups;
         }
     }
 }

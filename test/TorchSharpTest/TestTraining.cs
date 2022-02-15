@@ -970,7 +970,45 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.Rprop(seq.named_parameters());
+            var optimizer = torch.optim.Rprop(seq.parameters());
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+
+        [Fact]
+        public void TestTrainingRpropParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.Rprop(new Rprop.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
