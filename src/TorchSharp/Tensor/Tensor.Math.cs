@@ -594,7 +594,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            static extern bool THSTensor_is_conj(IntPtr tensor);
+            static extern long THSTensor_is_conj(IntPtr tensor);
 
             /// <summary>
             /// Returns true if the input is a conjugated tensor, i.e. its conjugate bit is set to True.
@@ -604,7 +604,7 @@ namespace TorchSharp
             {
                 var res = THSTensor_is_conj(Handle);
                 torch.CheckForErrors();
-                return res;
+                return res != 0;
             }
 
             [DllImport("LibTorchSharp")]

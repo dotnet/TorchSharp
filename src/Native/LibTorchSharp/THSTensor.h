@@ -240,7 +240,7 @@ EXPORT_API(Tensor) THSTensor_complex(const Tensor real, const Tensor imag);
 
 EXPORT_API(Tensor) THSTensor_conj(const Tensor tensor);
 
-EXPORT_API(bool)   THSTensor_is_conj(const Tensor tensor);
+EXPORT_API(int64_t)   THSTensor_is_conj(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_conj_physical(const Tensor tensor);
 

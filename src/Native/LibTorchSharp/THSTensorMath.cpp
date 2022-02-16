@@ -236,9 +236,9 @@ Tensor THSTensor_conj(const Tensor tensor)
     CATCH_TENSOR(tensor->conj());
 }
 
-bool THSTensor_is_conj(const Tensor tensor)
+int64_t THSTensor_is_conj(const Tensor tensor)
 {
-    CATCH_RETURN_RES(bool, false, res = tensor->is_conj();)
+    CATCH_RETURN_RES(int64_t, 0, res = tensor->is_conj();)
 }
 
 Tensor THSTensor_conj_physical(const Tensor tensor)
