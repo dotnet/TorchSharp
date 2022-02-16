@@ -14,7 +14,7 @@ __Fixed Bugs:__
 
 #510 Module.Load throws Mismatched state_dict sizes exception on BatchNorm1d<br/>
 #515 what's reason for making register_module internal?<br/>
-
+#495 Add support for OptimizerParamGroup
 
 ## NuGet Version 0.96.0
 
