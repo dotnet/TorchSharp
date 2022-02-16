@@ -501,5 +501,79 @@ namespace TorchSharp
                 return this.stack.forward(t);
             }
         }
+
+        [Fact]
+        public void ValidateIssue516()
+        {
+            using var module = new LMHead(128, 1000, "tanh", torch.rand(128, 1000));
+            using var optim = torch.optim.Adam(module.parameters(), 0.002);
+        }
+
+        internal abstract class BaseModule : torch.nn.Module
+        {
+            public int? InstanceId = null;
+
+            protected BaseModule(string name) : base(name)
+            {
+            }
+        }
+
+        internal sealed class ActivationFunction : BaseModule
+        {
+            private torch.nn.Module Function;
+
+            public ActivationFunction(string name) : base(name)
+            {
+                Function = name?.ToLower() switch {
+                    "relu" => torch.nn.ReLU(),
+                    "gelu" => torch.nn.GELU(),
+                    "tanh" => torch.nn.Tanh(),
+                    "linear" => torch.nn.Identity(),
+                    _ => throw new NotSupportedException($"Activation function {name} not supported.")
+                };
+            }
+
+            public override torch.Tensor forward(torch.Tensor x)
+            {
+                return Function.forward(x);
+            }
+
+            public override string GetName()
+            {
+                return Function.GetName();
+            }
+        }
+
+        internal sealed class LMHead : BaseModule
+        {
+            public readonly Modules.Sequential Projection;
+            public readonly TorchSharp.Modules.Parameter Weight;
+            public readonly TorchSharp.Modules.Parameter Bias;
+
+            public LMHead(int inSize, int embedDim, string activationFn, torch.Tensor outputWeight)
+                : base(nameof(LMHead))
+            {
+                if (outputWeight is null) {
+                    throw new ArgumentNullException(nameof(outputWeight));
+                }
+
+                Projection = torch.nn.Sequential(
+                    ("dense", torch.nn.Linear(inSize, embedDim)),
+                    ("activation", new ActivationFunction(activationFn)),
+                    ("layernorm", torch.nn.LayerNorm(new long[] { embedDim }))
+                );
+
+                var outputDim = outputWeight.shape[^2];
+                Weight = new TorchSharp.Modules.Parameter(outputWeight);
+                Bias = new TorchSharp.Modules.Parameter(torch.zeros(outputDim, dtype: torch.float32, requiresGrad: true));
+
+                RegisterComponents();
+            }
+
+            public override torch.Tensor forward(torch.Tensor features)
+            {
+                return torch.randn(10);
+            }
+        }
     }
 }
