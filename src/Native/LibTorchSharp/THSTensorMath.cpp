@@ -231,6 +231,31 @@ Tensor THSTensor_ceil_(const Tensor tensor)
     CATCH_TENSOR(tensor->ceil_());
 }
 
+Tensor THSTensor_conj(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->conj());
+}
+
+bool THSTensor_is_conj(const Tensor tensor)
+{
+    CATCH_RETURN_RES(bool, false, res = tensor->is_conj();)
+}
+
+Tensor THSTensor_conj_physical(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->conj_physical());
+}
+
+Tensor THSTensor_conj_physical_(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->conj_physical_());
+}
+
+Tensor THSTensor_resolve_conj(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->resolve_conj());
+}
+
 Tensor THSTensor_cos(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->cos());
