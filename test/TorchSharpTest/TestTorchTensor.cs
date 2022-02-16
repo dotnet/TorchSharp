@@ -3875,6 +3875,25 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void ConjTest()
+        {
+            var input = torch.randn(10, dtype: complex64);
+            Assert.False(input.is_conj());
+
+            var res = input.conj();
+            Assert.Equal(10, res.shape[0]);
+            Assert.True(torch.is_conj(res));
+
+            var resolved = torch.resolve_conj(res);
+            Assert.Equal(10, res.shape[0]);
+            Assert.False(resolved.is_conj());
+
+            var physical = torch.conj_physical(input);
+            Assert.Equal(10, res.shape[0]);
+            Assert.False(physical.is_conj());
+        }
+
+        [Fact]
         public void RoundTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };

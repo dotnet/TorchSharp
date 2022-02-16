@@ -238,6 +238,17 @@ EXPORT_API(Tensor) THSTensor_clamp_min_(const Tensor input, const Scalar min);
 
 EXPORT_API(Tensor) THSTensor_complex(const Tensor real, const Tensor imag);
 
+EXPORT_API(Tensor) THSTensor_conj(const Tensor tensor);
+
+EXPORT_API(int64_t)   THSTensor_is_conj(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_conj_physical(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_conj_physical_(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_resolve_conj(const Tensor tensor);
+
+
 EXPORT_API(Tensor) THSTensor_conv1d(const Tensor input, const Tensor weight, const Tensor bias,
     const int64_t* strides, const int strides_length,
     const int64_t* paddings, const int paddings_length,
