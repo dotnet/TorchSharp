@@ -1023,7 +1023,7 @@ namespace TorchSharp
             Assert.Equal(3, gradCounts);
         }
 
-        [Fact(Skip= "Intermittently failing: https://github.com/dotnet/TorchSharp/issues/367")]
+        [Fact]//(Skip= "Intermittently failing: https://github.com/dotnet/TorchSharp/issues/367")]
         public void TestAutoGradMode()
         {
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
