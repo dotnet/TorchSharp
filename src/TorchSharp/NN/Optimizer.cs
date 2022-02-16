@@ -1951,15 +1951,14 @@ namespace TorchSharp
 
                         var clr = lr / (1 + (state.step - 1) * lr_decay);
 
-                        if (grad.is_sparse) {
+                        if (grad.is_sparse)
                             throw new NotImplementedException("Adagrad optimization over sparse parameters");
-                        } else if (torch.is_complex(param)) {
+                        if (torch.is_complex(grad))
                             throw new NotImplementedException("Adagrad optimization over complex parameters");
-                        } else {
-                            state.sum.addcmul_(grad, grad, value: 1);
-                            var std = state.sum.sqrt().add_(eps);
-                            param.addcdiv_(grad, std, value: -clr);
-                        }
+
+                        state.sum.addcmul_(grad, grad, value: 1);
+                        var std = state.sum.sqrt().add_(eps);
+                        param.addcdiv_(grad, std, value: -clr);
                     }
 
 
@@ -2127,9 +2126,7 @@ namespace TorchSharp
                         }
 
                         state.exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
-                        // When complex types are supported:
-                        //state.exp_avg_sq.mul_(_beta2).addcmul_(grad, grad.conj(), value: 1 - _beta2)
-                        state.exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
+                        state.exp_avg_sq.mul_(beta2).addcmul_(grad, grad.conj(), value: 1 - beta2);
 
                         Tensor denom = null;
                         if (amsgrad) {

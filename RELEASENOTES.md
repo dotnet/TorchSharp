@@ -9,12 +9,15 @@ __API Changes:__
 __NOTE__: This release contains breaking changes.<br/>
 
 The APIs to create optimizers all take 'named_parameters' rather than 'parameters' now.<br/>
+Support for parameter groups in most optimizers.
+Support for parameter groups in LR schedulers.
 
 __Fixed Bugs:__
 
 #510 Module.Load throws Mismatched state_dict sizes exception on BatchNorm1d<br/>
 #515 what's reason for making register_module internal?<br/>
 #495 Add support for OptimizerParamGroup
+#509 Tensor.conj() not implemented
 
 ## NuGet Version 0.96.0
 
