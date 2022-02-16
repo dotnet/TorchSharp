@@ -496,13 +496,16 @@ namespace TorchSharp
 
                 public virtual bool has_buffer(string target)
                 {
-                    if (_internal_buffers.TryGetValue(target, out var parameter)) {
+                    if (_internal_buffers.TryGetValue(target, out var buffer)) {
                         return true;
                     }
-                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
-                        var prefix = child.name + ".";
-                        if (child.module.has_buffer(target.Remove(0, prefix.Length)))
-                            return true;
+
+                    var splits = target.Split('.');
+                    if (splits.Length > 1) {
+                        foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                            if (child.module.has_buffer(target.Remove(0, splits[0].Length + 1)))
+                                return true;
+                        }
                     }
                     return false;
                 }
@@ -512,12 +515,38 @@ namespace TorchSharp
                     if (_internal_params.TryGetValue(target, out var parameter)) {
                         return true;
                     }
-                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
-                        var prefix = child.name + ".";
-                        if (child.module.has_parameter(target.Remove(0, prefix.Length)))
-                            return true;
+
+                    var splits = target.Split('.');
+                    if (splits.Length > 1) {
+                        foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                            if (child.module.has_parameter(target.Remove(0, splits[0].Length + 1)))
+                                return true;
+                        }
                     }
                     return false;
+                }
+
+                /// <summary>
+                /// Returns the buffer given by target if it exists, otherwise throws an error.
+                /// </summary>
+                /// <param name="target">The fully-qualified string name of the buffer to look for.</param>
+                /// <returns>The tensor referenced by target</returns>
+                public virtual Tensor get_buffer(string target)
+                {
+                    if (target is null) throw new ArgumentNullException("target");
+                    if (_internal_buffers.TryGetValue(target, out var buffer)) {
+                        return buffer;
+                    }
+
+                    var splits = target.Split('.');
+                    if (splits.Length > 1) {
+                        foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                            var p = child.module.get_buffer(target.Remove(0, splits[0].Length + 1));
+                            if (p is not null)
+                                return p;
+                        }
+                    }
+                    return null;
                 }
 
                 /// <summary>
@@ -530,11 +559,14 @@ namespace TorchSharp
                     if (_internal_params.TryGetValue(target, out var parameter)) {
                         return parameter;
                     }
-                    foreach (var child in named_children().Where(nc => target.StartsWith(nc.name))) {
-                        var prefix = child.name + ".";
-                        var p = child.module.get_parameter(target.Remove(0, prefix.Length));
-                        if (p is not null)
-                            return p;
+
+                    var splits = target.Split('.');
+                    if (splits.Length > 1) {
+                        foreach (var child in named_children().Where(nc => nc.name == splits[0])) {
+                            var p = child.module.get_parameter(target.Remove(0, splits[0].Length + 1));
+                            if (p is not null)
+                                return p;
+                        }
                     }
                     return null;
                 }
@@ -583,7 +615,7 @@ namespace TorchSharp
                 /// <param name="name">Name of the submodule.</param>
                 /// <param name="submodule">The module to register.</param>
                 /// <exception cref="InvalidOperationException"></exception>
-                internal virtual void register_module(string name, Module submodule)
+                public virtual void register_module(string name, Module submodule)
                 {
                     if (submodule is null || submodule.handle.IsInvalid) {
                         if (_internal_submodules.ContainsKey(name)) {

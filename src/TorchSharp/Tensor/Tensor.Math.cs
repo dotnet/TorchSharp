@@ -229,6 +229,17 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Perform the element-wise division of tensor1 by tensor2 and add it to input.
+            /// </summary>
+            /// <param name="tensor1">First tensor</param>
+            /// <param name="tensor2">Second tensor</param>
+            /// <returns></returns>
+            public Tensor addcdiv(Tensor tensor1, Tensor tensor2)
+            {
+                return addcdiv(tensor1, tensor2, 1);
+            }
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_addcdiv_(IntPtr tensor, IntPtr tensor1, IntPtr tensor2, IntPtr value);
 
@@ -245,6 +256,17 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Performs the in-place element-wise division of tensor1 by tensor2 and add it to input.
+            /// </summary>
+            /// <param name="tensor1">First tensor</param>
+            /// <param name="tensor2">Second tensor</param>
+            /// <returns></returns>
+            public Tensor addcdiv_(Tensor tensor1, Tensor tensor2)
+            {
+                return addcdiv_(tensor1, tensor2, 1);
             }
 
             [DllImport("LibTorchSharp")]
@@ -543,6 +565,81 @@ namespace TorchSharp
             public Tensor ceil_()
             {
                 var res = THSTensor_ceil_(Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_conj(IntPtr tensor);
+
+            /// <summary>
+            /// Returns a view of input with a flipped conjugate bit. If input has a non-complex dtype, this function just returns input.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor conj()
+            {
+                var res = THSTensor_conj(Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_conj_physical(IntPtr tensor);
+
+            /// <summary>
+            /// Computes the element-wise conjugate of the given input tensor. If input has a non-complex dtype, this function just returns input.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor conj_physical()
+            {
+                var res = THSTensor_conj_physical(Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_conj_physical_(IntPtr tensor);
+
+            /// <summary>
+            /// In-place version of conj_physical
+            /// </summary>
+            /// <returns></returns>
+            public Tensor conj_physical_()
+            {
+                var res = THSTensor_conj_physical_(Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern long THSTensor_is_conj(IntPtr tensor);
+
+            /// <summary>
+            /// Returns true if the input is a conjugated tensor, i.e. its conjugate bit is set to True.
+            /// </summary>
+            /// <returns></returns>
+            public bool is_conj()
+            {
+                var res = THSTensor_is_conj(Handle);
+                torch.CheckForErrors();
+                return res != 0;
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_resolve_conj(IntPtr tensor);
+
+            /// <summary>
+            /// Returns a new tensor with materialized conjugation if input’s conjugate bit is set to True, else returns input.
+            /// The output tensor will always have its conjugate bit set to False.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor resolve_conj()
+            {
+                var res = THSTensor_resolve_conj(Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -2325,6 +2422,37 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor.</param>
         public static Tensor ceil_(Tensor input) => input.ceil_();
+
+        /// <summary>
+        /// Returns a view of input with a flipped conjugate bit. If input has a non-complex dtype, this function just returns input.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        public static Tensor conj(Tensor input) => input.conj();
+
+        /// <summary>
+        /// Returns true if the input is a conjugated tensor, i.e. its conjugate bit is set to True.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        public static bool is_conj(Tensor input) => input.is_conj();
+
+        /// <summary>
+        /// Computes the element-wise conjugate of the given input tensor. If input has a non-complex dtype, this function just returns input.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        public static Tensor conj_physical(Tensor input) => input.conj_physical();
+
+        /// <summary>
+        /// In-place version of conj_physical
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        public static Tensor conj_physical_(Tensor input) => input.conj_physical_();
+
+        /// <summary>
+        /// Returns a new tensor with materialized conjugation if input’s conjugate bit is set to True, else returns input.
+        /// The output tensor will always have its conjugate bit set to False.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        public static Tensor resolve_conj(Tensor input) => input.resolve_conj();
 
         /// <summary>
         /// Returns the cumulative sum of elements of input in the dimension dim.

@@ -12,8 +12,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\TorchSharpTest\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
+    <Compile Include="..\TorchSharpTest\GlobalSuppressions.cs" Link="GlobalSuppressions.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="..\TorchSharpTest\NN.cs" Link="NN.cs" />
+    <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs" />
     <Compile Include="..\TorchSharpTest\TestDistributions.cs" Link="TestDistributions.cs" />
     <Compile Include="..\TorchSharpTest\TestLoadSave.cs" Link="TestLoadSave.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchSharp.cs" Link="TestTorchSharp.cs" />
@@ -21,6 +24,12 @@
     <Compile Include="..\TorchSharpTest\TestTorchTensorBugs.cs" Link="TestTorchTensorBugs.cs" />
     <Compile Include="..\TorchSharpTest\TestTraining.cs" Link="TestTraining.cs" />
     <Compile Include="..\TorchSharpTest\TestDisposeScopes.cs" Link="TestDisposeScopes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\TorchSharpTest\bug510.dat" Link="bug510.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

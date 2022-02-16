@@ -9,6 +9,8 @@ using static TorchSharp.torch.nn.functional;
 using Xunit;
 
 using static TorchSharp.torch;
+using System.Reflection.Metadata.Ecma335;
+using TorchSharp.Modules;
 
 #nullable enable
 
@@ -184,6 +186,43 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestTrainingAdamParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.Adam(new Adam.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
         public void TestTrainingAdamAmsGrad()
         {
             var lin1 = Linear(1000, 100);
@@ -225,8 +264,9 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.Adam(seq.parameters(), amsgrad: true);
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
+            var lr = 0.001;
+            var optimizer = torch.optim.Adam(seq.parameters(), lr: lr, amsgrad: true);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, lr * 10, total_steps: 10);
 
             var loss = mse_loss(Reduction.Sum);
 
@@ -289,6 +329,43 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestTrainingAdamWParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.AdamW(new AdamW.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
         public void TestTrainingAdamWOneCycleLR()
         {
             var lin1 = Linear(1000, 100);
@@ -298,8 +375,9 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.AdamW(seq.parameters(), amsgrad: true);
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
+            var lr = 0.001;
+            var optimizer = torch.optim.AdamW(seq.parameters(), lr: lr, amsgrad: true);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, lr * 10, total_steps: 10);
 
             var loss = mse_loss(Reduction.Sum);
 
@@ -363,6 +441,43 @@ namespace TorchSharp
             Assert.True(finalLoss < initialLoss);
         }
 
+        [Fact]
+        public void TestTrainingAdagradParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.Adagrad(new Adagrad.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
         /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using Adadelta optimizer.
         /// </summary>
@@ -377,7 +492,44 @@ namespace TorchSharp
             var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 1.0f;
-            var optimizer = torch.optim.Adadelta(seq.named_parameters(), learning_rate);
+            var optimizer = torch.optim.Adadelta(seq.parameters(), learning_rate);
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingAdadeltaParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.Adadelta(new Adadelta.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -412,13 +564,50 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.Adamax(seq.named_parameters());
+            var optimizer = torch.optim.Adamax(seq.parameters());
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 15; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamaxParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.Adamax(new Adamax.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
                 using var eval = seq.forward(x);
                 using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
@@ -447,8 +636,9 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.Adamax(seq.named_parameters());
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 15);
+            var lr = 0.002;
+            var optimizer = torch.optim.Adamax(seq.parameters(), lr: lr);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, lr * 10, total_steps: 15);
 
             var loss = mse_loss(Reduction.Sum);
 
@@ -485,7 +675,44 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.NAdam(seq.named_parameters());
+            var optimizer = torch.optim.NAdam(seq.parameters());
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingNAdamParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.NAdam(new NAdam.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -520,8 +747,9 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.NAdam(seq.named_parameters());
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
+            var lr = 0.002;
+            var optimizer = torch.optim.NAdam(seq.parameters(), lr: lr);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, lr * 10, total_steps: 10);
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -557,7 +785,44 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.RAdam(seq.named_parameters());
+            var optimizer = torch.optim.RAdam(seq.parameters());
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingRAdamParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.RAdam(new RAdam.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -592,8 +857,95 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.RAdam(seq.named_parameters());
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 1.5, total_steps: 10);
+            var lr = 0.002;
+            var optimizer = torch.optim.RAdam(seq.parameters(), lr: lr);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, lr * 1.5, total_steps: 10);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingRAdamOneCycleLR_PG()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var lr = 0.002;
+            var optimizer = torch.optim.RAdam(new RAdam.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.003f } },
+                new () { Parameters = lin2.parameters(), Options = new () { LearningRate = lr } }
+            });
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, new double[] { lr * 1.5, lr * 2.25 }, total_steps: 10);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingRAdamCyclicLR_PG()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var lr = 0.0002;
+            var optimizer = torch.optim.SGD(new SGD.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.003f } },
+                new () { Parameters = lin2.parameters(), Options = new () { LearningRate = lr } }
+            }, lr);
+            var scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, new double[] { lr / 2, lr * 2 }, new double[] { lr * 1.5, lr * 2.25 });
 
             var loss = mse_loss(Reduction.Sum);
 
@@ -630,7 +982,51 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.ASGD(seq.named_parameters());
+            var optimizer = torch.optim.ASGD(seq.parameters());
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+
+        [Fact]
+        public void TestTrainingASGDParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var pgs = new ASGD.ParamGroup[]
+            {
+                new (lin1.parameters(), new () { LearningRate = 0.005f }),
+                new (lin2.parameters())
+            };
+
+            var optimizer = torch.optim.ASGD(new ASGD.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -665,7 +1061,45 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 });
             var y = torch.randn(new long[] { 64, 10 });
 
-            var optimizer = torch.optim.Rprop(seq.named_parameters());
+            var optimizer = torch.optim.Rprop(seq.parameters());
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+
+        [Fact]
+        public void TestTrainingRpropParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            var optimizer = torch.optim.Rprop(new Rprop.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -740,7 +1174,7 @@ namespace TorchSharp
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate);
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, learning_rate * 10, total_steps: 10);
 
             var loss = mse_loss(Reduction.Sum);
 
@@ -830,6 +1264,45 @@ namespace TorchSharp
             Assert.True(finalLoss < initialLoss);
         }
 
+        [Fact]
+        public void TestTrainingRMSCenteredParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+
+            var optimizer = torch.optim.RMSProp(
+                new RMSProp.ParamGroup[] {
+                    new(lin1.parameters()),
+                    new(lin2.parameters(), lr: learning_rate*10) },
+                learning_rate, centered: true);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
         /// <summary>
         /// Fully connected ReLU net with one hidden layer trained using SGD optimizer.
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
@@ -867,7 +1340,7 @@ namespace TorchSharp
             Assert.True(finalLoss < initialLoss);
         }
 
-        [Fact(Skip = "Fails with an exception in native code.")]
+        [Fact()]//(Skip = "Fails with an exception in native code.")]
         public void TestTrainingSGDNesterov()
         {
             var lin1 = Linear(1000, 100);
@@ -878,7 +1351,7 @@ namespace TorchSharp
             var y = torch.randn(new long[] { 64, 10 });
 
             double learning_rate = 0.00004f;
-            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, nesterov: true);
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, momentum: 0.1, nesterov: true);
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -912,6 +1385,44 @@ namespace TorchSharp
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingSGDDefaultsParamGroups()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var pgs = new SGD.ParamGroup[] {
+                new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
+                new (lin2.parameters(), lr: 0.00003, dampening: 0.05, momentum: 0.25)
+            };
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(pgs, learning_rate);
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -968,9 +1479,187 @@ namespace TorchSharp
                 optimizer.step();
                 scheduler.step();
 
-                Assert.True(optimizer.LearningRate < lastLR);
+                var pgFirst = optimizer.ParamGroups.First();
+                Assert.True(pgFirst.LearningRate < lastLR);
 
-                lastLR = optimizer.LearningRate;
+                lastLR = pgFirst.LearningRate;
+            }
+
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingSGDLambdaLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, i => Math.Pow(0.95,(1+i)));
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            double lastLR = learning_rate;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
+
+                var pgFirst = optimizer.ParamGroups.First();
+                Assert.True(pgFirst.LearningRate < lastLR);
+
+                lastLR = pgFirst.LearningRate;
+            }
+
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingSGDMultiplicativeLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.MultiplicativeLR(optimizer, i => 0.95);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            double lastLR = learning_rate;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
+
+                var pgFirst = optimizer.ParamGroups.First();
+                Assert.True(pgFirst.LearningRate < lastLR);
+
+                lastLR = pgFirst.LearningRate;
+            }
+
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingSGDExponentialLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            double lastLR = learning_rate;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
+
+                var pgFirst = optimizer.ParamGroups.First();
+                Assert.True(pgFirst.LearningRate < lastLR);
+
+                lastLR = pgFirst.LearningRate;
+            }
+
+            Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingSGDLinearLR()
+        {
+            var lin1 = Linear(1000, 100);
+            var lin2 = Linear(100, 10);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var x = torch.randn(new long[] { 64, 1000 });
+            var y = torch.randn(new long[] { 64, 10 });
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.LinearLR(optimizer, end_factor: 0.75, total_iters: 10);
+
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            var pgFirst = optimizer.ParamGroups.First();
+
+            double lastLR = pgFirst.LearningRate;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+                scheduler.step();
+
+                Assert.True(pgFirst.LearningRate < lastLR);
+
+                lastLR = pgFirst.LearningRate;
             }
 
             Assert.True(finalLoss < initialLoss);
@@ -1011,10 +1700,11 @@ namespace TorchSharp
                 optimizer.step();
                 scheduler.step();
 
+                var pgFirst = optimizer.ParamGroups.First();
                 if (i == 2 || i == 4 || i == 6) {
-                    Assert.True(optimizer.LearningRate < lastLR);
+                    Assert.True(pgFirst.LearningRate < lastLR);
                 }
-                lastLR = optimizer.LearningRate;
+                lastLR = pgFirst.LearningRate;
             }
 
             Assert.True(finalLoss < initialLoss);
@@ -1055,10 +1745,11 @@ namespace TorchSharp
                 optimizer.step();
                 scheduler.step();
 
+                var pgFirst = optimizer.ParamGroups.First();
                 if (i == 2 || i == 4 || i == 6) {
-                    Assert.True(optimizer.LearningRate < lastLR);
+                    Assert.True(pgFirst.LearningRate < lastLR);
                 }
-                lastLR = optimizer.LearningRate;
+                lastLR = pgFirst.LearningRate;
             }
 
             Assert.True(finalLoss < initialLoss);
