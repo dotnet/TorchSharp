@@ -88,7 +88,8 @@ namespace TorchSharp.Examples
                 var val_loss = evaluate(valid_data, model, loss, bptt, ntokens, optimizer);
                 sw.Stop();
 
-                Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {optimizer.LearningRate:0.00} | time: {sw.Elapsed.TotalSeconds:0.0}s | loss: {val_loss:0.00}\n");
+                var pgFirst = optimizer.ParamGroups.First();
+                Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {pgFirst.LearningRate:0.00} | time: {sw.Elapsed.TotalSeconds:0.0}s | loss: {val_loss:0.00}\n");
                 scheduler.step();
             }
 

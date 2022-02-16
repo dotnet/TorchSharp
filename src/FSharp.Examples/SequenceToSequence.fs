@@ -271,7 +271,8 @@ let run epochs =
         let val_loss = evaluate model valid_data ntokens
         sw.Stop()
 
-        let lrStr = optimizer.LearningRate.ToString("0.00")
+        let pgFirst = optimizer.ParamGroups.First()
+        let lrStr = pgFirst.LearningRate.ToString("0.00")
         let elapsed = sw.Elapsed.TotalSeconds.ToString("0.0")
         let lossStr = val_loss.ToString("0.00")
 
