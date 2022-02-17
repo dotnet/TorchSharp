@@ -502,11 +502,44 @@ namespace TorchSharp
             }
         }
 
-        [Fact]
+        [Fact]//(Skip ="")]
         public void ValidateIssue516()
         {
-            using var module = new LMHead(128, 1000, "tanh", torch.rand(128, 1000));
-            using var optim = torch.optim.Adam(module.parameters(), 0.002);
+            if (torch.cuda.is_available()) {
+                // *** Note1 ***
+                // When cuda == false, everything all right.
+                // When cuda == true, the following warning raised.
+                var cuda = true;
+
+                // All message printed in console:
+                // [W TensorBody.h:417] Warning: The .grad attribute of a Tensor that is not a leaf Tensor is being accessed.
+                // Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to
+                // be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf
+                // Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531
+                // for more informations. (function grad)
+
+                var model = new TestGradWarningModel();
+                if (cuda) {
+                    model.cuda();
+                }
+                var optimizer = torch.optim.Adam(model.parameters());
+                optimizer.zero_grad();      // Raise a warning
+
+                var x = torch.ones(5, 3);
+                var y = torch.ones(5, 4);
+                if (cuda) {
+                    x = x.cuda();
+                    y = y.cuda();
+                }
+                var z = model.forward(x);
+                var lossFunc = torch.nn.functional.cross_entropy_loss();
+                var loss = lossFunc(y, z);
+                loss.backward();
+                optimizer.step();      // Raise a warning
+
+                var grad1 = optimizer.parameters().ToArray()[0].grad();      // Raise a warning
+                var grad2 = model.Weight.grad();      // Raise a warning
+            }
         }
 
         internal abstract class BaseModule : torch.nn.Module
@@ -518,61 +551,26 @@ namespace TorchSharp
             }
         }
 
-        internal sealed class ActivationFunction : BaseModule
+        public class TestGradWarningModel : torch.nn.Module
         {
-            private torch.nn.Module Function;
+            public readonly Modules.Parameter Weight;
 
-            public ActivationFunction(string name) : base(name)
+            public TestGradWarningModel() : base(nameof(TestGradWarningModel))
             {
-                Function = name?.ToLower() switch {
-                    "relu" => torch.nn.ReLU(),
-                    "gelu" => torch.nn.GELU(),
-                    "tanh" => torch.nn.Tanh(),
-                    "linear" => torch.nn.Identity(),
-                    _ => throw new NotSupportedException($"Activation function {name} not supported.")
-                };
-            }
 
-            public override torch.Tensor forward(torch.Tensor x)
-            {
-                return Function.forward(x);
-            }
-
-            public override string GetName()
-            {
-                return Function.GetName();
-            }
-        }
-
-        internal sealed class LMHead : BaseModule
-        {
-            public readonly Modules.Sequential Projection;
-            public readonly TorchSharp.Modules.Parameter Weight;
-            public readonly TorchSharp.Modules.Parameter Bias;
-
-            public LMHead(int inSize, int embedDim, string activationFn, torch.Tensor outputWeight)
-                : base(nameof(LMHead))
-            {
-                if (outputWeight is null) {
-                    throw new ArgumentNullException(nameof(outputWeight));
-                }
-
-                Projection = torch.nn.Sequential(
-                    ("dense", torch.nn.Linear(inSize, embedDim)),
-                    ("activation", new ActivationFunction(activationFn)),
-                    ("layernorm", torch.nn.LayerNorm(new long[] { embedDim }))
-                );
-
-                var outputDim = outputWeight.shape[^2];
-                Weight = new TorchSharp.Modules.Parameter(outputWeight);
-                Bias = new TorchSharp.Modules.Parameter(torch.zeros(outputDim, dtype: torch.float32, requiresGrad: true));
+                // *** Note2 ***
+                // If I set the tensor device here, then setting cuda = true at line 20 won't cause the warnings.
+                // The warnings won't appear even when setting cuda = false at line 20 and execute a "model.cpu();".
+                // So I guess this is a single-directional problem (cpu -> cuda).
+                Weight = torch.zeros(new long[] { 3, 4 }).AsParameter();
+                //Weight = torch.zeros(new long[] { 3, 4 }, device: torch.CUDA).AsParameter();
 
                 RegisterComponents();
             }
 
-            public override torch.Tensor forward(torch.Tensor features)
+            public override torch.Tensor forward(torch.Tensor t)
             {
-                return torch.randn(10);
+                return torch.matmul(t, Weight);
             }
         }
     }
