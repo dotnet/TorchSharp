@@ -238,6 +238,16 @@ namespace TorchSharp
 
             public bool is_cuda { get { return device.type == DeviceType.CUDA; } }
 
+            [DllImport("LibTorchSharp")]
+            internal static extern long THSTensor_is_leaf(IntPtr handle);
+
+            /// <summary>
+            /// All Tensors that have requires_grad which is true will be leaf Tensors by convention.
+            /// For Tensors that have requires_grad which is true, they will be leaf Tensors if they were created by the user.This means that they are not the result of an operation and so grad_fn is None.
+            /// Only leaf Tensors will have their grad populated during a call to backward(). To get grad populated for non-leaf Tensors, you can use retain_grad().
+            /// </summary>
+            public bool is_leaf { get => THSTensor_is_leaf(Handle) != 0; }
+
 
             [DllImport("LibTorchSharp")]
             internal static extern IntPtr THSTensor_alias(IntPtr handle);
@@ -631,14 +641,22 @@ namespace TorchSharp
                 }
             }
 
-            /// <summary>
-            /// Change if autograd should record operations on this tensor: sets this tensor’s requires_grad attribute in-place. Returns this tensor.
-            /// </summary>
-            /// <param name="requires_grad"></param>
             public Tensor requires_grad_(bool requires_grad = true)
             {
                 this.requires_grad = true;
                 return this;
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern void THSTensor_retain_grad(IntPtr handle);
+
+            /// <summary>
+            /// Enables this Tensor to have their grad populated during backward(). This is a no-op for leaf tensors.
+            /// </summary>
+            public void retain_grad()
+            {
+                THSTensor_retain_grad(Handle);
+                torch.CheckForErrors();
             }
 
             /// <summary>

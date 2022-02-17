@@ -133,6 +133,8 @@ namespace TorchSharp
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
+                    if (deviceType == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
+
                     if (deviceType != _deviceType || deviceIndex != _deviceIndex) {
 
                         torch.InitializeDeviceType(deviceType);
@@ -151,7 +153,9 @@ namespace TorchSharp
 
                             if (param is not null) {  // This test must come before the Tensor test
                                 if (deviceType != param.device_type || deviceIndex != param.device_index) {
-                                    var p = new Modules.Parameter(param.to(deviceType, deviceIndex), param.requires_grad);
+                                    var t = param.to(deviceType, deviceIndex);
+                                    t.retain_grad();
+                                    var p = new Modules.Parameter(t, param.requires_grad);
                                     field.SetValue(this, p);
                                     ConditionallyRegisterParameter(name, p);
                                 }
@@ -218,7 +222,9 @@ namespace TorchSharp
 
                         if (param is not null) {  // This test must come before the Tensor test
                             if (dtype != param.dtype) {
-                                var p = new Modules.Parameter(param.to(dtype), param.requires_grad);
+                                var t = param.to(dtype);
+                                t.retain_grad();
+                                var p = new Modules.Parameter(t, param.requires_grad);
                                 field.SetValue(this, p);
                                 ConditionallyRegisterParameter(name, p);
                             }
