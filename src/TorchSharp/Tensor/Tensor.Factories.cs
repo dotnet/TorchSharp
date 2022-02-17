@@ -662,7 +662,7 @@ namespace TorchSharp
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
-                dtype = get_default_dtype();
+                dtype = ScalarType.Int64;
             }
 
             ValidateIntegerRange(low, dtype.Value, nameof(low));
