@@ -1098,42 +1098,42 @@ Tensor THSTensor_silu_(const Tensor tensor)
     CATCH_TENSOR(torch::silu_(*tensor));
 }
 
-void THSTensor_set1(const Tensor tensor, int64_t index, Scalar value)
+void THSTensor_set1(const Tensor tensor, int64_t index, const Tensor value)
 {
     CATCH(
         (*tensor)[index] = *value;
     )
 }
 
-void THSTensor_set2(const Tensor tensor, int64_t index1, int64_t index2, Scalar value)
+void THSTensor_set2(const Tensor tensor, int64_t index1, int64_t index2, const Tensor value)
 {
     CATCH(
         (*tensor)[index1][index2] = *value;
     )
 }
 
-void THSTensor_set3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, Scalar value)
+void THSTensor_set3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, const Tensor value)
 {
     CATCH(
         (*tensor)[index1][index2][index3] = *value;
     )
 }
 
-void THSTensor_set4(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, Scalar value)
+void THSTensor_set4(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, const Tensor value)
 {
     CATCH(
         (*tensor)[index1][index2][index3][index4] = *value;
     )
 }
 
-void THSTensor_set5(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, Scalar value)
+void THSTensor_set5(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, const Tensor value)
 {
     CATCH(
         (*tensor)[index1][index2][index3][index4][index5] = *value;
     )
 }
 
-void THSTensor_set6(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, int64_t index6, Scalar value)
+void THSTensor_set6(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, int64_t index6, const Tensor value)
 {
     CATCH(
         (*tensor)[index1][index2][index3][index4][index5][index6] = *value;
