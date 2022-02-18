@@ -1136,7 +1136,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_get1(IntPtr handle, long i1);
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_set1(IntPtr handle, long i1, IntPtr value);
+            static extern void THSTensor_set1(IntPtr handle, long i1, IntPtr value);
 
             /// <summary>
             /// Tensor indexer.
@@ -1151,7 +1151,7 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
                 set {
-                    THSTensor_set1(Handle, i1, value.ToScalar().Handle);
+                    THSTensor_set1(Handle, i1, value.Handle);
                     torch.CheckForErrors();
                 }
             }
@@ -1160,7 +1160,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_set2(IntPtr handle, long i1, long i2, IntPtr value);
+            static extern void THSTensor_set2(IntPtr handle, long i1, long i2, IntPtr value);
 
             /// <summary>
             /// Tensor indexer.
@@ -1176,7 +1176,7 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
                 set {
-                    THSTensor_set2(Handle, i1, i2, value.ToScalar().Handle);
+                    THSTensor_set2(Handle, i1, i2, value.Handle);
                     torch.CheckForErrors();
                 }
             }
@@ -1185,7 +1185,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_set3(IntPtr handle, long i1, long i2, long i3, IntPtr value);
+            static extern void THSTensor_set3(IntPtr handle, long i1, long i2, long i3, IntPtr value);
 
             /// <summary>
             /// Tensor indexer.
@@ -1203,7 +1203,7 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
                 set {
-                    THSTensor_set3(Handle, i1, i2, i3, value.ToScalar().Handle);
+                    THSTensor_set3(Handle, i1, i2, i3, value.Handle);
                     torch.CheckForErrors();
                 }
             }
@@ -1212,7 +1212,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_get4(IntPtr handle, long i1, long i2, long i3, long i4);
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_set4(IntPtr handle, long i1, long i2, long i3, long i4, IntPtr value);
+            static extern void THSTensor_set4(IntPtr handle, long i1, long i2, long i3, long i4, IntPtr value);
 
             /// <summary>
             /// Tensor indexer.
@@ -1231,7 +1231,7 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
                 set {
-                    THSTensor_set4(Handle, i1, i2, i3, i4, value.ToScalar().Handle);
+                    THSTensor_set4(Handle, i1, i2, i3, i4, value.Handle);
                     torch.CheckForErrors();
                 }
             }
@@ -1240,7 +1240,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_get5(IntPtr handle, long i1, long i2, long i3, long i4, long i5);
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_set5(IntPtr handle, long i1, long i2, long i3, long i4, long i5, IntPtr value);
+            static extern void THSTensor_set5(IntPtr handle, long i1, long i2, long i3, long i4, long i5, IntPtr value);
 
             /// <summary>
             /// Tensor indexer.
@@ -1260,7 +1260,7 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
                 set {
-                    THSTensor_set5(Handle, i1, i2, i3, i4, i5, value.ToScalar().Handle);
+                    THSTensor_set5(Handle, i1, i2, i3, i4, i5, value.Handle);
                     torch.CheckForErrors();
                 }
             }
@@ -1270,7 +1270,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_get6(IntPtr handle, long i1, long i2, long i3, long i4, long i5, long i6);
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_set6(IntPtr handle, long i1, long i2, long i3, long i4, long i5, long i6, IntPtr value);
+            static extern void THSTensor_set6(IntPtr handle, long i1, long i2, long i3, long i4, long i5, long i6, IntPtr value);
 
             /// <summary>
             /// Tensor indexer.
@@ -1291,7 +1291,7 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
                 set {
-                    THSTensor_set6(Handle, i1, i2, i3, i4, i5, i6, value.ToScalar().Handle);
+                    THSTensor_set6(Handle, i1, i2, i3, i4, i5, i6, value.Handle);
                     torch.CheckForErrors();
                 }
             }
