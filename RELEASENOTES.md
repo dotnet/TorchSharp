@@ -19,6 +19,7 @@ __Fixed Bugs:__
 #510 Module.Load throws Mismatched state_dict sizes exception on BatchNorm1d<br/>
 #515 what's reason for making register_module internal?<br/>
 #516 AdamW bug on v0.96.0<br/>
+#521 Can't set Tensor slice using indexing<br/>
 
 ## NuGet Version 0.96.0
 
