@@ -155,6 +155,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_LBFGS_ctor(IntPtr parameters, int len, double learningRate, long max_iter, long max_eval, double tolerange_grad, double tolerance_change, long history_size);
 
+            public static LBFGS LBFGS(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 0.01, long max_iter = 20, long? max_eval = null, double tolerange_grad = 1e-5, double tolerance_change = 1e-9, long history_size = 100)
+            {
+                return LBFGS(parameters.Select(np => np.parameter), lr, max_iter, max_eval.Value, tolerange_grad, tolerance_change, history_size);
+            }
+
             public static LBFGS LBFGS(IEnumerable<Parameter> parameters, double lr = 0.01, long max_iter = 20, long? max_eval = null, double tolerange_grad = 1e-5, double tolerance_change = 1e-9, long history_size = 100)
             {
                 if (!max_eval.HasValue) max_eval = 5 * max_iter / 4;
@@ -198,6 +203,24 @@ namespace TorchSharp
             /// <param name="momentum">Momentum factor (default: 0)</param>
             /// <param name="centered">if true, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
             /// <returns></returns>
+            public static RMSProp RMSProp(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false)
+            {
+                return new RMSProp(parameters.Select(np => np.parameter), lr, alpha, eps, weight_decay, momentum, centered);
+            }
+
+            /// <summary>
+            /// Implements RMSprop algorithm.
+            ///
+            /// Proposed by G.Hinton in his course.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize</param>
+            /// <param name="lr">Learning rate (default: 1e-2)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
+            /// <param name="alpha">Smoothing constant (default: 0.99)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="momentum">Momentum factor (default: 0)</param>
+            /// <param name="centered">if true, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
+            /// <returns></returns>
             public static RMSProp RMSProp(IEnumerable<RMSProp.ParamGroup> parameters, double lr = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false)
             {
                 return new RMSProp(parameters, lr, alpha, eps, weight_decay, momentum, centered);
@@ -220,6 +243,25 @@ namespace TorchSharp
             public static Adam Adam(IEnumerable<Parameter> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
                 return new Adam(parameters, lr, beta1, beta2, eps, weight_decay, amsgrad, maximize);
+            }
+
+            /// <summary>
+            /// Implements Adam algorithm.
+            ///
+            /// It has been proposed in Adam: A Method for Stochastic Optimization.The implementation of the L2 penalty follows changes proposed in Decoupled Weight Decay Regularization.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize</param>
+            /// <param name="lr">learning rate (default: 1e-3)</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
+            /// <param name="maximize"></param>
+            /// <returns></returns>
+            public static Adam Adam(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
+            {
+                return new Adam(parameters.Select(np => np.parameter), lr, beta1, beta2, eps, weight_decay, amsgrad, maximize);
             }
 
             /// <summary>
@@ -274,6 +316,25 @@ namespace TorchSharp
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
             /// <param name="maximize"></param>
             /// <returns></returns>
+            public static AdamW AdamW(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
+            {
+                return new AdamW(parameters.Select(np => np.parameter), lr, beta1, beta2, eps, weight_decay, amsgrad, maximize);
+            }
+
+            /// <summary>
+            /// Implements AdamW algorithm.
+            ///
+            /// It has been proposed in Adam: A Method for Stochastic Optimization. The AdamW variant was proposed in Decoupled Weight Decay Regularization.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize</param>
+            /// <param name="lr">learning rate (default: 1e-3)</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
+            /// <param name="maximize"></param>
+            /// <returns></returns>
             public static AdamW AdamW(IEnumerable<AdamW.ParamGroup> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
                 return new AdamW(parameters, lr, beta1, beta2, eps, weight_decay, amsgrad, maximize);
@@ -294,6 +355,23 @@ namespace TorchSharp
             public static Adagrad Adagrad(IEnumerable<Parameter> parameters, double lr = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
             {
                 return new Adagrad(parameters, lr, lr_decay, weight_decay, initial_accumulator_value, eps);
+            }
+
+            /// <summary>
+            /// Implements Adagrad algorithm.
+            ///
+            /// It has been proposed in Adaptive Subgradient Methods for Online Learning and Stochastic Optimization.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize</param>
+            /// <param name="lr">learning rate (default: 1e-2)</param>
+            /// <param name="lr_decay">learning rate decay (default: 0)</param>
+            /// <param name="weight_decay">weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="initial_accumulator_value"></param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-10)</param>
+            /// <returns></returns>
+            public static Adagrad Adagrad(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-2, double lr_decay = 0, double weight_decay = 0, double initial_accumulator_value = 0, double eps = 1e-10)
+            {
+                return new Adagrad(parameters.Select(np => np.parameter), lr, lr_decay, weight_decay, initial_accumulator_value, eps);
             }
 
             /// <summary>
@@ -340,6 +418,22 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
+            public static Adadelta Adadelta(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+            {
+                return new Adadelta(parameters.Select(np => np.parameter), lr, rho, eps, weight_decay);
+            }
+
+            /// <summary>
+            /// Implements Adadelta algorithm.
+            ///
+            /// It has been proposed in ADADELTA: An Adaptive Learning Rate Method.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
             public static Adadelta Adadelta(IEnumerable<Adadelta.ParamGroup> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
             {
                 return new Adadelta(parameters, lr, rho, eps, weight_decay);
@@ -361,6 +455,24 @@ namespace TorchSharp
             public static NAdam NAdam(IEnumerable<Parameter> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3)
             {
                 return new NAdam(named_parameters, lr, beta1, beta2, eps, weight_decay, momentum_decay);
+            }
+
+            /// <summary>
+            /// Implements NAdam algorithm.
+            ///
+            /// For further details regarding the algorithm we refer to Incorporating Nesterov Momentum into Adam.
+            /// https://openreview.net/forum?id=OM0jvwB8jIp57ZJjtNEZ
+            /// </summary>
+            /// <param name="named_parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="momentum_decay">Momentum decay</param>
+            public static NAdam NAdam(IEnumerable<(string name, Parameter parameter)> named_parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, double momentum_decay = 4e-3)
+            {
+                return new NAdam(named_parameters.Select(np => np.parameter), lr, beta1, beta2, eps, weight_decay, momentum_decay);
             }
 
             /// <summary>
@@ -410,6 +522,23 @@ namespace TorchSharp
             /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            public static RAdam RAdam(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            {
+                return new RAdam(parameters.Select(np => np.parameter), lr, beta1, beta2, eps, weight_decay);
+            }
+
+            /// <summary>
+            /// Implements RAdam algorithm.
+            ///
+            /// For further details regarding the algorithm we refer to 'On the variance of the adaptive learning rate and beyond.'
+            /// https://arxiv.org/abs/1908.03265
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             public static RAdam RAdam(IEnumerable<RAdam.ParamGroup> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
             {
                 return new RAdam(parameters, lr, beta1, beta2, eps, weight_decay);
@@ -430,6 +559,23 @@ namespace TorchSharp
             public static Adamax Adamax(IEnumerable<Parameter> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
             {
                 return new Adamax(parameters, lr, beta1, beta2, eps, weight_decay);
+            }
+
+            /// <summary>
+            /// Implements Adamax algorithm (a variant of Adam based on infinity norm).
+            ///
+            /// It has been proposed in Adam: A Method for Stochastic Optimization.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="beta1">Coefficient used for computing running averages of gradient and its square (default: 0.9)</param>
+            /// <param name="beta2">Coefficient used for computing running averages of gradient and its square (default: 0.999)</param>
+            /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-8)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
+            public static Adamax Adamax(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 0.002, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0)
+            {
+                return new Adamax(parameters.Select(np => np.parameter), lr, beta1, beta2, eps, weight_decay);
             }
 
             /// <summary>
@@ -478,6 +624,23 @@ namespace TorchSharp
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <returns></returns>
+            public static ASGD ASGD(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
+            {
+                return new Modules.ASGD(parameters.Select(np => np.parameter), lr, lambd, alpha, t0, weight_decay);
+            }
+
+            /// <summary>
+            /// Implements Averaged Stochastic Gradient Descent.
+            ///
+            /// It has been proposed in Acceleration of stochastic approximation by averaging.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="lambd">Decay term (default: 1e-4)</param>
+            /// <param name="alpha">Power for eta update (default: 0.75)</param>
+            /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <returns></returns>
             public static ASGD ASGD(IEnumerable<ParamGroup<ASGD.Options>> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
             {
                 return new Modules.ASGD(parameters, lr, lambd, alpha, t0, weight_decay);
@@ -496,6 +659,21 @@ namespace TorchSharp
             public static Rprop Rprop(IEnumerable<Parameter> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
             {
                 return new Rprop(parameters, lr, etaminus, etaplus, min_step, max_step);
+            }
+
+            /// <summary>
+            /// Implements the resilient backpropagation algorithm.
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="lr ">Learning rate</param>
+            /// <param name="etaminus">Multiplicative increase factor.</param>
+            /// <param name="etaplus">Multiplicative decrease factor.</param>
+            /// <param name="min_step">Minimum allowed step size.</param>
+            /// <param name="max_step">Maximum allowed step size.</param>
+            /// <returns></returns>
+            public static Rprop Rprop(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+            {
+                return new Rprop(parameters.Select(np => np.parameter), lr, etaminus, etaplus, min_step, max_step);
             }
 
             /// <summary>
@@ -527,6 +705,22 @@ namespace TorchSharp
             public static Modules.SGD SGD(IEnumerable<Parameter> parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
             {
                 return new Modules.SGD(parameters, learningRate, momentum, dampening, weight_decay, nesterov, maximize);
+            }
+
+            /// <summary>
+            /// Implements stochastic gradient descent (optionally with momentum).
+            /// </summary>
+            /// <param name="parameters">Parameters to optimize. This optimizer requires the <b>named</b> parameters collection.</param>
+            /// <param name="learningRate">Learning rate</param>
+            /// <param name="momentum">Momentum factor (default: 0)</param>
+            /// <param name="dampening">Dampening for momentum (default: 0)</param>
+            /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="nesterov">Enables Nesterov momentum (default: False)</param>
+            /// <param name="maximize"></param>
+            /// <returns></returns>
+            public static Modules.SGD SGD(IEnumerable<(string name, Parameter parameter)> parameters, double learningRate, double momentum = 0, double dampening = 0, double weight_decay = 0, bool nesterov = false, bool maximize = false)
+            {
+                return new Modules.SGD(parameters.Select(np => np.parameter), learningRate, momentum, dampening, weight_decay, nesterov, maximize);
             }
 
             /// <summary>

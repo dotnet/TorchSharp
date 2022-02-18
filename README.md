@@ -1,5 +1,7 @@
 [![Build Status](https://dotnet.visualstudio.com/TorchSharp/_apis/build/status/dotnet.TorchSharp?branchName=main)](https://dotnet.visualstudio.com/TorchSharp/_build/latest?definitionId=174&branchName=main)
 
+Please check the [Release Notes](RELEASENOTES.md) file for news on what's been updated in each new release.
+
 __TorchSharp is now in the .NET Foundation!__
 
 If you are using TorchSharp from NuGet, you should be using a version >= 0.95.1 of TorchSharp, and >= 1.10.0.1 of the libtorch-xxx redistributable packages. We recommend using one of the 'bundled' packages: TorchSharp-cpu, TorchSharp-cuda-windows, or TorchSharp-cuda-linux. They will pull in the right libtorch backends.
