@@ -346,7 +346,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            LossIsClose(197.63f, loss);
+            LossIsClose(94.941f, loss);
         }
 
         /// <summary>
@@ -820,6 +820,38 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestTrainingRAdamWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.RAdam(seq.parameters(), 0.0005, weight_decay: 0.05);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(66.263f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRAdamBetas()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.RAdam(seq.parameters(), 0.0005, beta1: 0.9, beta2: 0.999);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(66.265f, loss);
+        }
+
+        [Fact]
         public void TestTrainingRAdamParamGroups()
         {
             var gen = new Generator(4711);
@@ -910,9 +942,6 @@ namespace TorchSharp
             LossIsClose(58.589f, loss);
         }
 
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using ASGD optimizer.
-        /// </summary>
         [Fact]
         public void TestTrainingASGD()
         {
@@ -929,6 +958,69 @@ namespace TorchSharp
             LossIsClose(57.748f, loss);
         }
 
+        [Fact]
+        public void TestTrainingASGDLambda()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.ASGD(seq.parameters(), lambd: 0.00025);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(57.748f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingASGDAlpha()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.ASGD(seq.parameters(), alpha: 0.65);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(57.748f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingASGDWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.ASGD(seq.parameters(), weight_decay: 0.25);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(57.748f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingASGDT0()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.ASGD(seq.parameters(), t0: 100000);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(57.748f, loss);
+        }
 
         [Fact]
         public void TestTrainingASGDParamGroups()
@@ -956,9 +1048,6 @@ namespace TorchSharp
             LossIsClose(56.653f, loss);
         }
 
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using ASGD optimizer.
-        /// </summary>
         [Fact]
         public void TestTrainingRprop()
         {
@@ -973,6 +1062,38 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer);
 
             LossIsClose(229.68f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRpropEtam()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Rprop(seq.parameters(), etaminus: 0.55);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(201.417f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRpropEtap()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Rprop(seq.parameters(), etaplus: 1.25);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(221.365f, loss);
         }
 
 
@@ -1057,6 +1178,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestTrainingRMSWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, weight_decay: 0.15);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(56.608f, loss);
+        }
+
+        [Fact]
         public void TestTrainingRMSCentered()
         {
             var gen = new Generator(4711);
@@ -1071,6 +1209,40 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer);
 
             LossIsClose(56.189f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRMSCenteredWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, weight_decay: 0.15, centered: true);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(56.189f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRMSMomentum()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, momentum: 0.15);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(53.50f, loss);
         }
 
         [Fact]
@@ -1095,10 +1267,6 @@ namespace TorchSharp
             LossIsClose(53.6049f, loss);
         }
 
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using SGD optimizer.
-        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
-        /// </summary>
         [Fact]
         public void TestTrainingSGDMomentum()
         {
@@ -1114,6 +1282,23 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer);
 
             LossIsClose(53.711f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingSGDDampening()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, dampening: 0.5);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(62.494f, loss);
         }
 
         [Fact()]//(Skip = "Fails with an exception in native code.")]
