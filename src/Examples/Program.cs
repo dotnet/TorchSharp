@@ -6,12 +6,13 @@ namespace TorchSharp.Examples
     {
         public static void Main(string[] args)
         {
-            MNIST.Main(args);
-            AdversarialExampleGeneration.Main(args);
-            CIFAR10.Main(args);
-            SequenceToSequence.Main(args);
-            TextClassification.Main(args);
+            //MNIST.Main(args);
+            //AdversarialExampleGeneration.Main(args);
+            //CIFAR10.Main(args);
+            //SequenceToSequence.Main(args);
+            //TextClassification.Main(args);
             //ImageTransforms.Main(args);
+            IOReadWrite.Main(args);
         }
     }
 }

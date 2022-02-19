@@ -46,10 +46,9 @@ namespace TorchSharp.torchvision
             return (imager ?? DefaultImager).DecodeImage(data, mode);
         }
 
-        public static void write_image(Tensor image, string filename, IImager imager = null)
+        public static void write_image(Tensor image, string filename, ImageFormat format, IImager imager = null)
         {
-            // Use DefaultImager if imager == null
-            throw new NotImplementedException();
+            File.WriteAllBytes(filename, (imager ?? DefaultImager).EncodeImage(image, format));
         }
 
         public static Tensor encode_image(Tensor image, IImager imager = null)

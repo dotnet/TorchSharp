@@ -35,19 +35,20 @@ namespace TorchSharp.Examples
         {
             var filename = args[0];
 
-            torchvision.io.DefaultImager = new SkiaImager();
+            //torchvision.io.DefaultImager = new SkiaImager();
 
-            var img = torchvision.io.read_image(filename);
+            var img = torchvision.io.read_image(filename, torchvision.io.ImageReadMode.RGB);
 
-            Console.WriteLine($"Image has shape {img.shape}");
+            Console.WriteLine($"Image has {img.shape[0]} colour channels with dimensions {img.shape[1]}x{img.shape[2]}");
 
-            var imgGray = torchvision.io.read_image(filename, torchvision.io.ImageReadMode.GRAY);
+            //var transformed = torchvision.transforms.Compose(
+            //    torchvision.transforms.AutoContrast(),
+            //    torchvision.transforms.Invert()
+            //    ).forward(img);
 
-            Console.WriteLine($"Image Tensor: {img}\n Gray Image Tensor: {imgGray}");
+            var transformed = torchvision.transforms.RandomVerticalFlip(1).forward(img);
 
-            torchvision.io.write_image(img, "image_orig.png");
-            var encoded = torchvision.io.encode_image(imgGray);
-            torchvision.io.write_file("image_gray", encoded);
+            torchvision.io.write_image(transformed, "image_transformed_2.png", torchvision.io.ImageFormat.PNG);
         }
     }
 }
