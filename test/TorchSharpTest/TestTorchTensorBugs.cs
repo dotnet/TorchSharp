@@ -502,43 +502,31 @@ namespace TorchSharp
             }
         }
 
-        [Fact]//(Skip ="")]
+        [Fact]
         public void ValidateIssue516()
         {
             if (torch.cuda.is_available()) {
-                // *** Note1 ***
-                // When cuda == false, everything all right.
-                // When cuda == true, the following warning raised.
-                var cuda = true;
-
-                // All message printed in console:
-                // [W TensorBody.h:417] Warning: The .grad attribute of a Tensor that is not a leaf Tensor is being accessed.
-                // Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to
-                // be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf
-                // Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531
-                // for more informations. (function grad)
 
                 var model = new TestGradWarningModel();
-                if (cuda) {
-                    model.cuda();
-                }
-                var optimizer = torch.optim.Adam(model.parameters());
-                optimizer.zero_grad();      // Raise a warning
+                model.cuda();
 
-                var x = torch.ones(5, 3);
-                var y = torch.ones(5, 4);
-                if (cuda) {
-                    x = x.cuda();
-                    y = y.cuda();
-                }
+                var optimizer = torch.optim.Adam(model.parameters());
+                optimizer.zero_grad();
+
+                var x = torch.ones(5, 3).cuda();
+                var y = torch.ones(5, 4).cuda();
+
                 var z = model.forward(x);
                 var lossFunc = torch.nn.functional.cross_entropy_loss();
                 var loss = lossFunc(y, z);
                 loss.backward();
-                optimizer.step();      // Raise a warning
+                optimizer.step();
 
-                var grad1 = optimizer.parameters().ToArray()[0].grad();      // Raise a warning
-                var grad2 = model.Weight.grad();      // Raise a warning
+                var grad1 = optimizer.parameters().ToArray()[0].grad();
+                Assert.NotNull(grad1);
+
+                var grad2 = model.Weight.grad();
+                Assert.NotNull(grad2);
             }
         }
 
@@ -557,14 +545,7 @@ namespace TorchSharp
 
             public TestGradWarningModel() : base(nameof(TestGradWarningModel))
             {
-
-                // *** Note2 ***
-                // If I set the tensor device here, then setting cuda = true at line 20 won't cause the warnings.
-                // The warnings won't appear even when setting cuda = false at line 20 and execute a "model.cpu();".
-                // So I guess this is a single-directional problem (cpu -> cuda).
                 Weight = torch.zeros(new long[] { 3, 4 }).AsParameter();
-                //Weight = torch.zeros(new long[] { 3, 4 }, device: torch.CUDA).AsParameter();
-
                 RegisterComponents();
             }
 
