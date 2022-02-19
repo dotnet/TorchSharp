@@ -82,7 +82,7 @@ namespace TorchSharp.Examples
             var normImage = torchvision.transforms.Normalize(new double[] {0.1307}, new double[] {0.3081},
                 device: (Device) device);
 
-            using (var test = new MNISTReader(targetDir, "t10k", device: device, normImage)) {
+            using (var test = new MNISTReader(targetDir, "t10k", normImage)) {
 
                 var modelFile = dataset + ".model.bin";
 
@@ -93,7 +93,7 @@ namespace TorchSharp.Examples
 
                     model = new MNIST.Model("model", device);
 
-                    using (var train = new MNISTReader(targetDir, "train", device: device, normImage)) {
+                    using (var train = new MNISTReader(targetDir, "train", normImage)) {
                         MNIST.TrainingLoop(dataset, (Device) device, model, train, test);
                     }
 
@@ -111,7 +111,7 @@ namespace TorchSharp.Examples
             var epsilons = new double[] {0, 0.05, 0.1, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50};
 
             foreach (var ε in epsilons) {
-                using (var test = new MNISTReader(targetDir, "t10k", device: device, normImage)) {
+                using (var test = new MNISTReader(targetDir, "t10k", normImage)) {
                     var attacked = Test(model, nll_loss(), ε, test, test.Count);
                     Console.WriteLine($"Epsilon: {ε:F2}, accuracy: {attacked:P2}");
                 }

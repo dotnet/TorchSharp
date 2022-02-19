@@ -18,13 +18,13 @@ open type TorchSharp.torch.utils.data
 // FGSM Attack
 //
 // Based on : https://pytorch.org/tutorials/beginner/fgsm_tutorial.html
-// 
+//
 // There are at least two interesting data sets to use with this example:
-// 
+//
 // 1. The classic MNIST set of 60000 images of handwritten digits.
 //
 //     It is available at: http://yann.lecun.com/exdb/mnist/
-//     
+//
 // 2. The 'fashion-mnist' data set, which has the exact same file names and format as MNIST, but is a harder
 //    data set to train on. It's just as large as MNIST, and has the same 60/10 split of training and test
 //    data.
@@ -74,7 +74,7 @@ let test (model:MNIST.Model) (eps:float) (data:MNISTReader) size =
         let labels = dat.["label"]
 
         input.requires_grad <- true
-        
+
         begin  // This is introduced in order to let a few tensors go out of scope before GC
             use estimate = input --> model
             use loss = criterion estimate labels
@@ -103,22 +103,22 @@ let run epochs =
         testBatchSize <- testBatchSize * 4
 
     let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
-    use testData = new MNISTReader(targetDir, "t10k", device=device, transform=normImage)
+    use testData = new MNISTReader(targetDir, "t10k", transform=normImage)
 
     let modelFile = dataset + ".model.bin"
 
-    let model = 
+    let model =
         if not (File.Exists(modelFile)) then
             printfn $"\n  Running MNIST on {device.``type``.ToString()} in order to pre-train the model."
 
             let model = new MNIST.Model("model",device)
 
-            use train = new MNISTReader(targetDir, "train", device=device, transform=normImage)
+            use train = new MNISTReader(targetDir, "train", transform=normImage)
             MNIST.trainingLoop model epochs dataset train testData |> ignore
 
             printfn "Moving on to the Adversarial model.\n"
 
-            model 
+            model
 
         else
             let model = new MNIST.Model("model", torch.CPU)

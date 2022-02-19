@@ -23,9 +23,8 @@ namespace TorchSharp.torchvision.dsets
         /// </summary>
         /// <param name="path">Path to the folder containing the image files.</param>
         /// <param name="prefix">The file name prefix, either 'train' or 't10k' (the latter being the test data set).</param>
-        /// <param name="device">The device, i.e. CPU or GPU to place the output tensors on.</param>
-        /// <param name="transform"></param>
-        public MNISTReader(string path, string prefix, Device device = null, ITransform transform = null)
+        /// <param name="transform">Transform for input MNIST image</param>
+        public MNISTReader(string path, string prefix, ITransform transform = null)
         {
             // The MNIST data set is small enough to fit in memory, so let's load it there.
 
@@ -81,6 +80,9 @@ namespace TorchSharp.torchvision.dsets
 
         private ITransform transform;
 
+        /// <summary>
+        /// Size of dataset
+        /// </summary>
         public override long Count => data.Count;
 
         private List<Tensor> data = new();
@@ -92,6 +94,11 @@ namespace TorchSharp.torchvision.dsets
             labels.ForEach(d => d.Dispose());
         }
 
+        /// <summary>
+        /// Get tensor according to index
+        /// </summary>
+        /// <param name="index">Index for tensor</param>
+        /// <returns>Tensors of index. DataLoader will catenate these tensors as batchSize * 784 for image, batchSize * 1 for label</returns>
         public override Dictionary<string, Tensor> GetTensor(long index)
         {
             var rdic = new Dictionary<string, Tensor>();

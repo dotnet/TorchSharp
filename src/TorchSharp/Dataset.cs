@@ -25,10 +25,10 @@ namespace TorchSharp
                     public abstract long Count { get; }
 
                     /// <summary>
-                    /// Get tensor via index
+                    /// Get tensor according to index
                     /// </summary>
                     /// <param name="index">Index for tensor</param>
-                    /// <returns>Tensor for index. You should return dictionary for catenate random amount of tensors.</returns>
+                    /// <returns>Tensors of index. DataLoader will catenate these tensors.</returns>
                     public abstract Dictionary<string, Tensor> GetTensor(long index);
                 }
             }

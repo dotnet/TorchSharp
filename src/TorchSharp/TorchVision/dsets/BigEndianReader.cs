@@ -4,7 +4,7 @@ using System.IO;
 
 namespace TorchSharp.torchvision.dsets
 {
-    public class BigEndianReader
+    internal class BigEndianReader
     {
         public BigEndianReader(BinaryReader baseReader)
         {
