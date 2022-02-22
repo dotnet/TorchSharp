@@ -231,3 +231,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 10. Remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in in [azure-pipelines.yml](azure-pipelines.yml)
 
+
+## Building with Visual Studio
+
+In order for builds to work properly using Visual Studio 2019 or 2022, you must start VS from the 'x64 Native Tools Command Prompt for VS 2022' (or 2019) in order for the full environment to be set up correctly. Starting VS from the desktop or taskbar will not work properly.

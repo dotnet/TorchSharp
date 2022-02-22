@@ -8,6 +8,7 @@ open System.Diagnostics
 open System.Collections.Generic
 
 open TorchSharp
+open TorchSharp.Modules
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
 
@@ -244,7 +245,17 @@ let run epochs =
 
     use model = new TransformerModel(ntokens, device)
     let lr = 2.50
-    let optimizer = SGD(model.parameters(), lr)
+
+    let pgs = [|
+        SGD.ParamGroup(Parameters = model.parameters(), Options = SGD.Options(momentum = 1.0, dampening = 0.5));
+        SGD.ParamGroup(model.parameters(), momentum = 1.5, dampening = 0.1)
+    |]
+
+    let optimizer = SGD([|
+        SGD.ParamGroup(model.parameters(), momentum = 1.0, dampening = 0.5);
+        SGD.ParamGroup(model.parameters(), momentum = 1.5, dampening = 0.1)
+    |], lr)
+
     let scheduler = lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch=15)
 
     let totalTime = Stopwatch()
@@ -260,7 +271,8 @@ let run epochs =
         let val_loss = evaluate model valid_data ntokens
         sw.Stop()
 
-        let lrStr = optimizer.LearningRate.ToString("0.00")
+        let pgFirst = optimizer.ParamGroups.First()
+        let lrStr = pgFirst.LearningRate.ToString("0.00")
         let elapsed = sw.Elapsed.TotalSeconds.ToString("0.0")
         let lossStr = val_loss.ToString("0.00")
 

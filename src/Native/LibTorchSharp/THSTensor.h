@@ -586,6 +586,8 @@ EXPORT_API(Tensor) THSTensor_inverse(const Tensor tensor);
 
 EXPORT_API(int) THSTensor_is_contiguous(const Tensor input);
 
+EXPORT_API(int64_t) THSTensor_is_leaf(const Tensor tensor);
+
 EXPORT_API(int) THSTensor_is_sparse(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_isclose(const Tensor tensor, const Tensor other, const double rtol, const double atol, const bool equal_nan);
@@ -987,6 +989,8 @@ EXPORT_API(Tensor) THSTensor_remainder_(const Tensor left, const Tensor right);
 EXPORT_API(Tensor) THSTensor_remainder_scalar(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_remainder_scalar_(const Tensor left, const Scalar right);
+
+EXPORT_API(void) THSTensor_retain_grad(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_rsqrt(const Tensor tensor);
 
