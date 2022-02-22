@@ -15,13 +15,13 @@ open TorchSharp.Examples
 open TorchSharp.torchvision.dsets
 
 // Simple MNIST Convolutional model.
-// 
+//
 // There are at least two interesting data sets to use with this example:
-// 
+//
 // 1. The classic MNIST set of 60000 images of handwritten digits.
 //
 //     It is available at: http://yann.lecun.com/exdb/mnist/
-//     
+//
 // 2. The 'fashion-mnist' data set, which has the exact same file names and format as MNIST, but is a harder
 //    data set to train on. It's just as large as MNIST, and has the same 60/10 split of training and test
 //    data.
@@ -179,9 +179,9 @@ let run epochs =
         testBatchSize <- testBatchSize * 4
 
     let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
-    use train = new MNISTReader(targetDir, "train", device=device, transform=normImage)
-    use test = new MNISTReader(targetDir, "t10k", device=device, transform=normImage)
+    use train = new MNISTReader(targetDir, "train", transform=normImage)
+    use test = new MNISTReader(targetDir, "t10k", transform=normImage)
 
     let model = new Model("model", device)
-    
+
     trainingLoop model epochs dataset train test
