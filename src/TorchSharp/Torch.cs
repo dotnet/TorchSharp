@@ -124,7 +124,7 @@ namespace TorchSharp
                     trace.AppendLine($"Step 3 - Alternative load from consolidated directory of native binaries from nuget packages");
                     trace.AppendLine($"");
 
-                    var cpuRootPackage = "libtorch-cpu";
+                    var cpuRootPackage = $"libtorch-cpu-{nativeRid}";
                     var cudaRootPackage = $"libtorch-cuda-{cudaVersion}-{nativeRid}";
                     var target =
                         RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "LibTorchSharp.dll" :
@@ -196,7 +196,7 @@ namespace TorchSharp
                         trace.AppendLine("    Giving up, TorchSharp.dll does not appear to have been loaded from package directories");
                     }
                     if (!ok) {
-                        var message = $"This application uses TorchSharp but doesn't contain reference to either {cudaRootPackage} or {cpuRootPackage}, {libtorchPackageVersion}. Consider either referencing one of these packages or call System.Runtime.InteropServices.NativeLibrary.Load(path-to-{target}) explicitly for a Python install or a download of libtorch.so/torch.dll. See https://github.com/dotnet/TorchSharp/issues/169.\". Trace from LoadNativeBackend:\n{trace}";
+                        var message = $"This application or script uses TorchSharp but doesn't contain a reference to {(useCudaBackend ? cudaRootPackage : cpuRootPackage)}, Version={libtorchPackageVersion}.\n\nConsider referencing one of the combination packages TorchSharp-cpu, TorchSharp-cuda-linux, TorchSharp-cuda-windows or call System.Runtime.InteropServices.NativeLibrary.Load(path-to-{target}) explicitly for a Python install of pytorch. See https://github.com/dotnet/TorchSharp/issues/169.\".\n\nFor CUDA, you may need to call 'TorchSharp.torch.InitializeDeviceType(TorchSharp.DeviceType.CUDA)' before any use of TorchSharp CUDA packages from scripts or notebooks.\n\nTrace from LoadNativeBackend:\n{trace}";
                         Console.WriteLine(message);
                         throw new NotSupportedException(message);
                     }

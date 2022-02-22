@@ -16,6 +16,8 @@ __Fixed Bugs:__
 
 #495 Add support for OptimizerParamGroup<br/>
 #509 Tensor.conj() not implemented<br/>
+Using libtorch CPU packages from F# Interactive required explicit native loads
+
 #510 Module.Load throws Mismatched state_dict sizes exception on BatchNorm1d<br/>
 #515 what's reason for making register_module internal?<br/>
 #516 AdamW bug on v0.96.0<br/>
