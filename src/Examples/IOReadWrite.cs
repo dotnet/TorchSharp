@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using TorchSharp;
 using static TorchSharp.torch;
 
+using SkiaSharp;
+
 namespace TorchSharp.Examples
 {
     class IOReadWrite
@@ -39,16 +41,18 @@ namespace TorchSharp.Examples
 
             var img = torchvision.io.read_image(filename, torchvision.io.ImageReadMode.RGB);
 
-            Console.WriteLine($"Image has {img.shape[0]} colour channels with dimensions {img.shape[1]}x{img.shape[2]}");
+            // Add a batch dimension
+            var expanded  = img.unsqueeze(0);
+
+            Console.WriteLine($"Image has {expanded.shape[1]} colour channels with dimensions {expanded.shape[2]}x{expanded.shape[3]}");
 
             //var transformed = torchvision.transforms.Compose(
-            //    torchvision.transforms.AutoContrast(),
             //    torchvision.transforms.Invert()
             //    ).forward(img);
 
-            var transformed = torchvision.transforms.RandomVerticalFlip(1).forward(img);
+            var transformed = torchvision.transforms.functional.vflip(expanded);
 
-            torchvision.io.write_image(transformed, "image_transformed_2.png", torchvision.io.ImageFormat.PNG);
+            torchvision.io.write_image(transformed.squeeze(), "image_transformed_vflip.jpg", torchvision.io.ImageFormat.JPEG);
         }
     }
 }

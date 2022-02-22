@@ -32,7 +32,6 @@ namespace TorchSharp.torchvision
             {
                 var image = Image.Load<TPixel>(bytes);
 
-                TPixel p = new TPixel();
                 var channels = Unsafe.SizeOf<TPixel>();
 
                 byte[] imageBytes = new byte[image.Width * image.Height * channels];
