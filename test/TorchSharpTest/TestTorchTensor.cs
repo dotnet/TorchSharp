@@ -1665,6 +1665,29 @@ namespace TorchSharp
             Assert.Equal(2.0f, t[1, 2, 3, 4, 5, 6].ToSingle());
         }
 
+        // regression for https://github.com/dotnet/TorchSharp/issues/521
+        [Fact]
+        public void SetItemSlice()
+        {
+            var shape = new long[] { 2, 2, 2, 2, 2, 2, 2 };
+
+            using var t = zeros(size: shape);
+            t[1] = 1 * ones(size: new long[] { 2, 2, 2, 2, 2, 2 });
+            t[1, 1] = 2 * ones(size: new long[] { 2, 2, 2, 2, 2 });
+            t[1, 1, 1] = 3 * ones(size: new long[] { 2, 2, 2, 2 });
+            t[1, 1, 1, 1] = 4 * ones(size: new long[] { 2, 2, 2 });
+            t[1, 1, 1, 1, 1] = 5 * ones(size: new long[] { 2, 2 });
+            t[1, 1, 1, 1, 1, 1] = 6 * ones(size: new long[] { 2 });
+
+            Assert.Equal(0, t[0, 0, 0, 0, 0, 0, 0].ToSingle());
+            Assert.Equal(1, t[1, 0, 0, 0, 0, 0, 0].ToSingle());
+            Assert.Equal(2, t[1, 1, 0, 0, 0, 0, 0].ToSingle());
+            Assert.Equal(3, t[1, 1, 1, 0, 0, 0, 0].ToSingle());
+            Assert.Equal(4, t[1, 1, 1, 1, 0, 0, 0].ToSingle());
+            Assert.Equal(5, t[1, 1, 1, 1, 1, 0, 0].ToSingle());
+            Assert.Equal(6, t[1, 1, 1, 1, 1, 1, 0].ToSingle());
+        }
+
         [Fact]
         public void TestScalarToTensor()
         {
@@ -3872,6 +3895,25 @@ namespace TorchSharp
 
             input.ceil_();
             Assert.True(res.allclose(torch.tensor(expected)));
+        }
+
+        [Fact]
+        public void ConjTest()
+        {
+            var input = torch.randn(10, dtype: complex64);
+            Assert.False(input.is_conj());
+
+            var res = input.conj();
+            Assert.Equal(10, res.shape[0]);
+            Assert.True(torch.is_conj(res));
+
+            var resolved = torch.resolve_conj(res);
+            Assert.Equal(10, res.shape[0]);
+            Assert.False(resolved.is_conj());
+
+            var physical = torch.conj_physical(input);
+            Assert.Equal(10, res.shape[0]);
+            Assert.False(physical.is_conj());
         }
 
         [Fact]

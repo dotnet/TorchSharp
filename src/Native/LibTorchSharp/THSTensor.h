@@ -238,6 +238,17 @@ EXPORT_API(Tensor) THSTensor_clamp_min_(const Tensor input, const Scalar min);
 
 EXPORT_API(Tensor) THSTensor_complex(const Tensor real, const Tensor imag);
 
+EXPORT_API(Tensor) THSTensor_conj(const Tensor tensor);
+
+EXPORT_API(int64_t)   THSTensor_is_conj(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_conj_physical(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_conj_physical_(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_resolve_conj(const Tensor tensor);
+
+
 EXPORT_API(Tensor) THSTensor_conv1d(const Tensor input, const Tensor weight, const Tensor bias,
     const int64_t* strides, const int strides_length,
     const int64_t* paddings, const int paddings_length,
@@ -1051,17 +1062,17 @@ EXPORT_API(Tensor) THSTensor_set_(Tensor tensor, const Tensor source);
 
 EXPORT_API(Tensor) THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad);
 
-EXPORT_API(void) THSTensor_set1(const Tensor tensor, int64_t index, Scalar value);
+EXPORT_API(void) THSTensor_set1(const Tensor tensor, int64_t index, const Tensor value);
 
-EXPORT_API(void) THSTensor_set2(const Tensor tensor, int64_t index1, int64_t index2, Scalar value);
+EXPORT_API(void) THSTensor_set2(const Tensor tensor, int64_t index1, int64_t index2, const Tensor value);
 
-EXPORT_API(void) THSTensor_set3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, Scalar value);
+EXPORT_API(void) THSTensor_set3(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, const Tensor value);
 
-EXPORT_API(void) THSTensor_set4(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, Scalar value);
+EXPORT_API(void) THSTensor_set4(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, const Tensor value);
 
-EXPORT_API(void) THSTensor_set5(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, Scalar value);
+EXPORT_API(void) THSTensor_set5(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, const Tensor value);
 
-EXPORT_API(void) THSTensor_set6(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, int64_t index6, Scalar value);
+EXPORT_API(void) THSTensor_set6(const Tensor tensor, int64_t index1, int64_t index2, int64_t index3, int64_t index4, int64_t index5, int64_t index6, const Tensor value);
 
 EXPORT_API(int64_t) THSTensor_size(const Tensor tensor, const int64_t dim);
 
