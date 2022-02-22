@@ -124,7 +124,7 @@ namespace TorchSharp
                     trace.AppendLine($"Step 3 - Alternative load from consolidated directory of native binaries from nuget packages");
                     trace.AppendLine($"");
 
-                    var cpuRootPackage = "libtorch-cpu";
+                    var cpuRootPackage = "libtorch-cpu-{nativeRid}";
                     var cudaRootPackage = $"libtorch-cuda-{cudaVersion}-{nativeRid}";
                     var target =
                         RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "LibTorchSharp.dll" :

@@ -6,6 +6,8 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __Fixed Bugs:__
 
+Using libtorch CPU packages from F# Interactive required explicit native loads
+
 #510 Module.Load throws Mismatched state_dict sizes exception on BatchNorm1d<br/>
 
 ## NuGet Version 0.96.0
