@@ -554,5 +554,42 @@ namespace TorchSharp
                 return torch.matmul(t, Weight);
             }
         }
+
+        [Fact]
+        public void Validate532()
+        {
+            var module = new Module532(1000, 100);
+
+            var p = module.parameters().ToArray();
+            var pB = module.batch.parameters().ToArray();
+            var pC = module.conv.parameters().ToArray();
+
+            Assert.Equal(pB.Length+pC.Length, p.Length);
+        }
+
+        internal class Module532 : Module
+        {
+            public Module conv;
+            public Module batch;
+            private Module seq;
+
+            public Module532(int in_channels, int out_channels) : base(String.Empty)
+            {
+                conv = Conv1d(in_channels, out_channels, 3);
+                batch = BatchNorm1d(out_channels);
+                seq = Sequential(
+                    conv,
+                    batch,
+                    ReLU(inPlace: true)
+                );
+
+                this.RegisterComponents();
+            }
+
+            public override torch.Tensor forward(torch.Tensor t)
+            {
+                return this.seq.forward(t);
+            }
+        }
     }
 }
