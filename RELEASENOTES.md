@@ -19,10 +19,10 @@ __Fixed Bugs:__
 #515 what's reason for making register_module internal?<br/>
 #516 AdamW bug on v0.96.0<br/>
 #521 Can't set Tensor slice using indexing<br/>
-#525 LSTM's forward function not work with null hidden and cell state
-#532 Why does storing module layers in arrays break the learning process?
+#525 LSTM's forward function not work with null hidden and cell state<br/>
+#532 Why does storing module layers in arrays break the learning process?<br/>
 
-## NuGet Version 0.96.1
+## NuGet Version 0.96.2
 
 NOT RELEASED
 
