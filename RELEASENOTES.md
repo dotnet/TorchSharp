@@ -2,7 +2,7 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.96.2
+## NuGet Version 0.96.3
 
 __API Changes:__
 
@@ -19,6 +19,12 @@ __Fixed Bugs:__
 #515 what's reason for making register_module internal?<br/>
 #516 AdamW bug on v0.96.0<br/>
 #521 Can't set Tensor slice using indexing<br/>
+#525 LSTM's forward function not work with null hidden and cell state
+#532 Why does storing module layers in arrays break the learning process?
+
+## NuGet Version 0.96.1
+
+NOT RELEASED
 
 ## NuGet Version 0.96.1
 
