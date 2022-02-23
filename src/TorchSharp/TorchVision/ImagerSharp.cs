@@ -31,21 +31,17 @@ namespace TorchSharp.torchvision
             Tensor ToTensor<TPixel>(byte[] bytes) where TPixel : unmanaged, IPixel<TPixel>
             {
                 var image = Image.Load<TPixel>(bytes);
-
                 var channels = Unsafe.SizeOf<TPixel>();
-
-                byte[] imageBytes = new byte[image.Width * image.Height * channels];
-
+                byte[] imageBytes = new byte[image.Height * image.Width * channels];
                 image.CopyPixelDataTo(imageBytes);
-
-                return tensor(imageBytes, new long[] { image.Width, image.Height, channels}).permute(2, 0, 1);
+                return tensor(imageBytes, new long[] { image.Height, image.Width, channels}).permute(2, 0, 1);
             }
 
             byte[] FromTensor<TPixel>(Tensor t, ImageFormat format) where TPixel : unmanaged, IPixel<TPixel>
             {
                 var shape = t.shape;
                 var tt = t.reshape(new long[] { shape[0] * shape[1] * shape[2] });
-                var image = Image.LoadPixelData<TPixel>(tt.bytes.ToArray(), (int)shape[0], (int)shape[1]);
+                var image = Image.LoadPixelData<TPixel>(tt.bytes.ToArray(), (int)shape[1], (int)shape[0]);
                 IImageEncoder encoder = format switch {
                    ImageFormat.PNG => new PngEncoder(),
                    ImageFormat.JPEG => new JpegEncoder(),

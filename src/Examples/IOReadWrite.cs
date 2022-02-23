@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using TorchSharp;
+
 using static TorchSharp.torch;
 
 using SkiaSharp;
@@ -37,6 +38,8 @@ namespace TorchSharp.Examples
         {
             var filename = args[0];
 
+            Console.WriteLine($"Reading file {filename}");
+
             //torchvision.io.DefaultImager = new SkiaImager();
 
             var img = torchvision.io.read_image(filename, torchvision.io.ImageReadMode.RGB);
@@ -46,13 +49,15 @@ namespace TorchSharp.Examples
 
             Console.WriteLine($"Image has {expanded.shape[1]} colour channels with dimensions {expanded.shape[2]}x{expanded.shape[3]}");
 
-            //var transformed = torchvision.transforms.Compose(
-            //    torchvision.transforms.Invert()
-            //    ).forward(img);
+            var transformed = torchvision.transforms.Compose(
+                torchvision.transforms.Invert(),
+                torchvision.transforms.HorizontalFlip(),
+                torchvision.transforms.CenterCrop(256),
+                torchvision.transforms.Rotate(20)
+                ).forward(expanded);
 
-            var transformed = torchvision.transforms.functional.vflip(expanded);
 
-            torchvision.io.write_image(transformed.squeeze(), "image_transformed_vflip.jpg", torchvision.io.ImageFormat.JPEG);
+            torchvision.io.write_image(transformed.squeeze(), "image_transformed.jpg", torchvision.io.ImageFormat.JPEG);
         }
     }
 }
