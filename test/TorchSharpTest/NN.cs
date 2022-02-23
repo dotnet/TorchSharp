@@ -3172,6 +3172,21 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestLSTM3()
+        {
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }),
+                   c0 = torch.randn(new long[] { 2, 3, 20 }))
+            using (var rnn = LSTM(10, 20, 2)) {
+                var (output, hN, cN) = rnn.forward(input);
+                Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(c0.shape, cN.shape);
+                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            }
+
+        }
+
+        [Fact]
         public void TestLSTMCell1()
         {
             var seq = 5;
