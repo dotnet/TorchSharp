@@ -461,13 +461,19 @@ namespace TorchSharp
                 /// <returns>(string, Parameter) – Tuple containing the name and parameter</returns>
                 public virtual IEnumerable<(string name, Modules.Parameter parameter)> named_parameters(bool recurse = true)
                 {
+                    var seen = new HashSet<IntPtr>();
+
                     foreach (var nsm in _internal_params) {
+                        if (seen.Contains(nsm.Item2.Handle)) continue;
+                        seen.Add(nsm.Item2.Handle);
                         yield return nsm;
                     }
 
                     if (recurse) {
                         foreach (var (name, sm) in _internal_submodules) {
                             foreach (var (n, p) in sm.named_parameters(true)) {
+                                if (seen.Contains(p.Handle)) continue;
+                                seen.Add(p.Handle);
                                 yield return ($"{name}.{n}", p);
                             }
                         }
