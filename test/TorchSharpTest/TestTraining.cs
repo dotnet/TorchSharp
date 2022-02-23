@@ -9,6 +9,8 @@ using static TorchSharp.torch.nn.functional;
 using Xunit;
 
 using static TorchSharp.torch;
+using System.Reflection.Metadata.Ecma335;
+using TorchSharp.Modules;
 
 #nullable enable
 
@@ -147,21 +149,45 @@ namespace TorchSharp
             Assert.Equal(0.975, beta2);
         }
 
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using Adam optimizer.
-        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
-        /// </summary>
-        [Fact]
-        public void TestTrainingAdamDefaults()
+
+        private static void CreateDataAndLabels(Generator gen, out Tensor data, out Tensor labels, int batchSize = 64, int inputSize = 1000, int categories = 10)
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
+            data = torch.rand(new long[] { 64, inputSize }, generator: gen);
+            labels = torch.rand(new long[] { 64, categories }, generator: gen);
+        }
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+        private static void CreateLinearLayers(Generator gen, out Linear linear1, out Linear linear2, int inputSize = 1000, int categories = 10, int hiddenSize = 100)
+        {
+            linear1 = Linear(inputSize, hiddenSize);
+            linear2 = Linear(hiddenSize, categories);
 
-            var optimizer = torch.optim.Adam(seq.parameters());
+            ReInitializeLinear(gen, linear1);
+            ReInitializeLinear(gen, linear2);
+        }
+
+        private static void ReInitializeLinear(Generator gen, Linear linear)
+        {
+            // The Linear module will have been created with some RNG that we don't have control over, specifically
+            // the default RNG, which does not work well in a parallel environment (which the unit test framework is).
+            //
+            // Therefore, we need to set the initial parameters based on the generator we do have control over
+            // and which is unique to the unit test.
+
+            var w = rand(linear.weight.shape, generator: gen);
+            var wBound = 1 / Math.Sqrt(w.shape[1]);
+
+            linear.weight = Parameter(w * (2 * wBound) - wBound);
+
+            if (linear.bias is not null) {
+                var (fanIn, _) = init.CalculateFanInAndFanOut(linear.weight);
+                var bBound = (fanIn > 0) ? 1 / Math.Sqrt(fanIn) : 0;
+                var b = rand(linear.bias.shape, generator: gen);
+                linear.bias = Parameter(b * (2 * bBound) - bBound);
+            }
+        }
+
+        private static float TrainLoop(Sequential seq, Tensor x, Tensor y, optim.Optimizer optimizer)
+        {
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
@@ -178,63 +204,26 @@ namespace TorchSharp
 
                 output.backward();
 
-                using var _ = optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
-        }
-
-        [Fact]
-        public void TestTrainingAdamAmsGrad()
-        {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
-
-            var optimizer = torch.optim.Adam(seq.parameters(), amsgrad: true);
-            var loss = mse_loss(Reduction.Sum);
-
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
                 optimizer.step();
             }
+
+            // After 10 iterations, the final loss should always be less than the initial loss.
             Assert.True(finalLoss < initialLoss);
+
+            return finalLoss;
         }
 
-        [Fact]
-        public void TestTrainingAdamOneCycleLR()
+        private static float TrainLoop(Sequential seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true)
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
-
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
-
-            var optimizer = torch.optim.Adam(seq.parameters(), amsgrad: true);
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
-
             var loss = mse_loss(Reduction.Sum);
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
-            for (int i = 0; i < 10; i++) {
+            var pgFirst = optimizer.ParamGroups.First();
+            var lastLR = pgFirst.LearningRate;
 
+            for (int i = 0; i < 10; i++) {
                 using var eval = seq.forward(x);
                 using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
@@ -247,9 +236,117 @@ namespace TorchSharp
 
                 optimizer.step();
                 scheduler.step();
+
+                if (check_lr) {
+                    // For most LR schedulers, the LR decreases monotonically with each step. However,
+                    // that is not always the case, so the test must be disabled in some circumstances.
+                    Assert.True(pgFirst.LearningRate < lastLR);
+                    lastLR = pgFirst.LearningRate;
+                }
             }
 
+            // After 10 iterations, the final loss should always be less than the initial loss.
             Assert.True(finalLoss < initialLoss);
+
+            return finalLoss;
+        }
+
+        private void LossIsClose(float expected, float actual, float tolerance = 0.001f)
+        {
+            // The error tolerance should be relative, not absolute.
+            tolerance *= actual;
+            Assert.True(MathF.Abs(actual - expected) <= tolerance, $"Expected {expected}, but got {actual}");
+        }
+
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using Adam optimizer.
+        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
+        /// </summary>
+        [Fact]
+        public void TestTrainingAdamDefaults()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Adam(seq.parameters());
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(53.3606f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamParamGroups()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Adam(new Adam.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(105.82f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamAmsGrad()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Adam(seq.parameters(), amsgrad: true);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(53.34f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamWeightDecay()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Adam(seq.parameters(), weight_decay: 0.5);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(53.28f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamOneCycleLR()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var lr = 0.0005;
+            var optimizer = torch.optim.Adam(seq.parameters(), lr: lr, amsgrad: true);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, lr * 10, total_steps: 10);
+
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
+
+            LossIsClose(94.941f, loss);
         }
 
         /// <summary>
@@ -259,70 +356,87 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingAdamWDefaults()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             var optimizer = torch.optim.AdamW(seq.parameters());
-            var loss = mse_loss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
+            LossIsClose(53.3606f, loss);
+        }
 
-                finalLoss = lossVal;
+        [Fact]
+        public void TestTrainingAdamWParamGroups()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-                optimizer.zero_grad();
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-                output.backward();
+            var optimizer = torch.optim.AdamW(new AdamW.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
 
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(105.82f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamWAmsGrad()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.AdamW(seq.parameters(), amsgrad: true);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(53.34f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamWWeightDecay()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.AdamW(seq.parameters(), weight_decay: 0.5);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(53.28f, loss);
         }
 
         [Fact]
         public void TestTrainingAdamWOneCycleLR()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var lr = 0.001;
+            var optimizer = torch.optim.AdamW(seq.parameters(), lr: lr, amsgrad: true);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, lr * 10, total_steps: 10);
 
-            var optimizer = torch.optim.AdamW(seq.parameters(), amsgrad: true);
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            var loss = mse_loss(Reduction.Sum);
-
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
-
-            for (int i = 0; i < 10; i++) {
-
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-                scheduler.step();
-            }
-
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(197.63f, loss);
         }
 
 
@@ -333,105 +447,231 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingAdagrad()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.Adagrad(seq.parameters(), learning_rate);
-            var loss = mse_loss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(203.20f, loss);
         }
 
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using Adadelta optimizer.
-        /// </summary>
+        [Fact]
+        public void TestTrainingAdagradWeightDecay()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.Adagrad(seq.parameters(), learning_rate, weight_decay: 0.5);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(203.21f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdagradLRDecay()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.Adagrad(seq.parameters(), learning_rate, lr_decay: 0.1);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(211.065f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdagradParamGroups()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Adagrad(new Adagrad.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(51.51f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdagradParamGroupsWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Adagrad(new Adagrad.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f, weight_decay = 0.25 } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(51.45f, loss);
+        }
+
         [Fact]
         public void TestTrainingAdadelta()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
-
             double learning_rate = 1.0f;
-            var optimizer = torch.optim.Adadelta(seq.named_parameters(), learning_rate);
-            var loss = mse_loss(Reduction.Sum);
+            var optimizer = torch.optim.Adadelta(seq.parameters(), learning_rate);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(74.754f, loss);
         }
 
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using Adamax optimizer.
-        /// </summary>
+        [Fact]
+        public void TestTrainingAdadeltaWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 1.0f;
+            var optimizer = torch.optim.Adadelta(seq.parameters(), learning_rate, weight_decay: 0.35);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(73.226f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdadeltaRHO()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 1.0f;
+            var optimizer = torch.optim.Adadelta(seq.parameters(), learning_rate, rho: 0.75);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(73.027f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdadeltaParamGroups()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Adadelta(new Adadelta.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(77.891f, loss);
+        }
+
         [Fact]
         public void TestTrainingAdamax()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var optimizer = torch.optim.Adamax(seq.parameters());
 
-            var optimizer = torch.optim.Adamax(seq.named_parameters());
-            var loss = mse_loss(Reduction.Sum);
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            LossIsClose(55.559f, loss);
+        }
 
-            for (int i = 0; i < 15; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
+        [Fact]
+        public void TestTrainingAdamaxWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-                finalLoss = lossVal;
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-                optimizer.zero_grad();
+            var optimizer = torch.optim.Adamax(seq.parameters(), weight_decay: 0.35);
 
-                output.backward();
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(55.47f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamaxBetas()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Adamax(seq.parameters(), beta1: 0.75, beta2: 0.95);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(51.00f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamaxParamGroups()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Adamax(new Adamax.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(141.519f, loss);
         }
 
         /// <summary>
@@ -440,71 +680,103 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingAdamaxOneCycleLR()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var lr = 0.002;
+            var optimizer = torch.optim.Adamax(seq.parameters(), lr: lr);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, lr * 10, total_steps: 15);
 
-            var optimizer = torch.optim.Adamax(seq.named_parameters());
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 15);
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            var loss = mse_loss(Reduction.Sum);
-
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
-
-            for (int i = 0; i < 15; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-                scheduler.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(61.45f, loss);
         }
 
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using NAdam optimizer.
-        /// </summary>
         [Fact]
         public void TestTrainingNAdam()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var optimizer = torch.optim.NAdam(seq.parameters());
 
-            var optimizer = torch.optim.NAdam(seq.named_parameters());
-            var loss = mse_loss(Reduction.Sum);
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            LossIsClose(63.9739f, loss);
+        }
 
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
+        [Fact]
+        public void TestTrainingNAdamWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-                finalLoss = lossVal;
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-                optimizer.zero_grad();
+            var optimizer = torch.optim.NAdam(seq.parameters(), weight_decay: 0.45);
 
-                output.backward();
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(63.281f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingNAdamBetas()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.NAdam(seq.parameters(), beta1: 0.75, beta2: 0.95);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(56.387f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingNAdamMD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.NAdam(seq.parameters(), momentum_decay: 0.04);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(63.46877f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingNAdamParamGroups()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.NAdam(new NAdam.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(59.230f, loss);
         }
 
         /// <summary>
@@ -513,35 +785,19 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingNAdamOneCycleLR()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var lr = 0.002;
+            var optimizer = torch.optim.NAdam(seq.parameters(), lr: lr);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, lr * 10, total_steps: 10);
 
-            var optimizer = torch.optim.NAdam(seq.named_parameters());
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
-            var loss = mse_loss(Reduction.Sum);
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
-
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-                scheduler.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(214.188f, loss);
         }
 
         /// <summary>
@@ -550,33 +806,69 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingRAdam()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var optimizer = torch.optim.RAdam(seq.parameters(), 0.0005);
 
-            var optimizer = torch.optim.RAdam(seq.named_parameters());
-            var loss = mse_loss(Reduction.Sum);
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            LossIsClose(66.2651f, loss);
+        }
 
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
+        [Fact]
+        public void TestTrainingRAdamWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-                finalLoss = lossVal;
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-                optimizer.zero_grad();
+            var optimizer = torch.optim.RAdam(seq.parameters(), 0.0005, weight_decay: 0.05);
 
-                output.backward();
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(66.263f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRAdamBetas()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.RAdam(seq.parameters(), 0.0005, beta1: 0.9, beta2: 0.999);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(66.265f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRAdamParamGroups()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.RAdam(new RAdam.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.001f } },
+                new () { Parameters = lin2.parameters() }
+            }, 0.0005);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(170.338f, loss);
         }
 
         /// <summary>
@@ -585,106 +877,244 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingRAdamOneCycleLR()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var lr = 0.0005;
+            var optimizer = torch.optim.RAdam(seq.parameters(), lr: lr);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, lr * 1.5, total_steps: 10);
 
-            var optimizer = torch.optim.RAdam(seq.named_parameters());
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 1.5, total_steps: 10);
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            var loss = mse_loss(Reduction.Sum);
-
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
-
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-                scheduler.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(124.478f, loss);
         }
 
         /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using ASGD optimizer.
+        /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
         /// </summary>
+        [Fact]
+        public void TestTrainingRAdamOneCycleLR_PG()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var lr = 0.0005;
+            var optimizer = torch.optim.RAdam(new RAdam.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.003f } },
+                new () { Parameters = lin2.parameters(), Options = new () { LearningRate = lr } }
+            });
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, new double[] { lr * 1.5, lr * 2.25 }, total_steps: 10);
+
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
+
+            LossIsClose(92.047f, loss);
+        }
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingRAdamCyclicLR_PG()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var lr = 0.0002;
+            var optimizer = torch.optim.SGD(new SGD.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.003f } },
+                new () { Parameters = lin2.parameters(), Options = new () { LearningRate = lr } }
+            }, lr);
+            var scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, new double[] { lr / 2, lr * 2 }, new double[] { lr * 1.5, lr * 2.25 });
+
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
+
+            LossIsClose(58.589f, loss);
+        }
+
         [Fact]
         public void TestTrainingASGD()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var optimizer = torch.optim.ASGD(seq.parameters());
 
-            var optimizer = torch.optim.ASGD(seq.named_parameters());
-            var loss = mse_loss(Reduction.Sum);
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
-
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(57.748f, loss);
         }
 
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using ASGD optimizer.
-        /// </summary>
+        [Fact]
+        public void TestTrainingASGDLambda()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.ASGD(seq.parameters(), lambd: 0.00025);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(57.748f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingASGDAlpha()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.ASGD(seq.parameters(), alpha: 0.65);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(57.748f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingASGDWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.ASGD(seq.parameters(), weight_decay: 0.25);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(57.748f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingASGDT0()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.ASGD(seq.parameters(), t0: 100000);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(57.748f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingASGDParamGroups()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var pgs = new ASGD.ParamGroup[]
+            {
+                new (lin1.parameters(), new () { LearningRate = 0.005f }),
+                new (lin2.parameters())
+            };
+
+            var optimizer = torch.optim.ASGD(new ASGD.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.0002f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(56.653f, loss);
+        }
+
         [Fact]
         public void TestTrainingRprop()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var optimizer = torch.optim.Rprop(seq.parameters());
 
-            var optimizer = torch.optim.Rprop(seq.named_parameters());
-            var loss = mse_loss(Reduction.Sum);
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            LossIsClose(229.68f, loss);
+        }
 
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
+        [Fact]
+        public void TestTrainingRpropEtam()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-                finalLoss = lossVal;
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-                optimizer.zero_grad();
+            var optimizer = torch.optim.Rprop(seq.parameters(), etaminus: 0.55);
 
-                output.backward();
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(201.417f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRpropEtap()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Rprop(seq.parameters(), etaplus: 1.25);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(221.365f, loss);
+        }
+
+
+        [Fact]
+        public void TestTrainingRpropParamGroups()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Rprop(new Rprop.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.005f } },
+                new () { Parameters = lin2.parameters() }
+            });
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(78.619f, loss);
         }
 
         /// <summary>
@@ -694,34 +1124,18 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingRMSLR()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate);
-            var loss = mse_loss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(56.589f, loss);
         }
 
         /// <summary>
@@ -731,260 +1145,316 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingRMSOneCycleLR()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate);
-            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, optimizer.LearningRate * 10, total_steps: 10);
+            var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, learning_rate * 10, total_steps: 10);
 
-            var loss = mse_loss(Reduction.Sum);
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
-
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-                scheduler.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(207.87f, loss);
         }
 
         [Fact]
         public void TestTrainingRMSAlpha()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, alpha: 0.75);
-            var loss = mse_loss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
+            LossIsClose(156.339f, loss);
+        }
 
-                finalLoss = lossVal;
+        [Fact]
+        public void TestTrainingRMSWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-                optimizer.zero_grad();
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-                output.backward();
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, weight_decay: 0.15);
 
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(56.608f, loss);
         }
 
         [Fact]
         public void TestTrainingRMSCentered()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, centered: true);
-            var loss = mse_loss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(56.189f, loss);
         }
 
-        /// <summary>
-        /// Fully connected ReLU net with one hidden layer trained using SGD optimizer.
-        /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
-        /// </summary>
+        [Fact]
+        public void TestTrainingRMSCenteredWD()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, weight_decay: 0.15, centered: true);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(56.189f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRMSMomentum()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, momentum: 0.15);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(53.50f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRMSCenteredParamGroups()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+
+            var optimizer = torch.optim.RMSProp(
+                new RMSProp.ParamGroup[] {
+                    new(lin1.parameters()),
+                    new(lin2.parameters(), lr: learning_rate*10) },
+                learning_rate, centered: true);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(53.6049f, loss);
+        }
+
         [Fact]
         public void TestTrainingSGDMomentum()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, momentum: 0.5);
-            var loss = mse_loss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(53.711f, loss);
         }
 
-        [Fact(Skip = "Fails with an exception in native code.")]
-        public void TestTrainingSGDNesterov()
+        [Fact]
+        public void TestTrainingSGDDampening()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, dampening: 0.5);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(62.494f, loss);
+        }
+
+        [Fact()]//(Skip = "Fails with an exception in native code.")]
+        public void TestTrainingSGDNesterov()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
-            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, nesterov: true);
-            var loss = mse_loss(Reduction.Sum);
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate, momentum: 0.1, nesterov: true);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(59.270f, loss);
         }
 
         [Fact]
         public void TestTrainingSGDDefaults()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
-            var loss = mse_loss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            var loss = TrainLoop(seq, x, y, optimizer);
 
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
+            LossIsClose(62.494f, loss);
+        }
 
-                finalLoss = lossVal;
+        [Fact]
+        public void TestTrainingSGDDefaultsParamGroups()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-                optimizer.zero_grad();
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-                output.backward();
+            var pgs = new SGD.ParamGroup[] {
+                new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
+                new (lin2.parameters(), lr: 0.00003, dampening: 0.05, momentum: 0.25)
+            };
 
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(pgs, learning_rate);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(58.698f, loss);
         }
 
         [Fact]
         public void TestTrainingSGDStepLR()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
             var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.97);
 
-            var loss = mse_loss(Reduction.Sum);
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
+            LossIsClose(67.36136f, loss);
+        }
 
-            double lastLR = learning_rate;
+        [Fact]
+        public void TestTrainingSGDLambdaLR()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-                finalLoss = lossVal;
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, i => Math.Pow(0.95, (1 + i)));
 
-                optimizer.zero_grad();
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler);
 
-                output.backward();
+            LossIsClose(73.87f, loss);
+        }
 
-                optimizer.step();
-                scheduler.step();
+        [Fact]
+        public void TestTrainingSGDMultiplicativeLR()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-                Assert.True(optimizer.LearningRate < lastLR);
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
-                lastLR = optimizer.LearningRate;
-            }
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.MultiplicativeLR(optimizer, i => 0.95);
 
-            Assert.True(finalLoss < initialLoss);
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler);
+
+            LossIsClose(71.1419f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingSGDExponentialLR()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer);
+
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler);
+
+            LossIsClose(180.249f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingSGDLinearLR()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.LinearLR(optimizer, end_factor: 0.75, total_iters: 10);
+
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler);
+
+            LossIsClose(209.71f, loss);
         }
 
         [Fact]
         public void TestTrainingSGDMultiStepLR()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1011,24 +1481,26 @@ namespace TorchSharp
                 optimizer.step();
                 scheduler.step();
 
+                var pgFirst = optimizer.ParamGroups.First();
                 if (i == 2 || i == 4 || i == 6) {
-                    Assert.True(optimizer.LearningRate < lastLR);
+                    Assert.True(pgFirst.LearningRate < lastLR);
                 }
-                lastLR = optimizer.LearningRate;
+                lastLR = pgFirst.LearningRate;
             }
 
             Assert.True(finalLoss < initialLoss);
+
+            LossIsClose(69.423f, finalLoss);
         }
 
         [Fact]
         public void TestTrainingSGDCosineAnnealingLR()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
@@ -1055,100 +1527,62 @@ namespace TorchSharp
                 optimizer.step();
                 scheduler.step();
 
+                var pgFirst = optimizer.ParamGroups.First();
                 if (i == 2 || i == 4 || i == 6) {
-                    Assert.True(optimizer.LearningRate < lastLR);
+                    Assert.True(pgFirst.LearningRate < lastLR);
                 }
-                lastLR = optimizer.LearningRate;
+                lastLR = pgFirst.LearningRate;
             }
 
             Assert.True(finalLoss < initialLoss);
+
+            LossIsClose(88.98f, finalLoss);
         }
 
         [Fact]
         public void TestTrainingSGDCyclicLR()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
             var scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, 0.0001, 0.0004, step_size_up: 5);
 
-            var loss = mse_loss(Reduction.Sum);
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
-
-            for (int i = 0; i < 10; i++) {
-
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-                scheduler.step();
-            }
-
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(65.459f, loss);
         }
 
         [Fact]
         public void TestTrainingSGDOneCycleLR()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
             var scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, 0.0004, total_steps: 10);
 
-            var loss = mse_loss(Reduction.Sum);
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
-
-            for (int i = 0; i < 10; i++) {
-
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-                scheduler.step();
-            }
-
-            Assert.True(finalLoss < initialLoss);
+            LossIsClose(112.4992f, loss);
         }
 
         [Fact]
         public void TestTrainingLBFGSDefaults()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
@@ -1182,9 +1616,12 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingLBFGSNoClosure()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
             Assert.Throws<ArgumentNullException>(() => optimizer.step());
@@ -1193,12 +1630,11 @@ namespace TorchSharp
         [Fact]
         public void TestTrainingLBFGS_ME()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate, max_iter: 15, max_eval: 15);
@@ -1249,25 +1685,8 @@ namespace TorchSharp
             var y = torch.randn(new long[] { 64, 10 });
 
             var optimizer = torch.optim.Adam(seq.parameters());
-            var loss = mse_loss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
-
-            for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
-            }
-            Assert.True(finalLoss < initialLoss);
+            TrainLoop(seq, x, y, optimizer);
         }
 
 
@@ -1319,29 +1738,6 @@ namespace TorchSharp
                 }
             } else {
                 Assert.Throws<InvalidOperationException>(() => torch.randn(new long[] { 64, 3, 28, 28 }).cuda());
-            }
-        }
-
-        [Fact(Skip = "MNIST data too big to keep in repo")]
-        public void TestMNISTLoader()
-        {
-            using (var train = Data.Loader.MNIST("../../../../test/data/MNIST", 32)) {
-                Assert.NotNull(train);
-
-                var size = train.Size();
-                int i = 0;
-
-                foreach (var (data, target) in train) {
-                    i++;
-
-                    Assert.Equal(data.shape, new long[] { 32, 1, 28, 28 });
-                    Assert.Equal(target.shape, new long[] { 32 });
-
-                    data.Dispose();
-                    target.Dispose();
-                }
-
-                Assert.Equal(size, i * 32);
             }
         }
     }

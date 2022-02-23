@@ -110,6 +110,25 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Indicates whether a given element type is complex.
+        /// </summary>
+        /// <param name="type">The input type.</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Complex numbers are not real, and thus will return 'false'
+        /// </remarks>
+        internal static bool IsComplex(this ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.ComplexFloat32:
+            case ScalarType.ComplexFloat64:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Save the tensor in a .NET-specific format.
         /// </summary>
         /// <param name="tensor"></param>

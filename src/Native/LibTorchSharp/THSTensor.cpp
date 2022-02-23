@@ -1030,6 +1030,16 @@ int THSTensor_requires_grad(const Tensor tensor)
     CATCH_RETURN(int, 0, tensor->requires_grad());
 }
 
+void THSTensor_retain_grad(const Tensor tensor)
+{
+    CATCH(tensor->retain_grad(););
+}
+
+int64_t THSTensor_is_leaf(const Tensor tensor)
+{
+    CATCH_RETURN(int64_t, 0, tensor->is_leaf(););
+}
+
 Tensor THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int length)
 {
     CATCH_TENSOR(tensor->reshape(at::ArrayRef<int64_t>(shape, length)));
