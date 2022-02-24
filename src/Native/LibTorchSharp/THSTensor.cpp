@@ -286,6 +286,19 @@ Tensor THSTensor_cuda(const Tensor tensor)
     CATCH_TENSOR(tensor->cuda());
 }
 
+Tensor THSTensor_pin_memory(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->pin_memory());
+}
+
+int64_t THSTensor_is_pinned(const Tensor tensor)
+{
+    bool result = false;
+    CATCH(result = tensor->is_pinned(););
+    return result;
+}
+
+
 void THSTensor_cummax(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim)
 {
     auto max = tensor->cummax(dim);
