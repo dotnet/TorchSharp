@@ -8,7 +8,7 @@ using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 using static TorchSharp.torch.utils.data;
-using TorchSharp.torchvision.dsets;
+using static TorchSharp.torchvision.datasets;
 
 namespace TorchSharp.Examples
 {
@@ -26,9 +26,6 @@ namespace TorchSharp.Examples
     ///    data set to train on. It's just as large as MNIST, and has the same 60/10 split of training and test
     ///    data.
     ///    It is available at: https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion
-    ///
-    /// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
-    /// constant below at the folder location.
     /// </remarks>
     public class MNIST
     {
@@ -41,7 +38,7 @@ namespace TorchSharp.Examples
         internal static void Main(string[] args)
         {
             var dataset = args.Length > 0 ? args[0] : "mnist";
-            var datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset);
+            var datasetPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
             torch.random.manual_seed(1);
 
@@ -51,17 +48,6 @@ namespace TorchSharp.Examples
             Console.WriteLine($"Running MNIST on {device.type.ToString()}");
             Console.WriteLine($"Dataset: {dataset}");
 
-            var sourceDir = datasetPath;
-            var targetDir = Path.Combine(datasetPath, "test_data");
-
-            if (!Directory.Exists(targetDir)) {
-                Directory.CreateDirectory(targetDir);
-                Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "train-images-idx3-ubyte.gz"), targetDir);
-                Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "train-labels-idx1-ubyte.gz"), targetDir);
-                Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-images-idx3-ubyte.gz"), targetDir);
-                Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir);
-            }
-
             if (device.type == DeviceType.CUDA) {
                 _trainBatchSize *= 4;
                 _testBatchSize *= 4;
@@ -69,17 +55,19 @@ namespace TorchSharp.Examples
 
             var model = new Model("model", device);
 
-            var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 }, device: (Device)device);
+            var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 });
 
-            using MNISTReader train_data = new MNISTReader(targetDir, "train", normImage),
-                test_data = new MNISTReader(targetDir, "t10k", normImage);
-            TrainingLoop("mnist", device, model, train_data, test_data);
+            using (Dataset train_data = torchvision.datasets.MNIST(datasetPath, true, download: true, target_transform: normImage),
+                           test_data = torchvision.datasets.MNIST(datasetPath, false, download: true, target_transform: normImage)) {
+
+                TrainingLoop("mnist", device, model, train_data, test_data);
+            }
         }
 
-        internal static void TrainingLoop(string dataset, Device device, Model model, MNISTReader train_data, MNISTReader test_data)
+        internal static void TrainingLoop(string dataset, Device device, Model model, Dataset train_data, Dataset test_data)
         {
-            using var train = new DataLoader(train_data, _trainBatchSize, shuffle: true);
-            using var test = new DataLoader(test_data, _testBatchSize, shuffle: false);
+            using var train = new DataLoader(train_data, _trainBatchSize, device: device, shuffle: true);
+            using var test = new DataLoader(test_data, _testBatchSize, device: device, shuffle: false);
 
             if (device.type == DeviceType.CUDA) {
                 _epochs *= 4;
@@ -96,8 +84,8 @@ namespace TorchSharp.Examples
 
                 using (var d = torch.NewDisposeScope()) {
 
-                    Train(model, optimizer, nll_loss(reduction: Reduction.Mean), device, train, epoch, train_data.Count);
-                    Test(model, nll_loss(reduction: torch.nn.Reduction.Sum), device, test, test_data.Count);
+                    Train(model, optimizer, nll_loss(reduction: Reduction.Mean), train, epoch, train_data.Count);
+                    Test(model, nll_loss(reduction: torch.nn.Reduction.Sum), test, test_data.Count);
 
                     Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
                     scheduler.step();
@@ -167,7 +155,6 @@ namespace TorchSharp.Examples
             Model model,
             torch.optim.Optimizer optimizer,
             Loss loss,
-            Device device,
             DataLoader dataLoader,
             int epoch,
             long size)
@@ -203,7 +190,6 @@ namespace TorchSharp.Examples
         private static void Test(
             Model model,
             Loss loss,
-            Device device,
             DataLoader dataLoader,
             long size)
         {

@@ -12,7 +12,7 @@ open type TorchSharp.torch.utils.data
 open type TorchSharp.Scalar
 
 open TorchSharp.Examples
-open TorchSharp.torchvision.dsets
+open type TorchSharp.torchvision.datasets
 
 // Simple MNIST Convolutional model.
 //
@@ -26,9 +26,6 @@ open TorchSharp.torchvision.dsets
 //    data set to train on. It's just as large as MNIST, and has the same 60/10 split of training and test
 //    data.
 //    It is available at: https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion
-//
-// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
-// constant below at the folder location.
 
 let mutable trainBatchSize = 64
 let mutable testBatchSize = 128
@@ -38,22 +35,13 @@ let logInterval = 100
 let cmdArgs = Environment.GetCommandLineArgs()
 let dataset = if cmdArgs.Length = 2 then cmdArgs.[1] else "mnist"
 
-let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset)
+let datasetPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
 
 torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
 let device = if hasCUDA then torch.CUDA else torch.CPU
-
-let getDataFiles sourceDir targetDir =
-
-    if not (Directory.Exists(targetDir)) then
-        Directory.CreateDirectory(targetDir) |> ignore
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "train-images-idx3-ubyte.gz"), targetDir)
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "train-labels-idx1-ubyte.gz"), targetDir)
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-images-idx3-ubyte.gz"), targetDir)
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir)
 
 type Model(name,device:torch.Device) as this =
     inherit Module(name)
@@ -88,7 +76,7 @@ type Model(name,device:torch.Device) as this =
 
 let loss x y = functional.nll_loss(reduction=Reduction.Mean).Invoke(x,y)
 
-let train (model:Model) (optimizer:Optimizer) (data: MNISTReader) epoch =
+let train (model:Model) (optimizer:Optimizer) (data: Dataset) epoch =
     model.train()
 
     let size = data.Count
@@ -97,7 +85,7 @@ let train (model:Model) (optimizer:Optimizer) (data: MNISTReader) epoch =
     let mutable batchID = 1
 
     printfn $"Epoch: {epoch}..."
-    let dataLoader = new DataLoader(data, trainBatchSize, true)
+    let dataLoader = new DataLoader(data, trainBatchSize, true, device=device)
     for dat in dataLoader do
 
         use d = torch.NewDisposeScope()
@@ -115,7 +103,7 @@ let train (model:Model) (optimizer:Optimizer) (data: MNISTReader) epoch =
 
         batchID <- batchID + 1
 
-let test (model:Model) (data:MNISTReader) =
+let test (model:Model) (data:Dataset) =
     model.eval()
 
     let sz = float32 data.Count
@@ -123,7 +111,8 @@ let test (model:Model) (data:MNISTReader) =
     let mutable testLoss = 0.0f
     let mutable correct = 0
 
-    let dataLoader = new DataLoader(data, testBatchSize, false)
+    let dataLoader = new DataLoader(data, testBatchSize, false, device=device)
+
     for dat in dataLoader do
 
         use d = torch.NewDisposeScope()
@@ -170,17 +159,13 @@ let run epochs =
     printfn $"Running MNIST on {device.``type``.ToString()}"
     printfn $"Dataset: {dataset}"
 
-    let targetDir = Path.Combine(datasetPath, "test_data")
-
-    getDataFiles datasetPath targetDir
-
     if device.``type`` = DeviceType.CUDA then
         trainBatchSize <- trainBatchSize * 4
         testBatchSize <- testBatchSize * 4
 
-    let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
-    use train = new MNISTReader(targetDir, "train", transform=normImage)
-    use test = new MNISTReader(targetDir, "t10k", transform=normImage)
+    let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|])
+    use train = MNIST(datasetPath, true, true, target_transform=normImage)
+    use test = MNIST(datasetPath, false, true, target_transform=normImage)
 
     let model = new Model("model", device)
 

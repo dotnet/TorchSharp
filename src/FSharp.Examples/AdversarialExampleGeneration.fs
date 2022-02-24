@@ -9,10 +9,9 @@ open TorchSharp
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
 open type TorchSharp.Scalar
-open type TorchSharp.torchvision.dsets.MNISTReader
+open type TorchSharp.torchvision.datasets
 
 open TorchSharp.Examples
-open TorchSharp.torchvision.dsets
 open type TorchSharp.torch.utils.data
 
 // FGSM Attack
@@ -30,9 +29,6 @@ open type TorchSharp.torch.utils.data
 //    data.
 //    It is available at: https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion
 //
-// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
-// constant below at the folder location.
-//
 // The example is based on the PyTorch tutorial, but the results from attacking the model are very different from
 // what the tutorial article notes, at least on the machine where it was developed. There is an order-of-magnitude lower
 // drop-off in accuracy in this version. That said, when running the PyTorch tutorial on the same machine, the
@@ -48,7 +44,7 @@ let logInterval = 100
 let cmdArgs = Environment.GetCommandLineArgs()
 let dataset = if cmdArgs.Length = 2 then cmdArgs.[1] else "mnist"
 
-let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset)
+let datasetPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
 
 torch.random.manual_seed(1L) |> ignore
 
@@ -62,11 +58,11 @@ let attack (image:torch.Tensor) (eps:Scalar) (data_grad:torch.Tensor) =
     use sign = data_grad.sign()
     (image + eps * sign).clamp(0.0.ToScalar(), 1.0.ToScalar())
 
-let test (model:MNIST.Model) (eps:float) (data:MNISTReader) size =
+let test (model:MNIST.Model) (eps:float) (data:Dataset) size =
 
     let mutable correct = 0
 
-    let dataLoader = new DataLoader(data, testBatchSize, false)
+    let dataLoader = new DataLoader(data, testBatchSize, false, device=device)
     for dat in dataLoader do
 
         use d = torch.NewDisposeScope()
@@ -94,16 +90,12 @@ let run epochs =
     printfn $"Running AdversarialExampleGeneration on {device.``type``.ToString()}"
     printfn $"Dataset: {dataset}"
 
-    let targetDir = Path.Combine(datasetPath, "test_data")
-
-    MNIST.getDataFiles datasetPath targetDir
-
     if device.``type`` = DeviceType.CUDA then
         trainBatchSize <- trainBatchSize * 4
         testBatchSize <- testBatchSize * 4
 
-    let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
-    use testData = new MNISTReader(targetDir, "t10k", transform=normImage)
+    let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|])
+    use testData = MNIST(datasetPath, false, true, target_transform=normImage)
 
     let modelFile = dataset + ".model.bin"
 
@@ -113,7 +105,7 @@ let run epochs =
 
             let model = new MNIST.Model("model",device)
 
-            use train = new MNISTReader(targetDir, "train", transform=normImage)
+            use train = MNIST(datasetPath, true, true, target_transform=normImage)
             MNIST.trainingLoop model epochs dataset train testData |> ignore
 
             printfn "Moving on to the Adversarial model.\n"
