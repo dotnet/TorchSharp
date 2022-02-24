@@ -28,9 +28,6 @@ namespace TorchSharp.Examples
     ///    data.
     ///    It is available at: https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion
     ///
-    /// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
-    /// constant below at the folder location.
-    ///
     /// The example is based on the PyTorch tutorial, but the results from attacking the model are very different from
     /// what the tutorial article notes, at least on the machine where it was developed. There is an order-of-magnitude lower
     /// drop-off in accuracy in this version. That said, when running the PyTorch tutorial on the same machine, the

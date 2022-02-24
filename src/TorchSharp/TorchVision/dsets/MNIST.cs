@@ -16,6 +16,7 @@ namespace TorchSharp.torchvision
     {
         /// <summary>
         /// MNIST Dataset
+        /// http://yann.lecun.com/exdb/mnist/
         /// </summary>
         /// <param name="root">Root directory of dataset where the MNIST .gz data files exist.</param>
         /// <param name="train">If true, creates dataset from the 'train' files, otherwise from the 't10k' files.</param>
@@ -30,12 +31,22 @@ namespace TorchSharp.torchvision
             return new Modules.MNIST(root, train, download, target_transform);
         }
 
-#if false // Currently, the download of FashionMNIST is failing.
+        /// <summary>
+        /// Fashion-MNIST Dataset
+        /// https://github.com/zalandoresearch/fashion-mnist/raw/master/data/fashion/
+        /// </summary>
+        /// <param name="root">Root directory of dataset where the MNIST .gz data files exist.</param>
+        /// <param name="train">If true, creates dataset from the 'train' files, otherwise from the 't10k' files.</param>
+        /// <param name="download">
+        /// If true, downloads the dataset from the internet and puts it in root directory.
+        /// If the dataset is already downloaded, it is not downloaded again.
+        /// </param>
+        /// <param name="target_transform">A function/transform that takes in the target and transforms it.</param>
+        /// <returns>An iterable dataset.</returns>
         public static Dataset FashionMNIST(string root, bool train, bool download = false, ITransform target_transform = null)
         {
             return new Modules.FashionMNIST(root, train, download, target_transform);
         }
-#endif
 
         /// <summary>
         /// Kuzushiji-MNIST Dataset (https://github.com/rois-codh/kmnist)
@@ -218,9 +229,8 @@ namespace TorchSharp.torchvision
             /// <param name="download"></param>
             /// <param name="transform">Transform for input MNIST image</param>
             public FashionMNIST(string root, bool train, bool download = false, ITransform transform = null) :
-                base(root, "fashion-mnist", train ? "train" : "t10k", "https://github.com/zalandoresearch/fashion-mnist/blob/master/data/fashion/", download, transform)
+                base(root, "fashion-mnist", train ? "train" : "t10k", "https://github.com/zalandoresearch/fashion-mnist/raw/master/data/fashion/", download, transform)
             {
-                throw new NotImplementedException("File download is currently not functioning correctly for this data set.");
             }
         }
 

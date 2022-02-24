@@ -26,9 +26,6 @@ open type TorchSharp.torchvision.datasets
 //    data set to train on. It's just as large as MNIST, and has the same 60/10 split of training and test
 //    data.
 //    It is available at: https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion
-//
-// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
-// constant below at the folder location.
 
 let mutable trainBatchSize = 64
 let mutable testBatchSize = 128
