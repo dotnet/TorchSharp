@@ -181,7 +181,7 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor glorot_normal_(Tensor tensor, double gain = 1.0) => xavier_normal_(tensor, gain);
 
-                public static (long fanIn, long fanOut) CalculateFanInAndFanOut<T>(Tensor tensor)
+                public static (long fanIn, long fanOut) CalculateFanInAndFanOut(Tensor tensor)
                 {
                     var dimensions = tensor.Dimensions;
 

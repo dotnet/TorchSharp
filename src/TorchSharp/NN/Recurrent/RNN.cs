@@ -14,9 +14,18 @@ namespace TorchSharp
     {
         public class RNN : torch.nn.Module
         {
-            internal RNN(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal RNN(IntPtr handle, IntPtr boxedHandle, long hiddenSize, long numLayers, bool batchFirst, bool bidirectional) : base(handle, boxedHandle)
             {
+                _hidden_size = hiddenSize;
+                _num_layers = numLayers;
+                _bidirectional = bidirectional;
+                _batch_first = batchFirst;
             }
+
+            private long _hidden_size;
+            private long _num_layers;
+            private bool _bidirectional;
+            private bool _batch_first;
 
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_RNN_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
@@ -30,7 +39,14 @@ namespace TorchSharp
             /// <returns></returns>
             public new (Tensor, Tensor) forward(Tensor input, Tensor? h0 = null)
             {
-                var res = THSNN_RNN_forward(handle, input.Handle, h0?.Handle ?? IntPtr.Zero, out IntPtr hN);
+                if (h0 is null) {
+                    var N = _batch_first ? input.shape[0] : input.shape[1];
+                    var D = _bidirectional ? 2 : 1;
+
+                    h0 = torch.zeros(new long[] { D * _num_layers, N, _hidden_size });
+                }
+
+                var res = THSNN_RNN_forward(handle, input.Handle, h0.Handle, out IntPtr hN);
                 if (res == IntPtr.Zero || hN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(res), new Tensor(hN));
             }
@@ -146,7 +162,7 @@ namespace TorchSharp
             {
                 var res = THSNN_RNN_ctor(inputSize, hiddenSize, numLayers, (long)nonLinearity, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new RNN(res, boxedHandle);
+                return new RNN(res, boxedHandle, hiddenSize, numLayers, batchFirst, bidirectional);
             }
         }
     }

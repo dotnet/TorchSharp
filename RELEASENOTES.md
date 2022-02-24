@@ -2,9 +2,37 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.96.1
+## NuGet Version 0.96.3
+
+__API Changes:__
+
+__NOTE__: This release contains breaking changes.<br/>
+
+The APIs to create optimizers all take 'parameters()' as well as 'named_parameters()' now.<br/>
+Support for parameter groups in most optimizers.<br/>
+Support for parameter groups in LR schedulers.<br/>
 
 __Fixed Bugs:__
+
+#495 Add support for OptimizerParamGroup<br/>
+#509 Tensor.conj() not implemented<br/>
+#515 what's reason for making register_module internal?<br/>
+#516 AdamW bug on v0.96.0<br/>
+#521 Can't set Tensor slice using indexing<br/>
+#525 LSTM's forward function not work with null hidden and cell state<br/>
+#532 Why does storing module layers in arrays break the learning process?<br/>
+
+## NuGet Version 0.96.2
+
+NOT RELEASED
+
+## NuGet Version 0.96.1
+
+__API Changes:__
+
+__Fixed Bugs:__
+
+Using libtorch CPU packages from F# Interactive required explicit native loads
 
 #510 Module.Load throws Mismatched state_dict sizes exception on BatchNorm1d<br/>
 
@@ -20,9 +48,9 @@ Lower-cased names: Module.Train --> Module.train and Module.Eval --> Module.eval
 
 __Fixed Bugs:__
 
-#500 BatchNorm1d throws exception during eval with batch size of 1<br/>
-#499 Setting Linear.weight is not reflected in 'parameters()'<br/>
 #496 Wrong output shape of torch.nn.Conv2d with 2d stride overload<br/>
+#499 Setting Linear.weight is not reflected in 'parameters()'<br/>
+#500 BatchNorm1d throws exception during eval with batch size of 1<br/>
 
 ## NuGet Version 0.95.4
 

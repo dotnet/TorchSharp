@@ -133,6 +133,8 @@ namespace TorchSharp
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
+                    if (deviceType == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
+
                     if (deviceType != _deviceType || deviceIndex != _deviceIndex) {
 
                         torch.InitializeDeviceType(deviceType);
@@ -151,7 +153,9 @@ namespace TorchSharp
 
                             if (param is not null) {  // This test must come before the Tensor test
                                 if (deviceType != param.device_type || deviceIndex != param.device_index) {
-                                    var p = new Modules.Parameter(param.to(deviceType, deviceIndex), param.requires_grad);
+                                    var t = param.to(deviceType, deviceIndex);
+                                    t.retain_grad();
+                                    var p = new Modules.Parameter(t, param.requires_grad);
                                     field.SetValue(this, p);
                                     ConditionallyRegisterParameter(name, p);
                                 }
@@ -218,7 +222,9 @@ namespace TorchSharp
 
                         if (param is not null) {  // This test must come before the Tensor test
                             if (dtype != param.dtype) {
-                                var p = new Modules.Parameter(param.to(dtype), param.requires_grad);
+                                var t = param.to(dtype);
+                                t.retain_grad();
+                                var p = new Modules.Parameter(t, param.requires_grad);
                                 field.SetValue(this, p);
                                 ConditionallyRegisterParameter(name, p);
                             }
@@ -455,13 +461,19 @@ namespace TorchSharp
                 /// <returns>(string, Parameter) – Tuple containing the name and parameter</returns>
                 public virtual IEnumerable<(string name, Modules.Parameter parameter)> named_parameters(bool recurse = true)
                 {
+                    var seen = new HashSet<IntPtr>();
+
                     foreach (var nsm in _internal_params) {
+                        if (seen.Contains(nsm.Item2.Handle)) continue;
+                        seen.Add(nsm.Item2.Handle);
                         yield return nsm;
                     }
 
                     if (recurse) {
                         foreach (var (name, sm) in _internal_submodules) {
                             foreach (var (n, p) in sm.named_parameters(true)) {
+                                if (seen.Contains(p.Handle)) continue;
+                                seen.Add(p.Handle);
                                 yield return ($"{name}.{n}", p);
                             }
                         }
@@ -615,7 +627,7 @@ namespace TorchSharp
                 /// <param name="name">Name of the submodule.</param>
                 /// <param name="submodule">The module to register.</param>
                 /// <exception cref="InvalidOperationException"></exception>
-                internal virtual void register_module(string name, Module submodule)
+                public virtual void register_module(string name, Module submodule)
                 {
                     if (submodule is null || submodule.handle.IsInvalid) {
                         if (_internal_submodules.ContainsKey(name)) {

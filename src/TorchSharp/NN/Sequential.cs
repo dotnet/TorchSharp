@@ -47,8 +47,12 @@ namespace TorchSharp
             {
                 if (!recurse) yield break;
 
+                var seen = new HashSet<IntPtr>();
+
                 for (var i = 0; i < _names.Count; i++) {
                     foreach (var (n,p) in _modules[i].named_parameters(true)) {
+                        if (seen.Contains(p.Handle)) continue;
+                        seen.Add(p.Handle);
                         yield return ($"{_names[i]}.{n}", p);
                     }
                 }

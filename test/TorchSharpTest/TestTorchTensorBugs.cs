@@ -501,5 +501,95 @@ namespace TorchSharp
                 return this.stack.forward(t);
             }
         }
+
+        [Fact]
+        public void ValidateIssue516()
+        {
+            if (torch.cuda.is_available()) {
+
+                var model = new TestGradWarningModel();
+                model.cuda();
+
+                var optimizer = torch.optim.Adam(model.parameters());
+                optimizer.zero_grad();
+
+                var x = torch.ones(5, 3).cuda();
+                var y = torch.ones(5, 4).cuda();
+
+                var z = model.forward(x);
+                var lossFunc = torch.nn.functional.cross_entropy_loss();
+                var loss = lossFunc(y, z);
+                loss.backward();
+                optimizer.step();
+
+                var grad1 = optimizer.parameters().ToArray()[0].grad();
+                Assert.NotNull(grad1);
+
+                var grad2 = model.Weight.grad();
+                Assert.NotNull(grad2);
+            }
+        }
+
+        internal abstract class BaseModule : torch.nn.Module
+        {
+            public int? InstanceId = null;
+
+            protected BaseModule(string name) : base(name)
+            {
+            }
+        }
+
+        public class TestGradWarningModel : torch.nn.Module
+        {
+            public readonly Modules.Parameter Weight;
+
+            public TestGradWarningModel() : base(nameof(TestGradWarningModel))
+            {
+                Weight = torch.zeros(new long[] { 3, 4 }).AsParameter();
+                RegisterComponents();
+            }
+
+            public override torch.Tensor forward(torch.Tensor t)
+            {
+                return torch.matmul(t, Weight);
+            }
+        }
+
+        [Fact]
+        public void Validate532()
+        {
+            var module = new Module532(1000, 100);
+
+            var p = module.parameters().ToArray();
+            var pB = module.batch.parameters().ToArray();
+            var pC = module.conv.parameters().ToArray();
+
+            Assert.Equal(pB.Length+pC.Length, p.Length);
+        }
+
+        internal class Module532 : Module
+        {
+            public Module conv;
+            public Module batch;
+            private Module seq;
+
+            public Module532(int in_channels, int out_channels) : base(String.Empty)
+            {
+                conv = Conv1d(in_channels, out_channels, 3);
+                batch = BatchNorm1d(out_channels);
+                seq = Sequential(
+                    conv,
+                    batch,
+                    ReLU(inPlace: true)
+                );
+
+                this.RegisterComponents();
+            }
+
+            public override torch.Tensor forward(torch.Tensor t)
+            {
+                return this.seq.forward(t);
+            }
+        }
     }
 }

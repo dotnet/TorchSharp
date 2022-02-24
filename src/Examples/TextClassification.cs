@@ -80,7 +80,9 @@ namespace TorchSharp.Examples
 
                         sw.Stop();
 
-                        Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {optimizer.LearningRate:0.0000} | time: {sw.Elapsed.TotalSeconds:0.0}s\n");
+                        var pgFirst = optimizer.ParamGroups.First();
+
+                        Console.WriteLine($"\nEnd of epoch: {epoch} | lr: {pgFirst.LearningRate:0.00} | time: {sw.Elapsed.TotalSeconds:0.0}s\n");
                         scheduler.step();
                     }
                 }

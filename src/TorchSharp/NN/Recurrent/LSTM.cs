@@ -15,13 +15,18 @@ namespace TorchSharp
     {
         public class LSTM : torch.nn.Module
         {
-            internal LSTM(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            public new static LSTM Load(String modelPath)
+            internal LSTM(IntPtr handle, IntPtr boxedHandle, long hiddenSize, long numLayers, bool batchFirst, bool bidirectional) : base(handle, boxedHandle)
             {
-                var res = Module.Load(modelPath);
-                return new LSTM(res.handle.DangerousGetHandle(), IntPtr.Zero);
+                _hidden_size = hiddenSize;
+                _num_layers = numLayers;
+                _bidirectional = bidirectional;
+                _batch_first = batchFirst;
             }
+
+            private long _hidden_size;
+            private long _num_layers;
+            private bool _bidirectional;
+            private bool _batch_first;
 
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_LSTM_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0, IntPtr c_0, out IntPtr h_n, out IntPtr c_n);
@@ -34,7 +39,21 @@ namespace TorchSharp
             /// <returns></returns>
             public (Tensor, Tensor, Tensor) forward(Tensor input, (Tensor, Tensor)? h0_c0 = null)
             {
-                var res = THSNN_LSTM_forward(handle, input.Handle, h0_c0?.Item1.Handle ?? IntPtr.Zero, h0_c0?.Item2.Handle ?? IntPtr.Zero, out IntPtr hN, out IntPtr cN);
+                Tensor c0, h0;
+
+                if (h0_c0 == null) {
+                    var N = _batch_first ? input.shape[0] : input.shape[1];
+                    var D = _bidirectional ? 2 : 1;
+
+                    c0 = torch.zeros(new long[] { D * _num_layers, N, _hidden_size });
+                    h0 = torch.zeros(new long[] { D * _num_layers, N, _hidden_size });                   
+                }
+                else {
+                    h0 = h0_c0.Value.Item1;
+                    c0 = h0_c0.Value.Item2;
+                }
+
+                var res = THSNN_LSTM_forward(handle, input.Handle, h0.Handle, c0.Handle, out IntPtr hN, out IntPtr cN);
                 if (res == IntPtr.Zero || hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(res), new Tensor(hN), new Tensor(cN));
             }
@@ -63,7 +82,7 @@ namespace TorchSharp
             {
                 var res = THSNN_LSTM_ctor(inputSize, hiddenSize, numLayers, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new LSTM(res, boxedHandle);
+                return new LSTM(res, boxedHandle, hiddenSize, numLayers, batchFirst, bidirectional);
             }
         }
     }
