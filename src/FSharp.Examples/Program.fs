@@ -3,7 +3,7 @@
 [<EntryPoint>]
 let main argv =
 
-    TorchSharp.Examples.MNIST.run 4
+    TorchSharp.Examples.MNIST.run 2
     TorchSharp.Examples.AdversarialExampleGeneration.run 4
     TorchSharp.Examples.AlexNet.run 4
     TorchSharp.Examples.SequenceToSequence.run 4

@@ -2,9 +2,9 @@
 using System;
 using System.IO;
 
-namespace TorchSharp.torchvision.dsets
+namespace TorchSharp.Utils
 {
-    internal class BigEndianReader
+    public class BigEndianReader
     {
         public BigEndianReader(BinaryReader baseReader)
         {
