@@ -1013,7 +1013,6 @@ namespace TorchSharp
             /// <summary>
             /// Returns true if the tensor is contiguous.
             /// </summary>
-            
             public bool is_contiguous()
             {
                 var res = THSTensor_is_contiguous(Handle);
@@ -1028,10 +1027,37 @@ namespace TorchSharp
             /// Returns a contiguous in memory tensor containing the same data as the input tensor.
             /// If tensor is already in the specified memory format, this function returns the original tensor.
             /// </summary>
-            
             public Tensor contiguous()
             {
                 var res = THSTensor_contiguous(Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static long THSTensor_is_pinned(IntPtr handle);
+
+            /// <summary>
+            /// Returns true if the tensor is contiguous.
+            /// </summary>
+            public bool is_pinned()
+            {
+                var res = THSTensor_is_pinned(Handle);
+                torch.CheckForErrors();
+                return res != 0;
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_pin_memory(IntPtr handle);
+
+            /// <summary>
+            /// Returns a contiguous in memory tensor containing the same data as the input tensor.
+            /// If tensor is already in the specified memory format, this function returns the original tensor.
+            /// </summary>
+            public Tensor pin_memory()
+            {
+                var res = THSTensor_pin_memory(Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -1044,7 +1070,6 @@ namespace TorchSharp
             /// This attribute is null by default and becomes a Tensor the first time a call to backward() computes gradients for the tensor.
             /// The attribute will then contain the gradients computed and future calls to backward() will accumulate (add) gradients into it.
             /// </summary>
-            
             public Tensor? grad()
             {
                 var res = THSTensor_grad(Handle);

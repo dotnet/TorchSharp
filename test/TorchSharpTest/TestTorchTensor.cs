@@ -6053,5 +6053,17 @@ namespace TorchSharp
             var res = torchvision.transforms.VerticalFlip().forward(input);
             Assert.Equal(res, expected);
         }
+
+        [Fact]
+        public void TestPinnedMemory()
+        {
+            using (var t = torch.rand(512)) {
+                Assert.False(t.is_pinned());
+                if (torch.cuda.is_available()) {
+                    var s = t.pin_memory();
+                    Assert.True(s.is_pinned());
+                }
+            }
+        }
     }
 }

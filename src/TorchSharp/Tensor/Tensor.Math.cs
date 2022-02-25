@@ -541,6 +541,66 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_bitwise_left_shift(IntPtr tensor, IntPtr other);
+
+            /// <summary>
+            /// Element-wise bitwise left_shift
+            /// </summary>
+            /// <param name="other">Right-hand operand.</param>
+            /// <returns></returns>
+            public Tensor bitwise_left_shift(Tensor other)
+            {
+                var res = THSTensor_bitwise_left_shift(Handle, other.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_bitwise_left_shift_(IntPtr tensor, IntPtr other);
+
+            /// <summary>
+            /// Element-wise bitwise left_shift, in-place.
+            /// </summary>
+            /// <param name="other">Right-hand operand.</param>
+            /// <returns></returns>
+            public Tensor bitwise_left_shift_(Tensor other)
+            {
+                var res = THSTensor_bitwise_left_shift_(Handle, other.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_bitwise_right_shift(IntPtr tensor, IntPtr other);
+
+            /// <summary>
+            /// Element-wise bitwise right_shift
+            /// </summary>
+            /// <param name="other">Right-hand operand.</param>
+            /// <returns></returns>
+            public Tensor bitwise_right_shift(Tensor other)
+            {
+                var res = THSTensor_bitwise_right_shift(Handle, other.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_bitwise_right_shift_(IntPtr tensor, IntPtr other);
+
+            /// <summary>
+            /// Element-wise bitwise right_shift, in-place.
+            /// </summary>
+            /// <param name="other">Right-hand operand.</param>
+            /// <returns></returns>
+            public Tensor bitwise_right_shift_(Tensor other)
+            {
+                var res = THSTensor_bitwise_right_shift_(Handle, other.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_ceil(IntPtr tensor);
 
             /// <summary>
@@ -2410,6 +2470,34 @@ namespace TorchSharp
         /// <param name="left">Left-hand operand.</param>
         /// <param name="right">Right-hand operand.</param>
         public static Tensor bitwise_xor_(Tensor left, Tensor right) => left.bitwise_xor_(right);
+
+        /// <summary>
+        /// Element-wise bitwise left shift
+        /// </summary>
+        /// <param name="left">Left-hand operand.</param>
+        /// <param name="right">Right-hand operand.</param>
+        public static Tensor bitwise_left_shift(Tensor left, Tensor right) => left.bitwise_left_shift(right);
+
+        /// <summary>
+        /// Element-wise bitwise left shift, in place.
+        /// </summary>
+        /// <param name="left">Left-hand operand.</param>
+        /// <param name="right">Right-hand operand.</param>
+        public static Tensor bitwise_left_shift_(Tensor left, Tensor right) => left.bitwise_left_shift_(right);
+
+        /// <summary>
+        /// Element-wise bitwise right shift
+        /// </summary>
+        /// <param name="left">Left-hand operand.</param>
+        /// <param name="right">Right-hand operand.</param>
+        public static Tensor bitwise_right_shift(Tensor left, Tensor right) => left.bitwise_right_shift(right);
+
+        /// <summary>
+        /// Element-wise bitwise right shift, in place.
+        /// </summary>
+        /// <param name="left">Left-hand operand.</param>
+        /// <param name="right">Right-hand operand.</param>
+        public static Tensor bitwise_right_shift_(Tensor left, Tensor right) => left.bitwise_right_shift_(right);
 
         /// <summary>
         /// Returns a new tensor with the ceil of the elements of input, the smallest integer greater than or equal to each element.
