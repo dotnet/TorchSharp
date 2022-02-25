@@ -188,6 +188,14 @@ EXPORT_API(Tensor) THSTensor_bitwise_xor(const Tensor tensor, const Tensor other
 
 EXPORT_API(Tensor) THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other);
 
+EXPORT_API(Tensor) THSTensor_bitwise_left_shift(const Tensor tensor, const Tensor other);
+
+EXPORT_API(Tensor) THSTensor_bitwise_left_shift_(const Tensor tensor, const Tensor other);
+
+EXPORT_API(Tensor) THSTensor_bitwise_right_shift(const Tensor tensor, const Tensor other);
+
+EXPORT_API(Tensor) THSTensor_bitwise_right_shift_(const Tensor tensor, const Tensor other);
+
 EXPORT_API(Tensor) THSTensor_block_diag(const Tensor* tensor, const int length);
 
 EXPORT_API(Tensor) THSTensor_bmm(const Tensor b1wrapper, const Tensor b2wrapper);

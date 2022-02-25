@@ -216,6 +216,26 @@ Tensor THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_xor_(*other));
 }
 
+Tensor THSTensor_bitwise_left_shift(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->bitwise_left_shift(*other));
+}
+
+Tensor THSTensor_bitwise_left_shift_(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->bitwise_left_shift_(*other));
+}
+
+Tensor THSTensor_bitwise_right_shift(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->bitwise_right_shift(*other));
+}
+
+Tensor THSTensor_bitwise_right_shift_(const Tensor tensor, const Tensor other)
+{
+    CATCH_TENSOR(tensor->bitwise_right_shift_(*other));
+}
+
 Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
 {
     CATCH_TENSOR(batch1->bmm(*batch2));
