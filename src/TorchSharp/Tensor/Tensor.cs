@@ -5309,7 +5309,7 @@ namespace TorchSharp
                     if (i > 0) builder.Append(',');
 
                     if (indices[i].kind == TensorIndex.Kind.Ellipsis) {
-                        builder.Append(':');
+                        builder.Append("..");
                     } else if (indices[i].kind == TensorIndex.Kind.Single) {
                         builder.Append(indices[i].startIndexOrBoolOrSingle);
                     }
