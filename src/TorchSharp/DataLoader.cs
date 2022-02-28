@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using TorchSharp.Utils;
 
 namespace TorchSharp
@@ -24,6 +25,7 @@ namespace TorchSharp
                     private bool shuffle;
                     private Device device;
                     private IEnumerable<long> shuffler;
+                    private int num_worker;
 
                     /// <summary>
                     /// Pytorch style dataloader
@@ -32,13 +34,15 @@ namespace TorchSharp
                     /// <param name="batchSize">Size of batch</param>
                     /// <param name="device">device for output tensor</param>
                     /// <param name="shuffler">Shuffler for dataloader</param>
-                    public DataLoader(Dataset dataset, int batchSize, IEnumerable<long> shuffler, Device device = null)
+                    /// <param name="num_worker">Count of worker</param>
+                    public DataLoader(Dataset dataset, int batchSize, IEnumerable<long> shuffler, Device device = null, int num_worker = 1)
                     {
                         this.dataset = dataset;
                         this.batchSize = batchSize;
                         this.shuffle = true;
                         this.device = device ?? CPU;
                         this.shuffler = shuffler;
+                        this.num_worker = num_worker;
                     }
 
                     /// <summary>
@@ -49,13 +53,15 @@ namespace TorchSharp
                     /// <param name="shuffle">true if shuffle dataset, false for not</param>
                     /// <param name="device">device for output tensor</param>
                     /// <param name="seed">Seed for generating shuffle</param>
-                    public DataLoader(Dataset dataset, int batchSize, bool shuffle = false, Device device = null, int? seed = null)
+                    /// <param name="num_worker">Count of worker</param>
+                    public DataLoader(Dataset dataset, int batchSize, bool shuffle = false, Device device = null, int? seed = null, int num_worker = 1)
                     {
                         this.dataset = dataset;
                         this.batchSize = batchSize;
                         this.shuffle = shuffle;
                         this.device = device ?? CPU;
                         this.shuffler = seed is null ? new FisherYatesShuffler(dataset.Count) : new FisherYatesShuffler(dataset.Count, seed);
+                        this.num_worker = num_worker;
                     }
 
                     /// <summary>
@@ -63,7 +69,7 @@ namespace TorchSharp
                     /// </summary>
                     /// <returns>Enumerator for batch</returns>
                     public IEnumerator<Dictionary<string, Tensor>> GetEnumerator() =>
-                        new DataLoaderEnumerator(dataset, batchSize, shuffle, device, shuffler);
+                        new DataLoaderEnumerator(dataset, batchSize, shuffle, device, shuffler, num_worker);
 
                     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -81,23 +87,28 @@ namespace TorchSharp
                         private IEnumerable<long> shuffleEnumerable;
                         private IEnumerator<long> shuffler;
                         private long currentVal = 0;
-                        public DataLoaderEnumerator(Dataset dataset, int batchSize, bool shuffle, Device device, IEnumerable<long> shuffleEnumerable)
+                        private int num_worker = 0;
+                        public DataLoaderEnumerator(Dataset dataset, int batchSize, bool shuffle, Device device, IEnumerable<long> shuffleEnumerable, int num_worker)
                         {
                             this.dataset = dataset;
                             this.batchSize = batchSize;
                             this.device = device;
                             this.shuffle = shuffle;
                             this.shuffleEnumerable = shuffleEnumerable;
+                            if (num_worker < 1) num_worker = 1;
+                            this.num_worker = num_worker;
                             Reset();
                         }
+
+                        private object moveNextLock = new();
+
                         private bool MoveNextValue()
                         {
                             if (shuffle) {
                                 if (!shuffler.MoveNext()) return false;
                                 currentVal = shuffler.Current;
                                 return true;
-                            }
-                            else {
+                            } else {
                                 currentVal++;
                                 return currentVal < dataset.Count;
                             }
@@ -112,16 +123,51 @@ namespace TorchSharp
                             DisposeCurrent();
                             if (!MoveNextValue()) return false;
                             List<Dictionary<string, Tensor>> dic = new();
-                            dic.Add(dataset.GetTensor(currentVal));
-                            for (var i = 1; i < batchSize; i++) {
-                                if (!MoveNextValue()) break;
-                                dic.Add(dataset.GetTensor(currentVal));
-                            }
+                            var taskedBatchCount = 0;
+                            var taskBatchLock = new object();
+
+                            TaskBatch();
+                            var t = currentVal;
+
+                            //Run Async
+                            foreach(var _ in Enumerable.Range(1, num_worker - 1))
+                                ThreadPool.QueueUserWorkItem(CreateBatch);
+
+                            dic.Add(dataset.GetTensor(t));
+                            CreateBatch(null);
+
+                            while (dic.Count < taskedBatchCount) { } //Wait for every task finished
 
                             Current = new();
                             foreach (var x in dic[0].Keys)
                                 Current[x] = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0).to(device);
                             return true;
+
+                            void CreateBatch(object _)
+                            {
+                                while (TaskBatch()) {
+                                    var cv = 0L;
+                                    lock (moveNextLock) {
+                                        if (!MoveNextValue()) {
+                                            break;
+                                        }
+                                        cv = currentVal;
+                                    }
+
+                                    dic.Add(dataset.GetTensor(cv));
+                                }
+
+                                lock (taskBatchLock) {
+                                    taskedBatchCount--;
+                                }
+                            }
+
+                            bool TaskBatch()
+                            {
+                                lock (taskBatchLock) {
+                                    return taskedBatchCount++ < batchSize;
+                                }
+                            }
                         }
 
                         /// <summary>

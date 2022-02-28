@@ -3,12 +3,20 @@
 using System;
 using System.Collections.Generic;
 using Xunit;
+using Xunit.Abstractions;
 
 
 namespace TorchSharp
 {
     public class TestDataLoader
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public TestDataLoader(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         private class TestDataset : torch.utils.data.Dataset
         {
             public override long Count { get; } = 10;
@@ -55,6 +63,38 @@ namespace TorchSharp
                 Assert.Equal(x["data"], torch.tensor(new[]{1, 1}, new[]{2L}));
                 Assert.Equal(x["index"], torch.tensor(new[]{idx++, idx++}, new[]{2L}));
             }
+        }
+
+        [Fact]
+        public void MultiThreadDataLoaderTest1()
+        {
+            using var dataset = new TestDataset();
+            using var dataloader = new torch.utils.data.DataLoader(dataset, 4, false, torch.CPU, num_worker: 2);
+            var iter = dataloader.GetEnumerator();
+            iter.MoveNext();
+            var x = iter.Current;
+            Assert.Equal(x["data"], torch.tensor(new[]{1, 1, 1, 1}, new[]{4L}));
+            iter.MoveNext();
+            x = iter.Current;
+            Assert.Equal(x["data"], torch.tensor(new[]{1, 1, 1, 1}, new[]{4L}));
+            iter.MoveNext();
+            x = iter.Current;
+            Assert.Equal(x["data"], torch.tensor(new[]{1, 1}, new[]{2L}));
+        }
+
+        [Fact]
+        public void MultiThreadDataLoaderTest2()
+        {
+            using var dataset = new TestDataset();
+            using var dataloader = new torch.utils.data.DataLoader(dataset, 5, false, torch.CPU, num_worker: 2);
+            var iter = dataloader.GetEnumerator();
+            iter.MoveNext();
+            var x = iter.Current;
+            Assert.Equal(x["data"], torch.tensor(new[]{1, 1, 1, 1, 1}, new[]{5L}));
+            iter.MoveNext();
+            x = iter.Current;
+            Assert.Equal(x["data"], torch.tensor(new[]{1, 1, 1, 1, 1}, new[]{5L}));
+            Assert.False(iter.MoveNext());
         }
 
         [Fact]
