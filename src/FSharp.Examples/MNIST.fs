@@ -8,25 +8,24 @@ open System.Diagnostics
 open TorchSharp
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
+open type TorchSharp.torch.utils.data
 open type TorchSharp.Scalar
 
 open TorchSharp.Examples
+open type TorchSharp.torchvision.datasets
 
 // Simple MNIST Convolutional model.
-// 
+//
 // There are at least two interesting data sets to use with this example:
-// 
+//
 // 1. The classic MNIST set of 60000 images of handwritten digits.
 //
 //     It is available at: http://yann.lecun.com/exdb/mnist/
-//     
+//
 // 2. The 'fashion-mnist' data set, which has the exact same file names and format as MNIST, but is a harder
 //    data set to train on. It's just as large as MNIST, and has the same 60/10 split of training and test
 //    data.
 //    It is available at: https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion
-//
-// In each case, there are four .gz files to download. Place them in a folder and then point the '_dataLocation'
-// constant below at the folder location.
 
 let mutable trainBatchSize = 64
 let mutable testBatchSize = 128
@@ -36,22 +35,13 @@ let logInterval = 100
 let cmdArgs = Environment.GetCommandLineArgs()
 let dataset = if cmdArgs.Length = 2 then cmdArgs.[1] else "mnist"
 
-let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset)
+let datasetPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
 
 torch.random.manual_seed(1L) |> ignore
 
 let hasCUDA = torch.cuda.is_available()
 
 let device = if hasCUDA then torch.CUDA else torch.CPU
-
-let getDataFiles sourceDir targetDir =
-
-    if not (Directory.Exists(targetDir)) then
-        Directory.CreateDirectory(targetDir) |> ignore
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "train-images-idx3-ubyte.gz"), targetDir)
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "train-labels-idx1-ubyte.gz"), targetDir)
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-images-idx3-ubyte.gz"), targetDir)
-        Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, "t10k-labels-idx1-ubyte.gz"), targetDir)
 
 type Model(name,device:torch.Device) as this =
     inherit Module(name)
@@ -86,24 +76,24 @@ type Model(name,device:torch.Device) as this =
 
 let loss x y = functional.nll_loss(reduction=Reduction.Mean).Invoke(x,y)
 
-let train (model:Model) (optimizer:Optimizer) (dataLoader: MNISTReader) epoch =
+let train (model:Model) (optimizer:Optimizer) (data: Dataset) epoch =
     model.train()
 
-    let size = dataLoader.Size
-    let batchSize = dataLoader.BatchSize
+    let size = data.Count
+    let batchSize = trainBatchSize
 
     let mutable batchID = 1
 
     printfn $"Epoch: {epoch}..."
-
-    for (input,labels) in dataLoader do
+    let dataLoader = new DataLoader(data, trainBatchSize, true, device=device)
+    for dat in dataLoader do
 
         use d = torch.NewDisposeScope()
 
         optimizer.zero_grad()
 
-        let estimate = input --> model
-        let output = loss estimate labels
+        let estimate = dat.["data"] --> model
+        let output = loss estimate (dat.["label"])
 
         output.backward()
         optimizer.step() |> ignore
@@ -113,25 +103,27 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: MNISTReader) epoch =
 
         batchID <- batchID + 1
 
-let test (model:Model) (dataLoader:MNISTReader) =
+let test (model:Model) (data:Dataset) =
     model.eval()
 
-    let sz = float32 dataLoader.Size
+    let sz = float32 data.Count
 
     let mutable testLoss = 0.0f
     let mutable correct = 0
 
-    for (input,labels) in dataLoader do
+    let dataLoader = new DataLoader(data, testBatchSize, false, device=device)
+
+    for dat in dataLoader do
 
         use d = torch.NewDisposeScope()
 
         begin  // This is introduced in order to let a few tensors go out of scope before GC
-            let estimate = input --> model
-            let output = loss estimate labels
+            let estimate = dat.["data"] --> model
+            let output = loss estimate (dat.["label"])
             testLoss <- testLoss + output.ToSingle()
 
             let pred = estimate.argmax(1L)
-            correct <- correct + pred.eq(labels).sum().ToInt32()
+            correct <- correct + pred.eq(dat.["label"]).sum().ToInt32()
         end
 
     printfn $"Size: {sz}, Total: {sz}"
@@ -167,18 +159,14 @@ let run epochs =
     printfn $"Running MNIST on {device.``type``.ToString()}"
     printfn $"Dataset: {dataset}"
 
-    let targetDir = Path.Combine(datasetPath, "test_data")
-
-    getDataFiles datasetPath targetDir
-
     if device.``type`` = DeviceType.CUDA then
         trainBatchSize <- trainBatchSize * 4
         testBatchSize <- testBatchSize * 4
 
-    let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|], device=device)
-    use train = new MNISTReader(targetDir, "train", trainBatchSize, device=device, shuffle=true, transform=normImage)
-    use test = new MNISTReader(targetDir, "t10k", testBatchSize, device=device, transform=normImage)
+    let normImage = torchvision.transforms.Normalize( [|0.1307|], [|0.3081|])
+    use train = MNIST(datasetPath, true, true, target_transform=normImage)
+    use test = MNIST(datasetPath, false, true, target_transform=normImage)
 
     let model = new Model("model", device)
-    
+
     trainingLoop model epochs dataset train test
