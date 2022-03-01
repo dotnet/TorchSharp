@@ -43,6 +43,7 @@ namespace TorchSharp
             Assert.True(iterator.MoveNext());
             Assert.Equal(iterator.Current["data"], torch.tensor(rawArray: new[]{1L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int32));
             Assert.Equal(iterator.Current["label"], torch.tensor(rawArray: new[]{13L, 13L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int32));
+            Assert.Equal(iterator.Current["index"].ToString(true), torch.tensor(rawArray: new[]{0L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int64).ToString(true));
             iterator.Dispose();
         }
 
@@ -51,8 +52,10 @@ namespace TorchSharp
         {
             using var dataset = new TestDataset();
             using var dataloader = new torch.utils.data.DataLoader(dataset, 2, false, torch.CPU);
+            long idx = 0;
             foreach (var x in dataloader) {
                 Assert.Equal(x["data"], torch.tensor(new[]{1, 1}, new[]{2L}));
+                Assert.Equal(x["index"], torch.tensor(new[]{idx++, idx++}, new[]{2L}));
             }
         }
 

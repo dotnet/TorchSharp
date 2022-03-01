@@ -101,8 +101,6 @@ namespace TorchSharp
                             Reset();
                         }
 
-                        private object moveNextLock = new();
-
                         private bool MoveNextValue()
                         {
                             if (shuffle) {
@@ -129,6 +127,9 @@ namespace TorchSharp
                                 if (!MoveNextValue()) break;
                                 tensorIndexList.Add(currentVal);
                             }
+
+                            if (!shuffle)
+                                tensorIndexList.Reverse(); // ConcurrentBag::Add inserts data into first of the collections. So, I'll reverse them.
 
                             ConcurrentBag<Dictionary<string, Tensor>> dic = new();
                             var taskedBatchCount = 0;
