@@ -10,13 +10,6 @@ namespace TorchSharp
 {
     public class TestDataLoader
     {
-        private readonly ITestOutputHelper _testOutputHelper;
-
-        public TestDataLoader(ITestOutputHelper testOutputHelper)
-        {
-            _testOutputHelper = testOutputHelper;
-        }
-
         private class TestDataset : torch.utils.data.Dataset
         {
             public override long Count { get; } = 10;
@@ -40,6 +33,7 @@ namespace TorchSharp
             Assert.Equal(d["index"], torch.tensor(0L));
         }
 
+        // Cannot assert index because ConcurrentBag append tensors randomly
         [Fact]
         public void DataLoaderTest1()
         {
@@ -49,7 +43,6 @@ namespace TorchSharp
             Assert.True(iterator.MoveNext());
             Assert.Equal(iterator.Current["data"], torch.tensor(rawArray: new[]{1L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int32));
             Assert.Equal(iterator.Current["label"], torch.tensor(rawArray: new[]{13L, 13L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int32));
-            Assert.Equal(iterator.Current["index"].ToString(true), torch.tensor(rawArray: new[]{0L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int64).ToString(true));
             iterator.Dispose();
         }
 
@@ -58,10 +51,8 @@ namespace TorchSharp
         {
             using var dataset = new TestDataset();
             using var dataloader = new torch.utils.data.DataLoader(dataset, 2, false, torch.CPU);
-            long idx = 0;
             foreach (var x in dataloader) {
                 Assert.Equal(x["data"], torch.tensor(new[]{1, 1}, new[]{2L}));
-                Assert.Equal(x["index"], torch.tensor(new[]{idx++, idx++}, new[]{2L}));
             }
         }
 
@@ -80,6 +71,7 @@ namespace TorchSharp
             iter.MoveNext();
             x = iter.Current;
             Assert.Equal(x["data"], torch.tensor(new[]{1, 1}, new[]{2L}));
+            iter.Dispose();
         }
 
         [Fact]
@@ -95,6 +87,23 @@ namespace TorchSharp
             x = iter.Current;
             Assert.Equal(x["data"], torch.tensor(new[]{1, 1, 1, 1, 1}, new[]{5L}));
             Assert.False(iter.MoveNext());
+            iter.Dispose();
+        }
+
+        [Fact]
+        public void MultiThreadDataLoaderTest3()
+        {
+            using var dataset = new TestDataset();
+            using var dataloader = new torch.utils.data.DataLoader(dataset, 5, false, torch.CPU, num_worker: 10);
+            var iter = dataloader.GetEnumerator();
+            iter.MoveNext();
+            var x = iter.Current;
+            Assert.Equal(x["data"], torch.tensor(new[]{1, 1, 1, 1, 1}, new[]{5L}));
+            iter.MoveNext();
+            x = iter.Current;
+            Assert.Equal(x["data"], torch.tensor(new[]{1, 1, 1, 1, 1}, new[]{5L}));
+            Assert.False(iter.MoveNext());
+            iter.Dispose();
         }
 
         [Fact]
@@ -108,6 +117,8 @@ namespace TorchSharp
             iterator.MoveNext();
             iterator2.MoveNext();
             Assert.Equal(iterator.Current, iterator2.Current);
+            iterator.Dispose();
+            iterator2.Dispose();
         }
     }
 }

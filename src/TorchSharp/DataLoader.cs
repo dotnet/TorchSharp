@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -122,50 +123,45 @@ namespace TorchSharp
                         {
                             DisposeCurrent();
                             if (!MoveNextValue()) return false;
-                            List<Dictionary<string, Tensor>> dic = new();
+
+                            var tensorIndexList = new List<long> {currentVal};
+                            for (int i = 1; i < batchSize; i++) {
+                                if (!MoveNextValue()) break;
+                                tensorIndexList.Add(currentVal);
+                            }
+
+                            ConcurrentBag<Dictionary<string, Tensor>> dic = new();
                             var taskedBatchCount = 0;
                             var taskBatchLock = new object();
-
-                            TaskBatch();
-                            var t = currentVal;
 
                             //Run Async
                             foreach(var _ in Enumerable.Range(1, num_worker - 1))
                                 ThreadPool.QueueUserWorkItem(CreateBatch);
 
-                            dic.Add(dataset.GetTensor(t));
                             CreateBatch(null);
 
-                            while (dic.Count < taskedBatchCount) { } //Wait for every task finished
+                            while (dic.Count < tensorIndexList.Count) { } //Wait for tensors ready
 
                             Current = new();
-                            foreach (var x in dic[0].Keys)
+                            foreach (var x in dic.First().Keys)
                                 Current[x] = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0).to(device);
                             return true;
 
                             void CreateBatch(object _)
                             {
-                                while (TaskBatch()) {
-                                    var cv = 0L;
-                                    lock (moveNextLock) {
-                                        if (!MoveNextValue()) {
-                                            break;
-                                        }
-                                        cv = currentVal;
-                                    }
-
-                                    dic.Add(dataset.GetTensor(cv));
-                                }
-
-                                lock (taskBatchLock) {
-                                    taskedBatchCount--;
+                                while (true) {
+                                    var idx = TaskBatch();
+                                    if (idx is null) break;
+                                    dic.Add(dataset.GetTensor(idx.Value));
                                 }
                             }
 
-                            bool TaskBatch()
+                            long? TaskBatch()
                             {
                                 lock (taskBatchLock) {
-                                    return taskedBatchCount++ < batchSize;
+                                    if (taskedBatchCount < tensorIndexList.Count)
+                                        return tensorIndexList[taskedBatchCount++];
+                                    return null;
                                 }
                             }
                         }
