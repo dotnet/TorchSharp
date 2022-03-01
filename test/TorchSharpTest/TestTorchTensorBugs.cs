@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
+using System.IO;
 
 using System.Threading;
 
@@ -584,6 +584,47 @@ namespace TorchSharp
                 );
 
                 this.RegisterComponents();
+            }
+
+            public override torch.Tensor forward(torch.Tensor t)
+            {
+                return this.seq.forward(t);
+            }
+        }
+
+
+
+        [Fact]
+        public void Validate538()
+        {
+            var module = new Module538(1000, 100);
+
+            var sd = module.state_dict();
+
+            Assert.Equal(7, sd.Count);
+
+            if (File.Exists("bug538.dat")) File.Delete("bug538.dat");
+
+            module.save("bug538.dat");
+            module.load("bug538.dat");
+
+            File.Delete("bug538.dat");
+        }
+
+        internal class Module538 : Module
+        {
+            private Module seq;
+
+            public Module538(int in_channels, int out_channels) : base(String.Empty)
+            {
+                seq = Sequential(Conv2d(1, 32, 3),
+                     BatchNorm2d(32),
+                     ReLU(),
+                     Flatten(),
+                     LogSoftmax(1)
+                );
+
+                RegisterComponents();
             }
 
             public override torch.Tensor forward(torch.Tensor t)
