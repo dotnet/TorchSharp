@@ -110,18 +110,25 @@ namespace TorchSharp
                         public bool MoveNext()
                         {
                             DisposeCurrent();
-                            if (!MoveNextValue()) return false;
-                            List<Dictionary<string, Tensor>> dic = new();
-                            dic.Add(dataset.GetTensor(currentVal));
-                            for (var i = 1; i < batchSize; i++) {
-                                if (!MoveNextValue()) break;
+                            using (var scope = DisposeScopeManager.NewDisposeScope()) {
+                                if (!MoveNextValue()) return false;
+                                List<Dictionary<string, Tensor>> dic = new();
                                 dic.Add(dataset.GetTensor(currentVal));
-                            }
+                                for (var i = 1; i < batchSize; i++) {
+                                    if (!MoveNextValue()) break;
+                                    dic.Add(dataset.GetTensor(currentVal));
+                                }
 
-                            Current = new();
-                            foreach (var x in dic[0].Keys)
-                                Current[x] = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0).to(device);
-                            return true;
+                                Current = new();
+                                foreach (var x in dic[0].Keys) {
+                                    var t = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
+                                    if (t.device_type != device.type || t.device_index != device.index)
+                                        t = t.to(device);
+                                    scope.MoveToOuter(t);
+                                    Current[x] = t;
+                                }
+                                return true;
+                            }
                         }
 
                         /// <summary>
