@@ -85,13 +85,6 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void MultiThreadDataLoaderStress()
-        {
-            foreach (var _ in System.Linq.Enumerable.Range(1, 25))
-                BigDataLoaderTest3();
-        }
-
-        [Fact]
         public void CustomSeedTest()
         {
             using var dataset = new TestDataset();
