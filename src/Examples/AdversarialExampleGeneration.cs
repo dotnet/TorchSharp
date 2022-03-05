@@ -37,7 +37,11 @@ namespace TorchSharp.Examples
     /// </remarks>
     public class AdversarialExampleGeneration
     {
+#if NETFX461
+        private readonly static string _dataLocation = NSPath.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "mnist");
+#else
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "mnist");
+#endif // NETFX461
 
         private static int _epochs = 4;
         private static int _trainBatchSize = 64;

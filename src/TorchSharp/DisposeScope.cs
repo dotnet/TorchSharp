@@ -172,7 +172,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Disposes everything currenly in the dispose scope.
+        /// Disposes everything currently in the dispose scope.
         /// </summary>
         public void DisposeEverything() => DisposeEverythingBut(Enumerable.Empty<IDisposable>());
 

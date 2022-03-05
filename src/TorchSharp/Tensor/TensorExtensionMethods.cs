@@ -148,7 +148,12 @@ namespace TorchSharp
             writer.Encode(tensor.shape.Length); // 4 bytes
             foreach (var s in tensor.shape) writer.Encode(s); // n * 8 bytes
                                                                 // Then, the data
-            writer.Write(tensor.bytes); // ElementSize * NumberofElements
+#if NETSTANDARD2_0
+            // TODO: NETSTANDARD2_0 Try to optimize to avoid the allocation
+            writer.Write(tensor.bytes.ToArray()); // ElementSize * NumberOfElements
+#else
+            writer.Write(tensor.bytes); // ElementSize * NumberOfElements
+#endif // NETSTANDARD2_0
 
             if (copied) tensor.Dispose();
         }

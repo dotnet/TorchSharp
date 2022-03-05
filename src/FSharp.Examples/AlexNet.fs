@@ -12,7 +12,7 @@ open type TorchSharp.torch.optim
 open type TorchSharp.Scalar
 
 // Modified version of original AlexNet to fix CIFAR10 32x32 images.
-// 
+//
 // The dataset for this example can be found at: https://www.cs.toronto.edu/~kriz/cifar.html
 // Download the binary file, and place it in a dedicated folder, e.g. 'CIFAR10,' then edit
 // the '_dataLocation' definition below to point at the right folder.
@@ -28,7 +28,7 @@ let numClasses = 10L
 let cmdArgs = Environment.GetCommandLineArgs()
 let dataset = "CIFAR10"
 
-let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset)
+let datasetPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset)
 
 torch.random.manual_seed(1L) |> ignore
 
@@ -150,21 +150,21 @@ let test (model:Model) (dataLoader:CIFARReader) =
     let accString = ((float32 correct) / sz).ToString("0.0000")
 
     printfn $"\rTest set: Average loss {avgLossString} | Accuracy {accString}"
-    
-    
+
+
 let trainingLoop (model:Model) epochs trainData testData =
-    
+
         use optimizer = Adam(model.parameters(), 0.001)
-    
+
         let sw = Stopwatch()
         sw.Start()
-    
+
         for epoch = 1 to epochs do
             train model optimizer trainData epoch
             test model testData
 
         sw.Stop()
-    
+
         printfn $"Elapsed time: {sw.Elapsed.TotalSeconds:F1} s."
 
 let run epochs =
@@ -174,7 +174,7 @@ let run epochs =
         testBatchSize <- testBatchSize * 8
 
     let epochs = if device.``type`` = DeviceType.CUDA then epochs * 4 else epochs
-    
+
     printfn ""
     printfn $"\tRunning AlexNet with {dataset} on {device.``type``.ToString()} for {epochs} epochs"
     printfn ""
@@ -189,5 +189,5 @@ let run epochs =
     use model = new Model("model", device)
 
     trainingLoop model epochs trainData testData
-    
+
     ()

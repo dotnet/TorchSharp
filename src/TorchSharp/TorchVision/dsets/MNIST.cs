@@ -93,7 +93,11 @@ namespace TorchSharp.torchvision
 
                 this.transform = transform;
 
+#if NETSTANDARD2_0
+                var datasetPath = NSPath.Join(root, datasetName, "test_data");
+#else
                 var datasetPath = Path.Join(root, datasetName, "test_data");
+#endif // NETSTANDARD2_0
 
                 var dataPath = Path.Combine(datasetPath, prefix + "-images-idx3-ubyte");
                 var labelPath = Path.Combine(datasetPath, prefix + "-labels-idx1-ubyte");
@@ -137,15 +141,22 @@ namespace TorchSharp.torchvision
                 // Go through the data and create tensors
                 for (var i = 0; i < count; i++) {
                     var imgStart = i * imgSize;
-
+#if NETSTANDARD2_0
+                    data.Add(tensor(dataBytes.AsSpan(imgStart, imgSize).ToArray().Select(b => b / 256.0f).ToArray(), new long[] { width, height }));
+#else
                     data.Add(tensor(dataBytes[imgStart..(imgStart + imgSize)].Select(b => b / 256.0f).ToArray(), new long[] { width, height }));
+#endif // NETSTANDARD2_0
                     labels.Add(tensor(labelBytes[i], int64));
                 }
             }
 
             private void DownloadMNIST(string root, string baseUrl, string dataset)
             {
+#if NETSTANDARD2_0
+                var datasetPath = NSPath.Join(root, dataset);
+#else
                 var datasetPath = Path.Join(root, dataset);
+#endif // NETSTANDARD2_0
 
                 var sourceDir = datasetPath;
                 var targetDir = Path.Combine(datasetPath, "test_data");
@@ -178,7 +189,12 @@ namespace TorchSharp.torchvision
 
             private void DownloadFile(string file, string target, string baseUrl)
             {
+#if NETSTANDARD2_0
+                var filePath = NSPath.Join(target, file);
+#else
                 var filePath = Path.Join(target, file);
+#endif // NETSTANDARD2_0
+
                 var netPath = $"{baseUrl}{file}";
 
                 if (!File.Exists(filePath)) {

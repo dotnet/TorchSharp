@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <NoBuild>false</NoBuild>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>net5.0;net461</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
     <PlatformTarget>x64</PlatformTarget>

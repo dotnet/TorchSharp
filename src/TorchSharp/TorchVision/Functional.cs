@@ -43,7 +43,7 @@ namespace TorchSharp.torchvision
             }
 
             /// <summary>
-            /// Adjust the contrast of the image. 
+            /// Adjust the contrast of the image.
             /// </summary>
             /// <param name="img">An image tensor.</param>
             /// <param name="contrast_factor">
@@ -67,7 +67,7 @@ namespace TorchSharp.torchvision
 
             /// <summary>
             /// Perform gamma correction on an image.
-            /// 
+            ///
             /// See: https://en.wikipedia.org/wiki/Gamma_correction
             /// </summary>
             /// <param name="img">An image tensor.</param>
@@ -156,7 +156,7 @@ namespace TorchSharp.torchvision
             }
 
             /// <summary>
-            /// Adjust the sharpness of the image. 
+            /// Adjust the sharpness of the image.
             /// </summary>
             /// <param name="img">An image tensor.</param>
             /// <param name="sharpness">
@@ -396,7 +396,7 @@ namespace TorchSharp.torchvision
             }
 
             /// <summary>
-            /// Erase the input Tensor Image with given value. 
+            /// Erase the input Tensor Image with given value.
             /// </summary>
             /// <param name="img">The input tensor</param>
             /// <param name="top">Vertical component of the top left corner of the erased region.</param>
@@ -410,15 +410,23 @@ namespace TorchSharp.torchvision
             {
                 if (!inplace) {
                     using var t0 = img.clone();
+#if NETSTANDARD2_0
+                    return t0.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, (top, top + height), (left, left + width) });
+#else
                     return t0.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, top..(top + height), left..(left + width) });
+#endif // NETSTANDARD2_0
                 } else {
+#if NETSTANDARD2_0
+                    return img.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, (top, top + height), (left, left + width) });
+#else
                     return img.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, top..(top + height), left..(left + width) });
+#endif // NETSTANDARD2_0
                 }
             }
 
             /// <summary>
             /// Performs Gaussian blurring on the image by given kernel.
-            /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions. 
+            /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions.
             /// </summary>
             /// <returns></returns>
             public static Tensor gaussian_blur(Tensor input, IList<long> kernelSize, IList<float> sigma)
@@ -462,7 +470,7 @@ namespace TorchSharp.torchvision
 
             /// <summary>
             /// Performs Gaussian blurring on the image by given kernel.
-            /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions. 
+            /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions.
             /// </summary>
             /// <returns></returns>
             public static Tensor gaussian_blur(Tensor input, long kernelSize, float sigma)
@@ -472,7 +480,7 @@ namespace TorchSharp.torchvision
 
             /// <summary>
             /// Performs Gaussian blurring on the image by given kernel.
-            /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions. 
+            /// The image is expected to have […, H, W] shape, where … means an arbitrary number of leading dimensions.
             /// </summary>
             /// <returns></returns>
             public static Tensor gaussian_blur(Tensor input, long kernelHeight, long kernelWidth, float sigma_x, float sigma_y)
@@ -582,7 +590,7 @@ namespace TorchSharp.torchvision
             }
 
             /// <summary>
-            /// Resize the input image to the given size. 
+            /// Resize the input image to the given size.
             /// </summary>
             /// <param name="input">An image tensor.</param>
             /// <param name="height"></param>

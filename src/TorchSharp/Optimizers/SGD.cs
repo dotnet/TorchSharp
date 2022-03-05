@@ -187,9 +187,9 @@ namespace TorchSharp
             protected override void Dispose(bool disposing)
             {
                 base.Dispose(disposing);
-                foreach (var (name, state) in _state) {
-                    if (state.momentum_buffer is not null) {
-                        state.momentum_buffer.Dispose();
+                foreach (var kvp in _state) {
+                    if (kvp.Value.momentum_buffer is not null) {
+                        kvp.Value.momentum_buffer.Dispose();
                     }
                 }
                 _state.Clear();
