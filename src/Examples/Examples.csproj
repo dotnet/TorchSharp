@@ -4,7 +4,8 @@
     <OutputType>Exe</OutputType>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <TestCuda>true</TestCuda>
-    <TargetFrameworks>net5.0;net461</TargetFrameworks>
+    <TargetFrameworks>net5.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net461</TargetFrameworks>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
