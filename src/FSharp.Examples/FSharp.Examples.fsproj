@@ -8,7 +8,6 @@
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <RootNamespace>Examples</RootNamespace>
     <AssemblyName>FSharp.Examples</AssemblyName>
-    <DefineConstants Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework'">$(DefineConstants);NETFX461</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

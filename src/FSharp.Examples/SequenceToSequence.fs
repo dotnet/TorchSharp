@@ -86,11 +86,7 @@ type TransformerModel(ntokens, device:torch.Device) as this =
     let encoder = Embedding(ntokens, emsize)
     let decoder = Linear(emsize, ntokens)
 
-#if NETFX461
     let sqrEmSz = Math.Sqrt(float emsize).ToScalar()
-#else
-    let sqrEmSz = MathF.Sqrt(float32 emsize).ToScalar()
-#endif // NETFX461
 
     do
         let initrange = 0.1

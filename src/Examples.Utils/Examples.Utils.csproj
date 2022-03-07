@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;net461</TargetFrameworks>
-    <DefineConstants Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework'">$(DefineConstants);NETFX461</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

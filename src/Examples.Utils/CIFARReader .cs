@@ -81,11 +81,7 @@ namespace TorchSharp.Examples
                     var imgStart = lblStart + 1;
 
                     lablTensor[j] = torch.tensor(dataBytes[lblStart], torch.int64);
-#if NETFX461
                     var floats = dataBytes.AsSpan(imgStart, imgSize).ToArray().Select(b => (float)b).ToArray();
-#else
-                    var floats = dataBytes[imgStart..(imgStart + imgSize)].Select(b => (float)b).ToArray();
-#endif // NETFX461
                     using (var inputTensor = torch.tensor(floats))
                         dataTensor.index_put_(inputTensor, TensorIndex.Single(j));
                 }

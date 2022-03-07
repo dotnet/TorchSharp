@@ -1515,7 +1515,6 @@ namespace TorchSharp
             /// Returns a tensor with the same data and number of elements as self but with the specified shape.
             /// </summary>
             /// <param name="shape">The new tensor shape.</param>
-
             public Tensor reshape(params long[] shape)
             {
                 unsafe {

@@ -410,17 +410,9 @@ namespace TorchSharp.torchvision
             {
                 if (!inplace) {
                     using var t0 = img.clone();
-#if NETSTANDARD2_0
                     return t0.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, (top, top + height), (left, left + width) });
-#else
-                    return t0.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, top..(top + height), left..(left + width) });
-#endif // NETSTANDARD2_0
                 } else {
-#if NETSTANDARD2_0
                     return img.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, (top, top + height), (left, left + width) });
-#else
-                    return img.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, top..(top + height), left..(left + width) });
-#endif // NETSTANDARD2_0
                 }
             }
 

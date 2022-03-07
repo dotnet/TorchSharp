@@ -99,13 +99,8 @@ namespace TorchSharp
                 /// <returns></returns>
                 static public Tensor bilinear(Tensor input1, Tensor input2, Modules.Parameter weight, Modules.Parameter? bias = null)
                 {
-#if NETSTANDARD2_0
                     var in1Features = input1.shape[input1.shape.Length - 1];
                     var in2Features = input2.shape[input2.shape.Length - 1];
-#else
-                    var in1Features = input1.shape[^1];
-                    var in2Features = input2.shape[^1];
-#endif // NETSTANDARD2_0
                     var outFeatures = weight.shape[0];
 
                     using (var d = nn.Bilinear(in1Features, in2Features, outFeatures, bias is not null)) {
