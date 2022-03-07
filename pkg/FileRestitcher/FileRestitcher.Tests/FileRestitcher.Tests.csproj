@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <NoBuild>false</NoBuild>
-    <TargetFrameworks>net5.0;net461</TargetFrameworks>
-
+    <TargetFrameworks>net5.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net461</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
