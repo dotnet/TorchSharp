@@ -513,9 +513,9 @@ namespace System.IO
 
         public static string Join(string path1, string path2)
         {
-            if (path1.Length == 0)
+            if (path1 is null || path1.Length == 0)
                 return path2;
-            if (path2.Length == 0)
+            if (path2 is null || path2.Length == 0)
                 return path1;
 
             bool hasSeparator = IsDirectorySeparator(path1[path1.Length - 1]) || IsDirectorySeparator(path2[0]);
@@ -527,42 +527,42 @@ namespace System.IO
 
         public static string Join(string path1, string path2, string path3)
         {
-            if (path1.Length == 0)
+            if (path1 is null || path1.Length == 0)
                 return Join(path2, path3);
 
-            if (path2.Length == 0)
+            if (path2 is null || path2.Length == 0)
                 return Join(path1, path3);
 
-            if (path3.Length == 0)
+            if (path3 is null || path3.Length == 0)
                 return Join(path1, path2);
 
-            bool firstNeedsSeparator = IsDirectorySeparator(path1[path1.Length - 1]) || IsDirectorySeparator(path2[0]);
-            bool secondNeedsSeparator = IsDirectorySeparator(path2[path2.Length - 1]) || IsDirectorySeparator(path3[0]);
-            return path1 + (firstNeedsSeparator ? DirectorySeparatorCharAsString : "") + path2 + (secondNeedsSeparator ? DirectorySeparatorCharAsString : "") + path3;
+            bool firstHasSeparator = IsDirectorySeparator(path1[path1.Length - 1]) || IsDirectorySeparator(path2[0]);
+            bool secondHasSeparator = IsDirectorySeparator(path2[path2.Length - 1]) || IsDirectorySeparator(path3[0]);
+            return path1 + (firstHasSeparator ? "" : DirectorySeparatorCharAsString) + path2 + (secondHasSeparator ? "" : DirectorySeparatorCharAsString) + path3;
         }
 
         public static string Join(string path1, string path2, string path3, string path4)
         {
-            if (path1.Length == 0)
+            if (path1 is null || path1.Length == 0)
                 return Join(path2, path3, path4);
 
-            if (path2.Length == 0)
+            if (path2 is null || path2.Length == 0)
                 return Join(path1, path3, path4);
 
-            if (path3.Length == 0)
+            if (path3 is null || path3.Length == 0)
                 return Join(path1, path2, path4);
 
-            if (path4.Length == 0)
+            if (path4 is null || path4.Length == 0)
                 return Join(path1, path2, path3);
 
-            bool firstNeedsSeparator = IsDirectorySeparator(path1[path1.Length - 1]) || IsDirectorySeparator(path2[0]);
-            bool secondNeedsSeparator = IsDirectorySeparator(path2[path2.Length - 1]) || IsDirectorySeparator(path3[0]);
-            bool thirdNeedsSeparator = IsDirectorySeparator(path3[path3.Length - 1]) || IsDirectorySeparator(path4[0]);
+            bool firstHasSeparator = IsDirectorySeparator(path1[path1.Length - 1]) || IsDirectorySeparator(path2[0]);
+            bool secondHasSeparator = IsDirectorySeparator(path2[path2.Length - 1]) || IsDirectorySeparator(path3[0]);
+            bool thirdHasSeparator = IsDirectorySeparator(path3[path3.Length - 1]) || IsDirectorySeparator(path4[0]);
 
-            return path1 + (firstNeedsSeparator  ? DirectorySeparatorCharAsString : "") +
-                   path2 + (secondNeedsSeparator ? DirectorySeparatorCharAsString : "") +
-                   path3 + (thirdNeedsSeparator  ? DirectorySeparatorCharAsString : "") +
-                   path4;
+            return path1 + (firstHasSeparator  ? "" : DirectorySeparatorCharAsString) +
+                path2 + (secondHasSeparator ? "" : DirectorySeparatorCharAsString) +
+                path3 + (thirdHasSeparator  ? "" : DirectorySeparatorCharAsString) +
+                path4;
         }
     }
 }
