@@ -142,7 +142,13 @@ namespace TorchSharp.torchvision
                 for (var i = 0; i < count; i++) {
                     var imgStart = i * imgSize;
 #if NETSTANDARD2_0
-                    data.Add(tensor(dataBytes.AsSpan(imgStart, imgSize).ToArray().Select(b => b / 256.0f).ToArray(), new long[] { width, height }));
+                    var dataBytesSpan = dataBytes.AsSpan(imgStart, imgSize);
+                    var floats = new float[imgSize];
+                    for (int j = 0; j < imgSize; j++)
+                    {
+                        floats[j] = dataBytesSpan[j] / 256.0f;
+                    }
+                    data.Add(tensor(floats, new long[] { width, height }));
 #else
                     data.Add(tensor(dataBytes[imgStart..(imgStart + imgSize)].Select(b => b / 256.0f).ToArray(), new long[] { width, height }));
 #endif // NETSTANDARD2_0
