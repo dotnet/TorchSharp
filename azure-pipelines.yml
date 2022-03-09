@@ -47,8 +47,8 @@ jobs:
   parameters:
     prepScript: echo "no prep needed"
     name: Windows_x64_NetCore
-    buildScript: dotnet build /p:SkipCuda=true /p:IgnoreNetFX=true -c
-    testScript: dotnet test /p:SkipCuda=true /p:IgnoreNetFX=true --blame -c
+    buildScript: dotnet build /p:SkipCuda=true /p:SkipNetFxBuild=true -c
+    testScript: dotnet test /p:SkipCuda=true /p:SkipNetFxBuild=true --blame -c
     pool:
       vmImage: 'windows-2019'
 
@@ -56,8 +56,8 @@ jobs:
   parameters:
     prepScript: echo "no prep needed"
     name: Windows_x64_NetFX
-    buildScript: dotnet build /p:SkipCuda=true /p:IgnoreNetCore=true -c
-    testScript: dotnet test /p:SkipCuda=true /p:IgnoreNetCore=true --blame -c
+    buildScript: dotnet build /p:SkipCuda=true /p:SkipNetCoreBuild=true -c
+    testScript: dotnet test /p:SkipCuda=true /p:SkipNetCoreBuild=true --blame -c
     pool:
       vmImage: 'windows-2019'
 

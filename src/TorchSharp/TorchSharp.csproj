@@ -10,7 +10,6 @@
       <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
       <IsPackable>false</IsPackable>
       <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
-      <DefineConstants Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == 'netstandard2.0'">$(DefineConstants);NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -50,7 +49,7 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <!-- Trigger the download+placement of the redist bits and the build of the C++ project -->
-  <Target Name="NativeLibtorch" BeforeTargets="BeforeBuild" >
+  <Target Name="BuildNativeLibTorch" BeforeTargets="BeforeBuild" >
     <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
     <Message Importance="High" Text="Using Version = $(Version)" />
     <MSBuild Projects="..\Redist\libtorch-cuda-$(CudaVersionDot)\libtorch-cuda-$(CudaVersionDot).proj"

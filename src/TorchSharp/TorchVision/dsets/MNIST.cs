@@ -93,11 +93,11 @@ namespace TorchSharp.torchvision
 
                 this.transform = transform;
 
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0_OR_GREATER
                 var datasetPath = NSPath.Join(root, datasetName, "test_data");
 #else
                 var datasetPath = Path.Join(root, datasetName, "test_data");
-#endif // NETSTANDARD2_0
+#endif // NETSTANDARD2_0_OR_GREATER
 
                 var dataPath = Path.Combine(datasetPath, prefix + "-images-idx3-ubyte");
                 var labelPath = Path.Combine(datasetPath, prefix + "-labels-idx1-ubyte");
@@ -141,7 +141,7 @@ namespace TorchSharp.torchvision
                 // Go through the data and create tensors
                 for (var i = 0; i < count; i++) {
                     var imgStart = i * imgSize;
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0_OR_GREATER
                     var dataBytesSpan = dataBytes.AsSpan(imgStart, imgSize);
                     var floats = new float[imgSize];
                     for (int j = 0; j < imgSize; j++)
@@ -151,18 +151,18 @@ namespace TorchSharp.torchvision
                     data.Add(tensor(floats, new long[] { width, height }));
 #else
                     data.Add(tensor(dataBytes[imgStart..(imgStart + imgSize)].Select(b => b / 256.0f).ToArray(), new long[] { width, height }));
-#endif // NETSTANDARD2_0
+#endif // NETSTANDARD2_0_OR_GREATER
                     labels.Add(tensor(labelBytes[i], int64));
                 }
             }
 
             private void DownloadMNIST(string root, string baseUrl, string dataset)
             {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0_OR_GREATER
                 var datasetPath = NSPath.Join(root, dataset);
 #else
                 var datasetPath = Path.Join(root, dataset);
-#endif // NETSTANDARD2_0
+#endif // NETSTANDARD2_0_OR_GREATER
 
                 var sourceDir = datasetPath;
                 var targetDir = Path.Combine(datasetPath, "test_data");
@@ -195,11 +195,11 @@ namespace TorchSharp.torchvision
 
             private void DownloadFile(string file, string target, string baseUrl)
             {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0_OR_GREATER
                 var filePath = NSPath.Join(target, file);
 #else
                 var filePath = Path.Join(target, file);
-#endif // NETSTANDARD2_0
+#endif // NETSTANDARD2_0_OR_GREATER
 
                 var netPath = $"{baseUrl}{file}";
 

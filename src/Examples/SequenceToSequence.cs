@@ -26,11 +26,11 @@ namespace TorchSharp.Examples
     public class SequenceToSequence
     {
         // This path assumes that you're running this on Windows.
-#if NETFX472
+#if NET472_OR_GREATER
         private readonly static string _dataLocation = NSPath.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1");
 #else
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1");
-#endif // NETFX472
+#endif // NET472_OR_GREATER
 
         private const long emsize = 200;
         private const long nhid = 200;

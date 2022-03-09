@@ -5534,14 +5534,14 @@ namespace TorchSharp
 
             static public TensorIndex Slice((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
 
-#if !NETSTANDARD2_0
+#if !NETSTANDARD2_0_OR_GREATER
             static public TensorIndex Slice(System.Range range)
             {
                 long? start = !range.Start.IsFromEnd ? range.Start.Value : -1 * range.Start.Value;
                 long? end = !range.End.IsFromEnd ? range.End.Value : (range.End.Value == 0) ? null : -1 * range.End.Value;
                 return TensorIndex.Slice(start, end);
             }
-#endif // NETSTANDARD2_0
+#endif // NETSTANDARD2_0_OR_GREATER
             static public TensorIndex Bool(bool value) => new TensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
 
             static public TensorIndex Single(long? index) => new TensorIndex() { startIndexOrBoolOrSingle = index, kind = Kind.Single };
@@ -5563,14 +5563,14 @@ namespace TorchSharp
 
             public static implicit operator TensorIndex((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
 
-#if !NETSTANDARD2_0
+#if !NETSTANDARD2_0_OR_GREATER
             public static implicit operator TensorIndex(System.Range range)
             {
                 long? start = !range.Start.IsFromEnd ? range.Start.Value : -1 * range.Start.Value;
                 long? end = !range.End.IsFromEnd ? range.End.Value : (range.End.Value == 0) ? null : -1 * range.End.Value;
                 return TensorIndex.Slice(start, end);
             }
-#endif // NETSTANDARD2_0
+#endif // NETSTANDARD2_0_OR_GREATER
         }
 
         /// <summary>

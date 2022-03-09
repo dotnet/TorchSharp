@@ -5,8 +5,8 @@
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <TestCuda>true</TestCuda>
     <TargetFrameworks></TargetFrameworks>
-    <TargetFrameworks Condition="'$(IgnoreNetCore)' != 'true'">net5.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(IgnoreNetFX)' != 'true'">net472;$(TargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net5.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">net472;$(TargetFrameworks)</TargetFrameworks>
     <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net5.0</TargetFrameworks>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <RootNamespace>Examples</RootNamespace>
@@ -25,7 +25,7 @@
   <ItemGroup>
     <PackageReference Include="SharpZipLib" Version="1.3.3" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'net472'"/>
   </ItemGroup>
 
   <ItemGroup>
