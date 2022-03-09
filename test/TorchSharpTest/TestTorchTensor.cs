@@ -2144,7 +2144,7 @@ namespace TorchSharp
         public void TestIndexSlice2()
         {
             using (var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-#if NETFX461
+#if NETFX472
                 var t1 = i[(0, 2), 0];
                 Assert.Equal(0, t1[0].ToInt32());
                 Assert.Equal(6, t1[1].ToInt32());
@@ -2200,7 +2200,7 @@ namespace TorchSharp
                 var t6 = i[1.., ..2];
                 Assert.Equal(6, t6[0, 0].ToInt32());
                 Assert.Equal(5, t6[0, 1].ToInt32());
-#endif // NETFX461
+#endif // NETFX472
             }
         }
 

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks></TargetFrameworks>
     <TargetFrameworks Condition="'$(IgnoreNetCore)' != 'true'">net5.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(IgnoreNetFX)' != 'true'">net461;$(TargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(IgnoreNetFX)' != 'true'">net472;$(TargetFrameworks)</TargetFrameworks>
     <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net5.0</TargetFrameworks>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <IsPackable>false</IsPackable>
@@ -12,7 +12,7 @@
     <VSTestLogger>trx</VSTestLogger>
     <VSTestResultsDirectory>$(OutputPath)</VSTestResultsDirectory>
     <LangVersion>latest</LangVersion>
-    <DefineConstants Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework'">$(DefineConstants);NETFX461</DefineConstants>
+    <DefineConstants Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework'">$(DefineConstants);NETFX472</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,12 +32,12 @@
     <ProjectReference Include="..\..\src\TorchSharp\TorchSharp.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
     <PackageReference Include="System.Reflection.Metadata" Version="6.0.0" />
     <Compile Include="..\..\src\TorchSharp\netstandard.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' != 'net461'">
+  <ItemGroup Condition="'$(TargetFramework)' != 'net472'">
       <Compile Remove="netstandardTests.cs" />
   </ItemGroup>
 

@@ -35,11 +35,11 @@ namespace TorchSharp.Examples
         private const int epochs = 15;
 
         // This path assumes that you're running this on Windows.
-#if NETFX461
+#if NETFX472
         private readonly static string _dataLocation = NSPath.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS");
 #else
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS");
-#endif // NETFX461
+#endif // NETFX472
         internal static void Main(string[] args)
 
         {
