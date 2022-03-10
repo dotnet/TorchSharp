@@ -13,6 +13,7 @@
     <VSTestLogger>trx</VSTestLogger>
     <VSTestResultsDirectory>$(OutputPath)</VSTestResultsDirectory>
     <LangVersion>latest</LangVersion>
+    <Optimize Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' And $(Configuration.StartsWith('Release'))">false</Optimize>
   </PropertyGroup>
 
   <ItemGroup>

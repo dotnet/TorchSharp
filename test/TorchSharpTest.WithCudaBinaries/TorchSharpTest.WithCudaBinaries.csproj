@@ -13,6 +13,7 @@
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
     <VSTestLogger>trx</VSTestLogger>
     <VSTestResultsDirectory>$(OutputPath)</VSTestResultsDirectory>
+    <Optimize Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' And $(Configuration.StartsWith('Release'))">false</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
