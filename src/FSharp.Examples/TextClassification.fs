@@ -13,7 +13,7 @@ open type TorchSharp.torch.nn
 open TorchSharp.Examples
 
 // This example is based on the PyTorch tutorial at:
-// 
+//
 // https://pytorch.org/tutorials/beginner/text_sentiment_ngrams_tutorial.html
 //
 // It relies on the AG_NEWS dataset, which can be downloaded in CSV form at:
@@ -36,7 +36,7 @@ let logInterval = 200
 
 let cmdArgs = Environment.GetCommandLineArgs()
 
-let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS")
+let datasetPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS")
 
 torch.random.manual_seed(1L) |> ignore
 

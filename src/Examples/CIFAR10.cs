@@ -24,7 +24,11 @@ namespace TorchSharp.Examples
     class CIFAR10
     {
         private readonly static string _dataset = "CIFAR10";
+#if NET472_OR_GREATER
+        private readonly static string _dataLocation = NSPath.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", _dataset);
+#else
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", _dataset);
+#endif // NET472_OR_GREATER
 
         private static int _epochs = 8;
         private static int _trainBatchSize = 64;
