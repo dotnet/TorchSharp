@@ -13,9 +13,6 @@
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
     <VSTestLogger>trx</VSTestLogger>
     <VSTestResultsDirectory>$(OutputPath)</VSTestResultsDirectory>
-    <IsNetFxRelease Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' And $(Configuration.StartsWith('Release'))">true</IsNetFxRelease>
-    <Optimize Condition="'$(IsNetFxRelease)' == 'true'">false</Optimize>
-    <BuildInParallel Condition="'$(IsNetFxRelease)' == 'true'">false</BuildInParallel>
   </PropertyGroup>
 
   <ItemGroup>
