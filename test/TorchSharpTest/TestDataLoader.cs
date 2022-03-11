@@ -7,6 +7,9 @@ using Xunit;
 
 namespace TorchSharp
 {
+#if NET472_OR_GREATER
+    [Collection("Sequential")]
+#endif // NET472_OR_GREATER
     public class TestDataLoader
     {
         private class TestDataset : torch.utils.data.Dataset
