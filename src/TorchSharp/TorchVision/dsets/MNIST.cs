@@ -139,9 +139,6 @@ namespace TorchSharp.torchvision
 
                 var imgSize = height * width;
 
-                var sw = new Stopwatch();
-                sw.Start();
-
                 // Go through the data and create tensors
 
                 // A previous version of this relied on LINQ expressions, but it was about 20% slower.
@@ -157,9 +154,6 @@ namespace TorchSharp.torchvision
 
                     labels.Add(tensor(labelBytes[i], int64));
                 }
-
-                sw.Stop();
-                Console.WriteLine($"Elapsed = {sw.ElapsedMilliseconds}");
             }
 
             private void DownloadMNIST(string root, string baseUrl, string dataset)
