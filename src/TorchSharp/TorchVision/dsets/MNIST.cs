@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -139,19 +140,18 @@ namespace TorchSharp.torchvision
                 var imgSize = height * width;
 
                 // Go through the data and create tensors
+
+                // A previous version of this relied on LINQ expressions, but it was about 20% slower.
+
                 for (var i = 0; i < count; i++) {
                     var imgStart = i * imgSize;
-#if NETSTANDARD2_0_OR_GREATER
-                    var dataBytesSpan = dataBytes.AsSpan(imgStart, imgSize);
                     var floats = new float[imgSize];
                     for (int j = 0; j < imgSize; j++)
                     {
-                        floats[j] = dataBytesSpan[j] / 256.0f;
+                        floats[j] = dataBytes[j+imgStart] / 256.0f;
                     }
                     data.Add(tensor(floats, new long[] { width, height }));
-#else
-                    data.Add(tensor(dataBytes[imgStart..(imgStart + imgSize)].Select(b => b / 256.0f).ToArray(), new long[] { width, height }));
-#endif // NETSTANDARD2_0_OR_GREATER
+
                     labels.Add(tensor(labelBytes[i], int64));
                 }
             }
