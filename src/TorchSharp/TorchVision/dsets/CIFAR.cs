@@ -97,6 +97,7 @@ namespace TorchSharp.torchvision
                     DecompressFile(fileName, targetDir, targetDir);
                 }
             }
+
             private static void DecompressFile(string file, string sourceDir, string targetDir)
             {
                 Utils.Decompress.ExtractTGZ(Path.Combine(sourceDir, file), targetDir);
@@ -104,11 +105,7 @@ namespace TorchSharp.torchvision
 
             private void DownloadFile(string file, string target, string baseUrl)
             {
-#if NETSTANDARD2_0_OR_GREATER
-                var filePath = NSPath.Join(target, file);
-#else
-                var filePath = Path.Join(target, file);
-#endif // NETSTANDARD2_0_OR_GREATER
+                var filePath = JoinPaths(target, file);
 
                 var netPath = $"{baseUrl}{file}";
 
@@ -118,17 +115,21 @@ namespace TorchSharp.torchvision
                 }
             }
 
+            protected static string JoinPaths(string directory, string file)
+            {
+#if NETSTANDARD2_0_OR_GREATER
+                return NSPath.Join(directory, file);
+#else
+                return Path.Join(directory, file);
+#endif // NETSTANDARD2_0_OR_GREATER
+            }
         }
 
         internal class CIFAR10 : CIFAR, IDisposable
         {
             public CIFAR10(string root, bool train, string baseUrl, bool download, ITransform transform)
             {
-#if NETSTANDARD2_0_OR_GREATER
-                var targetDir = NSPath.Join(root, "CIFAR10");
-#else
-                var targetDir = Path.Join(root, "CIFAR10");
-#endif // NETSTANDARD2_0_OR_GREATER
+                var targetDir = JoinPaths(root, "CIFAR10");
 
                 if (download) Download(targetDir, baseUrl, "cifar-10", "cifar-10-binary.tar.gz");
 
@@ -147,7 +148,6 @@ namespace TorchSharp.torchvision
                 }
 
             }
-            private int _count = 0;
 
             private int ReadSingleFile(string path)
             {
@@ -184,13 +184,6 @@ namespace TorchSharp.torchvision
                 return count;
             }
 
-            private List<Tensor> data = new();
-            private List<Tensor> labels = new();
-
-            private ITransform transform;
-            public override long Count => _count;
-
-
             public override void Dispose()
             {
                 data.ForEach(d => d.Dispose());
@@ -214,17 +207,21 @@ namespace TorchSharp.torchvision
                 rdic.Add("label", labels[(int)index]);
                 return rdic;
             }
+
+            private List<Tensor> data = new();
+            private List<Tensor> labels = new();
+
+            private ITransform transform;
+            public override long Count => _count;
+
+            private int _count = 0;
         }
 
         internal class CIFAR100 : CIFAR, IDisposable
         {
             public CIFAR100(string root, bool train, string baseUrl, bool download, ITransform transform)
             {
-#if NETSTANDARD2_0_OR_GREATER
-                var targetDir = NSPath.Join(root, "CIFAR100");
-#else
-                var targetDir = Path.Join(root, "CIFAR100");
-#endif // NETSTANDARD2_0_OR_GREATER
+                var targetDir = JoinPaths(root, "CIFAR100");
 
                 if (download) Download(targetDir, baseUrl, "cifar-100", "cifar-100-binary.tar.gz");
 
@@ -239,7 +236,6 @@ namespace TorchSharp.torchvision
                 }
 
             }
-            private int _count = 0;
 
             private int ReadSingleFile(string path)
             {
@@ -279,14 +275,6 @@ namespace TorchSharp.torchvision
                 return count;
             }
 
-            private List<Tensor> data = new();
-            private List<Tensor> coarse_labels = new();
-            private List<Tensor> fine_labels = new();
-
-            private ITransform transform;
-            public override long Count => _count;
-
-
             public override void Dispose()
             {
                 data.ForEach(d => d.Dispose());
@@ -311,6 +299,15 @@ namespace TorchSharp.torchvision
                 rdic.Add("categories", coarse_labels[(int)index]);
                 return rdic;
             }
+
+            private List<Tensor> data = new();
+            private List<Tensor> coarse_labels = new();
+            private List<Tensor> fine_labels = new();
+
+            private ITransform transform;
+            public override long Count => _count;
+
+            private int _count = 0;
         }
     }
 }
