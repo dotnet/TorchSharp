@@ -146,7 +146,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
     let mutable total_loss = 0.0f
     let mutable src_mask = model.GenerateSquareSubsequentMask(bptt)
 
-    let mutable batch = 0
+    let mutable batch = 0L
 
     let tdlen = trainData.shape.[0]
 
@@ -171,12 +171,12 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
             total_loss <- total_loss + loss.cpu().item<float32>()
         end
 
-        if (batch % logInterval = 0) && (batch > 0) then
+        if ((batch % (int64 logInterval) = 0L) && (batch > 0)) || (batch = tdlen/bptt) then
             let cur_loss = (total_loss / (float32 logInterval)).ToString("0.00")
             printfn $"epoch: {epoch} | batch: {batch} / {tdlen/bptt} | loss: {cur_loss}"
             total_loss <- 0.0f
 
-        batch <- batch + 1
+        batch <- batch + 1L
         i <- i + bptt
 
         d.DisposeEverythingBut(src_mask) |> ignore
@@ -246,16 +246,7 @@ let run epochs =
     use model = new TransformerModel(ntokens, device)
     let lr = 2.50
 
-    let pgs = [|
-        SGD.ParamGroup(Parameters = model.parameters(), Options = SGD.Options(momentum = 1.0, dampening = 0.5));
-        SGD.ParamGroup(model.parameters(), momentum = 1.5, dampening = 0.1)
-    |]
-
-    let optimizer = SGD([|
-        SGD.ParamGroup(model.parameters(), momentum = 1.0, dampening = 0.5);
-        SGD.ParamGroup(model.parameters(), momentum = 1.5, dampening = 0.1)
-    |], lr)
-
+    let optimizer = SGD(model.parameters(), lr);
     let scheduler = lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch=15)
 
     let totalTime = Stopwatch()
