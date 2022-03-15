@@ -86,7 +86,7 @@ type Model(name,device:torch.Device) as this =
 
 let loss x y = functional.nll_loss().Invoke(x,y)
 
-let train (model:Model) (optimizer:Optimizer) (dataLoader:DataLoader) epoch (size:int) =
+let train (model:Model) (optimizer:Optimizer) (dataLoader:DataLoader) epoch (size:int64) =
 
     model.train()
 
@@ -167,7 +167,7 @@ let trainingLoop (model:Model) epochs trainData testData =
     sw.Start()
 
     for epoch = 1 to epochs do
-        train model optimizer trainLoader epoch (int trainData.Count)
+        train model optimizer trainLoader epoch trainData.Count
         test model testLoader (int testData.Count)
 
     sw.Stop()
