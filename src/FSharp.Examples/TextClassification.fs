@@ -93,7 +93,7 @@ let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) 
         total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().item<int64>())
         total_count <- total_count + labels.size(0)
 
-        if ((batch % logInterval = 0) && (batch > 0)) || batch = batch_count then
+        if (batch % logInterval = 0) && (batch > 0) then
             let accuracy = (total_acc / (float total_count)).ToString("0.00")
             printfn $"epoch: {epoch} | batch: {batch} / {batch_count} | accuracy: {accuracy}"
 

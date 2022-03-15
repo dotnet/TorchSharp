@@ -146,7 +146,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
     let mutable total_loss = 0.0f
     let mutable src_mask = model.GenerateSquareSubsequentMask(bptt)
 
-    let mutable batch = 0L
+    let mutable batch = 0
 
     let tdlen = trainData.shape.[0]
 
@@ -171,12 +171,12 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
             total_loss <- total_loss + loss.cpu().item<float32>()
         end
 
-        if ((batch % (int64 logInterval) = 0L) && (batch > 0)) then
+        if (batch % logInterval = 0) && (batch > 0) then
             let cur_loss = (total_loss / (float32 logInterval)).ToString("0.00")
             printfn $"epoch: {epoch} | batch: {batch} / {tdlen/bptt} | loss: {cur_loss}"
             total_loss <- 0.0f
 
-        batch <- batch + 1L
+        batch <- batch + 1
         i <- i + bptt
 
         d.DisposeEverythingBut(src_mask) |> ignore
