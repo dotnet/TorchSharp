@@ -9,7 +9,8 @@ open TorchSharp
 
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
-open type TorchSharp.Scalar
+open type TorchSharp.torch.utils.data
+open type TorchSharp.torchvision.datasets
 
 // Modified version of original AlexNet to fix CIFAR10 32x32 images.
 //
@@ -28,7 +29,7 @@ let numClasses = 10L
 let cmdArgs = Environment.GetCommandLineArgs()
 let dataset = "CIFAR10"
 
-let datasetPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", dataset)
+let datasetPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
 
 torch.random.manual_seed(1L) |> ignore
 
@@ -85,11 +86,9 @@ type Model(name,device:torch.Device) as this =
 
 let loss x y = functional.nll_loss().Invoke(x,y)
 
-let train (model:Model) (optimizer:Optimizer) (dataLoader: CIFARReader) epoch =
+let train (model:Model) (optimizer:Optimizer) (dataLoader:DataLoader) epoch (size:int) =
 
     model.train()
-
-    let size = dataLoader.Size
 
     let mutable batchID = 1
     let mutable total = 0L
@@ -97,9 +96,12 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: CIFARReader) epoch =
 
     printfn $"Epoch: {epoch}..."
 
-    for (input,labels) in dataLoader.Data() do
+    for batch in dataLoader do
 
         use d = torch.NewDisposeScope()
+
+        let input = batch["data"]
+        let labels = batch["label"]
 
         optimizer.zero_grad()
 
@@ -115,27 +117,29 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader: CIFARReader) epoch =
             use sum = estimate.argmax(1L).eq(labels).sum()
             correct <- correct + sum.ToInt64()
 
-            if batchID % logInterval = 0 then
-                let count = min (batchID * trainBatchSize) size
+            if batchID % logInterval = 0 || total = size then
                 let outputString = output.ToSingle().ToString("0.0000")
                 let accString = ((float correct) / (float total)).ToString("0.0000")
-                printfn $"\rTrain: epoch {epoch} [{count} / {size}] Loss: {outputString} Acc: {accString}"
+                printfn $"\rTrain: epoch {epoch} [{total} / {size}] Loss: {outputString} Acc: {accString}"
 
             batchID <- batchID + 1
         end
 
-let test (model:Model) (dataLoader:CIFARReader) =
+let test (model:Model) (dataLoader:DataLoader) (size:int) =
     model.eval()
 
-    let sz = float32 dataLoader.Size
+    let sz = float32 size
 
     let mutable testLoss = 0.0f
     let mutable correct = 0L
     let mutable batchCount = 0L
 
-    for (input,labels) in dataLoader.Data() do
+    for batch in dataLoader do
 
         use d = torch.NewDisposeScope()
+
+        let input = batch["data"]
+        let labels = batch["label"]
 
         let estimate = input --> model
         let output = loss estimate labels
@@ -154,18 +158,21 @@ let test (model:Model) (dataLoader:CIFARReader) =
 
 let trainingLoop (model:Model) epochs trainData testData =
 
-        use optimizer = Adam(model.parameters(), 0.001)
+    use trainLoader = new DataLoader(trainData, trainBatchSize, device=device, shuffle=true)
+    use testLoader = new DataLoader(testData, testBatchSize, device=device, shuffle=false)
 
-        let sw = Stopwatch()
-        sw.Start()
+    use optimizer = Adam(model.parameters(), 0.001)
 
-        for epoch = 1 to epochs do
-            train model optimizer trainData epoch
-            test model testData
+    let sw = Stopwatch()
+    sw.Start()
 
-        sw.Stop()
+    for epoch = 1 to epochs do
+        train model optimizer trainLoader epoch (int trainData.Count)
+        test model testLoader (int testData.Count)
 
-        printfn $"Elapsed time: {sw.Elapsed.TotalSeconds:F1} s."
+    sw.Stop()
+
+    printfn $"Elapsed time: {sw.Elapsed.TotalSeconds:F1} s."
 
 let run epochs =
 
@@ -183,8 +190,8 @@ let run epochs =
 
     getDataFiles datasetPath targetDir
 
-    use trainData = new CIFARReader(targetDir, false, trainBatchSize, shuffle=true, device=device)
-    use testData = new CIFARReader(targetDir, true, testBatchSize, device=device)
+    use trainData = torchvision.datasets.CIFAR10(datasetPath, true, true)
+    use testData = torchvision.datasets.CIFAR10(datasetPath, false, true)
 
     use model = new Model("model", device)
 

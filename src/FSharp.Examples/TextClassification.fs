@@ -10,8 +10,6 @@ open System.Collections.Generic
 open TorchSharp
 open type TorchSharp.torch.nn
 
-open TorchSharp.Examples
-
 // This example is based on the PyTorch tutorial at:
 //
 // https://pytorch.org/tutorials/beginner/text_sentiment_ngrams_tutorial.html
