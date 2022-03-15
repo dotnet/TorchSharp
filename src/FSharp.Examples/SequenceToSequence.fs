@@ -171,7 +171,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
             total_loss <- total_loss + loss.cpu().item<float32>()
         end
 
-        if ((batch % (int64 logInterval) = 0L) && (batch > 0)) || (batch = tdlen/bptt) then
+        if ((batch % (int64 logInterval) = 0L) && (batch > 0)) then
             let cur_loss = (total_loss / (float32 logInterval)).ToString("0.00")
             printfn $"epoch: {epoch} | batch: {batch} / {tdlen/bptt} | loss: {cur_loss}"
             total_loss <- 0.0f

@@ -100,8 +100,8 @@ let train (model:Model) (optimizer:Optimizer) (dataLoader:DataLoader) epoch (siz
 
         use d = torch.NewDisposeScope()
 
-        let input = batch["data"]
-        let labels = batch["label"]
+        let input = batch.["data"]
+        let labels = batch.["label"]
 
         optimizer.zero_grad()
 
@@ -138,8 +138,8 @@ let test (model:Model) (dataLoader:DataLoader) (size:int) =
 
         use d = torch.NewDisposeScope()
 
-        let input = batch["data"]
-        let labels = batch["label"]
+        let input = batch.["data"]
+        let labels = batch.["label"]
 
         let estimate = input --> model
         let output = loss estimate labels
