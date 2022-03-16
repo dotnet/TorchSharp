@@ -90,7 +90,7 @@ namespace TorchSharp.torchvision
 
             protected MNIST(string root, string datasetName, string prefix, string baseUrl, bool download, ITransform transform)
             {
-                if (download) DownloadMNIST(root, baseUrl, datasetName);
+                if (download) Download(root, baseUrl, datasetName);
 
                 this.transform = transform;
 
@@ -156,7 +156,7 @@ namespace TorchSharp.torchvision
                 }
             }
 
-            private void DownloadMNIST(string root, string baseUrl, string dataset)
+            private void Download(string root, string baseUrl, string dataset)
             {
 #if NETSTANDARD2_0_OR_GREATER
                 var datasetPath = NSPath.Join(root, dataset);

@@ -137,7 +137,7 @@ namespace TorchSharp.Examples
                         total_loss += loss.to(torch.CPU).item<float>();
                     }
 
-                    if (batch % log_interval == 0 && batch > 0) {
+                    if ((batch % log_interval == 0 && batch > 0) || (batch == tdlen / bptt)) {
                         var cur_loss = total_loss / log_interval;
                         Console.WriteLine($"epoch: {epoch} | batch: {batch} / {tdlen / bptt} | loss: {cur_loss:0.00}");
                         total_loss = 0;
