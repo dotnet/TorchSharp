@@ -2,10 +2,8 @@
 
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using TorchSharp.Utils;
 
@@ -163,8 +161,8 @@ namespace TorchSharp
                                 lock (taskBatchLock) {
                                     if (taskedBatchCount < tensorIndexList.Count)
                                         return (taskedBatchCount, tensorIndexList[taskedBatchCount++]);
-                                    return null;
                                 }
+                                return null;
                             }
                         }
 
