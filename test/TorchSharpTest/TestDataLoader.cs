@@ -7,6 +7,9 @@ using Xunit.Abstractions;
 
 namespace TorchSharp
 {
+#if NET472_OR_GREATER
+    [Collection("Sequential")]
+#endif // NET472_OR_GREATER
     public class TestDataLoader
     {
         private class TestDataset : torch.utils.data.Dataset
@@ -56,6 +59,33 @@ namespace TorchSharp
                 Assert.Equal(x["data"], torch.tensor(new[]{1, 1}, new[]{2L}));
                 Assert.Equal(x["index"], torch.tensor(new[]{idx++, idx++}, new[]{2L}));
             }
+        }
+
+        private const int stressBatchSize = 32;
+
+        private class LargeTestDataset : torch.utils.data.Dataset
+        {
+            public override long Count { get; } = 2*stressBatchSize;
+            public override Dictionary<string, torch.Tensor> GetTensor(long index)
+            {
+                return new() { { "data", torch.rand(3, 512, 512) }, { "label", torch.tensor(16) }, { "index", torch.tensor(index) } };
+            }
+        }
+
+        [Fact]
+        public void BigDataLoaderTest3()
+        {
+            using var dataset = new LargeTestDataset();
+            using var dataloader = new torch.utils.data.DataLoader(dataset, stressBatchSize, false, torch.CPU);
+            var iter = dataloader.GetEnumerator();
+            iter.MoveNext();
+            var x = iter.Current;
+            Assert.Equal(new long[] { stressBatchSize, 3, 512, 512 }, x["data"].shape);
+            iter.MoveNext();
+            x = iter.Current;
+            Assert.Equal(new long[] { stressBatchSize, 3, 512, 512 }, x["data"].shape);
+            Assert.False(iter.MoveNext());
+            iter.Dispose();
         }
 
         [Fact]

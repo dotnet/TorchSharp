@@ -2,6 +2,7 @@
   "profiles": {
     "Examples": {
       "commandName": "Project",
+      "commandLineArgs": "mobilenet",
       "nativeDebugging": true
     }
   }

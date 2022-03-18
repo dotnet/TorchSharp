@@ -388,7 +388,7 @@ namespace TorchSharp
 
                 /// <summary>
                 /// Returns a dictionary containing a whole state of the module.
-                /// 
+                ///
                 /// Both parameters and persistent buffers(e.g.running averages) are included.Keys are corresponding parameter and buffer names.
                 /// Parameters and buffers set to null are not included.
                 /// </summary>
@@ -585,7 +585,7 @@ namespace TorchSharp
 
                 /// <summary>
                 /// Adds a buffer to the module.
-                /// 
+                ///
                 /// This is typically used to register a buffer that should not to be considered a model parameter.For example, BatchNorm’s running_mean is not a parameter,
                 /// but is part of the module’s state.Buffers, by default, are persistent and will be saved alongside parameters.
                 /// </summary>
@@ -722,14 +722,14 @@ namespace TorchSharp
                 {
                     writer.Encode(sd.Count); // 4 bytes
 
-                    foreach (var (k, v) in sd) {
-                        writer.Write(k);
-                        v.Save(writer);
+                    foreach (var kvp in sd) {
+                        writer.Write(kvp.Key);
+                        kvp.Value.Save(writer);
                     }
                 }
 
                 /// <summary>
-                /// Load the parameters and buffers 
+                /// Load the parameters and buffers
                 /// </summary>
                 /// <param name="location">The file path.</param>
                 /// <param name="strict">

@@ -14,7 +14,7 @@ namespace TorchSharp.Examples
 
     /// <summary>
     /// This example is based on the PyTorch tutorial at:
-    /// 
+    ///
     /// https://pytorch.org/tutorials/beginner/text_sentiment_ngrams_tutorial.html
     ///
     /// It relies on the AG_NEWS dataset, which can be downloaded in CSV form at:
@@ -35,7 +35,11 @@ namespace TorchSharp.Examples
         private const int epochs = 15;
 
         // This path assumes that you're running this on Windows.
+#if NET472_OR_GREATER
+        private readonly static string _dataLocation = NSPath.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS");
+#else
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "AG_NEWS");
+#endif // NET472_OR_GREATER
         internal static void Main(string[] args)
 
         {

@@ -8,6 +8,8 @@ using System.Diagnostics;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
+using static TorchSharp.torch.utils.data;
+using static TorchSharp.torchvision.datasets;
 
 namespace TorchSharp.Examples
 {
@@ -23,20 +25,19 @@ namespace TorchSharp.Examples
     /// </remarks>
     class CIFAR10
     {
-        private readonly static string _dataset = "CIFAR10";
-        private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", _dataset);
-
         private static int _epochs = 8;
         private static int _trainBatchSize = 64;
         private static int _testBatchSize = 128;
 
         private readonly static int _logInterval = 25;
-        private readonly static int _numClasses = 10;
+        private readonly static int _numClasses = 100;
 
         private readonly static int _timeout = 3600;    // One hour by default.
 
         internal static void Main(string[] args)
         {
+            var datasetPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
             torch.random.manual_seed(1);
 
             var device =
@@ -56,16 +57,8 @@ namespace TorchSharp.Examples
             var timeout = args.Length > 2 ? int.Parse(args[2]) : _timeout;
 
             Console.WriteLine();
-            Console.WriteLine($"\tRunning {modelName} with {_dataset} on {device.type.ToString()} for {epochs} epochs, terminating after {TimeSpan.FromSeconds(timeout)}.");
+            Console.WriteLine($"\tRunning {modelName} with CIFAR100 on {device.type.ToString()} for {epochs} epochs, terminating after {TimeSpan.FromSeconds(timeout)}.");
             Console.WriteLine();
-
-            var sourceDir = _dataLocation;
-            var targetDir = Path.Combine(_dataLocation, "test_data");
-
-            if (!Directory.Exists(targetDir)) {
-                Directory.CreateDirectory(targetDir);
-                Utils.Decompress.ExtractTGZ(Path.Combine(sourceDir, "cifar-10-binary.tar.gz"), targetDir);
-            }
 
             Console.WriteLine($"\tCreating the model...");
 
@@ -118,29 +111,34 @@ namespace TorchSharp.Examples
             Console.WriteLine($"\tPreparing training and test data...");
             Console.WriteLine();
 
-            using (var train = new CIFARReader(targetDir, false, _trainBatchSize, shuffle: true, device: device, transforms: new torchvision.ITransform[] { }))
-            using (var test = new CIFARReader(targetDir, true, _testBatchSize, device: device))
-            using (var optimizer = torch.optim.Adam(model.parameters(), 0.001)) {
+            using (Dataset train_data = torchvision.datasets.CIFAR100(datasetPath, true, download: true),
+                           test_data = torchvision.datasets.CIFAR100(datasetPath, false, download: true))
+            {
+                using var train = new DataLoader(train_data, _trainBatchSize, device: device, shuffle: true);
+                using var test = new DataLoader(test_data, _testBatchSize, device: device, shuffle: false);
 
-                Stopwatch totalSW = new Stopwatch();
-                totalSW.Start();
+                using (var optimizer = torch.optim.Adam(model.parameters(), 0.001)) {
 
-                for (var epoch = 1; epoch <= epochs; epoch++) {
+                    Stopwatch totalSW = new Stopwatch();
+                    totalSW.Start();
 
-                    Stopwatch epchSW = new Stopwatch();
-                    epchSW.Start();
+                    for (var epoch = 1; epoch <= epochs; epoch++) {
 
-                    Train(model, optimizer, nll_loss(), train.Data(), epoch, _trainBatchSize, train.Size);
-                    Test(model, nll_loss(), test.Data(), test.Size);
+                        Stopwatch epchSW = new Stopwatch();
+                        epchSW.Start();
 
-                    epchSW.Stop();
-                    Console.WriteLine($"Elapsed time for this epoch: {epchSW.Elapsed.TotalSeconds} s.");
+                        Train(model, optimizer, nll_loss(), train, epoch, _trainBatchSize, train_data.Count);
+                        Test(model, nll_loss(), test, test_data.Count);
 
-                    if (totalSW.Elapsed.TotalSeconds > timeout) break;
+                        epchSW.Stop();
+                        Console.WriteLine($"Elapsed time for this epoch: {epchSW.Elapsed.TotalSeconds} s.");
+
+                        if (totalSW.Elapsed.TotalSeconds > timeout) break;
+                    }
+
+                    totalSW.Stop();
+                    Console.WriteLine($"Elapsed training time: {totalSW.Elapsed} s.");
                 }
-
-                totalSW.Stop();
-                Console.WriteLine($"Elapsed training time: {totalSW.Elapsed} s.");
             }
 
             model.Dispose();
@@ -150,7 +148,7 @@ namespace TorchSharp.Examples
             Module model,
             torch.optim.Optimizer optimizer,
             Loss loss,
-            IEnumerable<(Tensor, Tensor)> dataLoader,
+            DataLoader dataLoader,
             int epoch,
             long batchSize,
             long size)
@@ -165,11 +163,12 @@ namespace TorchSharp.Examples
 
             using (var d = torch.NewDisposeScope()) {
 
-                foreach (var (data, target) in dataLoader) {
+                foreach (var data in dataLoader) {
 
                     optimizer.zero_grad();
 
-                    var prediction = model.forward(data);
+                    var target = data["label"];
+                    var prediction = model.forward(data["data"]);
                     var lsm = log_softmax(prediction, 1);
                     var output = loss(lsm, target);
 
@@ -182,9 +181,8 @@ namespace TorchSharp.Examples
                     var predicted = prediction.argmax(1);
                     correct += predicted.eq(target).sum().ToInt64();
 
-                    if (batchId % _logInterval == 0) {
-                        var count = Math.Min(batchId * batchSize, size);
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{count} / {size}] Loss: {output.ToSingle().ToString("0.000000")} | Accuracy: { ((float)correct / total).ToString("0.000000") }");
+                    if (batchId % _logInterval == 0 || total == size) {
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{total} / {size}] Loss: {output.ToSingle().ToString("0.000000")} | Accuracy: { ((float)correct / total).ToString("0.000000") }");
                     }
 
                     batchId++;
@@ -197,7 +195,7 @@ namespace TorchSharp.Examples
         private static void Test(
             Module model,
             Loss loss,
-            IEnumerable<(Tensor, Tensor)> dataLoader,
+            DataLoader dataLoader,
             long size)
         {
             model.eval();
@@ -208,9 +206,10 @@ namespace TorchSharp.Examples
 
             using (var d = torch.NewDisposeScope()) {
 
-                foreach (var (data, target) in dataLoader) {
+                foreach (var data in dataLoader) {
 
-                    var prediction = model.forward(data);
+                    var target = data["label"];
+                    var prediction = model.forward(data["data"]);
                     var lsm = log_softmax(prediction, 1);
                     var output = loss(lsm, target);
 

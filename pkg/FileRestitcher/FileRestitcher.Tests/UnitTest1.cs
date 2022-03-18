@@ -32,10 +32,10 @@ namespace FileRestitcherTests
                 var expectedFile = tmpDir + @"/a.so";
                 Console.WriteLine("Writing restored primary file at {0}", expectedFile);
                 var os = File.OpenWrite(expectedFile);
-                os.Write(oneChunk);
-                os.Write(oneChunk);
-                os.Write(oneChunk);
-                os.Write(oneChunk);
+                os.Write(oneChunk, 0, oneChunk.Length);
+                os.Write(oneChunk, 0, oneChunk.Length);
+                os.Write(oneChunk, 0, oneChunk.Length);
+                os.Write(oneChunk, 0, oneChunk.Length);
                 os.Close();
                 var os2 = File.OpenRead(expectedFile);
                 byte[] bytes = sha256Hash.ComputeHash(os2);

@@ -4,9 +4,9 @@
 
 name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
-variables: 
+variables:
   MyRunNumber:  $[counter('MyRunNumber', 52201)]
-  
+
   # Set this to 'true' to build the libtorch-* packages as part of main branch CI and
   # push them to the artifacts feed of the Azure CI project
   BuildLibTorchPackages: false
@@ -37,8 +37,8 @@ jobs:
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
         sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-5.0 &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
-    buildScript: dotnet build /p:SkipCuda=true -c 
-    testScript: dotnet test /p:SkipCuda=true --blame -c 
+    buildScript: dotnet build /p:SkipCuda=true -c
+    testScript: dotnet test /p:SkipCuda=true --blame -c
     pool:
       vmImage: 'ubuntu-latest'
     container: UbuntuContainer
@@ -46,9 +46,18 @@ jobs:
 - template: /build/ci/job-template.yml
   parameters:
     prepScript: echo "no prep needed"
-    name: Windows_x64
-    buildScript: dotnet build /p:SkipCuda=true -c 
-    testScript: dotnet test /p:SkipCuda=true --blame -c 
+    name: Windows_x64_NetCore
+    buildScript: dotnet build /p:SkipCuda=true /p:SkipNetFxBuild=true -c
+    testScript: dotnet test /p:SkipCuda=true /p:SkipNetFxBuild=true --blame -c
+    pool:
+      vmImage: 'windows-2019'
+
+- template: /build/ci/job-template.yml
+  parameters:
+    prepScript: echo "no prep needed"
+    name: Windows_x64_NetFX
+    buildScript: dotnet build /p:SkipCuda=true /p:SkipNetCoreBuild=true -c
+    testScript: dotnet test /p:SkipCuda=true /p:SkipNetCoreBuild=true --blame -c
     pool:
       vmImage: 'windows-2019'
 
@@ -56,8 +65,8 @@ jobs:
   parameters:
     prepScript: echo "no prep needed"
     name: MacOS_x64
-    buildScript: dotnet build /p:SkipCuda=true -c 
-    testScript: dotnet test --blame /p:SkipCuda=true --blame -c 
+    buildScript: dotnet build /p:SkipCuda=true -c
+    testScript: dotnet test --blame /p:SkipCuda=true --blame -c
     pool:
       vmImage: 'macos-10.15'
 
@@ -155,7 +164,7 @@ jobs:
     vmImage: 'windows-2019'
   steps:
 
-  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
+  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
   # yup we even nuke the .git
   - script: rmdir /q /s .git
     displayName: Clean up space (.git)
@@ -170,13 +179,13 @@ jobs:
     inputs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
-  
+
   - task: CopyFiles@2
     displayName: Copy linux native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets/libtorch-cpu-linux-x64
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-linux-x64
-  
+
   - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
     displayName: Free up space (LinuxAssets in workspace)
 
@@ -189,7 +198,7 @@ jobs:
     inputs:
       sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
-  
+
   - task: CopyFiles@2
     displayName: Copy mac native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
@@ -207,13 +216,13 @@ jobs:
     inputs:
       sourceFolder: $(Pipeline.Workspace)/WindowsAssets/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
-  
+
   - task: CopyFiles@2
     displayName: Copy windows native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/WindowsAssets/libtorch-cpu-win-x64
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-win-x64
-  
+
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
@@ -230,7 +239,7 @@ jobs:
     inputs:
       sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
       targetFolder: $(Build.ArtifactStagingDirectory)
- 
+
   - publish: $(Build.ArtifactStagingDirectory)
     displayName: Publish build packages
     artifact: BuildTorchSharpPackages
@@ -256,7 +265,7 @@ jobs:
     vmImage: 'windows-2019'
   steps:
 
-  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
+  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
   # yup we even nuke the .git
   - script: rmdir /q /s .git
     displayName: Clean up space (.git)
@@ -270,14 +279,14 @@ jobs:
     inputs:
       sourceFolder: $(Pipeline.Workspace)/WindowsAssets
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
-  
+
   - script: rmdir /s /q  $(Pipeline.Workspace)\WindowsAssets
     displayName: Free up space (windows assets in workspace)
 
   - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
     displayName: Create Packages
 
-  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
+  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
   - script: rmdir /q /s bin\obj
     displayName: Clean up space (bin\obj)
     continueOnError: true
@@ -287,11 +296,11 @@ jobs:
     inputs:
       sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
       targetFolder: $(Build.ArtifactStagingDirectory)
- 
+
   - publish: $(Build.ArtifactStagingDirectory)
     displayName: Publish Windows CUDA build packages
     artifact: BuildWinCUDAPackages
-  
+
 ################################################################################
 - job: Build_libtorch_cuda_linux_Packages
 ################################################################################
@@ -326,7 +335,7 @@ jobs:
         sudo apt-get -y install mono-devel
     displayName: Install dependencies
 
-  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
+  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
   # yup we even nuke the .git
   - script: rm -fr .git
     displayName: Clean up space (.git)
@@ -340,14 +349,14 @@ jobs:
     inputs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
-  
+
   - script: rm -fr  $(Pipeline.Workspace)/LinuxAssets
     displayName: Free up space (linux assets in workspace)
 
   - script: dotnet pack -c $(BuildConfig) --no-build -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=false /p:IncludeLibTorchCpuPackages=false /p:IncludeLibTorchCudaPackages=true src/TorchSharp/TorchSharp.csproj
     displayName: Create Packages
 
-  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can 
+  # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
   - script: rm -fr bin/obj
     displayName: Clean up space (bin/obj)
     continueOnError: true
@@ -357,11 +366,11 @@ jobs:
     inputs:
       sourceFolder: $(Build.SourcesDirectory)/bin/packages/$(BuildConfig)
       targetFolder: $(Build.ArtifactStagingDirectory)
- 
+
   - publish: $(Build.ArtifactStagingDirectory)
     displayName: Publish Linux CUDA build packages
     artifact: BuildLinuxCUDAPackages
-  
+
 ################################################################################
 - job: CodeSign_Core
 ################################################################################
@@ -401,10 +410,10 @@ jobs:
       --description 'TorchSharp' `
       --descriptionUrl 'https://github.com/dotnet/TorchSharp'
     displayName: Sign packages
-      
+
   - publish: $(Pipeline.Workspace)/BuildTorchSharpPackages
     displayName: Publish Signed TorchSharp Packages
-    artifact: SignedTorchSharpPackages    
+    artifact: SignedTorchSharpPackages
     continueOnError: true
 
   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildTorchSharpPackages
@@ -450,12 +459,12 @@ jobs:
       --description 'TorchSharp' `
       --descriptionUrl 'https://github.com/dotnet/TorchSharp'
     displayName: Sign packages
-      
+
   - publish: $(Pipeline.Workspace)/BuildWinCUDAPackages
     displayName: Publish Signed Windows CUDA Packages
-    artifact: SignedWinCUDAPackages    
+    artifact: SignedWinCUDAPackages
     continueOnError: true
-  
+
   - script: rmdir /s /q  $(Pipeline.Workspace)\BuildWinCUDAPackages
     displayName: Free up space (TorchSharp packages in workspace)
 
@@ -475,7 +484,7 @@ jobs:
       --description 'TorchSharp' `
       --descriptionUrl 'https://github.com/dotnet/TorchSharp'
     displayName: Sign packages
-      
+
   - publish: $(Pipeline.Workspace)/BuildLinuxCUDAPackages
     displayName: Publish Signed Linux CUDA Packages
     artifact: SignedLinuxCUDAPackages
@@ -683,7 +692,7 @@ jobs:
     displayName: Download Signed Linux CUDA Packages
     artifact: SignedLinuxCUDAPackages
 
-  # push the Linux Cuda packages 
+  # push the Linux Cuda packages
   - task: NuGetCommand@2
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
@@ -694,7 +703,7 @@ jobs:
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
 
-  # push the Linux Cuda packages 
+  # push the Linux Cuda packages
   - task: NuGetCommand@2
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
@@ -705,7 +714,7 @@ jobs:
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
 
-  # push the Linux Cuda packages 
+  # push the Linux Cuda packages
   - task: NuGetCommand@2
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
@@ -716,7 +725,7 @@ jobs:
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
 
-  # push the Linux Cuda packages 
+  # push the Linux Cuda packages
   - task: NuGetCommand@2
     displayName: 'NuGet push (cuda linux-x64)'
     inputs:
