@@ -4,6 +4,22 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.96.3
 
+In this release, the big change is support for .NET FX 4.7.2 and later.
+
+There are no breaking changes that we are aware of, but see the comment on API Changes below -- backporting code to .NET 4.7 or 4.8, which were not previously supported, may lead to errors in code that uses tensor indexing.
+
+__API Changes:__
+
+Due to the unavailability of `System.Range` in .NET FX 4.7, indexing of tensors using the `[a..b]` syntax is not available. In its place, we have added support for using tuples as index expressions, with the same semantics, except that the "from end" unary operator `^` of the C# range syntax is not available. The tuple syntax is also available for versions of .NET that do support `System.Range`
+
+A second piece of new functionality was to integrate @dayo05's work on DataLoader into the Examples. A couple of MNIST and CIFAR data sets are now found in `torchvision.datasets`
+
+__Fixed Bugs:__
+
+#529 pin_memory missing<br/>
+
+## NuGet Version 0.96.3
+
 __API Changes:__
 
 __NOTE__: This release contains breaking changes.<br/>

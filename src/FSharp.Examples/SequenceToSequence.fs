@@ -15,7 +15,7 @@ open type TorchSharp.torch.optim
 open TorchSharp.Examples
 
 // This example is based on the PyTorch tutorial at:
-// 
+//
 // https://pytorch.org/tutorials/beginner/transformer_tutorial.html
 //
 // It relies on the WikiText2 dataset, which can be downloaded at:
@@ -41,7 +41,7 @@ let logInterval = 200
 
 let cmdArgs = Environment.GetCommandLineArgs()
 
-let datasetPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1")
+let datasetPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1")
 
 torch.random.manual_seed(1L) |> ignore
 
@@ -86,7 +86,7 @@ type TransformerModel(ntokens, device:torch.Device) as this =
     let encoder = Embedding(ntokens, emsize)
     let decoder = Linear(emsize, ntokens)
 
-    let sqrEmSz = MathF.Sqrt(float32 emsize).ToScalar()
+    let sqrEmSz = Math.Sqrt(float emsize).ToScalar()
 
     do
         let initrange = 0.1
@@ -124,7 +124,7 @@ let process_input (iter:string seq) (tokenizer:string->string seq) (vocab:TorchT
                 if t.NumberOfElements > 0L then
                     t
         |], 0L)
-    
+
 let batchify (data:torch.Tensor) batchSize (device:torch.Device) =
     let nbatch = data.shape.[0] / batchSize
     let d2 = data.narrow(0L, 0L, nbatch * batchSize).view(batchSize, -1L).t()
@@ -169,7 +169,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
             optimizer.step() |> ignore
 
             total_loss <- total_loss + loss.cpu().item<float32>()
-        end 
+        end
 
         if (batch % logInterval = 0) && (batch > 0) then
             let cur_loss = (total_loss / (float32 logInterval)).ToString("0.00")
@@ -208,7 +208,7 @@ let evaluate (model:TransformerModel) (evalData:torch.Tensor) ntokens =
             let output = model.forward(data, src_mask)
             let loss = criterion (output.view(-1L, ntokens)) targets
             total_loss <- total_loss + (float32 data.shape.[0]) * loss.cpu().item<float32>()
-        end 
+        end
 
         batch <- batch + 1L
         i <- i + bptt
@@ -246,16 +246,7 @@ let run epochs =
     use model = new TransformerModel(ntokens, device)
     let lr = 2.50
 
-    let pgs = [|
-        SGD.ParamGroup(Parameters = model.parameters(), Options = SGD.Options(momentum = 1.0, dampening = 0.5));
-        SGD.ParamGroup(model.parameters(), momentum = 1.5, dampening = 0.1)
-    |]
-
-    let optimizer = SGD([|
-        SGD.ParamGroup(model.parameters(), momentum = 1.0, dampening = 0.5);
-        SGD.ParamGroup(model.parameters(), momentum = 1.5, dampening = 0.1)
-    |], lr)
-
+    let optimizer = SGD(model.parameters(), lr);
     let scheduler = lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch=15)
 
     let totalTime = Stopwatch()

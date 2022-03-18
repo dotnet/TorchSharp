@@ -14,7 +14,7 @@ namespace TorchSharp.Examples
 
     /// <summary>
     /// This example is based on the PyTorch tutorial at:
-    /// 
+    ///
     /// https://pytorch.org/tutorials/beginner/transformer_tutorial.html
     ///
     /// It relies on the WikiText2 dataset, which can be downloaded at:
@@ -26,7 +26,11 @@ namespace TorchSharp.Examples
     public class SequenceToSequence
     {
         // This path assumes that you're running this on Windows.
+#if NET472_OR_GREATER
+        private readonly static string _dataLocation = NSPath.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1");
+#else
         private readonly static string _dataLocation = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "..", "Downloads", "wikitext-2-v1");
+#endif // NET472_OR_GREATER
 
         private const long emsize = 200;
         private const long nhid = 200;
@@ -133,7 +137,7 @@ namespace TorchSharp.Examples
                         total_loss += loss.to(torch.CPU).item<float>();
                     }
 
-                    if (batch % log_interval == 0 && batch > 0) {
+                    if ((batch % log_interval == 0 && batch > 0) || (batch == tdlen / bptt)) {
                         var cur_loss = total_loss / log_interval;
                         Console.WriteLine($"epoch: {epoch} | batch: {batch} / {tdlen / bptt} | loss: {cur_loss:0.00}");
                         total_loss = 0;

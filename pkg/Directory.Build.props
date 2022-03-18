@@ -14,7 +14,7 @@
     <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
     <Copyright>Copyright PyTorch contributors</Copyright>
     <Owners>.NET Foundation and Contributors</Owners>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework Condition="'$(SkipSettingTargetFrameworkInGlobalProps)' != 'true'">netstandard2.0</TargetFramework>
     <PackageDescription>TorchSharp makes PyTorch available for .NET users. $(MSBuildProjectName) contains components of the PyTorch LibTorch library version $(LibTorchVersion) redistributed as a NuGet package with added support for TorchSharp.</PackageDescription>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
@@ -38,7 +38,7 @@
     <PackageTags>TorchSharp LibTorch PyTorch Torch DL DNN Deep ML Machine Learning Neural Network</PackageTags>
     <Copyright>Copyright .NET Foundation and Contributors</Copyright>
     <Owners>.NET Foundation and Contributors</Owners>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework Condition="'$(SkipSettingTargetFrameworkInGlobalProps)' != 'true'">netstandard2.0</TargetFramework>
     <PackageDescription>TorchSharp makes PyTorch available for .NET users.</PackageDescription>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
@@ -73,7 +73,7 @@
     <Content Remove="$(PackagePreparationPath)$(PackageIdFolderName)\**\*.dwarf" />
     <Content Remove="$(PackagePreparationPath)$(PackageIdFolderName)\**\*.dbg" />
   </ItemGroup>
-  
+
   <!-- Work around https://github.com/NuGet/Home/issues/6091 -->
   <ItemDefinitionGroup>
     <PackageReference>

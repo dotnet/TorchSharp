@@ -119,50 +119,60 @@ namespace TorchSharp
                         public bool MoveNext()
                         {
                             DisposeCurrent();
-                            if (!MoveNextValue()) return false;
+                            using (var scope = DisposeScopeManager.NewDisposeScope()) {
+                                if (!MoveNextValue()) return false;
 
-                            var tensorIndexList = new List<long> {currentVal};
-                            for (int i = 1; i < batchSize; i++) {
-                                if (!MoveNextValue()) break;
-                                tensorIndexList.Add(currentVal);
-                            }
-
-                            var dic = new List<Dictionary<string, Tensor>>(new Dictionary<string, Tensor>[tensorIndexList.Count]);
-                            var taskedBatchCount = 0;
-                            var taskBatchLock = new object();
-
-                            //Run Async
-                            var tasks = new List<Task>();
-                            foreach (var _ in Enumerable.Range(1, num_worker - 1))
-                                tasks.Add(new(ProcessPendingBatches));
-                            tasks.ForEach(x => x.Start());
-
-                            ProcessPendingBatches();
-
-                            foreach (var task in tasks)
-                                task.Wait();
-
-                            Current = new();
-                            foreach (var x in dic.First(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ).Keys)
-                                Current[x] = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0).to(device);
-                            return true;
-
-                            void ProcessPendingBatches()
-                            {
-                                while (true) {
-                                    var idx = ScheduleBatch();
-                                    if (idx is null) break;
-                                    dic[idx.Value.Item1] = dataset.GetTensor(idx.Value.Item2);
+                                var tensorIndexList = new List<long> {currentVal};
+                                for (int i = 1; i < batchSize; i++) {
+                                    if (!MoveNextValue()) break;
+                                    tensorIndexList.Add(currentVal);
                                 }
-                            }
 
-                            (int, long)? ScheduleBatch()
-                            {
-                                lock (taskBatchLock) {
-                                    if (taskedBatchCount < tensorIndexList.Count)
-                                        return (taskedBatchCount, tensorIndexList[taskedBatchCount++]);
+                                var dic = new List<Dictionary<string, Tensor>>(
+                                    new Dictionary<string, Tensor>[tensorIndexList.Count]);
+                                var taskedBatchCount = 0;
+                                var taskBatchLock = new object();
+
+                                //Run Async
+                                var tasks = new List<Task>();
+                                foreach (var _ in Enumerable.Range(1, num_worker - 1))
+                                    tasks.Add(new(ProcessPendingBatches));
+                                tasks.ForEach(x => x.Start());
+
+                                ProcessPendingBatches();
+
+                                foreach (var task in tasks)
+                                    task.Wait();
+
+                                Current = new();
+                                foreach (var x in dic.First().Keys) {
+                                    var t = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0);
+                                    if (t.device_type != device.type || t.device_index != device.index)
+                                        t = t.to(device);
+                                    scope.MoveToOuter(t);
+                                    Current[x] = t;
                                 }
-                                return null;
+
+                                return true;
+
+                                void ProcessPendingBatches()
+                                {
+                                    while (true) {
+                                        var idx = ScheduleBatch();
+                                        if (idx is null) break;
+                                        dic[idx.Value.Item1] = dataset.GetTensor(idx.Value.Item2);
+                                    }
+                                }
+
+                                (int, long)? ScheduleBatch()
+                                {
+                                    lock (taskBatchLock) {
+                                        if (taskedBatchCount < tensorIndexList.Count)
+                                            return (taskedBatchCount, tensorIndexList[taskedBatchCount++]);
+                                    }
+
+                                    return null;
+                                }
                             }
                         }
 

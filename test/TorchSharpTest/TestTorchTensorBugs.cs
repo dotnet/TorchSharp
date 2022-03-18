@@ -19,6 +19,9 @@ namespace TorchSharp
     // The tests in this file are all derived from reported GitHub Issues, serving
     // as regression tests.
 
+#if NET472_OR_GREATER
+    [Collection("Sequential")]
+#endif // NET472_OR_GREATER
     public class TestTorchTensorBugs
     {
 
@@ -481,7 +484,7 @@ namespace TorchSharp
 
             public Module510(int in_channels, int out_channels, int kernel_size=3, int stride = 1, int padding = 0) : base(String.Empty)
             {
-                var temp = BatchNorm1d(out_channels);               
+                var temp = BatchNorm1d(out_channels);
                 this.stack = Sequential(
                     Conv1d(in_channels, out_channels, 3, stride: stride, padding: padding, bias: false),
                     temp,

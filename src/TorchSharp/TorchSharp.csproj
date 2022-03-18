@@ -3,7 +3,7 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-      <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+      <TargetFrameworks>netcoreapp3.1;netstandard2.0</TargetFrameworks>
       <IncludeInPackage>TorchSharp</IncludeInPackage>
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
       <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
@@ -14,6 +14,10 @@
 
   <ItemGroup>
     <None Remove="Tensor\TensorTyped.tt" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'" >
+    <Compile Remove="netstandard.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,16 +48,21 @@
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
- <!-- Trigger the download+placement of the redist bits and the build of the C++ project -->
-  <Target Name="BeforeBuild">
+  <!-- Trigger the download+placement of the redist bits and the build of the C++ project -->
+  <Target Name="BuildNativeLibTorch" BeforeTargets="BeforeBuild" >
     <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
     <Message Importance="High" Text="Using Version = $(Version)" />
-    <MSBuild Projects="..\Redist\libtorch-cuda-$(CudaVersionDot)\libtorch-cuda-$(CudaVersionDot).proj" Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'" Targets="Build" />
+    <MSBuild Projects="..\Redist\libtorch-cuda-$(CudaVersionDot)\libtorch-cuda-$(CudaVersionDot).proj"
+            Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'"
+            RemoveProperties="TargetFramework"
+            Targets="Build" />
 
-    <MSBuild Projects="..\Redist\libtorch-cpu\libtorch-cpu.proj" Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" Targets="Build" />
+    <MSBuild Projects="..\Redist\libtorch-cpu\libtorch-cpu.proj"
+             Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'"
+             RemoveProperties="TargetFramework"
+             Targets="Build" />
 
-    <MSBuild Projects="..\Native\build.proj" Condition="'$(SkipNative)' != 'true'" Targets="Build" />
-
+    <MSBuild Projects="..\Native\build.proj" Condition="'$(SkipNative)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
   </Target>
 
   <Target Name="RealPack">
