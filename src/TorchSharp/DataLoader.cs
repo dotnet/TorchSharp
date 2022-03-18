@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TorchSharp.Utils;
 
@@ -131,7 +132,6 @@ namespace TorchSharp
                                 var dic = new List<Dictionary<string, Tensor>>(
                                     new Dictionary<string, Tensor>[tensorIndexList.Count]);
                                 var taskedBatchCount = 0;
-                                var taskBatchLock = new object();
 
                                 //Run Async
                                 var tasks = new List<Task>();
@@ -166,11 +166,9 @@ namespace TorchSharp
 
                                 (int, long)? ScheduleBatch()
                                 {
-                                    lock (taskBatchLock) {
-                                        if (taskedBatchCount < tensorIndexList.Count)
-                                            return (taskedBatchCount, tensorIndexList[taskedBatchCount++]);
-                                    }
-
+                                    var t = Interlocked.Increment(ref taskedBatchCount) - 1;
+                                    if (t < tensorIndexList.Count)
+                                        return (t, tensorIndexList[t]);
                                     return null;
                                 }
                             }
