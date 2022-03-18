@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using TorchSharp.Utils;
 
 namespace TorchSharp
@@ -128,40 +129,40 @@ namespace TorchSharp
                                 tensorIndexList.Add(currentVal);
                             }
 
-                            if (!shuffle)
-                                tensorIndexList.Reverse(); // ConcurrentBag::Add inserts data into first of the collections. So, I'll reverse them.
-
-                            ConcurrentBag<Dictionary<string, Tensor>> dic = new();
+                            var dic = new List<Dictionary<string, Tensor>>(new Dictionary<string, Tensor>[tensorIndexList.Count]);
                             var taskedBatchCount = 0;
                             var taskBatchLock = new object();
 
                             //Run Async
-                            foreach(var _ in Enumerable.Range(1, num_worker - 1))
-                                ThreadPool.QueueUserWorkItem(CreateBatch);
+                            var tasks = new List<Task>();
+                            foreach (var _ in Enumerable.Range(1, num_worker - 1))
+                                tasks.Add(new(ProcessPendingBatches));
+                            tasks.ForEach(x => x.Start());
 
-                            CreateBatch(null);
+                            ProcessPendingBatches();
 
-                            while (dic.Count < tensorIndexList.Count) { } //Wait for tensors ready
+                            foreach (var task in tasks)
+                                task.Wait();
 
                             Current = new();
-                            foreach (var x in dic.First().Keys)
+                            foreach (var x in dic.First(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ).Keys)
                                 Current[x] = cat(dic.Select(k => k[x].unsqueeze(0)).ToArray(), 0).to(device);
                             return true;
 
-                            void CreateBatch(object _)
+                            void ProcessPendingBatches()
                             {
                                 while (true) {
-                                    var idx = TaskBatch();
+                                    var idx = ScheduleBatch();
                                     if (idx is null) break;
-                                    dic.Add(dataset.GetTensor(idx.Value));
+                                    dic[idx.Value.Item1] = dataset.GetTensor(idx.Value.Item2);
                                 }
                             }
 
-                            long? TaskBatch()
+                            (int, long)? ScheduleBatch()
                             {
                                 lock (taskBatchLock) {
                                     if (taskedBatchCount < tensorIndexList.Count)
-                                        return tensorIndexList[taskedBatchCount++];
+                                        return (taskedBatchCount, tensorIndexList[taskedBatchCount++]);
                                     return null;
                                 }
                             }
