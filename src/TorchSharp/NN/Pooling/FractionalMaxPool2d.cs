@@ -10,7 +10,7 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// This class is used to represent a MaxPool2D module.
+        /// This class is used to represent a FractionalMaxPool2D module.
         /// </summary>
         public class FractionalMaxPool2d : torch.nn.Module
         {
@@ -48,7 +48,10 @@ namespace TorchSharp
             extern static IntPtr THSNN_FractionalMaxPool2d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pOutputSize, int sizeLength, IntPtr pOutputRatio, int ratioLength, out IntPtr pBoxedModule);
 
             /// <summary>
-            /// Applies a 2D max pooling over an input signal composed of several input planes.
+            /// Applies a 2D fractional max pooling over an input signal composed of several input planes.
+            ///
+            /// Fractional MaxPooling is described in detail in the paper Fractional MaxPooling by Ben Graham,
+            /// see: https://arxiv.org/abs/1412.6071
             /// </summary>
             /// <param name="kernel_size">The size of the sliding window, must be > 0.</param>
             /// <param name="output_size">The target output size of the image of the form oH x oW. Can be a tuple (oH, oW) or a single number oH for a square image oH x oH</param>
@@ -62,7 +65,10 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Applies a 2D max pooling over an input signal composed of several input planes.
+            /// Applies a 2D fractional max pooling over an input signal composed of several input planes.
+            ///
+            /// Fractional MaxPooling is described in detail in the paper Fractional MaxPooling by Ben Graham,
+            /// see: https://arxiv.org/abs/1412.6071
             /// </summary>
             /// <param name="kernel_size">The size of the sliding window, must be > 0.</param>
             /// <param name="output_size">The target output size of the image of the form oH x oW. Can be a tuple (oH, oW) or a single number oH for a square image oH x oH</param>
@@ -76,7 +82,10 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Applies a 2D max pooling over an input signal composed of several input planes.
+            /// Applies a 2D fractional max pooling over an input signal composed of several input planes.
+            ///
+            /// Fractional MaxPooling is described in detail in the paper Fractional MaxPooling by Ben Graham,
+            /// see: https://arxiv.org/abs/1412.6071
             /// </summary>
             /// <param name="kernel_size">The size of the sliding window, must be > 0.</param>
             /// <param name="output_size">The target output size of the image of the form oH x oW. Can be a tuple (oH, oW) or a single number oH for a square image oH x oH</param>
