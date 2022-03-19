@@ -1989,6 +1989,134 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestFractionalMaxPool2D_1()
+        {
+            Tensor ones = torch.ones(new long[] { 16, 24, 24 });
+            using (var pool = FractionalMaxPool2d(2, 12)) {
+                var pooled = pool.forward(ones);
+                var expShape = new long[] { 16, 12, 12 };
+                Assert.Equal(expShape, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+
+                var witIdx = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, witIdx.Values.shape);
+                Assert.Equal(expShape, witIdx.Indices.shape);
+            }
+            using (var pool = FractionalMaxPool2d((2, 2), (12, 16))) {
+                var pooled = pool.forward(ones);
+                var expShape = new long[] { 16, 12, 16 };
+                Assert.Equal(expShape, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+
+                var witIdx = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, witIdx.Values.shape);
+                Assert.Equal(expShape, witIdx.Indices.shape);
+            }
+        }
+
+        [Fact]
+        public void TestFractionalMaxPool2D_2()
+        {
+            Tensor ones = torch.ones(new long[] { 16, 24, 24 });
+            using (var pool = FractionalMaxPool2d(2, output_ratio: 0.5)) {
+                var pooled = pool.forward(ones);
+                var expShape = new long[] { 16, 12, 12 };
+                Assert.Equal(expShape, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+
+                var witIdx = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, witIdx.Values.shape);
+                Assert.Equal(expShape, witIdx.Indices.shape);
+            }
+            using (var pool = FractionalMaxPool2d((2, 2), output_ratio: (0.5, 2.0 / 3.0))) {
+                var pooled = pool.forward(ones);
+                var expShape = new long[] { 16, 12, 16 };
+                Assert.Equal(expShape, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+
+                var witIdx = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, witIdx.Values.shape);
+                Assert.Equal(expShape, witIdx.Indices.shape);
+            }
+        }
+
+        [Fact]
+        public void TestFractionalMaxPool3D_1()
+        {
+            Tensor ones = torch.ones(new long[] { 16, 24, 24, 24 });
+            using (var pool = FractionalMaxPool3d(2, 12)) {
+                var pooled = pool.forward(ones);
+                var expShape = new long[] { 16, 12, 12, 12 };
+                Assert.Equal(expShape, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+
+                var witIdx = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, witIdx.Values.shape);
+                Assert.Equal(expShape, witIdx.Indices.shape);
+            }
+            using (var pool = FractionalMaxPool3d((2, 2, 2), (12, 16, 20))) {
+                var pooled = pool.forward(ones);
+                var expShape = new long[] { 16, 12, 16, 20 };
+                Assert.Equal(expShape, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+
+                var witIdx = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, witIdx.Values.shape);
+                Assert.Equal(expShape, witIdx.Indices.shape);
+            }
+        }
+
+        [Fact]
+        public void TestFractionalMaxPool3D_2()
+        {
+            Tensor ones = torch.ones(new long[] { 16, 3, 24, 24, 24 });
+            using (var pool = FractionalMaxPool3d(2, output_ratio: 0.5)) {
+                var pooled = pool.forward(ones);
+                var expShape = new long[] { 16, 3, 12, 12, 12 };
+                Assert.Equal(expShape, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1, 0, 0].ToSingle());
+
+                var witIdx = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, witIdx.Values.shape);
+                Assert.Equal(expShape, witIdx.Indices.shape);
+            }
+            using (var pool = FractionalMaxPool3d((2, 2, 2), output_ratio: (0.5, 2.0 / 3.0, 5.0 / 6.0))) {
+                var pooled = pool.forward(ones);
+                var expShape = new long[] { 16, 3, 12, 16, 20 };
+                Assert.Equal(expShape, pooled.shape);
+                Assert.Equal(1, pooled[0, 0, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 0, 1, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 0, 0, 0].ToSingle());
+                Assert.Equal(1, pooled[0, 1, 1, 0, 0].ToSingle());
+
+                var witIdx = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, witIdx.Values.shape);
+                Assert.Equal(expShape, witIdx.Indices.shape);
+            }
+        }
+
+        [Fact]
         public void TestAvgPool1D_1()
         {
             Tensor ones = torch.ones(new long[] { 16, 3, 4 });

@@ -2,7 +2,7 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.96.3
+## NuGet Version 0.96.4
 
 In this release, the big change is support for .NET FX 4.7.2 and later.
 
@@ -16,7 +16,9 @@ A second piece of new functionality was to integrate @dayo05's work on DataLoade
 
 __Fixed Bugs:__
 
+#519 Multiprocessing dataloader support<br/>
 #529 pin_memory missing<br/>
+#545 Implement FractionalMaxPool{23}d<br/>
 
 ## NuGet Version 0.96.3
 
