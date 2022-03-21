@@ -139,9 +139,14 @@ Tensor THSTensor_broadcast_to(const Tensor tensor, const int64_t* shape, const i
     CATCH_TENSOR(tensor->broadcast_to(at::ArrayRef<int64_t>(shape, shape_len)));
 }
 
-EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundaries, const bool out_int32, const bool right)
+Tensor THSTensor_bucketize(const Tensor tensor, const Tensor boundaries, const bool out_int32, const bool right)
 {
     CATCH_TENSOR(torch::bucketize(*tensor, *boundaries, out_int32, right));
+}
+
+Tensor THSTensor_channel_shuffle(const Tensor tensor, const int64_t groups)
+{
+    CATCH_TENSOR(torch::channel_shuffle(*tensor, groups));
 }
 
 double THSTensor_clip_grad_norm_(const Tensor* tensors, const int length, const double max_norm, const double norm_type)

@@ -14,11 +14,17 @@ Due to the unavailability of `System.Range` in .NET FX 4.7, indexing of tensors 
 
 A second piece of new functionality was to integrate @dayo05's work on DataLoader into the Examples. A couple of MNIST and CIFAR data sets are now found in `torchvision.datasets`
 
+A number of the "bugs" listed below represent missing APIs.
+
 __Fixed Bugs:__
 
 #519 Multiprocessing dataloader support<br/>
 #529 pin_memory missing<br/>
 #545 Implement FractionalMaxPool{23}d<br/>
+#554 Implement MaxUnpool{123}d<br/>
+#555 Implement LPPool{12}d<br/>
+#556 Implement missing activation modules<br/>
+#559 Implement miscellaneous missing layers.<br/>
 
 ## NuGet Version 0.96.3
 

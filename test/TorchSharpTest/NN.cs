@@ -317,6 +317,16 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EvaluateGLU()
+        {
+            var rel = GLU();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(new long[] { 8, 8, 4 }, output.shape);
+        }
+
+        [Fact]
         public void EvaluateSELU()
         {
             var rel = SELU();
@@ -336,6 +346,36 @@ namespace TorchSharp
             var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= -0.2));
+        }
+
+        [Fact]
+        public void EvaluateHardshrink()
+        {
+            var rel = Hardshrink();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, new long[] { 8, 8, 8 });
+        }
+
+        [Fact]
+        public void EvaluateHardsigmoid()
+        {
+            var rel = Hardsigmoid();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, new long[] { 8, 8, 8 });
+        }
+
+        [Fact]
+        public void EvaluateHardtanh()
+        {
+            var rel = Hardtanh();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, new long[] { 8, 8, 8 });
         }
 
         [Fact]
@@ -402,6 +442,56 @@ namespace TorchSharp
             var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+        }
+
+        [Fact]
+        public void EvaluateSoftplus()
+        {
+            var rel = Softplus();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
+        public void EvaluateSoftshrink()
+        {
+            var rel = Softshrink();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
+        public void EvaluateSoftsign()
+        {
+            var rel = Softsign();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
+        public void EvaluateTanhshrink()
+        {
+            var rel = Tanhshrink();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
+        public void EvaluateThreshold()
+        {
+            var rel = Threshold(0.1, 0.0);
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
         }
         #endregion
 

@@ -288,6 +288,12 @@ EXPORT_API(NNModule) THSNN_ELU_ctor(const double alpha, const bool inplace, NNAn
 EXPORT_API(Tensor)   THSNN_ELU_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_GELU_ctor(NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_GELU_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_GLU_ctor(const int64_t dim, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_GLU_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Hardshrink_ctor(const double lambda, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Hardshrink_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Hardtanh_ctor(const double min_val, const double max_val, const bool inplace, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Hardtanh_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_LeakyReLU_ctor(const double negative_sloope, const bool inplace, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_LeakyReLU_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_Mish_ctor(NNAnyModule* outAsAnyModule);
@@ -312,8 +318,18 @@ EXPORT_API(NNModule) THSNN_Softmax2d_ctor(NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Softmax2d_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_Softmin_ctor(const int64_t dim, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Softmin_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Softplus_ctor(const double beta, const double threshold, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Softplus_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Softshrink_ctor(const double lambda, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Softshrink_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Softsign_ctor(NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Softsign_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_Tanh_ctor(NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Tanh_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Tanhshrink_ctor(NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Tanhshrink_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_Threshold_ctor(const double threshold, const double value, const bool inplace, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_Threshold_forward(const NNModule module, const Tensor tensor);
 
 // Sparse
 

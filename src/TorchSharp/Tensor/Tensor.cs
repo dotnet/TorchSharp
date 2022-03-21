@@ -2691,6 +2691,22 @@ namespace TorchSharp
 
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_channel_shuffle(IntPtr input, long groups);
+
+            /// <summary>
+            /// Divide the channels in a tensor into g groups and rearrange them.
+            ///
+            /// See: https://pytorch.org/docs/1.10/generated/torch.nn.ChannelShuffle.html#channelshuffle
+            /// </summary>
+            /// <param name="groups">The number of groups to divide channels in.</param>
+            public Tensor channel_shuffle(long groups)
+            {
+                var res = THSTensor_channel_shuffle(Handle, groups);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_clamp(IntPtr input, IntPtr min, IntPtr max);
 
             [DllImport("LibTorchSharp")]

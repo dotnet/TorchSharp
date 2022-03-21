@@ -208,6 +208,8 @@ EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundar
 
 EXPORT_API(Tensor) THSTensor_cat(const Tensor* tensor, const int length, const int64_t dim);
 
+EXPORT_API(Tensor) THSTensor_channel_shuffle(const Tensor tensor, const int64_t groups);
+
 EXPORT_API(double) THSTensor_clip_grad_norm_(const Tensor* tensor, const int length, const double max_norm, const double norm_type);
 
 EXPORT_API(Tensor) THSTensor_clone(const Tensor input);
