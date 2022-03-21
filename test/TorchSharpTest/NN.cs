@@ -317,6 +317,16 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EvaluateGLU()
+        {
+            var rel = GLU();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(new long[] { 8, 8, 4 }, output.shape);
+        }
+
+        [Fact]
         public void EvaluateSELU()
         {
             var rel = SELU();
@@ -336,6 +346,36 @@ namespace TorchSharp
             var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= -0.2));
+        }
+
+        [Fact]
+        public void EvaluateHardshrink()
+        {
+            var rel = Hardshrink();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, new long[] { 8, 8, 8 });
+        }
+
+        [Fact]
+        public void EvaluateHardsigmoid()
+        {
+            var rel = Hardsigmoid();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, new long[] { 8, 8, 8 });
+        }
+
+        [Fact]
+        public void EvaluateHardtanh()
+        {
+            var rel = Hardtanh();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, new long[] { 8, 8, 8 });
         }
 
         [Fact]
@@ -402,6 +442,56 @@ namespace TorchSharp
             var values = output.data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+        }
+
+        [Fact]
+        public void EvaluateSoftplus()
+        {
+            var rel = Softplus();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
+        public void EvaluateSoftshrink()
+        {
+            var rel = Softshrink();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
+        public void EvaluateSoftsign()
+        {
+            var rel = Softsign();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
+        public void EvaluateTanhshrink()
+        {
+            var rel = Tanhshrink();
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
+        }
+
+        [Fact]
+        public void EvaluateThreshold()
+        {
+            var rel = Threshold(0.1, 0.0);
+            var input = torch.randn(new long[] { 8, 8, 8 });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(input.shape, output.shape);
         }
         #endregion
 
@@ -1742,9 +1832,9 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 0, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 0].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
+                var (output, indices) = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
             }
         }
 
@@ -1810,9 +1900,9 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 1].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
+                var (output, indices) = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
             }
         }
 
@@ -1912,9 +2002,9 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
+                var (output, indices) = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
             }
         }
 
@@ -2001,9 +2091,9 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 1].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
+                var (output, indices) = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
             }
             using (var pool = FractionalMaxPool2d((2, 2), (12, 16))) {
                 var pooled = pool.forward(ones);
@@ -2014,9 +2104,9 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 1].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
+                var (output, indices) = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
             }
         }
 
@@ -2033,9 +2123,9 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 1].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
+                var (output, indices) = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
             }
             using (var pool = FractionalMaxPool2d((2, 2), output_ratio: (0.5, 2.0 / 3.0))) {
                 var pooled = pool.forward(ones);
@@ -2046,9 +2136,9 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 1].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
+                var (output, indices) = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
             }
         }
 
@@ -2065,9 +2155,9 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
+                var (output, indices) = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
             }
             using (var pool = FractionalMaxPool3d((2, 2, 2), (12, 16, 20))) {
                 var pooled = pool.forward(ones);
@@ -2078,9 +2168,9 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
+                var (output, indices) = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
             }
         }
 
@@ -2097,11 +2187,12 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0, 0, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 1, 0, 0].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
+                var (output, indices) = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
             }
             using (var pool = FractionalMaxPool3d((2, 2, 2), output_ratio: (0.5, 2.0 / 3.0, 5.0 / 6.0))) {
+
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 3, 12, 16, 20 };
                 Assert.Equal(expShape, pooled.shape);
@@ -2110,10 +2201,110 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0, 0, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 1, 0, 0].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
+                var (output, indices) = pool.forward_with_indices(ones);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
             }
+        }
+
+        [Fact]
+        public void TestMaxUnpool1D_1()
+        {
+            Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8 }).reshape(1, 1, 8);
+
+            using var pool = MaxPool1d(2, 2);
+            using var unpool = MaxUnpool1d(2, 2);
+
+            var expShape = new long[] { 1, 1, 4 };
+
+            var (output, indices) = pool.forward_with_indices(input);
+            Assert.Equal(expShape, output.shape);
+            Assert.Equal(expShape, indices.shape);
+
+            var result = unpool.forward(output, indices);
+            Tensor expected = torch.tensor(new float[] { 0, 2, 0, 4, 0, 6, 0, 8 }).reshape(1, 1, 8);
+            Assert.Equal(input.shape, result.shape);
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void TestMaxUnpool2D_1()
+        {
+            Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }).reshape(1, 1, 4, 4);
+
+            using var pool = MaxPool2d(2, 2);
+            using var unpool = MaxUnpool2d(2, 2);
+
+            var expShape = new long[] { 1, 1, 2, 2 };
+
+            var (output, indices) = pool.forward_with_indices(input);
+            Assert.Equal(expShape, output.shape);
+            Assert.Equal(expShape, indices.shape);
+
+            var result = unpool.forward(output, indices);
+            Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 6, 0, 8, 0, 0, 0, 0, 0, 14, 0, 16 }).reshape(1, 1, 4, 4);
+            Assert.Equal(input.shape, result.shape);
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void TestMaxUnpool2D_2()
+        {
+            Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 }).reshape(1, 1, 4, 5);
+
+            using var pool = MaxPool2d(2, 2);
+            using var unpool = MaxUnpool2d(2, 2);
+
+            var expShape = new long[] { 1, 1, 2, 2 };
+
+            var (output, indices) = pool.forward_with_indices(input);
+            Assert.Equal(expShape, output.shape);
+            Assert.Equal(expShape, indices.shape);
+
+            var result = unpool.forward(output, indices, output_size: input.shape);
+            Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 0, 7, 0, 9, 0, 0, 0, 0, 0, 0, 0, 17, 0, 19, 0 }).reshape(1, 1, 4, 5);
+            Assert.Equal(input.shape, result.shape);
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void TestMaxUnpool3D_1()
+        {
+            Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }).reshape(1, 1, 2, 2, 4);
+
+            using var pool = MaxPool3d(2, 2);
+            using var unpool = MaxUnpool3d(2, 2);
+
+            var expShape = new long[] { 1, 1, 1, 1, 2 };
+
+            var (output, indices) = pool.forward_with_indices(input);
+            Assert.Equal(expShape, output.shape);
+            Assert.Equal(expShape, indices.shape);
+
+            var result = unpool.forward(output, indices);
+            Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 16 }).reshape(1, 1, 2, 2, 4);
+            Assert.Equal(input.shape, result.shape);
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void TestMaxUnpool3D_2()
+        {
+            Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 }).reshape(1, 1, 2, 2, 5);
+
+            using var pool = MaxPool3d(2, 2);
+            using var unpool = MaxUnpool3d(2, 2);
+
+            var expShape = new long[] { 1, 1, 1, 1, 2 };
+
+            var (output, indices) = pool.forward_with_indices(input);
+            Assert.Equal(expShape, output.shape);
+            Assert.Equal(expShape, indices.shape);
+
+            var result = unpool.forward(output, indices, output_size: input.shape);
+            Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 19, 0 }).reshape(1, 1, 2, 2, 5);
+            Assert.Equal(input.shape, result.shape);
+            Assert.Equal(expected, result);
         }
 
         [Fact]
@@ -2235,6 +2426,82 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 0, 2, 0, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 0, 2, 1, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 0, 2, 2, 0].ToSingle());
+            }
+        }
+
+        static float sqrt2 = (float)Math.Sqrt(2.0); // Can't use MathF because of .NET FX 4.7
+
+        [Fact]
+        public void TestLPPool1D_1()
+        {
+            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
+            using (var pool = LPPool1d(2, 2)) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 3, 2 }, pooled.shape);
+                Assert.Equal(sqrt2, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(sqrt2, pooled[0, 1, 0].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestLPPool1D_2()
+        {
+            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
+            using (var pool = LPPool1d(2, 2, 1)) {
+                var pooled = pool.forward(ones);
+
+                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                Assert.Equal(sqrt2, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(sqrt2, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(sqrt2, pooled[0, 2, 0].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestLPPool2D_1()
+        {
+            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
+            using (var pool = LPPool2d(2, new long[] { 2, 2 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 2, 2 }, pooled.shape);
+                Assert.Equal(2, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(2, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(2, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(2, pooled[0, 1, 1].ToSingle());
+            }
+        }
+
+        [Fact]
+        public void TestLPPool2D_2()
+        {
+            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
+            using (var pool = LPPool2d(2, new long[] { 2, 2 }, new long[] { 1, 1 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                Assert.Equal(2, pooled[0, 0, 0].ToSingle());
+                Assert.Equal(2, pooled[0, 0, 1].ToSingle());
+                Assert.Equal(2, pooled[0, 0, 2].ToSingle());
+                Assert.Equal(2, pooled[0, 1, 0].ToSingle());
+                Assert.Equal(2, pooled[0, 1, 1].ToSingle());
+                Assert.Equal(2, pooled[0, 1, 2].ToSingle());
+                Assert.Equal(2, pooled[0, 2, 0].ToSingle());
+                Assert.Equal(2, pooled[0, 2, 1].ToSingle());
+                Assert.Equal(2, pooled[0, 2, 2].ToSingle());
+            }
+
+            ones = torch.ones(new long[] { 16, 4, 4, 4 });
+            using (var pool = LPPool2d(2, new long[] { 2, 2 }, new long[] { 1, 1 })) {
+                var pooled = pool.forward(ones);
+                Assert.Equal(new long[] { 16, 4, 3, 3 }, pooled.shape);
+                Assert.Equal(2, pooled[0, 0, 0, 0].ToSingle());
+                Assert.Equal(2, pooled[0, 0, 0, 1].ToSingle());
+                Assert.Equal(2, pooled[0, 0, 0, 2].ToSingle());
+                Assert.Equal(2, pooled[0, 0, 1, 0].ToSingle());
+                Assert.Equal(2, pooled[0, 0, 1, 1].ToSingle());
+                Assert.Equal(2, pooled[0, 0, 1, 2].ToSingle());
+                Assert.Equal(2, pooled[0, 0, 2, 0].ToSingle());
+                Assert.Equal(2, pooled[0, 0, 2, 1].ToSingle());
+                Assert.Equal(2, pooled[0, 0, 2, 2].ToSingle());
             }
         }
         #endregion
