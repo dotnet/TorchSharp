@@ -242,3 +242,289 @@ Tensor THSNN_triplet_margin_with_distance_loss(const Tensor anchor, const Tensor
         res = ResultTensor(torch::nn::functional::triplet_margin_with_distance_loss(*anchor, *positive, *negative, opts));
     )
 }
+
+NNModule THSNN_L1Loss_ctor(const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::L1LossOptions();
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::L1LossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_L1Loss_forward(const NNModule module, const Tensor tensor, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::L1Loss>()->forward(*tensor, *target));
+}
+
+NNModule THSNN_MSELoss_ctor(const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MSELossOptions();
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::MSELossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_MSELoss_forward(const NNModule module, const Tensor tensor, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::MSELoss>()->forward(*tensor, *target));
+}
+
+NNModule THSNN_CrossEntropyLoss_ctor(const Tensor weight, const int64_t ignore_index, const bool has_ii, const double label_smoothing, const bool has_ls, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::CrossEntropyLossOptions();
+        ApplyReduction(opts, reduction);
+        if (has_ii)
+            opts = opts.ignore_index(ignore_index);
+        if (has_ls)
+            opts = opts.label_smoothing(label_smoothing);
+        if (weight != NULL)
+            opts = opts.weight(*weight);
+        res = create_module<torch::nn::CrossEntropyLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_CrossEntropyLoss_forward(const NNModule module, const Tensor tensor, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::CrossEntropyLoss>()->forward(*tensor, *target));
+}
+
+NNModule THSNN_CTCLoss_ctor(const int64_t blank, const int64_t reduction, bool zero_infinity, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::CTCLossOptions().blank(blank).zero_infinity(zero_infinity);
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::CTCLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_CTCLoss_forward(const NNModule module, const Tensor log_probs, const Tensor targets, const Tensor input_lengths, const Tensor target_lengths)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::CTCLoss>()->forward(*log_probs, *targets, *input_lengths, *target_lengths));
+}
+
+NNModule THSNN_NLLLoss_ctor(const Tensor weight, const int64_t ignore_index, const bool has_ii, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::NLLLossOptions();
+        ApplyReduction(opts, reduction);
+        if (has_ii)
+            opts = opts.ignore_index(ignore_index);
+        if (weight != NULL)
+            opts = opts.weight(*weight);
+        res = create_module<torch::nn::NLLLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_NLLLoss_forward(const NNModule module, const Tensor tensor, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::NLLLoss>()->forward(*tensor, *target));
+}
+
+NNModule THSNN_PoissonNLLLoss_ctor(const bool log_input, const bool full, double eps, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::PoissonNLLLossOptions().log_input(log_input).eps(eps).full(full);
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::PoissonNLLLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_PoissonNLLLoss_forward(const NNModule module, const Tensor tensor, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::PoissonNLLLoss>()->forward(*tensor, *target));
+}
+
+NNModule THSNN_KLDivLoss_ctor(const bool log_target, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::KLDivLossOptions().log_target(log_target);
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::KLDivLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_KLDivLoss_forward(const NNModule module, const Tensor tensor, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::KLDivLoss>()->forward(*tensor, *target));
+}
+
+NNModule THSNN_BCELoss_ctor(const Tensor weight, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::BCELossOptions();
+        ApplyReduction(opts, reduction);
+        if (weight != NULL)
+            opts = opts.weight(*weight);
+        res = create_module<torch::nn::BCELossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_BCELoss_forward(const NNModule module, const Tensor tensor, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::BCELoss>()->forward(*tensor, *target));
+}
+
+NNModule THSNN_BCEWithLogitsLoss_ctor(const Tensor weight, const int64_t reduction, const Tensor pos_weight, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::BCEWithLogitsLossOptions();
+        ApplyReduction(opts, reduction);
+        if (weight != NULL)
+            opts = opts.weight(*weight);
+        if (pos_weight != NULL)
+            opts = opts.pos_weight(*pos_weight);
+        res = create_module<torch::nn::BCEWithLogitsLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_BCEWithLogitsLoss_forward(const NNModule module, const Tensor tensor, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::BCEWithLogitsLoss>()->forward(*tensor, *target));
+}
+
+NNModule THSNN_MarginRankingLoss_ctor(const double margin, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MarginRankingLossOptions().margin(margin);
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::MarginRankingLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_MarginRankingLoss_forward(const NNModule module, const Tensor input1, const Tensor input2, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::MarginRankingLoss>()->forward(*input1, *input2, *target));
+}
+
+NNModule THSNN_HingeEmbeddingLoss_ctor(const double margin, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::HingeEmbeddingLossOptions().margin(margin);
+    ApplyReduction(opts, reduction);
+    res = create_module<torch::nn::HingeEmbeddingLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_HingeEmbeddingLoss_forward(const NNModule module, const Tensor input, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::HingeEmbeddingLoss>()->forward(*input, *target));
+}
+
+NNModule THSNN_HuberLoss_ctor(const double delta, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::HuberLossOptions().delta(delta);
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::HuberLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_HuberLoss_forward(const NNModule module, const Tensor input, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::HuberLoss>()->forward(*input, *target));
+}
+
+NNModule THSNN_MultiLabelMarginLoss_ctor(const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MultiLabelMarginLossOptions();
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::MultiLabelMarginLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_MultiLabelMarginLoss_forward(const NNModule module, const Tensor input, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::MultiLabelMarginLoss>()->forward(*input, *target));
+}
+
+NNModule THSNN_SmoothL1Loss_ctor(const double beta, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::SmoothL1LossOptions().beta(beta);
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::SmoothL1LossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_SmoothL1Loss_forward(const NNModule module, const Tensor input, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::SmoothL1Loss>()->forward(*input, *target));
+}
+
+NNModule THSNN_SoftMarginLoss_ctor(const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::SoftMarginLossOptions();
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::SoftMarginLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_SoftMarginLoss_forward(const NNModule module, const Tensor input, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::SoftMarginLoss>()->forward(*input, *target));
+}
+
+NNModule THSNN_MultiLabelSoftMarginLoss_ctor(const Tensor weight, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MultiLabelSoftMarginLossOptions();
+        ApplyReduction(opts, reduction);
+        if (weight != NULL)
+            opts = opts.weight(*weight);
+        res = create_module<torch::nn::MultiLabelSoftMarginLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_MultiLabelSoftMarginLoss_forward(const NNModule module, const Tensor tensor, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::MultiLabelSoftMarginLoss>()->forward(*tensor, *target));
+}
+
+NNModule THSNN_CosineEmbeddingLoss_ctor(const double margin, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::CosineEmbeddingLossOptions().margin(margin);
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::CosineEmbeddingLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_CosineEmbeddingLoss_forward(const NNModule module, const Tensor input1, const Tensor input2, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::CosineEmbeddingLoss>()->forward(*input1, *input2, *target));
+}
+
+NNModule THSNN_MultiMarginLoss_ctor(const int64_t p, double margin, const Tensor weight, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MultiMarginLossOptions().p(0).margin(margin);
+        ApplyReduction(opts, reduction);
+        if (weight != NULL)
+            opts = opts.weight(*weight);
+        res = create_module<torch::nn::MultiMarginLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_MultiMarginLoss_forward(const NNModule module, const Tensor tensor, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::MultiMarginLoss>()->forward(*tensor, *target));
+}
+
+NNModule THSNN_TripletMarginLoss_ctor(const int64_t p, double margin, const bool swap, const double eps, const int64_t reduction, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::TripletMarginLossOptions().p(0).margin(margin).swap(swap).eps(eps);
+        ApplyReduction(opts, reduction);
+        res = create_module<torch::nn::TripletMarginLossImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_TripletMarginLoss_forward(const NNModule module, const Tensor anchor, const Tensor positive, const Tensor negative, const Tensor target)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::TripletMarginLoss>()->forward(*anchor, *positive, *negative));
+}

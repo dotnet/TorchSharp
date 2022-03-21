@@ -442,6 +442,48 @@ EXPORT_API(Tensor) THSNN_soft_margin_loss(const Tensor input, const Tensor targe
 EXPORT_API(Tensor) THSNN_triplet_margin_loss(const Tensor anchor, const Tensor positive, const Tensor negative, double margin, int64_t p, double eps, bool swap, const int64_t reduction);
 EXPORT_API(Tensor) THSNN_triplet_margin_with_distance_loss(const Tensor anchor, const Tensor positive, const Tensor negative, Tensor (*distance_function)(const Tensor x, const Tensor y), double margin, bool swap, const int64_t reduction);
 
+// Loss modules
+
+EXPORT_API(NNModule) THSNN_BCELoss_ctor(const Tensor weight, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_BCELoss_forward(const NNModule module, const Tensor tensor, const Tensor target);
+EXPORT_API(NNModule) THSNN_BCEWithLogitsLoss_ctor(const Tensor weight, const int64_t reduction, const Tensor pos_weight, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_BCEWithLogitsLoss_forward(const NNModule module, const Tensor tensor, const Tensor target);
+EXPORT_API(NNModule) THSNN_CosineEmbeddingLoss_ctor(const double margin, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_CosineEmbeddingLoss_forward(const NNModule module, const Tensor input1, const Tensor input2, const Tensor target);
+EXPORT_API(NNModule) THSNN_CrossEntropyLoss_ctor(const Tensor weight, const int64_t ignore_index, const bool has_ii, const double label_smoothing, const bool has_ls, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_CrossEntropyLoss_forward(const NNModule module, const Tensor tensor, const Tensor target);
+EXPORT_API(NNModule) THSNN_CTCLoss_ctor(const int64_t blank, const int64_t reduction, bool zero_infinity, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_CTCLoss_forward(const NNModule module, const Tensor log_probs, const Tensor targets, const Tensor input_lengths, const Tensor target_lengths);
+EXPORT_API(NNModule) THSNN_MarginRankingLoss_ctor(const double margin, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_MarginRankingLoss_forward(const NNModule module, const Tensor input1, const Tensor input2, const Tensor target);
+EXPORT_API(NNModule) THSNN_HingeEmbeddingLoss_ctor(const double margin, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_HingeEmbeddingLoss_forward(const NNModule module, const Tensor input, const Tensor target);
+EXPORT_API(NNModule) THSNN_HuberLoss_ctor(const double delta, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_HuberLoss_forward(const NNModule module, const Tensor input, const Tensor target);
+EXPORT_API(NNModule) THSNN_KLDivLoss_ctor(const bool log_target, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_KLDivLoss_forward(const NNModule module, const Tensor tensor, const Tensor target);
+EXPORT_API(NNModule) THSNN_L1Loss_ctor(const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_L1Loss_forward(const NNModule module, const Tensor tensor, const Tensor target);
+EXPORT_API(NNModule) THSNN_MSELoss_ctor(const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_MSELoss_forward(const NNModule module, const Tensor tensor, const Tensor target);
+EXPORT_API(NNModule) THSNN_MultiLabelMarginLoss_ctor(const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_MultiLabelMarginLoss_forward(const NNModule module, const Tensor input, const Tensor target);
+EXPORT_API(NNModule) THSNN_MultiLabelSoftMarginLoss_ctor(const Tensor weight, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_MultiLabelSoftMarginLoss_forward(const NNModule module, const Tensor tensor, const Tensor target);
+EXPORT_API(NNModule) THSNN_MultiMarginLoss_ctor(const int64_t p, double margin, const Tensor weight, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_MultiMarginLoss_forward(const NNModule module, const Tensor tensor, const Tensor target);
+EXPORT_API(NNModule) THSNN_NLLLoss_ctor(const Tensor weight, const int64_t ignore_index, const bool has_ii, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_NLLLoss_forward(const NNModule module, const Tensor tensor, const Tensor target);
+EXPORT_API(NNModule) THSNN_PoissonNLLLoss_ctor(const bool log_input, const bool full, double eps, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_PoissonNLLLoss_forward(const NNModule module, const Tensor tensor, const Tensor target);
+EXPORT_API(NNModule) THSNN_SmoothL1Loss_ctor(const double beta, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_SmoothL1Loss_forward(const NNModule module, const Tensor input, const Tensor target);
+EXPORT_API(NNModule) THSNN_SoftMarginLoss_ctor(const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_SoftMarginLoss_forward(const NNModule module, const Tensor input, const Tensor target);
+EXPORT_API(NNModule) THSNN_TripletMarginLoss_ctor(const int64_t p, double margin, const bool swap, const double eps, const int64_t reduction, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor) THSNN_TripletMarginLoss_forward(const NNModule module, const Tensor anchor, const Tensor positive, const Tensor negative, const Tensor target);
+
+
 // Optimizers
 
 EXPORT_API(Optimizer) THSNN_Adagrad_ctor(const Tensor* parameters, const int len, const double learning_rate, const double lr_decay, const double weight_decay, const double initial_accumulator_value, const double eps);

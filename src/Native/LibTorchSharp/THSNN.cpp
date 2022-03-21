@@ -1029,12 +1029,6 @@ void THSNN_LSTMCell_set_weight_hh(const NNModule module, const Tensor weight)
 
 NNModule THSNN_Sequential_ctor( /* NNAnyModule *submodules, const int length */ )
 {
-    //std::vector<torch::nn::NamedAnyModule> modules;
-    //for (int i = 0; i < length; i++)
-    //{
-    //	modules.push_back(*(*submodules[i])->as<torch::nn::NamedAnyModule>());
-    //}
-
     auto mod = std::make_shared<torch::nn::SequentialImpl>( /* std::begin(modules), std::end(modules) */ );
     return new std::shared_ptr<torch::nn::Module>(mod);
 }
