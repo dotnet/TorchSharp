@@ -36,7 +36,7 @@ def _get_elem_type(type_num: int):
         return np.float32
     elif type_num == 7:
         return np.float64
-    elif type_num == 0:
+    elif type_num == 11:
         # return torch.bool
         raise NotImplemented("Unsupported data type")
     elif type_num == 15:
