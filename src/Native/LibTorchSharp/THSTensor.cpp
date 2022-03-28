@@ -1629,11 +1629,16 @@ void THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), 
 {
     CATCH(
         auto res = tensor->unbind(dim);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
+}
+
+Tensor THSTensor_unfold(const Tensor tensor, const int64_t dimension, const int64_t size, const int64_t step)
+{
+    CATCH_TENSOR(tensor->unfold(dimension, size, step));
 }
 
 Tensor THSTensor_values(Tensor tensor)

@@ -4293,6 +4293,19 @@ namespace TorchSharp
             Assert.Equal(3.1f, res[2].ToSingle());
         }
 
+
+        [Fact]
+        public void UnfoldTest()
+        {
+            var data = torch.arange(1, 8);
+
+            var res = data.unfold(0, 2, 1);
+            Assert.Equal(new long[] { 6, 2 }, res.shape);
+
+            res = data.unfold(0, 2, 2);
+            Assert.Equal(new long[] { 3, 2 }, res.shape);
+        }
+
         [Fact]
         public void SplitWithSizeTest()
         {
