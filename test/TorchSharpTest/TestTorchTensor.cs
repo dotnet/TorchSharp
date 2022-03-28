@@ -4294,6 +4294,18 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void UnfoldTest()
+        {
+            var data = torch.arange(1, 8);
+
+            var res = data.unfold(0, 2, 1);
+            Assert.Equal(new long[] { 6, 2 }, res.shape);
+
+            res = data.unfold(0, 2, 2);
+            Assert.Equal(new long[] { 3, 2 }, res.shape);
+        }
+
+        [Fact]
         public void SplitWithSizeTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };

@@ -1636,6 +1636,11 @@ void THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), 
     )
 }
 
+Tensor THSTensor_unfold(const Tensor tensor, const int64_t dimension, const int64_t size, const int64_t step)
+{
+    CATCH_TENSOR(tensor->unfold(dimension, size, step));
+}
+
 Tensor THSTensor_values(Tensor tensor)
 {
     CATCH_TENSOR(tensor->_values());

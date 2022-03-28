@@ -3267,6 +3267,22 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unfold(IntPtr tensor, long dimension, long size, long step);
+
+            /// <summary>
+            /// Returns a view of the original tensor which contains all slices of size 'size' from the tensor in the given dimension.
+            /// </summary>
+            /// <param name="dimension">Dimension in which unfolding happens</param>
+            /// <param name="size">The size of each slice that is unfolded</param>
+            /// <param name="step">The step between each slice</param>
+            public Tensor unfold(long dimension, long size, long step)
+            {
+                var res = THSTensor_unfold(Handle, dimension, size, step);
+                if (res == IntPtr.Zero) torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern void THSTensor_split_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size, long dimension);
 
             /// <summary>
