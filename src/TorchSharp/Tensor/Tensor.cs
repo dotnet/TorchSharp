@@ -1528,6 +1528,109 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_flatten(IntPtr tensor, long start, long end);
+
+            /// <summary>
+            /// Flattens input by reshaping it into a one-dimensional tensor. 
+            /// </summary>
+            /// <param name="start_dim">The first dim to flatten</param>
+            /// <param name="end_dim">The last dim to flatten.</param>
+            /// <remarks>Flattening a zero-dimensional tensor will return a one-dimensional view.</remarks>
+            public Tensor flatten(long start_dim = 0, long end_dim = -1)
+            {
+                var res = THSTensor_flatten(Handle, start_dim, end_dim);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unflatten(IntPtr tensor, long dimension, IntPtr shape, int length);
+
+            /// <summary>
+            /// Expands the dimension dim of the self tensor over multiple dimensions of sizes given by sizes.
+            /// </summary>
+            /// <param name="dim">Dimension to unflatten.</param>
+            /// <param name="sizes">New shape of the unflattened dimension.</param>
+            public Tensor unflatten(long dim, params long[] sizes)
+            {
+                unsafe {
+                    fixed (long* pshape = sizes) {
+                        var res = THSTensor_unflatten(Handle, dim, (IntPtr)pshape, sizes.Length);
+                        if (res == IntPtr.Zero)
+                            torch.CheckForErrors();
+                        return new Tensor(res);
+                    }
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique(IntPtr tensor, bool sorted, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique_dim(IntPtr tensor, long dim, bool sorted, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique_consecutive(IntPtr tensor, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique_dim_consecutive(IntPtr tensor, long dim, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+
+            /// <summary>
+            /// Returns the unique elements of the input tensor.
+            /// </summary>
+            /// <param name="sorted">Whether to sort the unique elements in ascending order before returning as output.</param>
+            /// <param name="return_inverse">Whether to also return the indices for where elements in the original input ended up in the returned unique list.</param>
+            /// <param name="return_counts">Whether to also return the counts for each unique element.</param>
+            /// <param name="dim">The dimension to apply unique. If null, the unique of the flattened input is returned.</param>
+            /// <returns></returns>
+            /// <remarks>This function is different from torch.unique_consecutive() in the sense that this function also eliminates non-consecutive duplicate values.</remarks>
+            public (Tensor output, Tensor? inverse_indices, Tensor? counts) unique(bool sorted = true, bool return_inverse = false, bool return_counts = false, int? dim = null)
+            {
+                IntPtr res = IntPtr.Zero;
+                IntPtr inverse_indices, counts;
+
+                if (dim is null) {
+                    res = THSTensor_unique(Handle, sorted, return_inverse, return_counts, out inverse_indices, out counts);
+                }
+                else {
+                    res = THSTensor_unique_dim(Handle, dim.Value, sorted, return_inverse, return_counts, out inverse_indices, out counts);
+                }
+
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), inverse_indices != IntPtr.Zero ? new Tensor(inverse_indices) : null, counts != IntPtr.Zero ? new Tensor(counts) : null);
+            }
+
+            /// <summary>
+            /// Returns the unique elements of the input tensor.
+            /// </summary>
+            /// <param name="return_inverse">Whether to also return the indices for where elements in the original input ended up in the returned unique list.</param>
+            /// <param name="return_counts">Whether to also return the counts for each unique element.</param>
+            /// <param name="dim">The dimension to apply unique. If null, the unique of the flattened input is returned.</param>
+            /// <returns>A tuple with the output, the indices, and counts. The latter two may be 'null'</returns>
+            /// <remarks>This function is different from torch.unique_consecutive() in the sense that this function also eliminates non-consecutive duplicate values.</remarks>
+            public (Tensor output, Tensor? inverse_indices, Tensor? counts) unique_consecutive(bool return_inverse = false, bool return_counts = false, int? dim = null)
+            {
+                IntPtr inverse_indices, counts;
+
+                IntPtr res = (dim is null)
+                    ? THSTensor_unique_consecutive(Handle, return_inverse, return_counts, out inverse_indices, out counts)
+                    : THSTensor_unique_dim_consecutive(Handle, dim.Value, return_inverse, return_counts, out inverse_indices, out counts);
+
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), inverse_indices != IntPtr.Zero ? new Tensor(inverse_indices) : null, counts != IntPtr.Zero ? new Tensor(counts) : null);
+            }
+
+            /// <summary>
+            /// Expands the dimension dim of the self tensor over multiple dimensions of sizes given by sizes.
+            /// </summary>
+            /// <param name="dim">Dimension to unflatten.</param>
+            /// <param name="sizes">New shape of the unflattened dimension.</param>
+            public Tensor unflatten(long dim, torch.Size sizes)
+            {
+                return unflatten(dim, sizes.Shape);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_squeeze(IntPtr tensor, long dimension);
 
             [DllImport("LibTorchSharp")]
@@ -5480,6 +5583,27 @@ namespace TorchSharp
                         builder.Append(val2.Imaginary.ToString(fltFormat, cultureInfo)).Append('i');
                     break;
                 }
+            }
+
+            public object tolist()
+            {
+                if (this.shape.Length == 0) {
+                    return this.ToScalar();
+                }
+
+                var result = new System.Collections.ArrayList();
+                if (shape.Length == 1) {
+                    for (long idx = 0; idx < shape[0]; idx++) {
+                        result.Add(this[idx].ToScalar());
+                    }
+                }
+                else {
+                    for (long idx = 0; idx < shape[0]; idx++) {
+                        result.Add(this[idx].tolist());
+                    }
+                }
+
+                return result;
             }
 
             public static explicit operator float(Tensor value) => value.ToSingle();

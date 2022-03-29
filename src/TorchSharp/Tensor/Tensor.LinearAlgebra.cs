@@ -82,6 +82,11 @@ namespace TorchSharp
                 return torch.linalg.det(this);
             }
 
+
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_eig(IntPtr tensor, bool eigenvectors, out IntPtr pEigenvectors);
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_matmul(IntPtr tensor, IntPtr target);
 
@@ -226,6 +231,7 @@ namespace TorchSharp
         /// <summary>
         /// Computes the determinant of a square matrix.
         /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor det(Tensor input)
         {
             return torch.linalg.det(input);

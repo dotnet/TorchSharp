@@ -58,6 +58,17 @@ Tensor THSLinalg_eig(const Tensor tensor, Tensor* eigenvectors)
     return ResultTensor(std::get<0>(res));
 }
 
+
+Tensor THSTensor_eig(const Tensor tensor, bool vectors, Tensor* eigenvectors)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = tensor->eig(vectors););
+    if (vectors) {
+        *eigenvectors = ResultTensor(std::get<1>(res));
+    }
+    return ResultTensor(std::get<0>(res));
+}
+
 Tensor THSLinalg_eigh(const Tensor tensor, const char UPLO, Tensor* eigenvectors)
 {
     std::string _uplo;

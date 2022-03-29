@@ -45,6 +45,35 @@ namespace TorchSharp
             }
         }
 
+
+        [Fact]
+        public void Test1DToList()
+        {
+            {
+                Tensor t = torch.zeros(4);
+                var lst = t.tolist();
+                var list = lst as System.Collections.IList;
+                Assert.NotNull(list);
+                if (list is not null) {
+                    Assert.Equal(4, list.Count);
+                    for (var idx = 0; idx < list.Count; idx++)
+                       Assert.IsType<Scalar>(list[idx]);
+                }
+            }
+            {
+                Tensor t = torch.zeros(4, 4);
+                var lst = t.tolist();
+                var list = lst as System.Collections.IList;
+                Assert.NotNull(list);
+
+                if (list is not null) {
+                    Assert.Equal(4, list.Count);
+                    for (var idx = 0; idx < list.Count; idx++)
+                        Assert.IsType<System.Collections.ArrayList>(list[idx]);
+                }
+            }
+        }
+
         [Fact]
         public void TestToString1()
         {
@@ -5025,6 +5054,24 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EigTest32()
+        {
+            {
+                var a = torch.tensor(
+                    new float[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
+
+                var expected = torch.tensor(
+                    new (float, float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
+
+                { 
+                    var (values, vectors) = linalg.eig(a);
+                    Assert.NotNull(vectors);
+                    Assert.True(values.allclose(expected));
+                }
+            }
+        }
+
+        [Fact]
         public void EighvalsTest32()
         {
             {
@@ -6118,6 +6165,95 @@ namespace TorchSharp
                     var s = t.pin_memory();
                     Assert.True(s.is_pinned());
                 }
+            }
+        }
+
+        [Fact]
+        public void TestReshape()
+        {
+            var input = torch.ones(4, 4, 4, 4);
+            using (var t = input.reshape(16, 4, 4)) {
+                Assert.Equal(new long[] { 16, 4, 4 }, t.shape);
+            }
+            using (var t = input.flatten()) {
+                Assert.Equal(new long[] { 256 }, t.shape);
+            }
+            using (var t = input.flatten(1)) {
+                Assert.Equal(new long[] { 4, 64 }, t.shape);
+            }
+            input = torch.ones(16, 4, 4);
+            using (var t = input.unflatten(0, 4, 4)) {
+                Assert.Equal(new long[] { 4, 4, 4, 4 }, t.shape);
+            }
+        }
+
+        [Fact]
+        public void TestUnique()
+        {
+            var input = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
+
+            {
+                var (output, i, c) = input.unique();
+                Assert.NotNull(output);
+                Assert.Null(i);
+                Assert.Null(c);
+            }
+            {
+                var (output, i, c) = input.unique(return_inverse: true);
+                Assert.NotNull(output);
+                Assert.NotNull(i);
+                if (i is not null)
+                    Assert.Equal(input.shape, i?.shape);
+                Assert.Null(c);
+            }
+            {
+                var (output, i, c) = input.unique(return_inverse: false, return_counts:true);
+                Assert.NotNull(output);
+                Assert.Null(i);
+                Assert.NotNull(c);
+            }
+            {
+                var (output, i, c) = input.unique(return_inverse: true, return_counts: true);
+                Assert.NotNull(output);
+                Assert.NotNull(i);
+                if (i is not null)
+                    Assert.Equal(input.shape, i?.shape);
+                Assert.NotNull(c);
+            }
+        }
+
+        [Fact]
+        public void TestUniqueConsequtive()
+        {
+            var input = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
+
+            {
+                var (output, i, c) = input.unique_consecutive();
+                Assert.NotNull(output);
+                Assert.Null(i);
+                Assert.Null(c);
+            }
+            {
+                var (output, i, c) = input.unique_consecutive(return_inverse: true);
+                Assert.NotNull(output);
+                Assert.NotNull(i);
+                if (i is not null)
+                    Assert.Equal(input.shape, i?.shape);
+                Assert.Null(c);
+            }
+            {
+                var (output, i, c) = input.unique_consecutive(return_inverse: false, return_counts: true);
+                Assert.NotNull(output);
+                Assert.Null(i);
+                Assert.NotNull(c);
+            }
+            {
+                var (output, i, c) = input.unique_consecutive(return_inverse: true, return_counts: true);
+                Assert.NotNull(output);
+                Assert.NotNull(i);
+                if (i is not null)
+                    Assert.Equal(input.shape, i?.shape);
+                Assert.NotNull(c);
             }
         }
     }
