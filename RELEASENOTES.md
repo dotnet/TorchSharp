@@ -25,6 +25,8 @@ __Fixed Bugs:__
 #555 Implement LPPool{12}d<br/>
 #556 Implement missing activation modules<br/>
 #559 Implement miscellaneous missing layers.<br/>
+#564 torch.Tensor.tolist<br/>
+
 
 ## NuGet Version 0.96.3
 
