@@ -455,6 +455,8 @@ EXPORT_API(Tensor) THSTensor_eye_out(const int64_t n, const int64_t m, const Ten
 
 EXPORT_API(Tensor) THSTensor_fill_(const Tensor tensor, Scalar value);
 
+EXPORT_API(Tensor) THSTensor_flatten(const Tensor tensor, const int64_t start, const int64_t end);
+
 EXPORT_API(Tensor) THSTensor_flip(const Tensor tensor, const int64_t* sizes, const int length);
 
 EXPORT_API(Tensor) THSTensor_fliplr(const Tensor tensor);
@@ -1191,6 +1193,15 @@ EXPORT_API(int8_t) THSTensor_type(const Tensor tensor);
 
 EXPORT_API(void) THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t dim);
 
+EXPORT_API(Tensor) THSTensor_unique(const Tensor tensor, const bool sorted, const bool return_inverse, const bool return_counts, Tensor* inverse_indices, Tensor* counts);
+EXPORT_API(Tensor) THSTensor_unique_dim(const Tensor tensor, const int64_t dim, const bool sorted, const bool return_inverse, const bool return_counts, Tensor* inverse_indices, Tensor* counts);
+EXPORT_API(Tensor) THSTensor_unique_consecutive(const Tensor tensor, const bool return_inverse, const bool return_counts, Tensor* inverse_indices, Tensor* counts);
+EXPORT_API(Tensor) THSTensor_unique_dim_consecutive(const Tensor tensor, const int64_t dim, const bool return_inverse, const bool return_counts, Tensor* inverse_indices, Tensor* counts);
+
+EXPORT_API(Tensor) THSTensor_unflatten(const Tensor tensor, const int64_t dimension, const int64_t* shape, const int length);
+
+EXPORT_API(Tensor) THSTensor_unfold(const Tensor tensor, const int64_t dimension, const int64_t size, const int64_t step);
+
 EXPORT_API(Tensor) THSTensor_unsqueeze(Tensor tensor, int64_t dim);
 EXPORT_API(Tensor) THSTensor_unsqueeze_(Tensor tensor, int64_t dim);
 
@@ -1304,6 +1315,8 @@ EXPORT_API(Tensor) THSLinalg_slogdet(const Tensor tensor, Tensor *logabsdet);
 
 EXPORT_API(Tensor) THSLinalg_eig(const Tensor tensor, Tensor* eigenvectors);
 EXPORT_API(Tensor) THSLinalg_eigh(const Tensor tensor, const char UPLO, Tensor* eigenvectors);
+
+EXPORT_API(Tensor) THSTensor_eig(const Tensor tensor, bool vectors, Tensor* eigenvectors);
 
 EXPORT_API(Tensor) THSLinalg_eigvals(const Tensor tensor);
 EXPORT_API(Tensor) THSLinalg_eigvalsh(const Tensor tensor, const char UPLO);

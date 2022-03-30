@@ -1241,10 +1241,10 @@ void THSTensor_split_with_size(
 {
     CATCH(
         auto res = tensor->split(split_size, dim);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1257,10 +1257,10 @@ void THSTensor_split_with_sizes(
 {
     CATCH(
         auto res = tensor->split_with_sizes(at::ArrayRef<int64_t>(sizes, length), dim);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1272,10 +1272,10 @@ void THSTensor_tensor_split_with_size(
 {
     CATCH(
         auto res = tensor->tensor_split(n, dim);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1288,10 +1288,10 @@ void THSTensor_tensor_split_with_sizes(
 {
     CATCH(
         auto res = tensor->tensor_split(at::ArrayRef<int64_t>(sizes, length), dim);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1303,10 +1303,10 @@ void THSTensor_tensor_split_with_tensor_sizes(
 {
     CATCH(
         auto res = tensor->tensor_split(*sizes, dim);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1317,10 +1317,10 @@ void THSTensor_vsplit_with_size(
 {
     CATCH(
         auto res = tensor->vsplit(n);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1332,10 +1332,10 @@ void THSTensor_vsplit_with_sizes(
 {
     CATCH(
         auto res = tensor->vsplit(at::ArrayRef<int64_t>(sizes, length));
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1346,10 +1346,10 @@ void THSTensor_hsplit_with_size(
 {
     CATCH(
         auto res = tensor->hsplit(n);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1361,10 +1361,10 @@ void THSTensor_hsplit_with_sizes(
 {
     CATCH(
         auto res = tensor->hsplit(at::ArrayRef<int64_t>(sizes, length));
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1375,10 +1375,10 @@ void THSTensor_dsplit_with_size(
 {
     CATCH(
         auto res = tensor->dsplit(n);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1390,10 +1390,10 @@ void THSTensor_dsplit_with_sizes(
 {
     CATCH(
         auto res = tensor->dsplit(at::ArrayRef<int64_t>(sizes, length));
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1416,10 +1416,10 @@ void THSTensor_strides(const Tensor tensor, int64_t* (*allocator)(size_t length)
 {
     CATCH(
         auto res = tensor->strides();
-    const size_t sz = res.size();
-    int64_t * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = res[i];
+        const size_t sz = res.size();
+        int64_t * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = res[i];
     );
 }
 
@@ -1432,10 +1432,10 @@ void THSTensor_sizes(const Tensor tensor, int64_t* (*allocator)(size_t length))
 {
     CATCH(
         auto res = tensor->sizes();
-    const size_t sz = res.size();
-    int64_t * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = res[i];
+        const size_t sz = res.size();
+        int64_t * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = res[i];
     );
 }
 
@@ -1528,9 +1528,9 @@ void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), co
 {
     CATCH(
         auto topk = tensor->topk(k, dim, largest, sorted);
-    Tensor * result = allocator(2);
-    result[0] = new torch::Tensor(std::get<0>(topk));
-    result[1] = new torch::Tensor(std::get<1>(topk));
+        Tensor * result = allocator(2);
+        result[0] = new torch::Tensor(std::get<0>(topk));
+        result[1] = new torch::Tensor(std::get<1>(topk));
     )
 }
 
@@ -1629,11 +1629,86 @@ void THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), 
 {
     CATCH(
         auto res = tensor->unbind(dim);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
+}
+
+Tensor THSTensor_flatten(const Tensor tensor, const int64_t start, const int64_t end)
+{
+    CATCH_TENSOR(tensor->flatten(start, end));
+}
+
+Tensor THSTensor_unflatten(const Tensor tensor, const int64_t dimension, const int64_t* shape, const int length)
+{
+    CATCH_TENSOR(tensor->unflatten(dimension, at::ArrayRef<int64_t>(shape, length)));
+}
+
+Tensor THSTensor_unique(const Tensor tensor, const bool sorted, const bool return_inverse, const bool return_counts, Tensor* inverse_indices, Tensor *counts)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
+
+    CATCH(res = torch::_unique2(*tensor, sorted, return_inverse, return_counts););
+
+    if (return_inverse) {
+        *inverse_indices = ResultTensor(std::get<1>(res));
+    }
+    if (return_counts) {
+        *counts = ResultTensor(std::get<2>(res));
+    }
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_unique_dim(const Tensor tensor, const int64_t dim, const bool sorted, const bool return_inverse, const bool return_counts, Tensor* inverse_indices, Tensor* counts)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
+
+    CATCH(res = torch::unique_dim(*tensor, dim, sorted, return_inverse, return_counts););
+
+    if (return_inverse) {
+        *inverse_indices = ResultTensor(std::get<1>(res));
+    }
+    if (return_counts) {
+        *counts = ResultTensor(std::get<2>(res));
+    }
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_unique_consecutive(const Tensor tensor, const bool return_inverse, const bool return_counts, Tensor* inverse_indices, Tensor* counts)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
+
+    CATCH(res = torch::unique_consecutive(*tensor, return_inverse, return_counts););
+
+    if (return_inverse) {
+        *inverse_indices = ResultTensor(std::get<1>(res));
+    }
+    if (return_counts) {
+        *counts = ResultTensor(std::get<2>(res));
+    }
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_unique_dim_consecutive(const Tensor tensor, const int64_t dim, const bool return_inverse, const bool return_counts, Tensor* inverse_indices, Tensor* counts)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
+
+    CATCH(res = torch::unique_dim_consecutive(*tensor, dim, return_inverse, return_counts););
+
+    if (return_inverse) {
+        *inverse_indices = ResultTensor(std::get<1>(res));
+    }
+    if (return_counts) {
+        *counts = ResultTensor(std::get<2>(res));
+    }
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_unfold(const Tensor tensor, const int64_t dimension, const int64_t size, const int64_t step)
+{
+    CATCH_TENSOR(tensor->unfold(dimension, size, step));
 }
 
 Tensor THSTensor_values(Tensor tensor)
