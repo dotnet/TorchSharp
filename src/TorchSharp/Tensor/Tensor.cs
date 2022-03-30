@@ -1531,7 +1531,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_flatten(IntPtr tensor, long start, long end);
 
             /// <summary>
-            /// Flattens input by reshaping it into a one-dimensional tensor. 
+            /// Flattens input by reshaping it into a one-dimensional tensor.
             /// </summary>
             /// <param name="start_dim">The first dim to flatten</param>
             /// <param name="end_dim">The last dim to flatten.</param>
@@ -5407,7 +5407,7 @@ namespace TorchSharp
                         PrintValue(sb, t[currentSize - 1].ToScalar());
                     }
                 } else {
-                    var newline = string.Join("", Enumerable.Repeat(Environment.NewLine, (int) dim - 1).ToList());
+                    var newline = string.Join("", Enumerable.Repeat('\n', (int) dim - 1).ToList());
                     if (currentSize <= 6) {
                         sb.Append(ToNumpyString(t[0], mdim, false));
                         sb.Append(newline);

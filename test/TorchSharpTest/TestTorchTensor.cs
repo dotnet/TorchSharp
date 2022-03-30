@@ -5163,7 +5163,7 @@ namespace TorchSharp
                 var expected = torch.tensor(
                     new (float, float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
 
-                { 
+                {
                     var (values, vectors) = linalg.eig(a);
                     Assert.NotNull(vectors);
                     Assert.True(values.allclose(expected));
