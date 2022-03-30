@@ -5235,6 +5235,79 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Get string info of tensor as numpy style.
+            /// </summary>
+            /// <returns></returns>
+            public string str()
+                => ToNumpyString(this, ndim);
+
+            private static string ToNumpyString(Tensor t, long mdim, bool isFCreate = true)
+            {
+                var dim = t.dim();
+                if (t.size().Length == 0) return "";
+                var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int) (mdim - dim))) : "");
+                sb.Append('[');
+                var currentSize = t.size()[0];
+                if (dim == 1) {
+                    if (currentSize <= 6) {
+                        for (var i = 0; i < currentSize - 1; i++) {
+                            PrintValue(sb, t[i].ToScalar());
+                            sb.Append(' ');
+                        }
+
+                        PrintValue(sb, t[currentSize - 1].ToScalar());
+                    } else {
+                        for (var i = 0; i < 3; i++) {
+                            PrintValue(sb, t[i].ToScalar());
+                            sb.Append(' ');
+                        }
+
+                        sb.Append("... ");
+
+                        for (var i = currentSize - 3; i < currentSize - 1; i++) {
+                            PrintValue(sb, t[i].ToScalar());
+                            sb.Append(' ');
+                        }
+
+                        PrintValue(sb, t[currentSize - 1].ToScalar());
+                    }
+                } else {
+                    var newline = string.Join("", Enumerable.Repeat(Environment.NewLine, (int) dim - 1).ToList());
+                    if (currentSize <= 6) {
+                        sb.Append(ToNumpyString(t[0], mdim, false));
+                        sb.Append(newline);
+                        for (var i = 1; i < currentSize - 1; i++) {
+                            sb.Append(ToNumpyString(t[i], mdim));
+                            sb.Append(newline);
+                        }
+
+                        sb.Append(ToNumpyString(t[currentSize - 1], mdim));
+                    } else {
+                        sb.Append(ToNumpyString(t[0], mdim, false));
+                        sb.Append(newline);
+                        for (var i = 1; i < 3; i++) {
+                            sb.Append(ToNumpyString(t[i], mdim));
+                            sb.Append(newline);
+                        }
+
+                        sb.Append(string.Join("", Enumerable.Repeat(' ', (int) (mdim - dim))));
+                        sb.Append(" ...");
+                        sb.Append(newline);
+
+                        for (var i = currentSize - 3; i < currentSize - 1; i++) {
+                            sb.Append(ToNumpyString(t[i], mdim));
+                            sb.Append(newline);
+                        }
+
+                        sb.Append(ToNumpyString(t[currentSize - 1], mdim));
+                    }
+                }
+
+                sb.Append("]");
+                return sb.ToString();
+            }
+
+            /// <summary>
             /// Get a string representation of the tensor.
             /// </summary>
             /// <param name="withData">Boolean, used to discriminate.</param>
@@ -5396,6 +5469,9 @@ namespace TorchSharp
                     width -= str.Length + 1;
                 }
             }
+
+            private static void PrintValue(StringBuilder builder, Scalar value) =>
+                PrintValue(builder, value.Type, value, "g5", CultureInfo.CurrentCulture);
 
             private static void PrintValue(StringBuilder builder, ScalarType type, Scalar value, string fltFormat, CultureInfo cultureInfo)
             {
