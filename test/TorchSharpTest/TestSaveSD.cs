@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 using TorchSharp.Modules;
@@ -22,7 +23,6 @@ namespace TorchSharp
             public static int EMBEDDING_VEC_LEN = 100;
             public static int HIDDEN_SIZE = 128;
 
-            private readonly Module layers;
             private Module embedding;
             private LSTM lstm;
             private Module dropout;
