@@ -50,7 +50,7 @@ namespace TorchSharp
                 var h0 = zeros(1, input.shape[0], HIDDEN_SIZE, device: _device);
                 var c0 = zeros(1, input.shape[0], HIDDEN_SIZE, device: _device);
                 var (x_rnn, _, _) = lstm.forward(x_embed, (h0, c0));
-                var x_rnn_last_seq = x_rnn[.., -1, ..];
+                var x_rnn_last_seq = x_rnn[(null,null), -1, (null,null)];
                 x_rnn_last_seq = dropout.forward(x_rnn_last_seq);
                 var logits = dense.forward(x_rnn_last_seq);
                 return sigmoid.forward(logits);
