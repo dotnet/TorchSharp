@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 using TorchSharp.Modules;
+using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using Xunit;
 
@@ -23,7 +24,7 @@ namespace TorchSharp
 
             private readonly Module layers;
             private Module embedding;
-            private TorchSharp.Modules.LSTM lstm;
+            private LSTM lstm;
             private Module dropout;
             private Module dense;
             private Module sigmoid;
