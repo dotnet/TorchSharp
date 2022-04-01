@@ -39,7 +39,7 @@ namespace TorchSharp
                 sigmoid = Sigmoid();
 
                 RegisterComponents();
-                if (device != null && device.type == TorchSharp.DeviceType.CUDA)
+                if (device != null && device.type == DeviceType.CUDA)
                     this.to(device);
             }
 
@@ -59,7 +59,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveSDData()
         {
-            var lstm = new LSTMModel("lstm", "lstm", torch.CPU);
+            var lstm = new LSTMModel("lstm", torch.CPU);
             lstm.save("./lstm.dat");
         }
     }
