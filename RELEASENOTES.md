@@ -26,7 +26,7 @@ __Fixed Bugs:__
 #556 Implement missing activation modules<br/>
 #559 Implement miscellaneous missing layers.<br/>
 #564 torch.Tensor.tolist<br/>
-
+#566 Implicit conversion of scalars to tensors<br>
 
 ## NuGet Version 0.96.3
 
