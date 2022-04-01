@@ -1729,32 +1729,46 @@ namespace TorchSharp
         [Fact]
         public void TestScalarToTensor2()
         {
-            using (var tensor = 1.ToTensor()) {
+            using (Tensor tensor = 1) {
                 Assert.Equal(ScalarType.Int32, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(1, tensor.ToInt32());
             }
-            using (var tensor = ((byte)1).ToTensor()) {
+            using (Tensor tensor = ((byte)1).ToTensor()) {
                 Assert.Equal(ScalarType.Byte, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(1, tensor.ToByte());
             }
-            using (var tensor = ((sbyte)-1).ToTensor()) {
+            using (Tensor tensor = ((sbyte)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int8, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(-1, tensor.ToSByte());
             }
-            using (var tensor = ((short)-1).ToTensor()) {
+            using (Tensor tensor = ((short)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int16, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(-1, tensor.ToInt16());
             }
-            using (var tensor = ((long)-1).ToTensor()) {
+            using (Tensor tensor = ((long)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int64, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(-1L, tensor.ToInt64());
             }
-            using (var tensor = ((float)-1).ToTensor()) {
+            using (Tensor tensor = ((float)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Float32, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(-1.0f, tensor.ToSingle());
             }
-            using (var tensor = ((double)-1).ToTensor()) {
+            using (Tensor tensor = ((double)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Float64, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(-1.0, tensor.ToDouble());
             }
         }
@@ -1762,34 +1776,45 @@ namespace TorchSharp
         [Fact]
         public void TestScalarToTensor3()
         {
-            using (var tensor = 1.ToTensor()) {
+            using (Tensor tensor = 1.ToTensor()) {
                 Assert.Equal(ScalarType.Int32, tensor.dtype);
                 Assert.Equal(1, (int)tensor);
             }
-            using (var tensor = ((byte)1).ToTensor()) {
+            using (Tensor tensor = (byte)1) {
                 Assert.Equal(ScalarType.Byte, tensor.dtype);
                 Assert.Equal(1, (byte)tensor);
             }
-            using (var tensor = ((sbyte)-1).ToTensor()) {
+            using (Tensor tensor = (sbyte)-1) {
                 Assert.Equal(ScalarType.Int8, tensor.dtype);
                 Assert.Equal(-1, (sbyte)tensor);
             }
-            using (var tensor = ((short)-1).ToTensor()) {
+            using (Tensor tensor = (short)-1) {
                 Assert.Equal(ScalarType.Int16, tensor.dtype);
                 Assert.Equal(-1, (short)tensor);
             }
-            using (var tensor = ((long)-1).ToTensor()) {
+            using (Tensor tensor = (long)-1) {
                 Assert.Equal(ScalarType.Int64, tensor.dtype);
                 Assert.Equal(-1L, (long)tensor);
             }
-            using (var tensor = ((float)-1).ToTensor()) {
+            using (Tensor tensor = (float)-1) {
                 Assert.Equal(ScalarType.Float32, tensor.dtype);
                 Assert.Equal(-1.0f, (float)tensor);
             }
-            using (var tensor = ((double)-1).ToTensor()) {
+            using (Tensor tensor = (double)-1) {
                 Assert.Equal(ScalarType.Float64, tensor.dtype);
                 Assert.Equal(-1.0, (double)tensor);
             }
+        }
+
+        [Fact]
+        public void TestNegativeScalarToTensor()
+        {
+            Scalar s = 10;
+            TensorIndex ti = 10;
+            Tensor t;
+
+            Assert.Throws<InvalidOperationException>(() => { t = s; });
+            Assert.Throws<InvalidOperationException>(() => { t = ti; });
         }
 
         [Fact]
@@ -2085,6 +2110,15 @@ namespace TorchSharp
                 Assert.Equal(sparse.SparseIndices.data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
                 Assert.Equal(sparse.SparseValues.data<float>().ToArray(), new float[] { 3, 4, 5 });
             }
+        }
+
+        [Fact]
+        public void TestIndexerAndImplicitConversion()
+        {
+            var points = torch.zeros(6, torch.ScalarType.Float16);
+            points[0] = 4.0f;
+            points[1] = 1.0d;
+            points[2] = 7;
         }
 
         [Fact]

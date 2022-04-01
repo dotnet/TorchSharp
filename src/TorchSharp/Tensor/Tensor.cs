@@ -1156,6 +1156,15 @@ namespace TorchSharp
             static extern void THSTensor_set1(IntPtr handle, long i1, IntPtr value);
 
             /// <summary>
+            /// This is only here in order to help the C# compiler make the right choice vis-a-vis
+            /// implicit conversions.
+            /// </summary>
+            public static implicit operator Tensor(Scalar scalar)
+            {
+                throw new InvalidOperationException("Implicit conversion from Scalar to Tensor -- this should never be invoked, the operator is only here to guide the compiler's overload resolution.");
+            }
+
+            /// <summary>
             /// Tensor indexer.
             /// </summary>
             /// <param name="i1">The first-dimension index.</param>
@@ -5239,55 +5248,57 @@ namespace TorchSharp
                 return right.le(left);
             }
 
-            public static explicit operator Tensor(byte value)
+            public static implicit operator Tensor(byte value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(sbyte value)
+            public static implicit operator Tensor(sbyte value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(short value)
+            public static implicit operator Tensor(short value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(int value)
+            public static implicit operator Tensor(int value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(long value)
+            public static implicit operator Tensor(long value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(float value)
+            public static implicit operator Tensor(float value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(double value)
+            public static implicit operator Tensor(double value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(bool value)
+            public static implicit operator Tensor(bool value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor((float, float) value)
+            public static implicit operator Tensor((float, float) value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(System.Numerics.Complex value)
+            public static implicit operator Tensor(System.Numerics.Complex value)
             {
                 return torch.tensor(value);
             }
+
+            //public static implicit operator Tensor(Scalar value) { throw new InvalidOperationException("Conversion from Scalar to Tensor"); }
 
 
             public static implicit operator Tensor(byte[] value)
@@ -5716,6 +5727,8 @@ namespace TorchSharp
             {
                 return TensorIndex.Single(value);
             }
+
+            public static implicit operator Tensor(TensorIndex value) { throw new InvalidOperationException("Implicit conversion from TensorIndex to Tensor -- this should never be invoked, the operator is only here to guide the compiler's overload resolution."); }
 
             public static implicit operator TensorIndex((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
 
