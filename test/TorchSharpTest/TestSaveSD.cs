@@ -58,10 +58,54 @@ namespace TorchSharp
         }
         
         [Fact]
-        public void TestSaveSDData()
+        public void TestSaveSDData_LSTM()
         {
             var lstm = new LSTMModel("lstm", torch.CPU);
             lstm.save("./lstm.dat");
+        }
+        
+        class LeNet1Model : Module
+        {
+            // The names of properties should be the same in C# and Python
+            // in this case, we both name the Sequential as layers
+            private readonly Module layers;
+            private Device _device;
+
+            public LeNet1Model(string name, Device device = null) : base(name)
+            {
+                _device = device;
+
+                // the names of each layer should also be the same in C# and Python
+                var modules = new List<(string, Module)>();
+                modules.Add(("conv-1", Conv2d(1, 4, 5, padding: 2)));
+                modules.Add(("bnrm2d-1", BatchNorm2d(4)));
+                modules.Add(("relu-1", ReLU()));
+                modules.Add(("maxpool-1", MaxPool2d(2, stride: 2)));
+                modules.Add(("conv-2", Conv2d(4, 12, 5)));
+                modules.Add(("bnrm2d-2", BatchNorm2d(12)));
+                modules.Add(("relu-2", ReLU()));
+                modules.Add(("maxpool-2", MaxPool2d(2, stride: 2)));
+                modules.Add(("flatten", Flatten()));
+                modules.Add(("linear", Linear(300, 10)));
+                layers = Sequential(modules);
+
+                RegisterComponents();
+                if (device != null && device.type == TorchSharp.DeviceType.CUDA)
+                    this.to(device);
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                return layers.forward(input);
+            }
+        }
+        
+        
+        [Fact]
+        public void TestSaveSDData_LeNet1()
+        {
+            var lenet1 = new LeNet1Model("lenet1", torch.CPU);
+            lenet1.save("./lenet1.dat");
         }
     }
 }
