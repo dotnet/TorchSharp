@@ -1528,6 +1528,109 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_flatten(IntPtr tensor, long start, long end);
+
+            /// <summary>
+            /// Flattens input by reshaping it into a one-dimensional tensor. 
+            /// </summary>
+            /// <param name="start_dim">The first dim to flatten</param>
+            /// <param name="end_dim">The last dim to flatten.</param>
+            /// <remarks>Flattening a zero-dimensional tensor will return a one-dimensional view.</remarks>
+            public Tensor flatten(long start_dim = 0, long end_dim = -1)
+            {
+                var res = THSTensor_flatten(Handle, start_dim, end_dim);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unflatten(IntPtr tensor, long dimension, IntPtr shape, int length);
+
+            /// <summary>
+            /// Expands the dimension dim of the self tensor over multiple dimensions of sizes given by sizes.
+            /// </summary>
+            /// <param name="dim">Dimension to unflatten.</param>
+            /// <param name="sizes">New shape of the unflattened dimension.</param>
+            public Tensor unflatten(long dim, params long[] sizes)
+            {
+                unsafe {
+                    fixed (long* pshape = sizes) {
+                        var res = THSTensor_unflatten(Handle, dim, (IntPtr)pshape, sizes.Length);
+                        if (res == IntPtr.Zero)
+                            torch.CheckForErrors();
+                        return new Tensor(res);
+                    }
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique(IntPtr tensor, bool sorted, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique_dim(IntPtr tensor, long dim, bool sorted, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique_consecutive(IntPtr tensor, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique_dim_consecutive(IntPtr tensor, long dim, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+
+            /// <summary>
+            /// Returns the unique elements of the input tensor.
+            /// </summary>
+            /// <param name="sorted">Whether to sort the unique elements in ascending order before returning as output.</param>
+            /// <param name="return_inverse">Whether to also return the indices for where elements in the original input ended up in the returned unique list.</param>
+            /// <param name="return_counts">Whether to also return the counts for each unique element.</param>
+            /// <param name="dim">The dimension to apply unique. If null, the unique of the flattened input is returned.</param>
+            /// <returns></returns>
+            /// <remarks>This function is different from torch.unique_consecutive() in the sense that this function also eliminates non-consecutive duplicate values.</remarks>
+            public (Tensor output, Tensor? inverse_indices, Tensor? counts) unique(bool sorted = true, bool return_inverse = false, bool return_counts = false, int? dim = null)
+            {
+                IntPtr res = IntPtr.Zero;
+                IntPtr inverse_indices, counts;
+
+                if (dim is null) {
+                    res = THSTensor_unique(Handle, sorted, return_inverse, return_counts, out inverse_indices, out counts);
+                }
+                else {
+                    res = THSTensor_unique_dim(Handle, dim.Value, sorted, return_inverse, return_counts, out inverse_indices, out counts);
+                }
+
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), inverse_indices != IntPtr.Zero ? new Tensor(inverse_indices) : null, counts != IntPtr.Zero ? new Tensor(counts) : null);
+            }
+
+            /// <summary>
+            /// Returns the unique elements of the input tensor.
+            /// </summary>
+            /// <param name="return_inverse">Whether to also return the indices for where elements in the original input ended up in the returned unique list.</param>
+            /// <param name="return_counts">Whether to also return the counts for each unique element.</param>
+            /// <param name="dim">The dimension to apply unique. If null, the unique of the flattened input is returned.</param>
+            /// <returns>A tuple with the output, the indices, and counts. The latter two may be 'null'</returns>
+            /// <remarks>This function is different from torch.unique_consecutive() in the sense that this function also eliminates non-consecutive duplicate values.</remarks>
+            public (Tensor output, Tensor? inverse_indices, Tensor? counts) unique_consecutive(bool return_inverse = false, bool return_counts = false, int? dim = null)
+            {
+                IntPtr inverse_indices, counts;
+
+                IntPtr res = (dim is null)
+                    ? THSTensor_unique_consecutive(Handle, return_inverse, return_counts, out inverse_indices, out counts)
+                    : THSTensor_unique_dim_consecutive(Handle, dim.Value, return_inverse, return_counts, out inverse_indices, out counts);
+
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), inverse_indices != IntPtr.Zero ? new Tensor(inverse_indices) : null, counts != IntPtr.Zero ? new Tensor(counts) : null);
+            }
+
+            /// <summary>
+            /// Expands the dimension dim of the self tensor over multiple dimensions of sizes given by sizes.
+            /// </summary>
+            /// <param name="dim">Dimension to unflatten.</param>
+            /// <param name="sizes">New shape of the unflattened dimension.</param>
+            public Tensor unflatten(long dim, torch.Size sizes)
+            {
+                return unflatten(dim, sizes.Shape);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_squeeze(IntPtr tensor, long dimension);
 
             [DllImport("LibTorchSharp")]
@@ -2691,6 +2794,22 @@ namespace TorchSharp
 
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_channel_shuffle(IntPtr input, long groups);
+
+            /// <summary>
+            /// Divide the channels in a tensor into g groups and rearrange them.
+            ///
+            /// See: https://pytorch.org/docs/1.10/generated/torch.nn.ChannelShuffle.html#channelshuffle
+            /// </summary>
+            /// <param name="groups">The number of groups to divide channels in.</param>
+            public Tensor channel_shuffle(long groups)
+            {
+                var res = THSTensor_channel_shuffle(Handle, groups);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_clamp(IntPtr input, IntPtr min, IntPtr max);
 
             [DllImport("LibTorchSharp")]
@@ -3248,6 +3367,22 @@ namespace TorchSharp
                 }
 
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unfold(IntPtr tensor, long dimension, long size, long step);
+
+            /// <summary>
+            /// Returns a view of the original tensor which contains all slices of size 'size' from the tensor in the given dimension.
+            /// </summary>
+            /// <param name="dimension">Dimension in which unfolding happens</param>
+            /// <param name="size">The size of each slice that is unfolded</param>
+            /// <param name="step">The step between each slice</param>
+            public Tensor unfold(long dimension, long size, long step)
+            {
+                var res = THSTensor_unfold(Handle, dimension, size, step);
+                if (res == IntPtr.Zero) torch.CheckForErrors();
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
@@ -5104,105 +5239,193 @@ namespace TorchSharp
                 return right.le(left);
             }
 
-            public static explicit operator Tensor(byte value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(byte value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(sbyte value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(sbyte value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(short value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(short value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(int value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(int value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(long value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(long value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(float value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(float value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(double value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(double value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(bool value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(bool value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor((float, float) value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor((float, float) value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(System.Numerics.Complex value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(System.Numerics.Complex value)
             {
                 return torch.tensor(value);
             }
 
-
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(byte[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(sbyte[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(short[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(int[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(long[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(float[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(double[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(bool[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor((float, float)[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(System.Numerics.Complex[] value)
             {
                 return torch.tensor(value);
+            }
+
+            /// <summary>
+            /// This is only here in order to help the C# compiler make the right choice vis-a-vis
+            /// implicit conversions.
+            /// </summary>
+            public static implicit operator Tensor(Scalar scalar)
+            {
+                throw new InvalidOperationException("Implicit conversion from Scalar to Tensor -- this should never be invoked, the operator is only here to guide the compiler's overload resolution.");
             }
 
             // Specifically added to make F# look good.
@@ -5235,7 +5458,7 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Get a string representation of the tensor.
+            /// Get a verbose string representation of a tensor.
             /// </summary>
             /// <param name="withData">Boolean, used to discriminate.</param>
             /// <param name="fltFormat">The format string to use for floating point values.</param>
@@ -5450,6 +5673,27 @@ namespace TorchSharp
                 }
             }
 
+            public object tolist()
+            {
+                if (this.shape.Length == 0) {
+                    return this.ToScalar();
+                }
+
+                var result = new System.Collections.ArrayList();
+                if (shape.Length == 1) {
+                    for (long idx = 0; idx < shape[0]; idx++) {
+                        result.Add(this[idx].ToScalar());
+                    }
+                }
+                else {
+                    for (long idx = 0; idx < shape[0]; idx++) {
+                        result.Add(this[idx].tolist());
+                    }
+                }
+
+                return result;
+            }
+
             public static explicit operator float(Tensor value) => value.ToSingle();
             public static explicit operator double(Tensor value) => value.ToDouble();
             public static explicit operator sbyte(Tensor value) => value.ToSByte();
@@ -5560,6 +5804,8 @@ namespace TorchSharp
             {
                 return TensorIndex.Single(value);
             }
+
+            public static implicit operator Tensor(TensorIndex value) { throw new InvalidOperationException("Implicit conversion from TensorIndex to Tensor -- this should never be invoked, the operator is only here to guide the compiler's overload resolution."); }
 
             public static implicit operator TensorIndex((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
 
