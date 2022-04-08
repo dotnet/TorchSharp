@@ -46,6 +46,8 @@ For efficient memory management, the model should be created on the CPU before l
 
 ><br/>It is __critical__ that all submodules and buffers in a custom module or composed by a Sequential object have exactly the same name in the original and target models, since that is how persisted tensors are associated with the model into which they are loaded.<br/><br/>The CustomModule 'RegisterComponents' will automatically find all fields that are either modules or tensors, register the former as modules, and the latter as buffers. It registers all of these using the name of the field, just like the PyTorch Module base class does.<br/><br/>
 
+### Saving a TorchSharp format model in Python
+
 If the model starts out in Python, there's a simple script that allows you to use code that is very similar to the Pytorch API to save models to the TorchSharp format. Rather than placing this trivial script in a Python package and publishing it, we choose to just refer you to the script file itself, [exportsd.py](../../src/Python/exportsd.py), which has all the necessary code.
 
 ```Python
@@ -53,3 +55,15 @@ f = open("model_weights.dat", "wb")
 exportsd.save_state_dict(model.to("cpu").state_dict(), f)
 f.close()
 ```
+
+### Loading a TorchSharp format model in Python
+
+If the model starts out in TorchSharp, there's also a simple script that allows you to load TorchSharp models in Python. All the necessary code can be found in [importsd.py](../../src/Python/importsd.py). And there is an example for using the script:
+
+```Python
+f = open("model_weights.dat", "rb")
+model.load_state_dict(importsd.load_state_dict(f))
+f.close()
+```
+
+Also, you can check [TestSaveSD.cs](../../test/TorchSharpTest/TestSaveSD.cs) and [pyimporttest.py](../../test/TorchSharpTest/pyimporttest.py) for more examples.
