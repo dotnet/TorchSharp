@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -5343,10 +5344,22 @@ namespace TorchSharp
             // Specifically added to make F# look good.
             public static Tensor op_MinusMinusGreater(Tensor t, torch.nn.Module m) => m.forward(t);
 
+            public static TensorStringStyle DefaultOutputStyle = TensorStringStyle.Metadata;
+
+            public override string ToString() => ToString(DefaultOutputStyle);
+
+            public string ToString(TensorStringStyle style, string fltFormat = "g5", int width = 100,
+                CultureInfo? cultureInfo = null) => style switch {
+                    TensorStringStyle.Metadata => ToMetadataString(),
+                    TensorStringStyle.Julia => ToJuliaString(fltFormat, width, cultureInfo),
+                    TensorStringStyle.Numpy => ToNumpyString(this, ndim),
+                    _ => throw new InvalidEnumArgumentException("Not supported type")
+                };
+
             /// <summary>
             ///   Get a string representation of the tensor.
             /// </summary>
-            public override string ToString()
+            private string ToMetadataString()
             {
                 if (Handle == IntPtr.Zero) return "";
 
@@ -5368,13 +5381,6 @@ namespace TorchSharp
 
                 return sb.ToString();
             }
-
-            /// <summary>
-            /// Get string info of tensor as numpy style.
-            /// </summary>
-            /// <returns></returns>
-            public string str()
-                => ToNumpyString(this, ndim);
 
             private static string ToNumpyString(Tensor t, long mdim, bool isFCreate = true)
             {
@@ -5445,17 +5451,15 @@ namespace TorchSharp
             /// <summary>
             /// Get a string representation of the tensor.
             /// </summary>
-            /// <param name="withData">Boolean, used to discriminate.</param>
             /// <param name="fltFormat">The format string to use for floating point values.</param>
             /// <param name="width">The width of each line of the output string.</param>
             /// <param name="cultureInfo">The CulturInfo to use when formatting the text</param>
 
-            public string ToString(bool withData, string fltFormat = "g5", int width = 100, CultureInfo? cultureInfo = null)
+            private string ToJuliaString(string fltFormat = "g5", int width = 100, CultureInfo? cultureInfo = null)
             {
                 var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
-                if (!withData) return this.ToString();
 
-                var builder = new StringBuilder(this.ToString());
+                var builder = new StringBuilder(this.ToMetadataString());
 
                 if (Dimensions == 0) {
 

@@ -79,17 +79,17 @@ namespace TorchSharp
         {
             {
                 Tensor t = (Tensor)3.14f;
-                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal("[], type = Float32, device = cpu, value = 3.14", str);
             }
             {
                 Tensor t = torch.tensor(3.14f);
-                var str = t.ToString(true, "E2", cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, "E2", cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal("[], type = Float32, device = cpu, value = 3.14E+000", str);
             }
             {
                 Tensor t = torch.tensor((3.14f, 6.28f), torch.complex64);
-                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal("[], type = ComplexFloat32, device = cpu, value = 3.14+6.28i", str);
             }
         }
@@ -101,18 +101,18 @@ namespace TorchSharp
         {
             {
                 Tensor t = torch.zeros(4);
-                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[4], type = Float32, device = cpu{_sep} 0 0 0 0{_sep}", str);
             }
             {
                 Tensor t = torch.zeros(4, torch.complex64);
-                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[4], type = ComplexFloat32, device = cpu{_sep} 0 0 0 0{_sep}", str);
             }
             {
                 Tensor t = torch.ones(4, torch.complex64);
                 for (int i = 0; i < t.shape[0]; i++) t[i] = torch.tensor((1.0f * i, 2.43f * i * 2), torch.complex64);
-                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[4], type = ComplexFloat32, device = cpu{_sep} 0 1+4.86i 2+9.72i 3+14.58i{_sep}", str);
             }
         }
@@ -122,17 +122,17 @@ namespace TorchSharp
         {
             {
                 Tensor t = torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4);
-                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[2x4], type = Float32, device = cpu{_sep}{_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}", str);
             }
             {
                 Tensor t = torch.zeros(2, 4, torch.complex64);
-                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[2x4], type = ComplexFloat32, device = cpu{_sep}{_sep} 0 0 0 0{_sep} 0 0 0 0{_sep}", str);
             }
             {
                 Tensor t = torch.ones(2, 4, torch.complex64);
-                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[2x4], type = ComplexFloat32, device = cpu{_sep}{_sep} 1 1 1 1{_sep} 1 1 1 1{_sep}", str);
             }
         }
@@ -145,7 +145,7 @@ namespace TorchSharp
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, 2, 2, 4);
-                var str = t.ToString(true, "0.0000000", cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, "0.0000000", cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,..,..] ={_sep} 0.0000000   3.1410000 6.2834000    3.1415200{_sep}" +
                              $" 0.0000063 -13.1415300 0.0100000 4713.1400000{_sep}{_sep}[1,..,..] ={_sep} 0.0100000 0.0000000 0.0000000 0.0000000{_sep}" +
                              $" 0.0000000 0.0000000 0.0000000 0.0000000{_sep}", str);
@@ -162,7 +162,7 @@ namespace TorchSharp
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, 2, 2, 2, 4);
-                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
                              $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}" +
                              $"[1,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
@@ -184,7 +184,7 @@ namespace TorchSharp
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, new long[] { 2, 2, 2, 2, 4 });
-                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[2x2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
                              $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[0,1,0,..,..] ={_sep}" +
                              $"        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,1,1,..,..] ={_sep} 0.01 0 0 0{_sep}   " +
@@ -216,7 +216,7 @@ namespace TorchSharp
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, new long[] { 2, 2, 2, 2, 2, 4 });
-                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[2x2x2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,0,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
                              $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,0,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[0,0,1,0,..,..] ={_sep}" +
                              $"        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,1,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}" +
@@ -243,36 +243,36 @@ namespace TorchSharp
         [Fact]
         public void Test1DToNumpyString()
         {
-            Assert.Equal("[0 0 0 0]", torch.zeros(4).str());
-            Assert.Equal("[0 0 0 0]", torch.zeros(4, torch.complex64).str());
+            Assert.Equal("[0 0 0 0]", torch.zeros(4).ToString(TensorStringStyle.Numpy));
+            Assert.Equal("[0 0 0 0]", torch.zeros(4, torch.complex64).ToString(TensorStringStyle.Numpy));
             {
                 Tensor t = torch.ones(4, torch.complex64);
                 for (int i = 0; i < t.shape[0]; i++) t[i] = torch.tensor((1.0f * i, 2.43f * i * 2), torch.complex64);
-                var str = t.str();
+                var str = t.ToString(TensorStringStyle.Numpy);
                 Assert.Equal($"[0 1+4.86i 2+9.72i 3+14.58i]", str);
             }
-            Assert.Equal("[1 1 1 ... 1 1 1]", torch.ones(100, ScalarType.Int32).str());
-            Assert.Equal("[1 3 5 ... 195 197 199]", torch.tensor(Enumerable.Range(0, 100).Select(x => 2 * x + 1).ToList(), ScalarType.Float32).str());
+            Assert.Equal("[1 1 1 ... 1 1 1]", torch.ones(100, ScalarType.Int32).ToString(TensorStringStyle.Numpy));
+            Assert.Equal("[1 3 5 ... 195 197 199]", torch.tensor(Enumerable.Range(0, 100).Select(x => 2 * x + 1).ToList(), ScalarType.Float32).ToString(TensorStringStyle.Numpy));
         }
 
         [Fact]
         public void Test2DToNumpyString()
         {
-            Assert.Equal("[[0 3.141 6.2834 3.1415]\n [6.28e-06 -13.142 0.01 4713.1]]", torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4).str());
+            Assert.Equal($"[[0 3.141 6.2834 3.1415]{_sep} [6.28e-06 -13.142 0.01 4713.1]]", torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4).ToString(TensorStringStyle.Numpy));
             {
                 Tensor t = torch.zeros(5, 5, torch.complex64);
                 for(int i = 0; i < t.shape[0]; i++)
                     for(int j = 0; j < t.shape[1]; j++)
                         t[i][j] = torch.tensor((1.24f * i, 2.491f * i * 2), torch.complex64);
-                var str = t.str();
-                Assert.Equal("[[0 0 0 0 0]\n [1.24+4.982i 1.24+4.982i 1.24+4.982i 1.24+4.982i 1.24+4.982i]\n [2.48+9.964i 2.48+9.964i 2.48+9.964i 2.48+9.964i 2.48+9.964i]\n [3.72+14.946i 3.72+14.946i 3.72+14.946i 3.72+14.946i 3.72+14.946i]\n [4.96+19.928i 4.96+19.928i 4.96+19.928i 4.96+19.928i 4.96+19.928i]]", str);
+                var str = t.ToString(TensorStringStyle.Numpy);
+                Assert.Equal($"[[0 0 0 0 0]{_sep} [1.24+4.982i 1.24+4.982i 1.24+4.982i 1.24+4.982i 1.24+4.982i]{_sep} [2.48+9.964i 2.48+9.964i 2.48+9.964i 2.48+9.964i 2.48+9.964i]{_sep} [3.72+14.946i 3.72+14.946i 3.72+14.946i 3.72+14.946i 3.72+14.946i]{_sep} [4.96+19.928i 4.96+19.928i 4.96+19.928i 4.96+19.928i 4.96+19.928i]]", str);
             }
-            Assert.Equal("[[0 0 0 0]\n [0 0 0 0]]", torch.zeros(2, 4, torch.complex64).str());
-            Assert.Equal("[[1 1 1 1]\n [1 1 1 1]]", torch.ones(2, 4, torch.complex64).str());
-            Assert.Equal("[[7.5 10 12.5 ... 125 127.5 130]\n [132.5 135 137.5 ... 250 252.5 255]]", torch.tensor(Enumerable.Range(1, 100).Select(x => x * 2.5 + 5).ToList(), new long[]{2, 50}, ScalarType.Float32).str());
-            Assert.Equal("[[7.5 10 12.5 ... 250 252.5 255]\n [257.5 260 262.5 ... 500 502.5 505]\n [507.5 510 512.5 ... 750 752.5 755]\n ...\n [24258 24260 24262 ... 24500 24502 24505]\n [24508 24510 24512 ... 24750 24752 24755]\n [24758 24760 24762 ... 25000 25002 25005]]",
+            Assert.Equal($"[[0 0 0 0]{_sep} [0 0 0 0]]", torch.zeros(2, 4, torch.complex64).ToString(TensorStringStyle.Numpy));
+            Assert.Equal($"[[1 1 1 1]{_sep} [1 1 1 1]]", torch.ones(2, 4, torch.complex64).ToString(TensorStringStyle.Numpy));
+            Assert.Equal($"[[7.5 10 12.5 ... 125 127.5 130]{_sep} [132.5 135 137.5 ... 250 252.5 255]]", torch.tensor(Enumerable.Range(1, 100).Select(x => x * 2.5 + 5).ToList(), new long[]{2, 50}, ScalarType.Float32).ToString(TensorStringStyle.Numpy));
+            Assert.Equal($"[[7.5 10 12.5 ... 250 252.5 255]{_sep} [257.5 260 262.5 ... 500 502.5 505]{_sep} [507.5 510 512.5 ... 750 752.5 755]{_sep} ...{_sep} [24258 24260 24262 ... 24500 24502 24505]{_sep} [24508 24510 24512 ... 24750 24752 24755]{_sep} [24758 24760 24762 ... 25000 25002 25005]]",
                 torch.tensor(Enumerable.Range(1, 10000).Select(x => x * 2.5 + 5).ToList(), new long[] {100, 100},
-                    ScalarType.Float32).str());
+                    ScalarType.Float32).ToString(TensorStringStyle.Numpy));
         }
 
         [Fact]
@@ -280,32 +280,32 @@ namespace TorchSharp
         {
             {
                 Assert.Equal(
-                    "[[[0 3.141 6.2834 3.1415]\n  [6.28e-06 -13.142 0.01 4713.1]]\n\n [[0.01 0 0 0]\n  [0 0 0 0]]]",
+                    $"[[[0 3.141 6.2834 3.1415]{_sep}  [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep} [[0.01 0 0 0]{_sep}  [0 0 0 0]]]",
                     torch.tensor(
                         new float[] {
                             0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f,
                             0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                        }, 2, 2, 4).str());
-                Assert.Equal("[[[7.5 10 12.5 ... 25 27.5 30]\n  [32.5 35 37.5 ... 50 52.5 55]\n  [57.5 60 62.5 ... 75 77.5 80]\n  ...\n  [182.5 185 187.5 ... 200 202.5 205]\n  [207.5 210 212.5 ... 225 227.5 230]\n  [232.5 235 237.5 ... 250 252.5 255]]\n\n [[257.5 260 262.5 ... 275 277.5 280]\n  [282.5 285 287.5 ... 300 302.5 305]\n  [307.5 310 312.5 ... 325 327.5 330]\n  ...\n  [432.5 435 437.5 ... 450 452.5 455]\n  [457.5 460 462.5 ... 475 477.5 480]\n  [482.5 485 487.5 ... 500 502.5 505]]\n\n [[507.5 510 512.5 ... 525 527.5 530]\n  [532.5 535 537.5 ... 550 552.5 555]\n  [557.5 560 562.5 ... 575 577.5 580]\n  ...\n  [682.5 685 687.5 ... 700 702.5 705]\n  [707.5 710 712.5 ... 725 727.5 730]\n  [732.5 735 737.5 ... 750 752.5 755]]\n\n ...\n\n [[24258 24260 24262 ... 24275 24278 24280]\n  [24282 24285 24288 ... 24300 24302 24305]\n  [24308 24310 24312 ... 24325 24328 24330]\n  ...\n  [24432 24435 24438 ... 24450 24452 24455]\n  [24458 24460 24462 ... 24475 24478 24480]\n  [24482 24485 24488 ... 24500 24502 24505]]\n\n [[24508 24510 24512 ... 24525 24528 24530]\n  [24532 24535 24538 ... 24550 24552 24555]\n  [24558 24560 24562 ... 24575 24578 24580]\n  ...\n  [24682 24685 24688 ... 24700 24702 24705]\n  [24708 24710 24712 ... 24725 24728 24730]\n  [24732 24735 24738 ... 24750 24752 24755]]\n\n [[24758 24760 24762 ... 24775 24778 24780]\n  [24782 24785 24788 ... 24800 24802 24805]\n  [24808 24810 24812 ... 24825 24828 24830]\n  ...\n  [24932 24935 24938 ... 24950 24952 24955]\n  [24958 24960 24962 ... 24975 24978 24980]\n  [24982 24985 24988 ... 25000 25002 25005]]]", torch.tensor(Enumerable.Range(1, 10000).Select(x => x * 2.5 + 5).ToList(), new long[]{100, 10, 10}, ScalarType.Float32).str());
+                        }, 2, 2, 4).ToString(TensorStringStyle.Numpy));
+                Assert.Equal($"[[[7.5 10 12.5 ... 25 27.5 30]{_sep}  [32.5 35 37.5 ... 50 52.5 55]{_sep}  [57.5 60 62.5 ... 75 77.5 80]{_sep}  ...{_sep}  [182.5 185 187.5 ... 200 202.5 205]{_sep}  [207.5 210 212.5 ... 225 227.5 230]{_sep}  [232.5 235 237.5 ... 250 252.5 255]]{_sep}{_sep} [[257.5 260 262.5 ... 275 277.5 280]{_sep}  [282.5 285 287.5 ... 300 302.5 305]{_sep}  [307.5 310 312.5 ... 325 327.5 330]{_sep}  ...{_sep}  [432.5 435 437.5 ... 450 452.5 455]{_sep}  [457.5 460 462.5 ... 475 477.5 480]{_sep}  [482.5 485 487.5 ... 500 502.5 505]]{_sep}{_sep} [[507.5 510 512.5 ... 525 527.5 530]{_sep}  [532.5 535 537.5 ... 550 552.5 555]{_sep}  [557.5 560 562.5 ... 575 577.5 580]{_sep}  ...{_sep}  [682.5 685 687.5 ... 700 702.5 705]{_sep}  [707.5 710 712.5 ... 725 727.5 730]{_sep}  [732.5 735 737.5 ... 750 752.5 755]]{_sep}{_sep} ...{_sep}{_sep} [[24258 24260 24262 ... 24275 24278 24280]{_sep}  [24282 24285 24288 ... 24300 24302 24305]{_sep}  [24308 24310 24312 ... 24325 24328 24330]{_sep}  ...{_sep}  [24432 24435 24438 ... 24450 24452 24455]{_sep}  [24458 24460 24462 ... 24475 24478 24480]{_sep}  [24482 24485 24488 ... 24500 24502 24505]]{_sep}{_sep} [[24508 24510 24512 ... 24525 24528 24530]{_sep}  [24532 24535 24538 ... 24550 24552 24555]{_sep}  [24558 24560 24562 ... 24575 24578 24580]{_sep}  ...{_sep}  [24682 24685 24688 ... 24700 24702 24705]{_sep}  [24708 24710 24712 ... 24725 24728 24730]{_sep}  [24732 24735 24738 ... 24750 24752 24755]]{_sep}{_sep} [[24758 24760 24762 ... 24775 24778 24780]{_sep}  [24782 24785 24788 ... 24800 24802 24805]{_sep}  [24808 24810 24812 ... 24825 24828 24830]{_sep}  ...{_sep}  [24932 24935 24938 ... 24950 24952 24955]{_sep}  [24958 24960 24962 ... 24975 24978 24980]{_sep}  [24982 24985 24988 ... 25000 25002 25005]]]", torch.tensor(Enumerable.Range(1, 10000).Select(x => x * 2.5 + 5).ToList(), new long[]{100, 10, 10}, ScalarType.Float32).ToString(TensorStringStyle.Numpy));
             }
         }
 
         [Fact]
         public void Test4DToNumpyString()
         {
-            Assert.Equal("[[[[0 3.141 6.2834 3.1415]\n   [6.28e-06 -13.142 0.01 4713.1]]\n\n  [[0.01 0 0 0]\n   [0 0 0 0]]]\n\n\n [[[0 3.141 6.2834 3.1415]\n   [6.28e-06 -13.142 0.01 4713.1]]\n\n  [[0.01 0 0 0]\n   [0 0 0 0]]]]", torch.tensor(new float[] {
+            Assert.Equal($"[[[[0 3.141 6.2834 3.1415]{_sep}   [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}  [[0.01 0 0 0]{_sep}   [0 0 0 0]]]{_sep}{_sep}{_sep} [[[0 3.141 6.2834 3.1415]{_sep}   [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}  [[0.01 0 0 0]{_sep}   [0 0 0 0]]]]", torch.tensor(new float[] {
                 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
                 0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
                 0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-            }, 2, 2, 2, 4).str());
+            }, 2, 2, 2, 4).ToString(TensorStringStyle.Numpy));
         }
 
         [Fact]
         public void Test5DToNumpyString()
         {
             Assert.Equal(
-                "[[[[[0 3.141 6.2834 3.1415]\n    [6.28e-06 -13.142 0.01 4713.1]]\n\n   [[0.01 0 0 0]\n    [0 0 0 0]]]\n\n\n  [[[0 3.141 6.2834 3.1415]\n    [6.28e-06 -13.142 0.01 4713.1]]\n\n   [[0.01 0 0 0]\n    [0 0 0 0]]]]\n\n\n\n [[[[0 3.141 6.2834 3.1415]\n    [6.28e-06 -13.142 0.01 4713.1]]\n\n   [[0.01 0 0 0]\n    [0 0 0 0]]]\n\n\n  [[[0 3.141 6.2834 3.1415]\n    [6.28e-06 -13.142 0.01 4713.1]]\n\n   [[0.01 0 0 0]\n    [0 0 0 0]]]]]",
+                $"[[[[[0 3.141 6.2834 3.1415]{_sep}    [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}   [[0.01 0 0 0]{_sep}    [0 0 0 0]]]{_sep}{_sep}{_sep}  [[[0 3.141 6.2834 3.1415]{_sep}    [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}   [[0.01 0 0 0]{_sep}    [0 0 0 0]]]]{_sep}{_sep}{_sep}{_sep} [[[[0 3.141 6.2834 3.1415]{_sep}    [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}   [[0.01 0 0 0]{_sep}    [0 0 0 0]]]{_sep}{_sep}{_sep}  [[[0 3.141 6.2834 3.1415]{_sep}    [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}   [[0.01 0 0 0]{_sep}    [0 0 0 0]]]]]",
                 torch.tensor(
                     new float[] {
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f,
@@ -314,14 +314,14 @@ namespace TorchSharp
                         6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f,
-                    }, new long[] {2, 2, 2, 2, 4}).str());
+                    }, new long[] {2, 2, 2, 2, 4}).ToString(TensorStringStyle.Numpy));
         }
 
         [Fact]
         public void Test6DToNumpyString()
         {
             Assert.Equal(
-                "[[[[[[0 3.141 6.2834 3.1415]\n     [6.28e-06 -13.142 0.01 4713.1]]\n\n    [[0.01 0 0 0]\n     [0 0 0 0]]]\n\n\n   [[[0 3.141 6.2834 3.1415]\n     [6.28e-06 -13.142 0.01 4713.1]]\n\n    [[0.01 0 0 0]\n     [0 0 0 0]]]]\n\n\n\n  [[[[0 3.141 6.2834 3.1415]\n     [6.28e-06 -13.142 0.01 4713.1]]\n\n    [[0.01 0 0 0]\n     [0 0 0 0]]]\n\n\n   [[[0 3.141 6.2834 3.1415]\n     [6.28e-06 -13.142 0.01 4713.1]]\n\n    [[0.01 0 0 0]\n     [0 0 0 0]]]]]\n\n\n\n\n [[[[[0 3.141 6.2834 3.1415]\n     [6.28e-06 -13.142 0.01 4713.1]]\n\n    [[0.01 0 0 0]\n     [0 0 0 0]]]\n\n\n   [[[0 3.141 6.2834 3.1415]\n     [6.28e-06 -13.142 0.01 4713.1]]\n\n    [[0.01 0 0 0]\n     [0 0 0 0]]]]\n\n\n\n  [[[[0 3.141 6.2834 3.1415]\n     [6.28e-06 -13.142 0.01 4713.1]]\n\n    [[0.01 0 0 0]\n     [0 0 0 0]]]\n\n\n   [[[0 3.141 6.2834 3.1415]\n     [6.28e-06 -13.142 0.01 4713.1]]\n\n    [[0.01 0 0 0]\n     [0 0 0 0]]]]]]",
+                $"[[[[[[0 3.141 6.2834 3.1415]{_sep}     [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}    [[0.01 0 0 0]{_sep}     [0 0 0 0]]]{_sep}{_sep}{_sep}   [[[0 3.141 6.2834 3.1415]{_sep}     [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}    [[0.01 0 0 0]{_sep}     [0 0 0 0]]]]{_sep}{_sep}{_sep}{_sep}  [[[[0 3.141 6.2834 3.1415]{_sep}     [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}    [[0.01 0 0 0]{_sep}     [0 0 0 0]]]{_sep}{_sep}{_sep}   [[[0 3.141 6.2834 3.1415]{_sep}     [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}    [[0.01 0 0 0]{_sep}     [0 0 0 0]]]]]{_sep}{_sep}{_sep}{_sep}{_sep} [[[[[0 3.141 6.2834 3.1415]{_sep}     [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}    [[0.01 0 0 0]{_sep}     [0 0 0 0]]]{_sep}{_sep}{_sep}   [[[0 3.141 6.2834 3.1415]{_sep}     [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}    [[0.01 0 0 0]{_sep}     [0 0 0 0]]]]{_sep}{_sep}{_sep}{_sep}  [[[[0 3.141 6.2834 3.1415]{_sep}     [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}    [[0.01 0 0 0]{_sep}     [0 0 0 0]]]{_sep}{_sep}{_sep}   [[[0 3.141 6.2834 3.1415]{_sep}     [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}    [[0.01 0 0 0]{_sep}     [0 0 0 0]]]]]]",
                 torch.tensor(
                     new float[] {
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f,
@@ -335,7 +335,7 @@ namespace TorchSharp
                         3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f,
                         4713.14f, 0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                    }, new long[] {2, 2, 2, 2, 2, 4}).str());
+                    }, new long[] {2, 2, 2, 2, 2, 4}).ToString(TensorStringStyle.Numpy));
         }
 
 
@@ -6071,8 +6071,8 @@ namespace TorchSharp
                     {
                         var poster = torchvision.transforms.functional.adjust_hue(input, 0.0);
 
-                        var istr = input.ToString(true);
-                        var pstr = poster.ToString(true);
+                        var istr = input.ToString(TensorStringStyle.Julia);
+                        var pstr = poster.ToString(TensorStringStyle.Julia);
 
                         Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
                         Assert.True(poster.allclose(input));
@@ -6081,8 +6081,8 @@ namespace TorchSharp
                     {
                         var poster = torchvision.transforms.functional.adjust_hue(input, 0.15);
 
-                        var istr = input.ToString(true);
-                        var pstr = poster.ToString(true);
+                        var istr = input.ToString(TensorStringStyle.Julia);
+                        var pstr = poster.ToString(TensorStringStyle.Julia);
 
                         Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
                         Assert.False(poster.allclose(input));
@@ -6156,7 +6156,7 @@ namespace TorchSharp
 
                     var poster = torchvision.transforms.functional.perspective(input, startpoints, endpoints);
 
-                    var pStr = poster.ToString(true);
+                    var pStr = poster.ToString(TensorStringStyle.Julia);
 
                     Assert.Equal(new long[] { 1, 3, 8, 8 }, poster.shape);
                 }

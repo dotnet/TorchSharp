@@ -12,6 +12,13 @@ namespace TorchSharp
 {
     using static torch;
 
+    public enum TensorStringStyle
+    {
+        Metadata,
+        Julia,
+        Numpy
+    }
+
     /// <summary>
     /// A few extensions to the Tensor type.
     /// </summary>
@@ -41,7 +48,7 @@ namespace TorchSharp
         /// </remarks>
         public static string str(this Tensor tensor, string fltFormat = "g5", int width = 100)
         {
-            return tensor.ToString(true, fltFormat, width);
+            return tensor.ToString(TensorStringStyle.Julia, fltFormat, width);
         }
 
         /// <summary>
