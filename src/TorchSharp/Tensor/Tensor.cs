@@ -5240,105 +5240,193 @@ namespace TorchSharp
                 return right.le(left);
             }
 
-            public static explicit operator Tensor(byte value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(byte value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(sbyte value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(sbyte value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(short value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(short value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(int value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(int value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(long value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(long value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(float value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(float value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(double value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(double value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(bool value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(bool value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor((float, float) value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor((float, float) value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(System.Numerics.Complex value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(System.Numerics.Complex value)
             {
                 return torch.tensor(value);
             }
 
-
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(byte[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(sbyte[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(short[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(int[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(long[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(float[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(double[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(bool[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor((float, float)[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(System.Numerics.Complex[] value)
             {
                 return torch.tensor(value);
+            }
+
+            /// <summary>
+            /// This is only here in order to help the C# compiler make the right choice vis-a-vis
+            /// implicit conversions.
+            /// </summary>
+            public static implicit operator Tensor(Scalar scalar)
+            {
+                throw new InvalidOperationException("Implicit conversion from Scalar to Tensor -- this should never be invoked, the operator is only here to guide the compiler's overload resolution.");
             }
 
             // Specifically added to make F# look good.
@@ -5449,7 +5537,7 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Get a string representation of the tensor.
+            /// Get a verbose string representation of a tensor.
             /// </summary>
             /// <param name="fltFormat">The format string to use for floating point values.</param>
             /// <param name="width">The width of each line of the output string.</param>
@@ -5796,6 +5884,8 @@ namespace TorchSharp
             {
                 return TensorIndex.Single(value);
             }
+
+            public static implicit operator Tensor(TensorIndex value) { throw new InvalidOperationException("Implicit conversion from TensorIndex to Tensor -- this should never be invoked, the operator is only here to guide the compiler's overload resolution."); }
 
             public static implicit operator TensorIndex((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
 

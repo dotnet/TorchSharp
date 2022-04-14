@@ -25,7 +25,7 @@ def _elem_type(t):
     elif dt == torch.float64:
         return 7
     elif dt == torch.bool:
-        return 0
+        return 11
     elif dt == torch.bfloat16:
         return 15
     else:
