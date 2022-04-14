@@ -5413,7 +5413,7 @@ namespace TorchSharp
                         PrintValue(sb, t[currentSize - 1].ToScalar());
                     }
                 } else {
-                    var newline = string.Join("", Enumerable.Repeat('\n', (int) dim - 1).ToList());
+                    var newline = string.Join("", Enumerable.Repeat(Environment.NewLine, (int) dim - 1).ToList());
                     if (currentSize <= 6) {
                         sb.Append(ToNumpyString(t[0], mdim, false));
                         sb.Append(newline);
