@@ -5440,7 +5440,7 @@ namespace TorchSharp
                 CultureInfo? cultureInfo = null) => style switch {
                     TensorStringStyle.Metadata => ToMetadataString(),
                     TensorStringStyle.Julia => ToJuliaString(fltFormat, width, cultureInfo),
-                    TensorStringStyle.Numpy => ToNumpyString(this, ndim),
+                    TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fltFormat, cultureInfo),
                     _ => throw new InvalidEnumArgumentException("Not supported type")
                 };
 
@@ -5470,8 +5470,10 @@ namespace TorchSharp
                 return sb.ToString();
             }
 
-            private static string ToNumpyString(Tensor t, long mdim, bool isFCreate = true)
+            private static string ToNumpyString(Tensor t, long mdim, bool isFCreate, string fltFormat, CultureInfo? cultureInfo)
             {
+                var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
+
                 var dim = t.dim();
                 if (t.size().Length == 0) return "";
                 var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int) (mdim - dim))) : "");
@@ -5480,42 +5482,42 @@ namespace TorchSharp
                 if (dim == 1) {
                     if (currentSize <= 6) {
                         for (var i = 0; i < currentSize - 1; i++) {
-                            PrintValue(sb, t[i].ToScalar());
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(' ');
                         }
 
-                        PrintValue(sb, t[currentSize - 1].ToScalar());
+                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
                     } else {
                         for (var i = 0; i < 3; i++) {
-                            PrintValue(sb, t[i].ToScalar());
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(' ');
                         }
 
                         sb.Append("... ");
 
                         for (var i = currentSize - 3; i < currentSize - 1; i++) {
-                            PrintValue(sb, t[i].ToScalar());
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(' ');
                         }
 
-                        PrintValue(sb, t[currentSize - 1].ToScalar());
+                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
                     }
                 } else {
                     var newline = string.Join("", Enumerable.Repeat(Environment.NewLine, (int) dim - 1).ToList());
                     if (currentSize <= 6) {
-                        sb.Append(ToNumpyString(t[0], mdim, false));
+                        sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo));
                         sb.Append(newline);
                         for (var i = 1; i < currentSize - 1; i++) {
-                            sb.Append(ToNumpyString(t[i], mdim));
+                            sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo));
                             sb.Append(newline);
                         }
 
-                        sb.Append(ToNumpyString(t[currentSize - 1], mdim));
+                        sb.Append(ToNumpyString(t[currentSize - 1], mdim, true, fltFormat, cultureInfo));
                     } else {
-                        sb.Append(ToNumpyString(t[0], mdim, false));
+                        sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo));
                         sb.Append(newline);
                         for (var i = 1; i < 3; i++) {
-                            sb.Append(ToNumpyString(t[i], mdim));
+                            sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo));
                             sb.Append(newline);
                         }
 
@@ -5524,11 +5526,11 @@ namespace TorchSharp
                         sb.Append(newline);
 
                         for (var i = currentSize - 3; i < currentSize - 1; i++) {
-                            sb.Append(ToNumpyString(t[i], mdim));
+                            sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo));
                             sb.Append(newline);
                         }
 
-                        sb.Append(ToNumpyString(t[currentSize - 1], mdim));
+                        sb.Append(ToNumpyString(t[currentSize - 1], mdim, true, fltFormat, cultureInfo));
                     }
                 }
 
@@ -5696,9 +5698,6 @@ namespace TorchSharp
                     width -= str.Length + 1;
                 }
             }
-
-            private static void PrintValue(StringBuilder builder, Scalar value) =>
-                PrintValue(builder, value.Type, value, "g5", CultureInfo.CurrentCulture);
 
             private static void PrintValue(StringBuilder builder, ScalarType type, Scalar value, string fltFormat, CultureInfo cultureInfo)
             {
