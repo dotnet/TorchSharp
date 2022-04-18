@@ -8,8 +8,13 @@ using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 
-//NOTE: This code was inspired by code found int the SciSharpStack-Examples repository.
+// This code was inspired by code found in the SciSharpStack-Examples repository located at:
+//
 //      https://github.com/SciSharp/SciSharp-Stack-Examples
+//
+// Original License: https://github.com/SciSharp/SciSharp-Stack-Examples/blob/master/LICENSE
+//
+// Original copyright information was not found at the above location.
 
 namespace TorchSharp.Utils
 {
