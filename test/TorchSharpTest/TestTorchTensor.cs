@@ -14,6 +14,9 @@ using Xunit;
 
 namespace TorchSharp
 {
+#if NET472_OR_GREATER
+    [Collection("Sequential")]
+#endif // NET472_OR_GREATER
     public class TestTensor
     {
         [Fact]
@@ -39,6 +42,35 @@ namespace TorchSharp
             }
             using (var scalar = ((double)0).ToScalar()) {
                 Assert.Equal(ScalarType.Float64, scalar.Type);
+            }
+        }
+
+
+        [Fact]
+        public void Test1DToList()
+        {
+            {
+                Tensor t = torch.zeros(4);
+                var lst = t.tolist();
+                var list = lst as System.Collections.IList;
+                Assert.NotNull(list);
+                if (list is not null) {
+                    Assert.Equal(4, list.Count);
+                    for (var idx = 0; idx < list.Count; idx++)
+                       Assert.IsType<Scalar>(list[idx]);
+                }
+            }
+            {
+                Tensor t = torch.zeros(4, 4);
+                var lst = t.tolist();
+                var list = lst as System.Collections.IList;
+                Assert.NotNull(list);
+
+                if (list is not null) {
+                    Assert.Equal(4, list.Count);
+                    for (var idx = 0; idx < list.Count; idx++)
+                        Assert.IsType<System.Collections.ArrayList>(list[idx]);
+                }
             }
         }
 
@@ -70,7 +102,7 @@ namespace TorchSharp
             }
         }
 
-        private string _sep = OperatingSystem.IsWindows() ? "\r\n" : "\n";
+        private string _sep = Environment.NewLine;
 
         [Fact]
         public void Test1DToString()
@@ -122,8 +154,8 @@ namespace TorchSharp
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, 2, 2, 4);
                 var str = t.ToString(true, "0.0000000", cultureInfo: CultureInfo.InvariantCulture);
-                Assert.Equal($"[2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,:,:] ={_sep} 0.0000000   3.1410000 6.2834000    3.1415200{_sep}" +
-                             $" 0.0000063 -13.1415300 0.0100000 4713.1400000{_sep}{_sep}[1,:,:] ={_sep} 0.0100000 0.0000000 0.0000000 0.0000000{_sep}" +
+                Assert.Equal($"[2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,..,..] ={_sep} 0.0000000   3.1410000 6.2834000    3.1415200{_sep}" +
+                             $" 0.0000063 -13.1415300 0.0100000 4713.1400000{_sep}{_sep}[1,..,..] ={_sep} 0.0100000 0.0000000 0.0000000 0.0000000{_sep}" +
                              $" 0.0000000 0.0000000 0.0000000 0.0000000{_sep}", str);
             }
         }
@@ -139,10 +171,10 @@ namespace TorchSharp
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, 2, 2, 2, 4);
                 var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
-                Assert.Equal($"[2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
-                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}" +
-                             $"[1,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
-                             $"[1,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}", str);
+                Assert.Equal($"[2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}" +
+                             $"[1,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
+                             $"[1,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}", str);
             }
         }
 
@@ -161,12 +193,12 @@ namespace TorchSharp
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, new long[] { 2, 2, 2, 2, 4 });
                 var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
-                Assert.Equal($"[2x2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
-                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[0,1,0,:,:] ={_sep}" +
-                             $"        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}   " +
-                             $" 0 0 0 0{_sep}{_sep}[1,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
-                             $"[1,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,1,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
-                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}", str);
+                Assert.Equal($"[2x2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[0,1,0,..,..] ={_sep}" +
+                             $"        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,1,1,..,..] ={_sep} 0.01 0 0 0{_sep}   " +
+                             $" 0 0 0 0{_sep}{_sep}[1,0,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
+                             $"[1,0,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,1,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,1,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}", str);
             }
         }
 
@@ -193,17 +225,17 @@ namespace TorchSharp
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, new long[] { 2, 2, 2, 2, 2, 4 });
                 var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture);
-                Assert.Equal($"[2x2x2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
-                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[0,0,1,0,:,:] ={_sep}" +
-                             $"        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}" +
-                             $"[0,1,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,1,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}" +
-                             $"    0 0 0 0{_sep}{_sep}[0,1,1,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
-                             $"[0,1,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,0,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
-                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,0,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,0,1,0,:,:] ={_sep}" +
-                             $"        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,0,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}" +
-                             $"    0 0 0 0{_sep}{_sep}[1,1,0,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
-                             $"[1,1,0,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,1,1,0,:,:] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
-                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,1,1,1,:,:] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}", str);
+                Assert.Equal($"[2x2x2x2x2x4], type = Float32, device = cpu{_sep}{_sep}[0,0,0,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,0,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[0,0,1,0,..,..] ={_sep}" +
+                             $"        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,0,1,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}" +
+                             $"[0,1,0,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[0,1,0,1,..,..] ={_sep} 0.01 0 0 0{_sep}" +
+                             $"    0 0 0 0{_sep}{_sep}[0,1,1,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
+                             $"[0,1,1,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,0,0,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,0,0,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,0,1,0,..,..] ={_sep}" +
+                             $"        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,0,1,1,..,..] ={_sep} 0.01 0 0 0{_sep}" +
+                             $"    0 0 0 0{_sep}{_sep}[1,1,0,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}" +
+                             $"[1,1,0,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}{_sep}[1,1,1,0,..,..] ={_sep}        0   3.141 6.2834 3.1415{_sep}" +
+                             $" 6.28e-06 -13.142   0.01 4713.1{_sep}{_sep}[1,1,1,1,..,..] ={_sep} 0.01 0 0 0{_sep}    0 0 0 0{_sep}", str);
             }
         }
 
@@ -1697,32 +1729,46 @@ namespace TorchSharp
         [Fact]
         public void TestScalarToTensor2()
         {
-            using (var tensor = 1.ToTensor()) {
+            using (Tensor tensor = 1) {
                 Assert.Equal(ScalarType.Int32, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(1, tensor.ToInt32());
             }
-            using (var tensor = ((byte)1).ToTensor()) {
+            using (Tensor tensor = ((byte)1).ToTensor()) {
                 Assert.Equal(ScalarType.Byte, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(1, tensor.ToByte());
             }
-            using (var tensor = ((sbyte)-1).ToTensor()) {
+            using (Tensor tensor = ((sbyte)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int8, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(-1, tensor.ToSByte());
             }
-            using (var tensor = ((short)-1).ToTensor()) {
+            using (Tensor tensor = ((short)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int16, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(-1, tensor.ToInt16());
             }
-            using (var tensor = ((long)-1).ToTensor()) {
+            using (Tensor tensor = ((long)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Int64, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(-1L, tensor.ToInt64());
             }
-            using (var tensor = ((float)-1).ToTensor()) {
+            using (Tensor tensor = ((float)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Float32, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(-1.0f, tensor.ToSingle());
             }
-            using (var tensor = ((double)-1).ToTensor()) {
+            using (Tensor tensor = ((double)-1).ToTensor()) {
                 Assert.Equal(ScalarType.Float64, tensor.dtype);
+                Assert.Equal(0, tensor.ndim);
+                Assert.Empty(tensor.shape);
                 Assert.Equal(-1.0, tensor.ToDouble());
             }
         }
@@ -1730,34 +1776,45 @@ namespace TorchSharp
         [Fact]
         public void TestScalarToTensor3()
         {
-            using (var tensor = 1.ToTensor()) {
+            using (Tensor tensor = 1.ToTensor()) {
                 Assert.Equal(ScalarType.Int32, tensor.dtype);
                 Assert.Equal(1, (int)tensor);
             }
-            using (var tensor = ((byte)1).ToTensor()) {
+            using (Tensor tensor = (byte)1) {
                 Assert.Equal(ScalarType.Byte, tensor.dtype);
                 Assert.Equal(1, (byte)tensor);
             }
-            using (var tensor = ((sbyte)-1).ToTensor()) {
+            using (Tensor tensor = (sbyte)-1) {
                 Assert.Equal(ScalarType.Int8, tensor.dtype);
                 Assert.Equal(-1, (sbyte)tensor);
             }
-            using (var tensor = ((short)-1).ToTensor()) {
+            using (Tensor tensor = (short)-1) {
                 Assert.Equal(ScalarType.Int16, tensor.dtype);
                 Assert.Equal(-1, (short)tensor);
             }
-            using (var tensor = ((long)-1).ToTensor()) {
+            using (Tensor tensor = (long)-1) {
                 Assert.Equal(ScalarType.Int64, tensor.dtype);
                 Assert.Equal(-1L, (long)tensor);
             }
-            using (var tensor = ((float)-1).ToTensor()) {
+            using (Tensor tensor = (float)-1) {
                 Assert.Equal(ScalarType.Float32, tensor.dtype);
                 Assert.Equal(-1.0f, (float)tensor);
             }
-            using (var tensor = ((double)-1).ToTensor()) {
+            using (Tensor tensor = (double)-1) {
                 Assert.Equal(ScalarType.Float64, tensor.dtype);
                 Assert.Equal(-1.0, (double)tensor);
             }
+        }
+
+        [Fact]
+        public void TestNegativeScalarToTensor()
+        {
+            Scalar s = 10;
+            TensorIndex ti = 10;
+            Tensor t;
+
+            Assert.Throws<InvalidOperationException>(() => { t = s; });
+            Assert.Throws<InvalidOperationException>(() => { t = ti; });
         }
 
         [Fact]
@@ -2056,6 +2113,15 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestIndexerAndImplicitConversion()
+        {
+            var points = torch.zeros(6, torch.ScalarType.Float16);
+            points[0] = 4.0f;
+            points[1] = 1.0d;
+            points[2] = 7;
+        }
+
+        [Fact]
         public void TestIndexSingle()
         {
             using (var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
@@ -2144,6 +2210,35 @@ namespace TorchSharp
         public void TestIndexSlice2()
         {
             using (var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
+#if NET472_OR_GREATER
+                var t1 = i[(0, 2), 0];
+                Assert.Equal(0, t1[0].ToInt32());
+                Assert.Equal(6, t1[1].ToInt32());
+
+                // one slice
+                var t2 = i[(1, 2), 0];
+                Assert.Equal(6, t2[0].ToInt32());
+
+                // two slice
+                var t3 = i[(1, 2), (1, 3)];
+                Assert.Equal(5, t3[0, 0].ToInt32());
+                Assert.Equal(4, t3[0, 1].ToInt32());
+
+                // both absent
+                var t4 = i[(0, null), (0, null)];
+                Assert.Equal(0, t4[0, 0].ToInt32());
+                Assert.Equal(1, t4[0, 1].ToInt32());
+
+                // end absent
+                var t5 = i[(1, null), (1, null)];
+                Assert.Equal(5, t5[0, 0].ToInt32());
+                Assert.Equal(4, t5[0, 1].ToInt32());
+
+                // start absent
+                var t6 = i[(1, null), (0, 2)];
+                Assert.Equal(6, t6[0, 0].ToInt32());
+                Assert.Equal(5, t6[0, 1].ToInt32());
+#else
                 var t1 = i[0..2, 0];
                 Assert.Equal(0, t1[0].ToInt32());
                 Assert.Equal(6, t1[1].ToInt32());
@@ -2171,7 +2266,7 @@ namespace TorchSharp
                 var t6 = i[1.., ..2];
                 Assert.Equal(6, t6[0, 0].ToInt32());
                 Assert.Equal(5, t6[0, 1].ToInt32());
-
+#endif // NET472_OR_GREATER
             }
         }
 
@@ -3947,6 +4042,17 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void ChannelShuffleTest()
+        {
+            var tensor = torch.tensor(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, 1, 4, 2, 2);
+            {
+                var res = tensor.channel_shuffle(2);
+                var expected = torch.tensor(new int[] { 1, 2, 3, 4, 9, 10, 11, 12, 5, 6, 7, 8, 13, 14, 15, 16 }, 1, 4, 2, 2);
+                Assert.True(res.allclose(expected));
+            }
+        }
+
+        [Fact]
         public void VanderTest()
         {
             var x = torch.tensor(new int[] { 1, 2, 3, 5 });
@@ -4248,6 +4354,18 @@ namespace TorchSharp
             Assert.Equal(1.1f, res[0].ToSingle());
             Assert.Equal(2.0f, res[1].ToSingle());
             Assert.Equal(3.1f, res[2].ToSingle());
+        }
+
+        [Fact]
+        public void UnfoldTest()
+        {
+            var data = torch.arange(1, 8);
+
+            var res = data.unfold(0, 2, 1);
+            Assert.Equal(new long[] { 6, 2 }, res.shape);
+
+            res = data.unfold(0, 2, 2);
+            Assert.Equal(new long[] { 3, 2 }, res.shape);
         }
 
         [Fact]
@@ -4966,6 +5084,24 @@ namespace TorchSharp
 
                 Assert.Equal(5.4344883f, b.item<float>());
                 Assert.Equal(5.4344883f, c.item<float>());
+            }
+        }
+
+        [Fact]
+        public void EigTest32()
+        {
+            {
+                var a = torch.tensor(
+                    new float[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
+
+                var expected = torch.tensor(
+                    new (float, float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
+
+                { 
+                    var (values, vectors) = linalg.eig(a);
+                    Assert.NotNull(vectors);
+                    Assert.True(values.allclose(expected));
+                }
             }
         }
 
@@ -6052,6 +6188,107 @@ namespace TorchSharp
 
             var res = torchvision.transforms.VerticalFlip().forward(input);
             Assert.Equal(res, expected);
+        }
+
+        [Fact]
+        public void TestPinnedMemory()
+        {
+            using (var t = torch.rand(512)) {
+                Assert.False(t.is_pinned());
+                if (torch.cuda.is_available()) {
+                    var s = t.pin_memory();
+                    Assert.True(s.is_pinned());
+                }
+            }
+        }
+
+        [Fact]
+        public void TestReshape()
+        {
+            var input = torch.ones(4, 4, 4, 4);
+            using (var t = input.reshape(16, 4, 4)) {
+                Assert.Equal(new long[] { 16, 4, 4 }, t.shape);
+            }
+            using (var t = input.flatten()) {
+                Assert.Equal(new long[] { 256 }, t.shape);
+            }
+            using (var t = input.flatten(1)) {
+                Assert.Equal(new long[] { 4, 64 }, t.shape);
+            }
+            input = torch.ones(16, 4, 4);
+            using (var t = input.unflatten(0, 4, 4)) {
+                Assert.Equal(new long[] { 4, 4, 4, 4 }, t.shape);
+            }
+        }
+
+        [Fact]
+        public void TestUnique()
+        {
+            var input = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
+
+            {
+                var (output, i, c) = input.unique();
+                Assert.NotNull(output);
+                Assert.Null(i);
+                Assert.Null(c);
+            }
+            {
+                var (output, i, c) = input.unique(return_inverse: true);
+                Assert.NotNull(output);
+                Assert.NotNull(i);
+                if (i is not null)
+                    Assert.Equal(input.shape, i?.shape);
+                Assert.Null(c);
+            }
+            {
+                var (output, i, c) = input.unique(return_inverse: false, return_counts:true);
+                Assert.NotNull(output);
+                Assert.Null(i);
+                Assert.NotNull(c);
+            }
+            {
+                var (output, i, c) = input.unique(return_inverse: true, return_counts: true);
+                Assert.NotNull(output);
+                Assert.NotNull(i);
+                if (i is not null)
+                    Assert.Equal(input.shape, i?.shape);
+                Assert.NotNull(c);
+            }
+        }
+
+        [Fact]
+        public void TestUniqueConsequtive()
+        {
+            var input = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
+
+            {
+                var (output, i, c) = input.unique_consecutive();
+                Assert.NotNull(output);
+                Assert.Null(i);
+                Assert.Null(c);
+            }
+            {
+                var (output, i, c) = input.unique_consecutive(return_inverse: true);
+                Assert.NotNull(output);
+                Assert.NotNull(i);
+                if (i is not null)
+                    Assert.Equal(input.shape, i?.shape);
+                Assert.Null(c);
+            }
+            {
+                var (output, i, c) = input.unique_consecutive(return_inverse: false, return_counts: true);
+                Assert.NotNull(output);
+                Assert.Null(i);
+                Assert.NotNull(c);
+            }
+            {
+                var (output, i, c) = input.unique_consecutive(return_inverse: true, return_counts: true);
+                Assert.NotNull(output);
+                Assert.NotNull(i);
+                if (i is not null)
+                    Assert.Equal(input.shape, i?.shape);
+                Assert.NotNull(c);
+            }
         }
     }
 }

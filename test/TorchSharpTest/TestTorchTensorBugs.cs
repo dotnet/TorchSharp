@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
+using System.IO;
 
 using System.Threading;
 
@@ -19,6 +19,9 @@ namespace TorchSharp
     // The tests in this file are all derived from reported GitHub Issues, serving
     // as regression tests.
 
+#if NET472_OR_GREATER
+    [Collection("Sequential")]
+#endif // NET472_OR_GREATER
     public class TestTorchTensorBugs
     {
 
@@ -481,7 +484,7 @@ namespace TorchSharp
 
             public Module510(int in_channels, int out_channels, int kernel_size=3, int stride = 1, int padding = 0) : base(String.Empty)
             {
-                var temp = BatchNorm1d(out_channels);               
+                var temp = BatchNorm1d(out_channels);
                 this.stack = Sequential(
                     Conv1d(in_channels, out_channels, 3, stride: stride, padding: padding, bias: false),
                     temp,
@@ -584,6 +587,47 @@ namespace TorchSharp
                 );
 
                 this.RegisterComponents();
+            }
+
+            public override torch.Tensor forward(torch.Tensor t)
+            {
+                return this.seq.forward(t);
+            }
+        }
+
+
+
+        [Fact]
+        public void Validate538()
+        {
+            var module = new Module538(1000, 100);
+
+            var sd = module.state_dict();
+
+            Assert.Equal(7, sd.Count);
+
+            if (File.Exists("bug538.dat")) File.Delete("bug538.dat");
+
+            module.save("bug538.dat");
+            module.load("bug538.dat");
+
+            File.Delete("bug538.dat");
+        }
+
+        internal class Module538 : Module
+        {
+            private Module seq;
+
+            public Module538(int in_channels, int out_channels) : base(String.Empty)
+            {
+                seq = Sequential(Conv2d(1, 32, 3),
+                     BatchNorm2d(32),
+                     ReLU(),
+                     Flatten(),
+                     LogSoftmax(1)
+                );
+
+                RegisterComponents();
             }
 
             public override torch.Tensor forward(torch.Tensor t)

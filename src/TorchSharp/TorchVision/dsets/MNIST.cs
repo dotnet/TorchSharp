@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -89,11 +90,15 @@ namespace TorchSharp.torchvision
 
             protected MNIST(string root, string datasetName, string prefix, string baseUrl, bool download, ITransform transform)
             {
-                if (download) DownloadMNIST(root, baseUrl, datasetName);
+                if (download) Download(root, baseUrl, datasetName);
 
                 this.transform = transform;
 
+#if NETSTANDARD2_0_OR_GREATER
+                var datasetPath = NSPath.Join(root, datasetName, "test_data");
+#else
                 var datasetPath = Path.Join(root, datasetName, "test_data");
+#endif // NETSTANDARD2_0_OR_GREATER
 
                 var dataPath = Path.Combine(datasetPath, prefix + "-images-idx3-ubyte");
                 var labelPath = Path.Combine(datasetPath, prefix + "-labels-idx1-ubyte");
@@ -135,17 +140,29 @@ namespace TorchSharp.torchvision
                 var imgSize = height * width;
 
                 // Go through the data and create tensors
+
+                // A previous version of this relied on LINQ expressions, but it was about 20% slower.
+
                 for (var i = 0; i < count; i++) {
                     var imgStart = i * imgSize;
+                    var floats = new float[imgSize];
+                    for (int j = 0; j < imgSize; j++)
+                    {
+                        floats[j] = dataBytes[j+imgStart] / 256.0f;
+                    }
+                    data.Add(tensor(floats, new long[] { width, height }));
 
-                    data.Add(tensor(dataBytes[imgStart..(imgStart + imgSize)].Select(b => b / 256.0f).ToArray(), new long[] { width, height }));
                     labels.Add(tensor(labelBytes[i], int64));
                 }
             }
 
-            private void DownloadMNIST(string root, string baseUrl, string dataset)
+            private void Download(string root, string baseUrl, string dataset)
             {
+#if NETSTANDARD2_0_OR_GREATER
+                var datasetPath = NSPath.Join(root, dataset);
+#else
                 var datasetPath = Path.Join(root, dataset);
+#endif // NETSTANDARD2_0_OR_GREATER
 
                 var sourceDir = datasetPath;
                 var targetDir = Path.Combine(datasetPath, "test_data");
@@ -178,7 +195,12 @@ namespace TorchSharp.torchvision
 
             private void DownloadFile(string file, string target, string baseUrl)
             {
+#if NETSTANDARD2_0_OR_GREATER
+                var filePath = NSPath.Join(target, file);
+#else
                 var filePath = Path.Join(target, file);
+#endif // NETSTANDARD2_0_OR_GREATER
+
                 var netPath = $"{baseUrl}{file}";
 
                 if (!File.Exists(filePath)) {

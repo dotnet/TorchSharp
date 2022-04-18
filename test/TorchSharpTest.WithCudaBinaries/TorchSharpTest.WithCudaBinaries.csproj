@@ -1,7 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets. We have to clear that out to set only the targets we support. -->
+    <TargetFrameworks></TargetFrameworks>
+    <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net5.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">net472;$(TargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net5.0</TargetFrameworks>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <TestCuda>true</TestCuda>
     <IsPackable>false</IsPackable>
@@ -32,12 +36,17 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="System.Reflection.Metadata" Version="6.0.0" />
+    <Compile Include="..\..\src\TorchSharp\netstandard.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\TorchSharp\TorchSharp.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.3" />
+    <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="coverlet.msbuild" Version="2.8.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

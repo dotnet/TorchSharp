@@ -273,6 +273,14 @@ namespace TorchSharp
 
         static public Tensor amin(Tensor input, long[] dims, bool keepDim = false, Tensor @out = null) => input.amin(dims, keepDim, @out);
 
+        static public Tensor reshape(Tensor input, params long[] shape) => input.reshape(shape);
+
+        static public Tensor flatten(Tensor input, long start_dim, long end_dim) => input.flatten(start_dim, end_dim);
+
+        static public Tensor unflatten(Tensor input, long dim, params long[] sizes) => input.unflatten(dim, sizes);
+
+        static public Tensor unflatten(Tensor input, long dim, torch.Size sizes) => input.unflatten(dim, sizes.Shape);
+
         /// <summary>
         /// Return a tensor of elements selected from either x or y, depending on condition.
         /// </summary>

@@ -193,8 +193,8 @@ namespace TorchSharp
             protected override void Dispose(bool disposing)
             {
                 base.Dispose(disposing);
-                foreach (var (name, state) in _state) {
-                    state.Dispose();
+                foreach (var kvp in _state) {
+                    kvp.Value.Dispose();
                 }
             }
 

@@ -43,7 +43,7 @@ namespace TorchSharp
             ///  TBD
             /// </summary>
             /// <param name="obj"></param>
-            
+
             public override bool Equals(object? obj)
             {
                 return (obj is Tensor) && this.Equals((obj as Tensor)!);
@@ -123,7 +123,7 @@ namespace TorchSharp
             ///
             /// This is primarily useful when returning a tensor to native code in a callback,
             /// or when having created a managed tensor from a passed-in native handle.
-            /// 
+            ///
             /// See the torch.nn.Module.Module(string name) constructor for an example of its use.
             /// </summary>
             public IntPtr DecoupleFromNativeHandle()
@@ -146,9 +146,9 @@ namespace TorchSharp
             /// Only tensors that are realized in managed code will be counted, so tensors
             /// resulting from computations that remain in native code will not be counted
             /// in this property.
-            /// 
+            ///
             /// Further, two tensors may alias each other, pointing at the same underlying data.
-            /// 
+            ///
             /// Therefore, this property is mostly useful for diagnostic purposes, to
             /// make sure that there is no drift in tensor count from epoch to epoch,
             /// for example.
@@ -164,7 +164,7 @@ namespace TorchSharp
             /// in this property.
             ///
             /// Further, two tensors may alias each other, pointing at the same underlying data.
-            /// 
+            ///
             /// Therefore, this property is mostly useful for diagnostic purposes.
             /// </remarks>
             public static long PeakCount => _peakCount;
@@ -794,13 +794,13 @@ namespace TorchSharp
             /// Moves the tensor data.
             /// </summary>
             /// <param name="device">The target device</param>
-            
+
             public Tensor to(torch.Device device) => to(device.type, device.index);
             /// <summary>
             /// Moves the tensor data.
             /// </summary>
             /// <param name="other">The tensor serving as a template.</param>
-            
+
             public Tensor to(Tensor other) => to(other.device_type, other.device_index);
 
             [DllImport("LibTorchSharp")]
@@ -886,7 +886,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_vander(IntPtr handle, long N, bool increasing);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public Tensor vander(long N = -1, bool increasing = false)
             {
@@ -967,7 +967,7 @@ namespace TorchSharp
             /// <summary>
             /// Creates a strided copy of self.
             /// </summary>
-            
+
             public Tensor to_dense()
             {
                 var res = THSTensor_to_dense(Handle);
@@ -982,7 +982,7 @@ namespace TorchSharp
             /// <summary>
             /// Returns a copy of the tensor input.
             /// </summary>
-            
+
             public Tensor clone()
             {
                 var res = THSTensor_clone(Handle);
@@ -997,7 +997,7 @@ namespace TorchSharp
             /// <summary>
             /// Copies the elements from source into the tensor and returns it.
             /// </summary>
-            
+
             /// <remarks>The src tensor must be broadcastable with the target 'this' tensor. It may be of a different data type or reside on a different device.</remarks>
             public Tensor copy_(Tensor source, bool nonBlocking = false)
             {
@@ -1013,7 +1013,6 @@ namespace TorchSharp
             /// <summary>
             /// Returns true if the tensor is contiguous.
             /// </summary>
-            
             public bool is_contiguous()
             {
                 var res = THSTensor_is_contiguous(Handle);
@@ -1028,10 +1027,37 @@ namespace TorchSharp
             /// Returns a contiguous in memory tensor containing the same data as the input tensor.
             /// If tensor is already in the specified memory format, this function returns the original tensor.
             /// </summary>
-            
             public Tensor contiguous()
             {
                 var res = THSTensor_contiguous(Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static long THSTensor_is_pinned(IntPtr handle);
+
+            /// <summary>
+            /// Returns true if the tensor is contiguous.
+            /// </summary>
+            public bool is_pinned()
+            {
+                var res = THSTensor_is_pinned(Handle);
+                torch.CheckForErrors();
+                return res != 0;
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_pin_memory(IntPtr handle);
+
+            /// <summary>
+            /// Returns a contiguous in memory tensor containing the same data as the input tensor.
+            /// If tensor is already in the specified memory format, this function returns the original tensor.
+            /// </summary>
+            public Tensor pin_memory()
+            {
+                var res = THSTensor_pin_memory(Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -1044,7 +1070,6 @@ namespace TorchSharp
             /// This attribute is null by default and becomes a Tensor the first time a call to backward() computes gradients for the tensor.
             /// The attribute will then contain the gradients computed and future calls to backward() will accumulate (add) gradients into it.
             /// </summary>
-            
             public Tensor? grad()
             {
                 var res = THSTensor_grad(Handle);
@@ -1134,7 +1159,7 @@ namespace TorchSharp
             /// Tensor indexer.
             /// </summary>
             /// <param name="i1">The first-dimension index.</param>
-            
+
             [IndexerName("TensorItems")]
             public Tensor this[long i1] {
                 get {
@@ -1159,7 +1184,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="i1">The first-dimension index.</param>
             /// <param name="i2">The second-dimension index.</param>
-            
+
             [IndexerName("TensorItems")]
             public Tensor this[long i1, long i2] {
                 get {
@@ -1185,7 +1210,7 @@ namespace TorchSharp
             /// <param name="i1">The first-dimension index.</param>
             /// <param name="i2">The second-dimension index.</param>
             /// <param name="i3">The third-dimension index</param>
-            
+
             [IndexerName("TensorItems")]
             public Tensor this[long i1, long i2, long i3] {
                 get {
@@ -1213,7 +1238,7 @@ namespace TorchSharp
             /// <param name="i2">The second-dimension index.</param>
             /// <param name="i3">The third-dimension index</param>
             /// <param name="i4">The fourth-dimension index</param>
-            
+
             [IndexerName("TensorItems")]
             public Tensor this[long i1, long i2, long i3, long i4] {
                 get {
@@ -1242,7 +1267,7 @@ namespace TorchSharp
             /// <param name="i3">The third-dimension index</param>
             /// <param name="i4">The fourth-dimension index</param>
             /// <param name="i5">The fifth-dimension index</param>
-            
+
             [IndexerName("TensorItems")]
             public Tensor this[long i1, long i2, long i3, long i4, long i5] {
                 get {
@@ -1273,7 +1298,7 @@ namespace TorchSharp
             /// <param name="i4">The fourth-dimension index</param>
             /// <param name="i5">The fifth-dimension index</param>
             /// <param name="i6">The sixth-dimension index</param>
-            
+
             [IndexerName("TensorItems")]
             public Tensor this[long i1, long i2, long i3, long i4, long i5, long i6] {
                 get {
@@ -1291,7 +1316,7 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions.
             /// </summary>
-            
+
             public Tensor index(params TensorIndex[] indices)
             {
                 EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
@@ -1312,7 +1337,7 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions.
             /// </summary>
-            
+
             public Tensor index(params Tensor[] indices)
             {
                 return index(indices.Select(t => TensorIndex.Tensor(t)).ToArray());
@@ -1321,7 +1346,7 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
             /// </summary>
-            
+
             public Tensor index_put_(Tensor value, params TensorIndex[] indices)
             {
                 EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
@@ -1342,7 +1367,7 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
             /// </summary>
-            
+
             public Tensor index_put_(Tensor value, params Tensor[] indices)
             {
                 return index_put_(value, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
@@ -1352,7 +1377,7 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
             /// </summary>
-            
+
             public Tensor index_put_(Scalar value, params TensorIndex[] indices)
             {
                 EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
@@ -1373,7 +1398,7 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
             /// </summary>
-            
+
             public Tensor index_put_(Scalar value, params Tensor[] indices)
             {
                 return index_put_(value, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
@@ -1387,7 +1412,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="dimension"></param>
             /// <param name="index"></param>
-            
+
             public Tensor index_select(long dimension, Tensor index)
             {
                 var res = THSTensor_index_select(Handle, dimension, index.Handle);
@@ -1405,7 +1430,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="dim">The dimension to slice</param>
             /// <param name="index">The index to select with</param>
-            
+
             public Tensor select(long dim, long index)
             {
                 var res = THSTensor_select(Handle, dim, index);
@@ -1422,7 +1447,7 @@ namespace TorchSharp
             /// The result takes the same shape as the indices.
             /// </summary>
             /// <param name="index">The indices into tensor, an Int64 tensor.</param>
-            
+
             public Tensor take(Tensor index)
             {
                 var res = THSTensor_take(Handle, index.Handle);
@@ -1441,7 +1466,7 @@ namespace TorchSharp
             /// Selects values from input at the 1-dimensional indices from indices along the given dim.
             /// </summary>
             /// <param name="indices">The indices into input. Must have long dtype.</param>
-            
+
             /// <remarks>Functions that return indices along a dimension, like torch.argmax() and torch.argsort(), are designed to work with this function.</remarks>
             public Tensor take_along_dim(Tensor indices)
             {
@@ -1455,7 +1480,7 @@ namespace TorchSharp
             /// Selects values from input at the 1-dimensional indices from indices along the given dim.
             /// </summary>
             /// <param name="indices">The indices into input. Must have long dtype.</param>
-            
+
             /// <remarks>Functions that return indices along a dimension, like torch.argmax() and torch.argsort(), are designed to work with this function.</remarks>
             public Tensor take_along_dim(IEnumerable<long> indices) => take_along_dim(torch.tensor(indices.ToArray()));
 
@@ -1464,7 +1489,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="indices">The indices into input. Must have long dtype.</param>
             /// <param name="dimension">Dimension to select along.</param>
-            
+
             /// <remarks>Functions that return indices along a dimension, like torch.argmax() and torch.argsort(), are designed to work with this function.</remarks>
             public Tensor take_along_dim(Tensor indices, long dimension)
             {
@@ -1479,7 +1504,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="indices">The indices into input. Must have long dtype.</param>
             /// <param name="dim">Dimension to select along.</param>
-            
+
             /// <remarks>Functions that return indices along a dimension, like torch.argmax() and torch.argsort(), are designed to work with this function.</remarks>
             public Tensor take_along_dim(IEnumerable<long> indices, long dim) => take_along_dim(torch.tensor(indices.ToArray()), dim);
 
@@ -1490,7 +1515,6 @@ namespace TorchSharp
             /// Returns a tensor with the same data and number of elements as self but with the specified shape.
             /// </summary>
             /// <param name="shape">The new tensor shape.</param>
-            
             public Tensor reshape(params long[] shape)
             {
                 unsafe {
@@ -1504,6 +1528,109 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_flatten(IntPtr tensor, long start, long end);
+
+            /// <summary>
+            /// Flattens input by reshaping it into a one-dimensional tensor. 
+            /// </summary>
+            /// <param name="start_dim">The first dim to flatten</param>
+            /// <param name="end_dim">The last dim to flatten.</param>
+            /// <remarks>Flattening a zero-dimensional tensor will return a one-dimensional view.</remarks>
+            public Tensor flatten(long start_dim = 0, long end_dim = -1)
+            {
+                var res = THSTensor_flatten(Handle, start_dim, end_dim);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unflatten(IntPtr tensor, long dimension, IntPtr shape, int length);
+
+            /// <summary>
+            /// Expands the dimension dim of the self tensor over multiple dimensions of sizes given by sizes.
+            /// </summary>
+            /// <param name="dim">Dimension to unflatten.</param>
+            /// <param name="sizes">New shape of the unflattened dimension.</param>
+            public Tensor unflatten(long dim, params long[] sizes)
+            {
+                unsafe {
+                    fixed (long* pshape = sizes) {
+                        var res = THSTensor_unflatten(Handle, dim, (IntPtr)pshape, sizes.Length);
+                        if (res == IntPtr.Zero)
+                            torch.CheckForErrors();
+                        return new Tensor(res);
+                    }
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique(IntPtr tensor, bool sorted, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique_dim(IntPtr tensor, long dim, bool sorted, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique_consecutive(IntPtr tensor, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unique_dim_consecutive(IntPtr tensor, long dim, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
+
+            /// <summary>
+            /// Returns the unique elements of the input tensor.
+            /// </summary>
+            /// <param name="sorted">Whether to sort the unique elements in ascending order before returning as output.</param>
+            /// <param name="return_inverse">Whether to also return the indices for where elements in the original input ended up in the returned unique list.</param>
+            /// <param name="return_counts">Whether to also return the counts for each unique element.</param>
+            /// <param name="dim">The dimension to apply unique. If null, the unique of the flattened input is returned.</param>
+            /// <returns></returns>
+            /// <remarks>This function is different from torch.unique_consecutive() in the sense that this function also eliminates non-consecutive duplicate values.</remarks>
+            public (Tensor output, Tensor? inverse_indices, Tensor? counts) unique(bool sorted = true, bool return_inverse = false, bool return_counts = false, int? dim = null)
+            {
+                IntPtr res = IntPtr.Zero;
+                IntPtr inverse_indices, counts;
+
+                if (dim is null) {
+                    res = THSTensor_unique(Handle, sorted, return_inverse, return_counts, out inverse_indices, out counts);
+                }
+                else {
+                    res = THSTensor_unique_dim(Handle, dim.Value, sorted, return_inverse, return_counts, out inverse_indices, out counts);
+                }
+
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), inverse_indices != IntPtr.Zero ? new Tensor(inverse_indices) : null, counts != IntPtr.Zero ? new Tensor(counts) : null);
+            }
+
+            /// <summary>
+            /// Returns the unique elements of the input tensor.
+            /// </summary>
+            /// <param name="return_inverse">Whether to also return the indices for where elements in the original input ended up in the returned unique list.</param>
+            /// <param name="return_counts">Whether to also return the counts for each unique element.</param>
+            /// <param name="dim">The dimension to apply unique. If null, the unique of the flattened input is returned.</param>
+            /// <returns>A tuple with the output, the indices, and counts. The latter two may be 'null'</returns>
+            /// <remarks>This function is different from torch.unique_consecutive() in the sense that this function also eliminates non-consecutive duplicate values.</remarks>
+            public (Tensor output, Tensor? inverse_indices, Tensor? counts) unique_consecutive(bool return_inverse = false, bool return_counts = false, int? dim = null)
+            {
+                IntPtr inverse_indices, counts;
+
+                IntPtr res = (dim is null)
+                    ? THSTensor_unique_consecutive(Handle, return_inverse, return_counts, out inverse_indices, out counts)
+                    : THSTensor_unique_dim_consecutive(Handle, dim.Value, return_inverse, return_counts, out inverse_indices, out counts);
+
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), inverse_indices != IntPtr.Zero ? new Tensor(inverse_indices) : null, counts != IntPtr.Zero ? new Tensor(counts) : null);
+            }
+
+            /// <summary>
+            /// Expands the dimension dim of the self tensor over multiple dimensions of sizes given by sizes.
+            /// </summary>
+            /// <param name="dim">Dimension to unflatten.</param>
+            /// <param name="sizes">New shape of the unflattened dimension.</param>
+            public Tensor unflatten(long dim, torch.Size sizes)
+            {
+                return unflatten(dim, sizes.Shape);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_squeeze(IntPtr tensor, long dimension);
 
             [DllImport("LibTorchSharp")]
@@ -1513,7 +1640,7 @@ namespace TorchSharp
             /// Returns a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.
             /// </summary>
             /// <param name="dim">If given, the input will be squeezed only in this dimension</param>
-            
+
             public Tensor squeeze(long? dim = null)
             {
                 var res = dim.HasValue ? THSTensor_squeeze(Handle, dim.Value) : THSTensor_squeeze_no_dim(Handle);
@@ -1528,7 +1655,7 @@ namespace TorchSharp
             /// <summary>
             /// Expects input to be 1- or 2-D tensor and transposes dimensions 0 and 1.
             /// </summary>
-            
+
             public Tensor t()
             {
                 var res = THSTensor_t(Handle);
@@ -1540,7 +1667,7 @@ namespace TorchSharp
             /// <summary>
             /// Is this Tensor with its dimensions reversed.
             /// </summary>
-            
+
             public Tensor T {
                 get {
                     return this.permute(Enumerable.Range(0, (int)ndim).Reverse().Select(i => (long)i).ToArray());
@@ -1555,7 +1682,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="dim0"></param>
             /// <param name="dim1"></param>
-            
+
             public Tensor transpose(long dim0, long dim1)
             {
                 var res = THSTensor_transpose(Handle, dim0, dim1);
@@ -1572,7 +1699,7 @@ namespace TorchSharp
             /// The lower triangular part of the matrix is defined as the elements on and below the diagonal.
             /// </summary>
             /// <param name="diagonal">The diagonal to consider</param>
-            
+
             public Tensor tril(long diagonal = 0)
             {
                 var res = THSTensor_tril(Handle, diagonal);
@@ -1589,7 +1716,7 @@ namespace TorchSharp
             /// The upper triangular part of the matrix is defined as the elements on and above the diagonal.
             /// </summary>
             /// <param name="diagonal">The diagonal to consider</param>
-            
+
             public Tensor triu(long diagonal = 0)
             {
                 var res = THSTensor_triu(Handle, diagonal);
@@ -1618,7 +1745,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="dim0"></param>
             /// <param name="dim1"></param>
-            
+
             public Tensor transpose_(long dim0, long dim1)
             {
                 var res = THSTensor_transpose_(Handle, dim0, dim1);
@@ -1634,7 +1761,7 @@ namespace TorchSharp
             /// Returns a new tensor with the same data as the input tensor but of a different shape.
             /// </summary>
             /// <param name="shape">The shape of the view</param>
-            
+
             public Tensor view(params long[] shape)
             {
                 unsafe {
@@ -1664,7 +1791,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_view_as_complex(IntPtr tensor);
 
             /// <summary>
-            /// Returns a view of input as a complex tensor. 
+            /// Returns a view of input as a complex tensor.
             /// </summary>
             public Tensor view_as_complex()
             {
@@ -1678,7 +1805,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_view_as_real(IntPtr tensor);
 
             /// <summary>
-            /// Returns a view of input as a real tensor. 
+            /// Returns a view of input as a real tensor.
             /// </summary>
             public Tensor view_as_real()
             {
@@ -1692,9 +1819,9 @@ namespace TorchSharp
             static extern IntPtr THSTensor_all(IntPtr tensor);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
-            
+
             public Tensor all()
             {
                 var res = THSTensor_all(Handle);
@@ -1707,11 +1834,11 @@ namespace TorchSharp
             static extern IntPtr THSTensor_all_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="dimension"></param>
             /// <param name="keepDim"></param>
-            
+
             public Tensor all(long dimension, bool keepDim = false)
             {
                 var res = THSTensor_all_along_dimension(Handle, dimension, keepDim);
@@ -1732,7 +1859,7 @@ namespace TorchSharp
             /// <param name="dims">The dimension or dimensions to reduce.</param>
             /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
             /// <param name="out">The output tensor -- optional.</param>
-            
+
             public Tensor amax(long[] dims, bool keepDim = false, Tensor? @out = null)
             {
                 unsafe {
@@ -1757,7 +1884,7 @@ namespace TorchSharp
             /// <param name="dims">The dimension or dimensions to reduce.</param>
             /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
             /// <param name="out">The output tensor -- optional.</param>
-            
+
             public Tensor amin(long[] dims, bool keepDim = false, Tensor? @out = null)
             {
                 unsafe {
@@ -1780,7 +1907,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="dim">The dimension along which to compute the values. If null, computes the values over the entire input tensor</param>
             /// <param name="keepDim"> If true, the reduced dimensions will be kept in the output tensor as dimensions with size 1 for broadcasting.</param>
-            
+
             public (Tensor min, Tensor max) aminmax(long? dim = null, bool keepDim = false)
             {
                 var res = THSTensor_aminmax(Handle, (dim is null) ? -1 : dim.Value, keepDim, out IntPtr maxHandle);
@@ -1792,9 +1919,9 @@ namespace TorchSharp
             static extern IntPtr THSTensor_any(IntPtr tensor);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
-            
+
             public Tensor any()
             {
                 var res = THSTensor_any(Handle);
@@ -1807,11 +1934,11 @@ namespace TorchSharp
             static extern IntPtr THSTensor_any_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="dimension"></param>
             /// <param name="keepDim"></param>
-            
+
             public Tensor any(long dimension, bool keepDim = false)
             {
                 var res = THSTensor_any_along_dimension(Handle, dimension, keepDim);
@@ -1824,9 +1951,9 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmax(IntPtr tensor);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
-            
+
             public Tensor argmax()
             {
                 var res = THSTensor_argmax(Handle);
@@ -1839,11 +1966,11 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmax_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="dimension"></param>
             /// <param name="keepDim"></param>
-            
+
             public Tensor argmax(long dimension, bool keepDim = false)
             {
                 var res = THSTensor_argmax_along_dimension(Handle, dimension, keepDim);
@@ -1856,9 +1983,9 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmin(IntPtr tensor);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
-            
+
             public Tensor argmin()
             {
                 var res = THSTensor_argmin(Handle);
@@ -1871,11 +1998,11 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmin_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="dimension"></param>
             /// <param name="keepDim"></param>
-            
+
             public Tensor argmin(long dimension, bool keepDim = false)
             {
                 var res = THSTensor_argmin_along_dimension(Handle, dimension, keepDim);
@@ -1892,7 +2019,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="dimension">The dimension to sort along</param>
             /// <param name="descending">Controls the sorting order (ascending or descending)</param>
-            
+
             public Tensor argsort(long dimension = -1, bool descending = false)
             {
                 var res = THSTensor_argsort(Handle, dimension, descending);
@@ -1907,7 +2034,7 @@ namespace TorchSharp
             /// <summary>
             /// Convert each element from degrees to radians.
             /// </summary>
-            
+
             public Tensor deg2rad()
             {
                 var res = THSTensor_deg2rad(Handle);
@@ -1922,7 +2049,7 @@ namespace TorchSharp
             /// <summary>
             /// Convert each element from radians to degrees.
             /// </summary>
-            
+
             public Tensor rad2deg()
             {
                 var res = THSTensor_rad2deg(Handle);
@@ -1935,9 +2062,9 @@ namespace TorchSharp
             static extern IntPtr THSTensor_copysign(IntPtr tensor, IntPtr other);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
-            
+
             public Tensor copysign(Tensor other)
             {
                 var res = THSTensor_copysign(Handle, other.Handle);
@@ -2014,7 +2141,7 @@ namespace TorchSharp
             /// Constructs a tensor by repeating the elements of input. The reps argument specifies the number of repetitions in each dimension.
             /// </summary>
             /// <param name="reps">The number of repetitions per dimension.</param>
-            
+
             public Tensor tile(long[] reps)
             {
                 unsafe {
@@ -2032,7 +2159,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the logarithmic derivative of the gamma function on input.
             /// </summary>
-            
+
             public Tensor digamma()
             {
                 var res = THSTensor_digamma(Handle);
@@ -2047,7 +2174,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the logarithmic derivative of the gamma function on input, in place.
             /// </summary>
-            
+
             public Tensor digamma_()
             {
                 var res = THSTensor_digamma_(Handle);
@@ -2062,7 +2189,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the logarithm of the gamma function on input.
             /// </summary>
-            
+
             public Tensor lgamma()
             {
                 var res = THSTensor_lgamma(Handle);
@@ -2077,7 +2204,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the logarithm of the gamma function on input, in place.
             /// </summary>
-            
+
             public Tensor lgamma_()
             {
                 var res = THSTensor_lgamma_(Handle);
@@ -2093,7 +2220,7 @@ namespace TorchSharp
             /// Computes the multivariate log-gamma function) with dimension pp element-wise
             /// </summary>
             /// <param name="p">The number of dimensions</param>
-            
+
             public Tensor mvlgamma(long p)
             {
                 var res = THSTensor_mvlgamma(Handle, p);
@@ -2109,7 +2236,7 @@ namespace TorchSharp
             /// Computes the multivariate log-gamma function) with dimension pp element-wise, in place.
             /// </summary>
             /// <param name="p">The number of dimensions</param>
-            
+
             public Tensor mvlgamma_(long p)
             {
                 var res = THSTensor_mvlgamma_(Handle, p);
@@ -2144,9 +2271,9 @@ namespace TorchSharp
             static extern IntPtr THSTensor_positive(IntPtr tensor);
 
             /// <summary>
-            /// Returns input. Throws a runtime error if input is a bool tensor. 
+            /// Returns input. Throws a runtime error if input is a bool tensor.
             /// </summary>
-            
+
             public Tensor positive()
             {
                 if (this.dtype == ScalarType.Bool) throw new ArgumentException("Boolean tensor");
@@ -2361,7 +2488,7 @@ namespace TorchSharp
             /// Computes the regularized lower incomplete gamma function
             /// </summary>
             /// <param name="other">The second non-negative input tensor</param>
-            
+
             public Tensor igamma(Tensor other)
             {
                 var res = THSTensor_igamma(Handle, other.Handle);
@@ -2377,7 +2504,7 @@ namespace TorchSharp
             /// Computes the regularized upper incomplete gamma function.
             /// </summary>
             /// <param name="other">The second non-negative input tensor</param>
-            
+
             public Tensor igammac(Tensor other)
             {
                 var res = THSTensor_igammac(Handle, other.Handle);
@@ -2392,7 +2519,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the zeroth order modified Bessel function of the first kind for each element of input.
             /// </summary>
-            
+
             public Tensor i0()
             {
                 var res = THSTensor_i0(Handle);
@@ -2628,7 +2755,7 @@ namespace TorchSharp
             /// If no suitable index found, return 0 for non-numerical value (eg. nan, inf) or the size of boundaries (one pass the last index).
             /// In other words, if false, gets the lower bound index for each value in input from boundaries.
             /// If true, gets the upper bound index instead. Default value is False.</param>
-            
+
             public Tensor bucketize(Tensor boundaries, bool outInt32 = false, bool right = false)
             {
                 var res = THSTensor_bucketize(Handle, boundaries.Handle, outInt32, right);
@@ -2665,6 +2792,22 @@ namespace TorchSharp
 
             public Tensor @double() => this.to_type(ScalarType.Float64);
 
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_channel_shuffle(IntPtr input, long groups);
+
+            /// <summary>
+            /// Divide the channels in a tensor into g groups and rearrange them.
+            ///
+            /// See: https://pytorch.org/docs/1.10/generated/torch.nn.ChannelShuffle.html#channelshuffle
+            /// </summary>
+            /// <param name="groups">The number of groups to divide channels in.</param>
+            public Tensor channel_shuffle(long groups)
+            {
+                var res = THSTensor_channel_shuffle(Handle, groups);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_clamp(IntPtr input, IntPtr min, IntPtr max);
@@ -2912,7 +3055,7 @@ namespace TorchSharp
             /// <param name="rtol">Relative tolerance</param>
             /// <param name="atol">Absolute tolerance</param>
             /// <param name="equal_nan">If true, then two NaN s will be considered equal</param>
-            
+
             public bool allclose(Tensor target, double rtol = 1e-05, double atol = 1e-08, bool equal_nan = false)
             {
                 var res = THSTensor_allclose(Handle, target.Handle, rtol, atol, equal_nan);
@@ -3041,7 +3184,7 @@ namespace TorchSharp
             /// Multiplies input by pow(2,other).
             /// </summary>
             /// <param name="other">A tensor of exponents, typically integers</param>
-            
+
             /// <remarks>Typically this function is used to construct floating point numbers by multiplying mantissas in input with integral powers of two created from the exponents in other.</remarks>
             public Tensor ldexp(Tensor other)
             {
@@ -3227,6 +3370,22 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unfold(IntPtr tensor, long dimension, long size, long step);
+
+            /// <summary>
+            /// Returns a view of the original tensor which contains all slices of size 'size' from the tensor in the given dimension.
+            /// </summary>
+            /// <param name="dimension">Dimension in which unfolding happens</param>
+            /// <param name="size">The size of each slice that is unfolded</param>
+            /// <param name="step">The step between each slice</param>
+            public Tensor unfold(long dimension, long size, long step)
+            {
+                var res = THSTensor_unfold(Handle, dimension, size, step);
+                if (res == IntPtr.Zero) torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern void THSTensor_split_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size, long dimension);
 
             /// <summary>
@@ -3234,7 +3393,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="size">The size of a single chunk</param>
             /// <param name="dimension">The dimension along which to split the tensor.</param>
-            
+
             public Tensor[] split(long size, int dimension = 0)
             {
                 IntPtr[] ptrArray;
@@ -3256,7 +3415,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="sizes">A list of sizes for each chunk</param>
             /// <param name="dimension">The dimension along which to split the tensor.</param>
-            
+
             public Tensor[] split(long[] sizes, int dimension = 0)
             {
                 IntPtr[] ptrArray;
@@ -3334,7 +3493,7 @@ namespace TorchSharp
             /// Splits input, a tensor with one or more dimensions, into multiple tensors vertically according to sizes.
             /// </summary>
             /// <param name="size">The size of each chunk</param>
-            
+
             public Tensor[] vsplit(long size)
             {
                 if (this.shape[0] % size != 0) throw new ArgumentException("The first dimension must be evenly divisible by the size");
@@ -3356,7 +3515,7 @@ namespace TorchSharp
             /// Splits input, a tensor with one or more dimensions, into multiple tensors vertically according to sizes.
             /// </summary>
             /// <param name="sizes">A list of split points</param>
-            
+
             public Tensor[] vsplit(params long[] sizes)
             {
                 IntPtr[] ptrArray;
@@ -3378,7 +3537,7 @@ namespace TorchSharp
             /// Splits input, a tensor with one or more dimensions, into multiple tensors vertically according to indices.
             /// </summary>
             /// <param name="indices">A list of split points</param>
-            
+
             public Tensor[] vsplit(Tensor indices) => tensor_split(indices, 0);
 
 
@@ -3389,7 +3548,7 @@ namespace TorchSharp
             /// Splits input, a tensor with one or more dimensions, into multiple tensors horizontally according to sizes.
             /// </summary>
             /// <param name="size">The size of each chunk</param>
-            
+
             public Tensor[] hsplit(long size)
             {
                 if (this.shape[1] % size != 0) throw new ArgumentException("The second dimension must be evenly divisible by the size");
@@ -3411,7 +3570,7 @@ namespace TorchSharp
             /// Splits input, a tensor with one or more dimensions, into multiple tensors horizontally according to sizes.
             /// </summary>
             /// <param name="sizes">A list of split points</param>
-            
+
             public Tensor[] hsplit(params long[] sizes)
             {
                 IntPtr[] ptrArray;
@@ -3433,7 +3592,7 @@ namespace TorchSharp
             /// Splits input, a tensor with one or more dimensions, into multiple tensors horizontally according to indices.
             /// </summary>
             /// <param name="indices">A list of split points</param>
-            
+
             public Tensor[] hsplit(Tensor indices) => tensor_split(indices, 1);
 
             [DllImport("LibTorchSharp")]
@@ -3443,7 +3602,7 @@ namespace TorchSharp
             /// Splits input, a tensor with three or more dimensions, into multiple tensors depthwise according to indices_or_sections. Each split is a view of input.
             /// </summary>
             /// <param name="size">The size of each chunk</param>
-            
+
             public Tensor[] dsplit(long size)
             {
                 if (this.shape[2] % size != 0) throw new ArgumentException("The third dimension must be evenly divisible by the size");
@@ -3497,7 +3656,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="chunks">The number of chunks to return</param>
             /// <param name="dim">Dimension along which to split the tensor</param>
-            
+
             /// <remarks>The last chunk will be smaller if the tensor size along the given dimension dim is not divisible by chunks.</remarks>
             public Tensor[] chunk(long chunks, long dim = 0L)
             {
@@ -3524,7 +3683,7 @@ namespace TorchSharp
             /// <param name="k">k for the k-th smallest element</param>
             /// <param name="dim">The dimension to find the kth value along</param>
             /// <param name="keepdim">Whether the output tensor has dim retained or not.</param>
-            
+
             public static (Tensor, Tensor) kthvalue(Tensor input, long k, long? dim, bool keepdim = false)
             {
                 var values = THSTensor_kthvalue(input.Handle, k, dim.HasValue ? dim.Value : -1, keepdim, out var indices);
@@ -3591,7 +3750,7 @@ namespace TorchSharp
             /// <param name="q">1D tensor of quantile values in the range [0, 1]</param>
             /// <param name="dim">The dimension to reduce.</param>
             /// <param name="keepdim">Whether the output tensor has dim retained or not.</param>
-            
+
             Tensor quantile(Tensor q, long dim = -1, bool keepdim = false)
             {
                 var res = THSTensor_quantile(Handle, q.Handle, dim, keepdim);
@@ -3610,7 +3769,7 @@ namespace TorchSharp
             /// <param name="q">1D tensor of quantile values in the range [0, 1]</param>
             /// <param name="dim">The dimension to reduce.</param>
             /// <param name="keepdim">Whether the output tensor has dim retained or not.</param>
-            
+
             Tensor nanquantile(Tensor q, long dim = -1, bool keepdim = false)
             {
                 var res = THSTensor_nanquantile(Handle, q.Handle, dim, keepdim);
@@ -3627,7 +3786,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="dim">The dimension to reduce, the last dimension by default.</param>
             /// <param name="keepdim">Whether the output tensor has dim retained or not</param>
-            
+
 
             public (Tensor values, Tensor indices) mode(long dim = -1L, bool keepdim = false)
             {
@@ -3985,7 +4144,7 @@ namespace TorchSharp
             /// <summary>
             /// Expand this tensor to the same size as other.
             /// </summary>
-            
+
             public Tensor expand_as(Tensor other) => expand(other.shape);
 
 
@@ -4018,7 +4177,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_broadcast_to(IntPtr tensor, IntPtr psizes, int length);
 
             /// <summary>
-            /// Broadcasts input to the shape shape. Equivalent to calling input.expand(shape). 
+            /// Broadcasts input to the shape shape. Equivalent to calling input.expand(shape).
             /// </summary>
             public Tensor broadcast_to(params long[] shape)
             {
@@ -4122,7 +4281,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_randn_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
 
             /// <summary>
-            /// Returns a tensor with the same size as input that is filled with random numbers from a normal distribution with mean 0 and variance 1. 
+            /// Returns a tensor with the same size as input that is filled with random numbers from a normal distribution with mean 0 and variance 1.
             /// </summary>
             public Tensor randn_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
@@ -4415,7 +4574,7 @@ namespace TorchSharp
             /// <summary>
             /// Fills the tensor with zeros.
             /// </summary>
-            
+
             public Tensor zero_()
             {
                 return zeros(shape);
@@ -4912,9 +5071,9 @@ namespace TorchSharp
             extern static IntPtr THSTensor_nonzero(IntPtr tensor);
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
-            
+
             public Tensor nonzero()
             {
                 var res = THSTensor_nonzero(Handle);
@@ -5080,105 +5239,193 @@ namespace TorchSharp
                 return right.le(left);
             }
 
-            public static explicit operator Tensor(byte value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(byte value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(sbyte value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(sbyte value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(short value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(short value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(int value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(int value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(long value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(long value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(float value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(float value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(double value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(double value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(bool value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(bool value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor((float, float) value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor((float, float) value)
             {
                 return torch.tensor(value);
             }
 
-            public static explicit operator Tensor(System.Numerics.Complex value)
+            /// <summary>
+            /// Useful when assigning a .NET numeric value to an index of a Tensor.
+            /// </summary>
+            /// <param name="value">The numeric value.</param>
+            public static implicit operator Tensor(System.Numerics.Complex value)
             {
                 return torch.tensor(value);
             }
 
-
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(byte[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(sbyte[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(short[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(int[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(long[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(float[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(double[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(bool[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor((float, float)[] value)
             {
                 return torch.tensor(value);
             }
 
+            /// <summary>
+            /// Useful when creating a tensor from a .NET array of numbers.
+            /// </summary>
+            /// <param name="value">The numeric value array.</param>
             public static implicit operator Tensor(System.Numerics.Complex[] value)
             {
                 return torch.tensor(value);
+            }
+
+            /// <summary>
+            /// This is only here in order to help the C# compiler make the right choice vis-a-vis
+            /// implicit conversions.
+            /// </summary>
+            public static implicit operator Tensor(Scalar scalar)
+            {
+                throw new InvalidOperationException("Implicit conversion from Scalar to Tensor -- this should never be invoked, the operator is only here to guide the compiler's overload resolution.");
             }
 
             // Specifically added to make F# look good.
@@ -5211,13 +5458,13 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Get a string representation of the tensor.
+            /// Get a verbose string representation of a tensor.
             /// </summary>
             /// <param name="withData">Boolean, used to discriminate.</param>
             /// <param name="fltFormat">The format string to use for floating point values.</param>
             /// <param name="width">The width of each line of the output string.</param>
             /// <param name="cultureInfo">The CulturInfo to use when formatting the text</param>
-            
+
             public string ToString(bool withData, string fltFormat = "g5", int width = 100, CultureInfo? cultureInfo = null)
             {
                 var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
@@ -5284,7 +5531,7 @@ namespace TorchSharp
                     if (i > 0) builder.Append(',');
 
                     if (indices[i].kind == TensorIndex.Kind.Ellipsis) {
-                        builder.Append(':');
+                        builder.Append("..");
                     } else if (indices[i].kind == TensorIndex.Kind.Single) {
                         builder.Append(indices[i].startIndexOrBoolOrSingle);
                     }
@@ -5426,6 +5673,27 @@ namespace TorchSharp
                 }
             }
 
+            public object tolist()
+            {
+                if (this.shape.Length == 0) {
+                    return this.ToScalar();
+                }
+
+                var result = new System.Collections.ArrayList();
+                if (shape.Length == 1) {
+                    for (long idx = 0; idx < shape[0]; idx++) {
+                        result.Add(this[idx].ToScalar());
+                    }
+                }
+                else {
+                    for (long idx = 0; idx < shape[0]; idx++) {
+                        result.Add(this[idx].tolist());
+                    }
+                }
+
+                return result;
+            }
+
             public static explicit operator float(Tensor value) => value.ToSingle();
             public static explicit operator double(Tensor value) => value.ToDouble();
             public static explicit operator sbyte(Tensor value) => value.ToSByte();
@@ -5508,13 +5776,16 @@ namespace TorchSharp
                 return new TensorIndex() { startIndexOrBoolOrSingle = start, step = step, stopIndex = stop, kind = Kind.Slice };
             }
 
+            static public TensorIndex Slice((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
+
+#if !NETSTANDARD2_0_OR_GREATER
             static public TensorIndex Slice(System.Range range)
             {
                 long? start = !range.Start.IsFromEnd ? range.Start.Value : -1 * range.Start.Value;
                 long? end = !range.End.IsFromEnd ? range.End.Value : (range.End.Value == 0) ? null : -1 * range.End.Value;
                 return TensorIndex.Slice(start, end);
             }
-
+#endif // NETSTANDARD2_0_OR_GREATER
             static public TensorIndex Bool(bool value) => new TensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
 
             static public TensorIndex Single(long? index) => new TensorIndex() { startIndexOrBoolOrSingle = index, kind = Kind.Single };
@@ -5534,12 +5805,18 @@ namespace TorchSharp
                 return TensorIndex.Single(value);
             }
 
+            public static implicit operator Tensor(TensorIndex value) { throw new InvalidOperationException("Implicit conversion from TensorIndex to Tensor -- this should never be invoked, the operator is only here to guide the compiler's overload resolution."); }
+
+            public static implicit operator TensorIndex((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
+
+#if !NETSTANDARD2_0_OR_GREATER
             public static implicit operator TensorIndex(System.Range range)
             {
                 long? start = !range.Start.IsFromEnd ? range.Start.Value : -1 * range.Start.Value;
                 long? end = !range.End.IsFromEnd ? range.End.Value : (range.End.Value == 0) ? null : -1 * range.End.Value;
                 return TensorIndex.Slice(start, end);
             }
+#endif // NETSTANDARD2_0_OR_GREATER
         }
 
         /// <summary>

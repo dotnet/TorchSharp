@@ -10,6 +10,9 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
+#if NET472_OR_GREATER
+    [Collection("Sequential")]
+#endif // NET472_OR_GREATER
     public class TestTorch
     {
         [Fact]
@@ -98,7 +101,7 @@ namespace TorchSharp
 
                 b = genA.initial_seed();
                 c = genB.initial_seed();
-                d = genC.initial_seed(); 
+                d = genC.initial_seed();
 
                 Assert.Equal(a, b);
                 Assert.Equal(c, d);

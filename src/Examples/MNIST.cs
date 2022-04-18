@@ -162,22 +162,27 @@ namespace TorchSharp.Examples
             model.train();
 
             int batchId = 1;
+            long total = 0;
 
             Console.WriteLine($"Epoch: {epoch}...");
 
             using (var d = torch.NewDisposeScope()) {
+
                 foreach (var data in dataLoader) {
                     optimizer.zero_grad();
 
+                    var target = data["label"];
                     var prediction = model.forward(data["data"]);
-                    var output = loss(prediction, data["label"]);
+                    var output = loss(prediction, target);
 
                     output.backward();
 
                     optimizer.step();
 
-                    if (batchId % _logInterval == 0) {
-                        Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * _trainBatchSize} / {size}] Loss: {output.ToSingle():F4}");
+                    total += target.shape[0];
+
+                    if (batchId % _logInterval == 0 || total == size) {
+                        Console.WriteLine($"\rTrain: epoch {epoch} [{total} / {size}] Loss: {output.ToSingle():F4}");
                     }
 
                     batchId++;

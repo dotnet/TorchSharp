@@ -16,6 +16,9 @@ using TorchSharp.Modules;
 
 namespace TorchSharp
 {
+#if NET472_OR_GREATER
+    [Collection("Sequential")]
+#endif // NET472_OR_GREATER
     public class TestTraining
     {
 

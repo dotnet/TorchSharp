@@ -1,0 +1,12 @@
+<!--
+  This props file mainly exist to set the property SkipSettingTargetFrameworkInGlobalProps to true. This property is used to skip initializing
+  the TargetFramework property to netstandard2.0 in the parent Directory.Build.props. Otherwise, this project will always be forced to build
+  against netstandard2.0 when using multi-targets (i.e when using TargetFrameworks property).
+  It is important to keep the order of setting the property SkipSettingTargetFrameworkInGlobalProps first, and then importing the parent Directory.Build.props
+-->
+<Project>
+  <PropertyGroup>
+    <SkipSettingTargetFrameworkInGlobalProps>true</SkipSettingTargetFrameworkInGlobalProps>
+  </PropertyGroup>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+</Project>
