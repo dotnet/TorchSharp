@@ -101,8 +101,13 @@ namespace TorchSharp
         {
             {
                 Tensor t = torch.zeros(4);
-                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture, newLine: _sep);
                 Assert.Equal($"[4], type = Float32, device = cpu{_sep} 0 0 0 0{_sep}", str);
+            }
+            {
+                Tensor t = torch.zeros(4);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture, newLine: "\n");
+                Assert.Equal($"[4], type = Float32, device = cpu\n 0 0 0 0\n", str);
             }
             {
                 Tensor t = torch.zeros(4, torch.complex64);
@@ -122,8 +127,13 @@ namespace TorchSharp
         {
             {
                 Tensor t = torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4);
-                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.ToString(true, cultureInfo: CultureInfo.InvariantCulture, newLine: _sep);
                 Assert.Equal($"[2x4], type = Float32, device = cpu{_sep}{_sep}        0   3.141 6.2834 3.1415{_sep} 6.28e-06 -13.142   0.01 4713.1{_sep}", str);
+            }
+            {
+                Tensor t = torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4);
+                var str = t.str();
+                Assert.Equal($"[2x4], type = Float32, device = cpu\n\n        0   3.141 6.2834 3.1415\n 6.28e-06 -13.142   0.01 4713.1\n", str);
             }
             {
                 Tensor t = torch.zeros(2, 4, torch.complex64);
