@@ -5436,6 +5436,16 @@ namespace TorchSharp
 
             public override string ToString() => ToString(DefaultOutputStyle);
 
+            /// <summary>
+            /// Tensor-specific ToString()
+            /// </summary>
+            /// <param name="style">
+            /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
+            /// </param>
+            /// <param name="fltFormat">The floating point format to use for each individual number.</param>
+            /// <param name="width">The line width to enforce</param>
+            /// <param name="cultureInfo">The culture, which affects how numbers are formatted.</param>
+            /// <returns></returns>
             public string ToString(TensorStringStyle style, string fltFormat = "g5", int width = 100,
                 CultureInfo? cultureInfo = null) => style switch {
                     TensorStringStyle.Metadata => ToMetadataString(),
