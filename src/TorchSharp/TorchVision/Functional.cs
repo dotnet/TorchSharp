@@ -898,8 +898,8 @@ namespace TorchSharp.torchvision
 
                 using var b_matrix = torch.tensor(startpoints.SelectMany(sp => sp).ToArray(), dtype: torch.float32).view(8);
 
-                var a_str = a_matrix.ToString(true);
-                var b_str = b_matrix.ToString(true);
+                var a_str = a_matrix.ToString(TensorStringStyle.Julia);
+                var b_str = b_matrix.ToString(TensorStringStyle.Julia);
 
                 var t0 = torch.linalg.lstsq(a_matrix, b_matrix);
 

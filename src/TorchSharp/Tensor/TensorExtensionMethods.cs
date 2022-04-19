@@ -12,6 +12,13 @@ namespace TorchSharp
 {
     using static torch;
 
+    public enum TensorStringStyle
+    {
+        Metadata,
+        Julia,
+        Numpy
+    }
+
     /// <summary>
     /// A few extensions to the Tensor type.
     /// </summary>
@@ -31,30 +38,38 @@ namespace TorchSharp
         /// Get a string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
+        /// <param name="style">
+        /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
+        /// </param>
         /// <param name="fltFormat">The format string to use for floating point values.</param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <returns></returns>
         /// <remarks>
         /// This method does exactly the same as ToString(bool, string, int), but is shorter,
-        /// looks more like  Python 'str' and doesn't require a boolean argument 'true' in order
+        /// looks more like Python 'str' and doesn't require a style argument in order
         /// to discriminate.
+        ///
+        /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string str(this Tensor tensor, string fltFormat = "g5", int width = 100)
+        public static string str(this Tensor tensor, TensorStringStyle style = TensorStringStyle.Julia, string fltFormat = "g5", int width = 100)
         {
-            return tensor.ToString(true, fltFormat, width);
+            return tensor.ToString(style, fltFormat, width);
         }
 
         /// <summary>
         /// Uses Console.WriteLine to print a tensor expression on stdout. This is intended for
-        /// .NET Interactive notebook use, primarily.
+        /// interactive notebook use, primarily.
         /// </summary>
         /// <param name="t">The input tensor.</param>
+        /// <param name="style">
+        /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
+        /// </param>
         /// <param name="fltFormat">The format string to use for floating point values.</param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <returns></returns>
-        public static Tensor print(this Tensor t, string fltFormat = "g5", int width = 100)
+        public static Tensor print(this Tensor t, TensorStringStyle style = TensorStringStyle.Julia, string fltFormat = "g5", int width = 100)
         {
-            Console.WriteLine(t.str());
+            Console.WriteLine(t.str(style, fltFormat, width));
             return t;
         }
 

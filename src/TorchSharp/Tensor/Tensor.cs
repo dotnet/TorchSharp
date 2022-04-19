@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -1531,7 +1532,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_flatten(IntPtr tensor, long start, long end);
 
             /// <summary>
-            /// Flattens input by reshaping it into a one-dimensional tensor. 
+            /// Flattens input by reshaping it into a one-dimensional tensor.
             /// </summary>
             /// <param name="start_dim">The first dim to flatten</param>
             /// <param name="end_dim">The last dim to flatten.</param>
@@ -5431,10 +5432,32 @@ namespace TorchSharp
             // Specifically added to make F# look good.
             public static Tensor op_MinusMinusGreater(Tensor t, torch.nn.Module m) => m.forward(t);
 
+            public static TensorStringStyle DefaultOutputStyle = TensorStringStyle.Metadata;
+
+            public override string ToString() => ToString(DefaultOutputStyle);
+
+            /// <summary>
+            /// Tensor-specific ToString()
+            /// </summary>
+            /// <param name="style">
+            /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
+            /// </param>
+            /// <param name="fltFormat">The floating point format to use for each individual number.</param>
+            /// <param name="width">The line width to enforce</param>
+            /// <param name="cultureInfo">The culture, which affects how numbers are formatted.</param>
+            /// <returns></returns>
+            public string ToString(TensorStringStyle style, string fltFormat = "g5", int width = 100,
+                CultureInfo? cultureInfo = null) => style switch {
+                    TensorStringStyle.Metadata => ToMetadataString(),
+                    TensorStringStyle.Julia => ToJuliaString(fltFormat, width, cultureInfo),
+                    TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fltFormat, cultureInfo),
+                    _ => throw new InvalidEnumArgumentException("Not supported type")
+                };
+
             /// <summary>
             ///   Get a string representation of the tensor.
             /// </summary>
-            public override string ToString()
+            private string ToMetadataString()
             {
                 if (Handle == IntPtr.Zero) return "";
 
@@ -5457,20 +5480,86 @@ namespace TorchSharp
                 return sb.ToString();
             }
 
+            private static string ToNumpyString(Tensor t, long mdim, bool isFCreate, string fltFormat, CultureInfo? cultureInfo)
+            {
+                var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
+
+                var dim = t.dim();
+                if (t.size().Length == 0) return "";
+                var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int) (mdim - dim))) : "");
+                sb.Append('[');
+                var currentSize = t.size()[0];
+                if (dim == 1) {
+                    if (currentSize <= 6) {
+                        for (var i = 0; i < currentSize - 1; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(' ');
+                        }
+
+                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                    } else {
+                        for (var i = 0; i < 3; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(' ');
+                        }
+
+                        sb.Append("... ");
+
+                        for (var i = currentSize - 3; i < currentSize - 1; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(' ');
+                        }
+
+                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                    }
+                } else {
+                    var newline = string.Join("", Enumerable.Repeat(Environment.NewLine, (int) dim - 1).ToList());
+                    if (currentSize <= 6) {
+                        sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo));
+                        sb.Append(newline);
+                        for (var i = 1; i < currentSize - 1; i++) {
+                            sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo));
+                            sb.Append(newline);
+                        }
+
+                        sb.Append(ToNumpyString(t[currentSize - 1], mdim, true, fltFormat, cultureInfo));
+                    } else {
+                        sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo));
+                        sb.Append(newline);
+                        for (var i = 1; i < 3; i++) {
+                            sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo));
+                            sb.Append(newline);
+                        }
+
+                        sb.Append(string.Join("", Enumerable.Repeat(' ', (int) (mdim - dim))));
+                        sb.Append(" ...");
+                        sb.Append(newline);
+
+                        for (var i = currentSize - 3; i < currentSize - 1; i++) {
+                            sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo));
+                            sb.Append(newline);
+                        }
+
+                        sb.Append(ToNumpyString(t[currentSize - 1], mdim, true, fltFormat, cultureInfo));
+                    }
+                }
+
+                sb.Append("]");
+                return sb.ToString();
+            }
+
             /// <summary>
             /// Get a verbose string representation of a tensor.
             /// </summary>
-            /// <param name="withData">Boolean, used to discriminate.</param>
             /// <param name="fltFormat">The format string to use for floating point values.</param>
             /// <param name="width">The width of each line of the output string.</param>
             /// <param name="cultureInfo">The CulturInfo to use when formatting the text</param>
 
-            public string ToString(bool withData, string fltFormat = "g5", int width = 100, CultureInfo? cultureInfo = null)
+            private string ToJuliaString(string fltFormat = "g5", int width = 100, CultureInfo? cultureInfo = null)
             {
                 var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
-                if (!withData) return this.ToString();
 
-                var builder = new StringBuilder(this.ToString());
+                var builder = new StringBuilder(this.ToMetadataString());
 
                 if (Dimensions == 0) {
 
