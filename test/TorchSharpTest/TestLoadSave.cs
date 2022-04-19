@@ -48,6 +48,21 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSaveLoadConv2D_sd()
+        {
+            var conv = Conv2d(100, 10, 5);
+            var params0 = conv.parameters();
+
+            var sd = conv.state_dict();
+
+            var loaded = Conv2d(100, 10, 5);
+            Assert.NotEqual(params0, loaded.parameters());
+
+            loaded.load_state_dict(sd);
+            Assert.Equal(params0, loaded.parameters());
+        }
+
+        [Fact]
         public void TestSaveLoadSequential()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
@@ -60,6 +75,75 @@ namespace TorchSharp
             File.Delete(".model.ts");
 
             Assert.Equal(params0, params1);
+        }
+
+        [Fact]
+        public void TestSaveLoadSequential_sd()
+        {
+            var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            var params0 = conv.parameters();
+
+            var sd = conv.state_dict();
+
+            var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            Assert.NotEqual(params0, loaded.parameters());
+
+            loaded.load_state_dict(sd);
+            Assert.Equal(params0, loaded.parameters());
+        }
+
+        [Fact]
+        public void TestSaveLoadSequential_error1()
+        {
+            var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            var params0 = conv.parameters();
+
+            var sd = conv.state_dict();
+            sd.Remove("0.bias");
+
+            var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            Assert.NotEqual(params0, loaded.parameters());
+
+            Assert.Throws<InvalidOperationException>(() => loaded.load_state_dict(sd));
+        }
+
+        [Fact]
+        public void TestSaveLoadSequential_error2()
+        {
+            var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            var params0 = conv.parameters();
+
+            var sd = conv.state_dict();
+            var t = sd["0.bias"];
+
+            sd.Add("2.bias", t);
+
+            var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            Assert.NotEqual(params0, loaded.parameters());
+
+            Assert.Throws<InvalidOperationException>(() => loaded.load_state_dict(sd));
+        }
+
+        [Fact]
+        public void TestSaveLoadSequential_lax()
+        {
+            var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            var params0 = conv.parameters();
+
+            var sd = conv.state_dict();
+            var t = sd["0.bias"];
+            sd.Remove("0.bias");
+
+            sd.Add("2.bias", t);
+
+            var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            Assert.NotEqual(params0, loaded.parameters());
+
+            var (m,u) = loaded.load_state_dict(sd, false);
+            Assert.NotEqual(params0, loaded.parameters());
+
+            Assert.NotEmpty(m);
+            Assert.NotEmpty(u);
         }
 
         [Fact]

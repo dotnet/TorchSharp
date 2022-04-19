@@ -14,6 +14,8 @@ Due to the unavailability of `System.Range` in .NET FX 4.7, indexing of tensors 
 
 A second piece of new functionality was to integrate @dayo05's work on DataLoader into the Examples. A couple of MNIST and CIFAR data sets are now found in `torchvision.datasets`
 
+A Numpy-style version of ToString() was added to the existing Julia-style, and the argument to the verbose ToString() was changed from 'Boolean' to an enumeration.
+
 A number of the "bugs" listed below represent missing APIs.
 
 __Fixed Bugs:__
@@ -26,7 +28,8 @@ __Fixed Bugs:__
 #556 Implement missing activation modules<br/>
 #559 Implement miscellaneous missing layers.<br/>
 #564 torch.Tensor.tolist<br/>
-#566 Implicit conversion of scalars to tensors<br>
+#566 Implicit conversion of scalars to tensors<br/>
+#576 load_state_dict functionality<br/>
 
 ## NuGet Version 0.96.3
 
