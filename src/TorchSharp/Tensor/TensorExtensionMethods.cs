@@ -43,6 +43,7 @@ namespace TorchSharp
         /// </param>
         /// <param name="fltFormat">The format string to use for floating point values.</param>
         /// <param name="width">The width of each line of the output string.</param>
+        /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <returns></returns>
         /// <remarks>
         /// This method does exactly the same as ToString(bool, string, int), but is shorter,
@@ -51,9 +52,9 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string str(this Tensor tensor, TensorStringStyle style = TensorStringStyle.Julia, string fltFormat = "g5", int width = 100)
+        public static string str(this Tensor tensor, TensorStringStyle style = TensorStringStyle.Julia, string fltFormat = "g5", int width = 100, string newLine = "\n")
         {
-            return tensor.ToString(style, fltFormat, width);
+            return tensor.ToString(style, fltFormat, width, newLine: newLine);
         }
 
         /// <summary>
@@ -66,10 +67,11 @@ namespace TorchSharp
         /// </param>
         /// <param name="fltFormat">The format string to use for floating point values.</param>
         /// <param name="width">The width of each line of the output string.</param>
+        /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <returns></returns>
-        public static Tensor print(this Tensor t, TensorStringStyle style = TensorStringStyle.Julia, string fltFormat = "g5", int width = 100)
+        public static Tensor print(this Tensor t, TensorStringStyle style = TensorStringStyle.Julia, string fltFormat = "g5", int width = 100, string newLine = "\n")
         {
-            Console.WriteLine(t.str(style, fltFormat, width));
+            Console.WriteLine(t.str(style, fltFormat, width, newLine: newLine));
             return t;
         }
 
