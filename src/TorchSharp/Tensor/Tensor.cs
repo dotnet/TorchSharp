@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -1531,7 +1532,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_flatten(IntPtr tensor, long start, long end);
 
             /// <summary>
-            /// Flattens input by reshaping it into a one-dimensional tensor. 
+            /// Flattens input by reshaping it into a one-dimensional tensor.
             /// </summary>
             /// <param name="start_dim">The first dim to flatten</param>
             /// <param name="end_dim">The last dim to flatten.</param>
@@ -5431,10 +5432,52 @@ namespace TorchSharp
             // Specifically added to make F# look good.
             public static Tensor op_MinusMinusGreater(Tensor t, torch.nn.Module m) => m.forward(t);
 
+            public static TensorStringStyle DefaultOutputStyle = TensorStringStyle.Metadata;
+
+            public override string ToString() => ToMetadataString();
+
+            /// <summary>
+            /// Tensor-specific ToString(), for backward-compat with pre-0.96.4 versions.
+            /// </summary>
+            /// <returns></returns>
+            public string ToString(bool disamb,
+                                   string fltFormat = "g5",
+                                   int width = 100,
+                                   CultureInfo? cultureInfo = null,
+                                   string newLine = "") => disamb ? ToString(TensorStringStyle.Julia, fltFormat, width, cultureInfo, newLine) : ToMetadataString();
+
+            /// <summary>
+            /// Tensor-specific ToString()
+            /// </summary>
+            /// <param name="style">
+            /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
+            /// </param>
+            /// <param name="fltFormat">The floating point format to use for each individual number.</param>
+            /// <param name="width">The line width to enforce</param>
+            /// <param name="cultureInfo">The culture, which affects how numbers are formatted.</param>
+            /// <param name="newLine">The newline string to use, defaults to system default.</param>
+            /// <returns></returns>
+            public string ToString(TensorStringStyle style,
+                                   string fltFormat = "g5",
+                                   int width = 100,
+                                   CultureInfo? cultureInfo = null,
+                                   string newLine = "")
+            {
+                if (String.IsNullOrEmpty(newLine))
+                    newLine = Environment.NewLine;
+
+                return style switch {
+                    TensorStringStyle.Metadata => ToMetadataString(),
+                    TensorStringStyle.Julia => ToJuliaString(fltFormat, width, cultureInfo, newLine),
+                    TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fltFormat, cultureInfo, newLine),
+                    _ => throw new InvalidEnumArgumentException("Not supported type")
+                };
+            }
+
             /// <summary>
             ///   Get a string representation of the tensor.
             /// </summary>
-            public override string ToString()
+            private string ToMetadataString()
             {
                 if (Handle == IntPtr.Zero) return "";
 
@@ -5457,20 +5500,86 @@ namespace TorchSharp
                 return sb.ToString();
             }
 
+            private static string ToNumpyString(Tensor t, long mdim, bool isFCreate, string fltFormat, CultureInfo? cultureInfo, string newLine)
+            {
+                var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
+
+                var dim = t.dim();
+                if (t.size().Length == 0) return "";
+                var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int) (mdim - dim))) : "");
+                sb.Append('[');
+                var currentSize = t.size()[0];
+                if (dim == 1) {
+                    if (currentSize <= 6) {
+                        for (var i = 0; i < currentSize - 1; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(' ');
+                        }
+
+                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                    } else {
+                        for (var i = 0; i < 3; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(' ');
+                        }
+
+                        sb.Append("... ");
+
+                        for (var i = currentSize - 3; i < currentSize - 1; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(' ');
+                        }
+
+                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                    }
+                } else {
+                    var newline = string.Join("", Enumerable.Repeat(newLine, (int) dim - 1).ToList());
+                    if (currentSize <= 6) {
+                        sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
+                        sb.Append(newline);
+                        for (var i = 1; i < currentSize - 1; i++) {
+                            sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
+                            sb.Append(newline);
+                        }
+
+                        sb.Append(ToNumpyString(t[currentSize - 1], mdim, true, fltFormat, cultureInfo, newLine));
+                    } else {
+                        sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
+                        sb.Append(newline);
+                        for (var i = 1; i < 3; i++) {
+                            sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
+                            sb.Append(newline);
+                        }
+
+                        sb.Append(string.Join("", Enumerable.Repeat(' ', (int) (mdim - dim))));
+                        sb.Append(" ...");
+                        sb.Append(newline);
+
+                        for (var i = currentSize - 3; i < currentSize - 1; i++) {
+                            sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
+                            sb.Append(newline);
+                        }
+
+                        sb.Append(ToNumpyString(t[currentSize - 1], mdim, true, fltFormat, cultureInfo, newLine));
+                    }
+                }
+
+                sb.Append("]");
+                return sb.ToString();
+            }
+
             /// <summary>
             /// Get a verbose string representation of a tensor.
             /// </summary>
-            /// <param name="withData">Boolean, used to discriminate.</param>
             /// <param name="fltFormat">The format string to use for floating point values.</param>
             /// <param name="width">The width of each line of the output string.</param>
             /// <param name="cultureInfo">The CulturInfo to use when formatting the text</param>
-
-            public string ToString(bool withData, string fltFormat = "g5", int width = 100, CultureInfo? cultureInfo = null)
+            /// <param name="newLine">The newline string to use, defaults to system default.</param>
+            private string ToJuliaString(string fltFormat, int width, CultureInfo? cultureInfo, string newLine)
             {
                 var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
-                if (!withData) return this.ToString();
 
-                var builder = new StringBuilder(this.ToString());
+                var builder = new StringBuilder(this.ToMetadataString());
 
                 if (Dimensions == 0) {
 
@@ -5484,24 +5593,23 @@ namespace TorchSharp
 
                     var appendEllipsis = row.Count < shape[0];
 
-                    builder.AppendLine();
-                    PrintOneRow(row, row.Select(str => str.Length).ToArray(), new bool[shape[0]], fltFormat, builder, this, appendEllipsis);
+                    builder.Append(newLine);
+                    PrintOneRow(row, row.Select(str => str.Length).ToArray(), new bool[shape[0]], fltFormat, builder, this, appendEllipsis, newLine);
 
                 } else if (Dimensions == 2) {
 
-                    builder.AppendLine().AppendLine();
-                    PrintTwoDimensions(fltFormat, width, builder, this, actualCulturInfo);
+                    builder.Append(newLine);
+                    PrintTwoDimensions(fltFormat, width, builder, this, actualCulturInfo, newLine);
 
                 } else {
-                    builder.AppendLine();
                     var indices = new List<TensorIndex>();
-                    RecursivePrintDimensions(0, indices, fltFormat, width, builder, actualCulturInfo);
+                    RecursivePrintDimensions(0, indices, fltFormat, width, builder, actualCulturInfo, newLine);
                 }
 
                 return builder.ToString();
             }
 
-            private void RecursivePrintDimensions(int dim, IEnumerable<TensorIndex> indices, string fltFormat, int width, StringBuilder builder, CultureInfo cultureInfo)
+            private void RecursivePrintDimensions(int dim, IEnumerable<TensorIndex> indices, string fltFormat, int width, StringBuilder builder, CultureInfo cultureInfo, string newLine)
             {
                 if (dim == Dimensions - 3) {
                     // We're at the third-last dimension. This is where we can print out the last two dimensions.
@@ -5510,15 +5618,15 @@ namespace TorchSharp
 
                         var idxs = indices.Append(TensorIndex.Single(i)).Append(TensorIndex.Ellipsis).Append(TensorIndex.Ellipsis).ToArray();
                         var str = IndicesToString(idxs);
-                        builder.AppendLine().AppendLine($"{str} =");
+                        builder.Append(newLine).Append($"{str} =").Append(newLine);
                         var slice = this.index(idxs);
-                        PrintTwoDimensions(fltFormat, width, builder, slice, cultureInfo);
+                        PrintTwoDimensions(fltFormat, width, builder, slice, cultureInfo, newLine);
                     }
                 } else {
 
                     for (int i = 0; i < shape[dim]; i++) {
 
-                        RecursivePrintDimensions(dim + 1, indices.Append(TensorIndex.Single(i)), fltFormat, width, builder, cultureInfo);
+                        RecursivePrintDimensions(dim + 1, indices.Append(TensorIndex.Single(i)), fltFormat, width, builder, cultureInfo, newLine);
                     }
                 }
             }
@@ -5539,7 +5647,7 @@ namespace TorchSharp
                 return builder.Append(']').ToString();
             }
 
-            private static void PrintTwoDimensions(string fltFormat, int width, StringBuilder builder, Tensor t, CultureInfo cultureInfo)
+            private static void PrintTwoDimensions(string fltFormat, int width, StringBuilder builder, Tensor t, CultureInfo cultureInfo, string newLine)
             {
                 // TODO: This code will align the first digits of each column, taking a leading '-' into account.
                 //       An alternative would be to align periods, or to align the last character of each column.
@@ -5574,13 +5682,13 @@ namespace TorchSharp
                 }
 
                 for (int i = 0; i < rowCount; i++) {
-                    PrintOneRow(rows[i].Take(shortestRow).ToList(), columnSpace, hasMinus, fltFormat, builder, t[i], appendEllipsis);
+                    PrintOneRow(rows[i].Take(shortestRow).ToList(), columnSpace, hasMinus, fltFormat, builder, t[i], appendEllipsis, newLine);
                 }
             }
 
             private const string ellipsis = "...";
 
-            private static void PrintOneRow(IList<string> row, int[] space, bool[] hasMinus, string fltFormat, StringBuilder builder, Tensor rowTensor, bool appendEllipsis)
+            private static void PrintOneRow(IList<string> row, int[] space, bool[] hasMinus, string fltFormat, StringBuilder builder, Tensor rowTensor, bool appendEllipsis, string newLine)
             {
                 for (var i = 0; i < row.Count; i++) {
                     var pad = space[i] - row[i].Length;
@@ -5596,7 +5704,7 @@ namespace TorchSharp
                 if (appendEllipsis) {
                     builder.Append(' ').Append(ellipsis);
                 }
-                builder.AppendLine();
+                builder.Append(newLine);
             }
 
             private static void BuildRow(List<string> row, Tensor t, int width, string fltFormat, CultureInfo cultureInfo)

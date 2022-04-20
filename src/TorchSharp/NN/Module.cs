@@ -416,6 +416,46 @@ namespace TorchSharp
                     return destination;
                 }
 
+                /// <summary>
+                /// Copies parameters and buffers from state_dict into this module and its descendants.
+                ///
+                /// If strict is True, then the keys of state_dict must exactly match the keys returned by this module’s state_dict() function.
+                /// </summary>
+                /// <param name="source">A dict containing parameters and persistent buffers.</param>
+                /// <param name="strict">Whether to strictly enforce that the keys in state_dict match the keys returned by this module’s state_dict() function.</param>
+                /// <returns></returns>
+
+                public virtual (IList<string> missing_keys, IList<string> unexpected_keyes) load_state_dict(Dictionary<string, Tensor> source, bool strict = true)
+                {
+                    List<string> missing = new List<string>();
+                    List<string> unexpected = new List<string>();
+
+                    var destination = state_dict();
+
+                    foreach (var key in source.Keys) {
+                        if (!destination.ContainsKey(key)) {
+                            unexpected.Add(key);
+                        }
+                    }
+
+                    foreach (var key in destination.Keys) {
+                        if (!source.ContainsKey(key)) {
+                            missing.Add(key);
+                        }
+                    }
+
+                    if (strict && (missing.Count > 0 || unexpected.Count > 0))
+                        throw new InvalidOperationException("The loaded state_dict is not identica to the target dictionary.");
+
+                    foreach (var key in source.Keys) {
+                        if (destination.ContainsKey(key)) {
+                            destination[key].bytes = source[key].bytes;
+                        }
+                    }
+
+                    return (missing, unexpected);
+                }
+
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_get_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 

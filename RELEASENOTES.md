@@ -2,6 +2,12 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.96.5
+
+Same-day release. The previous release was made without propert testing of the ToString() improvements in a notebook context. It turned out that when the standard Windows line-terminator "\r\n" is used in a VS Code notebook, an extra blank line is created.
+
+This release fixes that by allowing the caller of ToString() to pass in the line terminator string that should be used when formatting the string. This is easily done in the notebook.
+
 ## NuGet Version 0.96.4
 
 In this release, the big change is support for .NET FX 4.7.2 and later.
@@ -13,6 +19,8 @@ __API Changes:__
 Due to the unavailability of `System.Range` in .NET FX 4.7, indexing of tensors using the `[a..b]` syntax is not available. In its place, we have added support for using tuples as index expressions, with the same semantics, except that the "from end" unary operator `^` of the C# range syntax is not available. The tuple syntax is also available for versions of .NET that do support `System.Range`
 
 A second piece of new functionality was to integrate @dayo05's work on DataLoader into the Examples. A couple of MNIST and CIFAR data sets are now found in `torchvision.datasets`
+
+A Numpy-style version of ToString() was added to the existing Julia-style, and the argument to the verbose ToString() was changed from 'Boolean' to an enumeration.
 
 A number of the "bugs" listed below represent missing APIs.
 
@@ -26,7 +34,8 @@ __Fixed Bugs:__
 #556 Implement missing activation modules<br/>
 #559 Implement miscellaneous missing layers.<br/>
 #564 torch.Tensor.tolist<br/>
-#566 Implicit conversion of scalars to tensors<br>
+#566 Implicit conversion of scalars to tensors<br/>
+#576 load_state_dict functionality<br/>
 
 ## NuGet Version 0.96.3
 
