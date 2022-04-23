@@ -1,14 +1,11 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
-
 using static TorchSharp.torch;
 
 #nullable enable
 namespace TorchSharp
 {
-    using System.Collections.Generic;
     using Modules;
 
     namespace Modules

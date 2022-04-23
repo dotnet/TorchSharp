@@ -1,13 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.IO;
-using System.Collections.Generic;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn.functional;
-using static TorchSharp.TensorExtensionMethods;
-using static TorchSharp.torchvision.datasets;
 using static TorchSharp.torch.utils.data;
-using System.Net;
 
 namespace TorchSharp.Examples
 {

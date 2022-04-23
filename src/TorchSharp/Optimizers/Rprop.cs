@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
 namespace TorchSharp
@@ -72,8 +71,6 @@ namespace TorchSharp
 
     namespace Modules
     {
-        using static torch.optim;
-
         public class Rprop : OptimizerHelper
         {
             /// <summary>

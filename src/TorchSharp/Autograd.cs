@@ -6,8 +6,6 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp
 {
-    using static torch;
-
     /// <summary>
     /// Helper class, relying on IDisposable to implement block-based scoping of autograd settings.
     /// </summary>

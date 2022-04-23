@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using static TorchSharp.torch;
 
 namespace TorchSharp
 {
