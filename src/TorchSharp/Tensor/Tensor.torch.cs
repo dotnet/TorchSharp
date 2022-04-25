@@ -214,12 +214,37 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        /// Returns the k largest elements of the given input tensor along a given dimension.
+        /// </summary>
+        /// <param name="tensor">The input tensor</param>
+        /// <param name="k">The 'k' in 'top-k'.</param>
+        /// <param name="dimension">The dimension to sort along. If dim is not given, the last dimension of the input is chosen.</param>
+        /// <param name="largest">Controls whether to return largest or smallest elements</param>
+        /// <param name="sorted">Controls whether to return the elements in sorted order</param>
+        /// <returns></returns>
+        public static (Tensor values, Tensor indexes) topk(Tensor tensor, int k, int dimension = -1, bool largest = true, bool sorted = true) => tensor.topk(k, dimension, largest, sorted);
+
+        /// <summary>
+        /// Removes a tensor dimension.
+        /// </summary>
+        /// <param name="tensor">The input tensor</param>
+        /// <param name="dimension">The dimension to remove.</param>
+        /// <returns>An array of all slices along a given dimension, already without it.</returns>
+        public static Tensor[] unbind(Tensor tensor, int dimension = 0) => tensor.unbind(dimension);
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTorch_lstsq(IntPtr input, IntPtr A, out IntPtr pQR);
 
-        public static (Tensor Solution, Tensor QR) lstsq(Tensor input, Tensor A)
+        /// <summary>
+        /// Computes the solution to the least squares and least norm problems for a full rank matrix A of size m×n and a matrix B of size m×k.
+        /// </summary>
+        /// <param name="A">the m by n matrix AA</param>
+        /// <param name="B">the matrix BB</param>
+        /// <returns></returns>
+        public static (Tensor Solution, Tensor QR) lstsq(Tensor B, Tensor A)
         {
-            var solution = THSTorch_lstsq(input.Handle, A.Handle, out var qr);
+            var solution = THSTorch_lstsq(B.Handle, A.Handle, out var qr);
             if (solution == IntPtr.Zero || qr == IntPtr.Zero)
                 torch.CheckForErrors();
             return (new Tensor(solution), new Tensor(qr));
