@@ -2,10 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
 using static TorchSharp.Utils.LEB128Codec;
-using System.Runtime.CompilerServices;
 
 #nullable enable
 namespace TorchSharp

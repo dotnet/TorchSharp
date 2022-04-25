@@ -6,8 +6,6 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Globalization;
 using static TorchSharp.torch;
-using static TorchSharp.TensorExtensionMethods;
-
 using Xunit;
 
 #nullable enable

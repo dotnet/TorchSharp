@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
+
 #nullable enable
 namespace TorchSharp
 {

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Collections.Concurrent;
 
 // The scalar 'from' factories for complex tensors require some hand-written code, cannot be generated.
 

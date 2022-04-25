@@ -4,8 +4,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-using static TorchSharp.torch;
-
 #nullable enable
 namespace TorchSharp
 {
