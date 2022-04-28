@@ -11,6 +11,7 @@ extern thread_local char *torch_last_err;
 typedef torch::Tensor *Tensor;
 typedef torch::Scalar *Scalar;
 typedef torch::Generator* Generator;
+typedef c10::Storage* Storage;
 
 typedef std::shared_ptr<torch::nn::Module>* NNModule;
 typedef std::shared_ptr<torch::nn::AnyModule> * NNAnyModule;

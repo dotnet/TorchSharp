@@ -12,6 +12,7 @@ set(SOURCES
     THSData.h
     THSJIT.h
     THSNN.h
+	THSStorage.h
     THSTensor.h
     THSTorch.h
 	THSVision.h
@@ -31,6 +32,7 @@ set(SOURCES
 	THSOptimizers.cpp
 	THSRandom.cpp
 	THSSpecial.cpp
+	THSStorage.cpp
     THSTensor.cpp
 	THSTensorConv.cpp
 	THSTensorFactories.cpp

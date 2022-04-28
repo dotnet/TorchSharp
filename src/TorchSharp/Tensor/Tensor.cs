@@ -269,6 +269,28 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Returns the underlying storage.
+            /// </summary>
+            /// <returns></returns>
+            public Storage<T> storage<T>() where T: unmanaged
+            {
+                return Storage.CreateTypedStorageInstance<T>(this);
+            }
+
+            [DllImport("LibTorchSharp")]
+            internal static extern long THSTensor_storage_offset(IntPtr tensor);
+
+            /// <summary>
+            /// Returns the tensor’s offset in the underlying storage in terms of number of storage elements (not bytes).
+            /// </summary>
+            /// <returns></returns>
+            public long storage_offset()
+            {
+                var res = THSTensor_storage_offset(Handle);
+                torch.CheckForErrors();
+                return res;
+            }
 
             [DllImport("LibTorchSharp")]
             internal static extern IntPtr THSTensor_data(IntPtr handle);
@@ -767,14 +789,6 @@ namespace TorchSharp
                 var res = THSTensor_to_type_and_device(Handle, (sbyte)type, (int)device.type, device.index, copy);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
-                //var res = THSTensor_to_type(Handle, (sbyte)type);
-                //if (res == IntPtr.Zero)
-                //    Torch.CheckForErrors();
-
-                //res = THSTensor_to_device(res, (int)device.type, device.index);
-                //if (res == IntPtr.Zero)
-                //    Torch.CheckForErrors();
-
                 return new Tensor(res);
             }
 
