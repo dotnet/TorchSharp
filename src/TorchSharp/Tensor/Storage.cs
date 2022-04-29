@@ -16,23 +16,23 @@ namespace TorchSharp
         /// </summary>
         public abstract class Storage
         {
-            internal Storage()
+            protected Storage()
             {
             }
 
-            internal Storage(Tensor tensor)
+            protected Storage(Tensor tensor)
             {
                 _tensor = tensor;
                 data_ptr();
             }
 
-            internal Storage(Tensor tensor, IntPtr data_ptr)
+            protected Storage(Tensor tensor, IntPtr data_ptr)
             {
                 _tensor = tensor;
                 _tensor_data_ptr = (data_ptr == IntPtr.Zero) ? this.data_ptr() : data_ptr;
             }
 
-            internal static Storage<T> CreateTypedStorageInstance<T>(Tensor tensor) where T : unmanaged
+            internal static Storage<T> Create<T>(Tensor tensor) where T : unmanaged
             {
                 var type = typeof(T);
                 switch (type) {
@@ -53,11 +53,11 @@ namespace TorchSharp
                 case Type _ when type == typeof(System.Numerics.Complex):
                     return new Storage<T>(tensor.to_type(ScalarType.ComplexFloat64));
                 default:
-                    throw new NotImplementedException();
+                    throw new NotSupportedException();
                 }
             }
 
-            internal static Tensor CreateTypedTensor<T>(ScalarType dtype, IList<T> rawArray)
+            protected static Tensor CreateTypedTensor<T>(ScalarType dtype, IList<T> rawArray)
             {
                 switch (dtype) {
                 case ScalarType.Int8:
@@ -77,7 +77,7 @@ namespace TorchSharp
                 case ScalarType.ComplexFloat64:
                     return torch.tensor(rawArray as IList<System.Numerics.Complex>);
                 default:
-                    throw new NotImplementedException();
+                    throw new NotSupportedException();
                 }
             }
 
@@ -174,7 +174,7 @@ namespace TorchSharp
         /// A torch.Storage is a contiguous, one-dimensional array of a single data type.
         /// Every tensor has a corresponding storage of the same data type.
         /// </summary>
-        public class Storage<T> : torch.Storage, IDisposable, IEnumerable<T> where T : unmanaged
+        public sealed class Storage<T> : torch.Storage, IDisposable, IEnumerable<T> where T : unmanaged
         {
             internal Storage(torch.Tensor tensor, int count = -1) : base(tensor, IntPtr.Zero)
             {
@@ -277,6 +277,8 @@ namespace TorchSharp
             public Storage<T> this[(int? start, int? end) range] {
                 get {
                     ValidateNotScalar();
+                    if (range.end < range.start)
+                        throw new ArgumentException("end < start");
                     var start = CheckIndex(range.start.HasValue? range.start.Value : 0);
                     var end = CheckIndex(range.end.HasValue ? range.end.Value : Count);
                     var count = end - start;
@@ -289,6 +291,8 @@ namespace TorchSharp
                     ValidateNotScalar();
                     if (value._tensor is not null || value._tensor_data_ptr != IntPtr.Zero)
                         throw new InvalidOperationException();
+                    if (range.end < range.start)
+                        throw new ArgumentException("end < start");
                     var v = value._scalarValue;
                     var start = CheckIndex(range.start.HasValue ? range.start.Value : 0);
                     var end = CheckIndex(range.end.HasValue ? range.end.Value : Count);
@@ -307,13 +311,11 @@ namespace TorchSharp
             /// <param name="range">The range.</param>
             public Storage<T> this[System.Range range] {
                 get {
-                    ValidateNotScalar();
                     var start = CheckIndex(range.Start);
                     var end = CheckIndex(range.End);
                     return this[(start, end)];
                 }
                 set {
-                    ValidateNotScalar();
                     var start = CheckIndex(range.Start);
                     var end = CheckIndex(range.End);
                     this[(start, end)] = value;
@@ -412,26 +414,34 @@ namespace TorchSharp
                 return false;
             }
 
+            /// <summary>
+            /// Copy the contents of the Storage instance into the provided array, starting at 'arrayIndex'
+            /// </summary>
+            /// <param name="array">A target array.</param>
+            /// <param name="arrayIndex">The first offset in the array to write data to.</param>
             public void CopyTo(IList<T> array, int arrayIndex)
             {
                 ValidateNotScalar();
-                int idx = arrayIndex;
 
                 unsafe {
                     var ptr = (T*)data_ptr();
-                    for (int i = arrayIndex; i < Count && i < array.Count-arrayIndex; i++)
+                    for (int i = 0; i < Count && i < array.Count-arrayIndex; i++)
                         array[i + arrayIndex] = ((T*)ptr)[i];
                 }
             }
 
+            /// <summary>
+            /// Copy the contents of the provided array into the Storage instance, starting at 'arrayIndex' in the array.
+            /// </summary>
+            /// <param name="array">A source array.</param>
+            /// <param name="arrayIndex">The first offset in the array to read data from.</param>
             public void CopyFrom(IList<T> array, int arrayIndex)
             {
                 ValidateNotScalar();
-                int idx = arrayIndex;
 
                 unsafe {
                     var ptr = (T*)data_ptr();
-                    for (int i = arrayIndex; i < Count && i < array.Count-arrayIndex; i++)
+                    for (int i = 0; i < Count && i < array.Count-arrayIndex; i++)
                         ((T*)ptr)[i] = array[i+arrayIndex];
                 }
             }
@@ -469,7 +479,7 @@ namespace TorchSharp
                 _tensor = null;
             }
 
-            private class StorageEnumerator: IEnumerator<T>
+            private struct StorageEnumerator: IEnumerator<T>
             {
                 private Storage<T> _span;
                 private readonly long _count;
@@ -483,7 +493,8 @@ namespace TorchSharp
                     _span = span;
                     _count = span.Count;
                     Debug.Assert(_count > 0);
-                    Reset();
+                    _index = -1;
+                    _current = default;
                 }
 
                 public T Current => _current;
@@ -498,14 +509,12 @@ namespace TorchSharp
 
                 public bool MoveNext()
                 {
-                    if (_index < 0) {
-                        _index = 0;
-                    } else if (++_index >= _count) {
+                    if (_index >= _count - 1) {
                         Reset();
                         return false;
-                    } else {
-                        _index += 1;
                     }
+
+                    _index += 1;
 
                     unsafe { _current = ((T*)_span._tensor_data_ptr)[_index]; }
                     return true;

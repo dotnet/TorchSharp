@@ -275,7 +275,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Storage<T> storage<T>() where T: unmanaged
             {
-                return Storage.CreateTypedStorageInstance<T>(this);
+                return Storage.Create<T>(this);
             }
 
             [DllImport("LibTorchSharp")]
