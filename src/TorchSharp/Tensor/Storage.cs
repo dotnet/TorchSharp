@@ -10,6 +10,10 @@ namespace TorchSharp
 {
     public static partial class torch
     {
+        /// <summary>
+        /// A torch.Storage is a contiguous, one-dimensional array of a single data type.
+        /// Every tensor has a corresponding storage of the same data type.
+        /// </summary>
         public abstract class Storage
         {
             internal Storage()
@@ -80,26 +84,62 @@ namespace TorchSharp
             protected torch.Tensor _tensor;   // Keeping it alive.
             protected IntPtr _tensor_data_ptr;
 
+            /// <summary>
+            /// Convert to bool storage.
+            /// </summary>
+            /// <returns></returns>
             public Storage<bool> @bool() => _tensor.to_type(ScalarType.Bool).storage<bool>();
 
+            /// <summary>
+            /// Convert to byte storage.
+            /// </summary>
             public Storage<byte> @byte() => _tensor.to_type(ScalarType.Byte).storage<byte>();
 
+            /// <summary>
+            /// Convert to char storage.
+            /// </summary>
             public Storage<char> @char() => _tensor.to_type(ScalarType.Int8).storage<char>();
 
+            /// <summary>
+            /// Convert to int storage.
+            /// </summary>
             public Storage<int> @int() => _tensor.to_type(ScalarType.Int32).storage<int>();
 
+            /// <summary>
+            /// Convert to long storage.
+            /// </summary>
             public Storage<long> @long() => _tensor.to_type(ScalarType.Int64).storage<long>();
 
+            /// <summary>
+            /// Convert to float storage.
+            /// </summary>
             public Storage<float> @float() => _tensor.to_type(ScalarType.Float32).storage<float>();
 
+            /// <summary>
+            /// Convert to double storage.
+            /// </summary>
             public Storage<double> @double() => _tensor.to_type(ScalarType.Float64).storage<double>();
 
+            /// <summary>
+            /// Convert to 32-bit complex storage.
+            /// </summary>
             public Storage<(float,float)> complex_float() => _tensor.to_type(ScalarType.ComplexFloat32).storage<(float, float)>();
 
+            /// <summary>
+            /// Convert to 64-bit complex storage.
+            /// </summary>
             public Storage<System.Numerics.Complex> complex_double() => _tensor.to_type(ScalarType.ComplexFloat64).storage<System.Numerics.Complex>();
 
+            /// <summary>
+            /// The size of each storage element.
+            /// </summary>
+            /// <returns></returns>
             public abstract int element_size();
 
+            /// <summary>
+            /// A pointer to the raw data in memory.
+            /// </summary>
+            /// <returns></returns>
             protected IntPtr data_ptr()
             {
                 if (_tensor_data_ptr != IntPtr.Zero)
@@ -111,8 +151,10 @@ namespace TorchSharp
                 return res;
             }
 
-            public Device device { get { return _tensor.device; } }
-
+            /// <summary>
+            /// The number of bytes allocated to the storage.
+            /// </summary>
+            /// <returns></returns>
             public UInt64 nbytes()
             {
                 var res = THSStorage_nbytes(_tensor.Handle);
@@ -128,14 +170,18 @@ namespace TorchSharp
             protected static extern IntPtr THSStorage_data_ptr(IntPtr tensor);
         }
 
+        /// <summary>
+        /// A torch.Storage is a contiguous, one-dimensional array of a single data type.
+        /// Every tensor has a corresponding storage of the same data type.
+        /// </summary>
         public class Storage<T> : torch.Storage, IDisposable, IEnumerable<T> where T : unmanaged
         {
-            public Storage(torch.Tensor tensor, int count = -1) : base(tensor, IntPtr.Zero)
+            internal Storage(torch.Tensor tensor, int count = -1) : base(tensor, IntPtr.Zero)
             {
                 _count = count;
             }
 
-            public Storage(IntPtr data_ptr, ScalarType dtype, int count = -1) : base(null, data_ptr)
+            internal Storage(IntPtr data_ptr, ScalarType dtype, int count = -1) : base(null, data_ptr)
             {
                 _count = count;
                 _tensor = CreateTypedTensor<T>(dtype, this.ToArray());
@@ -148,6 +194,10 @@ namespace TorchSharp
 
             private T _scalarValue = default(T);
 
+            /// <summary>
+            /// Size of each storage element.
+            /// </summary>
+            /// <returns></returns>
             public override int element_size()
             {
                 ValidateNotScalar();
@@ -156,18 +206,38 @@ namespace TorchSharp
                 }
             }
 
-            public Storage<T> cuda()
-            {
-                ValidateNotScalar();
-                return _tensor.cuda().storage<T>();
+            /// <summary>
+            /// The device where the storage is located.
+            /// </summary>
+            public Device device {
+                get {
+                    ValidateNotScalar();
+                    return _tensor.device;
+                }
             }
 
+            /// <summary>
+            /// Move the storage to a CUDA device.
+            /// </summary>
+            public Storage<T> cuda(Device device = null)
+            {
+                ValidateNotScalar();
+                return _tensor.cuda(device).storage<T>();
+            }
+
+            /// <summary>
+            /// Move the storage to the CPU.
+            /// </summary>
             public Storage<T> cpu()
             {
                 ValidateNotScalar();
                 return _tensor.cpu().storage<T>();
             }
 
+            /// <summary>
+            /// Convert the storage instance to a .NET array, copying its data.
+            /// </summary>
+            /// <returns></returns>
             public T[] ToArray()
             {
                 ValidateNotScalar();
@@ -176,6 +246,11 @@ namespace TorchSharp
                 return result;
             }
 
+            /// <summary>
+            /// Accesses a single element of a storage.
+            /// </summary>
+            /// <param name="index">The index of the element.</param>
+            /// <returns></returns>
             public T this[int index] {
                 get {
                     ValidateNotScalar();
@@ -195,6 +270,10 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Accesses a slice of a storage instance.
+            /// </summary>
+            /// <param name="range">The range, expressed as a tuple [start,end)</param>
             public Storage<T> this[(int? start, int? end) range] {
                 get {
                     ValidateNotScalar();
@@ -222,17 +301,21 @@ namespace TorchSharp
             }
 
 #if !NETSTANDARD2_0_OR_GREATER
-            public Storage<T> this[System.Range index] {
+            /// <summary>
+            /// Accesses a slice of a storage instance.
+            /// </summary>
+            /// <param name="range">The range.</param>
+            public Storage<T> this[System.Range range] {
                 get {
                     ValidateNotScalar();
-                    var start = CheckIndex(index.Start);
-                    var end = CheckIndex(index.End);
+                    var start = CheckIndex(range.Start);
+                    var end = CheckIndex(range.End);
                     return this[(start, end)];
                 }
                 set {
                     ValidateNotScalar();
-                    var start = CheckIndex(index.Start);
-                    var end = CheckIndex(index.End);
+                    var start = CheckIndex(range.Start);
+                    var end = CheckIndex(range.End);
                     this[(start, end)] = value;
                 }
             }
@@ -255,9 +338,12 @@ namespace TorchSharp
             private void ValidateNotScalar()
             {
                 if (_tensor is null &&_tensor_data_ptr == IntPtr.Zero)
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("Invalid use of a scalar Storage instance.");
             }
 
+            /// <summary>
+            /// The number of elements in the storage.
+            /// </summary>
             public int Count {
                 get {
                     ValidateNotScalar();
@@ -277,12 +363,20 @@ namespace TorchSharp
                 return new Storage<T>(value);
             }
 
+            /// <summary>
+            /// Copy data from an array into a storage instance.
+            /// </summary>
+            /// <param name="array"></param>
             public void copy_(IList<T> array)
             {
                 ValidateNotScalar();
                 CopyFrom(array, 0);
             }
 
+            /// <summary>
+            /// Fill a storage instance with a single value.
+            /// </summary>
+            /// <param name="value"></param>
             public void fill_(T value)
             {
                 ValidateNotScalar();
@@ -293,6 +387,10 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Convert the storage to a .NET list.
+            /// </summary>
+            /// <returns></returns>
             public IList<T> tolist()
             {
                 ValidateNotScalar();
@@ -338,6 +436,11 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Look up a value and return the first index where it can be found.
+            /// </summary>
+            /// <param name="item">The item to look for.</param>
+            /// <returns></returns>
             public int IndexOf(T item)
             {
                 unsafe {

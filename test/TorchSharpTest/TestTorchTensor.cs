@@ -6405,7 +6405,6 @@ namespace TorchSharp
         public void TestStorage_Basic()
         {
             var x = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
-            var y = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
 
             var st = x.storage<long>();
 
@@ -6492,6 +6491,38 @@ namespace TorchSharp
 
             Assert.Equal(data, x.data<long>().ToArray());
             Assert.Equal(new int[] { 1, 1, 2, 17, 17, 1, 1, 2 }, st.ToArray());
+        }
+
+        [Fact]
+        public void TestStorage_Fill()
+        {
+            var x = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
+
+            var st = x.storage<long>();
+            Assert.NotNull(st);
+            Assert.Equal(8, st.Count);
+
+            st.fill_(17);
+
+            Assert.Equal(new long[] { 17, 17, 17, 17, 17, 17, 17, 17 }, st.ToArray());
+            Assert.Equal(new long[] { 17, 17, 17, 17, 17, 17, 17, 17 }, x.data<long>().ToArray());
+        }
+
+        [Fact]
+        public void TestStorage_Copy()
+        {
+            var x = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
+
+            var st = x.storage<long>();
+            Assert.NotNull(st);
+            Assert.Equal(8, st.Count);
+
+            var data = new long[] { 12, 4711, 26, 23, 35, 17, 13, 27 };
+
+            st.copy_(data);
+
+            Assert.Equal(data, st.ToArray());
+            Assert.Equal(data, x.data<long>().ToArray());
         }
     }
 }

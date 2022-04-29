@@ -711,8 +711,12 @@ namespace TorchSharp
             /// Returns a copy of this object in CUDA memory.
             /// If this object is already in CUDA memory and on the correct device, then no copy is performed and the original object is returned.
             /// </summary>
-            public Tensor cuda()
+            public Tensor cuda(Device? device = null)
             {
+                if (device is null) {
+                    device = torch.CUDA;
+                }
+
                 torch.InitializeDeviceType(DeviceType.CUDA);
                 var res = THSTensor_cuda(Handle);
                 if (res == IntPtr.Zero)
