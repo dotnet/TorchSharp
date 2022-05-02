@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
 using static TorchSharp.Utils.LEB128Codec;
 
 #nullable enable
@@ -41,6 +42,7 @@ namespace TorchSharp
         /// <param name="fltFormat">The format string to use for floating point values.</param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
+        /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
         /// <returns></returns>
         /// <remarks>
         /// This method does exactly the same as ToString(bool, string, int), but is shorter,
@@ -49,9 +51,9 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string str(this Tensor tensor, TensorStringStyle style = TensorStringStyle.Julia, string fltFormat = "g5", int width = 100, string newLine = "\n")
+        public static string str(this Tensor tensor, TensorStringStyle style = TensorStringStyle.Julia, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
         {
-            return tensor.ToString(style, fltFormat, width, newLine: newLine);
+            return tensor.ToString(style, fltFormat, width, newLine: newLine, cultureInfo:cultureInfo);
         }
 
         /// <summary>
