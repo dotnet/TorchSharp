@@ -10,8 +10,8 @@ __API Changes:__
 
 __Fixed Bugs:__
 
-#582 unbind missing
-
+#582 unbind missing<br/>
+#592 GRU and Input and hidden tensors are not at the same device,[...]<br/>
 
 ## NuGet Version 0.96.5
 
