@@ -713,12 +713,15 @@ namespace TorchSharp
             /// </summary>
             public Tensor cuda(Device? device = null)
             {
-                if (device is null) {
-                    device = torch.CUDA;
+                if (device is not null && device.type != DeviceType.CUDA) {
+                    throw new ArgumentException("Not a CUDA device.", "device");
                 }
 
                 torch.InitializeDeviceType(DeviceType.CUDA);
-                var res = THSTensor_cuda(Handle);
+
+                var res = device is null
+                    ? THSTensor_cuda(Handle)
+                    : THSTensor_to_device(Handle, (int)DeviceType.CUDA, device_index, false);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
