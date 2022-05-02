@@ -41,7 +41,7 @@ namespace TorchSharp
                     var N = _batch_first ? input.shape[0] : input.shape[1];
                     var D = _bidirectional ? 2 : 1;
 
-                    h0 = torch.zeros(new long[] { D * _num_layers, N, _hidden_size });
+                    h0 = torch.zeros(new long[] { D * _num_layers, N, _hidden_size }, device:input.device);
                 }
 
                 var res = THSNN_GRU_forward(handle, input.Handle, h0.Handle, out IntPtr hN);
