@@ -637,17 +637,43 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void DemonstrateGruIssu()
+        public void GruModuleWorksWithoutPassingH0()
         {
-            // This test fails if the proposed fix in GRU isn't included - remove
-            // , device:input.device from GRU.forward and this test fails in CUDA. Works in CPU though.
             var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
             using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device:device),
                    h0 = torch.randn(new long[] { 1, 3, 20 }, device:device))
             using (var gru = GRU(10, 20)) {
                 gru.to(device);
-                // Note how h0 isn't passed along here, it's just kept for the assert below.
                 var (output, hN) = gru.forward(input);
+                Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            }
+        }
+
+        [Fact]
+        public void LstmModuleWorksWithoutPassingH0C0()
+        {
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device:device),
+                   h0 = torch.randn(new long[] { 1, 3, 20 }, device:device))
+            using (var lstm = LSTM(10, 20)) {
+                lstm.to(device);
+                var (output, hN, hX) = lstm.forward(input);
+                Assert.Equal(h0.shape, hN.shape);
+                Assert.Equal(h0.shape, hX.shape);
+                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            }
+        }
+
+        [Fact]
+        public void RnnModuleWorksWithoutPassingH0()
+        {
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device:device),
+                   h0 = torch.randn(new long[] { 1, 3, 20 }, device:device))
+            using (var rnn = RNN(10, 20)) {
+                rnn.to(device);
+                var (output, hN) = rnn.forward(input);
                 Assert.Equal(h0.shape, hN.shape);
                 Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
             }
