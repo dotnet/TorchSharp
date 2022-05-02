@@ -2,6 +2,17 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.96.6
+
+__API Changes:__
+
+#587 Added the Storage classes, and Tensor.storage()
+
+__Fixed Bugs:__
+
+#582 unbind missing<br/>
+#592 GRU and Input and hidden tensors are not at the same device,[...]<br/>
+
 ## NuGet Version 0.96.5
 
 Same-day release. The previous release was made without propert testing of the ToString() improvements in a notebook context. It turned out that when the standard Windows line-terminator "\r\n" is used in a VS Code notebook, an extra blank line is created.

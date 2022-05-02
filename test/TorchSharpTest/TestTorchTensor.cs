@@ -55,7 +55,7 @@ namespace TorchSharp
                 if (list is not null) {
                     Assert.Equal(4, list.Count);
                     for (var idx = 0; idx < list.Count; idx++)
-                       Assert.IsType<Scalar>(list[idx]);
+                        Assert.IsType<Scalar>(list[idx]);
                 }
             }
             {
@@ -269,17 +269,17 @@ namespace TorchSharp
             Assert.Equal($"[[0 3.141 6.2834 3.1415]{_sep} [6.28e-06 -13.142 0.01 4713.1]]", torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4).ToString(TensorStringStyle.Numpy));
             {
                 Tensor t = torch.zeros(5, 5, torch.complex64);
-                for(int i = 0; i < t.shape[0]; i++)
-                    for(int j = 0; j < t.shape[1]; j++)
+                for (int i = 0; i < t.shape[0]; i++)
+                    for (int j = 0; j < t.shape[1]; j++)
                         t[i][j] = torch.tensor((1.24f * i, 2.491f * i * 2), torch.complex64);
                 var str = t.ToString(TensorStringStyle.Numpy);
                 Assert.Equal($"[[0 0 0 0 0]{_sep} [1.24+4.982i 1.24+4.982i 1.24+4.982i 1.24+4.982i 1.24+4.982i]{_sep} [2.48+9.964i 2.48+9.964i 2.48+9.964i 2.48+9.964i 2.48+9.964i]{_sep} [3.72+14.946i 3.72+14.946i 3.72+14.946i 3.72+14.946i 3.72+14.946i]{_sep} [4.96+19.928i 4.96+19.928i 4.96+19.928i 4.96+19.928i 4.96+19.928i]]", str);
             }
             Assert.Equal($"[[0 0 0 0]{_sep} [0 0 0 0]]", torch.zeros(2, 4, torch.complex64).ToString(TensorStringStyle.Numpy));
             Assert.Equal($"[[1 1 1 1]{_sep} [1 1 1 1]]", torch.ones(2, 4, torch.complex64).ToString(TensorStringStyle.Numpy));
-            Assert.Equal($"[[7 9 11 ... 101 103 105]{_sep} [107 109 111 ... 201 203 205]]", torch.tensor(Enumerable.Range(1, 100).Select(x => x * 2 + 5).ToList(), new long[]{2, 50}, ScalarType.Float32).ToString(TensorStringStyle.Numpy));
+            Assert.Equal($"[[7 9 11 ... 101 103 105]{_sep} [107 109 111 ... 201 203 205]]", torch.tensor(Enumerable.Range(1, 100).Select(x => x * 2 + 5).ToList(), new long[] { 2, 50 }, ScalarType.Float32).ToString(TensorStringStyle.Numpy));
             Assert.Equal($"[[7 9 11 ... 201 203 205]{_sep} [207 209 211 ... 401 403 405]{_sep} [407 409 411 ... 601 603 605]{_sep} ...{_sep} [19407 19409 19411 ... 19601 19603 19605]{_sep} [19607 19609 19611 ... 19801 19803 19805]{_sep} [19807 19809 19811 ... 20001 20003 20005]]",
-                torch.tensor(Enumerable.Range(1, 10000).Select(x => x * 2 + 5).ToList(), new long[] {100, 100},
+                torch.tensor(Enumerable.Range(1, 10000).Select(x => x * 2 + 5).ToList(), new long[] { 100, 100 },
                     ScalarType.Float32).ToString(TensorStringStyle.Numpy));
         }
 
@@ -324,7 +324,7 @@ namespace TorchSharp
                         6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f,
-                    }, new long[] {2, 2, 2, 2, 4}).ToString(TensorStringStyle.Numpy));
+                    }, new long[] { 2, 2, 2, 2, 4 }).ToString(TensorStringStyle.Numpy));
         }
 
         [Fact]
@@ -345,7 +345,7 @@ namespace TorchSharp
                         3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f,
                         4713.14f, 0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                    }, new long[] {2, 2, 2, 2, 2, 4}).ToString(TensorStringStyle.Numpy));
+                    }, new long[] { 2, 2, 2, 2, 2, 4 }).ToString(TensorStringStyle.Numpy));
         }
 
 
@@ -6351,7 +6351,7 @@ namespace TorchSharp
                 Assert.Null(c);
             }
             {
-                var (output, i, c) = input.unique(return_inverse: false, return_counts:true);
+                var (output, i, c) = input.unique(return_inverse: false, return_counts: true);
                 Assert.NotNull(output);
                 Assert.Null(i);
                 Assert.NotNull(c);
@@ -6399,6 +6399,130 @@ namespace TorchSharp
                     Assert.Equal(input.shape, i?.shape);
                 Assert.NotNull(c);
             }
+        }
+
+        [Fact]
+        public void TestStorage_Basic()
+        {
+            var x = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
+
+            var st = x.storage<long>();
+
+            Assert.NotNull(st);
+            Assert.Equal(8, st.Count);
+        }
+
+        [Fact]
+        public void TestStorage_ToArray()
+        {
+            var data = new long[] { 1, 1, 2, 2, 3, 1, 1, 2 };
+            var x = torch.tensor(data);
+
+            var st = x.storage<long>();
+
+            Assert.NotNull(st);
+
+            Assert.Equal(8, st.Count);
+            Assert.Equal(data, st.ToArray());
+        }
+
+        [Fact]
+        public void TestStorage_Modify1()
+        {
+            var data = new long[] { 1, 1, 2, 2, 3, 1, 1, 2 };
+            var x = torch.tensor(data);
+
+            var st = x.storage<long>();
+
+            Assert.NotNull(st);
+
+            Assert.IsType<long>(st[3]);
+
+            st[3] = 5;
+            Assert.Equal(new long[] { 1, 1, 2, 5, 3, 1, 1, 2 }, x.data<long>().ToArray());
+            Assert.Equal(new long[] { 1, 1, 2, 5, 3, 1, 1, 2 }, st.ToArray());
+        }
+
+        [Fact]
+        public void TestStorage_Modify2()
+        {
+            var data = new long[] { 1, 1, 2, 2, 3, 1, 1, 2 };
+            var x = torch.tensor(data);
+
+            var st = x.storage<long>();
+
+            Assert.NotNull(st);
+            Assert.Equal(2, st[(3, 5)].Count);
+
+            st[(3,5)] = 5;
+            Assert.Equal(new long[] { 1, 1, 2, 5, 5, 1, 1, 2 }, x.data<long>().ToArray());
+            Assert.Equal(new long[] { 1, 1, 2, 5, 5, 1, 1, 2 }, st.ToArray());
+        }
+
+        [Fact]
+        public void TestStorage_Modify3()
+        {
+            var data = new long[] { 1, 1, 2, 2, 3, 1, 1, 2 };
+            var x = torch.tensor(data);
+
+            var st = x.storage<int>();
+
+            Assert.NotNull(st);
+
+            Assert.IsType<int>(st[3]);
+
+            st[3] = 5;
+            Assert.Equal(new int[] { 1, 1, 2, 5, 3, 1, 1, 2 }, st.ToArray());
+            Assert.Equal(data, x.data<long>().ToArray());
+        }
+
+        [Fact]
+        public void TestStorage_Modify4()
+        {
+            var data = new long[] { 1, 1, 2, 2, 3, 1, 1, 2 };
+            var x = torch.tensor(data);
+
+            var st = x.storage<int>();
+
+            Assert.NotNull(st);
+            Assert.Equal(2, st[(3, 5)].Count);
+
+            st[(3, 5)] = 17;
+
+            Assert.Equal(data, x.data<long>().ToArray());
+            Assert.Equal(new int[] { 1, 1, 2, 17, 17, 1, 1, 2 }, st.ToArray());
+        }
+
+        [Fact]
+        public void TestStorage_Fill()
+        {
+            var x = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
+
+            var st = x.storage<long>();
+            Assert.NotNull(st);
+            Assert.Equal(8, st.Count);
+
+            st.fill_(17);
+
+            Assert.Equal(new long[] { 17, 17, 17, 17, 17, 17, 17, 17 }, st.ToArray());
+            Assert.Equal(new long[] { 17, 17, 17, 17, 17, 17, 17, 17 }, x.data<long>().ToArray());
+        }
+
+        [Fact]
+        public void TestStorage_Copy()
+        {
+            var x = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
+
+            var st = x.storage<long>();
+            Assert.NotNull(st);
+            Assert.Equal(8, st.Count);
+
+            var data = new long[] { 12, 4711, 26, 23, 35, 17, 13, 27 };
+
+            st.copy_(data);
+
+            Assert.Equal(data, st.ToArray());
+            Assert.Equal(data, x.data<long>().ToArray());
         }
     }
 }
