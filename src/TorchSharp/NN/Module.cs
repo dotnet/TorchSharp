@@ -412,25 +412,25 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="source">A dict containing parameters and persistent buffers.</param>
                 /// <param name="strict">Whether to strictly enforce that the keys in state_dict match the keys returned by this module’s state_dict() function.</param>
-                /// <param name="skipped">A list of keys not to consider when loading the dictionary.</param>
+                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
                 /// <returns></returns>
-                public virtual (IList<string> missing_keys, IList<string> unexpected_keyes) load_state_dict(Dictionary<string, Tensor> source, bool strict = true, IList<string> skipped = null)
+                public virtual (IList<string> missing_keys, IList<string> unexpected_keyes) load_state_dict(Dictionary<string, Tensor> source, bool strict = true, IList<string> skip = null)
                 {
                     List<string> missing = new List<string>();
                     List<string> unexpected = new List<string>();
-                    if (skipped is null) skipped = new List<string>();
+                    skip ??= new List<string>();
 
                     var destination = state_dict();
 
                     foreach (var key in source.Keys) {
-                        if (skipped.Contains(key)) continue;
+                        if (skip.Contains(key)) continue;
                         if (!destination.ContainsKey(key)) {
                             unexpected.Add(key);
                         }
                     }
 
                     foreach (var key in destination.Keys) {
-                        if (skipped.Contains(key)) continue;
+                        if (skip.Contains(key)) continue;
                         if (!source.ContainsKey(key)) {
                             missing.Add(key);
                         }
@@ -440,7 +440,7 @@ namespace TorchSharp
                         throw new InvalidOperationException("The loaded state_dict is not identical to the target dictionary.");
 
                     foreach (var key in source.Keys) {
-                        if (skipped.Contains(key)) continue;
+                        if (skip.Contains(key)) continue;
                         if (destination.ContainsKey(key)) {
                             destination[key].bytes = source[key].bytes;
                         }
@@ -823,7 +823,7 @@ namespace TorchSharp
                 /// </remarks>
                 public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string> skip = null)
                 {
-                    if (skip == null) skip = new List<string>();
+                    skip ??= new List<string>();
 
                     var sd = state_dict();
 
