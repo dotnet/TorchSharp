@@ -418,7 +418,7 @@ namespace TorchSharp
                 {
                     List<string> missing = new List<string>();
                     List<string> unexpected = new List<string>();
-                    skip ??= new List<string>();
+                    skip ??= Array.Empty<string>();
 
                     var destination = state_dict();
 
@@ -823,7 +823,7 @@ namespace TorchSharp
                 /// </remarks>
                 public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string> skip = null)
                 {
-                    skip ??= new List<string>();
+                    skip ??= Array.Empty<string>();
 
                     var sd = state_dict();
 
