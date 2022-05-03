@@ -57,6 +57,26 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSaveLoadLinear3()
+        {
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var linear = Linear(100, 10, true);
+            var params0 = linear.parameters();
+            linear.save(".model.ts");
+
+            var loadedLinear = Linear(10, 10, true);    // Mismatched shape, shouldn't matter when skipped.
+            Assert.Throws<ArgumentException>(() => loadedLinear.load(".model.ts"));
+
+            loadedLinear.load(".model.ts", skip: new[] { "weight" });
+            var params2 = loadedLinear.parameters();
+            File.Delete(".model.ts");
+
+            Assert.NotEqual(params0.First(), params2.First());
+            Assert.Equal(params0.Skip(1).First(), params2.Skip(1).First());
+        }
+
+
+        [Fact]
         public void TestSaveLoadConv2D()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
