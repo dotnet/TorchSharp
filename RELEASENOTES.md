@@ -8,7 +8,9 @@ __API Changes:__
 
 #587 Added the Storage classes, and Tensor.storage()<br/>
 Added torchvision.models.resnet***() factories<br/>
-Added 'skip' list for loading and saving Module weights.
+Added torchvision.models.alexnet() factory<br/>
+Added torchvision.models.vgg*() factories<br/>
+Added 'skip' list for loading and saving weights.
 
 __Fixed Bugs:__
 
