@@ -228,6 +228,11 @@ EXPORT_API(void)     THSNN_LayerNorm_set_weight(const NNModule module, const Ten
 EXPORT_API(NNModule) THSNN_GroupNorm_ctor(const int64_t num_groups, const int64_t num_channels, const double eps, const bool affine, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_GroupNorm_forward(const NNModule module, const Tensor tensor);
 
+EXPORT_API(Tensor)   THSNN_GroupNorm_bias(const NNModule module);
+EXPORT_API(void)     THSNN_GroupNorm_set_bias(const NNModule module, const Tensor bias);
+EXPORT_API(Tensor)   THSNN_GroupNorm_weight(const NNModule module);
+EXPORT_API(void)     THSNN_GroupNorm_set_weight(const NNModule module, const Tensor weight);
+
 EXPORT_API(NNModule) THSNN_LocalResponseNorm_ctor(const int64_t size, const double alpha, const double beta, const double k, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_LocalResponseNorm_forward(const NNModule module, const Tensor tensor);
 

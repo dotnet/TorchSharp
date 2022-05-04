@@ -254,7 +254,7 @@ namespace TorchSharp.torchvision
                 return new ResNet(
                     "ResNet152",
                     (in_planes, planes, stride) => new Bottleneck(in_planes, planes, stride),
-                    Bottleneck.expansion, new int[] { 3, 4, 36, 3 },
+                    Bottleneck.expansion, new int[] { 3, 8, 36, 3 },
                     numClasses,
                     device);
             }
@@ -276,6 +276,19 @@ namespace TorchSharp.torchvision
                 fc = Linear(512 * expansion, numClasses);
 
                 RegisterComponents();
+
+                foreach (var (_, m) in named_modules()) {
+                    switch (m) {
+                    // This test must come before the Tensor test
+                    case TorchSharp.Modules.Conv2d conv:
+                        torch.nn.init.kaiming_normal_(conv.weight, mode: init.FanInOut.FanOut, nonlinearity: init.NonlinearityType.ReLU);
+                        break;
+                    case TorchSharp.Modules.BatchNorm2d bn:
+                        torch.nn.init.constant_(bn.weight, 1);
+                        torch.nn.init.constant_(bn.bias, 0);
+                        break;
+                    }
+                }
 
                 if (device != null && device.type == DeviceType.CUDA)
                     this.to(device);
@@ -328,6 +341,8 @@ namespace TorchSharp.torchvision
                         downsample.Add(BatchNorm2d(expansion * planes));
                     }
 
+                    torch.nn.init.constant_(bn2.weight, 1);
+
                     RegisterComponents();
                 }
 
@@ -346,7 +361,7 @@ namespace TorchSharp.torchvision
                 private readonly Module conv1;
                 private readonly Module bn1;
                 private readonly Module conv2;
-                private readonly Module bn2;
+                private readonly TorchSharp.Modules.BatchNorm2d bn2;
                 private readonly Module relu1;
                 private readonly TorchSharp.Modules.ModuleList downsample = new TorchSharp.Modules.ModuleList();
             }
@@ -371,6 +386,8 @@ namespace TorchSharp.torchvision
                         downsample.Add(BatchNorm2d(expansion * planes));
                     }
 
+                    torch.nn.init.constant_(bn3.weight, 1);
+
                     RegisterComponents();
                 }
 
@@ -393,7 +410,7 @@ namespace TorchSharp.torchvision
                 private readonly Module conv2;
                 private readonly Module bn2;
                 private readonly Module conv3;
-                private readonly Module bn3;
+                private readonly TorchSharp.Modules.BatchNorm2d bn3;
                 private readonly Module relu1;
                 private readonly Module relu2;
 

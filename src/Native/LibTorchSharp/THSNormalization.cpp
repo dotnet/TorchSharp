@@ -70,6 +70,27 @@ Tensor THSNN_GroupNorm_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::GroupNorm>()->forward(*tensor));
 }
 
+Tensor THSNN_GroupNorm_bias(const NNModule module)
+{
+    return get_bias<torch::nn::GroupNorm>(module);
+}
+
+void THSNN_GroupNorm_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::GroupNorm>(module, bias);
+}
+
+Tensor THSNN_GroupNorm_weight(const NNModule module)
+{
+    return get_weight<torch::nn::GroupNorm>(module);
+}
+
+void THSNN_GroupNorm_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::GroupNorm>(module, weight);
+}
+
+
 NNModule THSNN_InstanceNorm1d_ctor(const int64_t features, const double eps, const double momentum, const bool affine, const bool track_running_stats, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(

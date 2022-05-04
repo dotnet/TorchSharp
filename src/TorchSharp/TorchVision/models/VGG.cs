@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using TorchSharp.torchvision.Modules;
@@ -363,6 +364,26 @@ namespace TorchSharp.torchvision
                     );
 
                 RegisterComponents();
+
+                foreach (var (_, m) in named_modules()) {
+                    switch (m) {
+                    // This test must come before the Tensor test
+                    case TorchSharp.Modules.Conv2d conv:
+                        torch.nn.init.kaiming_normal_(conv.weight, mode: init.FanInOut.FanOut, nonlinearity: init.NonlinearityType.ReLU);
+                        if (conv.bias is not null && !conv.bias.IsInvalid) {
+                            torch.nn.init.constant_(conv.bias, 0);
+                        }
+                        break;
+                    case TorchSharp.Modules.BatchNorm2d bn:
+                        torch.nn.init.constant_(bn.weight, 1);
+                        torch.nn.init.constant_(bn.bias, 0);
+                        break;
+                    case TorchSharp.Modules.Linear ln:
+                        torch.nn.init.normal_(ln.weight, 0, 0.01);
+                        torch.nn.init.constant_(ln.bias, 0);
+                        break;
+                    }
+                }
 
                 if (device != null && device.type == DeviceType.CUDA)
                     this.to(device);
