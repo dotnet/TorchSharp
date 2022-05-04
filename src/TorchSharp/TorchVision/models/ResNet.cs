@@ -22,13 +22,24 @@ namespace TorchSharp.torchvision
         /// using the exportsd.py script, then loading into the .NET instance:
         ///
         /// from torchvision import models
+        /// import exportsd
+        /// 
         /// model = models.resnet18(pretrained=True)
-        /// exportsd.save_state_dict(model.state_dict(), "your file name here")
+        /// f = open("model_weights.dat", "wb")
+        /// exportsd.save_state_dict(model.state_dict(), f)
+        /// f.close()
         ///
         /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
         ///
         /// In order for the weights to be loaded, the number of classes has to be the same as
         /// in the pre-trained model, which is 1000.
+        ///
+        /// It is also possible to skip loading the last linear layer and use it for transfer-learning
+        /// with a different number of output classes. To do so, pass "fc.weight", "fc.bias" as the skip list when loading.
+        ///
+        /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
+        /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
+        /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
         /// </remarks>
         public static Modules.ResNet resnet18(int num_classes = 1000, Device device = null)
         {
@@ -45,13 +56,24 @@ namespace TorchSharp.torchvision
         /// using the exportsd.py script, then loading into the .NET instance:
         ///
         /// from torchvision import models
+        /// import exportsd
+        /// 
         /// model = models.resnet34(pretrained=True)
-        /// exportsd.save_state_dict(model.state_dict(), "your file name here")
+        /// f = open("model_weights.dat", "wb")
+        /// exportsd.save_state_dict(model.state_dict(), f)
+        /// f.close()
         ///
         /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
         ///
         /// In order for the weights to be loaded, the number of classes has to be the same as
         /// in the pre-trained model, which is 1000.
+        ///
+        /// It is also possible to skip loading the last linear layer and use it for transfer-learning
+        /// with a different number of output classes. To do so, pass "fc.weight", "fc.bias" as the skip list when loading.
+        ///
+        /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
+        /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
+        /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
         /// </remarks>
         public static Modules.ResNet resnet34(int num_classes = 1000, Device device = null)
         {
@@ -68,13 +90,24 @@ namespace TorchSharp.torchvision
         /// using the exportsd.py script, then loading into the .NET instance:
         ///
         /// from torchvision import models
+        /// import exportsd
+        /// 
         /// model = models.resnet50(pretrained=True)
-        /// exportsd.save_state_dict(model.state_dict(), "your file name here")
+        /// f = open("model_weights.dat", "wb")
+        /// exportsd.save_state_dict(model.state_dict(), f)
+        /// f.close()
         ///
         /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
         ///
         /// In order for the weights to be loaded, the number of classes has to be the same as
         /// in the pre-trained model, which is 1000.
+        ///
+        /// It is also possible to skip loading the last linear layer and use it for transfer-learning
+        /// with a different number of output classes. To do so, pass "fc.weight", "fc.bias" as the skip list when loading.
+        ///
+        /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
+        /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
+        /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
         /// </remarks>
         public static Modules.ResNet resnet50(int num_classes = 1000, Device device = null)
         {
@@ -91,13 +124,24 @@ namespace TorchSharp.torchvision
         /// using the exportsd.py script, then loading into the .NET instance:
         ///
         /// from torchvision import models
+        /// import exportsd
+        /// 
         /// model = models.resnet101(pretrained=True)
-        /// exportsd.save_state_dict(model.state_dict(), "your file name here")
+        /// f = open("model_weights.dat", "wb")
+        /// exportsd.save_state_dict(model.state_dict(), f)
+        /// f.close()
         ///
         /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
         ///
         /// In order for the weights to be loaded, the number of classes has to be the same as
         /// in the pre-trained model, which is 1000.
+        ///
+        /// It is also possible to skip loading the last linear layer and use it for transfer-learning
+        /// with a different number of output classes. To do so, pass "fc.weight", "fc.bias" as the skip list when loading.
+        ///
+        /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
+        /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
+        /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
         /// </remarks>
         public static Modules.ResNet resnet101(int num_classes = 1000, Device device = null)
         {
@@ -114,14 +158,25 @@ namespace TorchSharp.torchvision
         /// using the exportsd.py script, then loading into the .NET instance:
         ///
         /// from torchvision import models
+        /// import exportsd
+        /// 
         /// model = models.resnet152(pretrained=True)
-        /// exportsd.save_state_dict(model.state_dict(), "your file name here")
+        /// f = open("model_weights.dat", "wb")
+        /// exportsd.save_state_dict(model.state_dict(), f)
+        /// f.close()
         ///
         /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
-        /// </remarks>
         ///
         /// In order for the weights to be loaded, the number of classes has to be the same as
         /// in the pre-trained model, which is 1000.
+        ///
+        /// It is also possible to skip loading the last linear layer and use it for transfer-learning
+        /// with a different number of output classes. To do so, pass "fc.weight", "fc.bias" as the skip list when loading.
+        ///
+        /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
+        /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
+        /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
+        /// </remarks>
         public static Modules.ResNet resnet152(int num_classes = 1000, Device device = null)
         {
             return Modules.ResNet.ResNet152(num_classes, device);
