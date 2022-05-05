@@ -49,7 +49,7 @@ namespace TorchSharp
                 var seen = new HashSet<IntPtr>();
 
                 for (var i = 0; i < _names.Count; i++) {
-                    foreach (var (n,p) in _modules[i].named_parameters(true)) {
+                    foreach (var (n, p) in _modules[i].named_parameters(true)) {
                         if (seen.Contains(p.Handle)) continue;
                         seen.Add(p.Handle);
                         yield return ($"{_names[i]}.{n}", p);
@@ -112,7 +112,7 @@ namespace TorchSharp
 
                 var t0 = _modules[0].forward(tensor);
 
-                for (var idx = 1; idx < _modules.Count-1; idx++) {
+                for (var idx = 1; idx < _modules.Count - 1; idx++) {
                     var t1 = _modules[idx].forward(t0);
                     t0.Dispose();
                     t0 = t1;
@@ -135,7 +135,9 @@ namespace TorchSharp
 
             protected override void Dispose(bool disposing)
             {
-                foreach (var m in _modules) { m.Dispose(); }
+                if (disposing) {
+                    foreach (var m in _modules) { m.Dispose(); }
+                }
                 base.Dispose(disposing);
             }
 
@@ -186,7 +188,7 @@ namespace TorchSharp
             static public Sequential Sequential()
             {
                 var handle = THSNN_Sequential_ctor();
-                if(handle == IntPtr.Zero) {torch.CheckForErrors();}
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
                 return new Sequential(handle);
             }
@@ -221,7 +223,7 @@ namespace TorchSharp
             static public Sequential Sequential(params torch.nn.Module[] modules)
             {
                 var res = Sequential();
-                foreach(var m in modules)
+                foreach (var m in modules)
                     res.Add(m);
                 return res;
             }
@@ -289,7 +291,7 @@ namespace TorchSharp
             static public Sequential Sequential(IEnumerable<torch.nn.Module> modules)
             {
                 var res = Sequential();
-                foreach(var module in modules)
+                foreach (var module in modules)
                     res.Add(module);
                 return res;
             }
