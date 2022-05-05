@@ -106,6 +106,11 @@ namespace TorchSharp
                 protected virtual void Dispose(bool disposing)
                 {
                     if (disposing) {
+
+                        foreach (var (_,m) in named_modules()) {
+                            m.Dispose();
+                        }
+
                         handle.Dispose();
                         handle.SetHandleAsInvalid();
                         boxedModule?.Dispose();
