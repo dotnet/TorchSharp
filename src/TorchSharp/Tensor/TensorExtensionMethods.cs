@@ -179,7 +179,12 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensor">The tensor into which to load serialized data.</param>
         /// <param name="reader">A BinaryReader instance</param>
-        public static void Load(this Tensor tensor, System.IO.BinaryReader reader)
+        /// <param name="skip">If true, the data will be read from the stream, but not copied to the target tensor.</param>
+        /// <remarks>
+        /// Using a skip list only prevents tensors in the target module from being modified, it
+        /// does not alter the logic related to checking for matching tensor element types.
+        /// </remarks>
+        public static void Load(this Tensor tensor, System.IO.BinaryReader reader, bool skip = false)
         {
             // First, read the type
             var type = (ScalarType)reader.Decode();
@@ -197,7 +202,8 @@ namespace TorchSharp
                 totalSize *= loadedShape[i];
             }
 
-            if (!loadedShape.SequenceEqual(tensor.shape))
+            if (!skip && !loadedShape.SequenceEqual(tensor.shape))
+                // We only care about this if the bytes will be written to the tensor.
                 throw new ArgumentException("Mismatched tensor shape while loading. Make sure that the model you are loading into is exactly the same as the origin.");
 
             //
@@ -206,7 +212,11 @@ namespace TorchSharp
             if (totalSize > int.MaxValue)
                 throw new NotImplementedException("Loading tensors larger than 2GB");
 
-            tensor.bytes = reader.ReadBytes((int)(totalSize * tensor.ElementSize));
+            // This needs to be done even if the tensor is skipped, since we have to advance the input stream.
+            var bytes = reader.ReadBytes((int)(totalSize * tensor.ElementSize));
+
+            if (!skip)
+                tensor.bytes = bytes;
         }
 
         /// <summary>

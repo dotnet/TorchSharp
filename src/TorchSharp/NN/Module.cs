@@ -96,8 +96,8 @@ namespace TorchSharp
                 /// </summary>
                 public void Dispose()
                 {
-                    Dispose(true);
                     GC.SuppressFinalize(this);
+                    Dispose(true);
                 }
 
                 /// <summary>
@@ -105,7 +105,19 @@ namespace TorchSharp
                 /// </summary>
                 protected virtual void Dispose(bool disposing)
                 {
-                    if (disposing) {
+                    if (disposing && !handle.IsInvalid) {
+
+                        foreach (var (_, p) in named_buffers(false)) {
+                            p.Dispose();
+                        }
+                        foreach (var (_, b) in named_parameters(false)) {
+                            b.Dispose();
+                        }
+
+                        foreach (var (_,m) in named_modules()) {
+                            m.Dispose();
+                        }
+
                         handle.Dispose();
                         handle.SetHandleAsInvalid();
                         boxedModule?.Dispose();
@@ -143,14 +155,12 @@ namespace TorchSharp
                             var fieldName = field.Name;
                             var value = field.GetValue(this);
 
-                            switch (value)
-                            {
-                                // This test must come before the Tensor test
-                                case Parameter param when deviceType == param.device_type && deviceIndex == param.device_index:
-                                    continue;
+                            switch (value) {
+                            // This test must come before the Tensor test
+                            case Parameter param when deviceType == param.device_type && deviceIndex == param.device_index:
+                                continue;
 
-                                case Parameter param:
-                                {
+                            case Parameter param: {
                                     var t = param.to(deviceType, deviceIndex);
                                     t.retain_grad();
                                     var p = new Parameter(t, param.requires_grad);
@@ -159,8 +169,7 @@ namespace TorchSharp
                                     break;
                                 }
 
-                                case Tensor tensor when (deviceType != tensor.device_type || deviceIndex != tensor.device_index):
-                                {
+                            case Tensor tensor when (deviceType != tensor.device_type || deviceIndex != tensor.device_index): {
                                     var t = tensor.to(deviceType, deviceIndex);
                                     field.SetValue(this, t);
                                     ConditionallyRegisterBuffer(fieldName, t);
@@ -211,14 +220,12 @@ namespace TorchSharp
                         var fieldName = field.Name;
                         var value = field.GetValue(this);
 
-                        switch (value)
-                        {
-                            // This test must come before the Tensor test
-                            case Parameter param when dtype == param.dtype:
-                                continue;
+                        switch (value) {
+                        // This test must come before the Tensor test
+                        case Parameter param when dtype == param.dtype:
+                            continue;
 
-                            case Parameter param:
-                            {
+                        case Parameter param: {
                                 var t = param.to(dtype);
                                 t.retain_grad();
                                 var p = new Parameter(t, param.requires_grad);
@@ -227,11 +234,10 @@ namespace TorchSharp
                                 break;
                             }
 
-                            case Tensor tensor when dtype == tensor.dtype:
-                                continue;
+                        case Tensor tensor when dtype == tensor.dtype:
+                            continue;
 
-                            case Tensor tensor:
-                            {
+                        case Tensor tensor: {
                                 var t = tensor.to(dtype);
                                 field.SetValue(this, t);
                                 ConditionallyRegisterBuffer(fieldName, t);
@@ -266,7 +272,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public virtual Module apply(Action<Module> fn)
                 {
-                    foreach (var (_,m) in _internal_submodules) m.apply(fn);
+                    foreach (var (_, m) in _internal_submodules) m.apply(fn);
                     fn(this);
                     return this;
                 }
@@ -403,7 +409,7 @@ namespace TorchSharp
                         destination.TryAdd(key, p.Item2);
                     }
 
-                    foreach (var (n,p) in _internal_submodules) {
+                    foreach (var (n, p) in _internal_submodules) {
                         var key = string.IsNullOrEmpty(prefix) ? $"{n}" : $"{prefix}.{n}";
                         p.state_dict(destination, key);
                     }
@@ -418,30 +424,35 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="source">A dict containing parameters and persistent buffers.</param>
                 /// <param name="strict">Whether to strictly enforce that the keys in state_dict match the keys returned by this module’s state_dict() function.</param>
+                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
                 /// <returns></returns>
-                public virtual (IList<string> missing_keys, IList<string> unexpected_keyes) load_state_dict(Dictionary<string, Tensor> source, bool strict = true)
+                public virtual (IList<string> missing_keys, IList<string> unexpected_keyes) load_state_dict(Dictionary<string, Tensor> source, bool strict = true, IList<string> skip = null)
                 {
                     List<string> missing = new List<string>();
                     List<string> unexpected = new List<string>();
+                    skip ??= Array.Empty<string>();
 
                     var destination = state_dict();
 
                     foreach (var key in source.Keys) {
+                        if (skip.Contains(key)) continue;
                         if (!destination.ContainsKey(key)) {
                             unexpected.Add(key);
                         }
                     }
 
                     foreach (var key in destination.Keys) {
+                        if (skip.Contains(key)) continue;
                         if (!source.ContainsKey(key)) {
                             missing.Add(key);
                         }
                     }
 
                     if (strict && (missing.Count > 0 || unexpected.Count > 0))
-                        throw new InvalidOperationException("The loaded state_dict is not identica to the target dictionary.");
+                        throw new InvalidOperationException("The loaded state_dict is not identical to the target dictionary.");
 
                     foreach (var key in source.Keys) {
+                        if (skip.Contains(key)) continue;
                         if (destination.ContainsKey(key)) {
                             destination[key].bytes = source[key].bytes;
                         }
@@ -498,8 +509,8 @@ namespace TorchSharp
                     if (!recurse) yield break;
                     foreach (var (submoduleName, subModule) in _internal_submodules) {
                         foreach (var (parameterName, parameter) in subModule.named_parameters(true)) {
-                            if (seen.Contains(parameter.Handle)) continue;
-                            seen.Add(parameter.Handle);
+                            if (seen.Contains(parameter.handle)) continue;
+                            seen.Add(parameter.handle);
                             yield return ($"{submoduleName}.{parameterName}", parameter);
                         }
                     }
@@ -720,30 +731,50 @@ namespace TorchSharp
                 /// Save the parameters and buffers of the module to a disk location.
                 /// </summary>
                 /// <param name="location">The file path.</param>
+                /// <param name="skip">A list of keys not to consider when saving the weights.</param>
                 /// <returns></returns>
-                public Module save(string location)
+                public Module save(string location, IList<string> skip = null)
                 {
                     using var stream = System.IO.File.OpenWrite(location);
                     using var writer = new System.IO.BinaryWriter(stream);
-                    save(writer);
+                    save(writer, skip);
 
                     return this;
                 }
 
-                public Module save(System.IO.BinaryWriter writer)
+                /// <summary>
+                /// Save the parameters and buffers of the module to a disk location.
+                /// </summary>
+                /// <param name="writer">A binary writer instance.</param>
+                /// <param name="skip">A list of keys not to consider when saving the weights.</param>
+                /// <returns></returns>
+                public Module save(System.IO.BinaryWriter writer, IList<string> skip = null)
                 {
                     var sd = state_dict();
 
                     // First, write how many entries.
-                    SaveStateDictionary(writer, sd);
+                    save_state_dict(writer, sd, skip);
 
                     return this;
                 }
 
-                public static void SaveStateDictionary(
-                    System.IO.BinaryWriter writer,
-                    Dictionary<string, Tensor> sd)
+                /// <summary>
+                /// 
+                /// </summary>
+                /// <param name="writer">A binary writer instance.</param>
+                /// <param name="skip">A list of keys not to consider when saving the weights.</param>
+                /// <param name="sd">A dictionary containing all the buffers and parameters of the module.</param>
+                public static void save_state_dict(System.IO.BinaryWriter writer, Dictionary<string, Tensor> sd, IList<string> skip = null)
                 {
+                    if (skip is not null && skip.Count > 0) {
+                        // We need to make a copy, so that the passed-in 'sd' isn't modified.
+                        var tmp = new Dictionary<string, Tensor>();
+                        foreach (var kv in sd.Where(kv => !skip.Contains(kv.Key))) {
+                            tmp.Add(kv.Key, kv.Value);
+                        }
+                        sd = tmp;
+                    }
+
                     writer.Encode(sd.Count); // 4 bytes
 
                     foreach (var kvp in sd) {
@@ -761,8 +792,14 @@ namespace TorchSharp
                 /// If false, will load the parameters and buffers that it finds in the saved file,
                 /// leaving everything else alone.
                 /// </param>
-                /// <returns></returns>
-                public Module load(string location, bool strict = true)
+                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>              
+                /// <returns>The module, with parameters and buffers loaded.</returns>
+                /// <remarks>
+                /// Using a skip list only prevents tensors in the target module from being modified, it
+                /// does not alter any logic related to checking for matching tensor element types or entries.
+                /// It may be necessary to also pass 'strict=false' to avoid exceptions.
+                /// </remarks>
+                public Module load(string location, bool strict = true, IList<string> skip = null)
                 {
                     var dt = _deviceType;
                     var di = _deviceIndex;
@@ -772,7 +809,7 @@ namespace TorchSharp
                     try {
                         using var stream = System.IO.File.OpenRead(location);
                         using var reader = new System.IO.BinaryReader(stream);
-                        load(reader, strict);
+                        load(reader, strict, skip);
                     } finally {
                         to(dt, di);
                     }
@@ -780,8 +817,26 @@ namespace TorchSharp
                     return this;
                 }
 
-                public virtual Module load(System.IO.BinaryReader reader, bool strict = true)
+                /// <summary>
+                /// Load the parameters and buffers
+                /// </summary>
+                /// <param name="reader">A binary reader instance.</param>
+                /// <param name="strict">
+                /// If true, will only load a module if it exactly corresponds to the current module's state.
+                /// If false, will load the parameters and buffers that it finds in the saved file,
+                /// leaving everything else alone.
+                /// </param>
+                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <returns>The module, with parameters and buffers loaded.</returns>
+                /// <remarks>
+                /// Using a skip list only prevents tensors in the target module from being modified, it
+                /// does not alter any logic related to checking for matching tensor element types or entries.
+                /// It may be necessary to also pass 'strict=false' to avoid exceptions.
+                /// </remarks>
+                public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string> skip = null)
                 {
+                    skip ??= Array.Empty<string>();
+
                     var sd = state_dict();
 
                     // First, figure out how many entries.
@@ -797,7 +852,7 @@ namespace TorchSharp
                             throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
 
                         if (found) {
-                            sd[key].Load(reader);
+                            sd[key].Load(reader, skip: skip.Contains(key));
                         }
                     }
 
@@ -869,17 +924,16 @@ namespace TorchSharp
 
                         var value = field.GetValue(this);
 
-                        switch (value)
-                        {
-                            case Module module:
-                                register_module(fieldName, module);
-                                break;
-                            case Parameter param: // This test must come before the Tensor test
-                                register_parameter(fieldName, param);
-                                break;
-                            case Tensor tensor:
-                                register_buffer(fieldName, tensor);
-                                break;
+                        switch (value) {
+                        case Module module:
+                            register_module(fieldName, module);
+                            break;
+                        case Parameter param: // This test must come before the Tensor test
+                            register_parameter(fieldName, param);
+                            break;
+                        case Tensor tensor:
+                            register_buffer(fieldName, tensor);
+                            break;
                         }
                     }
 

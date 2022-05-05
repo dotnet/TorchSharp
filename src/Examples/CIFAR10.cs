@@ -60,7 +60,7 @@ namespace TorchSharp.Examples
 
             switch (modelName.ToLower()) {
             case "alexnet":
-                model = new AlexNet(modelName, _numClasses, device);
+                model = torchvision.models.alexnet(_numClasses, device:device);  // new AlexNet(modelName, _numClasses, device);
                 break;
             case "mobilenet":
                 model = new MobileNet(modelName, _numClasses, device);
@@ -69,7 +69,8 @@ namespace TorchSharp.Examples
             case "vgg13":
             case "vgg16":
             case "vgg19":
-                model = new VGG(modelName, _numClasses, device);
+                model = torchvision.models.vgg11_bn(1000); //new VGG(modelName, _numClasses, device);
+                model.load(@"c:\Users\niklasg\source\Testing\Python\vgg11_bn.dat");
                 break;
             case "resnet18":
                 model = ResNet.ResNet18(_numClasses, device);
@@ -101,12 +102,13 @@ namespace TorchSharp.Examples
             var gray = torchvision.transforms.Grayscale(3);
             var rotate = torchvision.transforms.Rotate(90);
             var contrast = torchvision.transforms.AdjustContrast(1.25);
+            var resize = torchvision.transforms.Resize(224, 224);
 
             Console.WriteLine($"\tPreparing training and test data...");
             Console.WriteLine();
 
-            using (Dataset train_data = torchvision.datasets.CIFAR100(datasetPath, true, download: true),
-                           test_data = torchvision.datasets.CIFAR100(datasetPath, false, download: true))
+            using (Dataset train_data = torchvision.datasets.CIFAR100(datasetPath, true, download: true, target_transform: resize),
+                           test_data = torchvision.datasets.CIFAR100(datasetPath, false, download: true, target_transform: resize))
             {
                 using var train = new DataLoader(train_data, _trainBatchSize, device: device, shuffle: true);
                 using var test = new DataLoader(test_data, _testBatchSize, device: device, shuffle: false);

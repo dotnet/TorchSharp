@@ -6,7 +6,11 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __API Changes:__
 
-#587 Added the Storage classes, and Tensor.storage()
+#587 Added the Storage classes, and Tensor.storage()<br/>
+Added torchvision.models.resnet***() factories<br/>
+Added torchvision.models.alexnet() factory<br/>
+Added torchvision.models.vgg*() factories<br/>
+Added 'skip' list for loading and saving weights.
 
 __Fixed Bugs:__
 

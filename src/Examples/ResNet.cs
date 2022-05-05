@@ -15,9 +15,6 @@ namespace TorchSharp.Examples
         // The code here is is loosely based on https://github.com/kuangliu/pytorch-cifar/blob/master/models/resnet.py
         // Licence and copypright notice at: https://github.com/kuangliu/pytorch-cifar/blob/master/LICENSE
 
-        private readonly long[] planes = new long[] { 64, 128, 128, 256, 256, 512, 512, 512, 512, 512, 512, 1024, 1024 };
-        private readonly long[] strides = new long[] { 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1 };
-
         private readonly Module layers;
         private int in_planes = 64;
 
@@ -64,7 +61,7 @@ namespace TorchSharp.Examples
         public static ResNet ResNet152(int numClasses, Device device = null)
         {
             return new ResNet(
-                "ResNet101",
+                "ResNet152",
                 (name, in_planes, planes, stride) => new Bottleneck(name, in_planes, planes, stride),
                 Bottleneck.expansion, new int[] { 3, 4, 36, 3 },
                 10,
@@ -73,8 +70,6 @@ namespace TorchSharp.Examples
 
         public ResNet(string name, Func<string, int,int,int,Module> block, int expansion, IList<int> num_blocks, int numClasses, Device device = null) : base(name)
         {
-            if (planes.Length != strides.Length) throw new ArgumentException("'planes' and 'strides' must have the same length.");
-
             var modules = new List<(string, Module)>();
 
             modules.Add(($"conv2d-first", Conv2d(3, 64, kernelSize: 3, stride: 1, padding: 1, bias: false)));

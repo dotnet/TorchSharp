@@ -16,19 +16,65 @@ namespace TorchSharp
     public class TestLoadSave
     {
         [Fact]
-        public void TestSaveLoadLinear()
+        public void TestSaveLoadLinear1()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
             var linear = Linear(100, 10, true);
             var params0 = linear.parameters();
             linear.save(".model.ts");
+
             var loadedLinear = Linear(100, 10, true);
             loadedLinear.load(".model.ts");
+
             var params1 = loadedLinear.parameters();
+            Assert.Equal(params0, params1);
+
+            loadedLinear = Linear(100, 10, true);
+            loadedLinear.load(".model.ts", skip: new [] { "weight"});
+            var params2 = loadedLinear.parameters();
             File.Delete(".model.ts");
 
-            Assert.Equal(params0, params1);
+            Assert.NotEqual(params0.First(), params2.First());
+            Assert.Equal(params0.Skip(1).First(), params2.Skip(1).First());
         }
+
+        [Fact]
+        public void TestSaveLoadLinear2()
+        {
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var linear = Linear(100, 10, true);
+            var params0 = linear.parameters();
+            linear.save(".model.ts", skip: new[] { "weight" });
+
+            var loadedLinear = Linear(100, 10, true);
+            Assert.Throws<ArgumentException>(() => loadedLinear.load(".model.ts", strict: true));
+            loadedLinear.load(".model.ts", strict: false);
+            var params2 = loadedLinear.parameters();
+            File.Delete(".model.ts");
+
+            Assert.NotEqual(params0.First(), params2.First());
+            Assert.Equal(params0.Skip(1).First(), params2.Skip(1).First());
+        }
+
+        [Fact]
+        public void TestSaveLoadLinear3()
+        {
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var linear = Linear(100, 10, true);
+            var params0 = linear.parameters();
+            linear.save(".model.ts");
+
+            var loadedLinear = Linear(10, 10, true);    // Mismatched shape, shouldn't matter when skipped.
+            Assert.Throws<ArgumentException>(() => loadedLinear.load(".model.ts"));
+
+            loadedLinear.load(".model.ts", skip: new[] { "weight" });
+            var params2 = loadedLinear.parameters();
+            File.Delete(".model.ts");
+
+            Assert.NotEqual(params0.First(), params2.First());
+            Assert.Equal(params0.Skip(1).First(), params2.Skip(1).First());
+        }
+
 
         [Fact]
         public void TestSaveLoadConv2D()
