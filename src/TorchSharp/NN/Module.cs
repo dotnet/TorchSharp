@@ -96,8 +96,8 @@ namespace TorchSharp
                 /// </summary>
                 public void Dispose()
                 {
-                    Dispose(true);
                     GC.SuppressFinalize(this);
+                    Dispose(true);
                 }
 
                 /// <summary>
@@ -105,7 +105,14 @@ namespace TorchSharp
                 /// </summary>
                 protected virtual void Dispose(bool disposing)
                 {
-                    if (disposing) {
+                    if (disposing && !handle.IsInvalid) {
+
+                        foreach (var (_, p) in named_buffers(false)) {
+                            p.Dispose();
+                        }
+                        foreach (var (_, b) in named_parameters(false)) {
+                            b.Dispose();
+                        }
 
                         foreach (var (_,m) in named_modules()) {
                             m.Dispose();
@@ -502,8 +509,8 @@ namespace TorchSharp
                     if (!recurse) yield break;
                     foreach (var (submoduleName, subModule) in _internal_submodules) {
                         foreach (var (parameterName, parameter) in subModule.named_parameters(true)) {
-                            if (seen.Contains(parameter.Handle)) continue;
-                            seen.Add(parameter.Handle);
+                            if (seen.Contains(parameter.handle)) continue;
+                            seen.Add(parameter.handle);
                             yield return ($"{submoduleName}.{parameterName}", parameter);
                         }
                     }
