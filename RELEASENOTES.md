@@ -10,12 +10,14 @@ __API Changes:__
 Added torchvision.models.resnet***() factories<br/>
 Added torchvision.models.alexnet() factory<br/>
 Added torchvision.models.vgg*() factories<br/>
-Added 'skip' list for loading and saving weights.
+Added 'skip' list for loading and saving weights.<br/>
+Added torchvision.models.interception_v3() factory<br/>
 
 __Fixed Bugs:__
 
 #582 unbind missing<br/>
 #592 GRU and Input and hidden tensors are not at the same device,[...]<br/>
+Fixed Module.Dispose() and Sequential.Dispose() (no issue filed)
 
 ## NuGet Version 0.96.5
 

@@ -40,18 +40,56 @@ namespace TorchSharp
             /// <summary>
             /// Applies a 3D average pooling over an input signal composed of several input planes.
             /// </summary>
-            /// <param name="kernelSize">The size of the window</param>
+            /// <param name="kernel_size">The size of the window</param>
             /// <param name="strides">The stride of the window. Default value is kernel_size</param>
             /// <returns></returns>
-            static public AvgPool3d AvgPool3d(long[] kernelSize, long[] strides = null)
+            static public AvgPool3d AvgPool3d(long[] kernel_size, long[] strides = null)
             {
                 unsafe {
-                    fixed (long* pkernelSize = kernelSize, pstrides = strides) {
-                        var handle = THSNN_AvgPool3d_ctor((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
+                    fixed (long* pkernelSize = kernel_size, pstrides = strides) {
+                        var handle = THSNN_AvgPool3d_ctor((IntPtr)pkernelSize, kernel_size.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
                         if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new AvgPool3d(handle, boxedHandle);
                     }
                 }
+            }
+
+            /// <summary>
+            /// Applies a 3D average pooling over an input signal composed of several input planes.
+            /// </summary>
+            /// <param name="kernel_size">The size of the window</param>
+            /// <param name="stride">The stride of the window. Default value is kernel_size</param>
+            /// <returns></returns>
+            static public unsafe AvgPool3d AvgPool3d((long, long, long) kernel_size, (long, long, long)? stride = null)
+            {
+                long svalue1 = (stride == null) ? kernel_size.Item1 : stride.Value.Item1;
+                long svalue2 = (stride == null) ? kernel_size.Item2 : stride.Value.Item2;
+                long svalue3 = (stride == null) ? kernel_size.Item3 : stride.Value.Item3;
+
+                long* pkernelSize = stackalloc long[3] { kernel_size.Item1, kernel_size.Item2, kernel_size.Item3 };
+                long* pstrides = stackalloc long[3] { svalue1, svalue2, svalue3 };
+
+                var handle = THSNN_AvgPool3d_ctor((IntPtr)pkernelSize, 3, (IntPtr)pstrides, 3, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AvgPool3d(handle, boxedHandle);
+            }
+
+            /// <summary>
+            /// Applies a 3D average pooling over an input signal composed of several input planes.
+            /// </summary>
+            /// <param name="kernel_size">The size of the window</param>
+            /// <param name="stride">The stride of the window. Default value is kernel_size</param>
+            /// <returns></returns>
+            static public unsafe AvgPool3d AvgPool3d(long kernel_size, long? stride = null)
+            {
+                long svalue = (stride == null) ? kernel_size : stride.Value;
+
+                long* pkernelSize = stackalloc long[3] { kernel_size, kernel_size, kernel_size };
+                long* pstrides = stackalloc long[3] { svalue, svalue, svalue };
+
+                var handle = THSNN_AvgPool3d_ctor((IntPtr)pkernelSize, 3, (IntPtr)pstrides, 3, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AvgPool3d(handle, boxedHandle);
             }
         }
     }

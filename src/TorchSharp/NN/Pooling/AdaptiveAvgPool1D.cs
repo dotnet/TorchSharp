@@ -43,15 +43,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="outputSize">the target output size H</param>
             /// <returns></returns>
-            static public AdaptiveAvgPool1d AdaptiveAvgPool1d(long outputSize)
+            static public unsafe AdaptiveAvgPool1d AdaptiveAvgPool1d(long outputSize)
             {
-                unsafe {
-                    fixed (long* pkernelSize = new long[] { outputSize }) {
-                        var handle = THSNN_AdaptiveAvgPool1d_ctor((IntPtr)pkernelSize, 1, out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new AdaptiveAvgPool1d(handle, boxedHandle);
-                    }
-                }
+                long* pkernelSize = stackalloc long[1] { outputSize };
+                var handle = THSNN_AdaptiveAvgPool1d_ctor((IntPtr)pkernelSize, 1, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AdaptiveAvgPool1d(handle, boxedHandle);
             }
         }
     }

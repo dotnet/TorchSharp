@@ -43,15 +43,41 @@ namespace TorchSharp
             /// </summary>
             /// <param name="outputSize">The target output size (H,W) of the image of the form H x W.</param>
             /// <returns></returns>
-            static public AdaptiveAvgPool2d AdaptiveAvgPool2d(long[] outputSize)
+            static public unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d(long[] outputSize)
             {
-                unsafe {
-                    fixed (long* pkernelSize = outputSize) {
-                        var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)pkernelSize, outputSize.Length, out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new AdaptiveAvgPool2d(handle, boxedHandle);
-                    }
+                fixed (long* poutputSize = outputSize) {
+                    var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)poutputSize, outputSize.Length, out var boxedHandle);
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new AdaptiveAvgPool2d(handle, boxedHandle);
                 }
+            }
+
+            /// <summary>
+            /// Applies a 2D adaptive average pooling over an input signal composed of several input planes.
+            /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
+            /// </summary>
+            /// <param name="outputSize">The target output size (H,W) of the image of the form H x W.</param>
+            /// <returns></returns>
+            static public unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d((long,long) outputSize)
+            {
+                long* poutputSize = stackalloc long[2] { outputSize.Item1, outputSize.Item2 };
+                var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)poutputSize, 2, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AdaptiveAvgPool2d(handle, boxedHandle);
+            }
+
+            /// <summary>
+            /// Applies a 2D adaptive average pooling over an input signal composed of several input planes.
+            /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
+            /// </summary>
+            /// <param name="outputSize">The target output size (H,W) of the image of the form H x W.</param>
+            /// <returns></returns>
+            static public unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d(long outputSize)
+            {
+                long* poutputSize = stackalloc long[2] { outputSize, outputSize };
+                var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)poutputSize, 2, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AdaptiveAvgPool2d(handle, boxedHandle);
             }
         }
     }
