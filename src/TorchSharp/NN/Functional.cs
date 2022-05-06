@@ -414,16 +414,27 @@ namespace TorchSharp
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static Tensor max_pool2d(Tensor input, long kernelSize, long? stride = null,
+                public static unsafe Tensor max_pool2d(Tensor input, long kernelSize, long? stride = null,
                     long? padding = null, long? dilation = null, bool ceil_mode = false)
                 {
-                    return max_pool2d(input,
-                        new long[] { kernelSize },
-                        stride == null ? new long[] { 1, 1 } : new long [] { stride.Value, stride.Value },
-                        padding == null ? new long[] { 0, 0 } : new long[] { padding.Value, padding.Value },
-                        dilation == null ? new long[] { 1, 1 } : new long[] { dilation.Value, dilation.Value },
-                        ceil_mode
-                        );
+                    long svalue = stride.HasValue ? stride.Value : kernelSize;
+                    long pvalue = padding.HasValue ? padding.Value : 0;
+                    long dvalue = dilation.HasValue ? dilation.Value : 1;
+
+                    long* pStride = stackalloc long[2] { svalue, svalue };
+                    long* pPadding = stackalloc long[2] { pvalue, pvalue };
+                    long* pDilation = stackalloc long[2] { dvalue, dvalue };
+
+                    long* pkernelSize = stackalloc long[2] { kernelSize, kernelSize };
+
+                    var res = THSTensor_max_pool2d(input.Handle,
+                                    (IntPtr)pkernelSize, 2,
+                                    (IntPtr)pStride, 2,
+                                    (IntPtr)pPadding, 2,
+                                    (IntPtr)pDilation, 2,
+                                    ceil_mode);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 /// <summary>
@@ -436,16 +447,30 @@ namespace TorchSharp
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static Tensor max_pool2d(Tensor input, (long, long) kernelSize, (long, long)? stride = null,
+                public static unsafe Tensor max_pool2d(Tensor input, (long, long) kernelSize, (long, long)? stride = null,
                     (long, long)? padding = null, (long, long)? dilation = null, bool ceil_mode = false)
                 {
-                    return max_pool2d(input,
-                        new long[] { kernelSize.Item1, kernelSize.Item2 },
-                        stride == null ? new long[] { 1, 1 } : new long[] { stride.Value.Item1, stride.Value.Item2 },
-                        padding == null ? new long[] { 0, 0 } : new long[] { padding.Value.Item1, padding.Value.Item2 },
-                        dilation == null ? new long[] { 1, 1 } : new long[] { dilation.Value.Item1, dilation.Value.Item2 },
-                        ceil_mode
-                        );
+                    long svalue1 = stride != null ? stride.Value.Item1 : kernelSize.Item1;
+                    long svalue2 = stride != null ? stride.Value.Item2 : kernelSize.Item2;
+                    long pvalue1 = padding != null ? padding.Value.Item1 : 0;
+                    long pvalue2 = padding != null ? padding.Value.Item2 : 0;
+                    long dvalue1 = dilation != null ? dilation.Value.Item1 : 1;
+                    long dvalue2 = dilation != null ? dilation.Value.Item2 : 1;
+
+                    long* pStride = stackalloc long[2] { svalue1, svalue2 };
+                    long* pPadding = stackalloc long[2] { pvalue1, pvalue2 };
+                    long* pDilation = stackalloc long[2] { dvalue1, dvalue2 };
+
+                    long* pkernelSize = stackalloc long[2] { kernelSize.Item1, kernelSize.Item2 };
+
+                    var res = THSTensor_max_pool2d(input.Handle,
+                                    (IntPtr)pkernelSize, 2,
+                                    (IntPtr)pStride, 2,
+                                    (IntPtr)pPadding, 2,
+                                    (IntPtr)pDilation, 2,
+                                    ceil_mode);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 [DllImport("LibTorchSharp")]
@@ -714,18 +739,27 @@ namespace TorchSharp
                 /// <param name="ceil_mode"></param>
                 /// <param name="count_include_pad"></param>
                 /// <returns></returns>
-                public static Tensor avg_pool2d(Tensor input, long kernelSize,
+                public static unsafe Tensor avg_pool2d(Tensor input, long kernelSize,
                     long? stride = null,
-                    long? padding = null,
+                    long padding = 0,
                     bool ceil_mode = false,
                     bool count_include_pad = true)
                 {
-                    return avg_pool2d(input,
-                        new long[] { kernelSize },
-                        (stride == null) ? new long[] { 1 } : new long[] { stride.Value },
-                        (padding == null) ? new long[] { 0 } : new long[] { padding.Value },
-                        ceil_mode,
-                        count_include_pad);
+                    long svalue = (stride == null) ? kernelSize : stride.Value;
+
+                    long* pkernelSize = stackalloc long[2] { kernelSize, kernelSize };
+                    long* pstrides = stackalloc long[2] { svalue, svalue };
+                    long* ppadding = stackalloc long[2] { padding, padding };
+
+                    var res =
+                        THSTensor_avg_pool2d(input.Handle,
+                            (IntPtr)pkernelSize, 2,
+                            (IntPtr)pstrides, 2,
+                            (IntPtr)ppadding, 2,
+                            ceil_mode,
+                            count_include_pad);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 /// <summary>
@@ -738,18 +772,31 @@ namespace TorchSharp
                 /// <param name="ceil_mode"></param>
                 /// <param name="count_include_pad"></param>
                 /// <returns></returns>
-                public static Tensor avg_pool2d(Tensor input, (long,long) kernelSize,
+                public static unsafe Tensor avg_pool2d(Tensor input, (long,long) kernelSize,
                     (long, long)? stride = null,
                     (long, long)? padding = null,
                     bool ceil_mode = false,
                     bool count_include_pad = true)
                 {
-                    return avg_pool2d(input,
-                        new long[] { kernelSize.Item1, kernelSize.Item2 },
-                        (stride == null) ? new long[] { 1, 1 } : new long[] { stride.Value.Item1, stride.Value.Item2 },
-                        (padding == null) ? new long[] { 0, 0 } : new long[] { padding.Value.Item1, padding.Value.Item2 },
-                        ceil_mode,
-                        count_include_pad);
+                    long svalue1 = (stride == null) ? kernelSize.Item1 : stride.Value.Item1;
+                    long svalue2 = (stride == null) ? kernelSize.Item2 : stride.Value.Item2;
+                    long pvalue1 = padding != null ? padding.Value.Item1 : 0;
+                    long pvalue2 = padding != null ? padding.Value.Item2 : 0;
+
+                    long* pstrides = stackalloc long[2] { svalue1, svalue2 };
+                    long* ppadding = stackalloc long[2] { pvalue1, pvalue2 };
+
+                    long* pkernelSize = stackalloc long[2] { kernelSize.Item1, kernelSize.Item2 };
+
+                    var res =
+                        THSTensor_avg_pool2d(input.Handle,
+                            (IntPtr)pkernelSize, 2,
+                            (IntPtr)pstrides, 2,
+                            (IntPtr)ppadding, 2,
+                            ceil_mode,
+                            count_include_pad);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 [DllImport("LibTorchSharp")]
@@ -900,8 +947,7 @@ namespace TorchSharp
                 {
                     unsafe {
                         fixed (long* poutputSize = output_size) {
-                            var res =
-                                THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, output_size.Length);
+                            var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, output_size.Length);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }
@@ -914,17 +960,13 @@ namespace TorchSharp
                 /// <param name="input">The input tensor.</param>
                 /// <param name="output_size"></param>
                 /// <returns></returns>
-                public static Tensor adaptive_avg_pool2d(Tensor input, (long, long) output_size)
+                public static unsafe Tensor adaptive_avg_pool2d(Tensor input, (long, long) output_size)
                 {
-                    var os = new long[] { output_size.Item1, output_size.Item2 };
-                    unsafe {
-                        fixed (long* poutputSize = os) {
-                            var res =
-                                THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
-                        }
-                    }
+                    long* poutputSize = stackalloc long[2] { output_size.Item1, output_size.Item2 };
+
+                    var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 /// <summary>
@@ -933,17 +975,13 @@ namespace TorchSharp
                 /// <param name="input">The input tensor.</param>
                 /// <param name="output_size"></param>
                 /// <returns></returns>
-                public static Tensor adaptive_avg_pool2d(Tensor input, long output_size)
+                public static unsafe Tensor adaptive_avg_pool2d(Tensor input, long output_size)
                 {
-                    var os = new long[] { output_size, output_size };
-                    unsafe {
-                        fixed (long* poutputSize = os) {
-                            var res =
-                                THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
-                        }
-                    }
+                    long* poutputSize = stackalloc long[2] { output_size, output_size };
+
+                    var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 [DllImport("LibTorchSharp")]
@@ -955,15 +993,13 @@ namespace TorchSharp
                 /// <param name="input">The input tensor.</param>
                 /// <param name="output_size"></param>
                 /// <returns></returns>
-                public static Tensor adaptive_avg_pool3d(Tensor input, long[] output_size)
+                public static unsafe Tensor adaptive_avg_pool3d(Tensor input, long[] output_size)
                 {
-                    unsafe {
-                        fixed (long* poutputSize = output_size) {
-                            var res =
-                                THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, output_size.Length);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
-                        }
+                    fixed (long* poutputSize = output_size) {
+                        var res =
+                            THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, output_size.Length);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
                     }
                 }
 
@@ -973,17 +1009,12 @@ namespace TorchSharp
                 /// <param name="input">The input tensor.</param>
                 /// <param name="output_size"></param>
                 /// <returns></returns>
-                public static Tensor adaptive_avg_pool3d(Tensor input, (long, long, long) output_size)
+                public static unsafe Tensor adaptive_avg_pool3d(Tensor input, (long, long, long) output_size)
                 {
-                    var os = new long[] { output_size.Item1, output_size.Item2, output_size.Item3 };
-                    unsafe {
-                        fixed (long* poutputSize = os) {
-                            var res =
-                                THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, 3);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
-                        }
-                    }
+                    long* poutputSize = stackalloc long[3] { output_size.Item1, output_size.Item2, output_size.Item3 };
+                    var res = THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, 3);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 /// <summary>
@@ -992,17 +1023,13 @@ namespace TorchSharp
                 /// <param name="input">The input tensor.</param>
                 /// <param name="output_size"></param>
                 /// <returns></returns>
-                public static Tensor adaptive_avg_pool3d(Tensor input, long output_size)
+                public static unsafe Tensor adaptive_avg_pool3d(Tensor input, long output_size)
                 {
                     var os = new long[] { output_size, output_size, output_size };
-                    unsafe {
-                        fixed (long* poutputSize = os) {
-                            var res =
-                                THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, 3);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
-                        }
-                    }
+                    long* poutputSize = stackalloc long[3] { output_size, output_size, output_size };
+                    var res = THSTensor_adaptive_avg_pool3d(input.Handle, (IntPtr)poutputSize, 3);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
 
                 [DllImport("LibTorchSharp")]
