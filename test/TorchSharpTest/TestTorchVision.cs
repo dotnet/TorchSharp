@@ -118,5 +118,13 @@ namespace TorchSharp
                 Assert.Equal(118, sd.Count);
             }
         }
+
+        [Fact]
+        public void TestInception()
+        {
+            using var model = inception_v3();
+            var sd = model.state_dict();
+            Assert.Equal(580, sd.Count);
+        }
     }
 }

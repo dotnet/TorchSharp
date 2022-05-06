@@ -16,6 +16,8 @@ namespace TorchSharp.torchvision
         /// ResNet-18
         /// </summary>
         /// <param name="num_classes">The number of output classes.</param>
+        /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
+        /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
         /// <param name="device">The device to locate the model on.</param>
         /// <remarks>
         /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
@@ -35,21 +37,26 @@ namespace TorchSharp.torchvision
         /// in the pre-trained model, which is 1000.
         ///
         /// It is also possible to skip loading the last linear layer and use it for transfer-learning
-        /// with a different number of output classes. To do so, pass "fc.weight", "fc.bias" as the skip list when loading.
+        /// with a different number of output classes. To do so, pass skipfc=true.
         ///
         /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
         /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
         /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
         /// </remarks>
-        public static Modules.ResNet resnet18(int num_classes = 1000, Device device = null)
+        public static Modules.ResNet resnet18(int num_classes = 1000,
+                string weights_file = null,
+                bool skipfc = true,
+                Device device = null)
         {
-            return Modules.ResNet.ResNet18(num_classes, device);
+            return Modules.ResNet.ResNet18(num_classes, weights_file, skipfc, device);
         }
 
         /// <summary>
         /// ResNet-34
         /// </summary>
         /// <param name="num_classes">The number of output classes.</param>
+        /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
+        /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
         /// <param name="device">The device to locate the model on.</param>
         /// <remarks>
         /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
@@ -69,21 +76,26 @@ namespace TorchSharp.torchvision
         /// in the pre-trained model, which is 1000.
         ///
         /// It is also possible to skip loading the last linear layer and use it for transfer-learning
-        /// with a different number of output classes. To do so, pass "fc.weight", "fc.bias" as the skip list when loading.
+        /// with a different number of output classes. To do so, pass skipfc=true.
         ///
         /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
         /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
         /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
         /// </remarks>
-        public static Modules.ResNet resnet34(int num_classes = 1000, Device device = null)
+        public static Modules.ResNet resnet34(int num_classes = 1000,
+                string weights_file = null,
+                bool skipfc = true,
+                Device device = null)
         {
-            return Modules.ResNet.ResNet34(num_classes, device);
+            return Modules.ResNet.ResNet34(num_classes, weights_file, skipfc, device);
         }
 
         /// <summary>
         /// ResNet-50
         /// </summary>
         /// <param name="num_classes">The number of output classes.</param>
+        /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
+        /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
         /// <param name="device">The device to locate the model on.</param>
         /// <remarks>
         /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
@@ -103,21 +115,26 @@ namespace TorchSharp.torchvision
         /// in the pre-trained model, which is 1000.
         ///
         /// It is also possible to skip loading the last linear layer and use it for transfer-learning
-        /// with a different number of output classes. To do so, pass "fc.weight", "fc.bias" as the skip list when loading.
+        /// with a different number of output classes. To do so, pass skipfc=true.
         ///
         /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
         /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
         /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
         /// </remarks>
-        public static Modules.ResNet resnet50(int num_classes = 1000, Device device = null)
+        public static Modules.ResNet resnet50(int num_classes = 1000,
+                string weights_file = null,
+                bool skipfc = true,
+                Device device = null)
         {
-            return Modules.ResNet.ResNet50(num_classes, device);
+            return Modules.ResNet.ResNet50(num_classes, weights_file, skipfc, device);
         }
 
         /// <summary>
         /// ResNet-101
         /// </summary>
         /// <param name="num_classes">The number of output classes.</param>
+        /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
+        /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
         /// <param name="device">The device to locate the model on.</param>
         /// <remarks>
         /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
@@ -137,21 +154,26 @@ namespace TorchSharp.torchvision
         /// in the pre-trained model, which is 1000.
         ///
         /// It is also possible to skip loading the last linear layer and use it for transfer-learning
-        /// with a different number of output classes. To do so, pass "fc.weight", "fc.bias" as the skip list when loading.
+        /// with a different number of output classes. To do so, pass skipfc=true.
         ///
         /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
         /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
         /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
         /// </remarks>
-        public static Modules.ResNet resnet101(int num_classes = 1000, Device device = null)
+        public static Modules.ResNet resnet101(int num_classes = 1000,
+                string weights_file = null,
+                bool skipfc = true,
+                Device device = null)
         {
-            return Modules.ResNet.ResNet101(num_classes, device);
+            return Modules.ResNet.ResNet101(num_classes, weights_file, skipfc, device);
         }
 
         /// <summary>
         /// ResNet-152
         /// </summary>
         /// <param name="num_classes">The number of output classes.</param>
+        /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
+        /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
         /// <param name="device">The device to locate the model on.</param>
         /// <remarks>
         /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
@@ -171,15 +193,18 @@ namespace TorchSharp.torchvision
         /// in the pre-trained model, which is 1000.
         ///
         /// It is also possible to skip loading the last linear layer and use it for transfer-learning
-        /// with a different number of output classes. To do so, pass "fc.weight", "fc.bias" as the skip list when loading.
+        /// with a different number of output classes. To do so, pass skipfc=true.
         ///
         /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
         /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
         /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
         /// </remarks>
-        public static Modules.ResNet resnet152(int num_classes = 1000, Device device = null)
+        public static Modules.ResNet resnet152(int num_classes = 1000,
+                string weights_file = null,
+                bool skipfc = true,
+                Device device = null)
         {
-            return Modules.ResNet.ResNet152(num_classes, device);
+            return Modules.ResNet.ResNet152(num_classes, weights_file, skipfc, device);
         }
     }
 
@@ -209,57 +234,88 @@ namespace TorchSharp.torchvision
 
             private int in_planes = 64;
 
-            public static ResNet ResNet18(int numClasses, Device device = null)
+            public static ResNet ResNet18(int numClasses,
+                string weights_file = null,
+                bool skipfc = true,
+                Device device = null)
             {
                 return new ResNet(
                     "ResNet18",
                     (in_planes, planes, stride) => new BasicBlock(in_planes, planes, stride),
                     BasicBlock.expansion, new int[] { 2, 2, 2, 2 },
                     numClasses,
+                    weights_file,
+                    skipfc,
                     device);
             }
 
-            public static ResNet ResNet34(int numClasses, Device device = null)
+            public static ResNet ResNet34(int numClasses,
+                string weights_file = null,
+                bool skipfc = true,
+                Device device = null)
             {
                 return new ResNet(
                     "ResNet34",
                     (in_planes, planes, stride) => new BasicBlock(in_planes, planes, stride),
                     BasicBlock.expansion, new int[] { 3, 4, 6, 3 },
                     numClasses,
+                    weights_file,
+                    skipfc,
                     device);
             }
 
-            public static ResNet ResNet50(int numClasses, Device device = null)
+            public static ResNet ResNet50(int numClasses,
+                string weights_file = null,
+                bool skipfc = true,
+                Device device = null)
             {
                 return new ResNet(
                     "ResNet50",
                     (in_planes, planes, stride) => new Bottleneck(in_planes, planes, stride),
                     Bottleneck.expansion, new int[] { 3, 4, 6, 3 },
                     numClasses,
+                    weights_file,
+                    skipfc,
                     device);
             }
 
-            public static ResNet ResNet101(int numClasses, Device device = null)
+            public static ResNet ResNet101(int numClasses,
+                string weights_file = null,
+                bool skipfc = true,
+                Device device = null)
             {
                 return new ResNet(
                     "ResNet101",
                     (in_planes, planes, stride) => new Bottleneck(in_planes, planes, stride),
                     Bottleneck.expansion, new int[] { 3, 4, 23, 3 },
                     numClasses,
+                    weights_file,
+                    skipfc,
                     device);
             }
 
-            public static ResNet ResNet152(int numClasses, Device device = null)
+            public static ResNet ResNet152(int numClasses,
+                string weights_file = null,
+                bool skipfc = true,
+                Device device = null)
             {
                 return new ResNet(
                     "ResNet152",
                     (in_planes, planes, stride) => new Bottleneck(in_planes, planes, stride),
                     Bottleneck.expansion, new int[] { 3, 8, 36, 3 },
                     numClasses,
+                    weights_file,
+                    skipfc,
                     device);
             }
 
-            public ResNet(string name, Func<int, int, int, Module> block, int expansion, IList<int> num_blocks, int numClasses, Device device = null) : base(name)
+            public ResNet(string name,
+                Func<int, int, int, Module> block,
+                int expansion, IList<int> num_blocks,
+                int numClasses,
+                string weights_file = null,
+                bool skipfc = true,
+                Device device = null) : base(name)
             {
                 var modules = new List<(string, Module)>();
 
@@ -277,17 +333,24 @@ namespace TorchSharp.torchvision
 
                 RegisterComponents();
 
-                foreach (var (_, m) in named_modules()) {
-                    switch (m) {
-                    // This test must come before the Tensor test
-                    case TorchSharp.Modules.Conv2d conv:
-                        torch.nn.init.kaiming_normal_(conv.weight, mode: init.FanInOut.FanOut, nonlinearity: init.NonlinearityType.ReLU);
-                        break;
-                    case TorchSharp.Modules.BatchNorm2d bn:
-                        torch.nn.init.constant_(bn.weight, 1);
-                        torch.nn.init.constant_(bn.bias, 0);
-                        break;
+                if (string.IsNullOrEmpty(weights_file)) {
+
+                    foreach (var (_, m) in named_modules()) {
+                        switch (m) {
+                        // This test must come before the Tensor test
+                        case TorchSharp.Modules.Conv2d conv:
+                            torch.nn.init.kaiming_normal_(conv.weight, mode: init.FanInOut.FanOut, nonlinearity: init.NonlinearityType.ReLU);
+                            break;
+                        case TorchSharp.Modules.BatchNorm2d bn:
+                            torch.nn.init.constant_(bn.weight, 1);
+                            torch.nn.init.constant_(bn.bias, 0);
+                            break;
+                        }
                     }
+                }
+                else {
+
+                    this.load(weights_file, skip: skipfc ? new[] { "fc.weight", "fc.bias" } : null);
                 }
 
                 if (device != null && device.type == DeviceType.CUDA)

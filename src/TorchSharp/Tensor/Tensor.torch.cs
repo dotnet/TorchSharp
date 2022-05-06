@@ -300,7 +300,7 @@ namespace TorchSharp
 
         static public Tensor reshape(Tensor input, params long[] shape) => input.reshape(shape);
 
-        static public Tensor flatten(Tensor input, long start_dim, long end_dim) => input.flatten(start_dim, end_dim);
+        static public Tensor flatten(Tensor input, long start_dim = 0, long end_dim = -1) => input.flatten(start_dim, end_dim);
 
         static public Tensor unflatten(Tensor input, long dim, params long[] sizes) => input.unflatten(dim, sizes);
 
