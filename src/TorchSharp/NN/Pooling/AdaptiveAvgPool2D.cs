@@ -43,14 +43,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="outputSize">The target output size (H,W) of the image of the form H x W.</param>
             /// <returns></returns>
-            static public AdaptiveAvgPool2d AdaptiveAvgPool2d(long[] outputSize)
+            static public unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d(long[] outputSize)
             {
-                unsafe {
-                    fixed (long* pkernelSize = outputSize) {
-                        var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)pkernelSize, outputSize.Length, out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new AdaptiveAvgPool2d(handle, boxedHandle);
-                    }
+                fixed (long* poutputSize = outputSize) {
+                    var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)poutputSize, outputSize.Length, out var boxedHandle);
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new AdaptiveAvgPool2d(handle, boxedHandle);
                 }
             }
 
@@ -60,16 +58,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="outputSize">The target output size (H,W) of the image of the form H x W.</param>
             /// <returns></returns>
-            static public AdaptiveAvgPool2d AdaptiveAvgPool2d((long,long) outputSize)
+            static public unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d((long,long) outputSize)
             {
-                long[] os = new long[] { outputSize.Item1, outputSize.Item2 };
-                unsafe {
-                    fixed (long* pkernelSize = os) {
-                        var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)pkernelSize, 2, out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new AdaptiveAvgPool2d(handle, boxedHandle);
-                    }
-                }
+                long* poutputSize = stackalloc long[2] { outputSize.Item1, outputSize.Item2 };
+                var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)poutputSize, 2, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AdaptiveAvgPool2d(handle, boxedHandle);
             }
 
             /// <summary>
@@ -78,16 +72,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="outputSize">The target output size (H,W) of the image of the form H x W.</param>
             /// <returns></returns>
-            static public AdaptiveAvgPool2d AdaptiveAvgPool2d(long outputSize)
+            static public unsafe AdaptiveAvgPool2d AdaptiveAvgPool2d(long outputSize)
             {
-                long[] os = new long[] { outputSize, outputSize };
-                unsafe {
-                    fixed (long* pkernelSize = os) {
-                        var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)pkernelSize, 2, out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new AdaptiveAvgPool2d(handle, boxedHandle);
-                    }
-                }
+                long* poutputSize = stackalloc long[2] { outputSize, outputSize };
+                var handle = THSNN_AdaptiveAvgPool2d_ctor((IntPtr)poutputSize, 2, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AdaptiveAvgPool2d(handle, boxedHandle);
             }
         }
     }

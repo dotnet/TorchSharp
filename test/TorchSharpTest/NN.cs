@@ -1765,6 +1765,49 @@ namespace TorchSharp
             Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }), obj);
         }
 
+        [Fact]
+        public void AvgPool2DTensorNN()
+        {
+            Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
+            {
+                var obj = AvgPool2d(new long[] { 2, 2 }).forward(ones);
+                Assert.Equal(typeof(Tensor), obj.GetType());
+                Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }), obj);
+            }
+            {
+                var obj = AvgPool2d(2).forward(ones);
+                Assert.Equal(typeof(Tensor), obj.GetType());
+                Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }), obj);
+            }
+            {
+                var obj = AvgPool2d((2,2)).forward(ones);
+                Assert.Equal(typeof(Tensor), obj.GetType());
+                Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }), obj);
+            }
+        }
+
+        [Fact]
+        public void AdaptiveAvgPool2DTensorNN()
+        {
+            {
+                Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
+                var obj = AdaptiveAvgPool2d(new long[] { 2, 2 }).forward(ones);
+                Assert.Equal(typeof(Tensor), obj.GetType());
+                Assert.Equal(torch.ones(new long[] { 4, 2, 2, 2 }), obj);
+            }
+            {
+                Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
+                var obj = AdaptiveAvgPool2d(2).forward(ones);
+                Assert.Equal(typeof(Tensor), obj.GetType());
+                Assert.Equal(torch.ones(new long[] { 4, 2, 2, 2 }), obj);
+            }
+            {
+                Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
+                var obj = AdaptiveAvgPool2d((2,2)).forward(ones);
+                Assert.Equal(typeof(Tensor), obj.GetType());
+                Assert.Equal(torch.ones(new long[] { 4, 2, 2, 2 }), obj);
+            }
+        }
 
         [Fact]
         public void AvgPool2DBackwardTensor()

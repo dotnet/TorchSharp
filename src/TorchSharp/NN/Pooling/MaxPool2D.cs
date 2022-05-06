@@ -56,12 +56,21 @@ namespace TorchSharp
             /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
             /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
             /// <returns></returns>
-            static public MaxPool2d MaxPool2d(long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
+            static public unsafe MaxPool2d MaxPool2d(long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
             {
-                var pStride = stride.HasValue ? new long[] { stride.Value, stride.Value } : null;
-                var pPadding = padding.HasValue ? new long[] { padding.Value, padding.Value } : null;
-                var pDilation = dilation.HasValue ? new long[] { dilation.Value, dilation.Value } : null;
-                return MaxPool2d(new long[] { kernelSize, kernelSize }, pStride, pPadding, pDilation, ceilMode);
+                long svalue = stride.HasValue ? stride.Value : kernelSize;
+                long pvalue = padding.HasValue ? padding.Value : 0;
+                long dvalue = dilation.HasValue ? dilation.Value : 1;
+
+                long* pStride   = stackalloc long[2] { svalue, svalue };
+                long* pPadding  = stackalloc long[2] { pvalue, pvalue };
+                long* pDilation = stackalloc long[2] { dvalue, dvalue };
+
+                long* pkernelSize = stackalloc long[2] { kernelSize, kernelSize };
+
+                var handle = THSNN_MaxPool2d_ctor((IntPtr)pkernelSize, 2, (IntPtr)pStride, 2, (IntPtr)pPadding, 2, (IntPtr)pDilation, 2, ceilMode, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new MaxPool2d(handle, boxedHandle);
             }
 
             /// <summary>
@@ -73,12 +82,24 @@ namespace TorchSharp
             /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
             /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
             /// <returns></returns>
-            static public MaxPool2d MaxPool2d((long, long) kernelSize, (long, long)? stride = null, (long, long)? padding = null, (long, long)? dilation = null, bool ceilMode = false)
+            static public unsafe MaxPool2d MaxPool2d((long, long) kernelSize, (long, long)? stride = null, (long, long)? padding = null, (long, long)? dilation = null, bool ceilMode = false)
             {
-                var pStride = stride.HasValue ? new long[] { stride.Value.Item1, stride.Value.Item2 } : null;
-                var pPadding = padding.HasValue ? new long[] { padding.Value.Item1, padding.Value.Item2 } : null;
-                var pDilation = dilation.HasValue ? new long[] { dilation.Value.Item1, dilation.Value.Item2 } : null;
-                return MaxPool2d(new long[] { kernelSize.Item1, kernelSize.Item2 }, pStride, pPadding, pDilation, ceilMode);
+                long svalue1 = stride != null ? stride.Value.Item1 : kernelSize.Item1;
+                long svalue2 = stride != null ? stride.Value.Item2 : kernelSize.Item2;
+                long pvalue1 = padding != null ? padding.Value.Item1 : 0;
+                long pvalue2 = padding != null ? padding.Value.Item2 : 0;
+                long dvalue1 = dilation != null ? dilation.Value.Item1 : 1;
+                long dvalue2 = dilation != null ? dilation.Value.Item2 : 1;
+
+                long* pStride = stackalloc long[2] { svalue1, svalue2 };
+                long* pPadding = stackalloc long[2] { pvalue1, pvalue2 };
+                long* pDilation = stackalloc long[2] { dvalue1, dvalue2 };
+
+                long* pkernelSize = stackalloc long[2] { kernelSize.Item1, kernelSize.Item2 };
+
+                var handle = THSNN_MaxPool2d_ctor((IntPtr)pkernelSize, 2, (IntPtr)pStride, 2, (IntPtr)pPadding, 2, (IntPtr)pDilation, 2, ceilMode, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new MaxPool2d(handle, boxedHandle);
             }
 
             /// <summary>
@@ -90,14 +111,12 @@ namespace TorchSharp
             /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
             /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
             /// <returns></returns>
-            static public MaxPool2d MaxPool2d(long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
+            static public unsafe MaxPool2d MaxPool2d(long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
             {
-                unsafe {
-                    fixed (long* pkernelSize = kernelSize, pstrides = strides, pPadding = padding, pDilation = dilation) {
-                        var handle = THSNN_MaxPool2d_ctor((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), (IntPtr)pPadding, (padding == null ? 0 : padding.Length), (IntPtr)pDilation, (dilation == null ? 0 : dilation.Length), ceilMode, out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new MaxPool2d(handle, boxedHandle);
-                    }
+                fixed (long* pkernelSize = kernelSize, pstrides = strides, pPadding = padding, pDilation = dilation) {
+                    var handle = THSNN_MaxPool2d_ctor((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), (IntPtr)pPadding, (padding == null ? 0 : padding.Length), (IntPtr)pDilation, (dilation == null ? 0 : dilation.Length), ceilMode, out var boxedHandle);
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new MaxPool2d(handle, boxedHandle);
                 }
             }
         }

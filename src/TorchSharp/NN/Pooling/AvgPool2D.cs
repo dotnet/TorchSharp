@@ -43,14 +43,12 @@ namespace TorchSharp
             /// <param name="kernel_size">The size of the window</param>
             /// <param name="strides">The stride of the window. Default value is kernel_size</param>
             /// <returns></returns>
-            static public AvgPool2d AvgPool2d(long[] kernel_size, long[] strides = null)
+            static public unsafe AvgPool2d AvgPool2d(long[] kernel_size, long[] strides = null)
             {
-                unsafe {
-                    fixed (long* pkernelSize = kernel_size, pstrides = strides) {
-                        var handle = THSNN_AvgPool2d_ctor((IntPtr)pkernelSize, kernel_size.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new AvgPool2d(handle, boxedHandle);
-                    }
+                fixed (long* pkernelSize = kernel_size, pstrides = strides) {
+                    var handle = THSNN_AvgPool2d_ctor((IntPtr)pkernelSize, kernel_size.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), out var boxedHandle);
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new AvgPool2d(handle, boxedHandle);
                 }
             }
 
@@ -60,11 +58,35 @@ namespace TorchSharp
             /// <param name="kernel_size">The size of the window</param>
             /// <param name="stride">The stride of the window.</param>
             /// <returns></returns>
-            static public AvgPool2d AvgPool2d(long kernel_size, long? stride = null)
+            static public unsafe AvgPool2d AvgPool2d((long,long) kernel_size, (long,long)? stride = null)
             {
-                return stride.HasValue ?
-                    AvgPool2d(new long[] { kernel_size, kernel_size }, new long[] { stride.Value, stride.Value }) :
-                    AvgPool2d(new long[] { kernel_size, kernel_size }, null);
+                long svalue1 = (stride == null) ? kernel_size.Item1 : stride.Value.Item1;
+                long svalue2 = (stride == null) ? kernel_size.Item2 : stride.Value.Item2;
+
+                long* pkernelSize = stackalloc long[2] { kernel_size.Item1, kernel_size.Item2 };
+                long* pstrides = stackalloc long[2] { svalue1, svalue2 };
+
+                var handle = THSNN_AvgPool2d_ctor((IntPtr)pkernelSize, 2, (IntPtr)pstrides, 2, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AvgPool2d(handle, boxedHandle);
+            }
+
+            /// <summary>
+            /// Applies a 2D average pooling over an input signal composed of several input planes.
+            /// </summary>
+            /// <param name="kernel_size">The size of the window</param>
+            /// <param name="stride">The stride of the window.</param>
+            /// <returns></returns>
+            static public unsafe AvgPool2d AvgPool2d(long kernel_size, long? stride = null)
+            {
+                long svalue = (stride == null) ? kernel_size : stride.Value;
+
+                long* pkernelSize = stackalloc long[2] { kernel_size, kernel_size };
+                long* pstrides = stackalloc long[2] { svalue, svalue };
+
+                var handle = THSNN_AvgPool2d_ctor((IntPtr)pkernelSize, 2, (IntPtr)pstrides, 2, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AvgPool2d(handle, boxedHandle);
             }
         }
     }
