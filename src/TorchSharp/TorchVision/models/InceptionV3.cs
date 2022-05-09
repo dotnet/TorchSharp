@@ -64,9 +64,8 @@ namespace TorchSharp.torchvision
         public class InceptionV3 : Module
         {
             // The code here is is loosely based on
-            // https://github.com/kuangliu/pytorch-cifar/blob/master/models/resnet.py and
-            // https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py
-            // Licence and copypright notice at: https://github.com/kuangliu/pytorch-cifar/blob/master/LICENSE
+            // https://github.com/pytorch/vision/blob/main/torchvision/models/inception.py
+            // Licence and copypright notice at: https://github.com/pytorch/vision/blob/main/LICENSE
 
             private readonly Module Conv2d_1a_3x3;
             private readonly Module Conv2d_2a_3x3;

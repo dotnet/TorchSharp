@@ -53,6 +53,10 @@ namespace TorchSharp.torchvision
 
     namespace Modules
     {
+        // The code here is based on
+        // https://github.com/pytorch/vision/blob/main/torchvision/models/alexnet.py
+        // Licence and copypright notice at: https://github.com/pytorch/vision/blob/main/LICENSE
+
         public class AlexNet : Module
         {
             private readonly Module features;

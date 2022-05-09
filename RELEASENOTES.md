@@ -12,6 +12,7 @@ Added torchvision.models.alexnet() factory<br/>
 Added torchvision.models.vgg*() factories<br/>
 Added 'skip' list for loading and saving weights.<br/>
 Added torchvision.models.interception_v3() factory<br/>
+Added torchvision.models.googlenet() factory<br/>
 
 __Fixed Bugs:__
 

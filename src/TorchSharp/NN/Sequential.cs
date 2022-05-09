@@ -18,10 +18,10 @@ namespace TorchSharp
         /// </summary>
         public class Sequential : torch.nn.Module
         {
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_Sequential_push_back(torch.nn.Module.HType module,
-                [MarshalAs(UnmanagedType.LPStr)] string name,
-                torch.nn.BoxedModule.HType boxedSubModule);
+            //[DllImport("LibTorchSharp")]
+            //private static extern void THSNN_Sequential_push_back(torch.nn.Module.HType module,
+            //    [MarshalAs(UnmanagedType.LPStr)] string name,
+            //    torch.nn.BoxedModule.HType boxedSubModule);
 
             internal void Add(string name, torch.nn.Module submodule)
             {
@@ -29,8 +29,8 @@ namespace TorchSharp
                 if (submodule.BoxedModule == null)
                     throw new InvalidOperationException("A Sequential or loaded module may not be added to a Sequential");
 
-                THSNN_Sequential_push_back(handle, name, submodule.BoxedModule.handle);
-                torch.CheckForErrors();
+                //THSNN_Sequential_push_back(handle, name, submodule.BoxedModule.handle);
+                //torch.CheckForErrors();
                 // Keep the sub-module alive for at least as long as the Sequential object is alive.
                 _modules.Add(submodule);
                 _names.Add(name);
@@ -93,9 +93,6 @@ namespace TorchSharp
             internal Sequential(IntPtr handle) : base(handle, IntPtr.Zero)
             {
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Sequential_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
