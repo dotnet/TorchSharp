@@ -320,17 +320,11 @@ namespace TorchSharp.torchvision
 
     namespace Modules
     {
-        /// <summary>
-        /// Modified version of VGG to classify CIFAR10 32x32 images.
-        /// </summary>
-        /// <remarks>
-        /// With an unaugmented CIFAR-10 data set, the author of this saw training converge
-        /// at roughly 85% accuracy on the test set, after 50 epochs using VGG-16.
-        /// </remarks>
         public class VGG : Module
         {
-            // The code here is is loosely based on https://github.com/kuangliu/pytorch-cifar/blob/master/models/vgg.py
-            // Licence and copypright notice at: https://github.com/kuangliu/pytorch-cifar/blob/master/LICENSE
+            // The code here is based on
+            // https://github.com/pytorch/vision/blob/main/torchvision/models/vgg.py
+            // Licence and copypright notice at: https://github.com/pytorch/vision/blob/main/LICENSE
 
             private readonly Dictionary<string, long[]> _channels = new Dictionary<string, long[]>() {
                 { "VGG11", new long[] { 64, 0, 128, 0, 256, 256, 0, 512, 512, 0, 512, 512, 0 } },

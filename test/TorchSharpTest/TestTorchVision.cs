@@ -126,5 +126,13 @@ namespace TorchSharp
             var sd = model.state_dict();
             Assert.Equal(580, sd.Count);
         }
+
+        [Fact]
+        public void TestGoogLeNet()
+        {
+            using var model = googlenet();
+            var sd = model.state_dict();
+            Assert.Equal(344, sd.Count);
+        }
     }
 }

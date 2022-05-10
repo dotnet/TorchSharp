@@ -502,8 +502,9 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(
                 ("lin1", lin1),
-                ("relu1", ReLU()),
-                ("lin2", lin2));
+                ("relu1", ReLU()));
+
+            var seq1 = Sequential(seq, lin2);
 
             var x = torch.randn(new long[] { 64, 1000 }, requiresGrad: true);
             var eval = seq.forward(x);
