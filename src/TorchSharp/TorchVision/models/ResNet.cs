@@ -212,10 +212,9 @@ namespace TorchSharp.torchvision
     {
         public class ResNet : Module
         {
-            // The code here is is loosely based on
-            // https://github.com/kuangliu/pytorch-cifar/blob/master/models/resnet.py and
+            // The code here is based on
             // https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py
-            // Licence and copypright notice at: https://github.com/kuangliu/pytorch-cifar/blob/master/LICENSE
+            // Licence and copypright notice at: https://github.com/pytorch/vision/blob/main/LICENSE
 
             private readonly Module conv1;
             private readonly Module bn1;
