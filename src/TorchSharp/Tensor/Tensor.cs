@@ -5875,6 +5875,41 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_stft(IntPtr x, long n_fft, long hop_length, long win_length, IntPtr window, bool normalized, bool onesided, bool return_complex);
+
+            public Tensor stft(long n_fft, long hop_length = -1, long win_length = -1, Tensor? window = null, bool center = true, PaddingModes pad_mode = PaddingModes.Reflect, bool normalized = false, bool? onesided = null, bool return_complex = false)
+            {
+                IntPtr _window = (window is null) ? IntPtr.Zero : window.Handle;
+                bool _onesided = onesided.HasValue ? onesided.Value : !is_complex();
+                if (center) {
+                    // TODO
+                    long signal_dim = dim();
+                    long pad = n_fft / 2;
+                    var extended_shape = shape;
+                    var input = torch.nn.functional.pad(
+                        view(extended_shape),
+                        new long[] { pad, pad }, pad_mode);
+                    //input = input.view(input.shape[-signal_dim:]);
+                    _window = input.Handle;
+                }
+                var res = THSTensor_stft(Handle, n_fft, hop_length, win_length, _window, normalized, _onesided, return_complex);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_istft(IntPtr x, long n_fft, long hop_length, long win_length, IntPtr window, bool center, bool normalized, bool onesided, long length, bool return_complex);
+
+            public Tensor istft(long n_fft, long hop_length = -1, long win_length = -1, Tensor? window = null, bool center = true, PaddingModes pad_mode = PaddingModes.Reflect, bool normalized = false, bool? onesided = null, long length = -1, bool return_complex = false)
+            {
+                IntPtr _window = (window is null) ? IntPtr.Zero : window.Handle;
+                bool _onesided = onesided.HasValue ? onesided.Value : !is_complex();
+                var res = THSTensor_istft(Handle, n_fft, hop_length, win_length, _window, center, normalized, _onesided, length, return_complex);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
         }
 
         /// <summary>

@@ -620,8 +620,6 @@ EXPORT_API(Tensor) THSTensor_isneginf(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_isreal(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_istft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool center, bool normalized, bool onesided, int64_t length, bool return_complex);
-
 EXPORT_API(Scalar) THSTensor_item(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_kron(const Tensor left, const Tensor right);
@@ -1058,8 +1056,6 @@ EXPORT_API(Tensor) THSTensor_sqrt_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_std(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_stft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool normalized, bool onesided, bool return_complex);
-
 EXPORT_API(Tensor) THSTensor_std_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim);
 
 EXPORT_API(Tensor) THSTensor_sub(const Tensor left, const Tensor right);
@@ -1487,3 +1483,7 @@ EXPORT_API(Tensor) THSTensor_hamming_window(const int64_t len, bool periodic, do
 EXPORT_API(Tensor) THSTensor_hann_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_kaiser_window(const int64_t len, bool periodic, double beta, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_stft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool normalized, bool onesided, bool return_complex);
+
+EXPORT_API(Tensor) THSTensor_istft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool center, bool normalized, bool onesided, int64_t length, bool return_complex);
