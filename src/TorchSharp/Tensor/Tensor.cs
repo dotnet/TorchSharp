@@ -236,7 +236,10 @@ namespace TorchSharp
             public bool is_floating_point() => torch.is_floating_point(dtype);
             public bool is_complex() => torch.is_complex(dtype);
 
-            public bool is_cuda { get { return device.type == DeviceType.CUDA; } }
+            public bool is_cuda => device.type == DeviceType.CUDA;
+
+            public bool is_meta => device.type == DeviceType.META;
+
 
             [DllImport("LibTorchSharp")]
             internal static extern long THSTensor_is_leaf(IntPtr handle);
