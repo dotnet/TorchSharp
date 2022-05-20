@@ -324,7 +324,7 @@ namespace TorchSharp
                         6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                         3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f,
-                    }, new long[] {2, 2, 2, 2, 4}).ToString(TensorStringStyle.Numpy, cultureInfo: CultureInfo.InvariantCulture));
+                    }, new long[] { 2, 2, 2, 2, 4 }).ToString(TensorStringStyle.Numpy, cultureInfo: CultureInfo.InvariantCulture));
         }
 
         [Fact]
@@ -345,7 +345,7 @@ namespace TorchSharp
                         3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f, 0.01f, 0.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f,
                         4713.14f, 0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                    }, new long[] {2, 2, 2, 2, 2, 4}).ToString(TensorStringStyle.Numpy, cultureInfo: CultureInfo.InvariantCulture));
+                    }, new long[] { 2, 2, 2, 2, 2, 4 }).ToString(TensorStringStyle.Numpy, cultureInfo: CultureInfo.InvariantCulture));
         }
 
 
@@ -2560,6 +2560,24 @@ namespace TorchSharp
                 Assert.Equal(ScalarType.Float32, moved.dtype);
                 Assert.Equal(DeviceType.CPU, moved.device_type);
             }
+        }
+
+        [Fact]
+        public void TestMeta()
+        {
+            var input = torch.rand(new long[] { 128 }, float64, torch.CPU);
+            var x = input.to(DeviceType.META);
+
+            var y = x + 10;
+
+            Assert.Equal(DeviceType.META, y.device_type);
+            Assert.Equal(x.shape, y.shape);
+
+            var z = input.to(ScalarType.Float32, torch.META);
+
+            Assert.Equal(ScalarType.Float32, z.dtype);
+            Assert.Equal(DeviceType.META, z.device_type);
+            Assert.Equal(x.shape, z.shape);
         }
 
         [Fact]
@@ -6454,7 +6472,7 @@ namespace TorchSharp
             Assert.NotNull(st);
             Assert.Equal(2, st[(3, 5)].Count);
 
-            st[(3,5)] = 5;
+            st[(3, 5)] = 5;
             Assert.Equal(new long[] { 1, 1, 2, 5, 5, 1, 1, 2 }, x.data<long>().ToArray());
             Assert.Equal(new long[] { 1, 1, 2, 5, 5, 1, 1, 2 }, st.ToArray());
         }
