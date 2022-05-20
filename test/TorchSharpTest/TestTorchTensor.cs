@@ -113,6 +113,12 @@ namespace TorchSharp
                 Assert.Equal($"[4], type = ComplexFloat32, device = cpu{_sep} 0 0 0 0{_sep}", str);
             }
             {
+                Tensor t = torch.ones(4, torch.complex64, torch.META);
+                for (int i = 0; i < t.shape[0]; i++) t[i] = torch.tensor((1.0f * i, 2.43f * i * 2), torch.complex64);
+                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal($"[4], type = ComplexFloat32, device = meta", str);
+            }
+            {
                 Tensor t = torch.ones(4, torch.complex64);
                 for (int i = 0; i < t.shape[0]; i++) t[i] = torch.tensor((1.0f * i, 2.43f * i * 2), torch.complex64);
                 var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
@@ -132,6 +138,16 @@ namespace TorchSharp
                 Tensor t = torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4);
                 var str = t.str(cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[2x4], type = Float32, device = cpu\n        0   3.141 6.2834 3.1415\n 6.28e-06 -13.142   0.01 4713.1\n", str);
+            }
+            if (torch.cuda.is_available()) {
+                Tensor t = torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4, device: torch.CUDA);
+                var str = t.str(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal($"[2x4], type = Float32, device = cuda:0\n        0   3.141 6.2834 3.1415\n 6.28e-06 -13.142   0.01 4713.1\n", str);
+            }
+            {
+                Tensor t = torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4, device: torch.META);
+                var str = t.str(cultureInfo: CultureInfo.InvariantCulture);
+                Assert.Equal($"[2x4], type = Float32, device = meta", str);
             }
             {
                 Tensor t = torch.zeros(2, 4, torch.complex64);

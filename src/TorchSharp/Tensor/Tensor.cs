@@ -5486,11 +5486,14 @@ namespace TorchSharp
                 if (String.IsNullOrEmpty(newLine))
                     newLine = Environment.NewLine;
 
+                if (device_type == DeviceType.META)
+                    return ToMetadataString();
+
                 return style switch {
                     TensorStringStyle.Metadata => ToMetadataString(),
                     TensorStringStyle.Julia => ToJuliaString(fltFormat, width, cultureInfo, newLine),
                     TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fltFormat, cultureInfo, newLine),
-                    _ => throw new InvalidEnumArgumentException("Not supported type")
+                    _ => throw new InvalidEnumArgumentException($"Unsupported tensor string style: {style}")
                 };
             }
 

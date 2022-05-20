@@ -2,6 +2,10 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.96.7
+
+Added the 'META' device type, which can be used to examine the affect of shape from tensor operations without actually doing any computations.
+
 ## NuGet Version 0.96.6
 
 __API Changes:__
