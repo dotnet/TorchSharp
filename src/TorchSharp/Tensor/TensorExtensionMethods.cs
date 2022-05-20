@@ -412,7 +412,7 @@ namespace TorchSharp
 
                 var padding_ltrb = new long[] { Math.Max(-left, 0), Math.Max(-top, 0), Math.Max(right - w, 0), Math.Max(bottom - h, 0) };
 
-                return TorchSharp.torch.nn.functional.pad(slice, padding_ltrb);
+                return TorchSharp.torchvision.transforms.functional.pad(slice, padding_ltrb);
             }
 
             return image.index(TensorIndex.Ellipsis, TensorIndex.Slice(top, bottom), TensorIndex.Slice(left, right));

@@ -74,26 +74,47 @@ namespace TorchSharp
                 /// <returns></returns>
                 static public Tensor pad(Tensor input, long[] pad, PaddingModes mode = PaddingModes.Constant, double value = 0)
                 {
-                    //
-                    // The Pytorch documentation does not cover what is actually happening in the native code, as far as
-                    // the ordering of padding elements goes. This code converts from the documented order, to the actual.
-                    // See: https://pytorch.org/vision/stable/transforms.html#torchvision.transforms.functional.pad
-                    //
-                    long[] correctedPad = pad;
-
-                    if (input.ndim > 1) {
-                        switch (pad.Length) {
-                        case 1:
-                            correctedPad = new long[] { pad[0], pad[0], pad[0], pad[0] };
-                            break;
-                        case 2:
-                            correctedPad = new long[] { pad[0], pad[0], pad[1], pad[1] };
-                            break;
-                        case 4:
-                            correctedPad = new long[] { pad[0], pad[2], pad[1], pad[3] };
-                            break;
+                    unsafe {
+                        fixed (long* psize = pad) {
+                            var res = THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
                         }
                     }
+                }
+
+                /// <summary>
+                /// Pads tensor.
+                /// </summary>
+                /// <param name="input">N-dimensional tensor</param>
+                /// <param name="pad">m-elements tuple, where m/2 ≤ input dimensions and m is even</param>
+                /// <param name="mode">'constant', 'reflect', 'replicate' or 'circular'. Default: 'constant'</param>
+                /// <param name="value">Fill value for 'constant' padding. Default: 0</param>
+                /// <returns></returns>
+                static public Tensor pad(Tensor input, (long,long) pad, PaddingModes mode = PaddingModes.Constant, double value = 0)
+                {
+                    long[] correctedPad = new long[] { pad.Item1, pad.Item2 };
+
+                    unsafe {
+                        fixed (long* psize = correctedPad) {
+                            var res = THSNN_pad(input.Handle, (IntPtr)psize, correctedPad.Length, (byte)mode, value);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+
+                /// <summary>
+                /// Pads tensor.
+                /// </summary>
+                /// <param name="input">N-dimensional tensor</param>
+                /// <param name="pad">m-elements tuple, where m/2 ≤ input dimensions and m is even</param>
+                /// <param name="mode">'constant', 'reflect', 'replicate' or 'circular'. Default: 'constant'</param>
+                /// <param name="value">Fill value for 'constant' padding. Default: 0</param>
+                /// <returns></returns>
+                static public Tensor pad(Tensor input, (long, long, long, long) pad, PaddingModes mode = PaddingModes.Constant, double value = 0)
+                {
+                    long[] correctedPad = new long[] { pad.Item1, pad.Item2, pad.Item3, pad.Item4 };
 
                     unsafe {
                         fixed (long* psize = correctedPad) {
@@ -114,11 +135,12 @@ namespace TorchSharp
                 /// <returns></returns>
                 static public Tensor pad(Tensor input, long pad, PaddingModes mode = PaddingModes.Constant, double value = 0)
                 {
-                    long[] correctedPad = new long[] { pad, pad, pad, pad };
+                    long[] correctedPad = new long[input.ndim*2];
+                    for (var i = 0; i < correctedPad.Length; i++) correctedPad[i] = pad;
 
                     unsafe {
                         fixed (long* psize = correctedPad) {
-                            var res = THSNN_pad(input.Handle, (IntPtr)psize, 4, (byte)mode, value);
+                            var res = THSNN_pad(input.Handle, (IntPtr)psize, correctedPad.Length, (byte)mode, value);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }

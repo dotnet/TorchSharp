@@ -4,7 +4,13 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.96.7
 
-Added the 'META' device type, which can be used to examine the affect of shape from tensor operations without actually doing any computations.
+__API Changes:__
+
+Added the 'META' device type, which can be used to examine the affect of shape from tensor operations without actually doing any computations.<br/>
+
+__Fixed Bugs:__
+
+#567 pad missing the choice to fill at start or end<br/>
 
 ## NuGet Version 0.96.6
 
