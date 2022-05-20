@@ -74,30 +74,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 static public Tensor pad(Tensor input, long[] pad, PaddingModes mode = PaddingModes.Constant, double value = 0)
                 {
-                    //
-                    // The Pytorch documentation does not cover what is actually happening in the native code, as far as
-                    // the ordering of padding elements goes. This code converts from the documented order, to the actual.
-                    // See: https://pytorch.org/vision/stable/transforms.html#torchvision.transforms.functional.pad
-                    //
-                    long[] correctedPad = pad;
-
-                    if (input.ndim > 1) {
-                        switch (pad.Length) {
-                        case 1:
-                            correctedPad = new long[] { pad[0], pad[0], pad[0], pad[0] };
-                            break;
-                        case 2:
-                            correctedPad = new long[] { pad[0], pad[0], pad[1], pad[1] };
-                            break;
-                        case 4:
-                            correctedPad = new long[] { pad[0], pad[2], pad[1], pad[3] };
-                            break;
-                        }
-                    }
-
                     unsafe {
-                        fixed (long* psize = correctedPad) {
-                            var res = THSNN_pad(input.Handle, (IntPtr)psize, correctedPad.Length, (byte)mode, value);
+                        fixed (long* psize = pad) {
+                            var res = THSNN_pad(input.Handle, (IntPtr)psize, pad.Length, (byte)mode, value);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }

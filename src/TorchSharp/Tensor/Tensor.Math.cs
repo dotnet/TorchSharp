@@ -3374,11 +3374,9 @@ namespace TorchSharp
         /// <param name="pad_mode"></param>
         /// <param name="normalized"></param>
         /// <param name="onesided"></param>
-        /// <param name="length"></param>
         /// <param name="return_complex"></param>
         /// <returns></returns>
-        public static Tensor istft(Tensor x, long n_fft, long hop_length = -1, long win_length = -1, Tensor window = null, bool center = true, PaddingModes pad_mode = PaddingModes.Reflect, bool normalized = false, bool? onesided = null, long length = -1, bool return_complex = false) => x.istft(n_fft, hop_length, win_length, window, center, pad_mode, normalized, onesided, length, return_complex);
-
+        public static Tensor stft(Tensor x, long n_fft, long hop_length = -1, long win_length = -1, Tensor window = null, bool center = true, PaddingModes pad_mode = PaddingModes.Reflect, bool normalized = false, bool? onesided = null, bool? return_complex = null) => x.stft(n_fft, hop_length, win_length, window, center, pad_mode, normalized, onesided, return_complex);
         /// <summary>
         /// 
         /// </summary>
@@ -3388,11 +3386,11 @@ namespace TorchSharp
         /// <param name="win_length"></param>
         /// <param name="window"></param>
         /// <param name="center"></param>
-        /// <param name="pad_mode"></param>
         /// <param name="normalized"></param>
         /// <param name="onesided"></param>
+        /// <param name="length"></param>
         /// <param name="return_complex"></param>
         /// <returns></returns>
-        public static Tensor stft(Tensor x, long n_fft, long hop_length = -1, long win_length = -1, Tensor window = null, bool center = true, PaddingModes pad_mode = PaddingModes.Reflect, bool normalized = false, bool? onesided = null, bool return_complex = false) => x.stft(n_fft, hop_length, win_length, window, center, pad_mode, normalized, onesided, return_complex);
+        public static Tensor istft(Tensor x, long n_fft, long hop_length = -1, long win_length = -1, Tensor window = null, bool center = true, bool normalized = false, bool? onesided = null, long length = -1, bool return_complex = false) => x.istft(n_fft, hop_length, win_length, window, center, normalized, onesided, length, return_complex);
     }
 }
