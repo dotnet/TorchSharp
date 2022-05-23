@@ -3739,14 +3739,32 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestPad()
+        public void TestVisionPad()
         {
             using (Tensor p4d = torch.randn(new long[] { 3, 3, 4, 2 })) {
-                using (var res = pad(p4d, new long[] { 1, 1 }, PaddingModes.Constant, 0.0)) {
+                using (var res = torchvision.transforms.functional.pad(p4d, new long[] { 1, 1 }, 0.0, PaddingModes.Constant)) {
                     Assert.Equal(new long[] { 3, 3, 6, 4 }, res.shape);
                 }
-                using (var res = pad(p4d, new long[] { 1, 1, 2, 2 }, PaddingModes.Constant, 0.0)) {
+                using (var res = torchvision.transforms.functional.pad(p4d, new long[] { 1, 1, 2, 2 }, 0.0, PaddingModes.Constant)) {
                     Assert.Equal(new long[] { 3, 3, 7, 5 }, res.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestNNPad()
+        {
+            {
+                var source = torch.arange(9).reshape(3, 3);
+                var result = torch.nn.functional.pad(input: source, pad: new long[] { 1, 2 }, mode: PaddingModes.Constant, value: 0);
+                Assert.Equal(new long[] { 3, 6 }, result.shape);
+
+                var str = result.ToString(TensorStringStyle.Numpy, newLine: "\n");
+                Assert.Equal("[[0 0 1 2 0 0]\n [0 3 4 5 0 0]\n [0 6 7 8 0 0]]", str);
+            }
+            using (Tensor p4d = torch.randn(new long[] { 3, 3, 4, 2 })) {
+                using (var res = pad(p4d, new long[] { 1, 1, 2, 3 }, PaddingModes.Constant, 0.0)) {
+                    Assert.Equal(new long[] { 3, 3, 9, 4 }, res.shape);
                 }
             }
         }
