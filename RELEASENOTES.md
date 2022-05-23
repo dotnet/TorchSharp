@@ -7,6 +7,7 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 __API Changes:__
 
 Added the 'META' device type, which can be used to examine the affect of shape from tensor operations without actually doing any computations.<br/>
+Added a few methods from the torch.nn.utils namespace.<br/>
 
 __Fixed Bugs:__
 
