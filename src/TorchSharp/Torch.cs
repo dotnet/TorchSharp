@@ -448,6 +448,7 @@ namespace TorchSharp
         HIP = 6, // AMD HIP
         FPGA = 7, // FPGA
         MSNPU = 8, // MSNPU
-        XLA = 9 // XLA / TPU
+        XLA = 9, // XLA / TPU
+        META = 14,
     }
 }

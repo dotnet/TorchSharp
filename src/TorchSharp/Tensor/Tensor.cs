@@ -236,7 +236,10 @@ namespace TorchSharp
             public bool is_floating_point() => torch.is_floating_point(dtype);
             public bool is_complex() => torch.is_complex(dtype);
 
-            public bool is_cuda { get { return device.type == DeviceType.CUDA; } }
+            public bool is_cuda => device.type == DeviceType.CUDA;
+
+            public bool is_meta => device.type == DeviceType.META;
+
 
             [DllImport("LibTorchSharp")]
             internal static extern long THSTensor_is_leaf(IntPtr handle);
@@ -5486,11 +5489,14 @@ namespace TorchSharp
                 if (String.IsNullOrEmpty(newLine))
                     newLine = Environment.NewLine;
 
+                if (device_type == DeviceType.META)
+                    return ToMetadataString();
+
                 return style switch {
                     TensorStringStyle.Metadata => ToMetadataString(),
                     TensorStringStyle.Julia => ToJuliaString(fltFormat, width, cultureInfo, newLine),
                     TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fltFormat, cultureInfo, newLine),
-                    _ => throw new InvalidEnumArgumentException("Not supported type")
+                    _ => throw new InvalidEnumArgumentException($"Unsupported tensor string style: {style}")
                 };
             }
 
