@@ -325,6 +325,7 @@ namespace TorchSharp
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Tensor(res);
         }
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_sample_dirichlet_(IntPtr tensor, IntPtr gen);
 
