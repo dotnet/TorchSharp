@@ -3361,5 +3361,37 @@ namespace TorchSharp
         /// <param name="replacement">Whether to draw with replacement or not</param>
         /// <param name="generator">Optional random number generator</param>
         public static Tensor multinomial(Tensor input, long num_samples, bool replacement = false, torch.Generator generator = null) => input.multinomial(num_samples, replacement, generator);
+
+        /// <summary>
+        /// Returns a tensor containing the result of Short-time Fourier transform (STFT).
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="n_fft">The size of Fourier transform</param>
+        /// <param name="hop_length">The hop length</param>
+        /// <param name="win_length">The window length</param>
+        /// <param name="window">The window function</param>
+        /// <param name="center">Whether the t-th frame is centered around t * hop_window, or not.</param>
+        /// <param name="pad_mode">The padding mode used when center is true.</param>
+        /// <param name="normalized">Whether the output is normalized, or not.</param>
+        /// <param name="onesided">Whether the output is onesided or not.</param>
+        /// <param name="return_complex">Whether a complex tensor is returned, or not.</param>
+        /// <returns>A tensor containing the result of Short-time Fourier transform (STFT).</returns>
+        public static Tensor stft(Tensor input, long n_fft, long hop_length = -1, long win_length = -1, Tensor window = null, bool center = true, PaddingModes pad_mode = PaddingModes.Reflect, bool normalized = false, bool? onesided = null, bool? return_complex = null) => input.stft(n_fft, hop_length, win_length, window, center, pad_mode, normalized, onesided, return_complex);
+
+        /// <summary>
+        /// Returns a tensor containing the result of Inverse Short-time Fourier transform.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="n_fft">The size of Fourier transform</param>
+        /// <param name="hop_length">The hop length</param>
+        /// <param name="win_length">The window length</param>
+        /// <param name="window">The window function</param>
+        /// <param name="center">Whether the t-th frame is centered around t * hop_window, or not.</param>
+        /// <param name="normalized">Whether the output is normalized, or not.</param>
+        /// <param name="onesided">Whether the output is onesided or not.</param>
+        /// <param name="length">The length of the output tensor.</param>
+        /// <param name="return_complex">Whether a complex tensor is returned, or not.</param>
+        /// <returns>A tensor containing the result of Inverse Short-time Fourier transform</returns>
+        public static Tensor istft(Tensor input, long n_fft, long hop_length = -1, long win_length = -1, Tensor window = null, bool center = true, bool normalized = false, bool? onesided = null, long length = -1, bool return_complex = false) => input.istft(n_fft, hop_length, win_length, window, center, normalized, onesided, length, return_complex);
     }
 }
