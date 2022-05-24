@@ -9,6 +9,7 @@ __API Changes:__
 Strong name signing of the TorchSharp library to allow loading it in .NET Framework strongly name signed apps.
 Added the 'META' device type, which can be used to examine the affect of shape from tensor operations without actually doing any computations.<br/>
 Added a few methods from the torch.nn.utils namespace.<br/>
+Add torch.stft() and torch.istft()
 
 __Fixed Bugs:__
 
