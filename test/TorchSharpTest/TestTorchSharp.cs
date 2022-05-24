@@ -189,7 +189,6 @@ namespace TorchSharp
 
             Assert.Equal(101110, vec.NumberOfElements);
         }
-
         [Fact]
         public void TestUtilsVtoP()
         {
@@ -205,7 +204,7 @@ namespace TorchSharp
 
             var data = torch.rand(101110);
 
-            var vec = torch.nn.utils.vector_to_parameters(data, seq.parameters());
+            torch.nn.utils.vector_to_parameters(data, seq.parameters());
 
             var data1 = torch.nn.utils.parameters_to_vector(seq.parameters());
 

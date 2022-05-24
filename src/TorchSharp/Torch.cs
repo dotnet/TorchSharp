@@ -307,13 +307,13 @@ namespace TorchSharp
                 extern static double THSTensor_clip_grad_norm_(IntPtr tensors, int len, double max_norm, double norm_type);
 
                 [DllImport("LibTorchSharp")]
-                extern static double THSTensor_clip_grad_value_(IntPtr tensors, int len, double clip_value);
+                extern static void THSTensor_clip_grad_value_(IntPtr tensors, int len, double clip_value);
 
                 [DllImport("LibTorchSharp")]
                 extern static IntPtr THSTensor_parameters_to_vector(IntPtr tensors, int len);
 
                 [DllImport("LibTorchSharp")]
-                extern static IntPtr THSTensor_vector_to_parameters(IntPtr vec, IntPtr tensors, int len);
+                extern static void THSTensor_vector_to_parameters(IntPtr vec, IntPtr tensors, int len);
 
                 /// <summary>
                 /// Clips gradient norm of an iterable of parameters.
@@ -327,8 +327,9 @@ namespace TorchSharp
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
                         IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                        return THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
+                        var value = THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
+                        CheckForErrors();
+                        return value;
                     }
                 }
 
@@ -338,12 +339,12 @@ namespace TorchSharp
                 /// <param name="tensors">An enumeration of Tensors that will have gradients normalized</param>
                 /// <param name="clip_value">Maximum allowed value of the gradients. The gradients are clipped in the range [-clip_value,clip_value]</param>
                 /// <remarks>Gradients are modified in-place.</remarks>
-                public static double clip_grad_value_(IEnumerable<Modules.Parameter> tensors, double clip_value)
+                public static void clip_grad_value_(IEnumerable<Modules.Parameter> tensors, double clip_value)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
                         IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                        return THSTensor_clip_grad_value_(tensorsRef, parray.Array.Length, clip_value);
+                        THSTensor_clip_grad_value_(tensorsRef, parray.Array.Length, clip_value);
+                        CheckForErrors();
                     }
                 }
 
@@ -370,15 +371,13 @@ namespace TorchSharp
                 /// <param name="vec">a single vector represents the parameters of a model.</param>
                 /// <param name="tensors">An enumeration of Tensors that are the parameters of a model.</param>
                 /// <returns>A one-dimensional tensor with the values of all the parameters.</returns>
-                public static Tensor vector_to_parameters(Tensor vec, IEnumerable<Modules.Parameter> tensors)
+                public static void vector_to_parameters(Tensor vec, IEnumerable<Modules.Parameter> tensors)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
                         IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-                        var res = THSTensor_vector_to_parameters(vec.Handle, tensorsRef, parray.Array.Length);
-                        if (res == IntPtr.Zero)
-                            CheckForErrors();
-                        return new Tensor(res);
+                        THSTensor_vector_to_parameters(vec.Handle, tensorsRef, parray.Array.Length);
+                        CheckForErrors();
                     }
                 }
             }
