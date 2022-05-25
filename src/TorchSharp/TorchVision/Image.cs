@@ -42,7 +42,13 @@ namespace TorchSharp.torchvision
 
         public static async Task<Tensor> read_image_async(string filename, ImageReadMode mode = ImageReadMode.UNCHANGED, IImager imager = null)
         {
-            var data = await File.ReadAllBytesAsync(filename);
+            byte[] data;
+
+            using (FileStream stream = File.Open(filename, FileMode.Open)) {
+                data = new byte[stream.Length];
+                await stream.ReadAsync(data, 0, (int)stream.Length);
+            }
+
             return (imager ?? DefaultImager).DecodeImage(data, mode);
         }
 
