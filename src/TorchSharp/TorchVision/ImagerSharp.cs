@@ -14,6 +14,9 @@ namespace TorchSharp.torchvision
 {
     public static partial class io
     {
+        /// <summary>
+        /// <cref>Imager</cref> implemented using ImageSharp.
+        /// </summary>
         public sealed class ImagerSharp : Imager
         {
             public override ImageFormat DetectFormat(byte[] image)

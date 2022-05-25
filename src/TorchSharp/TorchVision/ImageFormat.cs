@@ -1,5 +1,8 @@
 namespace TorchSharp.torchvision
 {
+    /// <summary>
+    /// File format for an image.
+    /// </summary>
     public enum ImageFormat
     {
         Unknown,
