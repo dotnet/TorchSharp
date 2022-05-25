@@ -14,21 +14,17 @@ namespace TorchSharp.Examples
 {
     class IOReadWrite
     {
-        class SkiaImager : torchvision.io.IImager
+        class SkiaImager : torchvision.io.Imager
         {
-            public torchvision.io.ImageFormat DetectFormat(byte[] bytes)
+            public override torchvision.ImageFormat DetectFormat(byte[] bytes)
             {
                 throw new NotImplementedException();
             }
-            public Tensor DecodeImage(byte[] image, torchvision.io.ImageFormat format,  torchvision.io.ImageReadMode mode)
+            public override Tensor DecodeImage(byte[] image, torchvision.ImageFormat format,  torchvision.io.ImageReadMode mode)
             {
                 throw new NotImplementedException();
             }
-            public Tensor DecodeImage(byte[] image, torchvision.io.ImageReadMode mode)
-            {
-                throw new NotImplementedException();
-            }
-            public byte[] EncodeImage(Tensor image, torchvision.io.ImageFormat format)
+            public override byte[] EncodeImage(Tensor image, torchvision.ImageFormat format)
             {
                 throw new NotImplementedException();
             }
@@ -40,12 +36,12 @@ namespace TorchSharp.Examples
 
             Console.WriteLine($"Reading file {filename}");
 
-            //torchvision.io.DefaultImager = new SkiaImager();
+            torchvision.io.DefaultImager = new SkiaImager();
 
             var img = torchvision.io.read_image(filename, torchvision.io.ImageReadMode.RGB);
 
             // Add a batch dimension
-            var expanded  = img.unsqueeze(0);
+            var expanded = img.unsqueeze(0);
 
             Console.WriteLine($"Image has {expanded.shape[1]} colour channels with dimensions {expanded.shape[2]}x{expanded.shape[3]}");
 
@@ -57,7 +53,7 @@ namespace TorchSharp.Examples
                 ).forward(expanded);
 
 
-            torchvision.io.write_image(transformed.squeeze(), "image_transformed.jpg", torchvision.io.ImageFormat.JPEG);
+            torchvision.io.write_image(transformed.squeeze(), "image_transformed.jpg", torchvision.ImageFormat.Jpeg);
         }
     }
 }
