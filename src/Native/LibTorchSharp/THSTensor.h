@@ -212,6 +212,12 @@ EXPORT_API(Tensor) THSTensor_channel_shuffle(const Tensor tensor, const int64_t 
 
 EXPORT_API(double) THSTensor_clip_grad_norm_(const Tensor* tensor, const int length, const double max_norm, const double norm_type);
 
+EXPORT_API(void) THSTensor_clip_grad_value_(const Tensor* tensors, const int length, const double value);
+
+EXPORT_API(Tensor) THSTensor_parameters_to_vector(const Tensor* tensors, const int length);
+
+EXPORT_API(void) THSTensor_vector_to_parameters(const Tensor vec, const Tensor* tensors, const int length);
+
 EXPORT_API(Tensor) THSTensor_clone(const Tensor input);
 
 EXPORT_API(Tensor) THSTensor_contiguous(const Tensor input);

@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
+using System.Collections.Generic;
 using Xunit;
 
 using static TorchSharp.torch;
@@ -170,6 +171,45 @@ namespace TorchSharp
                     Assert.Equal(value1, value3);
                 }
             }
+        }
+
+        [Fact]
+        public void TestUtilsPtoV()
+        {
+            var lin1 = nn.Linear(1000, 100);
+            var lin2 = nn.Linear(100, 10);
+
+            var submodules = new List<(string name, torch.nn.Module submodule)>();
+            submodules.Add(("lin1", lin1));
+            submodules.Add(("lin2", lin2));
+
+            var seq = nn.Sequential(submodules);
+
+            var vec = torch.nn.utils.parameters_to_vector(seq.parameters());
+
+            Assert.Equal(101110, vec.NumberOfElements);
+        }
+        [Fact]
+        public void TestUtilsVtoP()
+        {
+            var lin1 = nn.Linear(1000, 100);
+            var lin2 = nn.Linear(100, 10);
+
+            var submodules = new List<(string name, torch.nn.Module submodule)>();
+            submodules.Add(("lin1", lin1));
+            submodules.Add(("relu1", nn.ReLU()));
+            submodules.Add(("lin2", lin2));
+
+            var seq = nn.Sequential(submodules);
+
+            var data = torch.rand(101110);
+
+            torch.nn.utils.vector_to_parameters(data, seq.parameters());
+
+            var data1 = torch.nn.utils.parameters_to_vector(seq.parameters());
+
+            Assert.Equal(data.shape, data1.shape);
+            Assert.Equal(data, data1);
         }
 
         // Because some of the tests mess with global state, and are run in parallel, we need to

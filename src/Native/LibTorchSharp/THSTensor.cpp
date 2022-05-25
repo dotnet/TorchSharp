@@ -127,10 +127,10 @@ void THSTensor_broadcast_tensors(const Tensor* tensors, const int length, Tensor
 {
     CATCH(
         auto res = torch::broadcast_tensors(toTensors<at::Tensor>((torch::Tensor**)tensors, length));
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     );
 }
 
@@ -149,6 +149,16 @@ Tensor THSTensor_channel_shuffle(const Tensor tensor, const int64_t groups)
     CATCH_TENSOR(torch::channel_shuffle(*tensor, groups));
 }
 
+Tensor THSTensor_parameters_to_vector(const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::nn::utils::parameters_to_vector(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
+}
+
+void THSTensor_vector_to_parameters(const Tensor vec, const Tensor* tensors, const int length)
+{
+    CATCH(torch::nn::utils::vector_to_parameters(*vec, toTensors<at::Tensor>((torch::Tensor**)tensors, length)););
+}
+
 double THSTensor_clip_grad_norm_(const Tensor* tensors, const int length, const double max_norm, const double norm_type)
 {
     double res = 0.0;
@@ -156,6 +166,17 @@ double THSTensor_clip_grad_norm_(const Tensor* tensors, const int length, const 
         res = torch::nn::utils::clip_grad_norm_(toTensors<at::Tensor>((torch::Tensor**)tensors, length), max_norm, norm_type);
     );
     return res;
+}
+
+void THSTensor_clip_grad_value_(const Tensor* tensors, const int length, const double value)
+{
+    std::vector<at::Tensor> vec;
+    CATCH(
+        for (auto i = 0; i < length; i++) {
+            vec.push_back(*tensors[i]);
+        }
+        torch::nn::utils::clip_grad_value_(vec, value);
+    );
 }
 
 Tensor THSTensor_cat(const Tensor* tensors, const int length, const int64_t dim)

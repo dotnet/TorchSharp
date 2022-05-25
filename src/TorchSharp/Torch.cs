@@ -304,26 +304,82 @@ namespace TorchSharp
             public static partial class utils
             {
                 [DllImport("LibTorchSharp")]
-                extern static double THSTensor_clip_grad_norm_(IntPtr tensor, int len, double max_norm, double norm_type);
+                extern static double THSTensor_clip_grad_norm_(IntPtr tensors, int len, double max_norm, double norm_type);
+
+                [DllImport("LibTorchSharp")]
+                extern static void THSTensor_clip_grad_value_(IntPtr tensors, int len, double clip_value);
+
+                [DllImport("LibTorchSharp")]
+                extern static IntPtr THSTensor_parameters_to_vector(IntPtr tensors, int len);
+
+                [DllImport("LibTorchSharp")]
+                extern static void THSTensor_vector_to_parameters(IntPtr vec, IntPtr tensors, int len);
 
                 /// <summary>
                 /// Clips gradient norm of an iterable of parameters.
                 /// The norm is computed over all gradients together, as if they were concatenated into a single vector.
-                /// Gradients are modified in-place.
                 /// </summary>
                 /// <param name="tensors"></param>
                 /// <param name="max_norm"></param>
                 /// <param name="norm_type"></param>
-                /// <returns></returns>
+                /// <remarks>Gradients are modified in-place.</remarks>
                 public static double clip_grad_norm_(IEnumerable<Modules.Parameter> tensors, double max_norm, double norm_type = 2.0)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
                         IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-
-                        return THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
+                        var value = THSTensor_clip_grad_norm_(tensorsRef, parray.Array.Length, max_norm, norm_type);
+                        CheckForErrors();
+                        return value;
                     }
                 }
 
+                /// <summary>
+                /// Clips gradient of an iterable of parameters at specified value.
+                /// </summary>
+                /// <param name="tensors">An enumeration of Tensors that will have gradients normalized</param>
+                /// <param name="clip_value">Maximum allowed value of the gradients. The gradients are clipped in the range [-clip_value,clip_value]</param>
+                /// <remarks>Gradients are modified in-place.</remarks>
+                public static void clip_grad_value_(IEnumerable<Modules.Parameter> tensors, double clip_value)
+                {
+                    using (var parray = new PinnedArray<IntPtr>()) {
+                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                        THSTensor_clip_grad_value_(tensorsRef, parray.Array.Length, clip_value);
+                        CheckForErrors();
+                    }
+                }
+
+                /// <summary>
+                /// Convert parameters to one vector
+                /// </summary>
+                /// <param name="tensors">An enumeration of Tensors that are the parameters of a model.</param>
+                /// <returns>A one-dimensional tensor with the values of all the parameters.</returns>
+                public static Tensor parameters_to_vector(IEnumerable<Modules.Parameter> tensors)
+                {
+                    using (var parray = new PinnedArray<IntPtr>()) {
+                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                        var res = THSTensor_parameters_to_vector(tensorsRef, parray.Array.Length);
+                        if (res == IntPtr.Zero)
+                            CheckForErrors();
+                        return new Tensor(res);
+                    }
+                }
+
+                /// <summary>
+                /// Convert one vector to parameters.
+                /// </summary>
+                /// <param name="vec">a single vector represents the parameters of a model.</param>
+                /// <param name="tensors">An enumeration of Tensors that are the parameters of a model.</param>
+                /// <returns>A one-dimensional tensor with the values of all the parameters.</returns>
+                public static void vector_to_parameters(Tensor vec, IEnumerable<Modules.Parameter> tensors)
+                {
+                    using (var parray = new PinnedArray<IntPtr>()) {
+                        IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                        THSTensor_vector_to_parameters(vec.Handle, tensorsRef, parray.Array.Length);
+                        CheckForErrors();
+                    }
+                }
             }
         }
 
