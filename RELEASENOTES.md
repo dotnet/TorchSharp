@@ -2,6 +2,19 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.96.7
+
+__API Changes:__
+
+Strong name signing of the TorchSharp library to allow loading it in .NET Framework strongly name signed apps.
+Added the 'META' device type, which can be used to examine the affect of shape from tensor operations without actually doing any computations.<br/>
+Added a few methods from the torch.nn.utils namespace.<br/>
+Add torch.stft() and torch.istft()
+
+__Fixed Bugs:__
+
+#567 pad missing the choice to fill at start or end<br/>
+
 ## NuGet Version 0.96.6
 
 __API Changes:__

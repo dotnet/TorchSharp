@@ -454,7 +454,7 @@ namespace TorchSharp.torchvision
 
                 var padding = new long[] { k0d2, k1d2, k0sm1 - k0d2, k1sm1 - k1d2 };
 
-                using var img1 = TorchSharp.torch.nn.functional.pad(img0, padding, PaddingModes.Reflect);
+                using var img1 = TorchSharp.torchvision.transforms.functional.pad(img0, padding, padding_mode: PaddingModes.Reflect);
                 using var img2 = torch.nn.functional.conv2d(img1, kernel, groups: img1.shape[img1.shape.Length - 3]);
 
                 return SqueezeOut(img2, needCast, needSqueeze, out_dtype);
@@ -536,9 +536,74 @@ namespace TorchSharp.torchvision
             /// <param name="fill">Pixel fill value for constant fill.</param>
             /// <param name="padding_mode"></param>
             /// <returns></returns>
-            public static Tensor pad(Tensor input, long[] padding, int fill = 0, PaddingModes padding_mode = PaddingModes.Constant)
+            public static Tensor pad(Tensor input, long[] padding, double fill = 0, PaddingModes padding_mode = PaddingModes.Constant)
             {
-                return torch.nn.functional.pad(input, padding, padding_mode, fill);
+                long[] correctedPad = new long[4];
+
+                switch (padding.Length) {
+                case 1:
+                    correctedPad = new long[] { padding[0], padding[0], padding[0], padding[0] };
+                    break;
+                case 2:
+                    correctedPad = new long[] { padding[0], padding[0], padding[1], padding[1] };
+                    break;
+                case 4:
+                    correctedPad = new long[] { padding[0], padding[2], padding[1], padding[3] };
+                    break;
+                }
+
+                return torch.nn.functional.pad(input, correctedPad, padding_mode, fill);
+            }
+
+            /// <summary>
+            /// Pad the given image on all sides with the given “pad” value.
+            /// </summary>
+            /// <param name="input">An image tensor.</param>
+            /// <param name="padding">
+            /// Padding on each border. If a single int is provided this is used to pad all borders.
+            /// If sequence of length 2 is provided this is the padding on left/right and top/bottom respectively.
+            /// If a sequence of length 4 is provided this is the padding for the left, top, right and bottom borders respectively.
+            /// </param>
+            /// <param name="fill">Pixel fill value for constant fill.</param>
+            /// <param name="padding_mode"></param>
+            /// <returns></returns>
+            public static Tensor pad(Tensor input, long padding, double fill = 0, PaddingModes padding_mode = PaddingModes.Constant)
+            {
+                return torch.nn.functional.pad(input, new[] { padding, padding, padding, padding } , padding_mode, fill);
+            }
+
+            /// <summary>
+            /// Pad the given image on all sides with the given “pad” value.
+            /// </summary>
+            /// <param name="input">An image tensor.</param>
+            /// <param name="padding">
+            /// Padding on each border. If a single int is provided this is used to pad all borders.
+            /// If sequence of length 2 is provided this is the padding on left/right and top/bottom respectively.
+            /// If a sequence of length 4 is provided this is the padding for the left, top, right and bottom borders respectively.
+            /// </param>
+            /// <param name="fill">Pixel fill value for constant fill.</param>
+            /// <param name="padding_mode"></param>
+            /// <returns></returns>
+            public static Tensor pad(Tensor input, (long, long) padding, double fill = 0, PaddingModes padding_mode = PaddingModes.Constant)
+            {
+                return torch.nn.functional.pad(input, new[] { padding.Item1, padding.Item1, padding.Item2, padding.Item2 }, padding_mode, fill);
+            }
+
+            /// <summary>
+            /// Pad the given image on all sides with the given “pad” value.
+            /// </summary>
+            /// <param name="input">An image tensor.</param>
+            /// <param name="padding">
+            /// Padding on each border. If a single int is provided this is used to pad all borders.
+            /// If sequence of length 2 is provided this is the padding on left/right and top/bottom respectively.
+            /// If a sequence of length 4 is provided this is the padding for the left, top, right and bottom borders respectively.
+            /// </param>
+            /// <param name="fill">Pixel fill value for constant fill.</param>
+            /// <param name="padding_mode"></param>
+            /// <returns></returns>
+            public static Tensor pad(Tensor input, (long, long, long, long) padding, double fill = 0, PaddingModes padding_mode = PaddingModes.Constant)
+            {
+                return torch.nn.functional.pad(input, new[] { padding.Item1, padding.Item3, padding.Item2, padding.Item4 }, padding_mode, fill);
             }
 
             /// <summary>

@@ -88,6 +88,11 @@ namespace TorchSharp
         public static Device CUDA = new Device(DeviceType.CUDA, -1);
 
         /// <summary>
+        /// Convenience declaration of a META device accessible everywhere.
+        /// </summary>
+        public static Device META = new Device(DeviceType.META, -1);
+
+        /// <summary>
         /// Factory for a device object, following the Pytorch API.
         /// </summary>
         /// <param name="description">String description of the device, e.g. 'cpu' or 'cuda:0'</param>

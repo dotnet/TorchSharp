@@ -212,6 +212,12 @@ EXPORT_API(Tensor) THSTensor_channel_shuffle(const Tensor tensor, const int64_t 
 
 EXPORT_API(double) THSTensor_clip_grad_norm_(const Tensor* tensor, const int length, const double max_norm, const double norm_type);
 
+EXPORT_API(void) THSTensor_clip_grad_value_(const Tensor* tensors, const int length, const double value);
+
+EXPORT_API(Tensor) THSTensor_parameters_to_vector(const Tensor* tensors, const int length);
+
+EXPORT_API(void) THSTensor_vector_to_parameters(const Tensor vec, const Tensor* tensors, const int length);
+
 EXPORT_API(Tensor) THSTensor_clone(const Tensor input);
 
 EXPORT_API(Tensor) THSTensor_contiguous(const Tensor input);
@@ -1483,3 +1489,7 @@ EXPORT_API(Tensor) THSTensor_hamming_window(const int64_t len, bool periodic, do
 EXPORT_API(Tensor) THSTensor_hann_window(const int64_t len, bool periodic, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_kaiser_window(const int64_t len, bool periodic, double beta, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
+EXPORT_API(Tensor) THSTensor_stft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool normalized, bool onesided, bool return_complex);
+
+EXPORT_API(Tensor) THSTensor_istft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool center, bool normalized, bool onesided, int64_t length, bool return_complex);
