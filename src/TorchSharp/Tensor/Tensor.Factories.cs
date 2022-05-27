@@ -2080,7 +2080,7 @@ namespace TorchSharp
         /// var tensor = torch.tensor_from_array(rawArray: array, dtype: torch.ScalarType.Float64, device: torch.Device.CPU, requiresGrad: false);
         /// </code>
         /// </example>
-        public static Tensor tensor_from_array(Array rawArray, ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        public static Tensor from_array(Array rawArray, ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
         {
             // enumerates over all dimensions of the arbitrary array
             // and returns the length of the dimension
