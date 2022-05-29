@@ -95,7 +95,7 @@ namespace TorchSharp
             /// <param name="center">Whether the t-th frame is centered around t * hop_window, or not.</param>
             /// <param name="pad_mode">The padding mode used when center is true.</param>
             /// <param name="onesided">Whether the output is onesided or not.</param>
-            /// <returns></returns>
+            /// <returns>Inverse of spectrogram</returns>
             public static torch.Tensor inverse_spectrogram(torch.Tensor spectrogram, long? length, long pad, torch.Tensor window, long n_fft, long hop_length, long win_length, bool normalized, bool center = true, PaddingModes pad_mode = PaddingModes.Reflect, bool onesided = true)
             {
                 if (!spectrogram.is_complex()) {

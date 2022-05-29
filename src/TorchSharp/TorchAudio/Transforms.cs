@@ -177,6 +177,22 @@ namespace TorchSharp
 
         public static partial class transforms
         {
+            /// <summary>
+            /// Compute spectrograms from audio signals.
+            /// </summary>
+            /// <param name="n_fft">The size of Fourier transform</param>
+            /// <param name="hop_length">The hop length</param>
+            /// <param name="win_length">The window length</param>
+            /// <param name="pad">Padding on the sides</param>
+            /// <param name="window_fn">The callback to create a window function</param>
+            /// <param name="window">The window function</param>
+            /// <param name="power">Exponent for the magnitude spectrogram</param>
+            /// <param name="normalized">Whether the output is normalized, or not.</param>
+            /// <param name="center">Whether the t-th frame is centered around t * hop_window, or not.</param>
+            /// <param name="pad_mode">The padding mode used when center is true.</param>
+            /// <param name="onesided">Whether the output is onesided or not.</param>
+            /// <param name="return_complex">Deprecated and not used.</param>
+            /// <returns>ITransform to compute spectrograms of audio signals</returns>
             public static ITransform Spectrogram(
                 long n_fft = 400,
                 long? win_length = null,
@@ -206,6 +222,20 @@ namespace TorchSharp
                     return_complex: return_complex);
             }
 
+            /// <summary>
+            /// Compute inverse of spectrogram.
+            /// </summary>
+            /// <param name="n_fft">The size of Fourier transform</param>
+            /// <param name="hop_length">The hop length</param>
+            /// <param name="win_length">The window length</param>
+            /// <param name="pad">Padding on the sides</param>
+            /// <param name="window_fn">The callback to create a window function</param>
+            /// <param name="window">The window function</param>
+            /// <param name="normalized">Whether the output is normalized, or not.</param>
+            /// <param name="center">Whether the t-th frame is centered around t * hop_window, or not.</param>
+            /// <param name="pad_mode">The padding mode used when center is true.</param>
+            /// <param name="onesided">Whether the output is onesided or not.</param>
+            /// <returns>ITransform to compute inverse of spectrogram</returns>
             public static ITransform InverseSpectrogram(
                 long n_fft = 400,
                 long? win_length = null,
