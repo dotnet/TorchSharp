@@ -20,11 +20,6 @@ namespace TorchSharp
 {
     public static partial class torchaudio
     {
-        public interface ITransform
-        {
-            Tensor forward(Tensor input);
-        }
-
         public delegate torch.Tensor WindowFunction(long win_length);
 
         internal class Spectrogram : ITransform
