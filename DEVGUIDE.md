@@ -149,9 +149,9 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 1. Familiarise yourself with download links. See https://pytorch.org/get-started/locally/ for download links.
 
-   For example Linux, LibTorch 1.9.0 uses link
+   For example Linux, LibTorch 1.11.0 uses link
 
-       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.9.0%2Bcpu.zip
+       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.11.0%2Bcpu.zip
 
    The downloads are acquired automatically in the build process. To update the version, update these:
 
@@ -175,7 +175,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
    Check the contents of the unzip of the archive, e.g.
 
-       bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.9.0\libtorch\lib
+       bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.11.0\libtorch\lib
 
    You must also precisely refactor the CUDA binaries into multiple parts so each package ends up under ~300MB.
 

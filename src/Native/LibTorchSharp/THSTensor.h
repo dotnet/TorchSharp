@@ -3,7 +3,6 @@
 
 #include "../Stdafx.h"
 
-#include "TH/THTensor.h"
 #include "torch/torch.h"
 
 #include "Utils.h"

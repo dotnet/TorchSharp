@@ -12,10 +12,8 @@
     <NativeAssemblyReference Include="asmjit" />
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="fbgemm" />
-    <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="libiomp5md" />
     <NativeAssemblyReference Include="libiompstubs5md" />
-    <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
