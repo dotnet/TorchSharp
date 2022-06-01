@@ -149,13 +149,13 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 1. Familiarise yourself with download links. See https://pytorch.org/get-started/locally/ for download links.
 
-   For example Linux, LibTorch 1.9.0 uses link
+   For example Linux, LibTorch 1.11.0 uses link
 
-       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.9.0%2Bcpu.zip
+       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.11.0%2Bcpu.zip
 
    The downloads are acquired automatically in the build process. To update the version, update these:
 
-       <LibTorchVersion>1.9.0</LibTorchVersion>
+       <LibTorchVersion>1.11.0</LibTorchVersion>
 
 2. Run these to test downloads and update SHA hashes for the various LibTorch downloads:
 
@@ -175,7 +175,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
    Check the contents of the unzip of the archive, e.g.
 
-       bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.9.0\libtorch\lib
+       bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.11.0\libtorch\lib
 
    You must also precisely refactor the CUDA binaries into multiple parts so each package ends up under ~300MB.
 
@@ -220,7 +220,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 8. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
    get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` in [azure-pipelines.yml](azure-pipelines.yml):
 
-       <LibTorchPackageVersion>1.10.0.1</LibTorchPackageVersion>
+       <LibTorchPackageVersion>1.11.0.1</LibTorchPackageVersion>
 
        dotnet pack -c Debug /p:SkipCuda=true
        dotnet pack -c Release /p:SkipCuda=true

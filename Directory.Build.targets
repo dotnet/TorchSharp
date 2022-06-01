@@ -11,13 +11,9 @@
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' != 'true' or '$(SkipCuda)' == 'true') and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="asmjit" />
     <NativeAssemblyReference Include="c10" />
-    <NativeAssemblyReference Include="caffe2_detectron_ops" />
-    <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
     <NativeAssemblyReference Include="fbgemm" />
-    <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="libiomp5md" />
     <NativeAssemblyReference Include="libiompstubs5md" />
-    <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
@@ -29,8 +25,6 @@
     <NativeAssemblyReference Include="c10" Variant="cuda\" />
     <NativeAssemblyReference Include="asmjit" Variant="cuda\" />
     <NativeAssemblyReference Include="c10_cuda" Variant="cuda\" />
-    <NativeAssemblyReference Include="caffe2_detectron_ops_gpu" Variant="cuda\" />
-    <NativeAssemblyReference Include="caffe2_module_test_dynamic" Variant="cuda\" />
     <NativeAssemblyReference Include="caffe2_nvrtc" Variant="cuda\" />
     <NativeAssemblyReference Include="cublas64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="cublasLt64_11" Variant="cuda\" />
@@ -54,7 +48,6 @@
     <NativeAssemblyReference Include="nvrtc64_112_0" Variant="cuda\" />
     <NativeAssemblyReference Include="nvrtc-builtins64_113" Variant="cuda\" />
     <NativeAssemblyReference Include="nvToolsExt64_1" Variant="cuda\" />
-    <NativeAssemblyReference Include="pytorch_jni" Variant="cuda\" />
     <NativeAssemblyReference Include="torch" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cpu" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cuda" Variant="cuda\" />
@@ -67,9 +60,6 @@
   <!-- Mac libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64'and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="c10" />
-    <NativeAssemblyReference Include="caffe2_detectron_ops" />
-    <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
-    <NativeAssemblyReference Include="caffe2_observers" />
     <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="iomp5" />
     <NativeAssemblyReference Include="jitbackend_test" />
@@ -86,9 +76,6 @@
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="backend_with_compiler" />
     <NativeAssemblyReference Include="c10" />
-    <NativeAssemblyReference Include="caffe2_detectron_ops" />
-    <NativeAssemblyReference Include="caffe2_module_test_dynamic" />
-    <NativeAssemblyReference Include="caffe2_observers" />
     <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="jitbackend_test" />
     <NativeAssemblyReference Include="pytorch_jni" />

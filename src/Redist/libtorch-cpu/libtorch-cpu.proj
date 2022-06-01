@@ -28,13 +28,9 @@
   <ItemGroup Condition="'$(TargetOS)' == 'windows'">
     <File Include="libtorch\lib\asmjit.dll" />
     <File Include="libtorch\lib\c10.dll" />
-    <File Include="libtorch\lib\caffe2_detectron_ops.dll" />
-    <File Include="libtorch\lib\caffe2_module_test_dynamic.dll" />
     <File Include="libtorch\lib\fbgemm.dll" />
-    <File Include="libtorch\lib\fbjni.dll" />
     <File Include="libtorch\lib\libiomp5md.dll" />
     <File Include="libtorch\lib\libiompstubs5md.dll" />
-    <File Include="libtorch\lib\pytorch_jni.dll" />
     <File Include="libtorch\lib\torch.dll" />
     <File Include="libtorch\lib\torch_cpu.dll" />
     <File Include="libtorch\lib\torch_global_deps.dll" />
@@ -43,9 +39,6 @@
   <ItemGroup Condition="'$(TargetOS)' == 'mac'">
     <File Include="libtorch\lib\libbackend_with_compiler.dylib" />
     <File Include="libtorch\lib\libc10.dylib" />
-    <File Include="libtorch\lib\libcaffe2_detectron_ops.dylib" />
-    <File Include="libtorch\lib\libcaffe2_module_test_dynamic.dylib" />
-    <File Include="libtorch\lib\libcaffe2_observers.dylib" />
     <File Include="libtorch\lib\libfbjni.dylib" />
     <File Include="libtorch\lib\libiomp5.dylib" />
     <File Include="libtorch\lib\libjitbackend_test.dylib" />
@@ -60,9 +53,6 @@
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
     <File Include="libtorch\lib\libbackend_with_compiler.so" />
     <File Include="libtorch\lib\libc10.so" />
-    <File Include="libtorch\lib\libcaffe2_detectron_ops.so" />
-    <File Include="libtorch\lib\libcaffe2_module_test_dynamic.so" />
-    <File Include="libtorch\lib\libcaffe2_observers.so" />
     <File Include="libtorch\lib\libfbjni.so" />
     <File Include="libtorch\lib\libjitbackend_test.so" />
     <File Include="libtorch\lib\libnnapi_backend.so" />

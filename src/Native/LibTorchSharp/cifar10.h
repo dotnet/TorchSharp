@@ -8,8 +8,6 @@
 
 #include "torch/torch.h"
 
-#include <torch/csrc/WindowsTorchApiMacro.h>
-
 #include <string>
 #include <vector>
 
