@@ -19,7 +19,7 @@
     <SourceDir>$(RepoRoot)src/</SourceDir>
     <PkgDir>$(RepoRoot)pkg/</PkgDir>
 
-    <LibTorchPackageVersion>1.10.0.1</LibTorchPackageVersion>
+    <LibTorchPackageVersion>1.11.0.1</LibTorchPackageVersion>
 
     <!-- when building on local machines the massive downloads get placed up one directory -->
     <!-- so we can clean without triggering a re-download-->
@@ -78,7 +78,7 @@
   <!-- use stable versions for libtorch packages based on LibTorch version number scheme-->
   <!-- we manually update these -->
   <PropertyGroup Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">
-    <LibTorchPackageVersion>1.10.0.1</LibTorchPackageVersion>
+    <LibTorchPackageVersion>1.11.0.1</LibTorchPackageVersion>
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>
