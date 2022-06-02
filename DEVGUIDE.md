@@ -195,7 +195,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
    Because file sizes change from release to release, it may be necessary to add or remove fragments. When you add a fragment, you also need to add a corresponding project folder under the `pkg/` top-level folder. The process of doing so is copy-paste-rename of existing folders. The same goes for adding parts (whether fragmented or not): you should add a corresponding folder and project file. If you remove a fragment (or part), you should remove the corresponding folder, or CI will end up building empty packages.
 
-   3. Add the SHA files:
+3. Add the SHA files:
 
        git add src\Redist\libtorch-cpu\*.sha
        git add src\Redist\libtorch-cuda-11.3\*.sha
