@@ -205,8 +205,8 @@ namespace ConsoleApp2
                 }
             }
             catch (Exception ex) {
-                Console.WriteLine(ex.ToString());
-                Console.WriteLine(ex.StackTrace);
+                Console.Error.WriteLine(ex.ToString());
+                Console.Error.WriteLine(ex.StackTrace);
             }
             // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END HERE^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         }
