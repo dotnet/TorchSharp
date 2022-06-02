@@ -113,7 +113,7 @@ For this reason, we do the following
    install/detect/link of PyTorch CUDA on all downstream systems, whcih is extremely problematic
    for many practical reasons).
 
-   For example, the CUDA package fragments are defined in [libtorch-cuda](src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj). See more details later in this document.
+   For example, the CUDA package fragments are defined in [libtorch-cuda](src/Redist/libtorch-cuda-11.3/libtorch-cuda-11.3.proj). See more details later in this document.
 
 3. The `libtorch-*` packages are built in Azure DevOps CI
    [using this build pipeline](https://donsyme.visualstudio.com/TorchSharp/_build?definitionId=1&_a=summary) but only in main
@@ -173,7 +173,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
    Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done in CI.
 
    At this point you must **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
-   [libtorch-cpu](src\Redist\libtorch-cpu\libtorch-cpu.proj) and [libtorch-cuda](src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj).
+   [libtorch-cpu](src/Redist/libtorch-cpu/libtorch-cpu.proj) and [libtorch-cuda](src/Redist/libtorch-cuda-11.3/libtorch-cuda-11.3.proj).
 
    Check the contents of the unzip of the archive, e.g.
 
