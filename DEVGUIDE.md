@@ -113,6 +113,8 @@ For this reason, we do the following
    install/detect/link of PyTorch CUDA on all downstream systems, whcih is extremely problematic
    for many practical reasons).
 
+   For example, the CUDA package fragments are defined in [libtorch-cuda](src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj). See more details later in this document.
+
 3. The `libtorch-*` packages are built in Azure DevOps CI
    [using this build pipeline](https://donsyme.visualstudio.com/TorchSharp/_build?definitionId=1&_a=summary) but only in main
    branch and only when `BuildLibTorchPackages` is set to true in [azure-pipelines.yml](azure-pipelines.yml) in the main branch.
@@ -179,7 +181,21 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
    You must also precisely refactor the CUDA binaries into multiple parts so each package ends up under ~300MB.
 
-3. Add the SHA files:
+   For example, the following snippet spreads the `torch_cuda_cu.dll` binary file into four fragments. 
+
+   ```xml
+    <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment3" FileUnstitchIndex="3" FileUnstitchStart="750000000" FileUnstitchSize="-1" />
+   ```
+
+   They must all be called either 'primary,' which should be the first fragment, or 'fragmentN' where 'N' is the ordinal number of the fragment, starting with '1'. The current logic allows for as many as 10 non-primary fragments. If more are needed, the code in [FileRestitcher.cs](pkg\FileRestitcher\FileRestitcher\FileRestitcher.cs) and [RestitchPackage.targets](pkg\common\RestitchPackage.targets) needs to be updated. Note that the size of each fragment is expressed in bytes, and that fragment start must be
+   the sum of the size of all previous fragments. A '-1' should be used for the last fragment (and only for the last fragment): it means that the fragment size will be based on how much there is still left of the file.
+
+   Because file sizes change from release to release, it may be necessary to add or remove fragments. When you add a fragment, you also need to add a corresponding project folder under the `pkg/` top-level folder. The process of doing so is copy-paste-rename of existing folders. The same goes for adding parts (whether fragmented or not): you should add a corresponding folder and project file. If you remove a fragment (or part), you should remove the corresponding folder, or CI will end up building empty packages.
+
+   3. Add the SHA files:
 
        git add src\Redist\libtorch-cpu\*.sha
        git add src\Redist\libtorch-cuda-11.3\*.sha
@@ -227,7 +243,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
        dotnet pack -c Debug
        dotnet pack -c Release
 
-9. Submit to CI and debug problems
+9. Submit to CI and debug problems.
 
 10. Remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in in [azure-pipelines.yml](azure-pipelines.yml)
 

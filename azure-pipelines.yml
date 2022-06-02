@@ -521,7 +521,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp.*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -530,7 +530,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp-*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -540,7 +540,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -550,7 +550,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -560,7 +560,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -605,7 +605,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -616,7 +616,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -627,7 +627,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -638,7 +638,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -649,7 +649,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -692,7 +692,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -703,7 +703,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -714,7 +714,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -725,7 +725,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/TestingPackages'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
