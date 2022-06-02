@@ -146,11 +146,11 @@ Tensor THSLinalg_matrix_rank(const Tensor tensor, const double tol, const bool h
 {
     if (has_tol)
     {
-        CATCH_TENSOR(torch::linalg::matrix_rank(*tensor, tol, hermitian));
+        CATCH_TENSOR(at::matrix_rank(*tensor, tol, hermitian));
     }
     else
     {
-        CATCH_TENSOR(torch::linalg::matrix_rank(*tensor, c10::nullopt, hermitian));
+        CATCH_TENSOR(at::matrix_rank(*tensor, hermitian));
     }
 }
 

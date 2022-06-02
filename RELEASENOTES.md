@@ -4,6 +4,10 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.96.7
 
+__Dependency Changes:__
+
+This version integrates with the libtorch 1.10.0 backend. API updates to follow.<br/>
+
 __API Changes:__
 
 Strong name signing of the TorchSharp library to allow loading it in .NET Framework strongly name signed apps.

@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include "TH/THGeneral.h"
 #include "torch/torch.h"
 
 extern thread_local char *torch_last_err;
