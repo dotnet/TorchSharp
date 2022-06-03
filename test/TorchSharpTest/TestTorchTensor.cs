@@ -657,8 +657,22 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestFactory()
+        public void TestFromArrayFactory()
         {
+            {
+                var array = new bool[8];
+                var t = torch.tensor(array);
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.Bool, t.dtype);
+            }
+
+            {
+                var array = new int[8];
+                var t = torch.tensor(array);
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.Int32, t.dtype);
+            }
+
             {
                 var array = new float[8];
                 var t = torch.tensor(array);
@@ -685,6 +699,179 @@ namespace TorchSharp
             {
                 var array = new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
                 var t = torch.from_array(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 2, 2, 2 }, t.shape);
+                Assert.Equal(ScalarType.Float64, t.dtype);
+            }
+        }
+
+
+        [Fact]
+        public void TestMDTensorFactoryInt32()
+        {
+            {
+                var array = new int[8];
+                var t = torch.tensor(array);
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.Int32, t.dtype);
+            }
+
+            {
+                var array = new int[1, 2];
+                var t = torch.tensor(array);
+                Assert.Equal(2, t.ndim);
+                Assert.Equal(new long[] { 1, 2 }, t.shape);
+                Assert.Equal(ScalarType.Int32, t.dtype);
+            }
+
+            {
+                var array = new int[1, 2, 3];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3 }, t.shape);
+                Assert.Equal(ScalarType.Int32, t.dtype);
+            }
+
+            {
+                var array = new int[1, 2, 3, 4];
+                var t = torch.tensor(array);
+                Assert.Equal(4, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
+                Assert.Equal(ScalarType.Int32, t.dtype);
+            }
+
+            {
+                var array = new int[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 2, 2, 2 }, t.shape);
+                Assert.Equal(ScalarType.Int32, t.dtype);
+            }
+        }
+
+        [Fact]
+        public void TestMDTensorFactoryInt64()
+        {
+            {
+                var array = new long[8];
+                var t = torch.tensor(array);
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.Int64, t.dtype);
+            }
+
+            {
+                var array = new long[1, 2];
+                var t = torch.tensor(array);
+                Assert.Equal(2, t.ndim);
+                Assert.Equal(new long[] { 1, 2 }, t.shape);
+                Assert.Equal(ScalarType.Int64, t.dtype);
+            }
+
+            {
+                var array = new long[1, 2, 3];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3 }, t.shape);
+                Assert.Equal(ScalarType.Int64, t.dtype);
+            }
+
+            {
+                var array = new long[1, 2, 3, 4];
+                var t = torch.tensor(array);
+                Assert.Equal(4, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
+                Assert.Equal(ScalarType.Int64, t.dtype);
+            }
+
+            {
+                var array = new long[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 2, 2, 2 }, t.shape);
+                Assert.Equal(ScalarType.Int64, t.dtype);
+            }
+        }
+
+        [Fact]
+        public void TestMDTensorFactoryFloat32()
+        {
+            {
+                var array = new float[8];
+                var t = torch.tensor(array);
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.Float32, t.dtype);
+            }
+
+            {
+                var array = new float[1, 2];
+                var t = torch.tensor(array);
+                Assert.Equal(2, t.ndim);
+                Assert.Equal(new long[] { 1, 2 }, t.shape);
+                Assert.Equal(ScalarType.Float32, t.dtype);
+            }
+
+            {
+                var array = new float[1, 2, 3];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3 }, t.shape);
+                Assert.Equal(ScalarType.Float32, t.dtype);
+            }
+
+            {
+                var array = new float[1, 2, 3, 4];
+                var t = torch.tensor(array);
+                Assert.Equal(4, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
+                Assert.Equal(ScalarType.Float32, t.dtype);
+            }
+
+            {
+                var array = new float[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 2, 2, 2 }, t.shape);
+                Assert.Equal(ScalarType.Float32, t.dtype);
+            }
+        }
+
+        [Fact]
+        public void TestMDTensorFactoryFloat64()
+        {
+            {
+                var array = new double[8];
+                var t = torch.tensor(array);
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.Float64, t.dtype);
+            }
+
+            {
+                var array = new double[1, 2];
+                var t = torch.tensor(array);
+                Assert.Equal(2, t.ndim);
+                Assert.Equal(new long[] { 1, 2 }, t.shape);
+                Assert.Equal(ScalarType.Float64, t.dtype);
+            }
+
+            {
+                var array = new double[1, 2, 3];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3 }, t.shape);
+                Assert.Equal(ScalarType.Float64, t.dtype);
+            }
+
+            {
+                var array = new double[1, 2, 3, 4];
+                var t = torch.tensor(array);
+                Assert.Equal(4, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
+                Assert.Equal(ScalarType.Float64, t.dtype);
+            }
+
+            {
+                var array = new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
+                var t = torch.tensor(array);
                 Assert.Equal(3, t.ndim);
                 Assert.Equal(new long[] { 2, 2, 2 }, t.shape);
                 Assert.Equal(ScalarType.Float64, t.dtype);
