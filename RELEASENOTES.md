@@ -2,6 +2,14 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.96.8
+
+__API Changes:__
+
+Added torch.from_array() API to create a tensor from an arbitry-dimension .NET array.<br/>
+Added torch.tensor() overloads for most common dimensions of .NET arrays: ndim = [1,2,3,4]<br/>
+Added the most significant API additions from Pytorch 1.11.
+
 ## NuGet Version 0.96.7
 
 __Dependency Changes:__
