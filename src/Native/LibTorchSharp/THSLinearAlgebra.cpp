@@ -37,6 +37,11 @@ Tensor THSLinalg_cond_none(const Tensor tensor)
     CATCH_TENSOR(torch::linalg_cond(*tensor));
 }
 
+Tensor THSLinalg_cross(const Tensor input, const Tensor other, const int64_t dim)
+{
+    CATCH_TENSOR(torch::linalg_cross(*input, *other, dim));
+}
+
 Tensor THSLinalg_det(const Tensor tensor)
 {
     CATCH_TENSOR(torch::linalg::det(*tensor));
@@ -121,6 +126,14 @@ Tensor THSLinalg_lstsq_rcond(const Tensor A, const Tensor B, const double rcond,
     *residuals = ResultTensor(std::get<1>(res));
     *rank = ResultTensor(std::get<2>(res));
     *singular_values = ResultTensor(std::get<3>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSLinalg_lu_factor(const Tensor A, const bool pivot, Tensor* pivots)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg::lu_factor(*A, pivot););
+    *pivots = ResultTensor(std::get<1>(res));
     return ResultTensor(std::get<0>(res));
 }
 
@@ -302,6 +315,29 @@ Tensor THSTensor_lgamma(const Tensor tensor)
 Tensor THSTensor_norm(const Tensor tensor, float p)
 {
     CATCH_TENSOR(tensor->norm(p));
+}
+
+Tensor THSTensor_lu(const Tensor tensor, bool pivot, bool get_infos, Tensor* infos, Tensor* pivots)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg_lu_factor_ex(*tensor, pivot, false););
+    *infos = get_infos ? ResultTensor(std::get<2>(res)) : nullptr;
+    *pivots = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_lu_solve(const Tensor tensor, const Tensor LU_data, const Tensor LU_pivots)
+{
+    CATCH_TENSOR(tensor->lu_solve(*LU_data, *LU_pivots));
+}
+
+Tensor THSTensor_lu_unpack(const Tensor LU_data, const Tensor LU_pivots, bool unpack_data, bool unpack_pivots, Tensor* L, Tensor* U)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
+    CATCH(res = torch::lu_unpack(*LU_data, *LU_pivots, unpack_data, unpack_pivots););
+    *U = ResultTensor(std::get<2>(res));
+    *L = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
 }
 
 Tensor THSTensor_norm_along_dimension(const Tensor tensor, const int64_t dim, const bool keepdim, float p)

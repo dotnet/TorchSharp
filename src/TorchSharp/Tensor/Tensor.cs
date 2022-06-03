@@ -2748,9 +2748,17 @@ namespace TorchSharp
             static extern IntPtr THSTensor_baddbmm(IntPtr batch1, IntPtr batch2, IntPtr mat, float beta,
                 float alpha);
 
-            public Tensor baddbmm(Tensor batch2, Tensor mat, float beta = 1, float alpha = 1)
+            /// <summary>
+            /// Performs a batch matrix-matrix product of matrices in batch1 and batch2. input is added to the final result.
+            /// batch1 and batch2 must be 3-D tensors each containing the same number of matrices.
+            /// </summary>
+            /// <param name="batch1">The first batch of matrices to be multiplied</param>
+            /// <param name="batch2">The second batch of matrices to be multiplied</param>
+            /// <param name="beta">A multiplier for input</param>
+            /// <param name="alpha">A multiplier for batch1 @ batch2</param>
+            public Tensor baddbmm(Tensor batch1, Tensor batch2, float beta = 1, float alpha = 1)
             {
-                var res = THSTensor_baddbmm(Handle, batch2.Handle, mat.Handle, beta, alpha);
+                var res = THSTensor_baddbmm(Handle, batch1.Handle, batch2.Handle, beta, alpha);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -2758,6 +2766,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_bmm(IntPtr batch1, IntPtr batch2);
 
+            /// <summary>
+            /// Performs a batch matrix-matrix product of matrices stored in input and mat2.
+            /// </summary>
+            /// <param name="batch2">the second batch of matrices to be multiplied</param>
+            /// <returns></returns>
             public Tensor bmm(Tensor batch2)
             {
                 var res = THSTensor_bmm(Handle, batch2.Handle);
@@ -2949,6 +2962,21 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_diagonal(IntPtr tensor, long offset, long dim1, long dim2);
 
+            /// <summary>
+            /// Returns a partial view of input with the its diagonal elements with respect to dim1 and dim2 appended as a dimension at the end of the shape.
+            /// The argument offset controls which diagonal to consider:
+            ///
+            ///     If offset = 0, it is the main diagonal.
+            ///     If offset &gt; 0, it is above the main diagonal.
+            ///     If offset &lt; 0, it is below the main diagonal.
+            /// </summary>
+            /// <param name="offset">Which diagonal to consider. Default: 0 (main diagonal).</param>
+            /// <param name="dim1">First dimension with respect to which to take diagonal. Default: 0.</param>
+            /// <param name="dim2">Second dimension with respect to which to take diagonal. Default: 1.</param>
+            /// <remarks>
+            /// Applying torch.diag_embed() to the output of this function with the same arguments yields a diagonal matrix with the diagonal entries of the input.
+            /// However, torch.diag_embed() has different default dimensions, so those need to be explicitly specified.
+            /// </remarks>
             public Tensor diagonal(long offset = 0, long dim1 = 0, long dim2 = 0)
             {
                 var res = THSTensor_diagonal(Handle, offset, dim1, dim2);
