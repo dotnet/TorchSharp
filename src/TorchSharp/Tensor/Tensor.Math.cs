@@ -2468,6 +2468,24 @@ namespace TorchSharp
         public static Tensor bitwise_xor_(Tensor left, Tensor right) => left.bitwise_xor_(right);
 
         /// <summary>
+        /// Performs a batch matrix-matrix product of matrices stored in input and mat2.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="batch2">the second batch of matrices to be multiplied</param>
+        public static Tensor bmm(Tensor input, Tensor batch2) => input.bmm(batch2);
+
+        /// <summary>
+        /// Performs a batch matrix-matrix product of matrices in batch1 and batch2. input is added to the final result.
+        /// batch1 and batch2 must be 3-D tensors each containing the same number of matrices.
+        /// </summary>
+        /// <param name="input">The tensor to be added</param>
+        /// <param name="batch1">The first batch of matrices to be multiplied</param>
+        /// <param name="batch2">The second batch of matrices to be multiplied</param>
+        /// <param name="beta">A multiplier for input</param>
+        /// <param name="alpha">A multiplier for batch1 @ batch2</param>
+        public static Tensor baddbmm(Tensor input, Tensor batch1, Tensor batch2, float beta = 1, float alpha = 1) => input.baddbmm(batch1, batch2, beta, alpha);
+
+        /// <summary>
         /// Element-wise bitwise left shift
         /// </summary>
         /// <param name="left">Left-hand operand.</param>

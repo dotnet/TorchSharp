@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
+using System.Transactions;
+using ICSharpCode.SharpZipLib.BZip2;
 
 namespace TorchSharp
 {
@@ -59,9 +61,13 @@ namespace TorchSharp
             static extern IntPtr THSTensor_cross(IntPtr input, IntPtr other, long dim);
 
             /// <summary>
-            /// Returns the cross product of vectors in dimension dim of input and other.
-            /// input and other must have the same size, and the size of their dim dimension should be 3.
+            /// Computes the cross product of two 3-dimensional vectors.
             /// </summary>
+            /// <remarks>
+            /// Supports input of float, double, cfloat and cdouble dtypes. Also supports batches of vectors,
+            /// for which it computes the product along the dimension dim. In this case, the output has the
+            /// same batch dimensions as the inputs broadcast to a common shape.
+            /// </remarks>
             public Tensor cross(Scalar other, long dim)
             {
                 var res = THSTensor_cross(Handle, other.Handle, dim);
@@ -76,8 +82,6 @@ namespace TorchSharp
             {
                 return torch.linalg.det(this);
             }
-
-
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_eig(IntPtr tensor, bool eigenvectors, out IntPtr pEigenvectors);
@@ -233,6 +237,83 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Returns a partial view of input with the its diagonal elements with respect to dim1 and dim2 appended as a dimension at the end of the shape.
+        /// The argument offset controls which diagonal to consider:
+        ///
+        ///     If offset == 0, it is the main diagonal.
+        ///     If offset &gt; 0, it is above the main diagonal.
+        ///     If offset &lt; 0, it is below the main diagonal.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="offset">Which diagonal to consider. Default: 0 (main diagonal).</param>
+        /// <param name="dim1">First dimension with respect to which to take diagonal. Default: 0.</param>
+        /// <param name="dim2">Second dimension with respect to which to take diagonal. Default: 1.</param>
+        /// <remarks>
+        /// Applying torch.diag_embed() to the output of this function with the same arguments yields a diagonal matrix with the diagonal entries of the input.
+        /// However, torch.diag_embed() has different default dimensions, so those need to be explicitly specified.
+        /// </remarks>
+        public static Tensor diagonal(Tensor input, long offset = 0, long dim1 = 0, long dim2 = 0) => input.diagonal(offset, dim1, dim2);
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_lu(IntPtr tensor, bool pivot, bool get_infos, out IntPtr infos, out IntPtr pivots);
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_lu_solve(IntPtr tensor, IntPtr LU_data, IntPtr LU_pivots);
+
+        [DllImport("LibTorchSharp")]
+        static extern IntPtr THSTensor_lu_unpack(IntPtr LU_data, IntPtr LU_pivots, bool unpack_data, bool unpack_pivots, out IntPtr L, out IntPtr U);
+
+
+        /// <summary>
+        /// Computes the LU factorization of a matrix or batches of matrices A. Returns a tuple containing the LU factorization and pivots of A. Pivoting is done if pivot is set to true.
+        /// </summary>
+        /// <param name="A">The tensor to factor of size (∗,m,n)</param>
+        /// <param name="pivot">Controls whether pivoting is done. Default: true</param>
+        /// <param name="get_infos">If set to True, returns an info IntTensor. Default: false</param>
+        /// <returns></returns>
+        public static (Tensor A_LU, Tensor pivots, Tensor infos) lu(Tensor A, bool pivot = true, bool get_infos = false)
+        {
+            var solution = THSTensor_lu(A.Handle, pivot, get_infos, out var infos, out var pivots);
+            if (solution == IntPtr.Zero)
+                torch.CheckForErrors();
+            return (new Tensor(solution), pivots == IntPtr.Zero ? null : new Tensor(pivots), infos == IntPtr.Zero ? null : new Tensor(infos));
+        }
+
+        /// <summary>
+        /// Returns the LU solve of the linear system Ax = b using the partially pivoted LU factorization of A from torch.lu().
+        /// </summary>
+        /// <param name="b">The RHS tensor of size (∗,m,k), where *∗ is zero or more batch dimensions.</param>
+        /// <param name="LU_data">The pivoted LU factorization of A from torch.lu() of size (∗,m,m), where *∗ is zero or more batch dimensions.</param>
+        /// <param name="LU_pivots">
+        /// The pivots of the LU factorization from torch.lu() of size (∗,m), where *∗ is zero or more batch dimensions.
+        /// The batch dimensions of LU_pivots must be equal to the batch dimensions of LU_data.</param>
+        /// <returns></returns>
+        public static Tensor lu_solve(Tensor b, Tensor LU_data, Tensor LU_pivots)
+        {
+            var solution = THSTensor_lu_solve(b.Handle, LU_data.Handle, LU_pivots.Handle);
+            if (solution == IntPtr.Zero)
+                torch.CheckForErrors();
+            return new Tensor(solution);
+        }
+
+        /// <summary>
+        /// Unpacks the data and pivots from a LU factorization of a tensor into tensors L and U and a permutation tensor P.
+        /// </summary>
+        /// <param name="LU_data">The packed LU factorization data</param>
+        /// <param name="LU_pivots">The packed LU factorization pivots</param>
+        /// <param name="unpack_data">A flag indicating if the data should be unpacked. If false, then the returned L and U are null. Default: true</param>
+        /// <param name="unpack_pivots">A flag indicating if the pivots should be unpacked into a permutation matrix P. If false, then the returned P is null. Default: true</param>
+        /// <returns>A tuple of three tensors to use for the outputs (P, L, U)</returns>
+        public static (Tensor, Tensor, Tensor) lu_unpack(Tensor LU_data, Tensor LU_pivots, bool unpack_data = true, bool unpack_pivots = true)
+        {
+            var solution = THSTensor_lu_unpack(LU_data.Handle, LU_pivots.Handle, unpack_data, unpack_pivots, out var L, out var U);
+            if (solution == IntPtr.Zero)
+                torch.CheckForErrors();
+            return (new Tensor(solution), L == IntPtr.Zero ? null : new Tensor(L), U == IntPtr.Zero ? null : new Tensor(U));
+        }
+
+
+        /// <summary>
         /// Matrix product of two tensors.
         /// </summary>
         /// <returns></returns>
@@ -278,6 +359,8 @@ namespace TorchSharp
         {
             return input.matrix_power(n);
         }
+
+        public static Tensor norm(Tensor input) => input.norm();
 
         /// <summary>
         /// Computes the dot product of two 1D tensors. 

@@ -3475,6 +3475,68 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestLUSolve()
+        {
+            var A = torch.randn(2, 3, 3);
+            var b = torch.randn(2, 3, 1);
+
+            {
+                var (A_LU, pivots, infos) = torch.lu(A);
+
+                Assert.NotNull(A_LU);
+                Assert.NotNull(pivots);
+                Assert.Null(infos);
+
+                Assert.Equal(new long[] { 2, 3, 3 }, A_LU.shape);
+                Assert.Equal(new long[] { 2, 3 }, pivots.shape);
+
+                var x = torch.lu_solve(b, A_LU, pivots);
+                Assert.Equal(new long[] { 2, 3, 1 }, x.shape);
+
+                var y = torch.norm(torch.bmm(A, x) - b);
+                Assert.Empty(y.shape);
+            }
+
+            {
+                var (A_LU, pivots, infos) = torch.lu(A, get_infos:true);
+
+                Assert.NotNull(A_LU);
+                Assert.NotNull(pivots);
+                Assert.NotNull(infos);
+
+                Assert.Equal(new long[] { 2, 3, 3 }, A_LU.shape);
+                Assert.Equal(new long[] { 2, 3 }, pivots.shape);
+                Assert.Equal(new long[] { 2 }, infos.shape);
+
+                var x = torch.lu_solve(b, A_LU, pivots);
+                Assert.Equal(new long[] { 2, 3, 1 }, x.shape);
+
+                var y = torch.norm(torch.bmm(A, x) - b);
+                Assert.Empty(y.shape);
+            }
+        }
+
+        [Fact]
+        public void TestLUUnpack()
+        {
+            var A = torch.randn(2, 3, 3);
+
+            {
+                var (A_LU, pivots, infos) = torch.lu(A);
+
+                Assert.NotNull(A_LU);
+                Assert.NotNull(pivots);
+                Assert.Null(infos);
+
+                var (P, A_L, A_U) = torch.lu_unpack(A_LU, pivots);
+
+                Assert.Equal(new long[] { 2, 3, 3 }, P.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, A_L.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, A_U.shape);
+            }
+        }
+
+        [Fact]
         public void TestMul()
         {
             var x = torch.ones(new long[] { 100, 100 });

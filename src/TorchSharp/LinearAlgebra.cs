@@ -105,6 +105,20 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_cross(IntPtr input, IntPtr other, long dim);
+
+            /// <summary>
+            /// Returns the cross product of vectors in dimension dim of input and other.
+            /// input and other must have the same size, and the size of their dim dimension should be 3.
+            /// </summary>
+            public static Tensor cross(Tensor input, Tensor other, long dim = -1)
+            {
+                var res = THSLinalg_cross(input.Handle, other.Handle, dim);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSLinalg_det(IntPtr tensor);
 
             /// <summary>
@@ -135,6 +149,24 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return (new Tensor(res), new Tensor(logabsdet));
             }
+
+            /// <summary>
+            /// Returns a partial view of input with the its diagonal elements with respect to dim1 and dim2 appended as a dimension at the end of the shape.
+            /// The argument offset controls which diagonal to consider:
+            ///
+            ///     If offset == 0, it is the main diagonal.
+            ///     If offset &gt; 0, it is above the main diagonal.
+            ///     If offset &lt; 0, it is below the main diagonal.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="offset">Which diagonal to consider. Default: 0 (main diagonal).</param>
+            /// <param name="dim1">First dimension with respect to which to take diagonal. Default: -1.</param>
+            /// <param name="dim2">Second dimension with respect to which to take diagonal. Default: -2.</param>
+            /// <remarks>
+            /// Applying torch.diag_embed() to the output of this function with the same arguments yields a diagonal matrix with the diagonal entries of the input.
+            /// However, torch.diag_embed() has different default dimensions, so those need to be explicitly specified.
+            /// </remarks>
+            public static Tensor diagonal(Tensor input, int offset = 0, int dim1 = -2, int dim2 = -1) => input.diagonal(offset, dim1, dim2);
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSLinalg_eig(IntPtr tensor, out IntPtr pEigenvectors);
@@ -261,6 +293,23 @@ namespace TorchSharp
                 return (new Tensor(solution), new Tensor(residuals), new Tensor(rank), new Tensor(singularValues));
             }
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_lu_factor(IntPtr tensor, bool pivot, out IntPtr pPivots);
+
+            /// <summary>
+            /// Computes a compact representation of the LU factorization with partial pivoting of a matrix.
+            /// </summary>
+            /// <param name="input"></param>
+            /// <param name="pivot"></param>
+            /// <returns></returns>
+            public static (Tensor LU, Tensor? Pivots) lu_factor(Tensor input, bool pivot = true)
+            {
+                var solution = THSLinalg_lu_factor(input.Handle, pivot, out var pivots);
+                if (solution == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(solution), pivots == IntPtr.Zero ? null : new Tensor(pivots));
+            }
+
             /// <summary>
             /// Computes a solution to the least squares problem of a system of linear equations.
             /// </summary>
@@ -274,6 +323,11 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return (new Tensor(solution), new Tensor(residuals), new Tensor(rank), new Tensor(singularValues));
             }
+
+            /// <summary>
+            /// Computes the matrix exponential of a square matrix or of each square matrix in a batch.
+            /// </summary>
+            public static Tensor matrix_exp(Tensor input) => input.matrix_exp(); 
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSLinalg_matrix_norm_fronuc(IntPtr tensor, byte fronuc, IntPtr dim, int dim_length, bool keepdim);
