@@ -2067,24 +2067,26 @@ namespace TorchSharp
         /// Tensor from array of rank 1
         /// <code>
         /// var array = new double[] { { 1, 2, 3, 4, 5, 6, 7, 8 } };
-        /// var tensor = torch.tensor_from_array(rawArray: array, dtype: torch.ScalarType.Float64, device: torch.Device.CPU, requiresGrad: false);
+        /// var tensor = torch.from_array(rawArray: array, dtype: torch.ScalarType.Float64, device: torch.Device.CPU, requiresGrad: false);
         /// </code>
         /// Tensor from array of rank 2
         /// <code>
         /// var array = new double[,] { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } };
-        /// var tensor = torch.tensor_from_array(rawArray: array, dtype: torch.ScalarType.Float64, device: torch.Device.CPU, requiresGrad: false);
+        /// var tensor = torch.from_array(rawArray: array, dtype: torch.ScalarType.Float64, device: torch.Device.CPU, requiresGrad: false);
         /// </code>
         /// Tensor from array of rank 3
         /// <code>
         /// var array = new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
-        /// var tensor = torch.tensor_from_array(rawArray: array, dtype: torch.ScalarType.Float64, device: torch.Device.CPU, requiresGrad: false);
+        /// var tensor = torch.from_array(rawArray: array, dtype: torch.ScalarType.Float64, device: torch.Device.CPU, requiresGrad: false);
         /// </code>
         /// </example>
+        [System.Diagnostics.Contracts.Pure]
         public static Tensor from_array(Array rawArray, ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
         {
             // enumerates over all dimensions of the arbitrary array
             // and returns the length of the dimension
-            IEnumerable<long> GetShape(Array arr)
+            [System.Diagnostics.Contracts.Pure]
+            static IEnumerable<long> GetShape(Array arr)
             {
                 for (var dim = 0; dim < arr.Rank; dim++) {
                     var dimLength = arr.GetLength(dim);
@@ -2096,31 +2098,21 @@ namespace TorchSharp
             var t = rawArray.GetType().GetElementType();
             if (t is null) throw new InvalidOperationException($"{nameof(rawArray)}.GetType().GetElementType() returned null.");
 
-            IEnumerable<object> GetElements(Array rawArray)
-            {
-                foreach (var element in rawArray) {
-                    yield return element!;
-                }
-            }
-            var elements = GetElements(rawArray);
-
             // call the existing factory methods to construct the tensor
-            if (t == typeof(bool)) return tensor(elements.Cast<bool>().ToArray(), shape, dtype, device, requiresGrad);
-            if (t == typeof(byte)) return tensor(elements.Cast<byte>().ToArray(), shape, dtype, device, requiresGrad);
-            if (t == typeof(sbyte)) return tensor(elements.Cast<sbyte>().ToArray(), shape, dtype, device, requiresGrad);
-            if (t == typeof(short)) return tensor(elements.Cast<short>().ToArray(), shape, dtype, device, requiresGrad);
-            if (t == typeof(int)) return tensor(elements.Cast<int>().ToArray(), shape, dtype, device, requiresGrad);
-            if (t == typeof(long)) return tensor(elements.Cast<long>().ToArray(), shape, dtype, device, requiresGrad);
+            if (t == typeof(bool)) return tensor(rawArray.Cast<bool>().ToArray(), shape, dtype, device, requiresGrad);
+            if (t == typeof(byte)) return tensor(rawArray.Cast<byte>().ToArray(), shape, dtype, device, requiresGrad);
+            if (t == typeof(sbyte)) return tensor(rawArray.Cast<sbyte>().ToArray(), shape, dtype, device, requiresGrad);
+            if (t == typeof(short)) return tensor(rawArray.Cast<short>().ToArray(), shape, dtype, device, requiresGrad);
+            if (t == typeof(int)) return tensor(rawArray.Cast<int>().ToArray(), shape, dtype, device, requiresGrad);
+            if (t == typeof(long)) return tensor(rawArray.Cast<long>().ToArray(), shape, dtype, device, requiresGrad);
 #if NET50_OR_GREATER
             // TODO: implement the required factory method
-            // if (t == typeof(half)) return tensor(elements.Cast<half>().ToArray(), shape, dtype, device, requiresGrad);
+            // if (t == typeof(half)) return tensor(rawArray.Cast<half>().ToArray(), shape, dtype, device, requiresGrad);
 #endif
-            if (t == typeof(float)) return tensor(elements.Cast<float>().ToArray(), shape, dtype, device, requiresGrad);
-            if (t == typeof(double)) return tensor(elements.Cast<double>().ToArray(), shape, dtype, device, requiresGrad);
-            // TODO: implement the required factory methods
-            // if (t == typeof(Tuple<float, float>)) return tensor(elements.Cast<Tuple<float, float>>().ToArray(), shape, dtype, device, requiresGrad);
-            // if (t == typeof(Tuple<double, double>)) return tensor(elements.Cast<Tuple<double, double>>().ToArray(), shape, dtype, device, requiresGrad);
-            if (t == typeof(System.Numerics.Complex)) return tensor(elements.Cast<System.Numerics.Complex>().ToArray(), shape, dtype, device, requiresGrad);
+            if (t == typeof(float)) return tensor(rawArray.Cast<float>().ToArray(), shape, dtype, device, requiresGrad);
+            if (t == typeof(double)) return tensor(rawArray.Cast<double>().ToArray(), shape, dtype, device, requiresGrad);
+            if (t == typeof((float, float))) return tensor(rawArray.Cast<(float, float)>().ToArray(), shape, dtype, device, requiresGrad);
+            if (t == typeof(System.Numerics.Complex)) return tensor(rawArray.Cast<System.Numerics.Complex>().ToArray(), shape, dtype, device, requiresGrad);
 
             throw new NotSupportedException($"The type {t.FullName} is not supported.");
         }
