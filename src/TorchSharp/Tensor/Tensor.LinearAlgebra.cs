@@ -187,7 +187,36 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSLinalg_pinverse(IntPtr tensor, double rcond, bool hermitian);
+
+            /// <summary>
+            /// Computes the pseudoinverse (Moore-Penrose inverse) of a matrix.
+            /// </summary>
+            /// <param name="rcond">The tolerance value to determine when is a singular value zero </param>
+            /// <param name="hermitian">Indicates whether A is Hermitian if complex or symmetric if real. </param>
+            /// <remarks>Input should be tensor of shape (*, m, n) where * is zero or more batch dimensions.</remarks>
+            /// <returns></returns>
+            public Tensor pinverse(double rcond = 1e-15, bool hermitian = false)
+            {
+                var res = THSLinalg_pinverse(Handle, rcond, hermitian);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
         }
+
+
+        /// <summary>
+        /// Computes the pseudoinverse (Moore-Penrose inverse) of a matrix.
+        /// </summary>
+        /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+        /// <param name="rcond">The tolerance value to determine when is a singular value zero </param>
+        /// <param name="hermitian">Indicates whether A is Hermitian if complex or symmetric if real. </param>
+        /// <remarks>Input should be tensor of shape (*, m, n) where * is zero or more batch dimensions.</remarks>
+        public static Tensor pinverse(Tensor input, double rcond = 1e-15, bool hermitian = false) => input.pinverse(rcond, hermitian);
+
 
         /// <summary>
         /// Computes the Cholesky decomposition of a symmetric positive-definite matrix 'input' or for batches of symmetric positive-definite matrices.

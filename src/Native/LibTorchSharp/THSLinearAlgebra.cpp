@@ -155,16 +155,20 @@ Tensor THSLinalg_vector_norm(const Tensor tensor, const Scalar ord, const int64_
     CATCH_TENSOR(torch::linalg::vector_norm(*tensor, *ord, dims, keepdim, c10::nullopt));
 }
 
-Tensor THSLinalg_matrix_rank(const Tensor tensor, const double tol, const bool has_tol, const bool hermitian)
+Tensor THSLinalg_matrix_rank(const Tensor tensor, const double atol, const bool has_atol, const double rtol, const bool has_rtol, const bool hermitian)
 {
-    if (has_tol)
-    {
-        CATCH_TENSOR(at::matrix_rank(*tensor, tol, hermitian));
-    }
-    else
-    {
-        CATCH_TENSOR(at::matrix_rank(*tensor, hermitian));
-    }
+    auto atol_ = has_atol ? atol : c10::optional<double>();
+    auto rtol_ = has_rtol ? rtol : c10::optional<double>();
+
+    CATCH_TENSOR(torch::linalg::matrix_rank(*tensor, atol_, rtol_, hermitian));
+}
+
+Tensor THSLinalg_matrix_rank_tensor(const Tensor tensor, const Tensor atol, const Tensor rtol, const bool hermitian)
+{
+    const c10::optional<at::Tensor> atol_ = atol != nullptr ? *atol : c10::optional<at::Tensor>();
+    const c10::optional<at::Tensor> rtol_ = rtol != nullptr ? *rtol : c10::optional<at::Tensor>();
+
+    CATCH_TENSOR(torch::linalg::matrix_rank(*tensor, atol_, rtol_, hermitian));
 }
 
 Tensor THSLinalg_matrix_power(const Tensor tensor, const int64_t n)
@@ -201,7 +205,23 @@ Tensor THSLinalg_norm_opt(const Tensor tensor, const int64_t* dim, const int dim
     CATCH_TENSOR(torch::linalg::norm(*tensor, c10::nullopt, dims, keepdim, c10::nullopt));
 }
 
-Tensor THSLinalg_pinv(const Tensor tensor, const double rcond, const bool hermitian)
+Tensor THSLinalg_pinv(const Tensor tensor, const double atol, const bool has_atol, const double rtol, const bool has_rtol, const bool hermitian)
+{
+    auto atol_ = has_atol ? atol : c10::optional<double>();
+    auto rtol_ = has_rtol ? rtol : c10::optional<double>();
+
+    CATCH_TENSOR(torch::linalg_pinv(*tensor, atol_, rtol_, hermitian));
+}
+
+Tensor THSLinalg_pinv_tensor(const Tensor tensor, const Tensor atol, const Tensor rtol, const bool hermitian)
+{
+    const c10::optional<at::Tensor> atol_ = atol != nullptr ? *atol : c10::optional<at::Tensor>();
+    const c10::optional<at::Tensor> rtol_ = rtol != nullptr ? *rtol : c10::optional<at::Tensor>();
+
+    CATCH_TENSOR(torch::linalg_pinv(*tensor, atol_, rtol_, hermitian));
+}
+
+Tensor THSLinalg_pinverse(const Tensor tensor, const double rcond, const bool hermitian)
 {
     CATCH_TENSOR(torch::linalg::pinv(*tensor, rcond, hermitian));
 }

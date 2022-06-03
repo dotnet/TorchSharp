@@ -5462,6 +5462,30 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void MatrixRankTest()
+        {
+            var mr1 = torch.linalg.pinv(torch.randn(4, 3, 2));
+            Assert.Equal(new long[] { 4 }, mr1.shape);
+
+            var mr2 = torch.linalg.pinv(torch.randn(2, 4, 3, 2));
+            Assert.Equal(new long[] { 2, 4 }, mr2.shape);
+
+            // Really just testing that it doesn't blow up in interop for the following lines:
+
+            mr2 = torch.linalg.pinv(torch.randn(2, 4, 3, 2), atol: 1.0);
+            Assert.Equal(new long[] { 2, 4 }, mr2.shape);
+
+            mr2 = torch.linalg.pinv(torch.randn(2, 4, 3, 2), atol: 1.0, rtol: 0.0);
+            Assert.Equal(new long[] { 2, 4 }, mr2.shape);
+
+            mr2 = torch.linalg.pinv(torch.randn(2, 4, 3, 2), atol: torch.tensor(1.0));
+            Assert.Equal(new long[] { 2, 4 }, mr2.shape);
+
+            mr2 = torch.linalg.pinv(torch.randn(2, 4, 3, 2), atol: torch.tensor(1.0), rtol: torch.tensor(0.0));
+            Assert.Equal(new long[] { 2, 4 }, mr2.shape);
+        }
+
+        [Fact]
         public void MultiDotTest()
         {
             var a = torch.randn(new long[] { 25, 25 });
@@ -5520,6 +5544,27 @@ namespace TorchSharp
                 Assert.Equal(5.4344883f, b.item<float>());
                 Assert.Equal(5.4344883f, c.item<float>());
             }
+        }
+
+        [Fact]
+        public void PinvTest()
+        {
+            var mr1 = torch.linalg.pinv(torch.randn(4, 3, 5));
+            Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
+
+            // Really just testing that it doesn't blow up in interop for the following lines:
+
+            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: 1.0);
+            Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
+
+            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: 1.0, rtol: 0.0);
+            Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
+
+            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: torch.tensor(1.0));
+            Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
+
+            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: torch.tensor(1.0), rtol: torch.tensor(0.0));
+            Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
         }
 
         [Fact]
