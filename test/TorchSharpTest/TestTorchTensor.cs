@@ -697,6 +697,14 @@ namespace TorchSharp
             }
 
             {
+                var array = new int[1, 2, 3, 4];
+                var t = torch.from_array(array);
+                Assert.Equal(4, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
+                Assert.Equal(ScalarType.Int32, t.dtype);
+            }
+
+            {
                 var array = new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
                 var t = torch.from_array(array);
                 Assert.Equal(3, t.ndim);
