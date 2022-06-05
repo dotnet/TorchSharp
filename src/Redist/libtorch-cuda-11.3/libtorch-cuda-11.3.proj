@@ -28,8 +28,6 @@
     <File Include= "libtorch\lib\asmjit.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\c10.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\c10_cuda.dll" PackageSuffix="part1" />
-    <File Include= "libtorch\lib\caffe2_detectron_ops_gpu.dll" PackageSuffix="part1" />
-    <File Include= "libtorch\lib\caffe2_module_test_dynamic.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\caffe2_nvrtc.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\cublas64_11.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\cublasLt64_11.dll" PackageSuffix="part1" />
@@ -44,6 +42,7 @@
     <File Include= "libtorch\lib\cudnn_cnn_infer64_8.dll"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\cudnn_cnn_train64_8.dll" PackageSuffix="part4" />
+    <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part4" />
 
     <File Include= "libtorch\lib\cudnn64_8.dll" PackageSuffix="part5" />
     <File Include= "libtorch\lib\cufft64_10.dll" PackageSuffix="part5" />
@@ -52,16 +51,15 @@
     <File Include= "libtorch\lib\cupti64_2021.1.0.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\cusolverMg64_11.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\fbgemm.dll" PackageSuffix="part6" />
-    <File Include= "libtorch\lib\fbjni.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\libiomp5md.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\libiompstubs5md.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\nvrtc64_112_0.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\nvrtc-builtins64_113.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackageSuffix="part6" />
-    <File Include= "libtorch\lib\pytorch_jni.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\uv.dll" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\zlibwapi.dll" PackageSuffix="part6" />
 
     <File Include= "libtorch\lib\cusolver64_11.dll"  PackageSuffix="part7" />
 
@@ -73,11 +71,9 @@
     <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment3" FileUnstitchIndex="3" FileUnstitchStart="750000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment4" FileUnstitchIndex="4" FileUnstitchStart="1000000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment3" FileUnstitchIndex="3" FileUnstitchStart="750000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part10" />
-    <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part10" />
 
     <File Include= "libtorch\lib\cudnn_ops_infer64_8.dll" PackageSuffix="part11" />
 
@@ -87,10 +83,7 @@
     <File Include= "libtorch\lib\libc10.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libc10_cuda.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libc10d_cuda_test.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcaffe2_detectron_ops_gpu.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcaffe2_module_test_dynamic.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcaffe2_nvrtc.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcaffe2_observers.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libfbjni.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libjitbackend_test.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnnapi_backend.so"  PackageSuffix="part1"  />
@@ -102,10 +95,10 @@
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcudart-a7b20f20.so.11.0" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libnvrtc-1ea278b5.so.11.2" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libnvrtc-builtins-4730a239.so.11.3" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libgomp-a34b3233.so.1" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvToolsExt-24de1d56.so.1" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvrtc-1ea278b5.so.11.2" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvrtc-builtins-4730a239.so.11.3" PackageSuffix="part1"  />
     
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
@@ -123,8 +116,7 @@
     <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment3" FileUnstitchIndex="3" FileUnstitchStart="750000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment4" FileUnstitchIndex="4" FileUnstitchStart="1000000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment3" FileUnstitchIndex="3" FileUnstitchStart="750000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part4"  />
 

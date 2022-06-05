@@ -7,7 +7,7 @@
 
   <!-- Other/Non-Core Product Dependencies -->
   <PropertyGroup>
-    <LibTorchVersion>1.10.0</LibTorchVersion>
+    <LibTorchVersion>1.11.0</LibTorchVersion>
     <CudaVersionDot>11.3</CudaVersionDot>
     <CudaVersionNoDot>113</CudaVersionNoDot>
     <MklDnnVersion>2019.0.5.20190502</MklDnnVersion>
