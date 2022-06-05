@@ -43,8 +43,12 @@ namespace TorchSharp
                 using (var d = torch.NewDisposeScope()) {
 
                     if (pad > 0) {
-                        // TODO add "with torch.no_grad():" back when JIT supports it
-                        waveform = torch.nn.functional.pad(waveform, new long[] { pad, pad }, PaddingModes.Constant);
+                        // The original torchaudio doesn't have `torch.no_grad()' here to
+                        // avoid issues with JIT.
+                        // https://github.com/pytorch/audio/commit/a420cced7e60fcf9ba6efcff3a2e8bee3ac67d05#diff-ab14255549624af556aa0d1dfaf83241a95e05c3dd6a668cd2607655839f7a09
+                        using (torch.no_grad()) {
+                            waveform = torch.nn.functional.pad(waveform, new long[] { pad, pad }, PaddingModes.Constant);
+                        }
                     }
 
                     // pack batch
