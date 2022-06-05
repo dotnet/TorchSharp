@@ -40,44 +40,49 @@ namespace TorchSharp
             /// <returns>Spectrograms of audio signals</returns>
             public static torch.Tensor spectrogram(torch.Tensor waveform, long pad, torch.Tensor window, long n_fft, long hop_length, long win_length, double? power, bool normalized, bool center = true, PaddingModes pad_mode = PaddingModes.Reflect, bool onesided = true, bool? return_complex = null)
             {
-                if (pad > 0) {
-                    // TODO add "with torch.no_grad():" back when JIT supports it
-                    waveform = torch.nn.functional.pad(waveform, new long[] { pad, pad }, PaddingModes.Constant);
-                }
+                using (var d = torch.NewDisposeScope()) {
 
-                // pack batch
-                var shape = waveform.size();
-                waveform = waveform.reshape(-1, shape[shape.Length - 1]);
-
-                // default values are consistent with librosa.core.spectrum._spectrogram
-                var spec_f = torch.stft(
-                    input: waveform,
-                    n_fft: n_fft,
-                    hop_length: hop_length,
-                    win_length: win_length,
-                    window: window,
-                    center: center,
-                    pad_mode: pad_mode,
-                    normalized: false,
-                    onesided: onesided,
-                    return_complex: true);
-
-                // unpack batch
-                var spec_shape = new long[shape.Length + spec_f.dim() - 2];
-                Array.Copy(shape, spec_shape, shape.Length - 1);
-                Array.Copy(spec_f.shape, 1, spec_shape, shape.Length - 1, spec_f.dim() - 1);
-                spec_f = spec_f.reshape(spec_shape);
-
-                if (normalized) {
-                    spec_f /= window.pow(2.0).sum().sqrt();
-                }
-                if (power.HasValue) {
-                    if (power.Value == 1.0) {
-                        return spec_f.abs();
+                    if (pad > 0) {
+                        // TODO add "with torch.no_grad():" back when JIT supports it
+                        waveform = torch.nn.functional.pad(waveform, new long[] { pad, pad }, PaddingModes.Constant);
                     }
-                    return spec_f.abs().pow(power.Value);
-                } else {
-                    return spec_f;
+
+                    // pack batch
+                    var shape = waveform.size();
+                    waveform = waveform.reshape(-1, shape[shape.Length - 1]);
+
+                    // default values are consistent with librosa.core.spectrum._spectrogram
+                    var spec_f = torch.stft(
+                        input: waveform,
+                        n_fft: n_fft,
+                        hop_length: hop_length,
+                        win_length: win_length,
+                        window: window,
+                        center: center,
+                        pad_mode: pad_mode,
+                        normalized: false,
+                        onesided: onesided,
+                        return_complex: true);
+
+                    // unpack batch
+                    var spec_shape = new long[shape.Length + spec_f.dim() - 2];
+                    Array.Copy(shape, spec_shape, shape.Length - 1);
+                    Array.Copy(spec_f.shape, 1, spec_shape, shape.Length - 1, spec_f.dim() - 1);
+                    spec_f = spec_f.reshape(spec_shape);
+
+                    if (normalized) {
+                        spec_f /= window.pow(2.0).sum().sqrt();
+                    }
+
+                    if (power.HasValue) {
+                        if (power.Value == 1.0) {
+                            spec_f = spec_f.abs();
+                        } else {
+                            spec_f = spec_f.abs().pow(power.Value);
+                        }
+                    }
+
+                    return d.MoveToOuter(spec_f);
                 }
             }
 
@@ -102,40 +107,43 @@ namespace TorchSharp
                     throw new ArgumentException("Expected `spectrogram` to be complex dtype.");
                 }
 
-                if (normalized) {
-                    spectrogram = spectrogram * window.pow(2.0).sum().sqrt();
+                using (var d = torch.NewDisposeScope()) {
+
+                    if (normalized) {
+                        spectrogram = spectrogram * window.pow(2.0).sum().sqrt();
+                    }
+
+                    // pack batch
+                    var shape = spectrogram.size();
+                    spectrogram = spectrogram.reshape(-1, shape[shape.Length - 2], shape[shape.Length - 1]);
+
+                    // default values are consistent with librosa.core.spectrum._spectrogram
+                    var waveform = torch.istft(
+                        input: spectrogram,
+                        n_fft: n_fft,
+                        hop_length: hop_length,
+                        win_length: win_length,
+                        window: window,
+                        center: center,
+                        normalized: false,
+                        onesided: onesided,
+                        length: length.HasValue ? length.Value + 2 * pad : -1,
+                        return_complex: false
+                    );
+
+                    if (length.HasValue && pad > 0) {
+                        // remove padding from front and back
+                        waveform = waveform[TensorIndex.Colon, TensorIndex.Slice(pad, -pad)];
+                    }
+
+                    // unpack batch
+                    var waveform_shape = new long[shape.Length - 1];
+                    Array.Copy(shape, waveform_shape, shape.Length - 2);
+                    waveform_shape[waveform_shape.Length - 1] = waveform.shape[waveform.dim() - 1];
+                    waveform = waveform.reshape(waveform_shape);
+
+                    return d.MoveToOuter(waveform);
                 }
-
-                // pack batch
-                var shape = spectrogram.size();
-                spectrogram = spectrogram.reshape(-1, shape[shape.Length - 2], shape[shape.Length - 1]);
-
-                // default values are consistent with librosa.core.spectrum._spectrogram
-                var waveform = torch.istft(
-                    input: spectrogram,
-                    n_fft: n_fft,
-                    hop_length: hop_length,
-                    win_length: win_length,
-                    window: window,
-                    center: center,
-                    normalized: false,
-                    onesided: onesided,
-                    length: length.HasValue ? length.Value + 2 * pad : -1,
-                    return_complex: false
-                );
-
-                if (length.HasValue && pad > 0) {
-                    // remove padding from front and back
-                    waveform = waveform[TensorIndex.Colon, TensorIndex.Slice(pad, -pad)];
-                }
-
-                // unpack batch
-                var waveform_shape = new long[shape.Length - 1];
-                Array.Copy(shape, waveform_shape, shape.Length - 2);
-                waveform_shape[waveform_shape.Length - 1] = waveform.shape[waveform.dim() - 1];
-                waveform = waveform.reshape(waveform_shape);
-
-                return waveform;
             }
         }
     }
