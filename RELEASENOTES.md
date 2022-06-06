@@ -6,9 +6,14 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __API Changes:__
 
+__Fixed Bugs:__
+
+#618 TorchSharp.Modules.Normal.sample() Expected all tensors [...]<br/>
+
 Added torch.from_array() API to create a tensor from an arbitry-dimension .NET array.<br/>
 Added torch.tensor() overloads for most common dimensions of .NET arrays: ndim = [1,2,3,4]<br/>
 Added the most significant API additions from Pytorch 1.11.
+Added two torchaudio APIs.
 
 ## NuGet Version 0.96.7
 
