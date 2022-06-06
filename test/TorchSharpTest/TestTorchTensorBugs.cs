@@ -28,7 +28,9 @@ namespace TorchSharp
         [Fact]
         public void ValidateAddInplace()
         {
-            var x = torch.zeros(10,10);
+            using var _ = NewDisposeScope();
+
+            var x = torch.zeros(10, 10);
             var y = torch.ones(10).expand(10, 10);
 
             x.add_(y, 1);
@@ -42,6 +44,9 @@ namespace TorchSharp
             // Tensor.DataItem gives a hard crash on GPU tensor
 
             if (torch.cuda.is_available()) {
+
+                using var _ = NewDisposeScope();
+
                 var scalar = torch.tensor(3.14f, torch.CUDA);
                 Assert.Throws<InvalidOperationException>(() => scalar.item<float>());
                 var tensor = torch.zeros(new long[] { 10, 10 }, device: torch.CUDA);
@@ -60,6 +65,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue315_1()
         {
+            using var _ = NewDisposeScope();
+
             // https://github.com/dotnet/TorchSharp/issues/315
             // custom module crash in GC thread
 
@@ -78,6 +85,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue315_2()
         {
+            using var _ = NewDisposeScope();
+
             Func<Tensor, Tensor, Tensor> distance =
                 (x, y) => {
                     return (x - y).abs();
@@ -99,6 +108,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue315_3()
         {
+            using var _ = NewDisposeScope();
+
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
@@ -131,6 +142,8 @@ namespace TorchSharp
 
         private void ThreadFunc()
         {
+            using var _ = NewDisposeScope();
+
             using var net = nn.Sequential(
                 ("relu", nn.ReLU()),
                 ("double", new DoubleIt())
@@ -197,11 +210,13 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue353()
         {
+            using var _ = NewDisposeScope();
+
             //
             // Just validating that the methods are there.
             //
-            using var x = torch.zeros(3,3);
-            using var y = torch.ones(3,3);
+            using var x = torch.zeros(3, 3);
+            using var y = torch.ones(3, 3);
 
             var mx1 = x.max();
             Assert.Equal(0, mx1.item<float>());
@@ -219,11 +234,13 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue399_1()
         {
+            using var _ = NewDisposeScope();
+
             // Create a contiguous 3x4 matrix and fill with auto-inc values starting at zero.
             // 0 1 2 3
             // 4 5 6 7
             // 8 9 10 11
-            using var contig = torch.arange(12, int32).reshape(3,4).contiguous();
+            using var contig = torch.arange(12, int32).reshape(3, 4).contiguous();
             var data1 = contig.data<int>();
 
             // Create a 3x2 slice of this, which should contain:
@@ -246,6 +263,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue399_2()
         {
+            using var _ = NewDisposeScope();
+
             // Create a contiguous 3x4 matrix and fill with auto-inc values starting at zero.
             // 0 1 2 3
             // 4 5 6 7
@@ -278,6 +297,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue399_3()
         {
+            using var _ = NewDisposeScope();
+
             using var contig = torch.arange(27, int32).reshape(3, 3, 3).contiguous();
             using var trans = contig.permute(2, 0, 1);
 
@@ -289,6 +310,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue399_4()
         {
+            using var _ = NewDisposeScope();
+
             using var contig = torch.arange(12, int32).reshape(3, 4).contiguous();
             using var flipped = contig.t().flip(1);
             var strides = flipped.stride();
@@ -301,6 +324,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue399_5()
         {
+            using var _ = NewDisposeScope();
+
             using var contig = torch.arange(12, int32).reshape(3, 4).contiguous();
             using var strided = contig.as_strided(new long[] { 3, 2, 4 }, new long[] { 4, 0, 1 });
 
@@ -312,6 +337,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue399_6()
         {
+            using var _ = NewDisposeScope();
+
             using var contig = torch.arange(3, int32).reshape(3, 1).contiguous();
             using var strided = contig.expand(3, 4);
 
@@ -323,6 +350,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue399_7()
         {
+            using var _ = NewDisposeScope();
+
             using var contig = torch.arange(27, int32).reshape(3, 3, 3).contiguous();
             using var trans = contig.permute(2, 0, 1);
 
@@ -332,7 +361,7 @@ namespace TorchSharp
             var data1 = trans.contiguous().data<int>();
             var data2 = trans.data<int>();
 
-            var expected = new int[] { 0, 3, 6, 9, 12, 15, 18, 21, 24, 1, 4, 7, 10, 13, 16, 19, 22, 25, 2, 5, 8, 11, 14, 17, 20, 23, 26};
+            var expected = new int[] { 0, 3, 6, 9, 12, 15, 18, 21, 24, 1, 4, 7, 10, 13, 16, 19, 22, 25, 2, 5, 8, 11, 14, 17, 20, 23, 26 };
 
             long idx = 0;
             foreach (var value in data1) {
@@ -358,6 +387,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue399_8()
         {
+            using var _ = NewDisposeScope();
+
             // We need to test something that has rank 1, because the TensorAccessor uses
             // seprate enumeration logic for that.
             using var contig = torch.arange(48, int32).reshape(12, 4).contiguous();
@@ -371,7 +402,7 @@ namespace TorchSharp
 
             Assert.Equal(data1.ToArray(), data2.ToArray());
 
-            var expected = new int [] { 1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45};
+            var expected = new int[] { 1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45 };
 
             long idx = 0;
             foreach (var value in data1) {
@@ -397,6 +428,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateRandThrowsOnWrongType()
         {
+            using var _ = NewDisposeScope();
+
             Assert.Throws<ArgumentException>(() => torch.rand(3, 4, dtype: torch.int8));
             Assert.Throws<ArgumentException>(() => torch.rand(3, 4, dtype: torch.uint8));
             Assert.Throws<ArgumentException>(() => torch.rand(3, 4, dtype: torch.int16));
@@ -414,15 +447,19 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue496()
         {
+            using var _ = NewDisposeScope();
+
             var c2 = torch.nn.Conv2d(3, 16, kernelSize: (1, 7), stride: (1, 1), padding: (0, 3));
             var Win = torch.rand(16, 3, 8, 8);
             var s = c2.forward(Win).shape;
-            Assert.Equal(new long[] {16, 16, 8, 8}, s);
+            Assert.Equal(new long[] { 16, 16, 8, 8 }, s);
         }
 
         [Fact]
         public void ValidateIssue500()
         {
+            using var _ = NewDisposeScope();
+
             using (var pool = BatchNorm1d(28)) {
                 pool.eval();
                 pool.forward(torch.ones(1, 28));
@@ -450,6 +487,8 @@ namespace TorchSharp
         [Fact]
         public void ValidateIssue510()
         {
+            using var _ = NewDisposeScope();
+
             var model = new Module510(1, 32);
             model.forward(torch.randn(16, 1, 32));
 
@@ -482,7 +521,7 @@ namespace TorchSharp
         {
             private readonly Module stack;
 
-            public Module510(int in_channels, int out_channels, int kernel_size=3, int stride = 1, int padding = 0) : base(String.Empty)
+            public Module510(int in_channels, int out_channels, int kernel_size = 3, int stride = 1, int padding = 0) : base(String.Empty)
             {
                 var temp = BatchNorm1d(out_channels);
                 this.stack = Sequential(
@@ -509,6 +548,7 @@ namespace TorchSharp
         public void ValidateIssue516()
         {
             if (torch.cuda.is_available()) {
+                using var _ = NewDisposeScope();
 
                 var model = new TestGradWarningModel();
                 model.cuda();
@@ -561,13 +601,14 @@ namespace TorchSharp
         [Fact]
         public void Validate532()
         {
+            using var _ = NewDisposeScope();
             var module = new Module532(1000, 100);
 
             var p = module.parameters().ToArray();
             var pB = module.batch.parameters().ToArray();
             var pC = module.conv.parameters().ToArray();
 
-            Assert.Equal(pB.Length+pC.Length, p.Length);
+            Assert.Equal(pB.Length + pC.Length, p.Length);
         }
 
         internal class Module532 : Module
@@ -640,8 +681,9 @@ namespace TorchSharp
         public void GruModuleWorksWithoutPassingH0()
         {
             var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device:device),
-                   h0 = torch.randn(new long[] { 1, 3, 20 }, device:device))
+            using var _ = NewDisposeScope();
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
             using (var gru = GRU(10, 20)) {
                 gru.to(device);
                 var (output, hN) = gru.forward(input);
@@ -654,8 +696,9 @@ namespace TorchSharp
         public void LstmModuleWorksWithoutPassingH0C0()
         {
             var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device:device),
-                   h0 = torch.randn(new long[] { 1, 3, 20 }, device:device))
+            using var _ = NewDisposeScope();
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
             using (var lstm = LSTM(10, 20)) {
                 lstm.to(device);
                 var (output, hN, hX) = lstm.forward(input);
@@ -669,8 +712,9 @@ namespace TorchSharp
         public void RnnModuleWorksWithoutPassingH0()
         {
             var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device:device),
-                   h0 = torch.randn(new long[] { 1, 3, 20 }, device:device))
+            using var _ = NewDisposeScope();
+            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+               h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
             using (var rnn = RNN(10, 20)) {
                 rnn.to(device);
                 var (output, hN) = rnn.forward(input);
@@ -678,5 +722,20 @@ namespace TorchSharp
                 Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
             }
         }
+
+        [Fact]
+        public void ValidateBug618()
+        {
+            if (torch.cuda.is_available()) {
+                using var _ = NewDisposeScope();
+                var mean = torch.randn(new long[] { 32, 3, 3 }, device: torch.CUDA);
+                var tmp = torch.randn(new long[] { 3, 3 }, device: torch.CUDA);
+                var log_std = tmp.expand_as(mean);
+                var std = exp(log_std);
+                var dist = torch.distributions.Normal(mean, std);
+                dist.sample();// error
+            }
+        }
+
     }
 }

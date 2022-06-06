@@ -876,7 +876,9 @@ namespace TorchSharp
 
         static public Tensor normal(Tensor means, Tensor stddev, torch.Generator generator = null)
         {
-            return randn(means.shape, generator: generator) * stddev + means;
+            if (stddev.device_type != means.device_type || (stddev.device_type == DeviceType.CUDA && stddev.device_index != means.device_index))
+                throw new ArgumentException("The 'means' and 'stddev' tensors must be located on the same device.");
+            return randn(means.shape, generator: generator, device: stddev.device) * stddev + means;
         }
 
         /// <summary>

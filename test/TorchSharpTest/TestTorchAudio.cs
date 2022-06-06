@@ -1,6 +1,8 @@
 using System;
 using Xunit;
 
+using TorchSharp;
+
 namespace TorchSharp
 {
     public class TestTorchAudio
