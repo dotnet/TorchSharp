@@ -44,7 +44,7 @@ namespace TorchSharp.torchvision
             {
                 var shape = t.shape;
                 var tt = t.reshape(new long[] { shape[0] * shape[1] * shape[2] });
-                var image = Image.LoadPixelData<TPixel>(tt.bytes.ToArray(), (int)shape[1], (int)shape[0]);
+                var image = Image.LoadPixelData<TPixel>(tt.data<byte>().ToArray(), (int)shape[1], (int)shape[0]);
                 IImageEncoder encoder = format switch {
                    ImageFormat.Png => new PngEncoder(),
                    ImageFormat.Jpeg => new JpegEncoder(),
