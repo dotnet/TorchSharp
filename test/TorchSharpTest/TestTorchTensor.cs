@@ -4460,6 +4460,27 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void RoundTestWithDecimals()
+        {
+            const long n = 7L;
+            var i = eye(n); // identity matrix
+            var a = rand(new[] { n, n });
+            var b = linalg.inv(a);
+
+            // check non-inline version
+            var r0 = round(matmul(a, b), 2L);
+            var r1 = round(matmul(b, a), 3L);
+            Assert.True(torch.Equals(i, r0), "round() failed");
+            Assert.True(torch.Equals(i, r1), "round() failed");
+
+            // check inline version
+            var r0_ = matmul(a, b).round_(2L);
+            var r1_ = matmul(b, a).round_(3L);
+            Assert.True(torch.Equals(i, r0_), "round_() failed");
+            Assert.True(torch.Equals(i, r1_), "round_() failed");
+        }
+
+        [Fact]
         public void BucketizeTest()
         {
             var boundaries = torch.tensor(new int[] { 1, 3, 5, 7, 9 });
