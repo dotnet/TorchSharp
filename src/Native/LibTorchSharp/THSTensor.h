@@ -1005,9 +1005,9 @@ EXPORT_API(int) THSTensor_requires_grad(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int length);
 
-EXPORT_API(Tensor) THSTensor_round(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_round(const Tensor tensor, const int64_t decimals);
 
-EXPORT_API(Tensor) THSTensor_round_(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_round_(const Tensor tensor, const int64_t decimals);
 
 EXPORT_API(Tensor) THSTensor_remainder(const Tensor left, const Tensor right);
 
