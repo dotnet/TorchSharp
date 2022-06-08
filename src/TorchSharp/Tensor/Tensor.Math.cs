@@ -1741,29 +1741,14 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_round(IntPtr tensor);
-
-            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_round(IntPtr tensor, long decimals);
-
-            /// <summary>
-            /// Returns a new tensor with each of the elements of input rounded to the closest integer.
-            /// </summary>
-            /// <returns></returns>
-            public Tensor round()
-            {
-                var res = THSTensor_round(Handle);
-                if (res == IntPtr.Zero)
-                    torch.CheckForErrors();
-                return new Tensor(res);
-            }
 
             /// <summary>
             /// Returns a new tensor with each of the elements of input rounded to the closest value with the given number of decimals.
             /// </summary>
             /// <param name="decimals">Number of decimal places to round to (default: 0). If decimals is negative, it specifies the number of positions to the left of the decimal point.</param>
             /// <returns></returns>
-            public Tensor round(long decimals)
+            public Tensor round(long decimals = 0L)
             {
                 var res = THSTensor_round(Handle, decimals);
                 if (res == IntPtr.Zero)
@@ -1772,29 +1757,14 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_round_(IntPtr tensor);
-
-            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_round_(IntPtr tensor, long decimals);
-
-            /// <summary>
-            /// Replaces each of the elements of input with the element rounded to the closest integer.
-            /// </summary>
-            /// <returns></returns>
-            public Tensor round_()
-            {
-                var res = THSTensor_round_(Handle);
-                if (res == IntPtr.Zero)
-                    torch.CheckForErrors();
-                return new Tensor(res);
-            }
 
             /// <summary>
             /// Replaces each of the elements of input with the element rounded to the closest value with the given number of decimals.
             /// </summary>
             /// <param name="decimals">Number of decimal places to round to (default: 0). If decimals is negative, it specifies the number of positions to the left of the decimal point.</param>
             /// <returns></returns>
-            public Tensor round_(long decimals)
+            public Tensor round_(long decimals = 0L)
             {
                 var res = THSTensor_round_(Handle, decimals);
                 if (res == IntPtr.Zero)
@@ -3166,23 +3136,11 @@ namespace TorchSharp
         public static Tensor remainder_(Tensor left, Scalar right) => left.remainder_(right);
 
         /// <summary>
-        /// Returns a new tensor with each of the elements of input rounded to the closest integer.
-        /// </summary>
-        /// <param name="input">The input tensor.</param>
-        public static Tensor round(Tensor input) => input.round();
-
-        /// <summary>
         /// Returns a new tensor with each of the elements of input rounded to the closest value with the given number of decimals.
         /// </summary>
         /// <param name="input">The input tensor.</param>
         /// <param name="decimals">Number of decimal places to round to (default: 0). If decimals is negative, it specifies the number of positions to the left of the decimal point.</param>
         public static Tensor round(Tensor input, long decimals = 0L) => input.round(decimals);
-
-        /// <summary>
-        /// Replaces each of the elements of input with the element rounded to the closest integer.
-        /// </summary>
-        /// <param name="input">The input tensor.</param>
-        public static Tensor round_(Tensor input) => input.round_();
 
         /// <summary>
         /// Replaces each of the elements of input with the element rounded to the closest  value with the given number of decimals.
