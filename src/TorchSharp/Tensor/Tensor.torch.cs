@@ -95,7 +95,7 @@ namespace TorchSharp
         /// Elements that are shifted beyond the last position are re-introduced at the first position.
         /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
         /// </summary>
-        public static Tensor roll(Tensor input, IEnumerable<long> shifts, IEnumerable<long> dims) => input.roll(shifts, dims);
+        public static Tensor roll(Tensor input, ReadOnlySpan<long> shifts, IEnumerable<long> dims) => input.roll(shifts, dims);
 
         /// <summary>
         /// Returns a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.

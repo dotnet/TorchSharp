@@ -5185,13 +5185,13 @@ namespace TorchSharp
             /// Elements that are shifted beyond the last position are re-introduced at the first position.
             /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
             /// </summary>
-            public Tensor roll(IEnumerable<long> shifts, IEnumerable<long>? dims = null)
+            public Tensor roll(ReadOnlySpan<long> shifts, IEnumerable<long>? dims = null)
             {
-                var shLen = shifts.Count();
+                var shLen = shifts.Length;
                 var dmLen = dims is null ? 0 : dims.Count();
 
                 unsafe {
-                    fixed (long* sh = shifts.ToArray(), dm = (dims == null) ? null : dims.ToArray()) {
+                    fixed (long* sh = shifts, dm = (dims == null) ? null : dims.ToArray()) {
                         var res =
                             THSTensor_roll(Handle, (IntPtr)sh, shLen, (IntPtr)dm, dmLen);
                         if (res == IntPtr.Zero) { torch.CheckForErrors(); }
