@@ -4104,13 +4104,23 @@ namespace TorchSharp
             public Tensor std()
             {
                 var res = THSTensor_std(Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
                 return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_std_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim);
 
+            /// <summary>
+            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+            /// Otherwise, the sample deviation is calculated, without any correction.
+            /// </summary>
+            /// <param name="dimensions">The dimensions to reduce.</param>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+            /// <param name="type"></param>
+            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
             public Tensor std(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 unsafe {
@@ -4121,6 +4131,18 @@ namespace TorchSharp
                     }
                 }
             }
+
+            /// <summary>
+            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+            /// Otherwise, the sample deviation is calculated, without any correction.
+            /// </summary>
+            /// <param name="dimension">The dimension to reduce.</param>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimension" /> retained or not.</param>
+            /// <param name="type"></param>
+            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            public Tensor std(long dimension, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+                => std(new[] { dimension }, unbiased, keepDimension, type);
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_sum(IntPtr tensor, bool has_type, sbyte scalar_type);
