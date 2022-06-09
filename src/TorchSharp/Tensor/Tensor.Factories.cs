@@ -47,7 +47,7 @@ namespace TorchSharp
         /// Otherwise, the dtype is inferred to be torch.int64.</param>
         /// <param name="device"></param>
         /// <param name="requiresGrad"> If autograd should record operations on the returned tensor. Default: false.</param>
-        static public Tensor arange(Scalar start, Scalar stop, Scalar step, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor arange(Scalar start, Scalar stop, Scalar step, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
 
@@ -80,7 +80,7 @@ namespace TorchSharp
         /// Creates 1-D tensor of size [(stop - start) / step] with values from interval [start, stop) and
 		/// common difference step, starting from start
         /// </summary>
-        static public Tensor arange(Scalar start, Scalar stop, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor arange(Scalar start, Scalar stop, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return arange(start, stop, 1, dtype, device, requiresGrad);
         }
@@ -88,7 +88,7 @@ namespace TorchSharp
         /// <summary>
         /// Creates 1-D tensor of size [(stop - 0)] with values from interval [0, stop), starting from 0
         /// </summary>
-        static public Tensor arange(Scalar stop, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor arange(Scalar stop, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return arange(0, stop, 1, dtype, device, requiresGrad);
         }
@@ -165,7 +165,7 @@ namespace TorchSharp
         /// <summary>
         /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        static public Tensor randperm(long n, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randperm(long n, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             device = torch.InitializeDevice(device);
             dtype = dtype.HasValue ? dtype : ScalarType.Int64;
@@ -188,10 +188,7 @@ namespace TorchSharp
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
 
-        /// <summary>
-        ///  Create a new tensor filled with zeros
-        /// </summary>
-        static public Tensor zeros(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        static private Tensor _zeros(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -214,67 +211,83 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with zeros
+        ///  Create a new tensor filled with zeros
         /// </summary>
-        static public Tensor zeros(long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor zeros(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return zeros(new long[] { size }, dtype, device, requiresGrad);
+            return _zeros(size, dtype, device, requiresGrad);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with zeros
+        ///  Create a new tensor filled with zeros
         /// </summary>
-        static public Tensor zeros(long rows, long columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor zeros(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return zeros(new long[] { rows, columns }, dtype, device, requiresGrad);
-        }
-
-        /// <summary>
-        ///  Create a new 3-D tensor filled with zeros
-        /// </summary>
-        static public Tensor zeros(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
-        {
-            return zeros(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
-        }
-
-        /// <summary>
-        ///  Create a new 4-D tensor filled with zeros
-        /// </summary>
-        static public Tensor zeros(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
-        {
-            return zeros(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+            return _zeros(size, dtype, device, requiresGrad);
         }
 
         /// <summary>
         ///  Create a new 1-D tensor filled with zeros
         /// </summary>
-        static public Tensor zeros(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor zeros(long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return zeros(new long[] { size }, dtype, device, requiresGrad);
+            return _zeros(stackalloc long[] { size }, dtype, device, requiresGrad);
         }
 
         /// <summary>
         ///  Create a new 2-D tensor filled with zeros
         /// </summary>
-        static public Tensor zeros(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor zeros(long rows, long columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return zeros(new long[] { rows, columns }, dtype, device, requiresGrad);
+            return _zeros(stackalloc long[] { rows, columns }, dtype, device, requiresGrad);
         }
 
         /// <summary>
         ///  Create a new 3-D tensor filled with zeros
         /// </summary>
-        static public Tensor zeros(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor zeros(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return zeros(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+            return _zeros(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
         }
 
         /// <summary>
         ///  Create a new 4-D tensor filled with zeros
         /// </summary>
-        static public Tensor zeros(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor zeros(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return zeros(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+            return _zeros(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 1-D tensor filled with zeros
+        /// </summary>
+        public static Tensor zeros(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return _zeros(stackalloc long[] { size }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 2-D tensor filled with zeros
+        /// </summary>
+        public static Tensor zeros(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return _zeros(stackalloc long[] { rows, columns }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 3-D tensor filled with zeros
+        /// </summary>
+        public static Tensor zeros(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return _zeros(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with zeros
+        /// </summary>
+        public static Tensor zeros(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return _zeros(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
         }
 
         /// <summary>
@@ -291,7 +304,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new tensor filled with ones
         /// </summary>
-        static public Tensor ones(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        static private Tensor _ones(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -314,67 +327,83 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with ones
+        ///  Create a new tensor filled with ones
         /// </summary>
-        static public Tensor ones(long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor ones(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return ones(new long[] { size }, dtype, device, requiresGrad);
+            return _ones(size, dtype, device, requiresGrad);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with ones
+        ///  Create a new tensor filled with ones
         /// </summary>
-        static public Tensor ones(long rows, long columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor ones(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return ones(new long[] { rows, columns }, dtype, device, requiresGrad);
-        }
-
-        /// <summary>
-        ///  Create a new 3-D tensor filled with ones
-        /// </summary>
-        static public Tensor ones(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
-        {
-            return ones(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
-        }
-
-        /// <summary>
-        ///  Create a new 4-D tensor filled with ones
-        /// </summary>
-        static public Tensor ones(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
-        {
-            return ones(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+            return _ones(size, dtype, device, requiresGrad);
         }
 
         /// <summary>
         ///  Create a new 1-D tensor filled with ones
         /// </summary>
-        static public Tensor ones(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor ones(long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return ones(new long[] { size }, dtype, device, requiresGrad);
+            return _ones(new long[] { size }, dtype, device, requiresGrad);
         }
 
         /// <summary>
         ///  Create a new 2-D tensor filled with ones
         /// </summary>
-        static public Tensor ones(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor ones(long rows, long columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return ones(new long[] { rows, columns }, dtype, device, requiresGrad);
+            return _ones(new long[] { rows, columns }, dtype, device, requiresGrad);
         }
 
         /// <summary>
         ///  Create a new 3-D tensor filled with ones
         /// </summary>
-        static public Tensor ones(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor ones(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return ones(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+            return _ones(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
         }
 
         /// <summary>
         ///  Create a new 4-D tensor filled with ones
         /// </summary>
-        static public Tensor ones(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor ones(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
-            return ones(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+            return _ones(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 1-D tensor filled with ones
+        /// </summary>
+        public static Tensor ones(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return _ones(new long[] { size }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 2-D tensor filled with ones
+        /// </summary>
+        public static Tensor ones(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return _ones(new long[] { rows, columns }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 3-D tensor filled with ones
+        /// </summary>
+        public static Tensor ones(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return _ones(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+        }
+
+        /// <summary>
+        ///  Create a new 4-D tensor filled with ones
+        /// </summary>
+        public static Tensor ones(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        {
+            return _ones(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
         }
 
         /// <summary>
@@ -391,7 +420,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new tensor filled with empty
         /// </summary>
-        static public Tensor empty(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor empty(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -416,7 +445,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 1-D tensor filled with empty
         /// </summary>
-        static public Tensor empty(long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor empty(long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { size }, dtype, device, requiresGrad);
         }
@@ -424,7 +453,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 2-D tensor filled with empty
         /// </summary>
-        static public Tensor empty(long rows, long columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor empty(long rows, long columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { rows, columns }, dtype, device, requiresGrad);
         }
@@ -432,7 +461,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 3-D tensor filled with empty
         /// </summary>
-        static public Tensor empty(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor empty(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
         }
@@ -440,7 +469,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 4-D tensor filled with empty
         /// </summary>
-        static public Tensor empty(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor empty(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
         }
@@ -448,7 +477,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 1-D tensor filled with empty
         /// </summary>
-        static public Tensor empty(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor empty(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { size }, dtype, device, requiresGrad);
         }
@@ -456,7 +485,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 2-D tensor filled with empty
         /// </summary>
-        static public Tensor empty(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor empty(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { rows, columns }, dtype, device, requiresGrad);
         }
@@ -464,7 +493,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 3-D tensor filled with empty
         /// </summary>
-        static public Tensor empty(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor empty(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
         }
@@ -472,7 +501,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 4-D tensor filled with empty
         /// </summary>
-        static public Tensor empty(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor empty(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return empty(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
         }
@@ -489,7 +518,7 @@ namespace TorchSharp
         /// <summary>
         ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
         /// </summary>
-        static public Tensor empty_strided(long[] size, long[] strides, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor empty_strided(long[] size, long[] strides, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -517,7 +546,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new tensor filled with a given value
         /// </summary>
-        static public Tensor full(long[] size, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor full(long[] size, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -546,7 +575,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 1-D tensor filled with given value
         /// </summary>
-        static public Tensor full(long size, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor full(long size, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { size }, value, dtype, device, requiresGrad);
         }
@@ -554,7 +583,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 2-D tensor filled with given value
         /// </summary>
-        static public Tensor full(long rows, long columns, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor full(long rows, long columns, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { rows, columns }, value, dtype, device, requiresGrad);
         }
@@ -562,7 +591,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 3-D tensor filled with given value
         /// </summary>
-        static public Tensor full(long dim0, long dim1, long dim2, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor full(long dim0, long dim1, long dim2, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, dtype, device, requiresGrad);
         }
@@ -570,7 +599,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 4-D tensor filled with given value
         /// </summary>
-        static public Tensor full(long dim0, long dim1, long dim2, long dim3, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor full(long dim0, long dim1, long dim2, long dim3, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2, dim3 }, value, dtype, device, requiresGrad);
         }
@@ -578,7 +607,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 1-D tensor filled with given value
         /// </summary>
-        static public Tensor full(int size, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor full(int size, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { size }, value, dtype, device, requiresGrad);
         }
@@ -586,7 +615,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 2-D tensor filled with given value
         /// </summary>
-        static public Tensor full(int rows, int columns, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor full(int rows, int columns, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { rows, columns }, value, dtype, device, requiresGrad);
         }
@@ -594,7 +623,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 3-D tensor filled with given value
         /// </summary>
-        static public Tensor full(int dim0, int dim1, int dim2, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor full(int dim0, int dim1, int dim2, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2 }, value, dtype, device, requiresGrad);
         }
@@ -602,7 +631,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 4-D tensor filled with given value
         /// </summary>
-        static public Tensor full(int dim0, int dim1, int dim2, int dim3, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor full(int dim0, int dim1, int dim2, int dim3, Scalar value, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             return full(new long[] { dim0, dim1, dim2, dim3 }, value, dtype, device, requiresGrad);
         }
@@ -610,7 +639,7 @@ namespace TorchSharp
         /// <summary>
         /// Returns a tensor with the same size as input filled with 'value.'
         /// </summary>
-        static public Tensor full_like(Tensor input, Scalar value, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.full_like(value, dtype, device, requiresGrad);
+        public static Tensor full_like(Tensor input, Scalar value, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.full_like(value, dtype, device, requiresGrad);
 
 
         [DllImport("LibTorchSharp")]
@@ -619,7 +648,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
         /// </summary>
-        static public Tensor eye(long rows, long columns = -1L, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor eye(long rows, long columns = -1L, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -653,7 +682,7 @@ namespace TorchSharp
         /// <param name="device">The desired device of returned tensor.</param>
         /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
         /// <param name="generator">An optional random number genertor object.</param>
-        static public Tensor randint(long low, long high, Size size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randint(long low, long high, Size size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             var shape = size.Shape;
 
@@ -697,7 +726,7 @@ namespace TorchSharp
         /// <param name="device">The desired device of returned tensor.</param>
         /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
         /// <param name="generator">An optional random number genertor object.</param>
-        static public Tensor randint(long high, Size size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randint(long high, Size size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randint(0, high, size, dtype, device, requiresGrad, generator);
         }
@@ -713,7 +742,7 @@ namespace TorchSharp
         /// <param name="device">The desired device of returned tensor.</param>
         /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
         /// <param name="generator">An optional random number genertor object.</param>
-        static public Tensor randint(long high, long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randint(long high, long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randint(0, high, new Size(size), dtype, device, requiresGrad, generator);
         }
@@ -730,7 +759,7 @@ namespace TorchSharp
         /// <param name="generator">An optional random number genertor object.</param>
         /// <remarks>The array-size and 'int' overloads are necessary for F#, which doesn't implicitly convert types.
         ///          Once implicit conversion support is broadly available, some of these overloads can be removed.</remarks>
-        static public Tensor randint(long low, long high, long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randint(long low, long high, long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randint(low, high, new Size(size), dtype, device, requiresGrad, generator);
         }
@@ -747,7 +776,7 @@ namespace TorchSharp
         /// <param name="generator">An optional random number genertor object.</param>
         /// <remarks>The array-size and 'int' overloads are necessary for F#, which doesn't implicitly convert types.
         ///          Once implicit conversion support is broadly available, some of these overloads can be removed.</remarks>
-        static public Tensor randint(int low, int high, int[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randint(int low, int high, int[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randint(low, high, new Size(size), dtype, device, requiresGrad, generator);
         }
@@ -761,7 +790,7 @@ namespace TorchSharp
         /// <param name="device">The desired device of returned tensor.</param>
         /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
         /// <param name="generator">An optional random number genertor object.</param>
-        static public Tensor randint(int high, int[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randint(int high, int[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randint(0, high, new Size(size), dtype, device, requiresGrad, generator);
         }
@@ -874,7 +903,7 @@ namespace TorchSharp
             }
         }
 
-        static public Tensor normal(Tensor means, Tensor stddev, torch.Generator generator = null)
+        public static Tensor normal(Tensor means, Tensor stddev, torch.Generator generator = null)
         {
             if (stddev.device_type != means.device_type || (stddev.device_type == DeviceType.CUDA && stddev.device_index != means.device_index))
                 throw new ArgumentException("The 'means' and 'stddev' tensors must be located on the same device.");
@@ -884,7 +913,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public Tensor rand(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor rand(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             if (dtype.HasValue && torch.is_integral(dtype.Value))
                 throw new ArgumentException($"torch.rand() was passed a bad dtype: {dtype}. It must be floating point or complex.", "dtype");
@@ -914,7 +943,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 1-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public Tensor rand(long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor rand(long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return rand(new long[] { size }, dtype, device, requiresGrad, generator);
         }
@@ -922,7 +951,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 2-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public Tensor rand(long rows, long columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor rand(long rows, long columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return rand(new long[] { rows, columns }, dtype, device, requiresGrad, generator);
         }
@@ -930,7 +959,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 3-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public Tensor rand(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor rand(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return rand(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad, generator);
         }
@@ -938,7 +967,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public Tensor rand(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor rand(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return rand(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad, generator);
         }
@@ -946,7 +975,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 1-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public Tensor rand(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor rand(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return rand(new long[] { size }, dtype, device, requiresGrad, generator);
         }
@@ -954,7 +983,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 2-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public Tensor rand(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor rand(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return rand(new long[] { rows, columns }, dtype, device, requiresGrad, generator);
         }
@@ -962,7 +991,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 3-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public Tensor rand(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor rand(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return rand(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad, generator);
         }
@@ -970,7 +999,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        static public Tensor rand(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor rand(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return rand(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad, generator);
         }
@@ -978,7 +1007,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public Tensor randn(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randn(long[] size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             if (dtype.HasValue && torch.is_integral(dtype.Value))
                 throw new ArgumentException($"torch.randn() was passed a bad dtype: {dtype}. It must be floating point or complex.", "dtype");
@@ -1008,7 +1037,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 1-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public Tensor randn(long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randn(long size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randn(new long[] { size }, dtype, device, requiresGrad, generator);
         }
@@ -1016,7 +1045,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 2-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public Tensor randn(long rows, long columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randn(long rows, long columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randn(new long[] { rows, columns }, dtype, device, requiresGrad, generator);
         }
@@ -1024,7 +1053,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 3-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public Tensor randn(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randn(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randn(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad, generator);
         }
@@ -1032,7 +1061,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public Tensor randn(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randn(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randn(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad, generator);
         }
@@ -1040,7 +1069,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 1-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public Tensor randn(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randn(int size, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randn(new long[] { size }, dtype, device, requiresGrad, generator);
         }
@@ -1048,7 +1077,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 2-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public Tensor randn(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randn(int rows, int columns, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randn(new long[] { rows, columns }, dtype, device, requiresGrad, generator);
         }
@@ -1056,7 +1085,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 3-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public Tensor randn(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randn(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randn(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad, generator);
         }
@@ -1064,7 +1093,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        static public Tensor randn(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
+        public static Tensor randn(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false, torch.Generator generator = null)
         {
             return randn(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad, generator);
         }
@@ -2457,7 +2486,7 @@ namespace TorchSharp
         /// <summary>
         /// onstructs a complex tensor with its real part equal to real and its imaginary part equal to imag.
         /// </summary>
-        static public Tensor complex(Tensor real, Tensor imag)
+        public static Tensor complex(Tensor real, Tensor imag)
         {
             var res = THSTensor_complex(real.Handle, imag.Handle);
             if (res == IntPtr.Zero)
@@ -2468,7 +2497,7 @@ namespace TorchSharp
         /// <summary>
         /// Constructs a complex tensor whose elements are Cartesian coordinates corresponding to the polar coordinates with absolute value 'abs' and angle 'angle'.
         /// </summary>
-        static public Tensor polar(Tensor abs, Tensor angle)
+        public static Tensor polar(Tensor abs, Tensor angle)
         {
             var res = THSTensor_polar(abs.Handle, angle.Handle);
             if (res == IntPtr.Zero)
@@ -2482,7 +2511,7 @@ namespace TorchSharp
         /// <summary>
         ///  Create a one-dimensional tensor of size steps whose values are evenly spaced from start to end, inclusive.
         /// </summary>
-        static public Tensor linspace(double start, double end, long steps, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor linspace(double start, double end, long steps, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -2506,7 +2535,7 @@ namespace TorchSharp
         /// <summary>
         ///  Creates a one-dimensional tensor of size steps whose values are evenly spaced from base^start to base^end, inclusive, on a logarithmic scale with base 'base.'
         /// </summary>
-        static public Tensor logspace(double start, double end, long steps, double @base = 10, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor logspace(double start, double end, long steps, double @base = 10, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -2530,7 +2559,7 @@ namespace TorchSharp
         /// <summary>
         /// Bartlett window function.
         /// </summary>
-        static public Tensor bartlett_window(long len, bool periodic = true, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor bartlett_window(long len, bool periodic = true, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -2555,7 +2584,7 @@ namespace TorchSharp
         /// <summary>
         /// Blackman window function.
         /// </summary>
-        static public Tensor blackman_window(long len, bool periodic = true, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor blackman_window(long len, bool periodic = true, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -2580,7 +2609,7 @@ namespace TorchSharp
         /// <summary>
         /// Hamming window function.
         /// </summary>
-        static public Tensor hamming_window(long len, bool periodic = true, float alpha = 0.54f, float beta = 0.46f, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor hamming_window(long len, bool periodic = true, float alpha = 0.54f, float beta = 0.46f, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -2605,7 +2634,7 @@ namespace TorchSharp
         /// <summary>
         /// Hann window function.
         /// </summary>
-        static public Tensor hann_window(long len, bool periodic = true, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor hann_window(long len, bool periodic = true, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -2630,7 +2659,7 @@ namespace TorchSharp
         /// <summary>
         /// Computes the Kaiser window with window length window_length and shape parameter beta.
         /// </summary>
-        static public Tensor kaiser_window(long len, bool periodic = true, float beta = 12.0f, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+        public static Tensor kaiser_window(long len, bool periodic = true, float beta = 12.0f, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
         {
             device = torch.InitializeDevice(device);
             if (!dtype.HasValue) {
