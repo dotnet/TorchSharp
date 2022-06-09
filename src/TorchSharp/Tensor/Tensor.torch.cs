@@ -70,6 +70,41 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Roll the tensor along the given dimension(s).
+        /// Elements that are shifted beyond the last position are re-introduced at the first position.
+        /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
+        /// </summary>
+        public static Tensor roll(Tensor input, long shifts, long? dims = null) => input.roll(shifts, dims);
+
+        /// <summary>
+        /// Roll the tensor along the given dimension(s).
+        /// Elements that are shifted beyond the last position are re-introduced at the first position.
+        /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
+        /// </summary>
+        public static Tensor roll(Tensor input, (long,long) shifts, (long,long) dims) => input.roll(shifts, dims);
+
+        /// <summary>
+        /// Roll the tensor along the given dimension(s).
+        /// Elements that are shifted beyond the last position are re-introduced at the first position.
+        /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
+        /// </summary>
+        public static Tensor roll(Tensor input, (long, long, long) shifts, (long, long, long) dims) => input.roll(shifts, dims);
+
+        /// <summary>
+        /// Roll the tensor along the given dimension(s).
+        /// Elements that are shifted beyond the last position are re-introduced at the first position.
+        /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
+        /// </summary>
+        public static Tensor roll(Tensor input, long[] shifts, long[] dims = null) => input.roll(shifts, dims);
+
+        /// <summary>
+        /// Roll the tensor along the given dimension(s).
+        /// Elements that are shifted beyond the last position are re-introduced at the first position.
+        /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
+        /// </summary>
+        public static Tensor roll(Tensor input, ReadOnlySpan<long> shifts, ReadOnlySpan<long> dims = default) => input.roll(shifts, dims);
+
+        /// <summary>
         /// Returns a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.
         /// </summary>
         /// <param name="input"></param>

@@ -5101,6 +5101,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void RollTest()
+        {
+            using var x = torch.tensor(new long[] { 1, 2, 3, 4, 5, 6, 7, 8 }).view(4, 2);
+            using var expected_1 = torch.tensor(new long[] { 7, 8, 1, 2, 3, 4, 5, 6 }).view(4, 2);
+            using var expected_2 = torch.tensor(new long[] { 5, 6, 7, 8, 1, 2, 3, 4 }).view(4, 2);
+            using var expected_m1 = torch.tensor(new long[] { 3, 4, 5, 6, 7, 8, 1, 2 }).view(4, 2);
+
+            using var expected_tuple = torch.tensor(new long[] { 6, 5, 8, 7, 2, 1, 4, 3 }).view(4, 2);
+
+            Assert.Equal(expected_1, x.roll(1, 0));
+            Assert.Equal(expected_2, x.roll(2, 0));
+            Assert.Equal(expected_m1, x.roll(-1, 0));
+            Assert.Equal(expected_tuple, x.roll((2,1), (0,1)));
+            Assert.Equal(expected_tuple, x.roll(new long[] { 2, 1 }, new long[] { 0, 1 }));
+        }
+
+        [Fact]
         public void Conv1DTest()
         {
             var t1 =

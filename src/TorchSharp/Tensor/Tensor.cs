@@ -5165,6 +5165,76 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_roll(IntPtr tensor, IntPtr shifts, int shLength, IntPtr dims, long dimLength);
+
+            /// <summary>
+            /// Roll the tensor along the given dimension(s).
+            /// Elements that are shifted beyond the last position are re-introduced at the first position.
+            /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
+            /// </summary>
+            public Tensor roll(long shifts, long? dims = null)
+            {
+                if (dims.HasValue) {
+                    return _roll(stackalloc long[1] { shifts }, new long[1] { dims.Value });
+                }
+                else {
+                    return _roll(stackalloc long[1] { shifts }, null);
+                }
+            }
+
+            /// <summary>
+            /// Roll the tensor along the given dimension(s).
+            /// Elements that are shifted beyond the last position are re-introduced at the first position.
+            /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
+            /// </summary>
+            public Tensor roll((long,long) shifts, (long,long) dims)
+            {
+                return _roll(stackalloc long[2] { shifts.Item1, shifts.Item2 }, new long[2] { dims.Item1, dims.Item2 });
+            }
+
+            /// <summary>
+            /// Roll the tensor along the given dimension(s).
+            /// Elements that are shifted beyond the last position are re-introduced at the first position.
+            /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
+            /// </summary>
+            public Tensor roll(long[] shifts, long[]? dims = null)
+            {
+                return _roll(shifts, dims);
+            }
+
+            /// <summary>
+            /// Roll the tensor along the given dimension(s).
+            /// Elements that are shifted beyond the last position are re-introduced at the first position.
+            /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
+            /// </summary>
+            public Tensor roll((long, long, long) shifts, (long, long, long) dims)
+            {
+                return _roll(stackalloc long[3] { shifts.Item1, shifts.Item2, shifts.Item3 }, new long[3] { dims.Item1, dims.Item2, dims.Item3 });
+            }
+
+            /// <summary>
+            /// Roll the tensor along the given dimension(s).
+            /// Elements that are shifted beyond the last position are re-introduced at the first position.
+            /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
+            /// </summary>
+            public Tensor roll(ReadOnlySpan<long> shifts, ReadOnlySpan<long> dims = default)
+            {
+                return _roll(shifts, dims);
+            }
+
+            private unsafe Tensor _roll(ReadOnlySpan<long> shifts, ReadOnlySpan<long> dims)
+            {
+                var dmLen = dims.Length;
+
+                fixed (long* sh = shifts, dm = (dmLen == 0) ? null : dims) {
+                    var res =
+                        THSTensor_roll(Handle, (IntPtr)sh, shifts.Length, (IntPtr)dm, dmLen);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_slice(IntPtr tensor, long dimension, long start, long length, long step);
 
             /// <summary>
