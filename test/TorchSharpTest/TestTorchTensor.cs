@@ -5114,6 +5114,7 @@ namespace TorchSharp
             Assert.Equal(expected_2, x.roll(2, 0));
             Assert.Equal(expected_m1, x.roll(-1, 0));
             Assert.Equal(expected_tuple, x.roll((2,1), (0,1)));
+            Assert.Equal(expected_tuple, x.roll(new long[] { 2, 1 }, new long[] { 0, 1 }));
         }
 
         [Fact]
