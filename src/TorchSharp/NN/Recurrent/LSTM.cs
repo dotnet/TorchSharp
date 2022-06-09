@@ -42,8 +42,8 @@ namespace TorchSharp
                     var N = _batch_first ? input.shape[0] : input.shape[1];
                     var D = _bidirectional ? 2 : 1;
 
-                    c0 = torch.zeros(new long[] { D * _num_layers, N, _hidden_size }, device: input.device);
-                    h0 = torch.zeros(new long[] { D * _num_layers, N, _hidden_size }, device: input.device);
+                    c0 = torch.zeros(D * _num_layers, N, _hidden_size, device: input.device);
+                    h0 = torch.zeros(D * _num_layers, N, _hidden_size, device: input.device);
                 }
                 else {
                     h0 = h0_c0.Value.Item1;
