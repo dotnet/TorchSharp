@@ -1518,6 +1518,16 @@ Tensor THSTensor_std_along_dimensions(const Tensor tensor, const int64_t* dimens
     CATCH_TENSOR(tensor->std(at::ArrayRef<int64_t>(dimensions, length), unbiased, keepdim));
 }
 
+Tensor THSTensor_std_mean(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->std_mean());
+}
+
+Tensor THSTensor_std_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim)
+{
+    CATCH_TENSOR(tensor->std_mean(at::ArrayRef<int64_t>(dimensions, length), unbiased, keepdim));
+}
+
 Tensor THSTensor_sum(const Tensor tensor, bool has_type, const int8_t dtype)
 {
     CATCH_TENSOR(has_type ? tensor->sum((c10::ScalarType)dtype) : tensor->sum())

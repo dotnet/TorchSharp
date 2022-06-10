@@ -4101,6 +4101,8 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_std(IntPtr tensor);
 
+            /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+            [System.Diagnostics.Contracts.Pure]
             public Tensor std()
             {
                 var res = THSTensor_std(Handle);
@@ -4112,15 +4114,17 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_std_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim);
 
-            /// <summary>
+            /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+            /// <remarks>
             /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
             /// Otherwise, the sample deviation is calculated, without any correction.
-            /// </summary>
+            /// </remarks>
             /// <param name="dimensions">The dimensions to reduce.</param>
             /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
             public Tensor std(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 unsafe {
@@ -4132,17 +4136,73 @@ namespace TorchSharp
                 }
             }
 
-            /// <summary>
+            /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+            /// <remarks>
             /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
             /// Otherwise, the sample deviation is calculated, without any correction.
-            /// </summary>
+            /// </remarks>
             /// <param name="dimension">The dimension to reduce.</param>
             /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimension" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
             public Tensor std(long dimension, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => std(new[] { dimension }, unbiased, keepDimension, type);
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_std_mean(IntPtr tensor);
+
+            /// <summary>
+            /// Calculates the standard deviation and mean of all elements in the tensor.
+            /// </summary>
+            [System.Diagnostics.Contracts.Pure]
+            public Tensor std_mean()
+            {
+                var res = THSTensor_std_mean(Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+            
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_std_mean_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim);
+
+            /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+            /// <remarks>
+            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+            /// Otherwise, the sample deviation is calculated, without any correction.
+            /// </remarks>
+            /// <param name="dimensions">The dimensions to reduce.</param>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+            /// <param name="type"></param>
+            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
+            public Tensor std_mean(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            {
+                unsafe {
+                    fixed (long* pdims = dimensions) {
+                        var res = THSTensor_std_mean_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, unbiased, keepDimension);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
+                    }
+                }
+            }
+
+            /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+            /// <remarks>
+            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+            /// Otherwise, the sample deviation is calculated, without any correction.
+            /// </remarks>
+            /// <param name="dimension">The dimension to reduce.</param>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimension" /> retained or not.</param>
+            /// <param name="type"></param>
+            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
+            public Tensor std_mean(long dimension, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+                => std_mean(new[] { dimension }, unbiased, keepDimension, type);
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_sum(IntPtr tensor, bool has_type, sbyte scalar_type);
