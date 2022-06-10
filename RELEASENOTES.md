@@ -16,6 +16,7 @@ Added torch.tensor() overloads for most common dimensions of .NET arrays: ndim =
 Added the most significant API additions from Pytorch 1.11.
 Added two torchaudio APIs.
 Added 'decimals' argument to Tensor.round()
+Added torch.std_mean()
 
 ## NuGet Version 0.96.7
 

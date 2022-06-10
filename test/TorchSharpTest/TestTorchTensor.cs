@@ -4837,6 +4837,32 @@ namespace TorchSharp
 
         }
 
+        [Fact]
+        public void StdTest()
+        {
+            var data = torch.rand(10, 10, 10);
+
+            {
+                var std = data.std();
+                Assert.NotNull(std);
+                Assert.Empty(std.shape);
+            }
+            {
+                var std = torch.std(data, unbiased: false);
+                Assert.NotNull(std);
+                Assert.Empty(std.shape);
+            }
+            {
+                var std = data.std(1);
+                Assert.NotNull(std);
+                Assert.Equal(new long[] { 10, 10 }, std.shape);
+            }
+            {
+                var std = torch.std(data, 1, keepDimension: true);
+                Assert.NotNull(std);
+                Assert.Equal(new long[] { 10, 1, 10 }, std.shape);
+            }
+        }
 
         [Fact]
         public void StdMeanTest()
@@ -4851,7 +4877,7 @@ namespace TorchSharp
                 Assert.Empty(mean.shape);
             }
             {
-                var (std, mean) = data.std_mean(unbiased: false);
+                var (std, mean) = torch.std_mean(data, unbiased: false);
                 Assert.NotNull(std);
                 Assert.NotNull(mean);
                 Assert.Empty(std.shape);
@@ -4865,7 +4891,7 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 10, 10 }, mean.shape);
             }
             {
-                var (std, mean) = data.std_mean(1, keepDimension: true);
+                var (std, mean) = torch.std_mean(data, 1, keepDimension: true);
                 Assert.NotNull(std);
                 Assert.NotNull(mean);
                 Assert.Equal(new long[] { 10, 1, 10 }, std.shape);
