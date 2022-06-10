@@ -423,7 +423,7 @@ namespace TorchSharp
 
                         variance = variance.clone().maximum(torch.tensor(eps));
 
-                        var loss = 0.5 * (variance.log() + (input - target).square() / variance).view(input.shape[0], -1).sum(dimensions: new long[] { 1 });
+                        var loss = 0.5 * (variance.log() + (input - target).square() / variance).view(input.shape[0], -1).sum(dim: stackalloc long[] { 1 });
 
                         if (full) {
                             loss = loss + 0.5 * input.shape[1] * MathF.Log(2 * MathF.PI);
