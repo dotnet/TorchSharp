@@ -816,14 +816,14 @@ Tensor THSTensor_remainder_scalar_(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->remainder_(*right));
 }
 
-Tensor THSTensor_round(const Tensor tensor)
+Tensor THSTensor_round(const Tensor tensor, const int64_t decimals)
 {
-    CATCH_TENSOR(tensor->round());
+    CATCH_TENSOR(tensor->round(decimals));
 }
 
-Tensor THSTensor_round_(const Tensor tensor)
+Tensor THSTensor_round_(const Tensor tensor, const int64_t decimals)
 {
-    CATCH_TENSOR(tensor->round_());
+    CATCH_TENSOR(tensor->round_(decimals));
 }
 
 Tensor THSTensor_rsqrt(const Tensor tensor)
