@@ -1084,6 +1084,14 @@ Tensor THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int le
     CATCH_TENSOR(tensor->reshape(at::ArrayRef<int64_t>(shape, length)));
 }
 
+Tensor THSTensor_roll(const Tensor tensor, const int64_t* shifts, const int shLength, const int64_t* dims, const int dimLength)
+{
+    CATCH_TENSOR(
+        dims != nullptr
+        ? tensor->roll(at::ArrayRef<int64_t>(shifts, shLength), at::ArrayRef<int64_t>(dims, dimLength))
+        : tensor->roll(at::ArrayRef<int64_t>(shifts, shLength)));
+}
+
 void THSTensor_save(const Tensor tensor, const char* location)
 {
     CATCH(

@@ -7,6 +7,7 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 __Fixed Bugs:__
 
 #618 TorchSharp.Modules.Normal.sample() Expected all tensors [...]<br/>
+#621 torch.roll missing<br/>
 
 __API Changes:__
 
