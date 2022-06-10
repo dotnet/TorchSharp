@@ -3136,23 +3136,11 @@ namespace TorchSharp
         public static Tensor remainder_(Tensor left, Scalar right) => left.remainder_(right);
 
         /// <summary>
-        /// Returns a new tensor with each of the elements of input rounded to the closest integer.
-        /// </summary>
-        /// <param name="input">The input tensor.</param>
-        public static Tensor round(Tensor input) => input.round();
-
-        /// <summary>
         /// Returns a new tensor with each of the elements of input rounded to the closest value with the given number of decimals.
         /// </summary>
         /// <param name="input">The input tensor.</param>
         /// <param name="decimals">Number of decimal places to round to (default: 0). If decimals is negative, it specifies the number of positions to the left of the decimal point.</param>
         public static Tensor round(Tensor input, long decimals = 0L) => input.round(decimals);
-
-        /// <summary>
-        /// Replaces each of the elements of input with the element rounded to the closest integer.
-        /// </summary>
-        /// <param name="input">The input tensor.</param>
-        public static Tensor round_(Tensor input) => input.round_();
 
         /// <summary>
         /// Replaces each of the elements of input with the element rounded to the closest  value with the given number of decimals.
