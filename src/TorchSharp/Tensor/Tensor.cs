@@ -276,7 +276,7 @@ namespace TorchSharp
             /// Returns the underlying storage.
             /// </summary>
             /// <returns></returns>
-            public Storage<T> storage<T>() where T: unmanaged
+            public Storage<T> storage<T>() where T : unmanaged
             {
                 return Storage.Create<T>(this);
             }
@@ -1613,8 +1613,7 @@ namespace TorchSharp
 
                 if (dim is null) {
                     res = THSTensor_unique(Handle, sorted, return_inverse, return_counts, out inverse_indices, out counts);
-                }
-                else {
+                } else {
                     res = THSTensor_unique_dim(Handle, dim.Value, sorted, return_inverse, return_counts, out inverse_indices, out counts);
                 }
 
@@ -4151,22 +4150,23 @@ namespace TorchSharp
                 => std(new[] { dimension }, unbiased, keepDimension, type);
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_std_mean(IntPtr tensor);
+            static extern IntPtr THSTensor_std_mean(IntPtr tensor, bool unbiased, out IntPtr mean);
 
             /// <summary>
             /// Calculates the standard deviation and mean of all elements in the tensor.
             /// </summary>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
             [System.Diagnostics.Contracts.Pure]
-            public Tensor std_mean()
+            public (Tensor std, Tensor mean) std_mean(bool unbiased = true)
             {
-                var res = THSTensor_std_mean(Handle);
-                if (res == IntPtr.Zero)
+                var res = THSTensor_std_mean(Handle, unbiased, out var mean);
+                if (res == IntPtr.Zero || mean == IntPtr.Zero)
                     torch.CheckForErrors();
-                return new Tensor(res);
+                return (new Tensor(res), new Tensor(mean));
             }
             
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_std_mean_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim);
+            static extern IntPtr THSTensor_std_mean_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim, out IntPtr mean);
 
             /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
             /// <remarks>
@@ -4179,13 +4179,13 @@ namespace TorchSharp
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
             [System.Diagnostics.Contracts.Pure]
-            public Tensor std_mean(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            public (Tensor std, Tensor mean) std_mean(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 unsafe {
                     fixed (long* pdims = dimensions) {
-                        var res = THSTensor_std_mean_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, unbiased, keepDimension);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
+                        var res = THSTensor_std_mean_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, unbiased, keepDimension, out var mean);
+                        if (res == IntPtr.Zero || mean == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return (new Tensor(res), new Tensor(mean));
                     }
                 }
             }
@@ -4201,8 +4201,9 @@ namespace TorchSharp
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
             [System.Diagnostics.Contracts.Pure]
-            public Tensor std_mean(long dimension, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            public (Tensor std, Tensor mean) std_mean(long dimension, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => std_mean(new[] { dimension }, unbiased, keepDimension, type);
+
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_sum(IntPtr tensor, bool has_type, sbyte scalar_type);
