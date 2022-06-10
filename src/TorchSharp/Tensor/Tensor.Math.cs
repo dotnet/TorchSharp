@@ -1748,7 +1748,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="decimals">Number of decimal places to round to (default: 0). If decimals is negative, it specifies the number of positions to the left of the decimal point.</param>
             /// <returns></returns>
-            public Tensor round(long decimals = 0)
+            public Tensor round(long decimals = 0L)
             {
                 var res = THSTensor_round(Handle, decimals);
                 if (res == IntPtr.Zero)
@@ -1764,7 +1764,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="decimals">Number of decimal places to round to (default: 0). If decimals is negative, it specifies the number of positions to the left of the decimal point.</param>
             /// <returns></returns>
-            public Tensor round_(long decimals = 0)
+            public Tensor round_(long decimals = 0L)
             {
                 var res = THSTensor_round_(Handle, decimals);
                 if (res == IntPtr.Zero)
