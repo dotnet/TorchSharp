@@ -7,10 +7,20 @@ namespace TorchSharp
 {
     public static partial class torchaudio
     {
+        /// <summary>
+        /// Load audio data from a file.
+        /// </summary>
+        /// <param name="filepath">The file path to load</param>
+        /// <param name="frame_offset">Number of frames to skip before reading data</param>
+        /// <param name="num_frames">Maximum number of frames to read.</param>
+        /// <param name="normalize">True to normalize the audio to [-1.0, 1.0]</param>
+        /// <param name="channels_first">The dimension of the returned tensor is [channel, time] when true</param>
+        /// <param name="format">The format of the audio file</param>
+        /// <returns>A pair of waveform and sampling rate</returns>
         public static (torch.Tensor, int) load(
             string filepath,
-            int frame_offset = 0,
-            int num_frames = -1,
+            long frame_offset = 0,
+            long num_frames = -1,
             bool normalize = true,
             bool channels_first = true,
             AudioFormat? format = null)
@@ -24,6 +34,17 @@ namespace TorchSharp
                 format);
         }
 
+        /// <summary>
+        /// Save audio data to a file.
+        /// </summary>
+        /// <param name="filepath">The file path to save</param>
+        /// <param name="src">The waveform of audio</param>
+        /// <param name="sample_rate">The sampling rate of audio</param>
+        /// <param name="channels_first">The dimension of the returned tensor is [channel, time] when true</param>
+        /// <param name="compression">The compression factor</param>
+        /// <param name="format">The format of the audio file</param>
+        /// <param name="encoding">The audio encoding</param>
+        /// <param name="bits_per_sample">The number of bits per sample</param>
         public static void save(
             string filepath,
             torch.Tensor src,
@@ -45,6 +66,12 @@ namespace TorchSharp
                 bits_per_sample);
         }
 
+        /// <summary>
+        /// Get the information of an audio file.
+        /// </summary>
+        /// <param name="filepath">The file path of the audio file</param>
+        /// <param name="format">The format of the audio file</param>
+        /// <returns>The information of the audio file</returns>
         public static AudioMetaData info(
             string filepath,
             AudioFormat? format = null)

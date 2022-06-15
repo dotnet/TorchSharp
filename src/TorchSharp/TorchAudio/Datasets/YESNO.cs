@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,6 +29,7 @@ namespace TorchSharp
                 public override Dictionary<string, torch.Tensor> GetTensor(long index)
                 {
                     var (waveform, sample_rate) = torchaudio.load(audioPathList[index]);
+                    // TODO: produce sample_rate and labels.
                     return new Dictionary<string, torch.Tensor>() {
                         ["waveform"] = waveform,
                         ["sample_rate"] = null,
@@ -36,6 +38,15 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Create a Yesno dataset
+            /// </summary>
+            /// <param name="root">The path to the dataset</param>
+            /// <param name="url">The URL to download the dataset from</param>
+            /// <param name="folder_in_archive">The top directory of the dataset</param>
+            /// <param name="download">True to download the dataset</param>
+            /// <returns>The dataset</returns>
+            /// <exception cref="InvalidDataException"></exception>
             public static torch.utils.data.Dataset YESNO(
                 string root,
                 string url = "http://www.openslr.org/resources/1/waves_yesno.tar.gz",
@@ -43,7 +54,7 @@ namespace TorchSharp
                 bool download = false)
             {
                 var directoryPathInArchive = Path.Combine(root, folder_in_archive);
-                var archiveFileName = GetFilenameFromUrl(url);
+                var archiveFileName = GetFileNameFromUrl(url);
                 var archivePath = Path.Combine(root, archiveFileName);
                 if (download) {
                     if (!Directory.Exists(directoryPathInArchive)) {
@@ -59,7 +70,7 @@ namespace TorchSharp
                 return new YESNODataset(directoryPathInArchive);
             }
 
-            private static string GetFilenameFromUrl(string url)
+            private static string GetFileNameFromUrl(string url)
             {
                 int index = url.LastIndexOf('/');
                 if (index < 0) throw new ArgumentException();
@@ -68,7 +79,7 @@ namespace TorchSharp
                 return fileName;
             }
 
-            private static void ExtractTarGz(String archivePath, String destinationDirectory)
+            private static void ExtractTarGz(string archivePath, string destinationDirectory)
             {
                 using (var fileStream = File.OpenRead(archivePath)) {
                     using (var inputStream = new GZipInputStream(fileStream)) {

@@ -3,6 +3,9 @@ namespace TorchSharp
 {
     public static partial class torchaudio
     {
+        /// <summary>
+        /// Audio format
+        /// </summary>
         public enum AudioFormat
         {
             WAV,

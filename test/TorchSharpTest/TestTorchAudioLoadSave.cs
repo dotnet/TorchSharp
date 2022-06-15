@@ -21,7 +21,7 @@ namespace TorchSharp
 
         private class MockAudioBackend : torchaudio.backend.IAudioBackend
         {
-            public (torch.Tensor, int) load(string filepath, int frame_offset = 0, int num_frames = -1, bool normalize = true, bool channels_first = true, torchaudio.AudioFormat? format = null)
+            public (torch.Tensor, int) load(string filepath, long frame_offset = 0, long num_frames = -1, bool normalize = true, bool channels_first = true, torchaudio.AudioFormat? format = null)
             {
                 return (make_waveform(), ExpectedSampleRate);
             }

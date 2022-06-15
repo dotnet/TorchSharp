@@ -3,6 +3,9 @@ namespace TorchSharp
 {
     public static partial class torchaudio
     {
+        /// <summary>
+        /// Audio encoding
+        /// </summary>
         public enum AudioEncoding
         {
             PCM_S,

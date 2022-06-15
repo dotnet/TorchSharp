@@ -11,6 +11,14 @@ namespace TorchSharp
     {
         public static partial class hub
         {
+            /// <summary>
+            /// Download the url to a file 
+            /// </summary>
+            /// <param name="url">The URL to download</param>
+            /// <param name="dst">The file path to download the URL into</param>
+            /// <param name="hash_prefix">If non null, the SHA256 hash of downloaded content must match this prefix</param>
+            /// <param name="progress">Display the progress bar</param>
+            /// <exception cref="InvalidDataException">SHA256 hash doesn't match</exception>
             public static void download_url_to_file(string url, string dst, string hash_prefix = null, bool progress = true)
             {
                 using (var webClient = new WebClient()) {

@@ -13,8 +13,8 @@ namespace TorchSharp
             {
                 public (torch.Tensor, int) load(
                     string filepath,
-                    int frame_offset = 0,
-                    int num_frames = -1,
+                    long frame_offset = 0,
+                    long num_frames = -1,
                     bool normalize = true,
                     bool channels_first = true,
                     AudioFormat? format = null)
