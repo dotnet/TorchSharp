@@ -4897,6 +4897,16 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 10, 1, 10 }, std.shape);
                 Assert.Equal(new long[] { 10, 1, 10 }, mean.shape);
             }
+            {
+                var t = torch.from_array(new float[,]{ { 1f, 2f }, { 3f, 4f } });
+                var stdExpected = torch.std(t);
+                var meanExpected = torch.mean(t);
+                var (std, mean) = torch.std_mean(t);
+                Assert.NotNull(std);
+                Assert.NotNull(mean);
+                Assert.True(stdExpected.allclose(std));
+                Assert.True(meanExpected.allclose(mean));
+            }
         }
 
         [Fact]
