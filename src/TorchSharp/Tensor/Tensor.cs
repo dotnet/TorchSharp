@@ -4124,28 +4124,6 @@ namespace TorchSharp
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
             [System.Diagnostics.Contracts.Pure]
-            public Tensor std(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            {
-                unsafe {
-                    fixed (long* pdims = dimensions) {
-                        var res = THSTensor_std_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, unbiased, keepDimension);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
-                    }
-                }
-            }
-
-            /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
-            /// <remarks>
-            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
-            /// Otherwise, the sample deviation is calculated, without any correction.
-            /// </remarks>
-            /// <param name="dimensions">The dimensions to reduce.</param>
-            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
-            /// <param name="type"></param>
-            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            [System.Diagnostics.Contracts.Pure]
             public Tensor std(ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 unsafe {
@@ -4198,7 +4176,6 @@ namespace TorchSharp
             [System.Diagnostics.Contracts.Pure]
             public Tensor std((long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => std(stackalloc[] { dimensions.Item1, dimensions.Item2, dimensions.Item3 }, unbiased, keepDimension, type);
-
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_std_mean(IntPtr tensor, bool unbiased, out IntPtr mean);
@@ -4291,7 +4268,6 @@ namespace TorchSharp
             public (Tensor std, Tensor mean) std_mean((long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => std_mean(stackalloc[] { dimensions.Item1, dimensions.Item2 }, unbiased, keepDimension, type);
 
-
             /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
             /// <remarks>
             /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
@@ -4305,7 +4281,6 @@ namespace TorchSharp
             [System.Diagnostics.Contracts.Pure]
             public (Tensor std, Tensor mean) std_mean((long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => std_mean(stackalloc[] { dimensions.Item1, dimensions.Item2, dimensions.Item3 }, unbiased, keepDimension, type);
-
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_sum(IntPtr tensor, bool has_type, sbyte scalar_type);
