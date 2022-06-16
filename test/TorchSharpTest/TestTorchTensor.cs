@@ -4509,14 +4509,14 @@ namespace TorchSharp
             // check non-inline version
             var r0 = round(matmul(a, b), 2L);
             var r1 = round(matmul(b, a), 3L);
-            Assert.True(torch.Equals(i, r0), "round() failed");
-            Assert.True(torch.Equals(i, r1), "round() failed");
+            Assert.True(i.allclose(r0), "round() failed");
+            Assert.True(i.allclose(r1), "round() failed");
 
             // check inline version
             var r0_ = matmul(a, b).round_(2L);
             var r1_ = matmul(b, a).round_(3L);
-            Assert.True(torch.Equals(i, r0_), "round_() failed");
-            Assert.True(torch.Equals(i, r1_), "round_() failed");
+            Assert.True(i.allclose(r0_), "round_() failed");
+            Assert.True(i.allclose(r1_), "round_() failed");
         }
 
         [Fact]
