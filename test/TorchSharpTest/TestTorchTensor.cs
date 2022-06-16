@@ -43,7 +43,6 @@ namespace TorchSharp
             }
         }
 
-
         [Fact]
         public void Test1DToList()
         {
@@ -681,7 +680,7 @@ namespace TorchSharp
             }
 
             {
-                var array = new double[1,2];
+                var array = new double[1, 2];
                 var t = torch.from_array(array);
                 Assert.Equal(2, t.ndim);
                 Assert.Equal(new long[] { 1, 2 }, t.shape);
@@ -689,7 +688,7 @@ namespace TorchSharp
             }
 
             {
-                var array = new long[1,2,3];
+                var array = new long[1, 2, 3];
                 var t = torch.from_array(array);
                 Assert.Equal(3, t.ndim);
                 Assert.Equal(new long[] { 1, 2, 3 }, t.shape);
@@ -3693,7 +3692,7 @@ namespace TorchSharp
             }
 
             {
-                var (A_LU, pivots, infos) = torch.lu(A, get_infos:true);
+                var (A_LU, pivots, infos) = torch.lu(A, get_infos: true);
 
                 Assert.NotNull(A_LU);
                 Assert.NotNull(pivots);
@@ -4450,7 +4449,7 @@ namespace TorchSharp
         public void RoundTest()
         {
             var rnd = new Random();
-            var data = Enumerable.Range(1,100).Select(i => (float)rnd.NextDouble()*10000).ToArray();
+            var data = Enumerable.Range(1, 100).Select(i => (float)rnd.NextDouble() * 10000).ToArray();
 
             {
                 var expected = data.Select(x => MathF.Round(x)).ToArray();
@@ -4462,7 +4461,7 @@ namespace TorchSharp
                 Assert.True(input.allclose(torch.tensor(expected)));
             }
             {
-                var expected = data.Select(x => MathF.Round(x*10.0f)/10.0f).ToArray();
+                var expected = data.Select(x => MathF.Round(x * 10.0f) / 10.0f).ToArray();
                 var input = torch.tensor(data);
                 var res = input.round(1);
                 Assert.True(res.allclose(torch.tensor(expected)));
@@ -5246,7 +5245,7 @@ namespace TorchSharp
             Assert.Equal(expected_1, x.roll(1, 0));
             Assert.Equal(expected_2, x.roll(2, 0));
             Assert.Equal(expected_m1, x.roll(-1, 0));
-            Assert.Equal(expected_tuple, x.roll((2,1), (0,1)));
+            Assert.Equal(expected_tuple, x.roll((2, 1), (0, 1)));
             Assert.Equal(expected_tuple, x.roll(new long[] { 2, 1 }, new long[] { 0, 1 }));
         }
 
