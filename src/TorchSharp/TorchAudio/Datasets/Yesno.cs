@@ -13,27 +13,26 @@ namespace TorchSharp
     {
         public static partial class datasets
         {
-            private class YESNODataset : torch.utils.data.Dataset
+            private class YesnoDataset : torch.utils.data.Dataset<YesnoDatasetItem>
             {
                 public const string ArchiveChecksum = "c3f49e0cca421f96b75b41640749167b52118f232498667ca7a5f9416aef8e73";
 
                 private readonly string[] audioPathList;
 
-                public YESNODataset(string directoryPathInArchive)
+                public YesnoDataset(string directoryPathInArchive)
                 {
                     audioPathList = Directory.EnumerateFiles(directoryPathInArchive, "*.wav").ToArray();
                 }
 
                 public override long Count => audioPathList.LongLength;
 
-                public override Dictionary<string, torch.Tensor> GetTensor(long index)
+                public override YesnoDatasetItem GetTensor(long index)
                 {
                     var (waveform, sample_rate) = torchaudio.load(audioPathList[index]);
-                    // TODO: produce sample_rate and labels.
-                    return new Dictionary<string, torch.Tensor>() {
-                        ["waveform"] = waveform,
-                        ["sample_rate"] = null,
-                        ["labels"] = null
+                    return new() {
+                        waveform = waveform,
+                        sample_rate = sample_rate,
+                        labels = null
                     };
                 }
             }
@@ -47,7 +46,7 @@ namespace TorchSharp
             /// <param name="download">True to download the dataset</param>
             /// <returns>The dataset</returns>
             /// <exception cref="InvalidDataException"></exception>
-            public static torch.utils.data.Dataset YESNO(
+            public static torch.utils.data.Dataset<YesnoDatasetItem> YESNO(
                 string root,
                 string url = "http://www.openslr.org/resources/1/waves_yesno.tar.gz",
                 string folder_in_archive = "waves_yesno",
@@ -59,7 +58,7 @@ namespace TorchSharp
                 if (download) {
                     if (!Directory.Exists(directoryPathInArchive)) {
                         if (!File.Exists(archivePath)) {
-                            torch.hub.download_url_to_file(url, archivePath, YESNODataset.ArchiveChecksum);
+                            torch.hub.download_url_to_file(url, archivePath, YesnoDataset.ArchiveChecksum);
                         }
                         ExtractTarGz(archivePath, root);
                     }
@@ -67,7 +66,7 @@ namespace TorchSharp
                 if (!Directory.Exists(directoryPathInArchive)) {
                     throw new InvalidDataException("Dataset not found. Please use `download=true` to download it.");
                 }
-                return new YESNODataset(directoryPathInArchive);
+                return new YesnoDataset(directoryPathInArchive);
             }
 
             private static string GetFileNameFromUrl(string url)
