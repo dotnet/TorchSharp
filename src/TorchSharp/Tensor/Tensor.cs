@@ -5639,8 +5639,6 @@ namespace TorchSharp
             // Specifically added to make F# look good.
             public static Tensor op_MinusMinusGreater(Tensor t, torch.nn.Module m) => m.forward(t);
 
-            public static TensorStringStyle DefaultOutputStyle = TensorStringStyle.Metadata;
-
             public override string ToString() => ToMetadataString();
 
             /// <summary>
