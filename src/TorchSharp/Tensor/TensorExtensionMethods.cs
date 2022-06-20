@@ -53,7 +53,67 @@ namespace TorchSharp
         /// </remarks>
         public static string str(this Tensor tensor, TensorStringStyle style = TensorStringStyle.Julia, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
         {
-            return tensor.ToString(style, fltFormat, width, newLine: newLine, cultureInfo:cultureInfo);
+            return tensor.ToString(style, fltFormat, width, newLine: newLine, cultureInfo: cultureInfo);
+        }
+
+        /// <summary>
+        /// Get a julia style string representation of the tensor.
+        /// </summary>
+        /// <param name="tensor">The input tensor.</param>
+        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="width">The width of each line of the output string.</param>
+        /// <param name="newLine">The newline string to use, defaults to system default.</param>
+        /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This method does exactly the same as str(TensorStringStyle.Julia, ...) but is shorter,
+        /// looks more like Python 'str' and doesn't require a style argument in order
+        /// to discriminate.
+        ///
+        /// Primarily intended for use in interactive notebooks.
+        /// </remarks>
+        public static string juliastr(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
+        {
+            return tensor.ToString(TensorStringStyle.Julia, fltFormat, width, newLine: newLine, cultureInfo: cultureInfo);
+        }
+
+        /// <summary>
+        /// Get a metadata string representation of the tensor.
+        /// Creating metadata string will ignore fltFormat, etc. so this method will not accept them as parameter.
+        /// </summary>
+        /// <param name="tensor">The input tensor.</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This method does exactly the same as str(TensorStringStyle.Metadata, ...) but is shorter,
+        /// looks more like Python 'str' and doesn't require a style argument in order
+        /// to discriminate.
+        ///
+        /// Primarily intended for use in interactive notebooks.
+        /// </remarks>
+        public static string metastr(this Tensor tensor)
+        {
+            return tensor.ToString(TensorStringStyle.Metadata);
+        }
+
+        /// <summary>
+        /// Get a numpy style string representation of the tensor.
+        /// </summary>
+        /// <param name="tensor">The input tensor.</param>
+        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="width">The width of each line of the output string.</param>
+        /// <param name="newLine">The newline string to use, defaults to system default.</param>
+        /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This method does exactly the same as str(TensorStringStyle.Numpy, ...) but is shorter,
+        /// looks more like Python 'str' and doesn't require a style argument in order
+        /// to discriminate.
+        ///
+        /// Primarily intended for use in interactive notebooks.
+        /// </remarks>
+        public static string npstr(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
+        {
+            return tensor.ToString(TensorStringStyle.Numpy, fltFormat, width, newLine: newLine, cultureInfo: cultureInfo);
         }
 
         /// <summary>
