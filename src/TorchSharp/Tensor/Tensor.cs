@@ -1883,7 +1883,7 @@ namespace TorchSharp
             /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
             /// <param name="out">The output tensor -- optional.</param>
 
-            public Tensor amax(long[] dims, bool keepDim = false, Tensor? @out = null)
+            public Tensor amax(ReadOnlySpan<long> dims, bool keepDim = false, Tensor? @out = null)
             {
                 unsafe {
                     fixed (long* pdims = dims) {
@@ -1894,6 +1894,27 @@ namespace TorchSharp
                         return new Tensor(res);
                     }
                 }
+            }
+
+            /// <summary>
+            /// Returns the maximum value of each slice of the input tensor in the given dimension(s) dim.
+            /// </summary>
+            /// <param name="dims">The dimension or dimensions to reduce.</param>
+            /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+            /// <param name="out">The output tensor -- optional.</param>
+            public Tensor amax(long[] dims, bool keepDim = false, Tensor? @out = null)
+
+            {
+                return amax((ReadOnlySpan<long>)dims, keepDim, @out);
+            }
+
+            /// <summary>
+            /// Returns the maximum value of each slice of the input tensor in the given dimension(s) dim.
+            /// </summary>
+            /// <param name="dims">The dimension or dimensions to reduce.</param>
+            public Tensor amax(params long[] dims)
+            {
+                return amax((ReadOnlySpan<long>)dims, false, null);
             }
 
             [DllImport("LibTorchSharp")]
@@ -1908,7 +1929,7 @@ namespace TorchSharp
             /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
             /// <param name="out">The output tensor -- optional.</param>
 
-            public Tensor amin(long[] dims, bool keepDim = false, Tensor? @out = null)
+            public Tensor amin(ReadOnlySpan<long> dims, bool keepDim = false, Tensor? @out = null)
             {
                 unsafe {
                     fixed (long* pdims = dims) {
@@ -1919,6 +1940,27 @@ namespace TorchSharp
                         return new Tensor(res);
                     }
                 }
+            }
+
+            /// <summary>
+            /// Returns the minimum value of each slice of the input tensor in the given dimension(s) dim.
+            /// </summary>
+            /// <param name="dims">The dimension or dimensions to reduce.</param>
+            /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+            /// <param name="out">The output tensor -- optional.</param>
+            public Tensor amin(long[] dims, bool keepDim = false, Tensor? @out = null)
+            {
+                return amin((ReadOnlySpan<long>)dims, keepDim, @out);
+
+            }
+
+            /// <summary>
+            /// Returns the minimum value of each slice of the input tensor in the given dimension(s) dim.
+            /// </summary>
+            /// <param name="dims">The dimension or dimensions to reduce.</param>
+            public Tensor amin(params long[] dims)
+            {
+                return amin((ReadOnlySpan<long>)dims, false, null);
             }
 
             [DllImport("LibTorchSharp")]
@@ -3467,7 +3509,7 @@ namespace TorchSharp
             /// <param name="sizes">A list of sizes for each chunk</param>
             /// <param name="dimension">The dimension along which to split the tensor.</param>
 
-            public Tensor[] split(long[] sizes, int dimension = 0)
+            public Tensor[] split(ReadOnlySpan<long> sizes, int dimension = 0)
             {
                 IntPtr[] ptrArray;
 
@@ -3482,6 +3524,27 @@ namespace TorchSharp
                 }
 
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
+            }
+
+            /// <summary>
+            /// Splits the tensor into chunks. Each chunk is a view of the original tensor.
+            /// </summary>
+            /// <param name="sizes">A list of sizes for each chunk</param>
+            /// <param name="dimension">The dimension along which to split the tensor.</param>
+
+            public Tensor[] split(long[] sizes, int dimension = 0)
+            {
+                return split((ReadOnlySpan<long>)sizes, dimension);
+            }
+
+            /// <summary>
+            /// Splits the tensor into chunks. Each chunk is a view of the original tensor.
+            /// </summary>
+            /// <param name="sizes">A list of sizes for each chunk</param>
+
+            public Tensor[] split(params long[] sizes)
+            {
+                return split((ReadOnlySpan<long>)sizes, dimension);
             }
 
             [DllImport("LibTorchSharp")]
@@ -4316,14 +4379,12 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_sum_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool keepdim, bool has_type, sbyte scalar_type);
 
-            private Tensor _sum(ReadOnlySpan<long> dimensions, bool keepdim = false, ScalarType? type = null)
+            private unsafe Tensor _sum(ReadOnlySpan<long> dimensions, bool keepdim = false, ScalarType? type = null)
             {
-                unsafe {
-                    fixed (long* pdims = dimensions) {
-                        var res = THSTensor_sum_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, keepdim, type.HasValue, (sbyte)type.GetValueOrDefault());
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
-                    }
+                fixed (long* pdims = dimensions) {
+                    var res = THSTensor_sum_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, keepdim, type.HasValue, (sbyte)type.GetValueOrDefault());
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
 
@@ -4372,7 +4433,7 @@ namespace TorchSharp
             /// <summary>
             ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
             /// </summary>
-            public Tensor expand(long[] sizes, bool isImplicit = false)
+            public Tensor expand(ReadOnlySpan<long> sizes, bool isImplicit = false)
             {
                 unsafe {
                     fixed (long* psizes = sizes) {
@@ -4381,6 +4442,14 @@ namespace TorchSharp
                         return new Tensor(res);
                     }
                 }
+            }
+
+            /// <summary>
+            ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
+            /// </summary>
+            public Tensor expand(long[] sizes, bool isImplicit = false)
+            {
+                return expand((ReadOnlySpan<long>)sizes, isImplicit);
             }
 
             /// <summary>
@@ -4395,7 +4464,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor expand(params long[] sizes)
             {
-                return expand(sizes, false);
+                return expand((ReadOnlySpan<long>)sizes, false);
             }
 
             [DllImport("LibTorchSharp")]
