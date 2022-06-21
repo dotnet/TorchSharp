@@ -13,6 +13,7 @@ __Fixed Bugs:__
 
 __API Changes:__
 
+Add torchaudio.datasets.YESNO().
 Added torch.from_array() API to create a tensor from an arbitry-dimension .NET array.<br/>
 Added torch.tensor() overloads for most common dimensions of .NET arrays: ndim = [1,2,3,4]<br/>
 Added the most significant API additions from Pytorch 1.11.
