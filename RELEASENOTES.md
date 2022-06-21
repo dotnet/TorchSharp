@@ -4,19 +4,28 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.96.8
 
+__Breaking Changes:__
+
+This release contains a fix to inadvertent breaking changes in 0.96.7, related to Tensor.str(). This fix is itself breaking, in that it breaks any code that relies on the order of
+arguments to str() introduced in 0.96.7. However, since the pre-0.96.7 argument order makes more sense, we're taking this hit now rather than keeping the inconvenient order in 0.96.7.
+
 __Fixed Bugs:__
 
 #618 TorchSharp.Modules.Normal.sample() Expected all tensors [...]<br/>
 #621 torch.roll missing<br/>
+#629 Missing dependency in 0.96.7 calling TorchSharp.torchvision.datasets.MNIST<br/>
+#632 gaussian_nll_loss doesn't work on GPU<br/>
 
 __API Changes:__
 
+Add torchaudio.datasets.YESNO().
 Added torch.from_array() API to create a tensor from an arbitry-dimension .NET array.<br/>
 Added torch.tensor() overloads for most common dimensions of .NET arrays: ndim = [1,2,3,4]<br/>
-Added the most significant API additions from Pytorch 1.11.
-Added two torchaudio APIs.
-Added 'decimals' argument to Tensor.round()
-Added torch.std_mean()
+Added the most significant API additions from Pytorch 1.11.<br/>
+Added two torchaudio APIs.<br/>
+Added 'decimals' argument to Tensor.round()<br/>
+Changed tensor.str() to undo the breaking change in 0.96.7<br/>
+Added torch.std_mean()<br/>
 
 ## NuGet Version 0.96.7
 
@@ -26,7 +35,7 @@ This version integrates with the libtorch 1.11.0 backend. API updates to follow.
 
 __API Changes:__
 
-Strong name signing of the TorchSharp library to allow loading it in .NET Framework strongly name signed apps.
+Strong name signing of the TorchSharp library to allow loading it in .NET Framework strongly name signed apps.<br/>
 Added the 'META' device type, which can be used to examine the affect of shape from tensor operations without actually doing any computations.<br/>
 Added a few methods from the torch.nn.utils namespace.<br/>
 Add torch.stft() and torch.istft()
