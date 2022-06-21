@@ -13,15 +13,15 @@ __Fixed Bugs:__
 
 #618 TorchSharp.Modules.Normal.sample() Expected all tensors [...]<br/>
 #621 torch.roll missing<br/>
-#629 Missing dependency in 0.96.7 calling TorchSharp.torchvision.datasets.MNIST<br/>
 #632 gaussian_nll_loss doesn't work on GPU<br/>
 
 __API Changes:__
 
-Add torchaudio.datasets.YESNO().
+Add torchaudio.datasets.YESNO().<br/>
 Added torch.from_array() API to create a tensor from an arbitry-dimension .NET array.<br/>
 Added torch.tensor() overloads for most common dimensions of .NET arrays: ndim = [1,2,3,4]<br/>
 Added the most significant API additions from Pytorch 1.11.<br/>
+Added juliastr() and npstr().<br/>
 Added two torchaudio APIs.<br/>
 Added 'decimals' argument to Tensor.round()<br/>
 Changed tensor.str() to undo the breaking change in 0.96.7<br/>

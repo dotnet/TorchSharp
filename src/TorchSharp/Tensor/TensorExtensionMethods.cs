@@ -56,7 +56,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Get a julia style string representation of the tensor.
+        /// Get a Julia-style string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
         /// <param name="fltFormat">The format string to use for floating point values.</param>
@@ -95,7 +95,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Get a numpy style string representation of the tensor.
+        /// Get a numpy-style string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
         /// <param name="fltFormat">The format string to use for floating point values.</param>
