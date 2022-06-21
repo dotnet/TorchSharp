@@ -57,7 +57,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Get a julia style string representation of the tensor.
+        /// Get a Julia-style string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
         /// <param name="fltFormat">The format string to use for floating point values.</param>
@@ -72,7 +72,8 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string juliastr(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
+        public static string jlstr
+            (this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
         {
             return tensor.ToString(TensorStringStyle.Julia, fltFormat, width, newLine: newLine, cultureInfo: cultureInfo);
         }
@@ -96,7 +97,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Get a numpy style string representation of the tensor.
+        /// Get a numpy-style string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
         /// <param name="fltFormat">The format string to use for floating point values.</param>
