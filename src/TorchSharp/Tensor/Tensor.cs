@@ -3544,7 +3544,7 @@ namespace TorchSharp
 
             public Tensor[] split(params long[] sizes)
             {
-                return split((ReadOnlySpan<long>)sizes, dimension);
+                return split((ReadOnlySpan<long>)sizes, 0);
             }
 
             [DllImport("LibTorchSharp")]
