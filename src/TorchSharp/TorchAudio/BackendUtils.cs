@@ -11,19 +11,19 @@ namespace TorchSharp
         {
             public static partial class utils
             {
-                internal static IAudioBackend _backend;
+                internal static AudioBackend _backend;
 
                 static utils()
                 {
                     _backend = new NoBackend();
                 }
 
-                public static void set_audio_backend(IAudioBackend backend)
+                public static void set_audio_backend(AudioBackend backend)
                 {
                     _backend = backend;
                 }
 
-                public static IAudioBackend get_audio_backend()
+                public static AudioBackend get_audio_backend()
                 {
                     return _backend;
                 }

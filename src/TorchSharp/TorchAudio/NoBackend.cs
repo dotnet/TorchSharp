@@ -9,9 +9,9 @@ namespace TorchSharp
     {
         public static partial class backend
         {
-            public class NoBackend : IAudioBackend
+            public class NoBackend : AudioBackend
             {
-                public (torch.Tensor, int) load(
+                public override (torch.Tensor, int) load(
                     string filepath,
                     long frame_offset = 0,
                     long num_frames = -1,
@@ -22,7 +22,7 @@ namespace TorchSharp
                     throw new InvalidOperationException("No audio I/O backend is available.");
                 }
 
-                public void save(
+                public override void save(
                     string filepath,
                     torch.Tensor src,
                     int sample_rate,
@@ -35,7 +35,7 @@ namespace TorchSharp
                     throw new InvalidOperationException("No audio I/O backend is available.");
                 }
 
-                public AudioMetaData info(
+                public override AudioMetaData info(
                     string filepath,
                     AudioFormat? format = null)
                 {

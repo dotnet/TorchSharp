@@ -24,7 +24,7 @@ namespace TorchSharp
                 using (var webClient = new WebClient()) {
                     if (progress) {
                         // TODO: Implement progress.
-                        Console.WriteLine("download_url_to_file(progress: true) is not supported.");
+                        // Console.WriteLine("download_url_to_file(progress: true) is not supported.");
                     }
                     webClient.DownloadFile(url, dst);
                     string fileHash = GetFileChecksum(dst);

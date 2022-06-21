@@ -12,9 +12,9 @@ namespace TorchSharp
             /// <summary>
             /// Audio I/O backend
             /// </summary>
-            public interface IAudioBackend
+            public abstract class AudioBackend
             {
-                (torch.Tensor, int) load(
+                public abstract (torch.Tensor, int) load(
                     string filepath,
                     long frame_offset = 0,
                     long num_frames = -1,
@@ -22,7 +22,7 @@ namespace TorchSharp
                     bool channels_first = true,
                     AudioFormat? format = null);
 
-                void save(
+                public abstract void save(
                     string filepath,
                     torch.Tensor src,
                     int sample_rate,
@@ -32,7 +32,7 @@ namespace TorchSharp
                     AudioEncoding? encoding = null,
                     int? bits_per_sample = null);
 
-                AudioMetaData info(
+                public abstract AudioMetaData info(
                     string filepath,
                     AudioFormat? format = null);
             }

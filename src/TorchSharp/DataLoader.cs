@@ -16,13 +16,33 @@ namespace TorchSharp
         {
             public static partial class data
             {
+                /// <summary>
+                /// This class makes easier to create batch. Data set must implement Dataset interface
+                /// </summary>
                 public class DataLoader : DataLoader<Dictionary<string, torch.Tensor>, Dictionary<string, torch.Tensor>>
                 {
-                    public DataLoader(Dataset dataset, int batchSize, Func<Dictionary<string, torch.Tensor>, Dictionary<string, torch.Tensor>> collate_fn, IEnumerable<long> shuffler, Device device = null, int num_worker = 1)
+                    /// <summary>
+                    /// Pytorch style dataloader
+                    /// </summary>
+                    /// <param name="dataset">Dataset for create batch</param>
+                    /// <param name="batchSize">Size of batch</param>
+                    /// <param name="device">device for output tensor</param>
+                    /// <param name="shuffler">Shuffler for dataloader</param>
+                    /// <param name="num_worker">Count of worker</param>
+                    public DataLoader(Dataset dataset, int batchSize, IEnumerable<long> shuffler, Device device = null, int num_worker = 1)
                         : base(dataset, batchSize, Collate, shuffler, device, num_worker)
                     {
                     }
 
+                    /// <summary>
+                    /// Pytorch style dataloader
+                    /// </summary>
+                    /// <param name="dataset">Dataset for create batch</param>
+                    /// <param name="batchSize">Size of batch</param>
+                    /// <param name="shuffle">true if shuffle dataset, false for not</param>
+                    /// <param name="device">device for output tensor</param>
+                    /// <param name="seed">Seed for generating shuffle</param>
+                    /// <param name="num_worker">Count of worker</param>
                     public DataLoader(Dataset dataset, int batchSize, bool shuffle = false, Device device = null, int? seed = null, int num_worker = 1)
                         : base(dataset, batchSize, Collate, shuffle, device, seed, num_worker)
                     {
@@ -59,7 +79,7 @@ namespace TorchSharp
                     /// </summary>
                     /// <param name="dataset">Dataset for create batch</param>
                     /// <param name="batchSize">Size of batch</param>
-                    /// <param name="collate_fn"></param>
+                    /// <param name="collate_fn">Callback to merge items make to a batch</param>
                     /// <param name="device">device for output tensor</param>
                     /// <param name="shuffler">Shuffler for dataloader</param>
                     /// <param name="num_worker">Count of worker</param>
@@ -79,7 +99,7 @@ namespace TorchSharp
                     /// </summary>
                     /// <param name="dataset">Dataset for create batch</param>
                     /// <param name="batchSize">Size of batch</param>
-                    /// <param name="collate_fn"></param>
+                    /// <param name="collate_fn">Callback to merge items to make a batch</param>
                     /// <param name="shuffle">true if shuffle dataset, false for not</param>
                     /// <param name="device">device for output tensor</param>
                     /// <param name="seed">Seed for generating shuffle</param>
