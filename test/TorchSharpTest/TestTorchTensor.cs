@@ -82,12 +82,12 @@ namespace TorchSharp
             }
             {
                 Tensor t = torch.tensor(3.14f);
-                var str = t.ToString(TensorStringStyle.Julia, "E2", cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.jlstr("E2", cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal("[], type = Float32, device = cpu, value = 3.14E+000", str);
             }
             {
                 Tensor t = torch.tensor((3.14f, 6.28f), torch.complex64);
-                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.jlstr(cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal("[], type = ComplexFloat32, device = cpu, value = 3.14+6.28i", str);
             }
         }
@@ -104,7 +104,7 @@ namespace TorchSharp
             }
             {
                 Tensor t = torch.zeros(4);
-                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture, newLine: "\n");
+                var str = t.jlstr(cultureInfo: CultureInfo.InvariantCulture, newLine: "\n");
                 Assert.Equal($"[4], type = Float32, device = cpu\n 0 0 0 0\n", str);
             }
             {
@@ -115,7 +115,7 @@ namespace TorchSharp
             {
                 Tensor t = torch.ones(4, torch.complex64, torch.META);
                 for (int i = 0; i < t.shape[0]; i++) t[i] = torch.tensor((1.0f * i, 2.43f * i * 2), torch.complex64);
-                var str = t.ToString(TensorStringStyle.Julia, cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.jlstr(cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[4], type = ComplexFloat32, device = meta", str);
             }
             {
@@ -169,7 +169,7 @@ namespace TorchSharp
                         0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f,
                         0.01f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                     }, 2, 2, 4);
-                var str = t.ToString(TensorStringStyle.Julia, "0.0000000", cultureInfo: CultureInfo.InvariantCulture);
+                var str = t.jlstr("0.0000000", cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[2x2x4], type = Float32, device = cpu{_sep}[0,..,..] ={_sep} 0.0000000   3.1410000 6.2834000    3.1415200{_sep}" +
                              $" 0.0000063 -13.1415300 0.0100000 4713.1400000{_sep}{_sep}[1,..,..] ={_sep} 0.0100000 0.0000000 0.0000000 0.0000000{_sep}" +
                              $" 0.0000000 0.0000000 0.0000000 0.0000000{_sep}", str);

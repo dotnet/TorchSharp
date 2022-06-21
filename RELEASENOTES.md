@@ -8,6 +8,7 @@ __Fixed Bugs:__
 
 #618 TorchSharp.Modules.Normal.sample() Expected all tensors [...]<br/>
 #621 torch.roll missing<br/>
+#629 Missing dependency in 0.96.7 calling TorchSharp.torchvision.datasets.MNIST<br/>
 
 __API Changes:__
 
@@ -16,6 +17,7 @@ Added torch.tensor() overloads for most common dimensions of .NET arrays: ndim =
 Added the most significant API additions from Pytorch 1.11.
 Added two torchaudio APIs.
 Added 'decimals' argument to Tensor.round()
+Changed tensor.str() to undo the breaking change in 0.96.7
 
 ## NuGet Version 0.96.7
 

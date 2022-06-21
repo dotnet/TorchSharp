@@ -36,14 +36,13 @@ namespace TorchSharp
         /// Get a string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
-        /// <param name="style">
-        /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
-        /// </param>
         /// <param name="fltFormat">The format string to use for floating point values.</param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
-        /// <returns></returns>
+        /// <param name="style">
+        /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
+        /// </param>
         /// <remarks>
         /// This method does exactly the same as ToString(bool, string, int), but is shorter,
         /// looks more like Python 'str' and doesn't require a style argument in order
@@ -51,7 +50,7 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string str(this Tensor tensor, TensorStringStyle style = TensorStringStyle.Julia, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
+        public static string str(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Julia)
         {
             return tensor.ToString(style, fltFormat, width, newLine: newLine, cultureInfo: cultureInfo);
         }
@@ -72,7 +71,7 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string juliastr(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
+        public static string jlstr(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
         {
             return tensor.ToString(TensorStringStyle.Julia, fltFormat, width, newLine: newLine, cultureInfo: cultureInfo);
         }
@@ -121,16 +120,17 @@ namespace TorchSharp
         /// interactive notebook use, primarily.
         /// </summary>
         /// <param name="t">The input tensor.</param>
-        /// <param name="style">
-        /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
-        /// </param>
         /// <param name="fltFormat">The format string to use for floating point values.</param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
+        /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
+        /// <param name="style">
+        /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
+        /// </param>
         /// <returns></returns>
-        public static Tensor print(this Tensor t, TensorStringStyle style = TensorStringStyle.Julia, string fltFormat = "g5", int width = 100, string newLine = "\n")
+        public static Tensor print(this Tensor t, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Julia)
         {
-            Console.WriteLine(t.str(style, fltFormat, width, newLine: newLine));
+            Console.WriteLine(t.str(fltFormat, width, newLine, cultureInfo, style: style));
             return t;
         }
 
