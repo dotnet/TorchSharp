@@ -9,6 +9,7 @@ __Fixed Bugs:__
 #618 TorchSharp.Modules.Normal.sample() Expected all tensors [...]<br/>
 #621 torch.roll missing<br/>
 #629 Missing dependency in 0.96.7 calling TorchSharp.torchvision.datasets.MNIST<br/>
+#632 gaussian_nll_loss doesn't work on GPU<br/>
 
 __API Changes:__
 

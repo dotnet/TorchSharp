@@ -729,23 +729,38 @@ namespace TorchSharp
         [Fact]
         public void TestGaussianNLLLoss32()
         {
-            using (Tensor variance = torch.rand(new long[] { 15, 1 }, requiresGrad: true))
-            using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, requiresGrad: true))
-            using (Tensor target = torch.randn(new long[] { 15, 5, 5 })) {
+            {
+                Tensor variance = torch.rand(new long[] { 15, 1 }, requiresGrad: true);
+                Tensor input = torch.randn(new long[] { 15, 5, 5 }, requiresGrad: true);
+                Tensor target = torch.randn(new long[] { 15, 5, 5 });
+
+                if (torch.cuda.is_available()) {
+                    input = input.cuda();
+                    target = target.cuda();
+                    variance = variance.cuda();
+                }
+
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
-                var values = outTensor.data<float>().ToArray();
+                var values = outTensor.cpu().data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
-            using (Tensor variance = torch.rand(new long[] { 15, 5, 5 }, requiresGrad: true))
-            using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, requiresGrad: true))
-            using (Tensor target = torch.randn(new long[] { 15, 5, 5 })) {
+            {
+                Tensor variance = torch.rand(new long[] { 15, 1 }, requiresGrad: true);
+                Tensor input = torch.randn(new long[] { 15, 5, 5 }, requiresGrad: true);
+                Tensor target = torch.randn(new long[] { 15, 5, 5 });
+
+                if (torch.cuda.is_available()) {
+                    input = input.cuda();
+                    target = target.cuda();
+                    variance = variance.cuda();
+                }
                 var outTensor = gaussian_nll_loss()(input, target, variance);
                 outTensor.backward();
 
-                var values = outTensor.data<float>().ToArray();
+                var values = outTensor.cpu().data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
             }
