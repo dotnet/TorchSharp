@@ -276,7 +276,7 @@ namespace TorchSharp
             /// Returns the underlying storage.
             /// </summary>
             /// <returns></returns>
-            public Storage<T> storage<T>() where T: unmanaged
+            public Storage<T> storage<T>() where T : unmanaged
             {
                 return Storage.Create<T>(this);
             }
@@ -1613,8 +1613,7 @@ namespace TorchSharp
 
                 if (dim is null) {
                     res = THSTensor_unique(Handle, sorted, return_inverse, return_counts, out inverse_indices, out counts);
-                }
-                else {
+                } else {
                     res = THSTensor_unique_dim(Handle, dim.Value, sorted, return_inverse, return_counts, out inverse_indices, out counts);
                 }
 
@@ -4099,11 +4098,13 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_std(IntPtr tensor);
+            static extern IntPtr THSTensor_std(IntPtr tensor, bool unbiased);
 
-            public Tensor std()
+            /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+            [System.Diagnostics.Contracts.Pure]
+            public Tensor std(bool unbiased = true)
             {
-                var res = THSTensor_std(Handle);
+                var res = THSTensor_std(Handle, unbiased);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -4112,16 +4113,18 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_std_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim);
 
-            /// <summary>
+            /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+            /// <remarks>
             /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
             /// Otherwise, the sample deviation is calculated, without any correction.
-            /// </summary>
+            /// </remarks>
             /// <param name="dimensions">The dimensions to reduce.</param>
             /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            public Tensor std(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            [System.Diagnostics.Contracts.Pure]
+            public Tensor std(ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 unsafe {
                     fixed (long* pdims = dimensions) {
@@ -4132,17 +4135,152 @@ namespace TorchSharp
                 }
             }
 
-            /// <summary>
+            /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+            /// <remarks>
             /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
             /// Otherwise, the sample deviation is calculated, without any correction.
-            /// </summary>
+            /// </remarks>
             /// <param name="dimension">The dimension to reduce.</param>
             /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimension" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
             public Tensor std(long dimension, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-                => std(new[] { dimension }, unbiased, keepDimension, type);
+                => std(stackalloc[] { dimension }, unbiased, keepDimension, type);
+
+            /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+            /// <remarks>
+            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+            /// Otherwise, the sample deviation is calculated, without any correction.
+            /// </remarks>
+            /// <param name="dimensions">The dimensions to reduce.</param>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
+            /// <param name="type"></param>
+            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
+            public Tensor std((long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+                => std(stackalloc[] { dimensions.Item1, dimensions.Item2 }, unbiased, keepDimension, type);
+
+            /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+            /// <remarks>
+            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+            /// Otherwise, the sample deviation is calculated, without any correction.
+            /// </remarks>
+            /// <param name="dimensions">The dimensions to reduce.</param>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
+            /// <param name="type"></param>
+            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
+            public Tensor std((long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+                => std(stackalloc[] { dimensions.Item1, dimensions.Item2, dimensions.Item3 }, unbiased, keepDimension, type);
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_std_mean(IntPtr tensor, bool unbiased, out IntPtr mean);
+
+            /// <summary>
+            /// Calculates the standard deviation and mean of all elements in the tensor.
+            /// </summary>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            [System.Diagnostics.Contracts.Pure]
+            public (Tensor std, Tensor mean) std_mean(bool unbiased = true)
+            {
+                var res = THSTensor_std_mean(Handle, unbiased, out var mean);
+                if (res == IntPtr.Zero || mean == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), new Tensor(mean));
+            }
+            
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_std_mean_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim, out IntPtr mean);
+
+            /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+            /// <remarks>
+            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+            /// Otherwise, the sample deviation is calculated, without any correction.
+            /// </remarks>
+            /// <param name="dimensions">The dimensions to reduce.</param>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+            /// <param name="type"></param>
+            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
+            public (Tensor std, Tensor mean) std_mean(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            {
+                unsafe {
+                    fixed (long* pdims = dimensions) {
+                        var res = THSTensor_std_mean_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, unbiased, keepDimension, out var mean);
+                        if (res == IntPtr.Zero || mean == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return (new Tensor(res), new Tensor(mean));
+                    }
+                }
+            }
+
+            /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+            /// <remarks>
+            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+            /// Otherwise, the sample deviation is calculated, without any correction.
+            /// </remarks>
+            /// <param name="dimensions">The dimensions to reduce.</param>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+            /// <param name="type"></param>
+            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
+            public (Tensor std, Tensor mean) std_mean(ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            {
+                unsafe {
+                    fixed (long* pdims = dimensions) {
+                        var res = THSTensor_std_mean_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, unbiased, keepDimension, out var mean);
+                        if (res == IntPtr.Zero || mean == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return (new Tensor(res), new Tensor(mean));
+                    }
+                }
+            }
+
+            /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+            /// <remarks>
+            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+            /// Otherwise, the sample deviation is calculated, without any correction.
+            /// </remarks>
+            /// <param name="dimension">The dimension to reduce.</param>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimension" /> retained or not.</param>
+            /// <param name="type"></param>
+            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
+            public (Tensor std, Tensor mean) std_mean(long dimension, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+                => std_mean(new[] { dimension }, unbiased, keepDimension, type);
+
+            /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+            /// <remarks>
+            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+            /// Otherwise, the sample deviation is calculated, without any correction.
+            /// </remarks>
+            /// <param name="dimensions">The dimensions to reduce.</param>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
+            /// <param name="type"></param>
+            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
+            public (Tensor std, Tensor mean) std_mean((long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+                => std_mean(stackalloc[] { dimensions.Item1, dimensions.Item2 }, unbiased, keepDimension, type);
+
+            /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+            /// <remarks>
+            /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+            /// Otherwise, the sample deviation is calculated, without any correction.
+            /// </remarks>
+            /// <param name="dimensions">The dimensions to reduce.</param>
+            /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+            /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
+            /// <param name="type"></param>
+            /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+            [System.Diagnostics.Contracts.Pure]
+            public (Tensor std, Tensor mean) std_mean((long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+                => std_mean(stackalloc[] { dimensions.Item1, dimensions.Item2, dimensions.Item3 }, unbiased, keepDimension, type);
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_sum(IntPtr tensor, bool has_type, sbyte scalar_type);

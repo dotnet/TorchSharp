@@ -10,10 +10,14 @@ namespace TorchSharp
         {
             public static partial class data
             {
+                public abstract class Dataset : Dataset<Dictionary<string, torch.Tensor>>
+                {
+                }
+
                 /// <summary>
                 /// Interface for Dataloader
                 /// </summary>
-                public abstract class Dataset : IDisposable
+                public abstract class Dataset<T> : IDisposable
                 {
                     public virtual void Dispose()
                     {
@@ -29,7 +33,7 @@ namespace TorchSharp
                     /// </summary>
                     /// <param name="index">Index for tensor</param>
                     /// <returns>Tensors of index. DataLoader will catenate these tensors.</returns>
-                    public abstract Dictionary<string, Tensor> GetTensor(long index);
+                    public abstract T GetTensor(long index);
                 }
             }
         }

@@ -16,10 +16,11 @@ __API Changes:__
 Add torchaudio.datasets.YESNO().
 Added torch.from_array() API to create a tensor from an arbitry-dimension .NET array.<br/>
 Added torch.tensor() overloads for most common dimensions of .NET arrays: ndim = [1,2,3,4]<br/>
-Added the most significant API additions from Pytorch 1.11.
-Added two torchaudio APIs.
-Added 'decimals' argument to Tensor.round()
-Changed tensor.str() to undo the breaking change in 0.96.7
+Added the most significant API additions from Pytorch 1.11.<br/>
+Added two torchaudio APIs.<br/>
+Added 'decimals' argument to Tensor.round()<br/>
+Changed tensor.str() to undo the breaking change in 0.96.7<br/>
+Added torch.std_mean()<br/>
 
 ## NuGet Version 0.96.7
 
@@ -29,7 +30,7 @@ This version integrates with the libtorch 1.11.0 backend. API updates to follow.
 
 __API Changes:__
 
-Strong name signing of the TorchSharp library to allow loading it in .NET Framework strongly name signed apps.
+Strong name signing of the TorchSharp library to allow loading it in .NET Framework strongly name signed apps.<br/>
 Added the 'META' device type, which can be used to examine the affect of shape from tensor operations without actually doing any computations.<br/>
 Added a few methods from the torch.nn.utils namespace.<br/>
 Add torch.stft() and torch.istft()
