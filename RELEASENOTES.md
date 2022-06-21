@@ -4,6 +4,11 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.96.8
 
+__Breaking Changes:__
+
+This release contains a fix to inadvertent breaking changes in 0.96.7, related to Tensor.str(). This fix is itself breaking, in that it breaks any code that relies on the order of
+arguments to str() introduced in 0.96.7. However, since the pre-0.96.7 argument order makes more sense, we're taking this hit now rather than keeping the inconvenient order in 0.96.7.
+
 __Fixed Bugs:__
 
 #618 TorchSharp.Modules.Normal.sample() Expected all tensors [...]<br/>
