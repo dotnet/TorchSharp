@@ -43,7 +43,6 @@ namespace TorchSharp
             }
         }
 
-
         [Fact]
         public void Test1DToList()
         {
@@ -681,7 +680,7 @@ namespace TorchSharp
             }
 
             {
-                var array = new double[1,2];
+                var array = new double[1, 2];
                 var t = torch.from_array(array);
                 Assert.Equal(2, t.ndim);
                 Assert.Equal(new long[] { 1, 2 }, t.shape);
@@ -689,7 +688,7 @@ namespace TorchSharp
             }
 
             {
-                var array = new long[1,2,3];
+                var array = new long[1, 2, 3];
                 var t = torch.from_array(array);
                 Assert.Equal(3, t.ndim);
                 Assert.Equal(new long[] { 1, 2, 3 }, t.shape);
@@ -3693,7 +3692,7 @@ namespace TorchSharp
             }
 
             {
-                var (A_LU, pivots, infos) = torch.lu(A, get_infos:true);
+                var (A_LU, pivots, infos) = torch.lu(A, get_infos: true);
 
                 Assert.NotNull(A_LU);
                 Assert.NotNull(pivots);
@@ -4450,7 +4449,7 @@ namespace TorchSharp
         public void RoundTest()
         {
             var rnd = new Random();
-            var data = Enumerable.Range(1,100).Select(i => (float)rnd.NextDouble()*10000).ToArray();
+            var data = Enumerable.Range(1, 100).Select(i => (float)rnd.NextDouble() * 10000).ToArray();
 
             {
                 var expected = data.Select(x => MathF.Round(x)).ToArray();
@@ -4462,7 +4461,7 @@ namespace TorchSharp
                 Assert.True(input.allclose(torch.tensor(expected)));
             }
             {
-                var expected = data.Select(x => MathF.Round(x*10.0f)/10.0f).ToArray();
+                var expected = data.Select(x => MathF.Round(x * 10.0f) / 10.0f).ToArray();
                 var input = torch.tensor(data);
                 var res = input.round(1);
                 Assert.True(res.allclose(torch.tensor(expected)));
@@ -4510,14 +4509,14 @@ namespace TorchSharp
             // check non-inline version
             var r0 = round(matmul(a, b), 2L);
             var r1 = round(matmul(b, a), 3L);
-            Assert.True(torch.Equals(i, r0), "round() failed");
-            Assert.True(torch.Equals(i, r1), "round() failed");
+            Assert.True(i.allclose(r0), "round() failed");
+            Assert.True(i.allclose(r1), "round() failed");
 
             // check inline version
             var r0_ = matmul(a, b).round_(2L);
             var r1_ = matmul(b, a).round_(3L);
-            Assert.True(torch.Equals(i, r0_), "round_() failed");
-            Assert.True(torch.Equals(i, r1_), "round_() failed");
+            Assert.True(i.allclose(r0_), "round_() failed");
+            Assert.True(i.allclose(r1_), "round_() failed");
         }
 
         [Fact]
@@ -4835,6 +4834,78 @@ namespace TorchSharp
             var res4_0 = res4.ToInt32();
             Assert.Equal(6L, res4_0);
 
+        }
+
+        [Fact]
+        public void StdTest()
+        {
+            var data = torch.rand(10, 10, 10);
+
+            {
+                var std = data.std();
+                Assert.NotNull(std);
+                Assert.Empty(std.shape);
+            }
+            {
+                var std = torch.std(data, unbiased: false);
+                Assert.NotNull(std);
+                Assert.Empty(std.shape);
+            }
+            {
+                var std = data.std(1);
+                Assert.NotNull(std);
+                Assert.Equal(new long[] { 10, 10 }, std.shape);
+            }
+            {
+                var std = torch.std(data, 1, keepDimension: true);
+                Assert.NotNull(std);
+                Assert.Equal(new long[] { 10, 1, 10 }, std.shape);
+            }
+        }
+
+        [Fact]
+        public void StdMeanTest()
+        {
+            var data = torch.rand(10, 10, 10);
+
+            {
+                var (std, mean) = data.std_mean();
+                Assert.NotNull(std);
+                Assert.NotNull(mean);
+                Assert.Empty(std.shape);
+                Assert.Empty(mean.shape);
+            }
+            {
+                var (std, mean) = torch.std_mean(data, unbiased: false);
+                Assert.NotNull(std);
+                Assert.NotNull(mean);
+                Assert.Empty(std.shape);
+                Assert.Empty(mean.shape);
+            }
+            {
+                var (std, mean) = data.std_mean(1);
+                Assert.NotNull(std);
+                Assert.NotNull(mean);
+                Assert.Equal(new long[] { 10, 10 }, std.shape);
+                Assert.Equal(new long[] { 10, 10 }, mean.shape);
+            }
+            {
+                var (std, mean) = torch.std_mean(data, 1, keepDimension: true);
+                Assert.NotNull(std);
+                Assert.NotNull(mean);
+                Assert.Equal(new long[] { 10, 1, 10 }, std.shape);
+                Assert.Equal(new long[] { 10, 1, 10 }, mean.shape);
+            }
+            {
+                var t = torch.from_array(new float[,]{ { 1f, 2f }, { 3f, 4f } });
+                var stdExpected = torch.std(t);
+                var meanExpected = torch.mean(t);
+                var (std, mean) = torch.std_mean(t);
+                Assert.NotNull(std);
+                Assert.NotNull(mean);
+                Assert.True(stdExpected.allclose(std));
+                Assert.True(meanExpected.allclose(mean));
+            }
         }
 
         [Fact]
@@ -5174,7 +5245,7 @@ namespace TorchSharp
             Assert.Equal(expected_1, x.roll(1, 0));
             Assert.Equal(expected_2, x.roll(2, 0));
             Assert.Equal(expected_m1, x.roll(-1, 0));
-            Assert.Equal(expected_tuple, x.roll((2,1), (0,1)));
+            Assert.Equal(expected_tuple, x.roll((2, 1), (0, 1)));
             Assert.Equal(expected_tuple, x.roll(new long[] { 2, 1 }, new long[] { 0, 1 }));
         }
 

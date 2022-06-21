@@ -3211,6 +3211,147 @@ namespace TorchSharp
         public static Tensor signbit(Tensor input) => input.signbit();
 
         /// <summary>
+        /// Calculates the standard deviation and mean of all elements in the tensor.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+        public static Tensor std(Tensor input, bool unbiased = true) => input.std(unbiased);
+
+        /// <summary>
+        /// Calculates the standard deviation and mean of all elements in the tensor.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, bool unbiased = true) => input.std_mean(unbiased);
+
+        /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+        /// <remarks>
+        /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+        /// Otherwise, the sample deviation is calculated, without any correction.
+        /// </remarks>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dimensions">The dimensions to reduce.</param>
+        /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="type"></param>
+        /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+        public static Tensor std(Tensor input, long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            => input.std(dimensions, unbiased, keepDimension, type);
+
+        /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+        /// <remarks>
+        /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+        /// Otherwise, the sample deviation is calculated, without any correction.
+        /// </remarks>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dimensions">The dimensions to reduce.</param>
+        /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="type"></param>
+        /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+        public static Tensor std(Tensor input, long dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            => input.std(dimensions, unbiased, keepDimension, type);
+
+        /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+        /// <remarks>
+        /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+        /// Otherwise, the sample deviation is calculated, without any correction.
+        /// </remarks>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dimensions">The dimensions to reduce.</param>
+        /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="type"></param>
+        /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+        public static Tensor std(Tensor input, (long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            => input.std(dimensions, unbiased, keepDimension, type);
+
+        /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
+        /// <remarks>
+        /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+        /// Otherwise, the sample deviation is calculated, without any correction.
+        /// </remarks>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dimensions">The dimensions to reduce.</param>
+        /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="type"></param>
+        /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+        public static Tensor std(Tensor input, (long,long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            => input.std(dimensions, unbiased, keepDimension, type);
+
+        /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+        /// <remarks>
+        /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+        /// Otherwise, the sample deviation is calculated, without any correction.
+        /// </remarks>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dimensions">The dimensions to reduce.</param>
+        /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="type"></param>
+        /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            => input.std_mean(dimensions, unbiased, keepDimension, type);
+
+        /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+        /// <remarks>
+        /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+        /// Otherwise, the sample deviation is calculated, without any correction.
+        /// </remarks>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dimensions">The dimensions to reduce.</param>
+        /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="type"></param>
+        /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            => input.std_mean(dimensions, unbiased, keepDimension, type);
+
+        /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+        /// <remarks>
+        /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+        /// Otherwise, the sample deviation is calculated, without any correction.
+        /// </remarks>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dimensions">The dimensions to reduce.</param>
+        /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="type"></param>
+        /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, long dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            => input.std_mean(dimensions, unbiased, keepDimension, type);
+
+        /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+        /// <remarks>
+        /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+        /// Otherwise, the sample deviation is calculated, without any correction.
+        /// </remarks>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dimensions">The dimensions to reduce.</param>
+        /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="type"></param>
+        /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, (long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            => input.std_mean(dimensions, unbiased, keepDimension, type);
+
+        /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
+        /// <remarks>
+        /// If <paramref name="unbiased" /> is <value>true</value>, Bessel’s correction will be used.
+        /// Otherwise, the sample deviation is calculated, without any correction.
+        /// </remarks>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dimensions">The dimensions to reduce.</param>
+        /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
+        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="type"></param>
+        /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, (long,long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+            => input.std_mean(dimensions, unbiased, keepDimension, type);
+
+
+        /// <summary>
         /// Element-wise subtraction
         /// </summary>
         /// <param name="left">The left-hand operand.</param>
