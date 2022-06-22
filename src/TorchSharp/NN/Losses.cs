@@ -421,9 +421,10 @@ namespace TorchSharp
 
                         if ((variance < 0).any().cpu().item<bool>()) throw new ArgumentException("variance has negative entry/entries");
 
-                        variance = variance.clamp_min(eps);
+                        using (var _ = torch.no_grad())
+                            variance = variance.clamp_min(eps);
 
-                        var loss = 0.5 * (variance.log() + (input - target).square() / variance).view(input.shape[0], -1).sum(dimensions: new long[] { 1 });
+                        var loss = 0.5 * (variance.log() + (input - target).square() / variance).view(input.shape[0], -1).sum(dim: stackalloc long[] { 1 });
 
                         if (full) {
                             loss = loss + 0.5 * input.shape[1] * MathF.Log(2 * MathF.PI);

@@ -41,12 +41,21 @@ namespace TorchSharp
                     var N = _batch_first ? input.shape[0] : input.shape[1];
                     var D = _bidirectional ? 2 : 1;
 
-                    h0 = torch.zeros(new long[] { D * _num_layers, N, _hidden_size }, device: input.device);
+                    h0 = torch.zeros(D * _num_layers, N, _hidden_size, device: input.device);
                 }
 
                 var res = THSNN_RNN_forward(handle, input.Handle, h0.Handle, out IntPtr hN);
                 if (res == IntPtr.Zero || hN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(res), new Tensor(hN));
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_RNN_flatten_parameters(torch.nn.Module.HType module);
+
+            public void flatten_parameters()
+            {
+                THSNN_RNN_flatten_parameters(handle);
+                torch.CheckForErrors();
             }
 
             [DllImport("LibTorchSharp")]

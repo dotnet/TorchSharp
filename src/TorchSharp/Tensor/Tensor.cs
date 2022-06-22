@@ -1883,7 +1883,7 @@ namespace TorchSharp
             /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
             /// <param name="out">The output tensor -- optional.</param>
 
-            public Tensor amax(long[] dims, bool keepDim = false, Tensor? @out = null)
+            public Tensor amax(ReadOnlySpan<long> dims, bool keepDim = false, Tensor? @out = null)
             {
                 unsafe {
                     fixed (long* pdims = dims) {
@@ -1894,6 +1894,27 @@ namespace TorchSharp
                         return new Tensor(res);
                     }
                 }
+            }
+
+            /// <summary>
+            /// Returns the maximum value of each slice of the input tensor in the given dimension(s) dim.
+            /// </summary>
+            /// <param name="dims">The dimension or dimensions to reduce.</param>
+            /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+            /// <param name="out">The output tensor -- optional.</param>
+            public Tensor amax(long[] dims, bool keepDim = false, Tensor? @out = null)
+
+            {
+                return amax((ReadOnlySpan<long>)dims, keepDim, @out);
+            }
+
+            /// <summary>
+            /// Returns the maximum value of each slice of the input tensor in the given dimension(s) dim.
+            /// </summary>
+            /// <param name="dims">The dimension or dimensions to reduce.</param>
+            public Tensor amax(params long[] dims)
+            {
+                return amax((ReadOnlySpan<long>)dims, false, null);
             }
 
             [DllImport("LibTorchSharp")]
@@ -1908,7 +1929,7 @@ namespace TorchSharp
             /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
             /// <param name="out">The output tensor -- optional.</param>
 
-            public Tensor amin(long[] dims, bool keepDim = false, Tensor? @out = null)
+            public Tensor amin(ReadOnlySpan<long> dims, bool keepDim = false, Tensor? @out = null)
             {
                 unsafe {
                     fixed (long* pdims = dims) {
@@ -1919,6 +1940,27 @@ namespace TorchSharp
                         return new Tensor(res);
                     }
                 }
+            }
+
+            /// <summary>
+            /// Returns the minimum value of each slice of the input tensor in the given dimension(s) dim.
+            /// </summary>
+            /// <param name="dims">The dimension or dimensions to reduce.</param>
+            /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+            /// <param name="out">The output tensor -- optional.</param>
+            public Tensor amin(long[] dims, bool keepDim = false, Tensor? @out = null)
+            {
+                return amin((ReadOnlySpan<long>)dims, keepDim, @out);
+
+            }
+
+            /// <summary>
+            /// Returns the minimum value of each slice of the input tensor in the given dimension(s) dim.
+            /// </summary>
+            /// <param name="dims">The dimension or dimensions to reduce.</param>
+            public Tensor amin(params long[] dims)
+            {
+                return amin((ReadOnlySpan<long>)dims, false, null);
             }
 
             [DllImport("LibTorchSharp")]
@@ -3467,7 +3509,7 @@ namespace TorchSharp
             /// <param name="sizes">A list of sizes for each chunk</param>
             /// <param name="dimension">The dimension along which to split the tensor.</param>
 
-            public Tensor[] split(long[] sizes, int dimension = 0)
+            public Tensor[] split(ReadOnlySpan<long> sizes, int dimension = 0)
             {
                 IntPtr[] ptrArray;
 
@@ -3482,6 +3524,27 @@ namespace TorchSharp
                 }
 
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
+            }
+
+            /// <summary>
+            /// Splits the tensor into chunks. Each chunk is a view of the original tensor.
+            /// </summary>
+            /// <param name="sizes">A list of sizes for each chunk</param>
+            /// <param name="dimension">The dimension along which to split the tensor.</param>
+
+            public Tensor[] split(long[] sizes, int dimension = 0)
+            {
+                return split((ReadOnlySpan<long>)sizes, dimension);
+            }
+
+            /// <summary>
+            /// Splits the tensor into chunks. Each chunk is a view of the original tensor.
+            /// </summary>
+            /// <param name="sizes">A list of sizes for each chunk</param>
+
+            public Tensor[] split(params long[] sizes)
+            {
+                return split((ReadOnlySpan<long>)sizes, 0);
             }
 
             [DllImport("LibTorchSharp")]
@@ -4316,26 +4379,36 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_sum_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool keepdim, bool has_type, sbyte scalar_type);
 
-            /// <summary>
-            ///  Returns the sum of each row of the input tensor in the given dimensions.
-            /// </summary>
-            public Tensor sum(long[] dimensions, bool keepdim = false, ScalarType? type = null)
+            private unsafe Tensor _sum(ReadOnlySpan<long> dimensions, bool keepdim = false, ScalarType? type = null)
             {
-                unsafe {
-                    fixed (long* pdims = dimensions) {
-                        var res = THSTensor_sum_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, keepdim, type.HasValue, (sbyte)type.GetValueOrDefault());
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
-                    }
+                fixed (long* pdims = dimensions) {
+                    var res = THSTensor_sum_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, keepdim, type.HasValue, (sbyte)type.GetValueOrDefault());
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
 
+            /// <summary>
+            ///  Returns the sum of each row of the input tensor in the given dimensions.
+            /// </summary>
+            public Tensor sum(long[] dim, bool keepdim = false, ScalarType? type = null)
+            {
+                return _sum(dim, keepdim, type);
+            }
+
+            /// <summary>
+            ///  Returns the sum of each row of the input tensor in the given dimensions.
+            /// </summary>
+            public Tensor sum(ReadOnlySpan<long> dim, bool keepdim = false, ScalarType? type = null)
+            {
+                return _sum(dim, keepdim, type);
+            }
             /// <summary>
             ///  Returns the sum of each row of the input tensor in the given dimension.
             /// </summary>
             public Tensor sum(long dim, bool keepdim = false, ScalarType? type = null)
             {
-                return sum(new long[] { dim }, keepdim, type);
+                return _sum(stackalloc long[] { dim }, keepdim, type);
             }
 
             /// <summary>
@@ -4343,7 +4416,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor sum(long dim0, long dim1, bool keepdim = false, ScalarType? type = null)
             {
-                return sum(new long[] { dim0, dim1 }, keepdim, type);
+                return _sum(stackalloc long[] { dim0, dim1 }, keepdim, type);
             }
 
             /// <summary>
@@ -4351,7 +4424,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor sum(long dim0, long dim1, long dim2, bool keepDimension = false, ScalarType? type = null)
             {
-                return sum(new long[] { dim0, dim1, dim2 }, keepDimension, type);
+                return _sum(stackalloc long[] { dim0, dim1, dim2 }, keepDimension, type);
             }
 
             [DllImport("LibTorchSharp")]
@@ -4360,7 +4433,7 @@ namespace TorchSharp
             /// <summary>
             ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
             /// </summary>
-            public Tensor expand(long[] sizes, bool isImplicit = false)
+            public Tensor expand(ReadOnlySpan<long> sizes, bool isImplicit = false)
             {
                 unsafe {
                     fixed (long* psizes = sizes) {
@@ -4369,6 +4442,14 @@ namespace TorchSharp
                         return new Tensor(res);
                     }
                 }
+            }
+
+            /// <summary>
+            ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
+            /// </summary>
+            public Tensor expand(long[] sizes, bool isImplicit = false)
+            {
+                return expand((ReadOnlySpan<long>)sizes, isImplicit);
             }
 
             /// <summary>
@@ -4383,7 +4464,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor expand(params long[] sizes)
             {
-                return expand(sizes, false);
+                return expand((ReadOnlySpan<long>)sizes, false);
             }
 
             [DllImport("LibTorchSharp")]
@@ -4745,7 +4826,17 @@ namespace TorchSharp
             /// <summary>
             ///  Create a new tensor filled with ones
             /// </summary>
-            public Tensor new_ones(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            private Tensor new_ones(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                if (device == null) device = this.device;
+                if (dtype == null) dtype = this.dtype;
+                return torch.ones(size, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new tensor filled with ones
+            /// </summary>
+            private Tensor new_ones(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
@@ -4814,6 +4905,16 @@ namespace TorchSharp
             ///  Create a new tensor filled with zeros
             /// </summary>
             public Tensor new_zeros(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                if (device == null) device = this.device;
+                if (dtype == null) dtype = this.dtype;
+                return torch.zeros(size, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new tensor filled with zeros
+            /// </summary>
+            public Tensor new_zeros(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
@@ -4899,6 +5000,16 @@ namespace TorchSharp
             ///  Create a new tensor filled with empty
             /// </summary>
             public Tensor new_empty(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                if (device == null) device = this.device;
+                if (dtype == null) dtype = this.dtype;
+                return torch.empty(size, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new tensor filled with empty
+            /// </summary>
+            public Tensor new_empty(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
@@ -4993,9 +5104,33 @@ namespace TorchSharp
             }
 
             /// <summary>
+            ///  Mutates the tensor to have the given size with all values uninitialized
+            /// </summary>
+            public Tensor full(ReadOnlySpan<long> sizes, Scalar value)
+            {
+                unsafe {
+                    fixed (long* psizes = sizes) {
+                        var res = THSTensor_full_out((IntPtr)psizes, sizes.Length, value.Handle, Handle);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
+                    }
+                }
+            }
+
+            /// <summary>
             ///  Create a new tensor filled with a given value
             /// </summary>
             public Tensor new_full(long[] size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            {
+                if (device == null) device = this.device;
+                if (dtype == null) dtype = this.dtype;
+                return torch.full(size, value, dtype, device, requiresGrad);
+            }
+
+            /// <summary>
+            ///  Create a new tensor filled with a given value
+            /// </summary>
+            public Tensor new_full(ReadOnlySpan<long> size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
@@ -5332,8 +5467,7 @@ namespace TorchSharp
             {
                 if (dims.HasValue) {
                     return _roll(stackalloc long[1] { shifts }, new long[1] { dims.Value });
-                }
-                else {
+                } else {
                     return _roll(stackalloc long[1] { shifts }, null);
                 }
             }
@@ -5343,7 +5477,7 @@ namespace TorchSharp
             /// Elements that are shifted beyond the last position are re-introduced at the first position.
             /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
             /// </summary>
-            public Tensor roll((long,long) shifts, (long,long) dims)
+            public Tensor roll((long, long) shifts, (long, long) dims)
             {
                 return _roll(stackalloc long[2] { shifts.Item1, shifts.Item2 }, new long[2] { dims.Item1, dims.Item2 });
             }
@@ -5806,7 +5940,7 @@ namespace TorchSharp
 
                 var dim = t.dim();
                 if (t.size().Length == 0) return "";
-                var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int) (mdim - dim))) : "");
+                var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))) : "");
                 sb.Append('[');
                 var currentSize = t.size()[0];
                 if (dim == 1) {
@@ -5833,7 +5967,7 @@ namespace TorchSharp
                         PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
                     }
                 } else {
-                    var newline = string.Join("", Enumerable.Repeat(newLine, (int) dim - 1).ToList());
+                    var newline = string.Join("", Enumerable.Repeat(newLine, (int)dim - 1).ToList());
                     if (currentSize <= 6) {
                         sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
                         sb.Append(newline);
@@ -5851,7 +5985,7 @@ namespace TorchSharp
                             sb.Append(newline);
                         }
 
-                        sb.Append(string.Join("", Enumerable.Repeat(' ', (int) (mdim - dim))));
+                        sb.Append(string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))));
                         sb.Append(" ...");
                         sb.Append(newline);
 
@@ -6092,8 +6226,7 @@ namespace TorchSharp
                     for (long idx = 0; idx < shape[0]; idx++) {
                         result.Add(this[idx].ToScalar());
                     }
-                }
-                else {
+                } else {
                     for (long idx = 0; idx < shape[0]; idx++) {
                         result.Add(this[idx].tolist());
                     }
@@ -6165,22 +6298,27 @@ namespace TorchSharp
                 IntPtr _window = (window is null) ? IntPtr.Zero : window.Handle;
                 bool _onesided = onesided.HasValue ? onesided.Value : !is_complex();
                 bool _return_complex = return_complex.HasValue ? return_complex.Value : is_complex();
+
                 if (center) {
                     long signalDim = dim();
                     long pad = n_fft / 2;
                     var _shape = shape;
-                    var extendedShape = new long[] { 1, 1, 1 };
-                    for (int i = 0; i < signalDim; i++) {
-                        extendedShape[3 + i - signalDim] = _shape[i];
+
+                    unsafe {
+                        var extendedShape = new long[] { 1, 1, 1 };
+                        for (int i = 0; i < signalDim; i++) {
+                            extendedShape[3 + i - signalDim] = _shape[i];
+                        }
+                        var paddedInput = torch.nn.functional.pad(view(extendedShape), stackalloc long[] { pad, pad }, pad_mode);
+                        var paddedShape = paddedInput.shape;
+                        for (int i = 0; i < signalDim; i++) {
+                            _shape[i] = paddedShape[paddedShape.Length + i - signalDim];
+                        }
+                        paddedInput = paddedInput.view(_shape);
+                        _input = paddedInput.Handle;
                     }
-                    var paddedInput = torch.nn.functional.pad(view(extendedShape), new long[] { pad, pad }, pad_mode);
-                    var paddedShape = paddedInput.shape;
-                    for (int i = 0; i < signalDim; i++) {
-                        _shape[i] = paddedShape[paddedShape.Length + i - signalDim];
-                    }
-                    paddedInput = paddedInput.view(_shape);
-                    _input = paddedInput.Handle;
                 }
+
                 var res = THSTensor_stft(_input, n_fft, hop_length, win_length, _window, normalized, _onesided, _return_complex);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);

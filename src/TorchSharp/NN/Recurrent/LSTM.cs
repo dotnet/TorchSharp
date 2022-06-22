@@ -42,8 +42,8 @@ namespace TorchSharp
                     var N = _batch_first ? input.shape[0] : input.shape[1];
                     var D = _bidirectional ? 2 : 1;
 
-                    c0 = torch.zeros(new long[] { D * _num_layers, N, _hidden_size }, device: input.device);
-                    h0 = torch.zeros(new long[] { D * _num_layers, N, _hidden_size }, device: input.device);
+                    c0 = torch.zeros(D * _num_layers, N, _hidden_size, device: input.device);
+                    h0 = torch.zeros(D * _num_layers, N, _hidden_size, device: input.device);
                 }
                 else {
                     h0 = h0_c0.Value.Item1;
@@ -53,6 +53,15 @@ namespace TorchSharp
                 var res = THSNN_LSTM_forward(handle, input.Handle, h0.Handle, c0.Handle, out IntPtr hN, out IntPtr cN);
                 if (res == IntPtr.Zero || hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(res), new Tensor(hN), new Tensor(cN));
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_LSTM_flatten_parameters(torch.nn.Module.HType module);
+
+            public void flatten_parameters()
+            {
+                THSNN_LSTM_flatten_parameters(handle);
+                torch.CheckForErrors();
             }
         }
     }

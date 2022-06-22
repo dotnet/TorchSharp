@@ -4128,7 +4128,7 @@ namespace TorchSharp
         public void AMaxTest()
         {
             var a = torch.randn(new long[] { 15, 5, 4, 3 });
-            var b = a.amax(new long[] { 0, 1 });
+            var b = a.amax(0, 1);
             Assert.Equal(new long[] { 4, 3 }, b.shape);
             var c = a.amax(new long[] { 0, 1 }, keepDim: true);
             Assert.Equal(new long[] { 1, 1, 4, 3 }, c.shape);
@@ -4138,9 +4138,9 @@ namespace TorchSharp
         public void AMinTest()
         {
             var a = torch.randn(new long[] { 15, 5, 4, 3 });
-            var b = a.amax(new long[] { 0, 1 });
+            var b = a.amin(0, 1);
             Assert.Equal(new long[] { 4, 3 }, b.shape);
-            var c = a.amax(new long[] { 0, 1 }, keepDim: true);
+            var c = a.amin(new long[] { 0, 1 }, keepDim: true);
             Assert.Equal(new long[] { 1, 1, 4, 3 }, c.shape);
         }
 
