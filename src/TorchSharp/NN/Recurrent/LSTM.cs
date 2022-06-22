@@ -54,6 +54,15 @@ namespace TorchSharp
                 if (res == IntPtr.Zero || hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(res), new Tensor(hN), new Tensor(cN));
             }
+
+            [DllImport("LibTorchSharp")]
+            extern static void THSNN_LSTM_flatten_parameters(torch.nn.Module.HType module);
+
+            public void flatten_parameters()
+            {
+                THSNN_LSTM_flatten_parameters(handle);
+                torch.CheckForErrors();
+            }
         }
     }
 

@@ -756,6 +756,13 @@ Tensor THSNN_RNN_forward(const NNModule module, const Tensor input1, const Tenso
     return output;
 }
 
+void THSNN_RNN_flatten_parameters(const NNModule module)
+{
+    CATCH(
+        (*module)->as<torch::nn::RNN>()->flatten_parameters();
+    );
+}
+
 Tensor THSNN_RNN_bias_ih(const NNModule module, const int64_t idx)
 {
     return get_bias_ih<torch::nn::RNN>(module, idx);
@@ -822,6 +829,13 @@ Tensor THSNN_GRU_forward(const NNModule module, const Tensor input1, const Tenso
     return output;
 }
 
+void THSNN_GRU_flatten_parameters(const NNModule module)
+{
+    CATCH(
+        (*module)->as<torch::nn::GRU>()->flatten_parameters();
+    );
+}
+
 NNModule THSNN_LSTM_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
@@ -848,6 +862,13 @@ Tensor THSNN_LSTM_forward(const NNModule module, const Tensor input1, const Tens
         *c_n = new torch::Tensor(std::get<1>(std::get<1>(result)));
     );
     return output;
+}
+
+void THSNN_LSTM_flatten_parameters(const NNModule module)
+{
+    CATCH(
+        (*module)->as<torch::nn::LSTM>()->flatten_parameters();
+    );
 }
 
 NNModule THSNN_RNNCell_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t nonlinearity, const bool bias, NNAnyModule* outAsAnyModule)

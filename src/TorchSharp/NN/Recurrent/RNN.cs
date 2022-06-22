@@ -50,6 +50,15 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            extern static void THSNN_RNN_flatten_parameters(torch.nn.Module.HType module);
+
+            public void flatten_parameters()
+            {
+                THSNN_RNN_flatten_parameters(handle);
+                torch.CheckForErrors();
+            }
+
+            [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_RNN_bias_ih(torch.nn.Module.HType module, long idx);
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_RNN_bias_hh(torch.nn.Module.HType module, long idx);
