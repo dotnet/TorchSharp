@@ -10,14 +10,14 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Formats;
 
-namespace TorchSharp.torchvision
+using TorchSharp.torchvision;
+
+namespace TorchSharp.Examples
 {
-    public static partial class io
-    {
         /// <summary>
         /// <cref>Imager</cref> implemented using ImageSharp.
         /// </summary>
-        public sealed class ImagerSharp : Imager
+        public sealed class ImagerSharp : io.Imager
         {
             public override ImageFormat DetectFormat(byte[] image)
             {
@@ -55,24 +55,24 @@ namespace TorchSharp.torchvision
                 return stream.ToArray();
             }
 
-            public override Tensor DecodeImage(byte[] bytes, ImageFormat format, ImageReadMode mode = ImageReadMode.UNCHANGED)
+            public override Tensor DecodeImage(byte[] bytes, ImageFormat format, io.ImageReadMode mode = io.ImageReadMode.UNCHANGED)
             {
                 switch (mode) {
                 
-                case ImageReadMode.UNCHANGED:
+                case io.ImageReadMode.UNCHANGED:
                     return format switch {
                         ImageFormat.Png => ToTensor<Rgba32>(bytes),
                         ImageFormat.Jpeg => ToTensor<Rgb24>(bytes),
                         _ => throw new ArgumentException("Cannot decode Unknown format")
                     };
 
-                case ImageReadMode.RGB_ALPHA:
+                case io.ImageReadMode.RGB_ALPHA:
                     return ToTensor<Rgba32>(bytes);
-                case ImageReadMode.RGB:
+                case io.ImageReadMode.RGB:
                     return ToTensor<Rgb24>(bytes);
-                case ImageReadMode.GRAY_ALPHA:
+                case io.ImageReadMode.GRAY_ALPHA:
                     return ToTensor<La16>(bytes);
-                case ImageReadMode.GRAY:
+                case io.ImageReadMode.GRAY:
                     return ToTensor<L8>(bytes);
                 default: throw new NotImplementedException();
                 }
@@ -90,5 +90,4 @@ namespace TorchSharp.torchvision
                 };
             }
         }
-    }
 }

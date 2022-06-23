@@ -10,7 +10,7 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// <cref>Imager</cref> to be used when a <cref>torchvision.io</cref> image method's <c>imager</c> is unspecified.
         /// </summary>
-        public static Imager DefaultImager { get; set; } = new ImagerSharp();
+        public static Imager DefaultImager { get; set; }
 
         /// <summary>
         /// Abstract class providing a generic way to decode and encode images as <cref>Tensor</cref>s.

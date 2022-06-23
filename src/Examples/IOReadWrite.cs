@@ -95,7 +95,7 @@ namespace TorchSharp.Examples
                 ).forward(expanded);
 
 
-            torchvision.io.write_image(transformed.squeeze(), "image_transformed.jpg", torchvision.ImageFormat.Jpeg);
+            torchvision.io.write_image(transformed.squeeze(), "image_transformed.jpg", torchvision.ImageFormat.Jpeg, new ImagerSharp());
         }
     }
 }
