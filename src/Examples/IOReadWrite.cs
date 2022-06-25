@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -15,34 +16,55 @@ namespace TorchSharp.Examples
 {
     class IOReadWrite
     {
+        /// Imager implemented with SkiaSharp.
         internal class SkiaImager : torchvision.io.Imager
         {
-            public override torchvision.ImageFormat DetectFormat(byte[] bytes)
+            Tensor DecodeBitmap(SKBitmap bitmap, torchvision.io.ImageReadMode mode)
             {
-                var skdata = SKData.CreateCopy(bytes);
+                if (bitmap.ColorType != SKColorType.Bgra8888)
+                    throw new Exception("Unsupported format");
 
-                var skcodec = SKCodec.Create(skdata);
+                var inputBytes = bitmap.Bytes;
 
-                return skcodec.EncodedFormat switch {
-                    SKEncodedImageFormat.Jpeg => torchvision.ImageFormat.Jpeg,
-                    SKEncodedImageFormat.Png => torchvision.ImageFormat.Png,
-                    _ => torchvision.ImageFormat.Unknown
-                };
+                var outBytes = new byte[bitmap.Width * bitmap.Height * 4];
+                var cl = bitmap.Width * bitmap.Height;
+                for (int o = 0, i = 0; o < cl; o += 1, i += 4) {
+                    outBytes[o] = inputBytes[i + 2];
+                    outBytes[o + cl * 1] = inputBytes[i + 1];
+                    outBytes[o + cl * 2] = inputBytes[i];
+                    outBytes[o + cl * 3] = inputBytes[i + 3];
+                }
+                var rgba = tensor(outBytes, new long[] { 4, bitmap.Height, bitmap.Width });
+
+                switch (mode) {
+                case torchvision.io.ImageReadMode.UNCHANGED:
+                case torchvision.io.ImageReadMode.RGB_ALPHA:
+                    return rgba;
+                case torchvision.io.ImageReadMode.GRAY:
+                    return torchvision.transforms.Compose(
+                        torchvision.transforms.ConvertImageDType(ScalarType.Float32),
+                        torchvision.transforms.Grayscale(),
+                        torchvision.transforms.ConvertImageDType(ScalarType.Byte)
+                        ).forward(rgba);
+                default:
+                    throw new NotImplementedException();
+                }
+            }
+            public override Tensor DecodeImage(byte[] image, torchvision.io.ImageReadMode mode)
+            {
+                return DecodeBitmap(SKBitmap.Decode(image), mode);
             }
 
-            public override Tensor DecodeImage(byte[] image, torchvision.ImageFormat format, torchvision.io.ImageReadMode mode)
+            public override Tensor DecodeImage(Stream stream, torchvision.io.ImageReadMode mode)
             {
-                // Basic implemetation for only ImageReadMode.Unchanged.
-                var bitmap = SKBitmap.Decode(image);
-
-                // TODO: Roll the channels dim so this returns rgb instead of bgr.
-                return tensor(bitmap.Bytes, new long[] { bitmap.Height, bitmap.Width, bitmap.BytesPerPixel }).permute(2, 0, 1);
+                return DecodeBitmap(SKBitmap.Decode(stream), mode);
             }
+
             public override byte[] EncodeImage(Tensor image, torchvision.ImageFormat format)
             {
-
                 // Basic implementation for only 1 and 4 color channels.
                 var shape = image.shape;
+
                 var bytes = image.permute(1, 2, 0).reshape(new long[] { shape[0] * shape[1] * shape[2] }).bytes.ToArray();
 
                 // pin the managed array so that the GC doesn't move it
@@ -72,30 +94,30 @@ namespace TorchSharp.Examples
             }
         }
 
-        internal static void Main(string[] args)
+        internal static async void Main(string[] args)
         {
+            torchvision.io.DefaultImager = new SkiaImager();
+
             var filename = args[0];
 
             Console.WriteLine($"Reading file {filename}");
 
-            torchvision.io.DefaultImager = new SkiaImager();
+            var img = await torchvision.io.read_image_async(filename, torchvision.io.ImageReadMode.GRAY);
 
-            var img = torchvision.io.read_image(filename, torchvision.io.ImageReadMode.RGB_ALPHA);
-
-            // Add a batch dimension
-            var expanded = img.unsqueeze(0);
-
-            Console.WriteLine($"Image has {expanded.shape[1]} colour channels with dimensions {expanded.shape[2]}x{expanded.shape[3]}");
+            Console.WriteLine($"Image has {img.shape[0]} colour channels with dimensions {img.shape[1]}x{img.shape[2]}");
 
             var transformed = torchvision.transforms.Compose(
-                torchvision.transforms.Invert(),
+                //torchvision.transforms.Invert(),
                 torchvision.transforms.HorizontalFlip(),
                 //torchvision.transforms.CenterCrop(256),
                 torchvision.transforms.Rotate(50)
-                ).forward(expanded);
+                ).forward(img);
 
+            var out_file = "image_transformed.jpg";
 
-            torchvision.io.write_image(transformed.squeeze(), "image_transformed.jpg", torchvision.ImageFormat.Jpeg, new ImagerSharp());
+            torchvision.io.write_image(transformed, out_file, torchvision.ImageFormat.Jpeg);
+
+            Console.WriteLine($"Wrote file {out_file}");
         }
     }
 }

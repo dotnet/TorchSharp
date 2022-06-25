@@ -8,4 +8,5 @@ let main argv =
     TorchSharp.Examples.AlexNet.run 4
     TorchSharp.Examples.SequenceToSequence.run 4
     TorchSharp.Examples.TextClassification.run 15
+    TorchSharp.Examples.ImageTransforms.run argv
     0 // return an integer exit code

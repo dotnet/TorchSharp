@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -14,6 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ImageTransforms.fs" />
     <Compile Include="TextClassification.fs" />
     <Compile Include="SequenceToSequence.fs" />
     <Compile Include="AlexNet.fs" />
@@ -25,7 +26,7 @@
   <ItemGroup>
     <PackageReference Include="SharpZipLib" Version="1.3.3" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'net472'"/>
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="'$(TargetFramework)' == 'net472'" />
   </ItemGroup>
 
   <ItemGroup>
