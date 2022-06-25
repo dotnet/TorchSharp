@@ -12,13 +12,13 @@ open type TorchSharp.torchvision.transforms
 let run (argv : string[]) =
     DefaultImager <- new Utils.ImagerSharp()
 
-    let img = read_image argv[0]
+    let img = read_image(argv[0])
     let shape = img.shape
 
     printfn "Image has %d color channels and dimensions %dx%d" shape[0] shape[1] shape[2]
 
-    let filename = Path.GetFileNameWithoutExtension argv[0]
-    let dir = Path.GetDirectoryName argv[0]
+    let filename = Path.GetFileNameWithoutExtension(argv[0])
+    let dir = Path.GetDirectoryName(argv[0])
 
     let transform = torchvision.transforms.Compose(
         HorizontalFlip(),
@@ -34,7 +34,7 @@ let run (argv : string[]) =
     printfn "Wrote transformed image to %s" tfile
 
     let functional_transformed =
-        functional.hflip img
+        functional.hflip(img)
         |> fun t -> functional.rotate(t, 50f)
         |> fun t -> functional.center_crop(t, 256)
         
