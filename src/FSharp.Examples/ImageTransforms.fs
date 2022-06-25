@@ -20,11 +20,8 @@ let run (argv : string[]) =
     let filename = Path.GetFileNameWithoutExtension(argv[0])
     let dir = Path.GetDirectoryName(argv[0])
 
-    let transform = torchvision.transforms.Compose(
-        HorizontalFlip(),
-        Rotate(50f),
-        CenterCrop(256)
-    )
+    let transform = torchvision.transforms.Compose(HorizontalFlip(), Rotate(50f), CenterCrop(256))
+
     let transformed = transform.forward(img)
 
     let tfile = Path.Combine(dir, filename + "-transformed.png")
@@ -43,6 +40,3 @@ let run (argv : string[]) =
     write_image(functional_transformed, ftfile, torchvision.ImageFormat.Png)
 
     printfn "Wrote functionaly transformed image to %s" ftfile
-
-
-    
