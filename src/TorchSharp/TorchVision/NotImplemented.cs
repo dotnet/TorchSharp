@@ -21,6 +21,10 @@ namespace TorchSharp.torchvision
             {
                 throw exp;
             }
+            public override void EncodeImage(Tensor image, ImageFormat format, Stream stream)
+            {
+                throw exp;
+            }
         }
     }
 }

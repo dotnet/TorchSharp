@@ -60,7 +60,7 @@ namespace TorchSharp.Examples
                 return DecodeBitmap(SKBitmap.Decode(stream), mode);
             }
 
-            public override byte[] EncodeImage(Tensor image, torchvision.ImageFormat format)
+            public SKData EncodeToData(Tensor image, torchvision.ImageFormat format)
             {
                 // Basic implementation for only 1 and 4 color channels.
                 var shape = image.shape;
@@ -90,7 +90,16 @@ namespace TorchSharp.Examples
                     _ => throw new ArgumentException("Unsupported format"),
                 };
                 
-                return result.Encode(fmt, 100).ToArray();
+                return result.Encode(fmt, 100);
+            }
+            public override byte[] EncodeImage(Tensor image, torchvision.ImageFormat format)
+            {
+                return EncodeToData(image, format).ToArray();
+            }
+
+            public override void EncodeImage(Tensor image, torchvision.ImageFormat format, Stream stream)
+            {
+                EncodeToData(image, format).SaveTo(stream);
             }
         }
 

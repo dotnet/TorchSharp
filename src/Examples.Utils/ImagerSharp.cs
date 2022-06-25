@@ -49,6 +49,19 @@ namespace TorchSharp.Examples.Utils
                 return stream.ToArray();
             }
 
+            private void FromTensor<TPixel>(Tensor t, ImageFormat format, Stream stream) where TPixel : unmanaged, IPixel<TPixel>
+            {
+                var shape = t.shape;
+                var tt = t.reshape(new long[] { shape[0] * shape[1] * shape[2] });
+                var image = Image.LoadPixelData<TPixel>(tt.data<byte>().ToArray(), (int)shape[1], (int)shape[0]);
+                IImageEncoder encoder = format switch {
+                    ImageFormat.Png => new PngEncoder(),
+                    ImageFormat.Jpeg => new JpegEncoder(),
+                    _ => throw new ArgumentException("Cannot encode to Unknown format"),
+                };
+                encoder.Encode(image, stream);
+            }
+
             public override Tensor DecodeImage(byte[] bytes, io.ImageReadMode mode = io.ImageReadMode.UNCHANGED)
             {
                 switch (mode) {
@@ -75,7 +88,6 @@ namespace TorchSharp.Examples.Utils
             public override Tensor DecodeImage(Stream stream, io.ImageReadMode mode = io.ImageReadMode.UNCHANGED)
             {
                 switch (mode) {
-
                 case io.ImageReadMode.UNCHANGED:
                     var format = Image.DetectFormat(stream);
                     if (format is PngFormat) {
@@ -105,6 +117,27 @@ namespace TorchSharp.Examples.Utils
                     4 => FromTensor<Rgba32>(permuted, format),
                     _ => throw new ArgumentException("image tensor must have a colour channel of 1,2,3 or 4")
                 };
+            }
+
+            public override void EncodeImage(Tensor image, ImageFormat format, Stream stream)
+            {
+                Tensor permuted = image.permute(1, 2, 0);
+                switch (image.shape[0]) {
+                case 1:
+                    FromTensor<L8>(permuted, format, stream);
+                    break;
+                case 2:
+                    FromTensor<L16>(permuted, format, stream);
+                    break;
+                case 3:
+                    FromTensor<Rgb24>(permuted, format, stream);
+                    break;
+                case 4:
+                    FromTensor<Rgba32>(permuted, format, stream);
+                    break;
+                default:
+                    throw new ArgumentException("image tensor must have a colour channel of 1,2,3 or 4");
+                }
             }
     }
 }

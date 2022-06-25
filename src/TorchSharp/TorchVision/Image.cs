@@ -27,7 +27,7 @@ namespace TorchSharp.torchvision
             /// The image format is detected from image file contents.
             /// </remarks>
             /// <returns>
-            /// <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> and <c>dtype = uint8</c>.
+            /// <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.
             /// </returns>
             public abstract Tensor DecodeImage(byte[] image, ImageReadMode mode = ImageReadMode.UNCHANGED);
             /// <summary>
@@ -39,7 +39,7 @@ namespace TorchSharp.torchvision
             /// The image format is detected from image file contents.
             /// </remarks>
             /// <returns>
-            /// <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> and <c>dtype = uint8</c>.
+            /// <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.
             /// </returns>
             public abstract Tensor DecodeImage(Stream image, ImageReadMode mode = ImageReadMode.UNCHANGED);
 
@@ -50,6 +50,14 @@ namespace TorchSharp.torchvision
             /// <param name="format">Image format.</param>
             /// <returns>The encoded image.</returns>
             public abstract byte[] EncodeImage(Tensor image, ImageFormat format);
+            /// <summary>
+            /// Encodes a <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> into a stream.
+            /// </summary>
+            /// <param name="image"><cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.</param>
+            /// <param name="format">Image format.</param>
+            /// <param name="stream">Stream to write to.</param>
+            /// <returns>The encoded image.</returns>
+            public abstract void EncodeImage(Tensor image, ImageFormat format, Stream stream);
         }
 
         /// <summary>
