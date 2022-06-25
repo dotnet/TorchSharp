@@ -15,7 +15,7 @@ let run (argv : string[]) =
     let img = read_image(argv[0])
     let shape = img.shape
 
-    printfn "Image has %d color channels and dimensions %dx%d" shape[0] shape[1] shape[2]
+    printfn "Image has %d color channels and dimensions %dx%d" (shape[0]) (shape[1]) (shape[2])
 
     let filename = Path.GetFileNameWithoutExtension(argv[0])
     let dir = Path.GetDirectoryName(argv[0])
