@@ -12,13 +12,13 @@ open type TorchSharp.torchvision.transforms
 let run (argv : string[]) =
     DefaultImager <- new Utils.ImagerSharp()
 
-    let img = read_image(argv[0])
+    let img = read_image(argv.[0])
     let shape = img.shape
 
-    printfn "Image has %d color channels and dimensions %dx%d" (shape[0]) (shape[1]) (shape[2])
+    printfn "Image has %d color channels and dimensions %dx%d" (shape.[0]) (shape.[1]) (shape.[2])
 
-    let filename = Path.GetFileNameWithoutExtension(argv[0])
-    let dir = Path.GetDirectoryName(argv[0])
+    let filename = Path.GetFileNameWithoutExtension(argv.[0])
+    let dir = Path.GetDirectoryName(argv.[0])
 
     let transform = torchvision.transforms.Compose(HorizontalFlip(), Rotate(50f), CenterCrop(256))
 
