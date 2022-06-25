@@ -102,6 +102,20 @@ namespace TorchSharp.torchvision
         }
 
         /// <summary>
+        /// Reads an image file and returns the result as a <cref>Tensor</cref>.
+        /// </summary>
+        /// <param name="stream">Stream to read from.</param>
+        /// <param name="mode">Image read mode.</param>
+        /// <param name="imager"><cref>Imager</cref> to be use. Will use <cref>DefaultImager</cref> if null.</param>
+        /// <returns>
+        /// <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> and <c>dtype = uint8</c>.
+        /// </returns>
+        public static Tensor read_image(Stream stream, ImageReadMode mode = ImageReadMode.UNCHANGED, Imager imager = null)
+        {
+            return (imager ?? DefaultImager).DecodeImage(stream, mode);
+        }
+
+        /// <summary>
         /// Asynchronously reads an image file and returns the result as a <cref>Tensor</cref>.
         /// </summary>
         /// <param name="filename">Path to the image.</param>
@@ -133,6 +147,18 @@ namespace TorchSharp.torchvision
         public static void write_image(Tensor image, string filename, ImageFormat format, Imager imager = null)
         {
             File.WriteAllBytes(filename, (imager ?? DefaultImager).EncodeImage(image, format));
+        }
+
+        /// <summary>
+        /// Write a image <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> into a file.
+        /// </summary>
+        /// <param name="image"><cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.</param>
+        /// <param name="stream">Stream to write to.</param>
+        /// <param name="format">Image format.</param>
+        /// <param name="imager"><cref>Imager</cref> to be use. Will use <cref>DefaultImager</cref> if null.</param>
+        public static void write_image(Tensor image, Stream stream, ImageFormat format, Imager imager = null)
+        {
+            (imager ?? DefaultImager).EncodeImage(image, format, stream);
         }
 
         /// <summary>
