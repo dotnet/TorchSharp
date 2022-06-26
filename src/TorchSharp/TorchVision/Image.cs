@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 using static TorchSharp.torch;
@@ -21,7 +22,7 @@ namespace TorchSharp.torchvision
             /// <summary>
             /// Decode the contents of an image file and returns the result as a <cref>Tensor</cref>.
             /// </summary>
-            /// <param name="image">Image file contents.</param>
+            /// <param name="stream">Stream to read from.</param>
             /// <param name="mode">Image read mode.</param>
             /// <remarks>
             /// The image format is detected from image file contents.
@@ -29,27 +30,20 @@ namespace TorchSharp.torchvision
             /// <returns>
             /// <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.
             /// </returns>
-            public abstract Tensor DecodeImage(byte[] image, ImageReadMode mode = ImageReadMode.UNCHANGED);
+            public abstract Tensor DecodeImage(Stream stream, ImageReadMode mode = ImageReadMode.UNCHANGED);
             /// <summary>
-            /// Decode the contents of an image file and returns the result as a <cref>Tensor</cref>.
+            /// Asynchronously decode the contents of an image file and returns the result as a <cref>Tensor</cref>.
             /// </summary>
-            /// <param name="image">Image file contents.</param>
+            /// <param name="stream">Stream to read from.</param>
             /// <param name="mode">Image read mode.</param>
+            /// <param name="cancellationToken">Cancellation token.</param>
             /// <remarks>
             /// The image format is detected from image file contents.
             /// </remarks>
             /// <returns>
             /// <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.
             /// </returns>
-            public abstract Tensor DecodeImage(Stream image, ImageReadMode mode = ImageReadMode.UNCHANGED);
-
-            /// <summary>
-            /// Encodes a <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> into an array of bytes.
-            /// </summary>
-            /// <param name="image"><cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.</param>
-            /// <param name="format">Image format.</param>
-            /// <returns>The encoded image.</returns>
-            public abstract byte[] EncodeImage(Tensor image, ImageFormat format);
+            public abstract Task<Tensor> DecodeImageAsync(Stream stream, ImageReadMode mode = ImageReadMode.UNCHANGED, CancellationToken cancellationToken = default);
             /// <summary>
             /// Encodes a <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> into a stream.
             /// </summary>
@@ -58,6 +52,15 @@ namespace TorchSharp.torchvision
             /// <param name="stream">Stream to write to.</param>
             /// <returns>The encoded image.</returns>
             public abstract void EncodeImage(Tensor image, ImageFormat format, Stream stream);
+            /// <summary>
+            /// Asynchronously encodes a <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> into a stream.
+            /// </summary>
+            /// <param name="image"><cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.</param>
+            /// <param name="format">Image format.</param>
+            /// <param name="stream">Stream to write to.</param>
+            /// <param name="cancellationToken">Cancellation token.</param>
+            /// <returns>The encoded image.</returns>
+            public abstract Task EncodeImageAsync(Tensor image, ImageFormat format, Stream stream, CancellationToken cancellationToken = default);
         }
 
         /// <summary>
@@ -98,7 +101,8 @@ namespace TorchSharp.torchvision
         /// </returns>
         public static Tensor read_image(string filename, ImageReadMode mode = ImageReadMode.UNCHANGED, Imager imager = null)
         {
-            return (imager ?? DefaultImager).DecodeImage(File.ReadAllBytes(filename), mode);
+            using (FileStream stream = File.Open(filename, FileMode.Open))
+                return (imager ?? DefaultImager).DecodeImage(stream, mode);
         }
 
         /// <summary>
@@ -125,16 +129,26 @@ namespace TorchSharp.torchvision
         /// A task that represents the asynchronous read operation.
         /// The value of the TResult parameter is a <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> and <c>dtype = uint8</c>.
         /// </returns>
-        public static async Task<Tensor> read_image_async(string filename, ImageReadMode mode = ImageReadMode.UNCHANGED, Imager imager = null)
+        public static Task<Tensor> read_image_async(string filename, ImageReadMode mode = ImageReadMode.UNCHANGED, Imager imager = null)
         {
-            byte[] data;
 
-            using (FileStream stream = File.Open(filename, FileMode.Open)) {
-                data = new byte[stream.Length];
-                await stream.ReadAsync(data, 0, data.Length);
-            }
+            using (FileStream stream = File.Open(filename, FileMode.Open))
+                return (imager ?? DefaultImager).DecodeImageAsync(stream, mode);
+        }
 
-            return (imager ?? DefaultImager).DecodeImage(data, mode);
+        /// <summary>
+        /// Asynchronously reads an image file and returns the result as a <cref>Tensor</cref>.
+        /// </summary>
+        /// <param name="stream">Stream to read from.</param>
+        /// <param name="mode">Read mode.</param>
+        /// <param name="imager"><cref>Imager</cref> to be use. Will use <cref>DefaultImager</cref> if null.</param>
+        /// <returns>
+        /// A task that represents the asynchronous read operation.
+        /// The value of the TResult parameter is a <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> and <c>dtype = uint8</c>.
+        /// </returns>
+        public static Task<Tensor> read_image_async(Stream stream, ImageReadMode mode = ImageReadMode.UNCHANGED, Imager imager = null)
+        {
+            return (imager ?? DefaultImager).DecodeImageAsync(stream, mode);
         }
 
         /// <summary>
@@ -146,7 +160,8 @@ namespace TorchSharp.torchvision
         /// <param name="imager"><cref>Imager</cref> to be use. Will use <cref>DefaultImager</cref> if null.</param>
         public static void write_image(Tensor image, string filename, ImageFormat format, Imager imager = null)
         {
-            File.WriteAllBytes(filename, (imager ?? DefaultImager).EncodeImage(image, format));
+            using (FileStream stream = File.Open(filename, FileMode.OpenOrCreate))
+                (imager ?? DefaultImager).EncodeImage(image, format, stream);
         }
 
         /// <summary>
@@ -168,12 +183,23 @@ namespace TorchSharp.torchvision
         /// <param name="filename">Path to the file.</param>
         /// <param name="format">Image format.</param>
         /// <param name="imager"><cref>Imager</cref> to be use. Will use <cref>DefaultImager</cref> if null.</param>
-        public static async void write_image_async(Tensor image, string filename, ImageFormat format, Imager imager = null)
+        public static Task write_image_async(Tensor image, string filename, ImageFormat format, Imager imager = null)
         {
-            var data = (imager ?? DefaultImager).EncodeImage(image, format);
-            using (FileStream stream = File.Open(filename, FileMode.OpenOrCreate)) {
-                await stream.WriteAsync(data, 0, data.Length);
-            }
+            using (FileStream stream = File.Open(filename, FileMode.OpenOrCreate))
+                return (imager ?? DefaultImager).EncodeImageAsync(image, format, stream);
+        }
+
+        /// <summary>
+        /// Asynchronously write a image <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> into a file.
+        /// </summary>
+        /// <param name="image"><cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.</param>
+        /// <param name="stream">Stream to write to.</param>
+        /// <param name="format">Image format.</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <param name="imager"><cref>Imager</cref> to be use. Will use <cref>DefaultImager</cref> if null.</param>
+        public static Task write_image_async(Tensor image, Stream stream, ImageFormat format, CancellationToken cancellationToken = default, Imager imager = null)
+        {
+            return (imager ?? DefaultImager).EncodeImageAsync(image, format, stream);
         }
 
         /// <summary>
@@ -186,9 +212,11 @@ namespace TorchSharp.torchvision
         /// <returns>A one dimensional <c>uint8</c> <cref>Tensor</cref> that contains the raw bytes of <c>image</c> encoded in the provided format.</returns>
         public static Tensor encode_image(Tensor image, ImageFormat format, Imager imager = null)
         {
-            return (imager ?? DefaultImager).EncodeImage(image, format);
+            using (var stream = new MemoryStream()) {
+                (imager ?? DefaultImager).EncodeImage(image, format, stream);
+                return stream.ToArray();
+            }
         }
-
 
         /// <summary>
         /// Decodes an image <cref>Tensor</cref> buffer into a <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.
@@ -199,7 +227,10 @@ namespace TorchSharp.torchvision
         /// <returns><cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.</returns>
         public static Tensor decode_image(Tensor image, ImageReadMode mode = ImageReadMode.UNCHANGED, Imager imager = null)
         {
-            return (imager ?? DefaultImager).DecodeImage(image.bytes.ToArray(), mode);
+            using (var stream = new MemoryStream()) {
+                (imager ?? DefaultImager).DecodeImage(stream, mode);
+                return stream.ToArray();
+            }
         }
     }
 }

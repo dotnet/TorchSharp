@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -17,7 +18,8 @@ namespace TorchSharp.Examples
     class IOReadWrite
     {
         /// Imager implemented with SkiaSharp.
-        internal class SkiaImager : torchvision.io.Imager
+        /// Ignores async implementations.
+        internal class SkiaImager : torchvision.io.NotImplementedImager
         {
             Tensor DecodeBitmap(SKBitmap bitmap, torchvision.io.ImageReadMode mode)
             {
@@ -49,10 +51,6 @@ namespace TorchSharp.Examples
                 default:
                     throw new NotImplementedException();
                 }
-            }
-            public override Tensor DecodeImage(byte[] image, torchvision.io.ImageReadMode mode)
-            {
-                return DecodeBitmap(SKBitmap.Decode(image), mode);
             }
 
             public override Tensor DecodeImage(Stream stream, torchvision.io.ImageReadMode mode)
@@ -89,12 +87,8 @@ namespace TorchSharp.Examples
                     torchvision.ImageFormat.Gif => SKEncodedImageFormat.Gif,
                     _ => throw new ArgumentException("Unsupported format"),
                 };
-                
                 return result.Encode(fmt, 100);
-            }
-            public override byte[] EncodeImage(Tensor image, torchvision.ImageFormat format)
-            {
-                return EncodeToData(image, format).ToArray();
+                
             }
 
             public override void EncodeImage(Tensor image, torchvision.ImageFormat format, Stream stream)
@@ -103,7 +97,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        internal static async void Main(string[] args)
+        internal static void Main(string[] args)
         {
             torchvision.io.DefaultImager = new SkiaImager();
 
@@ -111,7 +105,7 @@ namespace TorchSharp.Examples
 
             Console.WriteLine($"Reading file {filename}");
 
-            var img = await torchvision.io.read_image_async(filename, torchvision.io.ImageReadMode.GRAY);
+            var img = torchvision.io.read_image(filename, torchvision.io.ImageReadMode.GRAY);
 
             Console.WriteLine($"Image has {img.shape[0]} colour channels with dimensions {img.shape[1]}x{img.shape[2]}");
 
