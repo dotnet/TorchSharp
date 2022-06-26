@@ -27,9 +27,9 @@ namespace TorchSharp.Examples.Utils
                 return tensor(imageBytes, new long[] { image.Height, image.Width, channels }).permute(2, 0, 1);
             }
 
-            private async Task<Tensor> ToTensorAsync<TPixel>(Stream stream) where TPixel : unmanaged, IPixel<TPixel>
+            private async Task<Tensor> ToTensorAsync<TPixel>(Stream stream, CancellationToken token) where TPixel : unmanaged, IPixel<TPixel>
             {
-                var image = await Image.LoadAsync<TPixel>(stream);
+                var image = await Image.LoadAsync<TPixel>(stream, token);
                 var channels = Unsafe.SizeOf<TPixel>();
                 byte[] imageBytes = new byte[image.Height * image.Width * channels];
                 image.CopyPixelDataTo(imageBytes);
@@ -68,18 +68,18 @@ namespace TorchSharp.Examples.Utils
                 case io.ImageReadMode.UNCHANGED:
                     var format = Image.DetectFormat(stream);
                     if (format is PngFormat) {
-                        return await ToTensorAsync<Rgba32>(stream);
+                        return await ToTensorAsync<Rgba32>(stream, cancellationToken);
                     } else {
-                        return await ToTensorAsync<Rgb24>(stream);
+                        return await ToTensorAsync<Rgb24>(stream, cancellationToken);
                     }
                 case io.ImageReadMode.RGB_ALPHA:
-                    return await ToTensorAsync<Rgba32>(stream);
+                    return await ToTensorAsync<Rgba32>(stream, cancellationToken);
                 case io.ImageReadMode.RGB:
-                    return await ToTensorAsync<Rgb24>(stream);
+                    return await ToTensorAsync<Rgb24>(stream, cancellationToken);
                 case io.ImageReadMode.GRAY_ALPHA:
-                    return await ToTensorAsync<La16>(stream);
+                    return await ToTensorAsync<La16>(stream, cancellationToken);
                 case io.ImageReadMode.GRAY:
-                    return await ToTensorAsync<L8>(stream);
+                    return await ToTensorAsync<L8>(stream, cancellationToken);
                 default: throw new NotImplementedException();
                 }
             }
