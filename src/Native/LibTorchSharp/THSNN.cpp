@@ -1078,3 +1078,47 @@ Tensor THSNN_one_hot(const Tensor self, const int64_t num_classes)
         res = ResultTensor(torch::nn::functional::one_hot(*self, num_classes));
     )
 }
+
+void THSNN_PackedSequence_dispose(PackedSequence sequence)
+{
+    delete sequence;
+}
+
+PackedSequence THSNN_pack_padded_sequence(Tensor input, Tensor lengths, bool batch_first, bool enforce_sorted)
+{
+    CATCH_RETURN(
+        torch::nn::utils::rnn::PackedSequence*,
+        nullptr,
+        new torch::nn::utils::rnn::PackedSequence(
+            torch::nn::utils::rnn::pack_padded_sequence(
+                *input, *lengths, batch_first, enforce_sorted)));
+}
+
+void THSNN_pad_packed_sequence(PackedSequence sequence, bool batch_first, double padding_value, int64_t total_length, Tensor* res1_, Tensor* res2_)
+{
+    Tensor& res1 = *res1_;
+    Tensor& res2 = *res2_;
+    CATCH_TENSORS_2(
+        torch::nn::utils::rnn::pad_packed_sequence(
+            *sequence, batch_first, padding_value,
+            total_length == -1 ? torch::nullopt : c10::optional<int64_t>(total_length)));
+}
+
+Tensor THSNN_pad_sequence(const Tensor* sequences, const int sequences_len, bool batch_first, double padding_value)
+{
+    CATCH_TENSOR(
+        torch::nn::utils::rnn::pad_sequence(
+            toTensors<at::Tensor>((torch::Tensor**)sequences, sequences_len),
+            batch_first, padding_value));
+}
+
+PackedSequence THSNN_pack_sequence(const Tensor* sequences, int sequences_len, bool enforce_sorted)
+{
+    CATCH_RETURN(
+        torch::nn::utils::rnn::PackedSequence*,
+        nullptr,
+        new torch::nn::utils::rnn::PackedSequence(
+            torch::nn::utils::rnn::pack_sequence(
+                toTensors<at::Tensor>((torch::Tensor**)sequences, sequences_len),
+                enforce_sorted)));
+}

@@ -11,8 +11,9 @@ typedef torch::Tensor *Tensor;
 typedef torch::Scalar *Scalar;
 typedef torch::Generator* Generator;
 typedef c10::Storage* Storage;
+typedef torch::nn::utils::rnn::PackedSequence* PackedSequence;
 
-typedef std::shared_ptr<torch::nn::Module>* NNModule;
+typedef std::shared_ptr<torch::nn::Module> * NNModule;
 typedef std::shared_ptr<torch::nn::AnyModule> * NNAnyModule;
 typedef std::shared_ptr<torch::optim::Optimizer> * Optimizer;
 typedef std::shared_ptr<torch::jit::Module> * JITModule;

@@ -499,3 +499,10 @@ EXPORT_API(Tensor)   THSNN_PairwiseDistance_forward(const NNModule module, const
 EXPORT_API(void) THSNN_initUniform(Tensor twrapper, double low, double high);
 EXPORT_API(void) THSNN_initKaimingUniform(Tensor tensor, double a);
 
+// Utils RNN
+
+EXPORT_API(void) THSNN_PackedSequence_dispose(PackedSequence sequence);
+EXPORT_API(PackedSequence) THSNN_pack_padded_sequence(Tensor input, Tensor lengths, bool batch_first, bool enforce_sorted);
+EXPORT_API(void) THSNN_pad_packed_sequence(PackedSequence sequence, bool batch_first, double padding_value, int64_t total_length, Tensor* res1, Tensor* res2);
+EXPORT_API(Tensor) THSNN_pad_sequence(const Tensor* sequences, const int sequences_len, bool batch_first, double padding_value);
+EXPORT_API(PackedSequence) THSNN_pack_sequence(const Tensor* sequences, int sequences_len, bool enforce_sorted);
