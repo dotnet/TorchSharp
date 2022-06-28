@@ -49,11 +49,9 @@ namespace TorchSharp
 
                         private HType handle;
 
-                        internal PackedSequence(IntPtr handle)
+                        internal PackedSequence(HType handle)
                         {
-                            if (handle != IntPtr.Zero) {
-                                this.handle = new HType(handle, true);
-                            }
+                            this.handle = handle;
                         }
 
                         internal HType Handle => handle;

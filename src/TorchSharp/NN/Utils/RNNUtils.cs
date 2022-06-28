@@ -16,7 +16,7 @@ namespace TorchSharp
                 public static partial class rnn
                 {
                     [DllImport("LibTorchSharp")]
-                    private static extern IntPtr THSNN_pack_padded_sequence(IntPtr input, IntPtr lengths, bool batch_first, bool enforce_sorted);
+                    private static extern PackedSequence.HType THSNN_pack_padded_sequence(IntPtr input, IntPtr lengths, bool batch_first, bool enforce_sorted);
 
                     [DllImport("LibTorchSharp")]
                     private static extern void THSNN_pad_packed_sequence(PackedSequence.HType sequence, bool batch_first, double padding_value, long total_length, out IntPtr res1, out IntPtr res2);
@@ -25,7 +25,7 @@ namespace TorchSharp
                     private static extern IntPtr THSNN_pad_sequence(IntPtr[] sequences, int sequences_len, bool batch_first, double padding_value);
 
                     [DllImport("LibTorchSharp")]
-                    private static extern IntPtr THSNN_pack_sequence(IntPtr[] sequences, int sequences_len, bool enforce_sorted);
+                    private static extern PackedSequence.HType THSNN_pack_sequence(IntPtr[] sequences, int sequences_len, bool enforce_sorted);
 
                     /// <summary>
                     /// Pack a padded sequences.
