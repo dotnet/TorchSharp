@@ -17,7 +17,7 @@ namespace TorchSharp
                     /// <summary>
                     /// A packed batch of variable length sequences.
                     /// </summary>
-                    public class PackedSequence : IDisposable
+                    public sealed class PackedSequence : IDisposable
                     {
                         /// <summary>
                         /// Class wrapping PyTorch's packedsequence object reference.
