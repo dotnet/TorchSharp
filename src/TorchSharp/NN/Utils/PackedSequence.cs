@@ -38,19 +38,12 @@ namespace TorchSharp
                             }
 
                             [DllImport("LibTorchSharp")]
-                            private static extern void THSNN_PackedSequence_dispose(HType handle);
+                            private static extern void THSNN_PackedSequence_dispose(IntPtr handle);
 
                             protected override bool ReleaseHandle()
                             {
-                                THSNN_PackedSequence_dispose(this);
+                                THSNN_PackedSequence_dispose(handle);
                                 return true;
-                            }
-
-                            protected override void Dispose(bool disposing)
-                            {
-                                if (disposing) {
-                                    ReleaseHandle();
-                                }
                             }
                         }
 
@@ -63,11 +56,6 @@ namespace TorchSharp
                             }
                         }
 
-                        ~PackedSequence()
-                        {
-                            Dispose(false);
-                        }
-
                         internal HType Handle => handle;
 
                         /// <summary>
@@ -75,16 +63,7 @@ namespace TorchSharp
                         /// </summary>
                         public void Dispose()
                         {
-                            Dispose(true);
-                            GC.SuppressFinalize(this);
-                        }
-
-                        /// <summary>
-                        ///   Implements the .NET Dispose pattern.
-                        /// </summary>
-                        protected virtual void Dispose(bool disposing)
-                        {
-                            if (disposing && handle != null && !handle.IsInvalid) {
+                            if (handle != null && !handle.IsInvalid) {
                                 handle.Dispose();
                                 handle.SetHandleAsInvalid();
                             }
