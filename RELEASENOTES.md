@@ -2,6 +2,15 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.96.9
+
+__Fixed Bugs__:
+
+__API Changes__:
+
+Add torch.utils.rnn<br/>
+Add torchvision.io<br/>
+
 ## NuGet Version 0.96.8
 
 __Breaking Changes:__
