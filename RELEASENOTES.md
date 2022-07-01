@@ -10,7 +10,8 @@ __API Changes__:
 
 Add torch.utils.rnn<br/>
 Add torchvision.io<br/>
-Add Tensor.trace() and torch.trace()<br/>
+Add Tensor.trace() and torch.trace() (unrelated to torch.jit.trace)<br/>
+Add ability to load modules that were traced using torch.jit.trace() in Pytorch<br/>
 
 ## NuGet Version 0.96.8
 

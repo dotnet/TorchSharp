@@ -46,6 +46,9 @@
     <Content Include="..\TorchSharpTest\linrelu.script.dat" Link="linrelu.script.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\TorchSharpTest\scripted.script.dat" Link="scripted.script.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

@@ -93,6 +93,20 @@ namespace TorchSharp
         [Fact]
         public void TestLoadJIT_2()
         {
+            // One linear layer followed by ReLU.
+            var m = TorchSharp.jit.load(@"scripted.script.dat");
+            var t = m.forward(torch.ones(6));
+
+            Assert.Equal(new long[] { 6 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.Equal(new float[] { 1.554085f, 1.01024628f, -1.35086036f, -1.84021854f, 0.0127189457f, 0.5994258f }, t.data<float>().ToArray());
+
+            m.Dispose();
+        }
+
+        [Fact]
+        public void TestLoadJIT_3()
+        {
             // Two linear layers, nested Sequential, ReLU in between.
             var m = TorchSharp.jit.load(@"l1000_100_10.script.dat");
 

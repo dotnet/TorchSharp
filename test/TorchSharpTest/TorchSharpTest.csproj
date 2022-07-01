@@ -32,7 +32,7 @@
     <None Update="l1000_100_10.script.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="linrelu.script.dat">
+    <None Update="scripted.script.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="xunit.runner.json">
