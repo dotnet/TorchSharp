@@ -80,7 +80,7 @@ namespace TorchSharp
         public void TestLoadJIT_1()
         {
             // One linear layer followed by ReLU.
-            var m = TorchSharp.jit.load(@"linrelu.script.dat");
+            var m = torch.jit.load(@"linrelu.script.dat");
             var t = m.forward(torch.ones(10));
 
             Assert.Equal(new long[] { 6 }, t.shape);
@@ -94,7 +94,7 @@ namespace TorchSharp
         public void TestLoadJIT_2()
         {
             // One linear layer followed by ReLU.
-            var m = TorchSharp.jit.load(@"scripted.script.dat");
+            var m = torch.jit.load(@"scripted.script.dat");
             var t = m.forward(torch.ones(6));
 
             Assert.Equal(new long[] { 6 }, t.shape);
@@ -108,7 +108,7 @@ namespace TorchSharp
         public void TestLoadJIT_3()
         {
             // Two linear layers, nested Sequential, ReLU in between.
-            var m = TorchSharp.jit.load(@"l1000_100_10.script.dat");
+            var m = torch.jit.load(@"l1000_100_10.script.dat");
 
             var sms = m.named_modules().ToArray();
             Assert.Equal(5, sms.Length);
@@ -130,7 +130,7 @@ namespace TorchSharp
         {
             if (torch.cuda.is_available()) {
 
-                var m = TorchSharp.jit.load(@"linrelu.script.dat");
+                var m = torch.jit.load(@"linrelu.script.dat");
 
                 m.to(DeviceType.CUDA);
                 var params0 = m.parameters().ToArray();

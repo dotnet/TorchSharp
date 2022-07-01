@@ -1671,7 +1671,7 @@ namespace TorchSharp
             var gen = new Generator(4711);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = TorchSharp.jit.load(@"l1000_100_10.script.dat");
+            var seq = torch.jit.load(@"l1000_100_10.script.dat");
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);

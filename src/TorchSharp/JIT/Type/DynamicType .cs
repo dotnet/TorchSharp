@@ -3,13 +3,17 @@ using System;
 
 namespace TorchSharp
 {
-    public static partial class jit
+    public static partial class torch
     {
-        public sealed class DynamicType : Type
+
+        public static partial class jit
         {
-            internal DynamicType(IntPtr handle) : base(handle, Type.TypeKind.AnyType)
+            public sealed class DynamicType : Type
             {
-                this.handle = new HType(handle, true, Type.TypeKind.AnyType);
+                internal DynamicType(IntPtr handle) : base(handle, Type.TypeKind.AnyType)
+                {
+                    this.handle = new HType(handle, true, Type.TypeKind.AnyType);
+                }
             }
         }
     }

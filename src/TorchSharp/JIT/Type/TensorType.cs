@@ -4,64 +4,67 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp
 {
-    public static partial class jit
+    public static partial class torch
     {
-        public sealed class TensorType : Type
+        public static partial class jit
         {
-            internal TensorType(IntPtr handle) : base(handle, TypeKind.TensorType)
+            public sealed class TensorType : Type
             {
-                this.handle = new HType(handle, true, TypeKind.TensorType);
-            }
-
-            internal TensorType(Type type) : base()
-            {
-                handle = type.handle;
-                type.handle = new HType(IntPtr.Zero, true, TypeKind.TensorType);
-                type.Dispose();
-            }
-
-            [DllImport("LibTorchSharp")]
-            private static extern sbyte THSJIT_TensorType_dtype(HType handle);
-
-            public torch.ScalarType GetScalarType()
-            {
-                return (torch.ScalarType)THSJIT_TensorType_dtype(handle);
-            }
-
-
-            [DllImport("LibTorchSharp")]
-            static extern long THSJIT_TensorType_sizes(HType handle, AllocatePinnedArray allocator);
-
-            /// <summary>
-            ///  Retrieves the sizes of all dimensions of the tensor.
-            /// </summary>
-            public long[] size()
-            {
-                long[] ptrArray;
-
-                using (var pa = new PinnedArray<long>()) {
-                    THSJIT_TensorType_sizes(handle, pa.CreateArray);
-                    torch.CheckForErrors();
-                    ptrArray = pa.Array;
+                internal TensorType(IntPtr handle) : base(handle, TypeKind.TensorType)
+                {
+                    this.handle = new HType(handle, true, TypeKind.TensorType);
                 }
 
-                return ptrArray;
-            }
+                internal TensorType(Type type) : base()
+                {
+                    handle = type.handle;
+                    type.handle = new HType(IntPtr.Zero, true, TypeKind.TensorType);
+                    type.Dispose();
+                }
 
-            [DllImport("LibTorchSharp")]
-            private static extern int THSJIT_getDimensionedTensorTypeDimensions(HType handle);
+                [DllImport("LibTorchSharp")]
+                private static extern sbyte THSJIT_TensorType_dtype(HType handle);
 
-            public int GetDimensions()
-            {
-                return THSJIT_getDimensionedTensorTypeDimensions(handle);
-            }
+                public torch.ScalarType GetScalarType()
+                {
+                    return (torch.ScalarType)THSJIT_TensorType_dtype(handle);
+                }
 
-            [DllImport("LibTorchSharp")]
-            private static extern string THSJIT_getDimensionedTensorDevice(HType handle);
 
-            public string GetDevice()
-            {
-                return THSJIT_getDimensionedTensorDevice(handle);
+                [DllImport("LibTorchSharp")]
+                static extern long THSJIT_TensorType_sizes(HType handle, AllocatePinnedArray allocator);
+
+                /// <summary>
+                ///  Retrieves the sizes of all dimensions of the tensor.
+                /// </summary>
+                public long[] size()
+                {
+                    long[] ptrArray;
+
+                    using (var pa = new PinnedArray<long>()) {
+                        THSJIT_TensorType_sizes(handle, pa.CreateArray);
+                        torch.CheckForErrors();
+                        ptrArray = pa.Array;
+                    }
+
+                    return ptrArray;
+                }
+
+                [DllImport("LibTorchSharp")]
+                private static extern int THSJIT_getDimensionedTensorTypeDimensions(HType handle);
+
+                public int GetDimensions()
+                {
+                    return THSJIT_getDimensionedTensorTypeDimensions(handle);
+                }
+
+                [DllImport("LibTorchSharp")]
+                private static extern string THSJIT_getDimensionedTensorDevice(HType handle);
+
+                public string GetDevice()
+                {
+                    return THSJIT_getDimensionedTensorDevice(handle);
+                }
             }
         }
     }
