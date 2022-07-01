@@ -312,9 +312,12 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 static extern IntPtr THSNN_Module_load([MarshalAs(UnmanagedType.LPStr)] string location);
 
-                public static Module Load(string location)
+                public static Module Load(string filename)
                 {
-                    var handle = THSNN_Module_load(location);
+                    if (!System.IO.File.Exists(filename))
+                        throw new System.IO.FileNotFoundException(filename);
+
+                    var handle = THSNN_Module_load(filename);
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
                     return new Module(handle, IntPtr.Zero);
                 }
@@ -825,6 +828,9 @@ namespace TorchSharp
                 /// </remarks>
                 public virtual Module load(string location, bool strict = true, IList<string> skip = null)
                 {
+                    if (!System.IO.File.Exists(location))
+                        throw new System.IO.FileNotFoundException(location);
+
                     var dt = _deviceType;
                     var di = _deviceIndex;
 

@@ -320,6 +320,8 @@ namespace TorchSharp
 
         public static ScriptModule load(string filename)
         {
+            if (!System.IO.File.Exists(filename))
+                throw new System.IO.FileNotFoundException(filename);
             return new ScriptModule(THSJIT_load(filename));
         }
 
