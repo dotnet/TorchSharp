@@ -186,7 +186,7 @@ namespace TorchSharp
             }
         }
 
-        private static float TrainLoop(Sequential seq, Tensor x, Tensor y, optim.Optimizer optimizer)
+        private static float TrainLoop(Module seq, Tensor x, Tensor y, optim.Optimizer optimizer)
         {
             var loss = mse_loss(Reduction.Sum);
 
@@ -213,7 +213,7 @@ namespace TorchSharp
             return finalLoss;
         }
 
-        private static float TrainLoop(Sequential seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true)
+        private static float TrainLoop(Module seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true)
         {
             var loss = mse_loss(Reduction.Sum);
 
@@ -1663,6 +1663,24 @@ namespace TorchSharp
             // so the check is disabled for now. We're still testing that the native
             // interop is working.
             //Assert.True(finalLoss < initialLoss);
+        }
+
+        [Fact]
+        public void TestTrainingLoadedTorchScript()
+        {
+            var gen = new Generator(4711);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = TorchSharp.jit.load(@".\l1000_100_10.script.dat");
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+
+            var loss = TrainLoop(seq, x, y, optimizer);
+
+            LossIsClose(53.81697f, loss);
+
+            seq.eval();
         }
 
         [Fact]

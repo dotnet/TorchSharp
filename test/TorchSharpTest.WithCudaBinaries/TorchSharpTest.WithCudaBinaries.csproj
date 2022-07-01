@@ -43,6 +43,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\TorchSharpTest\linrelu.script.dat" Link="linrelu.script.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\TorchSharpTest\l1000_100_10.script.dat" Link="l1000_100_10.script.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\TorchSharp\TorchSharp.csproj" />
   </ItemGroup>
 

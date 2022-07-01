@@ -358,6 +358,8 @@ EXPORT_API(int) THSTensor_device_index(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_diag(const Tensor tensor, const int64_t diagonal);
 
+EXPORT_API(Tensor) THSTensor_trace(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_diagflat(const Tensor tensor, const int64_t offset);
 
 EXPORT_API(Tensor) THSTensor_diagonal(const Tensor tensor, const int64_t offset, const int64_t dim1, const int64_t dim2);

@@ -31,9 +31,10 @@ namespace TorchSharp
                 /// </summary>
                 internal sealed class HType : SafeHandle
                 {
-                    public HType(IntPtr preexistingHandle, bool ownsHandle)
+                    public HType(IntPtr preexistingHandle, bool ownsHandle, bool script = false)
                         : base(IntPtr.Zero, ownsHandle)
                     {
+                        isScriptModule = script;
                         SetHandle(preexistingHandle);
                     }
 
@@ -46,10 +47,18 @@ namespace TorchSharp
 
                     [DllImport("LibTorchSharp")]
                     private static extern void THSNN_Module_dispose(HType handle);
+                    [DllImport("LibTorchSharp")]
+                    private static extern void THSJIT_Module_dispose(HType handle);
 
                     protected override bool ReleaseHandle()
                     {
-                        if (!IsInvalid) THSNN_Module_dispose(this);
+                        if (!IsInvalid) {
+                            if (isScriptModule) {
+                                THSJIT_Module_dispose(this);
+                            } else {
+                                THSNN_Module_dispose(this);
+                            }
+                        }
                         SetHandle(IntPtr.Zero);
                         return true;
                     }
@@ -60,6 +69,8 @@ namespace TorchSharp
                             ReleaseHandle();
                         }
                     }
+
+                    private bool isScriptModule;
                 }
 
                 internal HType handle;
@@ -72,6 +83,19 @@ namespace TorchSharp
                         if (boxedModule == null)
                             throw new InvalidOperationException("A Sequential or Loaded module may not be added to a Sequential");
                         return boxedModule;
+                    }
+                }
+
+                internal Module(HType handle, IntPtr? boxedHandle)
+                {
+                    this.handle = handle;
+                    boxedModule = boxedHandle.HasValue ? new BoxedModule(boxedHandle.Value) : null;
+
+                    foreach (var (parameterName, parameter) in _named_parameters()) {
+                        register_parameter(parameterName, parameter);
+                    }
+                    foreach (var (bufferName, buffer) in _named_buffers()) {
+                        register_buffer(bufferName, buffer);
                     }
                 }
 
@@ -256,8 +280,8 @@ namespace TorchSharp
                 /// <returns></returns>
                 public Module to(Tensor other)
                 {
-                    to(other.device_type, other.device_index);
-                    return to(other.dtype);
+                    to(other.dtype);
+                    return to(other.device_type, other.device_index);
                 }
 
                 /// <summary>
@@ -326,7 +350,7 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern bool THSNN_Module_is_training(HType module);
 
-                public bool training {
+                public virtual bool training {
                     get {
                         var res = THSNN_Module_is_training(handle);
                         CheckForErrors();
@@ -464,7 +488,7 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_get_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
-                protected (string name, Parameter parameter)[] _named_parameters()
+                protected virtual (string name, Parameter parameter)[] _named_parameters()
                 {
                     using var pa = new PinnedArray<IntPtr>();
                     using var sa = new PinnedArray<IntPtr>();
@@ -479,7 +503,7 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_get_named_buffers(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
-                protected (string name, Tensor buffer)[] _named_buffers()
+                protected virtual (string name, Tensor buffer)[] _named_buffers()
                 {
                     using var pa = new PinnedArray<IntPtr>();
                     using var sa = new PinnedArray<IntPtr>();
@@ -799,7 +823,7 @@ namespace TorchSharp
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public Module load(string location, bool strict = true, IList<string> skip = null)
+                public virtual Module load(string location, bool strict = true, IList<string> skip = null)
                 {
                     var dt = _deviceType;
                     var di = _deviceIndex;

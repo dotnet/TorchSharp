@@ -10,6 +10,7 @@ __API Changes__:
 
 Add torch.utils.rnn<br/>
 Add torchvision.io<br/>
+Add Tensor.trace() and torch.trace()<br/>
 
 ## NuGet Version 0.96.8
 

@@ -265,6 +265,15 @@ namespace TorchSharp
             return torch.linalg.det(input);
         }
 
+        public static Tensor diag(Tensor input, long dimension = 0) => input.diag(dimension);
+
+        /// <summary>
+        /// Returns the sum of the elements of the diagonal of the input 2-D matrix.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <returns></returns>
+        public static Tensor trace(Tensor input) => input.trace(); 
+
         /// <summary>
         /// Returns a partial view of input with the its diagonal elements with respect to dim1 and dim2 appended as a dimension at the end of the shape.
         /// The argument offset controls which diagonal to consider:

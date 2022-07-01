@@ -77,6 +77,65 @@ namespace TorchSharp
 
 
         [Fact]
+        public void TestLoadJIT_1()
+        {
+            // One linear layer followed by ReLU.
+            var m = TorchSharp.jit.load(@".\linrelu.script.dat");
+            var t = m.forward(torch.ones(10));
+
+            var inp = m.GetNumberOfOutputs();
+
+            Assert.Equal(new long[] { 6 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.Equal(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }, t.data<float>().ToArray());
+
+            m.Dispose();
+        }
+
+        [Fact]
+        public void TestLoadJIT_2()
+        {
+            // Two linear layers, nested Sequential, ReLU in between.
+            var m = TorchSharp.jit.load(@".\l1000_100_10.script.dat");
+
+            var sms = m.named_modules().ToArray();
+            Assert.Equal(5, sms.Length);
+
+            var kids = m.named_children().ToArray();
+            Assert.Equal(2, kids.Length);
+
+            var t = m.forward(torch.ones(1000));
+
+            Assert.Equal(new long[] { 10 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.Equal(new float[] { 0.564213157f, -0.04519982f, -0.005117342f, 0.395530462f, -0.3780813f, -0.004734449f, -0.3221216f, -0.289159119f, 0.268511474f, 0.180702567f }, t.data<float>().ToArray());
+
+            m.Dispose();
+        }
+
+        [Fact]
+        public void TestSaveLoadJITCUDA()
+        {
+            if (torch.cuda.is_available()) {
+
+                var m = TorchSharp.jit.load(@".\linrelu.script.dat");
+
+                m.to(DeviceType.CUDA);
+                var params0 = m.parameters().ToArray();
+                foreach (var p in params0)
+                    Assert.Equal(DeviceType.CUDA, p.device_type);
+
+                var t = m.forward(torch.ones(10).cuda()).cpu();
+
+                Assert.Equal(new long[] { 6 }, t.shape);
+                Assert.Equal(torch.float32, t.dtype);
+                Assert.Equal(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }, t.data<float>().ToArray());
+
+                m.Dispose();
+            }
+        }
+
+        [Fact]
         public void TestSaveLoadConv2D()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
