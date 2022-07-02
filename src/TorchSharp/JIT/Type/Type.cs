@@ -49,13 +49,6 @@ namespace TorchSharp
                         return true;
                     }
 
-                    protected override void Dispose(bool disposing)
-                    {
-                        if (disposing) {
-                            ReleaseHandle();
-                        }
-                    }
-
                     private TypeKind kind;
                 }
 

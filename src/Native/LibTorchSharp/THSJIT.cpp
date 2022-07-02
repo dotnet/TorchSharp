@@ -3,9 +3,13 @@
 
 JITModule THSJIT_load(const char* filename)
 {
-    auto res = torch::jit::load(filename);
-    auto copy = new torch::jit::Module(res);
-    return new std::shared_ptr<torch::jit::Module>(copy);
+    CATCH(
+        auto res = torch::jit::load(filename);
+        auto copy = new torch::jit::Module(res);
+        return new std::shared_ptr<torch::jit::Module>(copy);
+    );
+
+    return nullptr;
 }
 
 int THSJIT_Module_is_training(JITModule module)
@@ -148,7 +152,7 @@ int THSJIT_Method_num_inputs(const JITMethod method)
 
 int THSJIT_Module_num_inputs(const JITModule module)
 {
-    return (int)(*module)->get_method("forward").num_inputs()-1; // Don't count the 'self' argument.
+    return (int)(*module)->get_method("forward").num_inputs() - 1; // Don't count the 'self' argument.
 }
 
 int THSJIT_Module_num_outputs(const JITModule module)
@@ -225,8 +229,8 @@ void THSJIT_TensorType_sizes(const JITTensorType type, int64_t* (*allocator)(int
     if (res.has_value()) {
         const size_t sz = res.value().size();
         auto& vec = res.value();
-        int64_t * result = allocator(sz);
-        for (size_t i = 0; i < sz; i++)            
+        int64_t* result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
             result[i] = vec[i];
     }
     //);

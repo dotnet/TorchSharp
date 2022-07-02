@@ -66,7 +66,7 @@ namespace TorchSharp
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
 
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new ScriptModule(x) as nn.Module));
+                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new ScriptModule(x) as nn.Module)).Where(m => !String.IsNullOrEmpty(m.Item1));
                 }
 
                 [DllImport("LibTorchSharp")]
@@ -300,7 +300,11 @@ namespace TorchSharp
             {
                 if (!System.IO.File.Exists(filename))
                     throw new System.IO.FileNotFoundException(filename);
-                return new ScriptModule(THSJIT_load(filename));
+
+                var result = THSJIT_load(filename);
+                if (result == IntPtr.Zero)
+                    CheckForErrors();
+                return new ScriptModule(result);
             }
 
 
