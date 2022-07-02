@@ -31,10 +31,10 @@ namespace TorchSharp
                 /// </summary>
                 internal sealed class HType : SafeHandle
                 {
-                    public HType(IntPtr preexistingHandle, bool ownsHandle, bool script = false)
+                    public HType(IntPtr preexistingHandle, bool ownsHandle, Action<HType> dispose = null)
                         : base(IntPtr.Zero, ownsHandle)
                     {
-                        isScriptModule = script;
+                        _dispose = dispose??THSNN_Module_dispose;
                         SetHandle(preexistingHandle);
                     }
 
@@ -47,17 +47,11 @@ namespace TorchSharp
 
                     [DllImport("LibTorchSharp")]
                     private static extern void THSNN_Module_dispose(HType handle);
-                    [DllImport("LibTorchSharp")]
-                    private static extern void THSJIT_Module_dispose(HType handle);
 
                     protected override bool ReleaseHandle()
                     {
                         if (!IsInvalid) {
-                            if (isScriptModule) {
-                                THSJIT_Module_dispose(this);
-                            } else {
-                                THSNN_Module_dispose(this);
-                            }
+                            _dispose(this);
                         }
                         SetHandle(IntPtr.Zero);
                         return true;
@@ -70,7 +64,7 @@ namespace TorchSharp
                         }
                     }
 
-                    private bool isScriptModule;
+                    private Action<HType> _dispose;
                 }
 
                 internal HType handle;

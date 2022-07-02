@@ -15,7 +15,7 @@ namespace TorchSharp
         {
             public class ScriptModule : torch.nn.Module
             {
-                internal ScriptModule(IntPtr handle) : base(new HType(handle, true), null)
+                internal ScriptModule(IntPtr handle) : base(new HType(handle, true, THSJIT_Module_dispose), null)
                 {
                 }
 
@@ -23,6 +23,9 @@ namespace TorchSharp
                 {
                     Dispose(false);
                 }
+
+                [DllImport("LibTorchSharp")]
+                private static extern void THSJIT_Module_dispose(HType handle);
 
                 [DllImport("LibTorchSharp")]
                 private static extern void THSJIT_Module_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
