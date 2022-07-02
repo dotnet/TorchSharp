@@ -748,6 +748,9 @@ namespace TorchSharp
                 public virtual Tensor forward(Tensor x, Tensor y)
                     => throw new NotImplementedException("forward(x,y)");
 
+                public virtual Tensor forward(Tensor x, Tensor y, Tensor z)
+                    => throw new NotImplementedException("forward(x,y,z)");
+
                 /// <summary>
                 /// Save the parameters and buffers of the module to a disk location.
                 /// </summary>

@@ -287,21 +287,69 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern IntPtr THSJIT_Module_forward(HType module, IntPtr tensors, int length);
 
+                /// <summary>
+                /// Invoke the 'forward' function of the script with one tensor as its argument
+                /// </summary>
+                /// <param name="tensor">The input tensor</param>
+                /// <returns></returns>
                 public unsafe override Tensor forward(Tensor tensor)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
                         IntPtr tensorRefs = parray.CreateArray(new[] { tensor.Handle });
-                        var res = THSJIT_Module_forward(handle, tensorRefs, parray.Array.Length);
+                        var res = THSJIT_Module_forward(handle, tensorRefs, 1);
                         if (res == IntPtr.Zero)
                             CheckForErrors();
                         return new Tensor(res);
                     }
                 }
 
-                public unsafe override Tensor forward(Tensor tensor1, Tensor tensor2)
+                /// <summary>
+                /// Invoke the 'forward' function of the script with two tensors as its argument
+                /// </summary>
+                /// <param name="x">The first input tensor</param>
+                /// <param name="y">The second input tensor</param>
+                /// <returns></returns>
+                public unsafe override Tensor forward(Tensor x, Tensor y)
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorRefs = parray.CreateArray(new[] { tensor1.Handle, tensor2.Handle });
+                        IntPtr tensorRefs = parray.CreateArray(new[] { x.Handle, y.Handle });
+                        var res = THSJIT_Module_forward(handle, tensorRefs, 2);
+                        if (res == IntPtr.Zero)
+                            CheckForErrors();
+                        return new Tensor(res);
+                    }
+                }
+
+                /// <summary>
+                /// Invoke the 'forward' function of the script with three tensors as its argument
+                /// </summary>
+                /// <param name="x">The first input tensor</param>
+                /// <param name="y">The second input tensor</param>
+                /// <param name="z">The third input tensor</param>
+                /// <returns></returns>
+                public unsafe override Tensor forward(Tensor x, Tensor y, Tensor z)
+                {
+                    using (var parray = new PinnedArray<IntPtr>()) {
+                        IntPtr tensorRefs = parray.CreateArray(new[] { x.Handle, y.Handle, z.Handle });
+                        var res = THSJIT_Module_forward(handle, tensorRefs, 3);
+                        if (res == IntPtr.Zero)
+                            CheckForErrors();
+                        return new Tensor(res);
+                    }
+                }
+
+                /// <summary>
+                /// Invoke the 'forward' function of the script with four or more tensors as its argument
+                /// </summary>
+                /// <param name="x">The first input tensor</param>
+                /// <param name="y">The second input tensor</param>
+                /// <param name="z">The third input tensor</param>
+                /// <param name="tensors">The remaining tensors.</param>
+                /// <returns></returns>
+                public unsafe Tensor forward(Tensor x, Tensor y, Tensor z, params Tensor[] tensors)
+                {
+                    using (var parray = new PinnedArray<IntPtr>()) {
+                        IntPtr tensorRefs = parray.CreateArray(new[] { x, y, z }.Concat(tensors).Select(t => t.Handle).ToArray());
                         var res = THSJIT_Module_forward(handle, tensorRefs, parray.Array.Length);
                         if (res == IntPtr.Zero)
                             CheckForErrors();

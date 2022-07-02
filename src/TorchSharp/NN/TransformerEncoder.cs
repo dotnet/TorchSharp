@@ -29,7 +29,7 @@ namespace TorchSharp
             /// <param name="src_mask">The additive mask for the src sequence (optional).</param>
             /// <param name="src_key_padding_mask">The ByteTensor mask for src keys per batch (optional).</param>
             /// <returns></returns>
-            public Tensor forward(Tensor src, Tensor src_mask, Tensor src_key_padding_mask)
+            public override Tensor forward(Tensor src, Tensor src_mask, Tensor src_key_padding_mask)
             {
                 var res = THSNN_TransformerEncoder_forward(handle,
                     src.Handle,
