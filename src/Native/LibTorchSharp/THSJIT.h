@@ -18,6 +18,8 @@ enum TypeKind : int8_t {
 
 
 EXPORT_API(JITModule) THSJIT_load(const char* filename);
+EXPORT_API(void) THSJIT_save(JITModule module, const char* filename);
+
 EXPORT_API(void) THSJIT_Module_dispose(const JITModule module);
 
 EXPORT_API(int) THSJIT_Module_num_inputs(const JITModule method);

@@ -88,6 +88,26 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSaveJIT()
+        {
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+
+            // One linear layer followed by ReLU.
+            using var m1 = torch.jit.load(@"linrelu.script.dat");
+
+            torch.jit.save(m1, ".model.ts");
+            using var m2 = torch.jit.load(@".model.ts");
+
+            var t = m2.forward(torch.ones(10));
+
+            Assert.Equal(new long[] { 6 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.True(torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }).allclose(t));
+
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+        }
+
+        [Fact]
         public void TestLoadJIT_2()
         {
             // One linear layer followed by ReLU.
@@ -116,13 +136,15 @@ namespace TorchSharp
             Assert.Equal(new long[] { 10 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
             Assert.True(torch.tensor(new float[] { 0.564213157f, -0.04519982f, -0.005117342f, 0.395530462f, -0.3780813f, -0.004734449f, -0.3221216f, -0.289159119f, 0.268511474f, 0.180702567f }).allclose(t));
+
+            Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => m.forward(torch.ones(100)));
         }
 
         [Fact]
         public void TestLoadJIT_4()
         {
             // Definitely not a TorchScript file. Let's see what the runtime does with it.
-            Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => torch.jit.load(@"torch.dll"));
+            Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => torch.jit.load(@"bug510.dat"));
         }
 
         [Fact]

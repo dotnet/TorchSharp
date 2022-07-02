@@ -5,11 +5,18 @@ JITModule THSJIT_load(const char* filename)
 {
     CATCH(
         auto res = torch::jit::load(filename);
-        auto copy = new torch::jit::Module(res);
+        auto copy = new torch::jit::Module(res);        
         return new std::shared_ptr<torch::jit::Module>(copy);
     );
 
     return nullptr;
+}
+
+void THSJIT_save(JITModule module, const char* filename)
+{
+    CATCH(
+        (*module)->save(filename);
+    );
 }
 
 int THSJIT_Module_is_training(JITModule module)

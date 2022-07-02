@@ -291,7 +291,21 @@ namespace TorchSharp
                 {
                     using (var parray = new PinnedArray<IntPtr>()) {
                         IntPtr tensorRefs = parray.CreateArray(new[] { tensor.Handle });
-                        return new Tensor(THSJIT_Module_forward(handle, tensorRefs, parray.Array.Length));
+                        var res = THSJIT_Module_forward(handle, tensorRefs, parray.Array.Length);
+                        if (res == IntPtr.Zero)
+                            CheckForErrors();
+                        return new Tensor(res);
+                    }
+                }
+
+                public unsafe override Tensor forward(Tensor tensor1, Tensor tensor2)
+                {
+                    using (var parray = new PinnedArray<IntPtr>()) {
+                        IntPtr tensorRefs = parray.CreateArray(new[] { tensor1.Handle, tensor2.Handle });
+                        var res = THSJIT_Module_forward(handle, tensorRefs, parray.Array.Length);
+                        if (res == IntPtr.Zero)
+                            CheckForErrors();
+                        return new Tensor(res);
                     }
                 }
             }
@@ -310,6 +324,14 @@ namespace TorchSharp
                 return new ScriptModule(result);
             }
 
+            [DllImport("LibTorchSharp")]
+            private static extern void THSJIT_save(nn.Module.HType handle, string filename);
+
+            public static void save(ScriptModule module, string filename)
+            {
+                THSJIT_save(module.handle, filename);
+                CheckForErrors();
+            }
 
         }
     }
