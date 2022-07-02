@@ -266,7 +266,7 @@ namespace TorchSharp
                     return this;
                 }
 
-#if true   // These functions "work," but the native code doesn't seem to find any interesting information.
+#if false   // These functions "work," but the native code doesn't seem to find any interesting information.
 
                 [DllImport("LibTorchSharp")]
                 private static extern IntPtr THSJIT_Module_getInputType(HType module, int index);
