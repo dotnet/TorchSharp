@@ -293,6 +293,11 @@ Tensor THSTensor_diag(const Tensor tensor, const int64_t diagonal)
     CATCH_TENSOR(tensor->diag(diagonal));
 }
 
+Tensor THSTensor_trace(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->trace());
+}
+
 Tensor THSTensor_diagflat(const Tensor tensor, const int64_t offset)
 {
     CATCH_TENSOR(tensor->diagflat(offset));

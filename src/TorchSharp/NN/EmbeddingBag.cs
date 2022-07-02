@@ -32,7 +32,7 @@ namespace TorchSharp
             /// If specified, per_sample_weights must have exactly the same shape as input and is treated as having the same offsets, if those are not None.
             /// Only supported for mode='sum'.</param>
             /// <returns></returns>
-            public Tensor forward(Tensor input, Tensor offsets, Tensor perSampleWeights)
+            public override Tensor forward(Tensor input, Tensor offsets, Tensor perSampleWeights)
             {
                 if (!input.IsIntegral()) throw new ArgumentException("Embedding input must be an integral tensor.");
                 if (!(offsets is null) && input.dtype != offsets.dtype) throw new ArgumentException("input and offsets must have the same element type.");

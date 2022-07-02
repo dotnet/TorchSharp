@@ -2991,6 +2991,22 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_trace(IntPtr tensor);
+
+            /// <summary>
+            /// Returns the sum of the elements of the diagonal of the input 2-D matrix.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor trace()
+            {
+                if (ndim != 2)
+                    throw new ArgumentException($"Expected a matrix, but got tensor with ndim == {ndim}");
+                var res = THSTensor_trace(Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_diagflat(IntPtr tensor, long offset);
 
             public Tensor diagflat(long offset = 0)

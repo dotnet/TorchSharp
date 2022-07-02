@@ -130,11 +130,23 @@ namespace TorchSharp
                 base.Dispose(disposing);
             }
 
-            public override void train()
+            /// <summary>
+            /// Sets the module in training mode.
+            /// </summary>
+            /// <remarks>
+            /// This has any effect only on certain modules.See documentations of particular modules for details of their behaviors in training/evaluation mode, if they are affected, e.g.Dropout, BatchNorm, etc.
+            /// </remarks>
+            public override void train(bool on = true)
             {
-                foreach (var m in _modules) { m.train(); }
+                foreach (var m in _modules) { m.train(on); }
             }
 
+            /// <summary>
+            /// Sets the module in evaluation mode.
+            /// </summary>
+            /// <remarks>
+            /// This has any effect only on certain modules.See documentations of particular modules for details of their behaviors in training/evaluation mode, if they are affected, e.g.Dropout, BatchNorm, etc.
+            /// </remarks>
             public override void eval()
             {
                 foreach (var m in _modules) { m.eval(); }

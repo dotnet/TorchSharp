@@ -1,10 +1,9 @@
 
-TorchSharp are .NET bindings to the Torch library published
-here:
+TorchSharp are .NET bindings to the Torch library published here:
 
 https://pytorch.org/get-started/locally/
 
-This surfaces the C API as a strongly-typed C# API.
+This surfaces the C++ library as a strongly-typed .NET API.
 
 ## Getting Started
 
@@ -18,7 +17,4 @@ Then, start by reading up on [creating your own modules](articles/modules.md).
 
 An intruction on how to [share model](articles/saveload.md) weights between applications, whether in Python or .NET.
 
-
-## API documentation
-
-The [API Documentation](api/TorchSharp.html)
+Loading existing TorchScript files is now supported and described in [Loading TorchScript](articles/torchscript.md).

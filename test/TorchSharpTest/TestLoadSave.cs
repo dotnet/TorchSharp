@@ -60,7 +60,7 @@ namespace TorchSharp
         public void TestSaveLoadLinear3()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var linear = Linear(100, 10, true);
+            using var linear = Linear(100, 10, true);
             var params0 = linear.parameters();
             linear.save(".model.ts");
 
@@ -76,14 +76,126 @@ namespace TorchSharp
         }
 
 
+
+        [Fact]
+        public void TestLoadJIT_Func()
+        {
+            // One linear layer followed by ReLU.
+            using var m = torch.jit.load(@"func.script.dat");
+
+            var sms = m.named_modules().ToArray();
+            Assert.Empty(sms);
+
+            var kids = m.named_children().ToArray();
+            Assert.Empty(kids);
+
+            var t = m.forward(torch.ones(10), torch.ones(10));
+
+            Assert.Equal(new long[] { 10 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.True(torch.tensor(new float[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }).allclose(t));
+        }
+
+        [Fact]
+        public void TestLoadJIT_1()
+        {
+            // One linear layer followed by ReLU.
+            using var m = torch.jit.load(@"linrelu.script.dat");
+            var t = m.forward(torch.ones(10));
+
+            Assert.Equal(new long[] { 6 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.True(torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }).allclose(t));
+        }
+
+        [Fact]
+        public void TestSaveJIT()
+        {
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+
+            // One linear layer followed by ReLU.
+            using var m1 = torch.jit.load(@"linrelu.script.dat");
+
+            torch.jit.save(m1, ".model.ts");
+            using var m2 = torch.jit.load(@".model.ts");
+
+            var t = m2.forward(torch.ones(10));
+
+            Assert.Equal(new long[] { 6 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.True(torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }).allclose(t));
+
+            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+        }
+
+        [Fact]
+        public void TestLoadJIT_2()
+        {
+            // One linear layer followed by ReLU.
+            using var m = torch.jit.load(@"scripted.script.dat");
+            var t = m.forward(torch.ones(6));
+
+            Assert.Equal(new long[] { 6 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.True(torch.tensor(new float[] { 1.554085f, 1.01024628f, -1.35086036f, -1.84021854f, 0.0127189457f, 0.5994258f }).allclose(t));
+        }
+
+        [Fact]
+        public void TestLoadJIT_3()
+        {
+            // Two linear layers, nested Sequential, ReLU in between.
+            using var m = torch.jit.load(@"l1000_100_10.script.dat");
+
+            var sms = m.named_modules().ToArray();
+            Assert.Equal(4, sms.Length);
+
+            var kids = m.named_children().ToArray();
+            Assert.Equal(2, kids.Length);
+
+            var t = m.forward(torch.ones(1000));
+
+            Assert.Equal(new long[] { 10 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.True(torch.tensor(new float[] { 0.564213157f, -0.04519982f, -0.005117342f, 0.395530462f, -0.3780813f, -0.004734449f, -0.3221216f, -0.289159119f, 0.268511474f, 0.180702567f }).allclose(t));
+
+            Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => m.forward(torch.ones(100)));
+        }
+
+        [Fact]
+        public void TestLoadJIT_4()
+        {
+            // Definitely not a TorchScript file. Let's see what the runtime does with it.
+            Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => torch.jit.load(@"bug510.dat"));
+        }
+
+        [Fact]
+        public void TestSaveLoadJITCUDA()
+        {
+            if (torch.cuda.is_available()) {
+
+                using var m = torch.jit.load(@"linrelu.script.dat");
+
+                m.to(DeviceType.CUDA);
+                var params0 = m.parameters().ToArray();
+                foreach (var p in params0)
+                    Assert.Equal(DeviceType.CUDA, p.device_type);
+
+                var t = m.forward(torch.ones(10).cuda()).cpu();
+
+                Assert.Equal(new long[] { 6 }, t.shape);
+                Assert.Equal(torch.float32, t.dtype);
+                Assert.Equal(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }, t.data<float>().ToArray());
+            }
+        }
+
         [Fact]
         public void TestSaveLoadConv2D()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var conv = Conv2d(100, 10, 5);
+            using var conv = Conv2d(100, 10, 5);
             var params0 = conv.parameters();
             conv.save(".model.ts");
-            var loaded = Conv2d(100, 10, 5);
+            using var loaded = Conv2d(100, 10, 5);
             loaded.load(".model.ts");
             var params1 = loaded.parameters();
             File.Delete(".model.ts");
@@ -94,12 +206,12 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadConv2D_sd()
         {
-            var conv = Conv2d(100, 10, 5);
+            using var conv = Conv2d(100, 10, 5);
             var params0 = conv.parameters();
 
             var sd = conv.state_dict();
 
-            var loaded = Conv2d(100, 10, 5);
+            using var loaded = Conv2d(100, 10, 5);
             Assert.NotEqual(params0, loaded.parameters());
 
             loaded.load_state_dict(sd);
@@ -110,10 +222,10 @@ namespace TorchSharp
         public void TestSaveLoadSequential()
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            using var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             var params0 = conv.parameters();
             conv.save(".model.ts");
-            var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             loaded.load(".model.ts");
             var params1 = loaded.parameters();
             File.Delete(".model.ts");
@@ -124,12 +236,12 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadSequential_sd()
         {
-            var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            using var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             var params0 = conv.parameters();
 
             var sd = conv.state_dict();
 
-            var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             Assert.NotEqual(params0, loaded.parameters());
 
             loaded.load_state_dict(sd);
@@ -139,13 +251,13 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadSequential_error1()
         {
-            var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            using var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             var params0 = conv.parameters();
 
             var sd = conv.state_dict();
             sd.Remove("0.bias");
 
-            var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             Assert.NotEqual(params0, loaded.parameters());
 
             Assert.Throws<InvalidOperationException>(() => loaded.load_state_dict(sd));
@@ -154,7 +266,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadSequential_error2()
         {
-            var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            using var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             var params0 = conv.parameters();
 
             var sd = conv.state_dict();
@@ -162,7 +274,7 @@ namespace TorchSharp
 
             sd.Add("2.bias", t);
 
-            var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             Assert.NotEqual(params0, loaded.parameters());
 
             Assert.Throws<InvalidOperationException>(() => loaded.load_state_dict(sd));
@@ -171,7 +283,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadSequential_lax()
         {
-            var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            using var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             var params0 = conv.parameters();
 
             var sd = conv.state_dict();
@@ -180,7 +292,7 @@ namespace TorchSharp
 
             sd.Add("2.bias", t);
 
-            var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+            using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             Assert.NotEqual(params0, loaded.parameters());
 
             var (m,u) = loaded.load_state_dict(sd, false);
@@ -195,14 +307,14 @@ namespace TorchSharp
         {
             if (File.Exists(".model.ts")) File.Delete(".model.ts");
 
-            var original = new TestModule1();
+            using var original = new TestModule1();
             Assert.True(original.has_parameter("test"));
 
             var params0 = original.parameters();
             Assert.True(params0.ToArray().ToArray()[0].requires_grad);
             original.save(".model.ts");
 
-            var loaded = new TestModule1();
+            using var loaded = new TestModule1();
             Assert.True(loaded.has_parameter("test"));
 
             var params1 = loaded.parameters();
