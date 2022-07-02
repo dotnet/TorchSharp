@@ -24,30 +24,6 @@ namespace TorchSharp
                     Dispose(false);
                 }
 
-                /// <summary>
-                /// Implements the .NET Dispose pattern.
-                /// </summary>
-                protected override void Dispose(bool disposing)
-                {
-                    if (disposing && !handle.IsInvalid) {
-
-                        //foreach (var (_, p) in named_buffers(false)) {
-                        //    p.Dispose();
-                        //}
-                        //foreach (var (_, b) in named_parameters(false)) {
-                        //    b.Dispose();
-                        //}
-
-                        //foreach (var (_, m) in named_modules()) {
-                        //    m.Dispose();
-                        //}
-
-                        handle.Dispose();
-                        handle.SetHandleAsInvalid();
-                        boxedModule?.Dispose();
-                    }
-                }
-
                 [DllImport("LibTorchSharp")]
                 private static extern void THSJIT_Module_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
