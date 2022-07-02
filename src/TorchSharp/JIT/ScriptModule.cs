@@ -60,6 +60,10 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern void THSJIT_Module_named_modules(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
+                /// <summary>
+                /// Returns an enumerable of all modules in the network, yielding both the name of the module as well as the module itself.
+                /// </summary>
+                /// <returns>(string, Module) – Tuple of name and module</returns>
                 public override IEnumerable<(string name, nn.Module module)> named_modules()
                 {
                     using var pa = new PinnedArray<IntPtr>();
@@ -75,6 +79,10 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern void THSJIT_Module_named_children(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
+                /// <summary>
+                /// Returns an enumerable of immediate children modules, yielding both the name of the module as well as the module itself.
+                /// </summary>
+                /// <returns>(string, Module) – Tuple containing a name and child module</returns>
                 public override IEnumerable<(string name, nn.Module module)> named_children()
                 {
                     using var pa = new PinnedArray<IntPtr>();
@@ -107,17 +115,31 @@ namespace TorchSharp
                 }
 
                 [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_Module_train(HType module);
+                private static extern void THSJIT_Module_train(HType module, bool on);
 
-                public override void train()
+                /// <summary>
+                /// Sets the module in evaluation mode.
+                /// </summary>
+                /// <remarks>
+                /// Any script module that was created using torch.jit.trace() will be unaffected. The behavior of such
+                /// modules will be captured when traced.
+                /// </remarks>
+                public override void train(bool on = true)
                 {
-                    THSJIT_Module_train(handle);
+                    THSJIT_Module_train(handle, on);
                     CheckForErrors();
                 }
 
                 [DllImport("LibTorchSharp")]
                 private static extern void THSJIT_Module_eval(HType module);
 
+                /// <summary>
+                /// Sets the module in evaluation mode.
+                /// </summary>
+                /// <remarks>
+                /// Any script module that was created using torch.jit.trace() will be unaffected. The behavior of such
+                /// modules will be captured when traced.
+                /// </remarks>
                 public override void eval()
                 {
                     THSJIT_Module_eval(handle);
@@ -127,6 +149,9 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern bool THSJIT_Module_is_training(HType module);
 
+                /// <summary>
+                /// Check whether the module is set to training or evaluation mode.
+                /// </summary>
                 public override bool training {
                     get {
                         var res = THSJIT_Module_is_training(handle);
@@ -361,6 +386,15 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSJIT_load(string filename);
 
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <param name="filename"></param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule load(string filename)
             {
                 if (!System.IO.File.Exists(filename))
@@ -375,6 +409,14 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern void THSJIT_save(nn.Module.HType handle, string filename);
 
+            /// <summary>
+            /// Save an offline version of a previously loaded script module.
+            /// 
+            /// The saved module serializes all of the methods, submodules, parameters, and attributes of this module.
+            /// It can be loaded into the C++ API using torch::jit::load(filename) or into the .NET API with torch.jit.load().
+            /// </summary>
+            /// <param name="module"></param>
+            /// <param name="filename"></param>
             public static void save(ScriptModule module, string filename)
             {
                 THSJIT_save(module.handle, filename);

@@ -325,28 +325,41 @@ namespace TorchSharp
                     => THSNN_Module_save(handle, modelPath);
 
                 [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_train(HType module);
+                private static extern void THSNN_Module_train(HType module, bool on);
 
-                public virtual void train()
+                /// <summary>
+                /// Sets the module in training mode.
+                /// </summary>
+                /// <remarks>
+                /// This has any effect only on certain modules.See documentations of particular modules for details of their behaviors in training/evaluation mode, if they are affected, e.g.Dropout, BatchNorm, etc.
+                /// </remarks>
+                public virtual void train(bool train = true)
                 {
-                    THSNN_Module_train(handle);
+                    THSNN_Module_train(handle, train);
                     CheckForErrors();
-                    foreach (var (_, m) in named_children()) { m.train(); }
+                    foreach (var (_, m) in named_children()) { m.train(train); }
                 }
 
                 [DllImport("LibTorchSharp")]
                 private static extern void THSNN_Module_eval(HType module);
 
+                /// <summary>
+                /// Sets the module in evaluation mode.
+                /// </summary>
+                /// <remarks>
+                /// This has any effect only on certain modules.See documentations of particular modules for details of their behaviors in training/evaluation mode, if they are affected, e.g.Dropout, BatchNorm, etc.
+                /// </remarks>
                 public virtual void eval()
                 {
-                    THSNN_Module_eval(handle);
-                    CheckForErrors();
-                    foreach (var (_, m) in named_children()) { m.eval(); }
+                    train(false);
                 }
 
                 [DllImport("LibTorchSharp")]
                 private static extern bool THSNN_Module_is_training(HType module);
 
+                /// <summary>
+                /// Check whether the module is set to training or evaluation mode.
+                /// </summary>
                 public virtual bool training {
                     get {
                         var res = THSNN_Module_is_training(handle);

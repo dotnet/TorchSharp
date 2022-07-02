@@ -1096,6 +1096,8 @@ namespace TorchSharp
 
             modT.train();
 
+            Assert.True(modT.training);
+
             var eval = modT.forward(x);
             var loss = mse_loss(Reduction.Sum);
             var output = loss(eval, y);
@@ -3154,7 +3156,10 @@ namespace TorchSharp
             using (var K = torch.tensor(k_data, src_seq_len, batch_size, kembed_dim))
             using (var V = torch.tensor(v_data, src_seq_len, batch_size, vembed_dim))
             using (var Attn = torch.tensor(attn_data, batch_size, src_seq_len, src_seq_len)) {
+
                 mha.eval();
+                Assert.False(mha.training);
+
                 var (att_out, att_wts) = mha.forward(Q, K, V);
                 var t = att_wts.allclose(Attn, rtol: 0.5, atol: 0.5);
                 Assert.True(t);

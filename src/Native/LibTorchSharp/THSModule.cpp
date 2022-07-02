@@ -10,14 +10,9 @@ int THSNN_Module_is_training(NNModule module)
     return (*module)->is_training();
 }
 
-void THSNN_Module_train(NNModule module)
+void THSNN_Module_train(NNModule module, bool on)
 {
-    (*module)->train();
-}
-
-void THSNN_Module_eval(NNModule module)
-{
-    (*module)->eval();
+    (*module)->train(on);
 }
 
 const char* THSNN_Module_name(const NNModule module)

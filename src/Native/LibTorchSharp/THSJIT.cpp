@@ -24,9 +24,9 @@ int THSJIT_Module_is_training(JITModule module)
     return (*module)->is_training();
 }
 
-void THSJIT_Module_train(JITModule module)
+void THSJIT_Module_train(JITModule module, bool on)
 {
-    (*module)->train();
+    (*module)->train(on);
 }
 
 void THSJIT_Module_eval(JITModule module)
