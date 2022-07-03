@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Tar;
 
 namespace TorchSharp
 {
@@ -60,7 +58,7 @@ namespace TorchSharp
                         if (!File.Exists(archivePath)) {
                             torch.hub.download_url_to_file(url, archivePath, YesnoDataset.ArchiveChecksum);
                         }
-                        ExtractTarGz(archivePath, root);
+                        utils.extract_archive(archivePath, root);
                     }
                 }
                 if (!Directory.Exists(directoryPathInArchive)) {
@@ -76,17 +74,6 @@ namespace TorchSharp
                 var fileName = url.Substring(index + 1);
                 if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentException();
                 return fileName;
-            }
-
-            private static void ExtractTarGz(string archivePath, string destinationDirectory)
-            {
-                using (var fileStream = File.OpenRead(archivePath)) {
-                    using (var inputStream = new GZipInputStream(fileStream)) {
-                        using (TarArchive tarArchive = TarArchive.CreateInputTarArchive(inputStream, Encoding.UTF8)) {
-                            tarArchive.ExtractContents(destinationDirectory);
-                        }
-                    }
-                }
             }
         }
     }
