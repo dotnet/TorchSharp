@@ -369,7 +369,7 @@ namespace TorchSharp
                 {
                     var count = 3 + tensors.Length;
 
-                    if (count > 32) {
+                    if (count < 32) {
                         var tensorRefs = stackalloc IntPtr[count];
                         tensorRefs[0] = x.Handle;
                         tensorRefs[1] = y.Handle;
