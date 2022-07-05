@@ -368,16 +368,34 @@ namespace TorchSharp
                 public unsafe Tensor forward(Tensor x, Tensor y, Tensor z, params Tensor[] tensors)
                 {
                     var count = 3 + tensors.Length;
-                    var tensorRefs = stackalloc IntPtr [count];
-                    tensorRefs[0] = x.Handle;
-                    tensorRefs[1] = y.Handle;
-                    tensorRefs[2] = z.Handle;
-                    for (var i = 0; i < tensors.Length; i++) tensorRefs[3 + i] = tensors[i].Handle;
 
-                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, count);
-                    if (res == IntPtr.Zero)
-                        CheckForErrors();
-                    return new Tensor(res);
+                    if (count > 32) {
+                        var tensorRefs = stackalloc IntPtr[count];
+                        tensorRefs[0] = x.Handle;
+                        tensorRefs[1] = y.Handle;
+                        tensorRefs[2] = z.Handle;
+                        for (var i = 0; i < tensors.Length; i++) tensorRefs[3 + i] = tensors[i].Handle;
+
+                        var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, count);
+                        if (res == IntPtr.Zero)
+                            CheckForErrors();
+                        return new Tensor(res);
+                    }
+                    else {
+                        // It the unlikely event that there's a great number of arguments, use heap allocation.
+                        var tensorRefs = new IntPtr[count];
+                        tensorRefs[0] = x.Handle;
+                        tensorRefs[1] = y.Handle;
+                        tensorRefs[2] = z.Handle;
+                        for (var i = 0; i < tensors.Length; i++) tensorRefs[3 + i] = tensors[i].Handle;
+
+                        using (var parray = new PinnedArray<IntPtr>()) {
+                            var res = THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count);
+                            if (res == IntPtr.Zero)
+                                CheckForErrors();
+                            return new Tensor(res);
+                        }
+                    }
                 }
             }
 
