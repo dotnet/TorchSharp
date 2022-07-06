@@ -319,13 +319,11 @@ namespace TorchSharp
                 /// <returns></returns>
                 public unsafe override Tensor forward(Tensor tensor)
                 {
-                    using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorRefs = parray.CreateArray(new[] { tensor.Handle });
-                        var res = THSJIT_Module_forward(handle, tensorRefs, 1);
-                        if (res == IntPtr.Zero)
-                            CheckForErrors();
-                        return new Tensor(res);
-                    }
+                    var tensorRefs = stackalloc[] { tensor.Handle };
+                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 1);
+                    if (res == IntPtr.Zero)
+                        CheckForErrors();
+                    return new Tensor(res);
                 }
 
                 /// <summary>
@@ -336,13 +334,11 @@ namespace TorchSharp
                 /// <returns></returns>
                 public unsafe override Tensor forward(Tensor x, Tensor y)
                 {
-                    using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorRefs = parray.CreateArray(new[] { x.Handle, y.Handle });
-                        var res = THSJIT_Module_forward(handle, tensorRefs, 2);
-                        if (res == IntPtr.Zero)
-                            CheckForErrors();
-                        return new Tensor(res);
-                    }
+                    var tensorRefs = stackalloc[] { x.Handle, y.Handle };
+                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 2);
+                    if (res == IntPtr.Zero)
+                        CheckForErrors();
+                    return new Tensor(res);
                 }
 
                 /// <summary>
@@ -354,13 +350,11 @@ namespace TorchSharp
                 /// <returns></returns>
                 public unsafe override Tensor forward(Tensor x, Tensor y, Tensor z)
                 {
-                    using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorRefs = parray.CreateArray(new[] { x.Handle, y.Handle, z.Handle });
-                        var res = THSJIT_Module_forward(handle, tensorRefs, 3);
-                        if (res == IntPtr.Zero)
-                            CheckForErrors();
-                        return new Tensor(res);
-                    }
+                    var tensorRefs = stackalloc[] { x.Handle, y.Handle, z.Handle };
+                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 3);
+                    if (res == IntPtr.Zero)
+                        CheckForErrors();
+                    return new Tensor(res);
                 }
 
                 /// <summary>
@@ -373,12 +367,34 @@ namespace TorchSharp
                 /// <returns></returns>
                 public unsafe Tensor forward(Tensor x, Tensor y, Tensor z, params Tensor[] tensors)
                 {
-                    using (var parray = new PinnedArray<IntPtr>()) {
-                        IntPtr tensorRefs = parray.CreateArray(new[] { x, y, z }.Concat(tensors).Select(t => t.Handle).ToArray());
-                        var res = THSJIT_Module_forward(handle, tensorRefs, parray.Array.Length);
+                    var count = 3 + tensors.Length;
+
+                    if (count < 32) {
+                        var tensorRefs = stackalloc IntPtr[count];
+                        tensorRefs[0] = x.Handle;
+                        tensorRefs[1] = y.Handle;
+                        tensorRefs[2] = z.Handle;
+                        for (var i = 0; i < tensors.Length; i++) tensorRefs[3 + i] = tensors[i].Handle;
+
+                        var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, count);
                         if (res == IntPtr.Zero)
                             CheckForErrors();
                         return new Tensor(res);
+                    }
+                    else {
+                        // It the unlikely event that there's a great number of arguments, use heap allocation.
+                        var tensorRefs = new IntPtr[count];
+                        tensorRefs[0] = x.Handle;
+                        tensorRefs[1] = y.Handle;
+                        tensorRefs[2] = z.Handle;
+                        for (var i = 0; i < tensors.Length; i++) tensorRefs[3 + i] = tensors[i].Handle;
+
+                        using (var parray = new PinnedArray<IntPtr>()) {
+                            var res = THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count);
+                            if (res == IntPtr.Zero)
+                                CheckForErrors();
+                            return new Tensor(res);
+                        }
                     }
                 }
             }
