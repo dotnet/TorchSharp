@@ -12,6 +12,7 @@ Add torch.utils.rnn<br/>
 Add torchvision.io<br/>
 Add Tensor.trace() and torch.trace() (unrelated to torch.jit.trace)<br/>
 Add ability to load and save TorchScript modules created using Pytorch<br/>
+Added torchaudio.datasets.SPEECHCOMMANDS<br/>
 
 ## NuGet Version 0.96.8
 
