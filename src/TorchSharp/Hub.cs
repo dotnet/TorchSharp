@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TorchSharp
@@ -18,13 +19,12 @@ namespace TorchSharp
             /// <param name="url">The URL to download</param>
             /// <param name="dst">The file path to download the URL into</param>
             /// <param name="hash_prefix">If non null, the SHA256 hash of downloaded content must match this prefix</param>
-            /// <param name="progress">Display the progress bar</param>
             /// <exception cref="InvalidDataException">SHA256 hash doesn't match</exception>
-            public static void download_url_to_file(string url, string dst, string hash_prefix = null, bool progress = true)
+            public static void download_url_to_file(string url, string dst, string hash_prefix = null)
             {
                 try {
                     Task.Run(async () => {
-                        await download_url_to_file_async(url, dst, hash_prefix, progress);
+                        await download_url_to_file_async(url, dst, hash_prefix);
                     }).Wait();
                 } catch (AggregateException ex) {
                     throw ex.InnerException;
@@ -36,26 +36,25 @@ namespace TorchSharp
             /// </summary>
             /// <param name="url">The URL to download</param>
             /// <param name="dst">The file path to download the URL into</param>
+            /// <param name="cancellationToken">A cancellation token</param>
             /// <param name="hash_prefix">If non null, the SHA256 hash of downloaded content must match this prefix</param>
-            /// <param name="progress">Display the progress bar</param>
             /// <exception cref="InvalidDataException">SHA256 hash doesn't match</exception>
-            public static async Task download_url_to_file_async(string url, string dst, string hash_prefix = null, bool progress = true)
+            public static async Task download_url_to_file_async(string url, string dst, string hash_prefix = null, CancellationToken cancellationToken = default)
             {
-                using (var httpClient = new HttpClient()) {
-                    using (var response = await httpClient.GetAsync(url)) {
-                        if (!response.IsSuccessStatusCode) {
-                            throw new InvalidDataException();
-                        }
-                        using (var writer = File.OpenWrite(dst)) {
-                            if (progress) {
-                                // TODO: Implement progress.
-                                // Console.WriteLine("download_url_to_file(progress: true) is not supported.");
-                                await response.Content.CopyToAsync(writer);
-                            } else {
+                try {
+                    using (var httpClient = new HttpClient()) {
+                        using (var response = await httpClient.GetAsync(url, cancellationToken)) {
+                            response.EnsureSuccessStatusCode();
+                            using (var writer = File.OpenWrite(dst)) {
                                 await response.Content.CopyToAsync(writer);
                             }
                         }
                     }
+                } catch (Exception) {
+                    if (File.Exists(dst)) {
+                        File.Delete(dst);
+                    }
+                    throw;
                 }
 
                 string fileHash = GetFileChecksum(dst);
