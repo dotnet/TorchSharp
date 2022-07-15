@@ -878,9 +878,9 @@ void THSTensor_max_along_dimension(const Tensor tensor, Tensor* (*allocator)(siz
 {
     CATCH(
         auto max = tensor->max(dim, keepdim);
-    Tensor * result = allocator(2);
-    result[0] = new torch::Tensor(std::get<0>(max));
-    result[1] = new torch::Tensor(std::get<1>(max));
+        Tensor * result = allocator(2);
+        result[0] = new torch::Tensor(std::get<0>(max));
+        result[1] = new torch::Tensor(std::get<1>(max));
     )
 }
 
@@ -889,13 +889,23 @@ Tensor THSTensor_mean(const Tensor tensor)
     CATCH_TENSOR(tensor->mean());
 }
 
+Tensor THSTensor_var(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->var());
+}
+
 Tensor THSTensor_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool keepdim, bool has_type, const int8_t dtype)
 {
     CATCH_TENSOR(
-        has_type ?
-        tensor->mean(at::ArrayRef<int64_t>(dimensions, length), keepdim, (c10::ScalarType)dtype)
-        :
-        tensor->mean(at::ArrayRef<int64_t>(dimensions, length), keepdim))
+        has_type
+        ? tensor->mean(at::ArrayRef<int64_t>(dimensions, length), keepdim, (c10::ScalarType)dtype)
+        : tensor->mean(at::ArrayRef<int64_t>(dimensions, length), keepdim))
+}
+
+Tensor THSTensor_var_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim)
+{
+    tensor->var();
+    CATCH_TENSOR(tensor->var(at::ArrayRef<int64_t>(dimensions, length), unbiased, keepdim))
 }
 
 Tensor THSTensor_median(const Tensor tensor)
@@ -907,10 +917,10 @@ void THSTensor_mode(const Tensor tensor, Tensor* (*allocator)(size_t length), co
 {
     CATCH(
         auto res = tensor->mode(dim, keep_dim);
-    const size_t sz = 2;
-    Tensor * result = allocator(2);
-    result[0] = new torch::Tensor(std::get<0>(res));
-    result[1] = new torch::Tensor(std::get<1>(res));
+        const size_t sz = 2;
+        Tensor * result = allocator(2);
+        result[0] = new torch::Tensor(std::get<0>(res));
+        result[1] = new torch::Tensor(std::get<1>(res));
     )
 }
 
@@ -1527,12 +1537,30 @@ Tensor THSTensor_std_mean(const Tensor tensor, bool unbiased, Tensor *mean)
     return ResultTensor(std::get<0>(res));
 }
 
+Tensor THSTensor_var_mean(const Tensor tensor, bool unbiased, Tensor *var)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+
+    CATCH(res = torch::var_mean(*tensor, unbiased););
+    *var = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 Tensor THSTensor_std_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim, Tensor* mean)
 {
     std::tuple<at::Tensor, at::Tensor> res;
 
     CATCH(res = torch::std_mean(*tensor, at::ArrayRef<int64_t>(dimensions, length), unbiased, keepdim););
     *mean = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_var_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim, Tensor* var)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+
+    CATCH(res = torch::var_mean(*tensor, at::ArrayRef<int64_t>(dimensions, length), unbiased, keepdim););
+    *var = ResultTensor(std::get<1>(res));
     return ResultTensor(std::get<0>(res));
 }
 
