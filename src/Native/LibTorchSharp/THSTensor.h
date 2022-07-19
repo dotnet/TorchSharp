@@ -1080,9 +1080,9 @@ EXPORT_API(Tensor) THSTensor_var(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_var_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim);
 
-EXPORT_API(Tensor) THSTensor_var_mean(const Tensor tensor, int dim, Tensor* var);
+EXPORT_API(Tensor) THSTensor_var_mean(const Tensor tensor, bool unbiased, Tensor* var);
 
-EXPORT_API(Tensor) THSTensor_var_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim, Tensor* var);
+EXPORT_API(Tensor) THSTensor_var_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim, Tensor* mean);
 
 EXPORT_API(Tensor) THSTensor_sub(const Tensor left, const Tensor right);
 
