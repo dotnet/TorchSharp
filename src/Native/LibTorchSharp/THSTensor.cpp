@@ -1537,12 +1537,16 @@ Tensor THSTensor_std_mean(const Tensor tensor, bool unbiased, Tensor *mean)
     return ResultTensor(std::get<0>(res));
 }
 
-Tensor THSTensor_var_mean(const Tensor tensor, bool unbiased, Tensor *var)
+// <summary>
+// Wrapper for <code>std::tuple&lt;Tensor, Tensor&gt; var_mean(const Tensor&amp; self, bool unbiased)</code>.
+// See also: <a href="https://github.com/pytorch/pytorch/blob/master/aten/src/ATen/native/ReduceOps.cpp>ReduceOps.cpp</a>
+// </summary>
+Tensor THSTensor_var_mean(const Tensor tensor, bool unbiased, Tensor *mean)
 {
     std::tuple<at::Tensor, at::Tensor> res;
 
     CATCH(res = torch::var_mean(*tensor, unbiased););
-    *var = ResultTensor(std::get<1>(res));
+    *mean = ResultTensor(std::get<1>(res));
     return ResultTensor(std::get<0>(res));
 }
 
@@ -1555,12 +1559,16 @@ Tensor THSTensor_std_mean_along_dimensions(const Tensor tensor, const int64_t* d
     return ResultTensor(std::get<0>(res));
 }
 
-Tensor THSTensor_var_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim, Tensor* var)
+// <summary>
+// Wrapper for <code>std::tuple&lt;Tensor, Tensor&gt; var_mean(const Tensor&amp; self, IntArrayRef dim, bool unbiased, bool keepdim)</code>.
+// See also: <a href="https://github.com/pytorch/pytorch/blob/master/aten/src/ATen/native/ReduceOps.cpp>ReduceOps.cpp</a>
+// </summary>
+Tensor THSTensor_var_mean_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim, Tensor* mean)
 {
     std::tuple<at::Tensor, at::Tensor> res;
 
     CATCH(res = torch::var_mean(*tensor, at::ArrayRef<int64_t>(dimensions, length), unbiased, keepdim););
-    *var = ResultTensor(std::get<1>(res));
+    *mean = ResultTensor(std::get<1>(res));
     return ResultTensor(std::get<0>(res));
 }
 
