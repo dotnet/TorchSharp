@@ -4909,6 +4909,51 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void VarMeanTest()
+        {
+            var data = torch.rand(10, 10, 10);
+
+            {
+                var (@var, mean) = data.var_mean();
+                Assert.NotNull(@var);
+                Assert.NotNull(mean);
+                Assert.Empty(@var.shape);
+                Assert.Empty(mean.shape);
+            }
+            {
+                var (@var, mean) = torch.var_mean(data, unbiased: false);
+                Assert.NotNull(@var);
+                Assert.NotNull(mean);
+                Assert.Empty(@var.shape);
+                Assert.Empty(mean.shape);
+            }
+            {
+                var (@var, mean) = data.var_mean(1);
+                Assert.NotNull(@var);
+                Assert.NotNull(mean);
+                Assert.Equal(new long[] { 10, 10 }, @var.shape);
+                Assert.Equal(new long[] { 10, 10 }, mean.shape);
+            }
+            {
+                var (@var, mean) = torch.var_mean(data, 1, keepDimension: true);
+                Assert.NotNull(@var);
+                Assert.NotNull(mean);
+                Assert.Equal(new long[] { 10, 1, 10 }, @var.shape);
+                Assert.Equal(new long[] { 10, 1, 10 }, mean.shape);
+            }
+            //{
+            //    var t = torch.from_array(new float[,]{ { 1f, 2f }, { 3f, 4f } });
+            //    var varExpected = torch.var(t);
+            //    var meanExpected = torch.mean(t);
+            //    var (@var, mean) = torch.var_mean(t);
+            //    Assert.NotNull(@var);
+            //    Assert.NotNull(mean);
+            //    Assert.True(varExpected.allclose(@var));
+            //    Assert.True(meanExpected.allclose(mean));
+            //}
+        }
+
+        [Fact]
         public void UnbindTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
