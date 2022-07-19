@@ -35,6 +35,8 @@ namespace TorchSharp.Examples
         private static int _epochs = 1;
         private static int _trainBatchSize = 64;
         private static int _testBatchSize = 128;
+        private static int _sample_rate = 16000;
+        private static int _new_sample_rate = 8000;
 
         private readonly static int _logInterval = 200;
 
@@ -64,10 +66,12 @@ namespace TorchSharp.Examples
             var model = new M5("model");
             model.to(device);
 
+            var transform = torchaudio.transforms.Resample(_sample_rate, _new_sample_rate, device: device);
+
             _labelToIndex = Labels.Select((label, index) => (label, index)).ToDictionary(t => t.label, t => t.index);
             using (var train_data = SPEECHCOMMANDS(datasetPath, subset: "training", download: true))
             using (var test_data = SPEECHCOMMANDS(datasetPath, subset: "testing", download: true)) {
-                TrainingLoop("speechcommands", device, model, train_data, test_data);
+                TrainingLoop("speechcommands", device, model, transform, train_data, test_data);
             }
         }
 
@@ -83,16 +87,7 @@ namespace TorchSharp.Examples
             };
         }
 
-        private static torch.Tensor Transform(torch.Tensor audio)
-        {
-            var x = audio.reshape(audio.shape[0], audio.shape[1], -1, 2);
-            // torchaudio.transforms.Resample is not implemented
-            // Resampling from 16kHz to 8kHz.
-            var y = x.mean(dimensions: new long[] { 3 });
-            return y;
-        }
-
-        internal static void TrainingLoop(string dataset, Device device, M5 model, Dataset<SpeechCommandsDatasetItem> train_data, Dataset<SpeechCommandsDatasetItem> test_data)
+        internal static void TrainingLoop(string dataset, Device device, M5 model, ITransform transform, Dataset<SpeechCommandsDatasetItem> train_data, Dataset<SpeechCommandsDatasetItem> test_data)
         {
             using (var train_loader = new DataLoader<SpeechCommandsDatasetItem, BatchItem>(
                 train_data, _trainBatchSize, Collate, shuffle: true, device: device))
@@ -109,8 +104,8 @@ namespace TorchSharp.Examples
                 sw.Start();
 
                 for (var epoch = 1; epoch <= _epochs; epoch++) {
-                    Train(model, optimizer, nll_loss(reduction: torch.nn.Reduction.Mean), train_loader, epoch, train_data.Count);
-                    Test(model, nll_loss(reduction: torch.nn.Reduction.Sum), test_loader, test_data.Count);
+                    Train(model, transform, optimizer, nll_loss(reduction: torch.nn.Reduction.Mean), train_loader, epoch, train_data.Count);
+                    Test(model, transform, nll_loss(reduction: torch.nn.Reduction.Sum), test_loader, test_data.Count);
 
                     Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
                     scheduler.step();
@@ -126,6 +121,7 @@ namespace TorchSharp.Examples
 
         private static void Train(
             M5 model,
+            ITransform transform,
             torch.optim.Optimizer optimizer,
             Loss criteria,
             DataLoader<SpeechCommandsDatasetItem, BatchItem> dataLoader,
@@ -141,7 +137,7 @@ namespace TorchSharp.Examples
 
                 model.train();
                 foreach (var batch in dataLoader) {
-                    var audio = Transform(batch.audio);
+                    var audio = transform.forward(batch.audio);
                     var target = batch.label;
                     var output = model.forward(batch.audio).squeeze();
                     var loss = criteria(output, target);
@@ -163,6 +159,7 @@ namespace TorchSharp.Examples
 
         private static void Test(
             M5 model,
+            ITransform transform,
             Loss criteria,
             DataLoader<SpeechCommandsDatasetItem, BatchItem> dataLoader,
             long size)
@@ -175,7 +172,7 @@ namespace TorchSharp.Examples
             using (var d = torch.NewDisposeScope()) {
 
                 foreach (var batch in dataLoader) {
-                    var audio = Transform(batch.audio);
+                    var audio = transform.forward(batch.audio);
                     var target = batch.label;
                     var output = model.forward(batch.audio).squeeze();
                     var loss = criteria(output, target);
