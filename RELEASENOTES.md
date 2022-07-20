@@ -2,17 +2,21 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.96.9
+## NuGet Version 0.97.0
 
-__Fixed Bugs__:
+__Fixed Bugs:__
+
+#653:Tensor.to(Tensor) doesn't change dtype of Tensor.<br/>
 
 __API Changes__:
 
+Add ability to load and save TorchScript modules created using Pytorch<br/>
 Add torch.utils.rnn<br/>
 Add torchvision.io<br/>
 Add Tensor.trace() and torch.trace() (unrelated to torch.jit.trace)<br/>
-Add ability to load and save TorchScript modules created using Pytorch<br/>
-Added torchaudio.datasets.SPEECHCOMMANDS<br/>
+Add Tensor.var and Tensor.var_mean<br/>
+Add torchaudio.datasets.SPEECHCOMMANDS<br/>
+Add torchaudio.Resample()<br/>
 
 ## NuGet Version 0.96.8
 
