@@ -1690,7 +1690,10 @@ namespace TorchSharp
             /// <summary>
             /// Is this Tensor with its dimensions reversed.
             /// </summary>
-
+            /// <remarks>
+            /// Starting with Pytorch 1.11, 'T' should not be used for tensors that do not represents matrices:
+            /// https://github.com/pytorch/pytorch/pull/64180
+            /// </remarks>
             public Tensor T {
                 get {
                     return this.permute(Enumerable.Range(0, (int)ndim).Reverse().Select(i => (long)i).ToArray());
