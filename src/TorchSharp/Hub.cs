@@ -43,7 +43,7 @@ namespace TorchSharp
             {
                 try {
                     using (var httpClient = new HttpClient()) {
-                        using (var response = await httpClient.GetAsync(url, cancellationToken)) {
+                        using (var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken)) {
                             response.EnsureSuccessStatusCode();
                             using (var writer = File.OpenWrite(dst)) {
                                 await response.Content.CopyToAsync(writer);
