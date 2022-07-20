@@ -820,12 +820,13 @@ namespace TorchSharp
             /// <param name="device">The target device</param>
 
             public Tensor to(torch.Device device) => to(device.type, device.index);
+
             /// <summary>
             /// Moves the tensor data.
             /// </summary>
             /// <param name="other">The tensor serving as a template.</param>
 
-            public Tensor to(Tensor other) => to(other.device_type, other.device_index);
+            public Tensor to(Tensor other) => to(other.dtype, other.device);
 
             [DllImport("LibTorchSharp")]
             static extern long THSTensor_size(IntPtr handle, long dimension);
@@ -1690,7 +1691,10 @@ namespace TorchSharp
             /// <summary>
             /// Is this Tensor with its dimensions reversed.
             /// </summary>
-
+            /// <remarks>
+            /// Starting with Pytorch 1.11, 'T' should not be used for tensors that do not represents matrices:
+            /// https://github.com/pytorch/pytorch/pull/64180
+            /// </remarks>
             public Tensor T {
                 get {
                     return this.permute(Enumerable.Range(0, (int)ndim).Reverse().Select(i => (long)i).ToArray());

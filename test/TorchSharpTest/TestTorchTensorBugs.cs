@@ -737,5 +737,13 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        public void ValidateBug653()
+        {
+            var x = torch.linspace(0, 1, 100, dtype: torch.float32);
+            var y = torch.linspace(0, 1, 100, dtype: torch.float64);
+            var z = x.to(y);
+            Assert.Equal(torch.float64, z.dtype);
+        }
     }
 }
