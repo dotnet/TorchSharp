@@ -14,7 +14,7 @@ namespace TorchSharp
             var beta = 1;
             var t = torch.linspace(0, 5, 16000 * 5);
             var waveform = 1.0 * torch.sin(2 * Math.PI * t * fc + beta * torch.sin(2 * Math.PI * fm * t));
-            return waveform;
+            return waveform.unsqueeze(0);
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace TorchSharp
                 power: 2.0f,
                 normalized: true);
 
-            Assert.Equal(new long[] { 257, 501 }, spectrogram.shape);
+            Assert.Equal(new long[] { 1, 257, 501 }, spectrogram.shape);
             var mean_square = torch.mean(torch.square(spectrogram)).item<float>();
             Assert.InRange(mean_square - 50.7892f, -1e-2f, 1e-2f);
         }
@@ -110,6 +110,48 @@ namespace TorchSharp
                 normalized: false);
             var mse = torch.mean(torch.square(waveform - expected)).item<float>();
             Assert.InRange(mse, 0f, 1e-10f);
+        }
+
+        [Fact]
+        public void TestFunctionalResampleIdent()
+        {
+            var waveform = make_waveform();
+            var resampled_waveform = torchaudio.functional.resample(waveform, 16000, 16000);
+            Assert.Equal(waveform, resampled_waveform);
+        }
+
+        [Fact]
+        public void FunctionalResampleUpSample()
+        {
+            var waveform = make_waveform();
+            var resampled_waveform = torchaudio.functional.resample(waveform, 16000, 24000);
+            var x = waveform.reshape(1, -1, 2).mean(dimensions: new long[] { -1 });
+            var y = resampled_waveform.reshape(1, -1, 3).mean(dimensions: new long[] { -1 });
+            var mse = torch.mean(torch.square(x - y)).item<float>();
+            Assert.True(mse < 1e-2);
+        }
+
+        [Fact]
+        public void FunctionalResampleDownSample()
+        {
+            var waveform = make_waveform();
+            var resampled_waveform = torchaudio.functional.resample(waveform, 16000, 8000);
+            var x = waveform.reshape(1, -1, 2).mean(dimensions: new long[] { -1 });
+            var y = resampled_waveform;
+            var mse = torch.mean(torch.square(x - y)).item<float>();
+            Assert.True(mse < 1e-2);
+        }
+
+        [Fact]
+        public void TransformsResampleDownSample()
+        {
+            var waveform = make_waveform();
+            var transform = torchaudio.transforms.Resample(16000, 8000, device: waveform.device, dtype: waveform.dtype);
+            var resampled_waveform = transform.forward(waveform);
+            var x = waveform.reshape(1, -1, 2).mean(dimensions: new long[] { -1 });
+            var y = resampled_waveform;
+            var mse = torch.mean(torch.square(x - y)).item<float>();
+            Assert.True(mse < 1e-2);
         }
     }
 }

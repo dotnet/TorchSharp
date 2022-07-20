@@ -149,6 +149,134 @@ namespace TorchSharp
                     return d.MoveToOuter(waveform);
                 }
             }
+
+            /// <summary>
+            /// Resample the waveform
+            /// </summary>
+            /// <param name="waveform">The input waveform</param>
+            /// <param name="orig_freq">The source sampling rate</param>
+            /// <param name="new_freq">The destination sampling rate</param>
+            /// <param name="lowpass_filter_width">The width of the filter</param>
+            /// <param name="rolloff">The roll-off frequency</param>
+            /// <param name="resampling_method">The resampling method</param>
+            /// <param name="beta">Beta for Keizer window</param>
+            /// <returns>The resampled waveform</returns>
+            /// <exception cref="ArgumentOutOfRangeException"></exception>
+            public static torch.Tensor resample(torch.Tensor waveform, int orig_freq, int new_freq, int lowpass_filter_width = 6, double rolloff = 0.99, ResamplingMethod resampling_method = ResamplingMethod.sinc_interpolation, double? beta = null)
+            {
+                if (orig_freq <= 0 || new_freq <= 0) {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                using (var d = torch.NewDisposeScope()) {
+                    if (orig_freq == new_freq) {
+                        return d.MoveToOuter(waveform.alias());
+                    }
+
+                    int gcd = Gcd(orig_freq, new_freq);
+
+                    var (kernel, width) = _get_sinc_resample_kernel(
+                        orig_freq,
+                        new_freq,
+                        gcd,
+                        lowpass_filter_width,
+                        rolloff,
+                        resampling_method,
+                        beta,
+                        waveform.device,
+                        waveform.dtype);
+                    var resampled = _apply_sinc_resample_kernel(waveform, orig_freq, new_freq, gcd, kernel, width);
+                    return d.MoveToOuter(resampled);
+                }
+            }
+
+            internal static int Gcd(int a, int b)
+            {
+                if (a <= 0 || b <= 0) {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                while (b > 1) {
+                    (a, b) = (b, a % b);
+                }
+
+                return a;
+            }
+
+            internal static (torch.Tensor, int) _get_sinc_resample_kernel(int orig_freq, int new_freq, int gcd, int lowpass_filter_width = 6, double rolloff = 0.99, ResamplingMethod resampling_method = ResamplingMethod.sinc_interpolation, double? beta = null, torch.Device device = null, torch.ScalarType? dtype = null)
+            {
+                orig_freq = orig_freq / gcd;
+                new_freq = new_freq / gcd;
+
+                if (lowpass_filter_width <= 0) {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                var kernels_list = new List<torch.Tensor>();
+                double base_freq = Math.Min(orig_freq, new_freq);
+                base_freq *= rolloff;
+
+                var width = (int)Math.Ceiling(((double)lowpass_filter_width) * orig_freq / base_freq);
+                var idx_dtype = dtype ?? torch.float64;
+                var idx = torch.arange(-width, width + orig_freq, device: device, dtype: idx_dtype);
+
+                for (int i = 0; i < new_freq; i++) {
+                    var t = (-i / new_freq + idx / orig_freq) * base_freq;
+                    t = t.clamp_(-lowpass_filter_width, lowpass_filter_width);
+
+                    torch.Tensor window;
+                    if (resampling_method == ResamplingMethod.sinc_interpolation) {
+                        window = torch.square(torch.cos(t * Math.PI / lowpass_filter_width / 2));
+                    } else {
+                        // kaiser_window
+                        if (!beta.HasValue) {
+                            beta = 14.769656459379492;
+                        }
+                        var beta_tensor = torch.tensor(beta.Value);
+                        window = torch.special.i0(beta_tensor * torch.sqrt(1 - torch.square(t / lowpass_filter_width))) / torch.special.i0(beta_tensor);
+                    }
+                    t *= Math.PI;
+                    // Tensor.to(Tensor) of TorchSharp desn't change dtype.
+                    var kernel = torch.where(t == 0, torch.tensor(1.0).to(t).type_as(t), torch.sin(t) / t);
+                    kernel.mul_(window);
+                    kernels_list.Add(kernel);
+                }
+
+                var scale = ((double)base_freq) / orig_freq;
+                var kernels = torch.stack(kernels_list.ToArray()).view(new_freq, 1, -1).mul_(scale);
+                if (dtype == null) {
+                    kernels = kernels.to(torch.float32);
+                }
+                return (kernels, width);
+            }
+
+            internal static torch.Tensor _apply_sinc_resample_kernel(torch.Tensor waveform, int orig_freq, int new_freq, int gcd, torch.Tensor kernel, int width)
+            {
+                if (!waveform.is_floating_point()) {
+                    throw new ArgumentException($"Expected floating point type for waveform tensor, but received {waveform.dtype}.");
+                }
+
+                orig_freq = orig_freq / gcd;
+                new_freq = new_freq / gcd;
+
+                // pack batch
+                var shape = waveform.size();
+                waveform = waveform.view(-1, shape[waveform.dim() - 1]);
+
+                var num_wavs = waveform.shape[0];
+                var length = waveform.shape[1];
+
+                waveform = torch.nn.functional.pad(waveform, (width, width + orig_freq));
+                var resampled = torch.nn.functional.conv1d(waveform.unsqueeze(1), kernel, stride: orig_freq);
+                resampled = resampled.transpose(1, 2).reshape(num_wavs, -1);
+                int target_length = (int)Math.Ceiling(((double)new_freq) * length / orig_freq);
+                resampled = resampled[TensorIndex.Ellipsis, TensorIndex.Slice(0, target_length)];
+
+                // unpack batch
+                shape[shape.Length - 1] = resampled.shape[resampled.dim() - 1];
+                resampled = resampled.view(shape);
+                return resampled;
+            }
         }
     }
 }
