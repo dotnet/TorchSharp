@@ -47,11 +47,34 @@ namespace TorchSharp
                             }
                         }
 
+                        /// <summary>
+                        /// The packed sequences
+                        /// </summary>
+                        public readonly Tensor data;
+
+                        /// <summary>
+                        /// Batch size at each sequence step
+                        /// </summary>
+                        public readonly Tensor batch_sizes;
+
+                        /// <summary>
+                        /// The sorted indices
+                        /// </summary>
+                        public readonly Tensor sorted_indices;
+
+                        /// <summary>
+                        /// The original indices
+                        /// </summary>
+                        public readonly Tensor unsorted_indices;
                         private HType handle;
 
                         internal PackedSequence(HType handle)
                         {
                             this.handle = handle;
+                            this.data = new Tensor(THSNN_PackedSequence_data(handle));
+                            this.batch_sizes = new Tensor(THSNN_PackedSequence_batch_sizes(handle));
+                            this.sorted_indices = new Tensor(THSNN_PackedSequence_sorted_indices(handle));
+                            this.unsorted_indices = new Tensor(THSNN_PackedSequence_unsorted_indices(handle));
                         }
 
                         internal HType Handle => handle;
@@ -61,11 +84,28 @@ namespace TorchSharp
                         /// </summary>
                         public void Dispose()
                         {
+                            this.data.Dispose();
+                            this.batch_sizes.Dispose();
+                            this.sorted_indices.Dispose();
+                            this.unsorted_indices.Dispose();
+
                             if (handle != null && !handle.IsInvalid) {
                                 handle.Dispose();
                                 handle.SetHandleAsInvalid();
                             }
                         }
+
+                        [DllImport("LibTorchSharp")]
+                        private static extern IntPtr THSNN_PackedSequence_data(HType handle);
+
+                        [DllImport("LibTorchSharp")]
+                        private static extern IntPtr THSNN_PackedSequence_batch_sizes(HType handle);
+
+                        [DllImport("LibTorchSharp")]
+                        private static extern IntPtr THSNN_PackedSequence_sorted_indices(HType handle);
+
+                        [DllImport("LibTorchSharp")]
+                        private static extern IntPtr THSNN_PackedSequence_unsorted_indices(HType handle);
                     }
                 }
             }

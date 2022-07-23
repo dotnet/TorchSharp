@@ -41,12 +41,38 @@ namespace TorchSharp
                     var N = _batch_first ? input.shape[0] : input.shape[1];
                     var D = _bidirectional ? 2 : 1;
 
-                    h0 = torch.zeros(D * _num_layers, N, _hidden_size, device: input.device);
+                    h0 = torch.zeros(D * _num_layers, N, _hidden_size, dtype: input.dtype, device: input.device);
                 }
 
                 var res = THSNN_RNN_forward(handle, input.Handle, h0.Handle, out IntPtr hN);
                 if (res == IntPtr.Zero || hN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(res), new Tensor(hN));
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static torch.nn.utils.rnn.PackedSequence.HType THSNN_RNN_forward_with_packed_input(torch.nn.Module.HType module, torch.nn.utils.rnn.PackedSequence.HType input, IntPtr h_0, out IntPtr h_n);
+
+            /// <summary>
+            /// Applies a multi-layer Elman RNN with \tanhtanh or \text{ReLU}ReLU non-linearity to an input sequence.
+            /// </summary>
+            /// <param name="input">PackedSequence containing the features of the input sequence.</param>
+            /// <param name="h0">Tensor of shape (num_layers * num_directions, batch, hidden_size)containing the initial hidden state for each element in the batch.
+            /// Defaults to 0 if not provided. If the RNN is bidirectional, num_directions should be 2, else it should be 1.</param>
+            /// <returns></returns>
+            public (torch.nn.utils.rnn.PackedSequence, Tensor) forward(torch.nn.utils.rnn.PackedSequence input, Tensor? h0 = null)
+            {
+                if (h0 is null) {
+                    var data = input.data;
+                    var batch_sizes = input.batch_sizes;
+                    var N = batch_sizes[0].item<long>();
+                    var D = _bidirectional ? 2 : 1;
+
+                    h0 = torch.zeros(D * _num_layers, N, _hidden_size, dtype: data.dtype, device: data.device);
+                }
+
+                var res = THSNN_RNN_forward_with_packed_input(handle, input.Handle, h0.Handle, out IntPtr hN);
+                if (res.IsInvalid || hN == IntPtr.Zero) { torch.CheckForErrors(); }
+                return (new torch.nn.utils.rnn.PackedSequence(res), new Tensor(hN));
             }
 
             [DllImport("LibTorchSharp")]

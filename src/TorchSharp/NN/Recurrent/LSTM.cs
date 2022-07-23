@@ -42,10 +42,9 @@ namespace TorchSharp
                     var N = _batch_first ? input.shape[0] : input.shape[1];
                     var D = _bidirectional ? 2 : 1;
 
-                    c0 = torch.zeros(D * _num_layers, N, _hidden_size, device: input.device);
-                    h0 = torch.zeros(D * _num_layers, N, _hidden_size, device: input.device);
-                }
-                else {
+                    h0 = torch.zeros(D * _num_layers, N, _hidden_size, dtype: input.dtype, device: input.device);
+                    c0 = torch.zeros(D * _num_layers, N, _hidden_size, dtype: input.dtype, device: input.device);
+                } else {
                     h0 = h0_c0.Value.Item1;
                     c0 = h0_c0.Value.Item2;
                 }
@@ -53,6 +52,37 @@ namespace TorchSharp
                 var res = THSNN_LSTM_forward(handle, input.Handle, h0.Handle, c0.Handle, out IntPtr hN, out IntPtr cN);
                 if (res == IntPtr.Zero || hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(res), new Tensor(hN), new Tensor(cN));
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static torch.nn.utils.rnn.PackedSequence.HType THSNN_LSTM_forward_with_packed_input(torch.nn.Module.HType module, torch.nn.utils.rnn.PackedSequence.HType input, IntPtr h_0, IntPtr c_0, out IntPtr h_n, out IntPtr c_n);
+
+            /// <summary>
+            /// Applies a multi-layer long short-term memory (LSTM) RNN to an input sequence.
+            /// </summary>
+            /// <param name="input">PackedSequence containing the features of the input sequence.</param>
+            /// <param name="h0_c0">Tensors of shape (num_layers * num_directions, batch, hidden_size) containing the initial hidden and cell state for each element in the batch</param>
+            /// <returns></returns>
+            public (torch.nn.utils.rnn.PackedSequence, Tensor, Tensor) forward(torch.nn.utils.rnn.PackedSequence input, (Tensor, Tensor)? h0_c0 = null)
+            {
+                Tensor c0, h0;
+
+                if (h0_c0 == null) {
+                    var data = input.data;
+                    var batch_sizes = input.batch_sizes;
+                    var N = batch_sizes[0].item<long>();
+                    var D = _bidirectional ? 2 : 1;
+
+                    h0 = torch.zeros(D * _num_layers, N, _hidden_size, dtype: data.dtype, device: data.device);
+                    c0 = torch.zeros(D * _num_layers, N, _hidden_size, dtype: data.dtype, device: data.device);
+                } else {
+                    h0 = h0_c0.Value.Item1;
+                    c0 = h0_c0.Value.Item2;
+                }
+
+                var res = THSNN_LSTM_forward_with_packed_input(handle, input.Handle, h0.Handle, c0.Handle, out IntPtr hN, out IntPtr cN);
+                if (res.IsInvalid || hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
+                return (new torch.nn.utils.rnn.PackedSequence(res), new Tensor(hN), new Tensor(cN));
             }
 
             [DllImport("LibTorchSharp")]
