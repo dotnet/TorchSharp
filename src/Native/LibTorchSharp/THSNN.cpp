@@ -747,10 +747,23 @@ NNModule THSNN_RNN_ctor(const int64_t input_size, const int64_t hidden_size, con
 
 Tensor THSNN_RNN_forward(const NNModule module, const Tensor input1, const Tensor input2, Tensor* h_n)
 {
-    Tensor output;
+    Tensor output = nullptr;
+    *h_n = nullptr;
     CATCH(
         auto result = (*module)->as<torch::nn::RNN>()->forward(*input1, (input2 ? *input2 : at::Tensor()));
         output = new torch::Tensor(std::get<0>(result));
+        *h_n = new torch::Tensor(std::get<1>(result));
+    );
+    return output;
+}
+
+PackedSequence THSNN_RNN_forward_with_packed_input(const NNModule module, const PackedSequence input1, const Tensor input2, Tensor* h_n)
+{
+    PackedSequence output = nullptr;
+    *h_n = nullptr;
+    CATCH(
+        auto result = (*module)->as<torch::nn::RNN>()->forward_with_packed_input(*input1, (input2 ? *input2 : at::Tensor()));
+        output = new torch::nn::utils::rnn::PackedSequence(std::get<0>(result));
         *h_n = new torch::Tensor(std::get<1>(result));
     );
     return output;
@@ -820,10 +833,23 @@ NNModule THSNN_GRU_ctor(const int64_t input_size, const int64_t hidden_size, con
 
 Tensor THSNN_GRU_forward(const NNModule module, const Tensor input1, const Tensor input2, Tensor* h_n)
 {
-    Tensor output;
+    Tensor output = nullptr;
+    *h_n = nullptr;
     CATCH(
         auto result = (*module)->as<torch::nn::GRU>()->forward(*input1, (input2 ? *input2 : at::Tensor()));
         output = new torch::Tensor(std::get<0>(result));
+        *h_n = new torch::Tensor(std::get<1>(result));
+    );
+    return output;
+}
+
+PackedSequence THSNN_GRU_forward_with_packed_input(const NNModule module, const PackedSequence input1, const Tensor input2, Tensor* h_n)
+{
+    PackedSequence output = nullptr;
+    *h_n = nullptr;
+    CATCH(
+        auto result = (*module)->as<torch::nn::GRU>()->forward_with_packed_input(*input1, (input2 ? *input2 : at::Tensor()));
+        output = new torch::nn::utils::rnn::PackedSequence(std::get<0>(result));
         *h_n = new torch::Tensor(std::get<1>(result));
     );
     return output;
@@ -854,10 +880,28 @@ Tensor THSNN_LSTM_forward(const NNModule module, const Tensor input1, const Tens
 {
     const std::tuple<at::Tensor, at::Tensor>& second_arg = (h0 == nullptr || c0 == nullptr) ? std::make_tuple(at::Tensor(), at::Tensor()) : std::make_tuple(*h0, *c0);
 
-    Tensor output;
+    Tensor output = nullptr;
+    *h_n = nullptr;
+    *c_n = nullptr;
     CATCH(
         auto result = (*module)->as<torch::nn::LSTM>()->forward(*input1, second_arg);
         output = new torch::Tensor(std::get<0>(result));
+        *h_n = new torch::Tensor(std::get<0>(std::get<1>(result)));
+        *c_n = new torch::Tensor(std::get<1>(std::get<1>(result)));
+    );
+    return output;
+}
+
+PackedSequence THSNN_LSTM_forward_with_packed_input(const NNModule module, const PackedSequence input1, const Tensor h0, const Tensor c0, Tensor* h_n, Tensor* c_n)
+{
+    const std::tuple<at::Tensor, at::Tensor>& second_arg = (h0 == nullptr || c0 == nullptr) ? std::make_tuple(at::Tensor(), at::Tensor()) : std::make_tuple(*h0, *c0);
+
+    PackedSequence output = nullptr;
+    *h_n = nullptr;
+    *c_n = nullptr;
+    CATCH(
+        auto result = (*module)->as<torch::nn::LSTM>()->forward_with_packed_input(*input1, second_arg);
+        output = new torch::nn::utils::rnn::PackedSequence(std::get<0>(result));
         *h_n = new torch::Tensor(std::get<0>(std::get<1>(result)));
         *c_n = new torch::Tensor(std::get<1>(std::get<1>(result)));
     );
@@ -1077,6 +1121,26 @@ Tensor THSNN_one_hot(const Tensor self, const int64_t num_classes)
     CATCH_RETURN_Tensor(
         res = ResultTensor(torch::nn::functional::one_hot(*self, num_classes));
     )
+}
+
+Tensor THSNN_PackedSequence_data(PackedSequence sequence)
+{
+    CATCH_TENSOR(sequence->data());
+}
+
+Tensor THSNN_PackedSequence_batch_sizes(PackedSequence sequence)
+{
+    CATCH_TENSOR(sequence->batch_sizes());
+}
+
+Tensor THSNN_PackedSequence_sorted_indices(PackedSequence sequence)
+{
+    CATCH_TENSOR(sequence->sorted_indices());
+}
+
+Tensor THSNN_PackedSequence_unsorted_indices(PackedSequence sequence)
+{
+    CATCH_TENSOR(sequence->unsorted_indices());
 }
 
 void THSNN_PackedSequence_dispose(PackedSequence sequence)

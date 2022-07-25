@@ -369,10 +369,13 @@ EXPORT_API(void)     THSNN_MultiheadAttention_forward(const NNModule module, con
 
 EXPORT_API(NNModule) THSNN_RNN_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const int64_t nonlinearity, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_RNN_forward(const NNModule module, const Tensor input1, const Tensor input2, Tensor* h_n);
+EXPORT_API(PackedSequence) THSNN_RNN_forward_with_packed_input(const NNModule module, const PackedSequence input1, const Tensor input2, Tensor* h_n);
 EXPORT_API(NNModule) THSNN_GRU_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_GRU_forward(const NNModule module, const Tensor input1, const Tensor input2, Tensor* h_n);
+EXPORT_API(PackedSequence) THSNN_GRU_forward_with_packed_input(const NNModule module, const PackedSequence input1, const Tensor input2, Tensor* h_n);
 EXPORT_API(NNModule) THSNN_LSTM_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_LSTM_forward(const NNModule module, const Tensor input1, const Tensor h0, const Tensor c0, Tensor* h_n, Tensor* c_n);
+EXPORT_API(PackedSequence) THSNN_LSTM_forward_with_packed_input(const NNModule module, const PackedSequence input1, const Tensor h0, const Tensor c0, Tensor* h_n, Tensor* c_n);
 
 EXPORT_API(NNModule) THSNN_RNNCell_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t nonlinearity, const bool bias, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_RNNCell_forward(const NNModule module, const Tensor input1, const Tensor h0);
@@ -500,6 +503,10 @@ EXPORT_API(void) THSNN_initKaimingUniform(Tensor tensor, double a);
 
 // Utils RNN
 
+EXPORT_API(Tensor) THSNN_PackedSequence_data(PackedSequence sequence);
+EXPORT_API(Tensor) THSNN_PackedSequence_batch_sizes(PackedSequence sequence);
+EXPORT_API(Tensor) THSNN_PackedSequence_sorted_indices(PackedSequence sequence);
+EXPORT_API(Tensor) THSNN_PackedSequence_unsorted_indices(PackedSequence sequence);
 EXPORT_API(void) THSNN_PackedSequence_dispose(PackedSequence sequence);
 EXPORT_API(PackedSequence) THSNN_pack_padded_sequence(Tensor input, Tensor lengths, bool batch_first, bool enforce_sorted);
 EXPORT_API(void) THSNN_pad_packed_sequence(PackedSequence sequence, bool batch_first, double padding_value, int64_t total_length, Tensor* res1, Tensor* res2);
