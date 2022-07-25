@@ -3669,6 +3669,25 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestComparison()
+        {
+            var A = torch.tensor(new float[] { 1.2f, 3.4f, 1.4f, 3.3f }).reshape(2, 2);
+            var B = torch.tensor(new float[] { 1.3f, 3.3f });
+            Assert.Equal(new bool[] { false, false, false, true }, A.eq(B).data<bool>().ToArray());
+            Assert.Equal(new bool[] { false, false, false, true }, torch.eq(A, B).data<bool>().ToArray());
+            Assert.Equal(new bool[] { true, true, true, false }, A.ne(B).data<bool>().ToArray());
+            Assert.Equal(new bool[] { true, true, true, false }, torch.ne(A, B).data<bool>().ToArray());
+            Assert.Equal(new bool[] { true, false, false, false }, A.lt(B).data<bool>().ToArray());
+            Assert.Equal(new bool[] { true, false, false, false }, torch.lt(A, B).data<bool>().ToArray());
+            Assert.Equal(new bool[] { true, false, false, true }, A.le(B).data<bool>().ToArray());
+            Assert.Equal(new bool[] { true, false, false, true }, torch.le(A, B).data<bool>().ToArray());
+            Assert.Equal(new bool[] { false, true, true, false }, A.gt(B).data<bool>().ToArray());
+            Assert.Equal(new bool[] { false, true, true, false }, torch.gt(A, B).data<bool>().ToArray());
+            Assert.Equal(new bool[] { false, true, true, true }, A.ge(B).data<bool>().ToArray());
+            Assert.Equal(new bool[] { false, true, true, true }, torch.ge(A, B).data<bool>().ToArray());
+        }
+
+        [Fact]
         public void TestLUSolve()
         {
             var A = torch.randn(2, 3, 3);

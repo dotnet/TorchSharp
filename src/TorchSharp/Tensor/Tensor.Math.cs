@@ -2658,6 +2658,13 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Element-wise equal comparison
+        /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
+        public static Tensor eq(Tensor left, Tensor right) => left.eq(right);
+
+        /// <summary>
         /// Returns a new tensor with the exponential of the elements of the input tensor input.
         /// </summary>
         /// <param name="input">The input tensor.</param>
@@ -2766,6 +2773,20 @@ namespace TorchSharp
         public static Tensor gcd_(Tensor left, Tensor right) => left.gcd_(right);
 
         /// <summary>
+        /// Element-wise greater-than-or-equal comparison
+        /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
+        public static Tensor ge(Tensor left, Tensor right) => left.ge(right);
+
+        /// <summary>
+        /// Element-wise greater-than comparison
+        /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
+        public static Tensor gt(Tensor left, Tensor right) => left.gt(right);
+
+        /// <summary>
         /// Computes the histogram of a tensor.
         /// The elements are sorted into equal width bins between min and max.If min and max are both zero, the minimum and maximum values of the data are used.
         /// Elements lower than min and higher than max are ignored.
@@ -2838,6 +2859,20 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="p">The number of dimensions</param>
         public static Tensor polygamma_(Tensor input, long p) => input.polygamma_(p);
+
+        /// <summary>
+        /// Element-wise less-than-or-equal comparison
+        /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
+        public static Tensor le(Tensor left, Tensor right) => left.le(right);
+
+        /// <summary>
+        /// Element-wise less-than comparison
+        /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
+        public static Tensor lt(Tensor left, Tensor right) => left.lt(right);
 
         /// <summary>
         /// Returns a new tensor with the natural logarithm of the input elements.
@@ -3042,6 +3077,13 @@ namespace TorchSharp
         /// <param name="left">The left-hand operand.</param>
         /// <param name="right">The right-hand operand.</param>
         public static Tensor multiply_(Tensor left, Scalar right) => left.mul_(right);
+
+        /// <summary>
+        /// Element-wise not-equal comparison
+        /// </summary>
+        /// <param name="left">The left-hand operand.</param>
+        /// <param name="right">The right-hand operand.</param>
+        public static Tensor ne(Tensor left, Tensor right) => left.ne(right);
 
         /// <summary>
         /// Negation
