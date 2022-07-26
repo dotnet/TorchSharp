@@ -2911,7 +2911,7 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            public Tensor clip(Scalar min, Scalar max) => clamp(min, max);
+            public Tensor clip(Scalar? min = null, Scalar? max = null) => clamp(min, max);
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_clamp_(IntPtr input, IntPtr min, IntPtr max);
@@ -3884,8 +3884,7 @@ namespace TorchSharp
             /// <param name="q">1D tensor of quantile values in the range [0, 1]</param>
             /// <param name="dim">The dimension to reduce.</param>
             /// <param name="keepdim">Whether the output tensor has dim retained or not.</param>
-
-            Tensor quantile(Tensor q, long dim = -1, bool keepdim = false)
+            public Tensor quantile(Tensor q, long dim = -1, bool keepdim = false)
             {
                 var res = THSTensor_quantile(Handle, q.Handle, dim, keepdim);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -3904,7 +3903,7 @@ namespace TorchSharp
             /// <param name="dim">The dimension to reduce.</param>
             /// <param name="keepdim">Whether the output tensor has dim retained or not.</param>
 
-            Tensor nanquantile(Tensor q, long dim = -1, bool keepdim = false)
+            public Tensor nanquantile(Tensor q, long dim = -1, bool keepdim = false)
             {
                 var res = THSTensor_nanquantile(Handle, q.Handle, dim, keepdim);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
