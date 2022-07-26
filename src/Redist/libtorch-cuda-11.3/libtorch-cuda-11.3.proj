@@ -46,8 +46,8 @@
 
     <File Include= "libtorch\lib\cudnn64_8.dll" PackageSuffix="part5" />
     <File Include= "libtorch\lib\cufft64_10.dll" PackageSuffix="part5" />
+    <File Include= "libtorch\lib\cufftw64_10.dll" PackageSuffix="part5" />
 
-    <File Include= "libtorch\lib\cufftw64_10.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\cupti64_2021.1.0.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\cusolverMg64_11.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\fbgemm.dll" PackageSuffix="part6" />
@@ -90,7 +90,7 @@
     <File Include= "libtorch\lib\libpytorch_jni.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libtorch_cpu.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"  />
@@ -99,7 +99,8 @@
     <File Include= "libtorch\lib\libnvToolsExt-24de1d56.so.1" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvrtc-1ea278b5.so.11.2" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvrtc-builtins-4730a239.so.11.3" PackageSuffix="part1"  />
-    
+    <File Include= "libtorch\lib\libcudnn.so.8" PackageSuffix="part1"  />
+
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
     <File Include= "libtorch\lib\libtorch_cuda_cpp.so"  PackageSuffix="part2-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
@@ -115,10 +116,26 @@
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
     <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment3" FileUnstitchIndex="3" FileUnstitchStart="750000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="-1" />
 
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part4"  />
+    <File Include= "libtorch\lib\libtorch_cuda_cpp.so" PackageSuffix="part4" />
+
+    <File Include= "libtorch\lib\libtorch_cpu.so"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libtorch_cpu.so"  PackageSuffix="part5-fragment1" FileUnstitchIndex="0" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
+
+    <File Include= "libtorch\lib\libcudnn_adv_infer.so.8" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\libcudnn_adv_train.so.8" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\libcudnn_cnn_train.so.8" PackageSuffix="part6" />
+
+    <File Include= "libtorch\lib\libcudnn_ops_infer.so.8" PackageSuffix="part7" />
+    <File Include= "libtorch\lib\libcudnn_ops_train.so.8" PackageSuffix="part7" />
+    <File Include= "libtorch\lib\libcublas-c38bd442.so.11" PackageSuffix="part7" />
+
+    <File Include= "libtorch\lib\libcublasLt-17d45838.so.11" PackageSuffix="part8" />
+
+    <File Include= "libtorch\lib\libcudnn_ops_infer.so.8"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="275000000" />
+    <File Include= "libtorch\lib\libcudnn_ops_infer.so.8"  PackageSuffix="part9-fragment1" FileUnstitchIndex="1" FileUnstitchStart="275000000" FileUnstitchSize="275000000" />
+    <File Include= "libtorch\lib\libcudnn_ops_infer.so.8"  PackageSuffix="part9-fragment2" FileUnstitchIndex="2" FileUnstitchStart="550000000" FileUnstitchSize="-1" />
 
   </ItemGroup>
 

@@ -155,9 +155,17 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
        https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.11.0%2Bcpu.zip
 
-   The downloads are acquired automatically in the build process. To update the version, update these:
+   Don't download anything yet, or manually. The downloads are acquired automatically in step 2.
+   
+   To update the version, update this in [Dependencies.props](build/Dependencies.props):
 
        <LibTorchVersion>1.11.0</LibTorchVersion>
+
+    The libtorch version number is also referenced in source code, in the file 'src/TorchSharp/Torch.cs':
+
+    ```C#
+    const string libtorchPackageVersion = "1.11.0.1";
+    ```
 
 2. Run these to test downloads and update SHA hashes for the various LibTorch downloads:
 
@@ -174,6 +182,8 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
    At this point you must **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
    [libtorch-cpu](src/Redist/libtorch-cpu/libtorch-cpu.proj) and [libtorch-cuda](src/Redist/libtorch-cuda-11.3/libtorch-cuda-11.3.proj).
+
+   This is the step in the upgrade process that takes the most effort and time. It requires extreme care.
 
    Check the contents of the unzip of the archive, e.g.
 
