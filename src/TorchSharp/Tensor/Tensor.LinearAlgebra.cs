@@ -307,6 +307,16 @@ namespace TorchSharp
         /// </param>
         public static Tensor diff(Tensor input, long n = 1, long dim = -1, Tensor prepend = null, Tensor append = null) => input.diff(n, dim, prepend, append);
 
+
+        /// <summary>
+        /// Returns the p-norm of (input - other).
+        /// The shapes of input and other must be broadcastable.
+        /// </summary>
+        /// <param name="input">Left-hand side input tensor.</param>
+        /// <param name="other">Right-hand side input tensor</param>
+        /// <param name="p">The norm to be computed.</param>
+        public static Tensor dist(Tensor input, Tensor other, float p = 2.0f) => input.dist(other, p);
+
         /// <summary>
         /// Returns the sum of the elements of the diagonal of the input 2-D matrix.
         /// </summary>
@@ -438,6 +448,10 @@ namespace TorchSharp
             return input.matrix_power(n);
         }
 
+        /// <summary>
+        /// Returns the matrix norm or vector norm of a given tensor.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor norm(Tensor input) => input.norm();
 
         /// <summary>

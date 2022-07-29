@@ -11,7 +11,39 @@ namespace TorchSharp
     public static partial class torch
 
     {
+        /// <summary>
+        /// Returns a 1-dimensional view of each input tensor with zero dimensions. Input tensors with one or more dimensions are returned as-is.
+        /// </summary>
+        public static IEnumerable<Tensor> atleast_1d(params Tensor[] input) => input.Select(t => t.atleast_1d());
 
+        /// <summary>
+        /// Returns a 2-dimensional view of each input tensor with zero or one dimensions. Input tensors with two or more dimensions are returned as-is.
+        /// </summary>
+        public static IEnumerable<Tensor> atleast_2d(params Tensor[] input) => input.Select(t => t.atleast_2d());
+
+        /// <summary>
+        /// Returns a 1-dimensional view of each input tensor with fewer than three dimensions. Input tensors with three or more dimensions are returned as-is.
+        /// </summary>
+        public static IEnumerable<Tensor> atleast_3d(params Tensor[] input) => input.Select(t => t.atleast_3d());
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_block_diag(IntPtr tensor, int len);
+
+        /// <summary>
+        /// Create a block diagonal matrix from provided tensors.
+        /// </summary>
+        /// <param name="tensors">One or more tensors with 0, 1, or 2 dimensions.</param>
+        /// <returns></returns>
+        public static Tensor block_diag(params Tensor[] tensors)
+        {
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                var res = THSTensor_block_diag(tensorsRef, parray.Array.Length);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+        }
 
         [DllImport("LibTorchSharp")]
         static extern void THSTensor_broadcast_tensors(IntPtr tensor, long length, AllocatePinnedArray allocator);
@@ -85,7 +117,7 @@ namespace TorchSharp
         /// Elements that are shifted beyond the last position are re-introduced at the first position.
         /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
         /// </summary>
-        public static Tensor roll(Tensor input, (long,long) shifts, (long,long) dims) => input.roll(shifts, dims);
+        public static Tensor roll(Tensor input, (long, long) shifts, (long, long) dims) => input.roll(shifts, dims);
 
         /// <summary>
         /// Roll the tensor along the given dimension(s).
@@ -111,11 +143,20 @@ namespace TorchSharp
         /// <summary>
         /// Returns a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="input">The input tensor</param>
         /// <param name="dim">If given, the input will be squeezed only in this dimension</param>
         /// <returns></returns>
         public static Tensor squeeze(Tensor input, long? dim = null) => input.squeeze(dim);
 
+        /// <summary>
+        /// Sorts the elements of the input tensor along a given dimension in ascending order by value.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">The dimension to sort along. If dim is not given, the last dimension of the input is chosen.</param>
+        /// <param name="descending">Controls the sorting order (ascending or descending)</param>
+        /// <param name="stable">Makes the sorting routine stable, which guarantees that the order of equivalent elements is preserved.</param>
+        /// <returns>A named tuple of (values, indices) is returned, where the values are the sorted values and indices are the indices of the elements in the original input tensor.</returns>
+        public static (Tensor Values, Tensor Indices) sort(Tensor input, long dim = -1, bool descending = false, bool stable = false) => input.sort(dim, descending, stable);
 
         /// <summary>
         ///  Returns a new tensor with a dimension of size one inserted at the specified position.
@@ -128,6 +169,15 @@ namespace TorchSharp
         ///  The returned tensor shares the same underlying data with this tensor.
         /// </summary>
         public static Tensor unsqueeze_(Tensor input, long dim) => input.unsqueeze_(dim);
+
+        /// <summary>
+        /// Return a tensor of elements selected from either x or y, depending on condition.
+        /// </summary>
+        /// <param name="condition">When true, yield x, otherwise yield y.</param>
+        /// <param name="x">Values selected at indices where condition is true</param>
+        /// <param name="y">Values selected at indices where condition is false</param>
+        /// <returns></returns>
+        public static Tensor where(Tensor condition, Tensor x, Tensor y) => x.where(condition, y);
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_stack(IntPtr tensor, int len, long dim);
@@ -197,9 +247,9 @@ namespace TorchSharp
         extern static IntPtr THSTensor_column_stack(IntPtr tensors, int len);
 
         /// <summary>
-        /// Creates a new tensor by horizontally stacking the tensors in tensors.
+        /// Creates a new tensor by horizontally stacking the input tensors.
         /// </summary>
-        /// <param name="tensors"></param>
+        /// <param name="tensors">A list of input tensors.</param>
         /// <returns></returns>
         /// <remarks>Equivalent to torch.hstack(tensors), except each zero or one dimensional tensor t in tensors is first reshaped into a (t.numel(), 1) column before being stacked horizontally.</remarks>
         public static Tensor column_stack(IList<Tensor> tensors)
@@ -356,27 +406,55 @@ namespace TorchSharp
 
         static public Tensor clamp_min_(Tensor input, Scalar min) => input.clamp_min(min);
 
+        /// <summary>
+        /// Returns the maximum value of each slice of the input tensor in the given dimension(s) dim.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dims">The dimension or dimensions to reduce.</param>
+        /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+        /// <param name="out">The output tensor -- optional.</param>
         static public Tensor amax(Tensor input, long[] dims, bool keepDim = false, Tensor @out = null) => input.amax(dims, keepDim, @out);
 
+        /// <summary>
+        /// Returns the minimum value of each slice of the input tensor in the given dimension(s) dim.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dims">The dimension or dimensions to reduce.</param>
+        /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+        /// <param name="out">The output tensor -- optional.</param>
         static public Tensor amin(Tensor input, long[] dims, bool keepDim = false, Tensor @out = null) => input.amin(dims, keepDim, @out);
 
+        /// <summary>
+        /// Returns a tensor with the same data and number of elements as the input but with the specified shape.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="shape">The new tensor shape.</param>
         static public Tensor reshape(Tensor input, params long[] shape) => input.reshape(shape);
 
+        /// <summary>
+        /// Flattens input by reshaping it into a one-dimensional tensor.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="start_dim">The first dim to flatten</param>
+        /// <param name="end_dim">The last dim to flatten.</param>
+        /// <remarks>Flattening a zero-dimensional tensor will return a one-dimensional view.</remarks>
         static public Tensor flatten(Tensor input, long start_dim = 0, long end_dim = -1) => input.flatten(start_dim, end_dim);
 
+        /// <summary>
+        /// Expands the dimension dim of the self tensor over multiple dimensions of sizes given by sizes.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">Dimension to unflatten.</param>
+        /// <param name="sizes">New shape of the unflattened dimension.</param>
         static public Tensor unflatten(Tensor input, long dim, params long[] sizes) => input.unflatten(dim, sizes);
 
-        static public Tensor unflatten(Tensor input, long dim, torch.Size sizes) => input.unflatten(dim, sizes.Shape);
-
         /// <summary>
-        /// Return a tensor of elements selected from either x or y, depending on condition.
+        /// Expands the dimension dim of the self tensor over multiple dimensions of sizes given by sizes.
         /// </summary>
-        /// <param name="condition">When true, yield x, otherwise yield y.</param>
-        /// <param name="x">Values selected at indices where condition is true</param>
-        /// <param name="y">Values selected at indices where condition is false</param>
-        /// <returns></returns>
-        static public Tensor where(Tensor condition, Tensor x, Tensor y) => x.where(condition, y);
-
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">Dimension to unflatten.</param>
+        /// <param name="sizes">New shape of the unflattened dimension.</param>
+        static public Tensor unflatten(Tensor input, long dim, torch.Size sizes) => input.unflatten(dim, sizes.Shape);
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_standard_gamma_(IntPtr tensor, IntPtr gen);

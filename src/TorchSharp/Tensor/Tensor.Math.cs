@@ -2746,6 +2746,28 @@ namespace TorchSharp
         public static Tensor floor_(Tensor input) => input.exp_();
 
         /// <summary>
+        /// Computes the element-wise maximum of input and other.
+        /// 
+        /// This is like torch.maximum() except it handles NaNs differently: if exactly one of the two elements being compared is a NaN
+        /// then the non-NaN element is taken as the maximum.
+        /// Only if both elements are NaN is NaN propagated.
+        /// </summary>
+        /// <param name="input">The first input tensor</param>
+        /// <param name="other">The second input tensor</param>
+        public static Tensor fmax(Tensor input, Tensor other) => input.fmax(other);
+
+        /// <summary>
+        /// Computes the element-wise minimum of input and other.
+        /// 
+        /// This is like torch.minimum() except it handles NaNs differently: if exactly one of the two elements being compared is a NaN
+        /// then the non-NaN element is taken as the minimum.
+        /// Only if both elements are NaN is NaN propagated.
+        /// </summary>
+        /// <param name="input">The first input tensor</param>
+        /// <param name="other">The second input tensor</param>
+        public static Tensor fmin(Tensor input, Tensor other) => input.fmin(other);
+
+        /// <summary>
         /// Computes the element-wise remainder of division.
         /// </summary>
         public static Tensor fmod(Tensor left, Tensor right) => left.fmod(right);
@@ -2834,6 +2856,26 @@ namespace TorchSharp
         /// <param name="left">The left-hand operand.</param>
         /// <param name="right">The right-hand operand.</param>
         public static Tensor hypot(Tensor left, Tensor right) => left.hypot(right);
+
+        /// <summary>
+        /// Outer product of input and vec2. 
+        /// </summary>
+        /// <param name="input">1-D input vector.</param>
+        /// <param name="vec2">1-D input vector.</param>
+        /// <remarks>If input is a vector of size n and vec2 is a vector of size m, then out must be a matrix of size n×m.</remarks>
+        public static Tensor outer(Tensor input, Tensor vec2) => input.outer(vec2);
+
+        /// <summary>
+        /// Computes the dot product for 1D tensors.
+        /// For higher dimensions, sums the product of elements from input and other along their last dimension.
+        /// </summary>
+        public static Tensor inner(Tensor input, Tensor vec2) => input.inner(vec2);
+
+
+        /// <summary>
+        /// Alias for torch.linalg.inv()
+        /// </summary>
+        public static Tensor inverse(Tensor input) => torch.linalg.inv(input);
 
         /// <summary>
         /// Computes the logarithmic derivative of the gamma function on input.
@@ -3297,6 +3339,15 @@ namespace TorchSharp
         /// <param name="left">Numerator</param>
         /// <param name="right">Denominator</param>
         public static Tensor remainder_(Tensor left, Scalar right) => left.remainder_(right);
+
+        /// <summary>
+        /// Returns a tensor where each sub-tensor of input along dimension dim is normalized such that the p-norm of the sub-tensor is lower than the value maxnorm
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="p">The power for the norm computation</param>
+        /// <param name="dim">The dimension to slice over to get the sub-tensors</param>
+        /// <param name="maxnorm">The maximum norm to keep each sub-tensor under</param>
+        public static Tensor renorm(Tensor input, float p, long dim, float maxnorm) => input.renorm(p, dim, maxnorm);
 
         /// <summary>
         /// Returns a new tensor with each of the elements of input rounded to the closest value with the given number of decimals.
