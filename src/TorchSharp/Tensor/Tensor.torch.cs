@@ -16,6 +16,10 @@ namespace TorchSharp
         [DllImport("LibTorchSharp")]
         static extern void THSTensor_broadcast_tensors(IntPtr tensor, long length, AllocatePinnedArray allocator);
 
+        /// <summary>
+        /// Broadcasts the given tensors according to Torch broadcasting semantics.
+        /// </summary>
+        /// <param name="tensors">Any number of tensors of the same type</param>
         public static IList<Tensor> broadcast_tensors(params Tensor[] tensors)
         {
             if (tensors.Length == 0) {
@@ -189,16 +193,15 @@ namespace TorchSharp
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_column_stack(IntPtr tensors, int len);
+
         /// <summary>
         /// Creates a new tensor by horizontally stacking the tensors in tensors.
         /// </summary>
-        /// <param name="tensor"></param>
-        /// <param name="len"></param>
+        /// <param name="tensors"></param>
         /// <returns></returns>
         /// <remarks>Equivalent to torch.hstack(tensors), except each zero or one dimensional tensor t in tensors is first reshaped into a (t.numel(), 1) column before being stacked horizontally.</remarks>
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_column_stack(IntPtr tensor, int len);
-
         public static Tensor column_stack(IList<Tensor> tensors)
         {
             using (var parray = new PinnedArray<IntPtr>()) {
@@ -313,12 +316,36 @@ namespace TorchSharp
         /// </summary>
         public static Tensor scatter_add_(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter_add_(dimension, index, src);
 
+        /// <summary>
+        /// Clamps all elements in input into the range [ min, max ].
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="min">The minimum value</param>
+        /// <param name="max">The maximum value</param>
         static public Tensor clamp(Tensor input, Scalar min = null, Scalar max = null) => input.clamp(min, max);
 
+        /// <summary>
+        /// Clamps all elements in input into the range [ min, max ] in place.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="min">The minimum value</param>
+        /// <param name="max">The maximum value</param>
         static public Tensor clamp_(Tensor input, Scalar min = null, Scalar max = null) => input.clamp_(min, max);
 
+        /// <summary>
+        /// Clamps all elements in input into the range [ min, max ].
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="min">The minimum value</param>
+        /// <param name="max">The maximum value</param>
         static public Tensor clamp(Tensor input, Tensor min = null, Tensor max = null) => input.clamp(min, max);
 
+        /// <summary>
+        /// Clamps all elements in input into the range [ min, max ] in place.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="min">The minimum value</param>
+        /// <param name="max">The maximum value</param>
         static public Tensor clamp_(Tensor input, Tensor min = null, Tensor max = null) => input.clamp_(min, max);
 
         static public Tensor clamp_max(Tensor input, Scalar max) => input.clamp_max(max);
