@@ -2192,12 +2192,16 @@ namespace TorchSharp
                 Assert.True(tensor.isinf().data<bool>().ToArray().All(b => b));
                 Assert.False(tensor.isneginf().data<bool>().ToArray().All(b => b));
                 Assert.False(tensor.isfinite().data<bool>().ToArray().All(b => b));
+                Assert.False(tensor.isnan().data<bool>().ToArray().All(b => b));
+                Assert.False(torch.isnan(tensor).data<bool>().ToArray().All(b => b));
 
                 tensor.fill_(Single.NegativeInfinity);
                 Assert.True(tensor.isneginf().data<bool>().ToArray().All(b => b));
                 Assert.True(tensor.isinf().data<bool>().ToArray().All(b => b));
                 Assert.False(tensor.isposinf().data<bool>().ToArray().All(b => b));
                 Assert.False(tensor.isfinite().data<bool>().ToArray().All(b => b));
+                Assert.False(tensor.isnan().data<bool>().ToArray().All(b => b));
+                Assert.False(torch.isnan(tensor).data<bool>().ToArray().All(b => b));
             }
         }
 
