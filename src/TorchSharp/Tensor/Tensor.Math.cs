@@ -2658,6 +2658,37 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Computes the error function of the input.
+        /// </summary>
+        public static Tensor erf(Tensor input) => input.erf();
+
+        /// <summary>
+        /// Computes the error function of the input in place.
+        /// </summary>
+        public static Tensor erf_(Tensor input) => input.erf_();
+
+        /// <summary>
+        /// Computes the error function of the input.
+        /// </summary>
+        public static Tensor erfc(Tensor input) => input.erfc();
+
+        /// <summary>
+        /// Computes the error function of the input in place.
+        /// </summary>
+        public static Tensor erfc_(Tensor input) => input.erfc_();
+
+
+        /// <summary>
+        /// Computes the error function of the input.
+        /// </summary>
+        public static Tensor erfinv(Tensor input) => input.erf();
+
+        /// <summary>
+        /// Computes the error function of the input in place.
+        /// </summary>
+        public static Tensor erfinv_(Tensor input) => input.erfinv_();
+
+        /// <summary>
         /// Element-wise equal comparison
         /// </summary>
         /// <param name="left">The left-hand operand.</param>
@@ -2713,6 +2744,28 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor.</param>
         public static Tensor floor_(Tensor input) => input.exp_();
+
+        /// <summary>
+        /// Computes the element-wise maximum of input and other.
+        /// 
+        /// This is like torch.maximum() except it handles NaNs differently: if exactly one of the two elements being compared is a NaN
+        /// then the non-NaN element is taken as the maximum.
+        /// Only if both elements are NaN is NaN propagated.
+        /// </summary>
+        /// <param name="input">The first input tensor</param>
+        /// <param name="other">The second input tensor</param>
+        public static Tensor fmax(Tensor input, Tensor other) => input.fmax(other);
+
+        /// <summary>
+        /// Computes the element-wise minimum of input and other.
+        /// 
+        /// This is like torch.minimum() except it handles NaNs differently: if exactly one of the two elements being compared is a NaN
+        /// then the non-NaN element is taken as the minimum.
+        /// Only if both elements are NaN is NaN propagated.
+        /// </summary>
+        /// <param name="input">The first input tensor</param>
+        /// <param name="other">The second input tensor</param>
+        public static Tensor fmin(Tensor input, Tensor other) => input.fmin(other);
 
         /// <summary>
         /// Computes the element-wise remainder of division.
@@ -2805,6 +2858,26 @@ namespace TorchSharp
         public static Tensor hypot(Tensor left, Tensor right) => left.hypot(right);
 
         /// <summary>
+        /// Outer product of input and vec2. 
+        /// </summary>
+        /// <param name="input">1-D input vector.</param>
+        /// <param name="vec2">1-D input vector.</param>
+        /// <remarks>If input is a vector of size n and vec2 is a vector of size m, then out must be a matrix of size n×m.</remarks>
+        public static Tensor outer(Tensor input, Tensor vec2) => input.outer(vec2);
+
+        /// <summary>
+        /// Computes the dot product for 1D tensors.
+        /// For higher dimensions, sums the product of elements from input and other along their last dimension.
+        /// </summary>
+        public static Tensor inner(Tensor input, Tensor vec2) => input.inner(vec2);
+
+
+        /// <summary>
+        /// Alias for torch.linalg.inv()
+        /// </summary>
+        public static Tensor inverse(Tensor input) => torch.linalg.inv(input);
+
+        /// <summary>
         /// Computes the logarithmic derivative of the gamma function on input.
         /// </summary>
         /// <param name="input">The input tensor.</param>
@@ -2815,6 +2888,45 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor.</param>
         public static Tensor digamma_(Tensor input) => input.digamma_();
+
+        /// <summary>
+        /// Computes the Kronecker product of input and other.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="other">The second tensor</param>
+        public static Tensor kron(Tensor input, Tensor other) => input.kron(other);
+
+        /// <summary>
+        /// Computes the element-wise least common multiple (LCM) of input and other.
+        /// </summary>
+        /// <param name="input">The first input tensor.</param>
+        /// <param name="other">The second input tensor.</param>
+        /// <remarks>Both input and other must have integer types.</remarks>
+        public static Tensor lcm(Tensor input, Tensor other) => input.lcm(other);
+
+        /// <summary>
+        /// Computes the element-wise least common multiple (LCM) of input and other in place.
+        /// </summary>
+        /// <param name="input">The first input tensor.</param>
+        /// <param name="other">The second input tensor.</param>
+        /// <remarks>Both input and other must have integer types.</remarks>
+        public static Tensor lcm_(Tensor input, Tensor other) => input.lcm_(other);
+
+        /// <summary>
+        /// Multiplies input by pow(2,other).
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="other">A tensor of exponents, typically integers</param>
+        /// <remarks>Typically this function is used to construct floating point numbers by multiplying mantissas in input with integral powers of two created from the exponents in other.</remarks>
+        public static Tensor ldexp(Tensor input, Tensor other) => input.ldexp(other);
+
+        /// <summary>
+        /// Multiplies input by pow(2,other) in place.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="other">A tensor of exponents, typically integers</param>
+        /// <remarks>Typically this function is used to construct floating point numbers by multiplying mantissas in input with integral powers of two created from the exponents in other.</remarks>
+        public static Tensor ldexp_(Tensor input, Tensor other) => input.ldexp_(other);
 
         /// <summary>
         /// Computes the logarithm of the gamma function on input.
@@ -3000,21 +3112,72 @@ namespace TorchSharp
         /// <param name="eps">The epsilon for input clamp bound.</param>
         public static Tensor logit(Tensor input, double? eps = null) => input.logit(eps);
 
+        /// <summary>
+        /// Returns the maximum value of all elements in the input tensor.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor max(Tensor input) => input.max();
 
+        /// <summary>
+        /// Computes the element-wise maximum of input and other.
+        /// </summary>
+        /// <param name="input">The first input tensor</param>
+        /// <param name="other">The second input tensor</param>
         static public Tensor maximum(Tensor input, Tensor other) => input.maximum(other);
 
-        static public (Tensor values, Tensor indexes) max(Tensor input, long dimension, bool keepDim = false) => input.max(dimension, keepDim);
+        /// <summary>
+        /// Returns a named tuple (values, indexes) where values is the maximum value of each row of the input tensor in the given dimension dim.
+        /// And indices is the index location of each maximum value found (argmax).
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">the dimension to reduce.</param>
+        /// <param name="keepDim">whether the output tensor has dim retained or not. Default: false.</param>
+        /// <remarks>If keepDim is true, the output tensors are of the same size as input except in the dimension dim where they are of size 1.
+        /// Otherwise, dim is squeezed(see torch.squeeze()), resulting in the output tensors having 1 fewer dimension than input.</remarks>
 
+        static public (Tensor values, Tensor indexes) max(Tensor input, long dim, bool keepDim = false) => input.max(dim, keepDim);
+
+        /// <summary>
+        /// Returns the mean value of all elements in the input tensor.
+        /// </summary>
         public static Tensor mean(Tensor input) => input.mean();
 
+        /// <summary>
+        /// Returns the mean value of each row of the input tensor in the given dimension dim. If dim is a list of dimensions, reduce over all of them.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dimensions">The dimension or dimensions to reduce.</param>
+        /// <param name="keepDimension">Whether the output tensor has dim retained or not.</param>
+        /// <param name="type">The desired data type of returned tensor. If specified, the input tensor is cast to dtype before the operation is performed. This is useful for preventing data type overflows.</param>
+        /// <remarks>
+        /// If keepdim is True, the output tensor is of the same size as input except in the dimension(s) dim where it is of size 1.
+        /// Otherwise, dim is squeezed(see torch.squeeze()), resulting in the output tensor having 1 (or len(dim)) fewer dimension(s).
+        /// </remarks>
         public static Tensor mean(Tensor input, long[] dimensions, bool keepDimension = false, ScalarType? type = null) => input.mean(dimensions, keepDimension, type);
 
+        /// <summary>
+        /// Returns the minimum value of all elements in the input tensor.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor min(Tensor input) => input.min();
 
+        /// <summary>
+        /// Computes the element-wise minimum of input and other.
+        /// </summary>
+        /// <param name="input">The first input tensor</param>
+        /// <param name="other">The second input tensor</param>
         static public Tensor minimum(Tensor input, Tensor other) => input.minimum(other);
 
-        static public (Tensor values, Tensor indexes) min(Tensor input, long dimension, bool keepDim = false) => input.min(dimension, keepDim);
+        /// <summary>
+        /// Returns a named tuple (values, indexes) where values is the minimum value of each row of the input tensor in the given dimension dim.
+        /// And indices is the index location of each minimum value found (argmin).
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">the dimension to reduce.</param>
+        /// <param name="keepDim">whether the output tensor has dim retained or not. Default: false.</param>
+        /// <remarks>If keepDim is true, the output tensors are of the same size as input except in the dimension dim where they are of size 1.
+        /// Otherwise, dim is squeezed(see torch.squeeze()), resulting in the output tensors having 1 fewer dimension than input.</remarks>
+        static public (Tensor values, Tensor indexes) min(Tensor input, long dim, bool keepDim = false) => input.min(dim, keepDim);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
@@ -3176,6 +3339,15 @@ namespace TorchSharp
         /// <param name="left">Numerator</param>
         /// <param name="right">Denominator</param>
         public static Tensor remainder_(Tensor left, Scalar right) => left.remainder_(right);
+
+        /// <summary>
+        /// Returns a tensor where each sub-tensor of input along dimension dim is normalized such that the p-norm of the sub-tensor is lower than the value maxnorm
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="p">The power for the norm computation</param>
+        /// <param name="dim">The dimension to slice over to get the sub-tensors</param>
+        /// <param name="maxnorm">The maximum norm to keep each sub-tensor under</param>
+        public static Tensor renorm(Tensor input, float p, long dim, float maxnorm) => input.renorm(p, dim, maxnorm);
 
         /// <summary>
         /// Returns a new tensor with each of the elements of input rounded to the closest value with the given number of decimals.
@@ -3347,7 +3519,7 @@ namespace TorchSharp
         /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor std(Tensor input, (long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+        public static Tensor std(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             => input.std(dimensions, unbiased, keepDimension, type);
 
         /// <summary>Calculates the variance of all elements in the tensor.</summary>
@@ -3361,7 +3533,7 @@ namespace TorchSharp
         /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor var(Tensor input, (long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+        public static Tensor var(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             => input.var(dimensions, unbiased, keepDimension, type);
 
         /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
@@ -3375,7 +3547,7 @@ namespace TorchSharp
         /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor std(Tensor input, (long,long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+        public static Tensor std(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             => input.std(dimensions, unbiased, keepDimension, type);
 
         /// <summary>Calculates the variance of all elements in the tensor.</summary>
@@ -3389,7 +3561,7 @@ namespace TorchSharp
         /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor var(Tensor input, (long,long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+        public static Tensor var(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             => input.var(dimensions, unbiased, keepDimension, type);
 
         /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
@@ -3487,7 +3659,7 @@ namespace TorchSharp
         /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-        public static (Tensor std, Tensor mean) std_mean(Tensor input, (long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             => input.std_mean(dimensions, unbiased, keepDimension, type);
 
         /// <summary>Calculates the variance and mean of all elements in the tensor.</summary>
@@ -3501,7 +3673,7 @@ namespace TorchSharp
         /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the variance and the mean.</returns>
-        public static (Tensor @var, Tensor mean) var_mean(Tensor input, (long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+        public static (Tensor @var, Tensor mean) var_mean(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             => input.var_mean(dimensions, unbiased, keepDimension, type);
 
         /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
@@ -3515,7 +3687,7 @@ namespace TorchSharp
         /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-        public static (Tensor std, Tensor mean) std_mean(Tensor input, (long,long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             => input.std_mean(dimensions, unbiased, keepDimension, type);
 
         /// <summary>Calculates the variance and mean of all elements in the tensor.</summary>
@@ -3529,7 +3701,7 @@ namespace TorchSharp
         /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the variance and the mean.</returns>
-        public static (Tensor @var, Tensor mean) var_mean(Tensor input, (long,long,long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
+        public static (Tensor @var, Tensor mean) var_mean(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             => input.var_mean(dimensions, unbiased, keepDimension, type);
 
         /// <summary>

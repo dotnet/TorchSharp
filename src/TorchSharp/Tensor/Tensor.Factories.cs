@@ -935,11 +935,19 @@ namespace TorchSharp
             }
         }
 
-        public static Tensor normal(Tensor means, Tensor stddev, torch.Generator generator = null)
+        /// <summary>
+        /// Returns a tensor of random numbers drawn from separate normal distributions whose mean and standard deviation are given.
+        /// </summary>
+        /// <param name="mean">The tensor of per-element means</param>
+        /// <param name="std">The tensor of per-element standard deviations</param>
+        /// <param name="generator">An optional random number generator</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static Tensor normal(Tensor mean, Tensor std, torch.Generator generator = null)
         {
-            if (stddev.device_type != means.device_type || (stddev.device_type == DeviceType.CUDA && stddev.device_index != means.device_index))
+            if (std.device_type != mean.device_type || (std.device_type == DeviceType.CUDA && std.device_index != mean.device_index))
                 throw new ArgumentException("The 'means' and 'stddev' tensors must be located on the same device.");
-            return randn(means.shape, generator: generator, device: stddev.device) * stddev + means;
+            return randn(mean.shape, generator: generator, device: std.device) * std + mean;
         }
 
         /// <summary>

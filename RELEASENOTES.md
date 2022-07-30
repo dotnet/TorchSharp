@@ -2,6 +2,18 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.97.1
+
+This release is made shortly after 0.97.0, because of a breaking change that was introduced in a previous release and affected the integration with ML.NET.
+
+__Fixed Bugs:__
+
+__API Changes__:
+
+RNN, LSTM, GRU support PackedSequence<br/>
+Add element-wise comparison methods of torch class.<br/>
+Fix clamp and (non)quantile method declarations<br/>
+
 ## NuGet Version 0.97.0
 
 __Fixed Bugs:__

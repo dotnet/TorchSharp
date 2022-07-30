@@ -256,7 +256,7 @@ namespace TorchSharp
 
             /// <summary>
             /// Computes the inverse of a square matrix if it is invertible.
-            /// Returns a namedtuple(inverse, info). inverse contains the result of inverting A and info stores the LAPACK error codes.
+            /// Returns a named tuple(inverse, info). inverse contains the result of inverting A and info stores the LAPACK error codes.
             /// If A is not an invertible matrix, or if it’s a batch of matrices and one or more of them is not an invertible matrix,
             /// then info stores a positive integer for the corresponding matrix.The positive integer indicates the diagonal element of
             /// the LU decomposition of the input matrix that is exactly zero. info filled with zeros indicates that the inversion was successful.
