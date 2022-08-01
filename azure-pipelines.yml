@@ -68,7 +68,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test --blame /p:SkipCuda=true --blame -c
     pool:
-      vmImage: 'macos-10.15'
+      vmImage: 'macos-latest'
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
