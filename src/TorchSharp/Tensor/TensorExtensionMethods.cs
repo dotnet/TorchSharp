@@ -1,11 +1,11 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+#nullable enable
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using static TorchSharp.Utils.LEB128Codec;
 
-#nullable enable
 namespace TorchSharp
 {
     using static torch;
@@ -294,28 +294,28 @@ namespace TorchSharp
 
             switch (true) {
             case bool _ when typeof(T) == typeof(byte): {
-                    return torch.tensor(array as byte[], dimensions, requiresGrad: requiresGrad); ;
+                    return torch.tensor((array as byte[])!, dimensions, requiresGrad: requiresGrad); ;
                 }
             case bool _ when typeof(T) == typeof(sbyte): {
-                    return torch.tensor(array as sbyte[], dimensions, requiresGrad: requiresGrad); ;
+                    return torch.tensor((array as sbyte[])!, dimensions, requiresGrad: requiresGrad); ;
                 }
             case bool _ when typeof(T) == typeof(short): {
-                    return torch.tensor(array as short[], dimensions, requiresGrad: requiresGrad); ;
+                    return torch.tensor((array as short[])!, dimensions, requiresGrad: requiresGrad); ;
                 }
             case bool _ when typeof(T) == typeof(int): {
-                    return torch.tensor(array as int[], dimensions, requiresGrad: requiresGrad);
+                    return torch.tensor((array as int[])!, dimensions, requiresGrad: requiresGrad);
                 }
             case bool _ when typeof(T) == typeof(long): {
-                    return torch.tensor(array as long[], dimensions, requiresGrad: requiresGrad);
+                    return torch.tensor((array as long[])!, dimensions, requiresGrad: requiresGrad);
                 }
             case bool _ when typeof(T) == typeof(double): {
-                    return torch.tensor(array as double[], dimensions, requiresGrad: requiresGrad);
+                    return torch.tensor((array as double[])!, dimensions, requiresGrad: requiresGrad);
                 }
             case bool _ when typeof(T) == typeof(float): {
-                    return torch.tensor(array as float[], dimensions, requiresGrad: requiresGrad);
+                    return torch.tensor((array as float[])!, dimensions, requiresGrad: requiresGrad);
                 }
             case bool _ when typeof(T) == typeof(bool): {
-                    return torch.tensor(array as bool[], dimensions, requiresGrad: requiresGrad);
+                    return torch.tensor((array as bool[])!, dimensions, requiresGrad: requiresGrad);
                 }
             //case bool _ when typeof(T) == typeof(System.Numerics.Complex):
             //    {
