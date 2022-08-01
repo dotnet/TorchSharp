@@ -746,29 +746,5 @@ namespace TorchSharp
             var z = x.to(y);
             Assert.Equal(torch.float64, z.dtype);
         }
-
-        [Fact]
-        public void ValidateBug670()
-        {
-            using (var scope = NewDisposeScope())
-            {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                for (int i = 0; i < 1; i++) {
-                    var t1 = from_array(new float[100000, 768]);
-                    var t2 = from_array(new float[100000, 768]);
-                }
-                stopwatch.Stop();
-                var LastElapsedMs = (int)stopwatch.ElapsedMilliseconds;
-            }
-            using (var scope = NewDisposeScope()) {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                for (int i = 0; i < 1; i++) {
-                    var t1 = tensor(new float[100000, 768]);
-                    var t2 = tensor(new float[100000, 768]);
-                }
-                stopwatch.Stop();
-                var LastElapsedMs = (int)stopwatch.ElapsedMilliseconds;
-            }
-        }
     }
 }
