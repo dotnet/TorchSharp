@@ -757,6 +757,14 @@ namespace TorchSharp
             }
 
             {
+                var array = new sbyte[1000, 1000, 1000];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1000, 1000, 1000 }, t.shape);
+                Assert.Equal(ScalarType.Int8, t.dtype);
+            }
+
+            {
                 var array = new sbyte[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
                 var t = torch.tensor(array);
                 Assert.Equal(3, t.ndim);
@@ -771,7 +779,7 @@ namespace TorchSharp
         {
             {
                 var array = new short[8];
-                var t = torch.tensor(array);
+                using var t = torch.tensor(array);
                 Assert.Equal(1, t.ndim);
                 Assert.Equal(ScalarType.Int16, t.dtype);
             }
@@ -800,6 +808,13 @@ namespace TorchSharp
                 Assert.Equal(ScalarType.Int16, t.dtype);
             }
 
+            {
+                var array = new short[1000, 1000, 500];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1000, 1000, 500 }, t.shape);
+                Assert.Equal(ScalarType.Int16, t.dtype);
+            }
             {
                 var array = new short[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
                 var t = torch.tensor(array);
@@ -841,6 +856,14 @@ namespace TorchSharp
                 var t = torch.tensor(array);
                 Assert.Equal(4, t.ndim);
                 Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
+                Assert.Equal(ScalarType.Int32, t.dtype);
+            }
+
+            {
+                var array = new int[1000, 1000, 250];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1000, 1000, 250 }, t.shape);
                 Assert.Equal(ScalarType.Int32, t.dtype);
             }
 
@@ -889,6 +912,14 @@ namespace TorchSharp
             }
 
             {
+                var array = new long[1000, 1000, 125];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1000, 1000, 125 }, t.shape);
+                Assert.Equal(ScalarType.Int64, t.dtype);
+            }
+
+            {
                 var array = new long[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
                 var t = torch.tensor(array);
                 Assert.Equal(3, t.ndim);
@@ -921,6 +952,14 @@ namespace TorchSharp
                 var t = torch.tensor(array);
                 Assert.Equal(3, t.ndim);
                 Assert.Equal(new long[] { 1, 2, 3 }, t.shape);
+                Assert.Equal(ScalarType.Float32, t.dtype);
+            }
+
+            {
+                var array = new float[1000, 1000, 250];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1000, 1000, 250 }, t.shape);
                 Assert.Equal(ScalarType.Float32, t.dtype);
             }
 
@@ -973,6 +1012,14 @@ namespace TorchSharp
                 var t = torch.tensor(array);
                 Assert.Equal(4, t.ndim);
                 Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
+                Assert.Equal(ScalarType.Float64, t.dtype);
+            }
+
+            {
+                var array = new double[1000, 1000, 125];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1000, 1000, 125 }, t.shape);
                 Assert.Equal(ScalarType.Float64, t.dtype);
             }
 
