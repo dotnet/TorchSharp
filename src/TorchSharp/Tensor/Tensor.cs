@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 #nullable enable
 namespace TorchSharp
@@ -2676,6 +2677,23 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_isnan(IntPtr tensor);
+
+            /// <summary>
+            /// Returns a new tensor with boolean elements representing if each element of input is <value>NaN</value> or not. 
+            /// Complex values are considered <value>NaN</value> when either their real and/or imaginary part is <value>NaN</value>.
+            /// </summary>
+            /// <returns>A boolean tensor that is <value>True</value> where tensor is <value>NaN</value> and <value>False</value> elsewhere</returns>
+            [Pure]
+            public Tensor isnan()
+            {
+                var res = THSTensor_isnan(Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_isreal(IntPtr tensor);
 
             public Tensor isreal()
@@ -4420,7 +4438,7 @@ namespace TorchSharp
             /// <summary>
             /// Calculates the standard deviation of all elements in the tensor.
             /// </summary>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor std(bool unbiased = true)
             {
                 var res = THSTensor_std(Handle, unbiased);
@@ -4434,7 +4452,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="unbiased">If unbiased is true, Bessel’s correction will be used. Otherwise, the sample variance is calculated, without any correction.</param>
             /// <returns></returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor var(bool unbiased = true)
             {
                 var res = THSTensor_var(Handle, unbiased);
@@ -4459,7 +4477,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor std(ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 return _std(dimensions, unbiased, keepDimension, type);
@@ -4475,7 +4493,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor var(ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 return _var(dimensions, unbiased, keepDimension, type);
@@ -4491,7 +4509,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor std(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 return _std(dimensions, unbiased, keepDimension, type);
@@ -4507,7 +4525,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor var(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 return _var(dimensions, unbiased, keepDimension, type);
@@ -4543,7 +4561,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimension" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor std(long dimension, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => std(stackalloc[] { dimension }, unbiased, keepDimension, type);
 
@@ -4557,7 +4575,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimension" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor var(long dimension, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => var(stackalloc[] { dimension }, unbiased, keepDimension, type);
 
@@ -4571,7 +4589,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor std((long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => std(stackalloc[] { dimensions.Item1, dimensions.Item2 }, unbiased, keepDimension, type);
 
@@ -4585,7 +4603,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor var((long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => var(stackalloc[] { dimensions.Item1, dimensions.Item2 }, unbiased, keepDimension, type);
 
@@ -4599,7 +4617,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor std((long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => std(stackalloc[] { dimensions.Item1, dimensions.Item2, dimensions.Item3 }, unbiased, keepDimension, type);
 
@@ -4613,7 +4631,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public Tensor var((long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => var(stackalloc[] { dimensions.Item1, dimensions.Item2, dimensions.Item3 }, unbiased, keepDimension, type);
 
@@ -4628,7 +4646,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor std, Tensor mean) std_mean(bool unbiased = true)
             {
                 var res = THSTensor_std_mean(Handle, unbiased, out var mean);
@@ -4642,7 +4660,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the variance and the mean.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor @var, Tensor mean) var_mean(bool unbiased = true)
             {
                 var res = THSTensor_var_mean(Handle, unbiased, out var mean);
@@ -4667,7 +4685,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
             /// <param name="type"></param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor std, Tensor mean) std_mean(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 return _std_mean(dimensions, unbiased, keepDimension, type);
@@ -4684,7 +4702,7 @@ namespace TorchSharp
             /// <param name="type"></param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
             
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor std, Tensor mean) var_mean(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 return _var_mean(dimensions, unbiased, keepDimension, type);
@@ -4700,7 +4718,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
             /// <param name="type"></param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor std, Tensor mean) std_mean(ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 return _std_mean(dimensions, unbiased, keepDimension, type);
@@ -4716,7 +4734,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
             /// <param name="type"></param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor std, Tensor mean) var_mean(ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
                 return _var_mean(dimensions, unbiased, keepDimension, type);
@@ -4752,7 +4770,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimension" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor std, Tensor mean) std_mean(long dimension, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => std_mean(new[] { dimension }, unbiased, keepDimension, type);
 
@@ -4766,7 +4784,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimension" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the variance and the mean.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor @var, Tensor mean) var_mean(long dimension, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => var_mean(new[] { dimension }, unbiased, keepDimension, type);
 
@@ -4780,7 +4798,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor std, Tensor mean) std_mean((long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => std_mean(stackalloc[] { dimensions.Item1, dimensions.Item2 }, unbiased, keepDimension, type);
 
@@ -4794,7 +4812,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the variance and the mean.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor @var, Tensor mean) var_mean((long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => var_mean(stackalloc[] { dimensions.Item1, dimensions.Item2 }, unbiased, keepDimension, type);
 
@@ -4808,7 +4826,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor std, Tensor mean) std_mean((long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => std_mean(stackalloc[] { dimensions.Item1, dimensions.Item2, dimensions.Item3 }, unbiased, keepDimension, type);
 
@@ -4822,7 +4840,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has <paramref name="dimensions" /> retained or not.</param>
             /// <param name="type"></param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the variance and the mean.</returns>
-            [System.Diagnostics.Contracts.Pure]
+            [Pure]
             public (Tensor @var, Tensor mean) var_mean((long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
                 => var_mean(stackalloc[] { dimensions.Item1, dimensions.Item2, dimensions.Item3 }, unbiased, keepDimension, type);
 

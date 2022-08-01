@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -3851,6 +3852,15 @@ namespace TorchSharp
         /// <param name="generator">Optional random number generator</param>
         /// <returns></returns>
         public static Tensor bernoulli(Tensor input, torch.Generator generator = null) => input.bernoulli(generator);
+
+        /// <summary>
+        /// Returns a new tensor with boolean elements representing if each element of input is <value>NaN</value> or not. 
+        /// Complex values are considered <value>NaN</value> when either their real and/or imaginary part is <value>NaN</value>.
+        /// </summary>
+        /// <param name="input">the input tensor</param>
+        /// <returns>A boolean tensor that is <value>True</value> where input is <value>NaN</value> and <value>False</value> elsewhere</returns>
+        [Pure]
+        public static Tensor isnan(Tensor input) => input.isnan();
 
         /// <summary>
         /// Draws a binomial distribution given a trial count and probabilities.
