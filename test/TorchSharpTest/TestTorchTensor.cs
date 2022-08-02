@@ -2633,6 +2633,15 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void InitTruncNormal()
+        {
+            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
+                // Really just testing that it doesn't blow up.
+                using (var res = torch.nn.init.trunc_normal_(tensor, 0, 1, -0.5, 0.5)) { }
+            }
+        }
+
+        [Fact]
         public void InitOrthogonal()
         {
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
@@ -3484,8 +3493,7 @@ namespace TorchSharp
         public void TestAutoGradMode()
         {
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
-            //if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
                 var x = torch.randn(new long[] { 2, 3 }, requiresGrad: true);
                 using (torch.no_grad()) {
                     Assert.False(torch.is_grad_enabled());

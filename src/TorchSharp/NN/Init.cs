@@ -110,6 +110,47 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
 
+                private static double erf(double x)
+                {
+                    // TODO: this is a clumsy implementation, but it *is* XPLAT.
+                    var t = torch.tensor(new double[] { x });
+                    t.erf_();
+                    var result = t[0].item<double>();
+                    t.Dispose();
+                    return result;
+                }
+
+                static double sqrtof2 = Math.Sqrt(2.0);
+
+                private static double norm_cdf(double x) => (1.0 + erf(x / sqrtof2)) / 2.0;
+
+                /// <summary>
+                /// Fills the input Tensor with values drawn from a truncated normal distribution.
+                /// </summary>
+                /// <param name="tensor">Input tensor</param>
+                /// <param name="mean">The mean of the normal distribution</param>
+                /// <param name="std">The standard deviation of the normal distribution</param>
+                /// <param name="a">The minimum cutoff value</param>
+                /// <param name="b">The maximum cutoff value</param>
+                /// <returns></returns>
+                public static Tensor trunc_normal_(Tensor tensor, double mean, double std, double a, double b)
+                {
+
+                    using (torch.no_grad()) {
+
+                        var l = norm_cdf((a - mean) / std);
+                        var u = norm_cdf((b - mean) / std);
+
+                        tensor.uniform_(2 * l - 1, 2 * u - 1);
+                        tensor.erfinv_();
+                        tensor.mul_(std * sqrtof2);
+                        tensor.add_(mean);
+                        tensor.clamp_(min: a, max: b);
+
+                        return tensor;
+                    }
+                }
+
                 /// <summary>
                 /// Fills the input Tensor with a (semi) orthogonal matrix, as described in 'Exact solutions to the nonlinear dynamics of learning in deep linear neural networks'
                 /// </summary>
