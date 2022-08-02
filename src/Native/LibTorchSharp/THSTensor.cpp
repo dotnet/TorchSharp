@@ -640,6 +640,13 @@ Tensor THSTensor_isneginf(const Tensor tensor)
     CATCH_TENSOR(torch::isneginf(*tensor));
 }
 
+// Wrapper for <code>Tensor isnan(const Tensor&amp; self)</code>
+// See also: <a href="https://github.com/pytorch/pytorch/blob/master/aten/src/ATen/native/TensorCompare.cpp"/>TensorCompare.cpp</a>
+Tensor THSTensor_isnan(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::isnan(*tensor));
+}
+
 Tensor THSTensor_isposinf(const Tensor tensor)
 {
     CATCH_TENSOR(torch::isposinf(*tensor));

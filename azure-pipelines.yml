@@ -68,7 +68,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test --blame /p:SkipCuda=true --blame -c
     pool:
-      vmImage: 'macos-10.15'
+      vmImage: 'macos-latest'
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
@@ -137,7 +137,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'macos-10.15'
+    vmImage: 'macos-latest'
   steps:
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=false
     displayName: Build mac

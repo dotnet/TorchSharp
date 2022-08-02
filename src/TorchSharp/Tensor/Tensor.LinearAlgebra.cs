@@ -265,7 +265,57 @@ namespace TorchSharp
             return torch.linalg.det(input);
         }
 
-        public static Tensor diag(Tensor input, long dimension = 0) => input.diag(dimension);
+        /// <summary>
+        /// If input is a vector (1-D tensor), then returns a 2-D square tensor with the elements of input as the diagonal.
+        /// If input is a matrix (2-D tensor), then returns a 1-D tensor with the diagonal elements of input.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="diagonal">
+        /// The argument diagonal controls which diagonal to consider:
+        /// If diagonal is 0, it is the main diagonal.
+        /// If diagonal is greater than 0, it is above the main diagonal.
+        /// If diagonal is less than 0, it is below the main diagonal.
+        /// </param>
+        public static Tensor diag(Tensor input, long diagonal = 0) => input.diag(diagonal);
+
+        /// <summary>
+        /// If input is a vector (1-D tensor), then returns a 2-D square tensor with the elements of input as the diagonal.
+        /// If input is a matrix (2-D tensor), then returns a 2-D tensor with diagonal elements equal to a flattened input.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="offset">
+        /// The argument diagonal controls which diagonal to consider:
+        /// If diagonal is 0, it is the main diagonal.
+        /// If diagonal is greater than 0, it is above the main diagonal.
+        /// If diagonal is less than 0, it is below the main diagonal.
+        /// </param>
+        public static Tensor diagflat(Tensor input, long offset = 0) => input.diagflat(offset);
+
+        /// <summary>
+        /// Computes the n-th forward difference along the given dimension.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="n">The number of times to recursively compute the difference</param>
+        /// <param name="dim">The dimension to compute the difference along. Default is the last dimension.</param>
+        /// <param name="prepend">
+        /// Values to prepend or append to input along dim before computing the difference.
+        /// Their dimensions must be equivalent to that of input, and their shapes must match input’s shape except on dim.
+        /// </param>
+        /// <param name="append">
+        /// Values to prepend or append to input along dim before computing the difference.
+        /// Their dimensions must be equivalent to that of input, and their shapes must match input’s shape except on dim.
+        /// </param>
+        public static Tensor diff(Tensor input, long n = 1, long dim = -1, Tensor prepend = null, Tensor append = null) => input.diff(n, dim, prepend, append);
+
+
+        /// <summary>
+        /// Returns the p-norm of (input - other).
+        /// The shapes of input and other must be broadcastable.
+        /// </summary>
+        /// <param name="input">Left-hand side input tensor.</param>
+        /// <param name="other">Right-hand side input tensor</param>
+        /// <param name="p">The norm to be computed.</param>
+        public static Tensor dist(Tensor input, Tensor other, float p = 2.0f) => input.dist(other, p);
 
         /// <summary>
         /// Returns the sum of the elements of the diagonal of the input 2-D matrix.
@@ -398,6 +448,10 @@ namespace TorchSharp
             return input.matrix_power(n);
         }
 
+        /// <summary>
+        /// Returns the matrix norm or vector norm of a given tensor.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
         public static Tensor norm(Tensor input) => input.norm();
 
         /// <summary>

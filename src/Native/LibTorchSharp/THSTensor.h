@@ -625,6 +625,8 @@ EXPORT_API(Tensor) THSTensor_isposinf(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_isneginf(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_isnan(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_isreal(const Tensor tensor);
 
 EXPORT_API(Scalar) THSTensor_item(const Tensor tensor);
