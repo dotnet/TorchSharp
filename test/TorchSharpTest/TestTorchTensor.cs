@@ -1190,7 +1190,7 @@ namespace TorchSharp
                 var array = new System.Numerics.Complex[100, 500, 125];
                 var t = torch.tensor(array);
                 Assert.Equal(3, t.ndim);
-                Assert.Equal(new long[] { 1000, 500, 125 }, t.shape);
+                Assert.Equal(new long[] { 100, 500, 125 }, t.shape);
                 Assert.Equal(ScalarType.ComplexFloat64, t.dtype);
             }
         }
