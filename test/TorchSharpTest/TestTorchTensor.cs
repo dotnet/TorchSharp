@@ -728,6 +728,15 @@ namespace TorchSharp
             }
 
             {
+                var array = new System.Numerics.Complex[1, 2, 3, 4];
+                var t = torch.from_array(array);
+                Assert.Multiple(
+                    () => Assert.Equal(4, t.ndim),
+                    () => Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape),
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype));
+            }
+
+            {
                 var array = new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
                 var t = torch.from_array(array);
                 Assert.Multiple(
@@ -735,6 +744,76 @@ namespace TorchSharp
                     () => Assert.Equal(new long[] { 2, 2, 2 }, t.shape),
                     () => Assert.Equal(ScalarType.Float64, t.dtype),
                     () => Assert.Equal(array.Cast<double>().ToArray(), t.data<double>().ToArray()));
+            }
+        }
+
+        [Fact]
+        public void TestFromBufferFactory()
+        {
+            {
+                var array = new double[8];
+                var t = torch.frombuffer(array, ScalarType.Bool);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(8, t.shape[0]),
+                    () => Assert.Equal(ScalarType.Bool, t.dtype));
+            }
+            {
+                var array = new double[8];
+                var t = torch.frombuffer(array, ScalarType.Bool, 5, 2);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(ScalarType.Bool, t.dtype));
+            }
+            {
+                var array = new double[] { 0, 1, 2, 3, 4, 5, 6, 7};
+                var t = torch.frombuffer(array, ScalarType.Float64, 5, 2);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(3, t[1].item<double>()),
+                    () => Assert.Equal(6, t[4].item<double>()),
+                    () => Assert.Equal(ScalarType.Float64, t.dtype)); ;
+            }
+            {
+                var array = new double[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+                var t = torch.frombuffer(array, ScalarType.Float64, 5, 2);
+                t[4] = 15.0;
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(3, t[1].item<double>()),
+                    () => Assert.Equal(15, array[6]),
+                    () => Assert.Equal(ScalarType.Float64, t.dtype)); ;
+            }
+            {
+                var array = new System.Numerics.Complex[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = new System.Numerics.Complex(i, -i); }
+                var t = torch.frombuffer(array, ScalarType.ComplexFloat64, 5, 2);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(3, t.real[1].item<double>()),
+                    () => Assert.Equal(6, t.real[4].item<double>()),
+                    () => Assert.Equal(-3, t.imag[1].item<double>()),
+                    () => Assert.Equal(-6, t.imag[4].item<double>()),
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
+            }
+            {
+                var array = new System.Numerics.Complex[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = new System.Numerics.Complex(i, -i); }
+                var t = torch.frombuffer(array, ScalarType.ComplexFloat64, 5, 2);
+                t.real[4] = 15.0;
+                t.imag[4] = 25.0;
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(3, t.real[1].item<double>()),
+                    () => Assert.Equal(15, array[6].Real),
+                    () => Assert.Equal(-3, t.imag[1].item<double>()),
+                    () => Assert.Equal(25.0, array[6].Imaginary),
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
             }
         }
 
@@ -1208,6 +1287,34 @@ namespace TorchSharp
                 Assert.Equal(3, t.ndim);
                 Assert.Equal(new long[] { 100, 500, 125 }, t.shape);
                 Assert.Equal(ScalarType.ComplexFloat64, t.dtype);
+            }
+            {
+                var array = new System.Numerics.Complex[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = new System.Numerics.Complex(i, -i); }
+                var t = torch.tensor(array);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(8, t.shape[0]),
+                    () => Assert.Equal(3, t.real[3].item<double>()),
+                    () => Assert.Equal(6, t.real[6].item<double>()),
+                    () => Assert.Equal(-3, t.imag[3].item<double>()),
+                    () => Assert.Equal(-6, t.imag[6].item<double>()),
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
+            }
+            {
+                var array = new System.Numerics.Complex[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = new System.Numerics.Complex(i, -i); }
+                var t = torch.tensor(array);
+                t.real[6] = 17;
+                t.imag[6] = 15;
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(8, t.shape[0]),
+                    () => Assert.Equal(3, t.real[3].item<double>()),
+                    () => Assert.Equal(17, t.real[6].item<double>()),
+                    () => Assert.Equal(-3, t.imag[3].item<double>()),
+                    () => Assert.Equal(15, t.imag[6].item<double>()),
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
             }
         }
 

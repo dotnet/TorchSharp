@@ -885,6 +885,14 @@ EXPORT_API(Tensor) THSTensor_new(
     int8_t scalar_type,
     const bool requires_grad);
 
+EXPORT_API(Tensor) THSTensor_frombuffer(
+    void* data,
+    void (*deleter)(void*),
+    const int64_t count,
+    const ptrdiff_t offset,
+    int8_t scalar_type,
+    const bool requires_grad);
+
 EXPORT_API(Tensor) THSTensor_newInt64(
     int64_t* data,
     void (*deleter)(void*),
