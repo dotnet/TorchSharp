@@ -781,6 +781,35 @@ Tensor THSTensor_select(Tensor tensor, int64_t dim, int64_t index)
     CATCH_TENSOR(tensor->select(dim, index));
 }
 
+Tensor THSTensor_index_add(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source, const Scalar alpha)
+{
+    CATCH_TENSOR(tensor->index_add(dim, *index, *source, *alpha));
+}
+
+Tensor THSTensor_index_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source, const Scalar alpha)
+{
+    CATCH_TENSOR(tensor->index_add_(dim, *index, *source, *alpha));
+}
+
+Tensor THSTensor_index_copy(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source)
+{
+    CATCH_TENSOR(tensor->index_copy(dim, *index, *source));
+}
+
+Tensor THSTensor_index_copy_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source)
+{
+    CATCH_TENSOR(tensor->index_copy_(dim, *index, *source));
+}
+
+Tensor THSTensor_index_fill(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value)
+{
+    CATCH_TENSOR(tensor->index_fill(dim, *index, *value));
+}
+
+Tensor THSTensor_index_fill_(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value)
+{
+    CATCH_TENSOR(tensor->index_fill_(dim, *index, *value));
+}
 
 Tensor THSTensor_indices(Tensor tensor)
 {

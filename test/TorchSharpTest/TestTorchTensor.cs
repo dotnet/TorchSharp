@@ -8,6 +8,7 @@ using System.Globalization;
 using Xunit;
 using Xunit.Sdk;
 using static TorchSharp.torch;
+using ICSharpCode.SharpZipLib;
 
 #nullable enable
 
@@ -2397,6 +2398,136 @@ namespace TorchSharp
             Assert.Equal(4, t[1, 1, 1, 1, 0, 0, 0].ToSingle());
             Assert.Equal(5, t[1, 1, 1, 1, 1, 0, 0].ToSingle());
             Assert.Equal(6, t[1, 1, 1, 1, 1, 1, 0].ToSingle());
+        }
+
+        [Fact]
+        public void IndexAdd1()
+        {
+            using var _ = NewDisposeScope();
+
+            var y = torch.ones(3, 3);
+            var t = torch.tensor(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+            var index = torch.tensor(new long[] { 2, 0 });
+            var x = y.index_add(0, index, t, 2.0);
+
+            Assert.Multiple(
+                () => Assert.Equal(9.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(3.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(11.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(5.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(13.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(7.0, x[2, 2].ToSingle()));
+        }
+
+        [Fact]
+        public void IndexAdd2()
+        {
+            using var _ = NewDisposeScope();
+
+            var x = torch.ones(3, 3);
+            var t = torch.tensor(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+            var index = torch.tensor(new long[] { 2, 0 });
+            var y = x.index_add_(0, index, t, 2.0);
+
+            Assert.Multiple(
+                () => Assert.Equal(9.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(3.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(11.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(5.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(13.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(7.0, x[2, 2].ToSingle()));
+        }
+
+        [Fact]
+        public void IndexCopy1()
+        {
+            using var _ = NewDisposeScope();
+
+            var y = torch.zeros(3, 3);
+            var t = torch.tensor(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+            var index = torch.tensor(new long[] { 2, 0 });
+            var x = y.index_copy(0, index, t);
+
+            Assert.Multiple(
+                () => Assert.Equal(4.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(5.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(2.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(6.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(3.0, x[2, 2].ToSingle()));
+        }
+
+        [Fact]
+        public void IndexCopy2()
+        {
+            using var _ = NewDisposeScope();
+
+            var x = torch.zeros(3, 3);
+            var t = torch.tensor(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+            var index = torch.tensor(new long[] { 2, 0 });
+            var y = x.index_copy_(0, index, t);
+
+            Assert.Multiple(
+                () => Assert.Equal(4.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(5.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(2.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(6.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(3.0, x[2, 2].ToSingle()));
+        }
+
+        [Fact]
+        public void IndexFill1()
+        {
+            using var _ = NewDisposeScope();
+
+            var y = torch.zeros(3, 3);
+            var index = torch.tensor(new long[] { 0, 2 });
+            var x = y.index_fill(1, index, 1.0);
+
+            Assert.Multiple(
+                () => Assert.Equal(1.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(0.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(1.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 2].ToSingle()));
+        }
+
+        [Fact]
+        public void IndexFill2()
+        {
+            using var _ = NewDisposeScope();
+
+            var x = torch.zeros(3, 3);
+            var index = torch.tensor(new long[] { 0, 2 });
+            var y = x.index_fill_(1, index, 1.0);
+
+            Assert.Multiple(
+                () => Assert.Equal(1.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(0.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(1.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 2].ToSingle()));
         }
 
         [Fact]

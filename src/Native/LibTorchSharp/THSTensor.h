@@ -576,6 +576,15 @@ EXPORT_API(Tensor) THSTensor_histc(const Tensor tensor, const int64_t bins, cons
 
 EXPORT_API(Tensor) THSTensor_imag(const Tensor tensor);
 
+EXPORT_API(Tensor) THSTensor_index_add(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source, const Scalar alpha);
+EXPORT_API(Tensor) THSTensor_index_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source, const Scalar alpha);
+
+EXPORT_API(Tensor) THSTensor_index_copy(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
+EXPORT_API(Tensor) THSTensor_index_copy_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
+
+EXPORT_API(Tensor) THSTensor_index_fill(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value);
+EXPORT_API(Tensor) THSTensor_index_fill_(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value);
+
 EXPORT_API(Tensor) THSTensor_indices(Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_index(Tensor tensor,
