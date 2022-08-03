@@ -2638,6 +2638,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that it doesn't blow up.
                 using (var res = torch.nn.init.trunc_normal_(tensor, 0, 1, -0.5, 0.5)) { }
+                using (var res = torch.nn.init.trunc_normal_(tensor)) { }
             }
         }
 

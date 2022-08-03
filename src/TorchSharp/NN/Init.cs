@@ -110,15 +110,9 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
 
-                private static double erf(double x)
-                {
-                    // TODO: this is a clumsy implementation, but it *is* XPLAT.
-                    var t = torch.tensor(new double[] { x });
-                    t.erf_();
-                    var result = t[0].item<double>();
-                    t.Dispose();
-                    return result;
-                }
+                internal static double erf(double x) => THSSpecial_erf_scalar(x);
+
+                internal static double erfc(double x) => THSSpecial_erfc_scalar(x);
 
                 static double sqrtof2 = Math.Sqrt(2.0);
 
@@ -133,7 +127,7 @@ namespace TorchSharp
                 /// <param name="a">The minimum cutoff value</param>
                 /// <param name="b">The maximum cutoff value</param>
                 /// <returns></returns>
-                public static Tensor trunc_normal_(Tensor tensor, double mean, double std, double a, double b)
+                public static Tensor trunc_normal_(Tensor tensor, double mean = 0.0, double std = 1.0, double a = -2.0, double b = 2.0)
                 {
 
                     using (torch.no_grad()) {
@@ -147,7 +141,7 @@ namespace TorchSharp
                         tensor.add_(mean);
                         tensor.clamp_(min: a, max: b);
 
-                        return tensor;
+                        return tensor.alias();
                     }
                 }
 
@@ -256,6 +250,9 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_xavier_normal_(IntPtr tensor, double gain);
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_xavier_uniform_(IntPtr tensor, double gain);
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_zeros_(IntPtr tensor);
+
+                [DllImport("LibTorchSharp")] private static extern double THSSpecial_erf_scalar(double x);
+                [DllImport("LibTorchSharp")] private static extern double THSSpecial_erfc_scalar(double x);
 
             }
         }
