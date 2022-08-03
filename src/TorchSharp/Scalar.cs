@@ -145,9 +145,9 @@ namespace TorchSharp
         /// </summary>
         void Dispose(bool disposing)
         {
-            if (Handle != IntPtr.Zero) {
-                THSTorch_dispose_scalar(Handle);
-                Handle = IntPtr.Zero;
+            if (handle != IntPtr.Zero) {
+                THSTorch_dispose_scalar(handle);
+                handle = IntPtr.Zero;
             }
         }
     }
