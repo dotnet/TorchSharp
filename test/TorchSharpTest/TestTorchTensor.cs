@@ -1238,6 +1238,34 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
                 Assert.Equal(ScalarType.ComplexFloat32, t.dtype);
             }
+            {
+                var array = new (float Real, float Imaginary)[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = (i, -i); }
+                var t = torch.tensor(array);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(8, t.shape[0]),
+                    () => Assert.Equal(3, t.real[3].item<float>()),
+                    () => Assert.Equal(6, t.real[6].item<float>()),
+                    () => Assert.Equal(-3, t.imag[3].item<float>()),
+                    () => Assert.Equal(-6, t.imag[6].item<float>()),
+                    () => Assert.Equal(ScalarType.ComplexFloat32, t.dtype)); ;
+            }
+            {
+                var array = new (float Real, float Imaginary)[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = (i, -i); }
+                var t = torch.tensor(array);
+                t.real[6] = 17;
+                t.imag[6] = 15;
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(8, t.shape[0]),
+                    () => Assert.Equal(3, t.real[3].item<float>()),
+                    () => Assert.Equal(6, array[6].Real),
+                    () => Assert.Equal(-3, t.imag[3].item<float>()),
+                    () => Assert.Equal(-6, array[6].Imaginary),
+                    () => Assert.Equal(ScalarType.ComplexFloat32, t.dtype)); ;
+            }
         }
 
         [Fact]
@@ -1311,9 +1339,8 @@ namespace TorchSharp
                     () => Assert.Equal(1, t.ndim),
                     () => Assert.Equal(8, t.shape[0]),
                     () => Assert.Equal(3, t.real[3].item<double>()),
-                    () => Assert.Equal(17, t.real[6].item<double>()),
-                    () => Assert.Equal(-3, t.imag[3].item<double>()),
-                    () => Assert.Equal(15, t.imag[6].item<double>()),
+                    () => Assert.Equal(17, array[6].Real),
+                    () => Assert.Equal(15, array[6].Imaginary),
                     () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
             }
         }

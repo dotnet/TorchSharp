@@ -2370,12 +2370,6 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(System.Numerics.Complex[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            //var dataArray = new double[rawArray.Length * 2];
-            //for (var i = 0; i < rawArray.Length; i++) {
-            //    dataArray[i * 2] = rawArray[i].Real;
-            //    dataArray[i * 2 + 1] = rawArray[i].Imaginary;
-            //}
-
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
         }
 
@@ -2385,12 +2379,6 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(System.Numerics.Complex[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            //var dataArray = new double[rawArray.Length * 2];
-            //for (var i = 0; i < rawArray.Length; i++) {
-            //    dataArray[i * 2] = rawArray[i].Real;
-            //    dataArray[i * 2 + 1] = rawArray[i].Imaginary;
-            //}
-
             return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
         }
 
@@ -2445,14 +2433,6 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(System.Numerics.Complex[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            //var dataArray = new double[rawArray.GetLongLength(0), rawArray.GetLongLength(1) * 2];
-            //for (var i = 0; i < rawArray.GetLongLength(0); i++) {
-            //    for (var j = 0; j < rawArray.GetLongLength(1); j++) {
-            //        dataArray[i, j * 2] = rawArray[i, j].Real;
-            //        dataArray[i, j * 2 + 1] = rawArray[i, j].Imaginary;
-            //    }
-            //}
-
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
         }
 
@@ -2462,16 +2442,6 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(System.Numerics.Complex[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            //var dataArray = new double[rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) * 2];
-            //for (var i = 0; i < rawArray.GetLongLength(0); i++) {
-            //    for (var j = 0; j < rawArray.GetLongLength(1); j++) {
-            //        for (var k = 0; k < rawArray.GetLongLength(2); k++) {
-            //            dataArray[i, j, k * 2] = rawArray[i, j, k].Real;
-            //            dataArray[i, j, k * 2 + 1] = rawArray[i, j, k].Imaginary;
-            //        }
-            //    }
-            //}
-
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
         }
 
@@ -2481,18 +2451,6 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(System.Numerics.Complex[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            //var dataArray = new double[rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) * 2];
-            //for (var i = 0; i < rawArray.GetLongLength(0); i++) {
-            //    for (var j = 0; j < rawArray.GetLongLength(1); j++) {
-            //        for (var k = 0; k < rawArray.GetLongLength(2); k++) {
-            //            for (var l = 0; l < rawArray.GetLongLength(3); l++) {
-            //                dataArray[i, j, k, l * 2] = rawArray[i, j, k, l].Real;
-            //                dataArray[i, j, k, l * 2 + 1] = rawArray[i, j, k, l].Imaginary;
-            //            }
-            //        }
-            //    }
-            //}
-
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
         }
 
