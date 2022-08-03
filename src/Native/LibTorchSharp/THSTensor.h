@@ -1450,6 +1450,8 @@ EXPORT_API(Tensor) THSInit_eye_(Tensor matrix);
 
 EXPORT_API(Tensor) THSInit_normal_(Tensor tensor, double mean, double std);
 
+EXPORT_API(Tensor) THSInit_trunc_normal_(Tensor tensor, double mean, double std, double a, double b);
+
 EXPORT_API(Tensor) THSInit_ones_(Tensor tensor);
 
 EXPORT_API(Tensor) THSInit_orthogonal_(Tensor tensor, double gain);

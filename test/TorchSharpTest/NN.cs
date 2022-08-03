@@ -1132,33 +1132,6 @@ namespace TorchSharp
 
             Assert.Equal(3, gradCounts);
         }
-
-        [Fact]//(Skip= "Intermittently failing: https://github.com/dotnet/TorchSharp/issues/367")]
-        public void TestAutoGradMode()
-        {
-            // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                var x = torch.randn(new long[] { 2, 3 }, requiresGrad: true);
-                using (torch.no_grad()) {
-                    Assert.False(torch.is_grad_enabled());
-                    var sum = x.sum();
-                    Assert.Throws<ExternalException>(() => sum.backward());
-                    //var grad = x.Grad();
-                    //Assert.True(grad.Handle == IntPtr.Zero);
-                }
-                using (torch.enable_grad()) {
-                    Assert.True(torch.is_grad_enabled());
-                    var sum = x.sum();
-                    sum.backward();
-                    var grad = x.grad();
-                    Assert.False(grad is null || grad.Handle == IntPtr.Zero);
-                    var data = grad is not null ? grad.data<float>().ToArray() : new float[] { };
-                    for (int i = 0; i < 2 * 3; i++) {
-                        Assert.Equal(1.0, data[i]);
-                    }
-                }
-            }
-        }
         #endregion
 
         #region Convolution

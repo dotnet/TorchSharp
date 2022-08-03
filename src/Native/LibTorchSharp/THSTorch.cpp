@@ -226,3 +226,13 @@ Tensor THSTorch_lstsq(const Tensor input, const Tensor A, Tensor* qr)
     *qr = ResultTensor(std::get<1>(res));
     return ResultTensor(std::get<0>(res));
 }
+
+double THSSpecial_erf_scalar(const double x)
+{
+    return erf(x);
+}
+
+double THSSpecial_erfc_scalar(const double x)
+{
+    return erfc(x);
+}

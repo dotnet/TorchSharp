@@ -63,3 +63,8 @@ EXPORT_API(int8_t) THSTorch_scalar_type(Scalar value);
 
 // Dispose the scalar.
 EXPORT_API(void) THSTorch_dispose_scalar(Scalar scalar);
+
+// Math functions not available in .NET standard libs
+
+EXPORT_API(double) THSSpecial_erf_scalar(const double x);
+EXPORT_API(double) THSSpecial_erfc_scalar(const double x);

@@ -66,6 +66,31 @@ Tensor THSTensor_normal_(Tensor tensor, double mean, double std, const Generator
     CATCH_TENSOR(gen == nullptr ? tensor->normal_(mean, std) : tensor->normal_(mean, std, *gen));
 }
 
+double norm_cdf(double x) { return (1.0 + erf(x / sqrt(2.0))) / 2.0; }
+
+Tensor THSInit_trunc_normal_(Tensor tensor, double mean, double std, double a, double b)
+{
+    CATCH(
+        auto l = norm_cdf((a - mean) / std);
+        auto u = norm_cdf((b - mean) / std);
+
+        auto m = torch::Scalar(mean);
+        auto s = torch::Scalar(std);
+
+        auto a_ = torch::Scalar(a);
+        auto b_ = torch::Scalar(b);
+
+        THSInit_uniform_(tensor, 2 * l - 1, 2 * u - 1);
+
+        tensor->erfinv_();
+        tensor->mul_(m);
+        tensor->add_(s);
+        tensor->clamp_(a_, b_);
+    );
+
+    return ResultTensor(*tensor);
+}
+
 Tensor THSTensor_rand(
     const Generator gen,
     const int64_t* sizes,
@@ -82,8 +107,8 @@ Tensor THSTensor_rand(
         .requires_grad(requires_grad);
 
         tensor = new torch::Tensor(gen == nullptr ? torch::rand(at::ArrayRef<int64_t>(sizes, length), options) : torch::rand(at::ArrayRef<int64_t>(sizes, length), *gen, options));
-    )
-        return tensor;
+    );
+    return tensor;
 }
 
 Tensor THSTensor_rand_out(const Generator gen, const int64_t* sizes, const int length, const Tensor out)

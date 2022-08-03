@@ -2569,6 +2569,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.zeros_(tensor)) { }
+                using (var res = torch.nn.init.zeros_(tensor)) { }
             }
         }
 
@@ -2578,6 +2579,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.ones_(tensor)) { }
                 using (var res = torch.nn.init.ones_(tensor)) { }
             }
         }
@@ -2589,6 +2591,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.dirac_(tensor)) { }
+                using (var res = torch.nn.init.dirac_(tensor)) { }
             }
         }
 
@@ -2598,6 +2601,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.eye_(tensor)) { }
                 using (var res = torch.nn.init.eye_(tensor)) { }
             }
         }
@@ -2609,6 +2613,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.constant_(tensor, Math.PI)) { }
+                using (var res = torch.nn.init.constant_(tensor, Math.PI)) { }
             }
         }
 
@@ -2619,6 +2624,8 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.uniform_(tensor)) { }
+                using (var gen = new torch.Generator(4711L))
+                using (var res = torch.nn.init.uniform_(tensor, generator: gen)) { }
             }
         }
 
@@ -2629,6 +2636,20 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.normal_(tensor)) { }
+                using (var gen = new torch.Generator(4711L))
+                using (var res = torch.nn.init.normal_(tensor, generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InitTruncNormal()
+        {
+            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.trunc_normal_(tensor, 0, 1, -0.5, 0.5)) { }
+                using (var gen = new torch.Generator(4711L))
+                using (var res = torch.nn.init.trunc_normal_(tensor, generator: gen)) { }
             }
         }
 
@@ -2638,6 +2659,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.orthogonal_(tensor)) { }
                 using (var res = torch.nn.init.orthogonal_(tensor)) { }
             }
         }
@@ -2649,6 +2671,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.sparse_(tensor, 0.25)) { }
+                using (var res = torch.nn.init.sparse_(tensor, 0.25)) { }
             }
         }
 
@@ -2658,6 +2681,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.kaiming_uniform_(tensor)) { }
                 using (var res = torch.nn.init.kaiming_uniform_(tensor)) { }
             }
         }
@@ -2669,6 +2693,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.kaiming_normal_(tensor)) { }
+                using (var res = torch.nn.init.kaiming_normal_(tensor)) { }
             }
         }
 
@@ -2679,6 +2704,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.xavier_uniform_(tensor)) { }
+                using (var res = torch.nn.init.xavier_uniform_(tensor)) { }
             }
         }
 
@@ -2688,6 +2714,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.xavier_normal_(tensor)) { }
                 using (var res = torch.nn.init.xavier_normal_(tensor)) { }
             }
         }
