@@ -475,5 +475,86 @@ namespace TorchSharp
             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
             return new Tensor(res);
         }
+
+
+        /// <summary>
+        /// Accumulate the elements of alpha times source into the input tensor by adding to the indices in the order given in index.
+        /// 
+        /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
+        /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">Dimension along which to index</param>
+        /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+        /// <param name="source">The tensor containing values to add</param>
+        /// <param name="alpha">The scalar multiplier for source</param>
+        /// <returns></returns>
+        public static Tensor index_add(Tensor input, long dim, Tensor index, Tensor source, Scalar alpha) => input.index_add(dim, index, source, alpha);
+
+        /// <summary>
+        /// Accumulate, in place, the elements of alpha times source into the input tensor by adding to the indices in the order given in index.
+        /// 
+        /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
+        /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">Dimension along which to index</param>
+        /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+        /// <param name="source">The tensor containing values to add</param>
+        /// <param name="alpha">The scalar multiplier for source</param>
+        /// <returns></returns>
+        public static Tensor index_add_(Tensor input, long dim, Tensor index, Tensor source, Scalar alpha) => input.index_add_(dim, index, source, alpha);
+
+        /// <summary>
+        /// Copies the elements of the source tensor into the input tensor by selecting the indices in the order given in index.
+        ///
+        /// For example, if dim == 0 and index[i] == j, then the ith row of tensor is copied to the jth row of the input tensor.
+        /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">Dimension along which to index</param>
+        /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+        /// <param name="source">The tensor containing values to copy</param>
+        /// <returns></returns>
+        public static Tensor index_copy(Tensor input, long dim, Tensor index, Tensor source) => input.index_copy(dim, index, source);
+
+        /// <summary>
+        /// Copies, in place, the elements of the source tensor into the input tensor by selecting the indices in the order given in index.
+        ///
+        /// For example, if dim == 0 and index[i] == j, then the ith row of tensor is copied to the jth row of the input tensor.
+        /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">Dimension along which to index</param>
+        /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+        /// <param name="source">The tensor containing values to copy</param>
+        /// <returns></returns>
+        public static Tensor index_copy_(Tensor input, long dim, Tensor index, Tensor source) => input.index_copy_(dim, index, source);
+
+        /// <summary>
+        /// Fills the elements of the input tensor with value value by selecting the indices in the order given in index.
+        /// 
+        /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
+        /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">Dimension along which to index</param>
+        /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+        /// <param name="value">The scalar multiplier for source</param>
+        /// <returns></returns>
+        public static Tensor index_fill(Tensor input, long dim, Tensor index, Scalar value) => input.index_fill(dim, index, value);
+
+        /// <summary>
+        /// Fills, in place, the elements of the input tensor with value value by selecting the indices in the order given in index.
+        /// 
+        /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
+        /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">Dimension along which to index</param>
+        /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+        /// <param name="value">The scalar multiplier for source</param>
+        /// <returns></returns>
+        public static Tensor index_fill_(Tensor input, long dim, Tensor index, Scalar value) => input.index_fill_(dim, index, value);
     }
 }

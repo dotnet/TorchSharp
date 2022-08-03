@@ -4,6 +4,13 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.97.1
 
+__API Changes__:
+
+Added torch.nn.init.trunc_normal_
+Added index_add, index_copy, index_fill
+
+## NuGet Version 0.97.1
+
 This release is made shortly after 0.97.0, since it adresses a serious performance issue when creating large tensors from .NET arrays.
 
 __Fixed Bugs:__

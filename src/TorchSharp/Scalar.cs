@@ -9,7 +9,15 @@ namespace TorchSharp
     /// </summary>
     public sealed class Scalar : IDisposable
     {
-        internal IntPtr Handle { get; private set; }
+        internal IntPtr Handle {
+            get {
+                if (handle == IntPtr.Zero)
+                    throw new InvalidOperationException("Scalar invalid -- empty handle.");
+                return handle;
+            }
+            private set { handle = value; }
+        }
+        private IntPtr handle;
 
         internal Scalar(IntPtr handle)
         {
