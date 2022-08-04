@@ -61,11 +61,45 @@ Tensor THSTensor_hfft(const Tensor tensor, const int64_t n, const int64_t dim, i
     CATCH_TENSOR(torch::fft::hfft(*tensor, nArg, dim, normArg));
 }
 
+Tensor THSTensor_hfft2(const Tensor tensor, const int64_t* s, const int64_t* dim, int8_t norm)
+{
+    auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, 2));
+    auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
+    auto dArg = (dim == nullptr) ? c10::IntArrayRef({ -2, -1 }) : c10::IntArrayRef(dim, 2);
+    CATCH_TENSOR(torch::fft::hfft2(*tensor, sArg, dArg, normArg));
+}
+
+Tensor THSTensor_hfftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm)
+{
+    auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
+    auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, s_length));
+    c10::IntArrayRef dArg = (dim == nullptr) ? c10::IntArrayRef({-2, -1}) : c10::IntArrayRef(dim, dim_length);
+
+    CATCH_TENSOR(torch::fft::hfftn(*tensor, sArg, dArg, normArg));
+}
+
 Tensor THSTensor_ihfft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm)
 {
     auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     CATCH_TENSOR(torch::fft::ihfft(*tensor, nArg, dim, normArg));
+}
+
+Tensor THSTensor_ihfft2(const Tensor tensor, const int64_t* s, const int64_t* dim, int8_t norm)
+{
+    auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, 2));
+    auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
+    auto dArg = (dim == nullptr) ? c10::IntArrayRef({ -2, -1 }) : c10::IntArrayRef(dim, 2);
+    CATCH_TENSOR(torch::fft::ihfft2(*tensor, sArg, dArg, normArg));
+}
+
+Tensor THSTensor_ihfftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm)
+{
+    auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
+    auto sArg = (s == nullptr) ? c10::nullopt : c10::optional<c10::IntArrayRef>(c10::IntArrayRef(s, s_length));
+    c10::IntArrayRef dArg = (dim == nullptr) ? c10::IntArrayRef({ -2, -1 }) : c10::IntArrayRef(dim, dim_length);
+
+    CATCH_TENSOR(torch::fft::ihfftn(*tensor, sArg, dArg, normArg));
 }
 
 Tensor THSTensor_rfft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm)

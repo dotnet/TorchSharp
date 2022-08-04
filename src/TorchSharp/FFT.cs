@@ -447,6 +447,129 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);
             }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_hfft2(IntPtr tensor, IntPtr s, IntPtr dim, sbyte norm);
+
+            /// <summary>
+            /// Computes the 2-dimensional discrete Fourier transform of a Hermitian symmetric input signal.
+            ///
+            /// Equivalent to hfftn() but only transforms the last two dimensions by default.
+            /// input is interpreted as a one-sided Hermitian signal in the time domain.
+            /// By the Hermitian property, the Fourier transform will be real-valued.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="s">
+            /// Signal size in the transformed dimensions.
+            /// If given, each dimension dim[i] will either be zero-padded or trimmed to the length s[i] before computing the IFFT.
+            /// If a length -1 is specified, no padding is done in that dimension.
+            /// </param>
+            /// <param name="dim">Dimensions to be transformed</param>
+            /// <param name="norm">Normalization mode.</param>
+            public static Tensor hfft2(Tensor input, long[] s = null, long[] dim = null, FFTNormType norm = FFTNormType.Backward)
+            {
+                if (input.Dimensions < 2) throw new ArgumentException("hfft2() input should be at least 2D");
+                if (dim == null) dim = new long[] { -2, -1 };
+                unsafe {
+                    fixed (long* ps = s, pDim = dim) {
+                        var res = THSTensor_hfft2(input.Handle, (IntPtr)ps, (IntPtr)pDim, (sbyte)norm);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
+                    }
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_ihfft2(IntPtr tensor, IntPtr s, IntPtr dim, sbyte norm);
+
+            /// <summary>
+            /// Computes the 2-dimensional inverse discrete Fourier transform of a Hermitian symmetric input signal.
+            ///
+            /// Equivalent to hfftn() but only transforms the last two dimensions by default.
+            /// input is interpreted as a one-sided Hermitian signal in the time domain.
+            /// By the Hermitian property, the Fourier transform will be real-valued.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="s">
+            /// Signal size in the transformed dimensions.
+            /// If given, each dimension dim[i] will either be zero-padded or trimmed to the length s[i] before computing the IFFT.
+            /// If a length -1 is specified, no padding is done in that dimension.
+            /// </param>
+            /// <param name="dim">Dimensions to be transformed</param>
+            /// <param name="norm">Normalization mode.</param>
+            public static Tensor ihfft2(Tensor input, long[] s = null, long[] dim = null, FFTNormType norm = FFTNormType.Backward)
+            {
+                if (input.Dimensions < 2) throw new ArgumentException("ihfft2() input should be at least 2D");
+                if (dim == null) dim = new long[] { -2, -1 };
+                unsafe {
+                    fixed (long* ps = s, pDim = dim) {
+                        var res = THSTensor_ihfft2(input.Handle, (IntPtr)ps, (IntPtr)pDim, (sbyte)norm);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
+                    }
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_hfftn(IntPtr tensor, IntPtr s, int s_length, IntPtr dim, int dim_length, sbyte norm);
+
+            /// <summary>
+            /// Computes the n-dimensional discrete Fourier transform of a Herimitian symmetric input signal.
+            ///
+            /// input is interpreted as a one-sided Hermitian signal in the time domain.
+            /// By the Hermitian property, the Fourier transform will be real-valued.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="s">
+            /// Signal size in the transformed dimensions.
+            /// If given, each dimension dim[i] will either be zero-padded or trimmed to the length s[i] before computing the IFFT.
+            /// If a length -1 is specified, no padding is done in that dimension.
+            /// </param>
+            /// <param name="dim">Dimensions to be transformed</param>
+            /// <param name="norm">Normalization mode.</param>
+            public static Tensor hfftn(Tensor input, long[] s = null, long[] dim = null, FFTNormType norm = FFTNormType.Backward)
+            {
+                if (input.Dimensions < 2) throw new ArgumentException("hfftn() input should be at least 2D");
+                var slen = (s == null) ? 0 : s.Length;
+                var dlen = (dim == null) ? 0 : dim.Length;
+                unsafe {
+                    fixed (long* ps = s, pDim = dim) {
+                        var res = THSTensor_hfftn(input.Handle, (IntPtr)ps, slen, (IntPtr)pDim, dlen, (sbyte)norm);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
+                    }
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_ihfftn(IntPtr tensor, IntPtr s, int s_length, IntPtr dim, int dim_length, sbyte norm);
+            /// <summary>
+            /// Computes the n-dimensional inverse discrete Fourier transform of a Herimitian symmetric input signal.
+            ///
+            /// input is interpreted as a one-sided Hermitian signal in the time domain.
+            /// By the Hermitian property, the Fourier transform will be real-valued.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="s">
+            /// Signal size in the transformed dimensions.
+            /// If given, each dimension dim[i] will either be zero-padded or trimmed to the length s[i] before computing the IFFT.
+            /// If a length -1 is specified, no padding is done in that dimension.
+            /// </param>
+            /// <param name="dim">Dimensions to be transformed</param>
+            /// <param name="norm">Normalization mode.</param>
+            public static Tensor ihfftn(Tensor input, long[] s = null, long[] dim = null, FFTNormType norm = FFTNormType.Backward)
+            {
+                if (input.Dimensions < 2) throw new ArgumentException("ihfftn() input should be at least 2D");
+                var slen = (s == null) ? 0 : s.Length;
+                var dlen = (dim == null) ? 0 : dim.Length;
+                unsafe {
+                    fixed (long* ps = s, pDim = dim) {
+                        var res = THSTensor_ihfftn(input.Handle, (IntPtr)ps, slen, (IntPtr)pDim, dlen, (sbyte)norm);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new Tensor(res);
+                    }
+                }
+            }
         }
     }
 }

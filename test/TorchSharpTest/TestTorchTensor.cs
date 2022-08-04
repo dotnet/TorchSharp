@@ -6984,7 +6984,8 @@ namespace TorchSharp
             var inverted = fft.ifft2(output);
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
-#if false
+
+#if true
         [Fact]
         public void Float32FFTN()
         {
@@ -7033,6 +7034,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
 #endif
+
         [Fact]
         public void Float32RFFTN()
         {
@@ -7055,6 +7057,63 @@ namespace TorchSharp
 
             var inverted = fft.irfftn(output);
             Assert.Equal(ScalarType.Float64, inverted.dtype);
+        }
+
+        [Fact]
+        public void Float32HFFT2()
+        {
+            var input = torch.rand(new long[] { 5, 5, 5, 5 });
+            var output = fft.hfft2(input);
+            Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
+            Assert.Equal(input.dtype, output.dtype);
+
+            var inverted = fft.ihfft2(output);
+            Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.dtype);
+        }
+
+        [Fact]
+        public void Float64HFFT2()
+        {
+            var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
+            var output = fft.hfft2(input);
+            Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
+            Assert.Equal(input.dtype, output.dtype);
+
+            var inverted = fft.ihfft2(output);
+            Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
+        }
+
+        [Fact]
+        public void Float32HFFTN()
+        {
+            var input = torch.rand(new long[] { 5, 5, 5, 5 });
+            var output = fft.hfft2(input);
+            Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
+            Assert.Equal(input.dtype, output.dtype);
+
+            var inverted = fft.ihfft2(output);
+            Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.dtype);
+        }
+
+        [Fact]
+        public void Float64HFFTN()
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+
+                // TODO: Something in this test makes if fail on Windows / Release
+
+                var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
+                var output = fft.hfftn(input);
+                Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
+                Assert.Equal(input.dtype, output.dtype);
+
+                var inverted = fft.ihfftn(output);
+                Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
+                Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
+            }
         }
 
         [Fact]

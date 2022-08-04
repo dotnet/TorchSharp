@@ -1502,6 +1502,12 @@ EXPORT_API(Tensor) THSTensor_fft2(const Tensor tensor, const int64_t* s, const i
 
 EXPORT_API(Tensor) THSTensor_ifft2(const Tensor tensor, const int64_t* s, const int64_t* dim, int8_t norm);
 
+EXPORT_API(Tensor) THSTensor_hfft2(const Tensor tensor, const int64_t* s, const int64_t* dim, int8_t norm);
+EXPORT_API(Tensor) THSTensor_ihfft2(const Tensor tensor, const int64_t* s, const int64_t* dim, int8_t norm);
+
+EXPORT_API(Tensor) THSTensor_hfftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm);
+EXPORT_API(Tensor) THSTensor_ihfftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm);
+
 EXPORT_API(Tensor) THSTensor_fftn(const Tensor tensor, const int64_t *s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm);
 
 EXPORT_API(Tensor) THSTensor_ifftn(const Tensor tensor, const int64_t* s, const int s_length, const int64_t* dim, const int dim_length, int8_t norm);
