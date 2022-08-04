@@ -7176,6 +7176,35 @@ namespace TorchSharp
             BFloat16 = 15
         }
 
+        internal static ScalarType ToScalarType(Type t)
+        {
+            switch (true) {
+            case bool _ when t == typeof(bool):
+                return ScalarType.Bool;
+            case bool _ when t == typeof(byte):
+                return ScalarType.Byte;
+            case bool _ when t == typeof(byte):
+                return ScalarType.Byte;
+            case bool _ when t == typeof(sbyte):
+                return ScalarType.Int8;
+            case bool _ when t == typeof(short):
+                return ScalarType.Int16;
+            case bool _ when t == typeof(int):
+                return ScalarType.Int32;
+            case bool _ when t == typeof(long):
+                return ScalarType.Int64;
+            case bool _ when t == typeof(float):
+                return ScalarType.Float32;
+            case bool _ when t == typeof(double):
+                return ScalarType.Float64;
+            case bool _ when t == typeof((float, float)):
+                return ScalarType.ComplexFloat32;
+            case bool _ when t == typeof(System.Numerics.Complex):
+                return ScalarType.ComplexFloat64;
+            }
+            throw new NotSupportedException($"The type {t.FullName} is not supported.");
+        }
+
         public struct FInfo
         {
             public int bits;

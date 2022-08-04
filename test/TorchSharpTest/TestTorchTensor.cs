@@ -767,6 +767,15 @@ namespace TorchSharp
                     () => Assert.Equal(ScalarType.Bool, t.dtype));
             }
             {
+                // The number of input dimensions shouldn't matter.
+                var array = new double[2,4];
+                var t = torch.frombuffer(array, ScalarType.Bool, 5, 2);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(ScalarType.Bool, t.dtype));
+            }
+            {
                 var array = new double[] { 0, 1, 2, 3, 4, 5, 6, 7};
                 var t = torch.frombuffer(array, ScalarType.Float64, 5, 2);
                 Assert.Multiple(

@@ -97,8 +97,12 @@ namespace TorchSharp
         public static Tensor as_tensor(Tensor data, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
             if (dtype != null && device != null && (data.dtype != dtype || data.device != device)) {
-                return data.clone().to(dtype.Value, device).requires_grad_(data.requires_grad);
-            } else {
+                return data.to(dtype.Value, device).requires_grad_(data.requires_grad);
+            } else if (dtype != null && data.dtype != dtype) {
+                return data.to(dtype.Value).requires_grad_(data.requires_grad);
+            } else if (device != null && data.device != device) {
+                return data.to(device).requires_grad_(data.requires_grad);
+            } else { 
                 return data.alias();
             }
         }
@@ -2491,38 +2495,13 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor from_array(Array rawArray)
         {
-            var dtype = ToScalarType(rawArray.GetType().GetElementType()!);
+            var t = rawArray.GetType().GetElementType();
+            if (t == typeof((float, float)))
+                throw new NotImplementedException("from_array() for (float,float) elements.");
+
+            var dtype = ToScalarType(t!);
 
             return from_array(rawArray, dtype, CPU, false);
-        }
-
-        private static ScalarType ToScalarType(Type t)
-        {
-            switch (true) {
-            case bool _ when t == typeof(bool):
-                return ScalarType.Bool;
-            case bool _ when t == typeof(byte):
-                return ScalarType.Byte;
-            case bool _ when t == typeof(byte):
-                return ScalarType.Byte;
-            case bool _ when t == typeof(sbyte):
-                return ScalarType.Int8;
-            case bool _ when t == typeof(short):
-                return ScalarType.Int16;
-            case bool _ when t == typeof(int):
-                return ScalarType.Int32;
-            case bool _ when t == typeof(long):
-                return ScalarType.Int64;
-            case bool _ when t == typeof(float):
-                return ScalarType.Float32;
-            case bool _ when t == typeof(double):
-                return ScalarType.Float64;
-            case bool _ when t == typeof((float,float)):
-                return ScalarType.ComplexFloat32;
-            case bool _ when t == typeof(System.Numerics.Complex):
-                return ScalarType.ComplexFloat64;
-            }
-            throw new NotSupportedException($"The type {t.FullName} is not supported.");
         }
 
         [System.Diagnostics.Contracts.Pure]
