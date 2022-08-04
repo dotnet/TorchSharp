@@ -150,12 +150,13 @@ Tensor THSTensor_ifftshift(const Tensor tensor, const int64_t* dim, const int di
     CATCH_TENSOR(torch::fft::ifftshift(*tensor, dArg));
 }
 
-Tensor THSTensor_stft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool normalized, bool onesided, bool return_complex)
+Tensor THSTensor_stft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool normalized, int64_t onesided, bool return_complex)
 {
     auto _hop_length = hop_length == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(hop_length);
     auto _win_length = win_length == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(win_length);
     auto _window = window == nullptr ? c10::optional<at::Tensor>() : *window;
-    CATCH_TENSOR(x->stft(n_fft, _hop_length, _win_length, _window, normalized, onesided, return_complex));
+    auto _onesided = (onesided == -1) ? c10::optional<bool>() : c10::optional<bool>((bool)onesided);
+    CATCH_TENSOR(x->stft(n_fft, _hop_length, _win_length, _window, normalized, _onesided, return_complex));
 }
 
 Tensor THSTensor_istft(const Tensor x, int64_t n_fft, int64_t hop_length, int64_t win_length, const Tensor window, bool center, bool normalized, int64_t onesided, int64_t length, bool return_complex)

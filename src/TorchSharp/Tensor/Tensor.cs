@@ -6998,7 +6998,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_stft(IntPtr x, long n_fft, long hop_length, long win_length, IntPtr window, bool normalized, bool onesided, bool return_complex);
+            extern static IntPtr THSTensor_stft(IntPtr x, long n_fft, long hop_length, long win_length, IntPtr window, bool normalized, long onesided, bool return_complex);
 
             /// <summary>
             /// Short-time Fourier transform (STFT).
@@ -7017,7 +7017,11 @@ namespace TorchSharp
             {
                 IntPtr _input = Handle;
                 IntPtr _window = (window is null) ? IntPtr.Zero : window.Handle;
-                bool _onesided = onesided.HasValue ? onesided.Value : !is_complex();
+
+                long _onesided = -1; // encoding of null
+                if (onesided.HasValue) {
+                    _onesided = (onesided.Value ? 1 : 0);
+                }
                 bool _return_complex = return_complex.HasValue ? return_complex.Value : is_complex();
 
                 if (center) {
@@ -7068,11 +7072,9 @@ namespace TorchSharp
                 var fft_size = shape[1];
                 IntPtr _window = (window is null) ? IntPtr.Zero : window.Handle;
 
-                int _onesided = -1; // encoding of Python 'None'
+                long _onesided = -1; // encoding of null
                 if (onesided.HasValue) {
                     _onesided = (onesided.Value ? 1 : 0);
-                } else if (n_fft != fft_size) {
-                    _onesided = 1;
                 }
 
                 var res = THSTensor_istft(Handle, n_fft, hop_length, win_length, _window, center, normalized, _onesided, length, return_complex);
