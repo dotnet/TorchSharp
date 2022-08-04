@@ -2,12 +2,19 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.97.1
+## NuGet Version 0.97.2
+
+__Fixed Bugs:__
+
+#670 Better align methods for creating tensors from .NET arrays with Pytorch APIs.<br/>
+#679 The default value of onesided or torch.istft() is not aligned with PyTorch<br/>
 
 __API Changes__:
 
-Added torch.nn.init.trunc_normal_
-Added index_add, index_copy, index_fill
+Added torch.nn.init.trunc_normal_<br/>
+Added index_add, index_copy, index_fill<br/>
+Added torch.frombuffer()<br/>
+Rationalizing torch.tensor(), torch.as_tensor(), and torch.from_array()<br/>
 
 ## NuGet Version 0.97.1
 

@@ -1284,6 +1284,18 @@ namespace TorchSharp
                 Assert.Equal(1, t.ndim);
                 Assert.Equal(ScalarType.ComplexFloat64, t.dtype);
             }
+            {
+                var array = new System.Numerics.Complex[8];
+                var t = torch.tensor(array);
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.ComplexFloat64, t.dtype);
+
+                var s = t.reshape(2, 4);
+                Assert.Multiple(
+                    () => Assert.Equal(2, s.ndim),
+                    () => Assert.Equal(2, s.shape[0]),
+                    () => Assert.Equal(4, s.shape[1]));
+            }
 
             {
                 var array = new System.Numerics.Complex[1, 2];
@@ -1339,8 +1351,8 @@ namespace TorchSharp
                     () => Assert.Equal(1, t.ndim),
                     () => Assert.Equal(8, t.shape[0]),
                     () => Assert.Equal(3, t.real[3].item<double>()),
-                    () => Assert.Equal(17, array[6].Real),
-                    () => Assert.Equal(15, array[6].Imaginary),
+                    () => Assert.Equal(6, array[6].Real),
+                    () => Assert.Equal(-6, array[6].Imaginary),
                     () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
             }
         }
