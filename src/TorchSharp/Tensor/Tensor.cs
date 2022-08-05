@@ -1535,6 +1535,144 @@ namespace TorchSharp
             public Tensor take_along_dim(IEnumerable<long> indices, long dim) => take_along_dim(torch.tensor(indices.ToArray()), dim);
 
             [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_index_add(IntPtr tensor, long dim, IntPtr index, IntPtr source, IntPtr alpha);
+
+            /// <summary>
+            /// Accumulate the elements of alpha times source into the input tensor by adding to the indices in the order given in index.
+            /// 
+            /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// </summary>
+            /// <param name="dim">Dimension along which to index</param>
+            /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+            /// <param name="source">The tensor containing values to add</param>
+            /// <param name="alpha">The scalar multiplier for source</param>
+            /// <returns></returns>
+            public Tensor index_add(long dim, Tensor index, Tensor source, Scalar alpha)
+            {
+                if (index.dtype != ScalarType.Int64)
+                    throw new ArgumentException("Element type of 'index' must be 'Int64'");
+                var res = THSTensor_index_add(Handle, dim, index.Handle, source.Handle, alpha.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_index_add_(IntPtr tensor, long dim, IntPtr index, IntPtr source, IntPtr alpha);
+
+            /// <summary>
+            /// Accumulate, in place, the elements of alpha times source into the input tensor by adding to the indices in the order given in index.
+            /// 
+            /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// </summary>
+            /// <param name="dim">Dimension along which to index</param>
+            /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+            /// <param name="source">The tensor containing values to add</param>
+            /// <param name="alpha">The scalar multiplier for source</param>
+            /// <returns></returns>
+            public Tensor index_add_(long dim, Tensor index, Tensor source, Scalar alpha)
+            {
+                if (index.dtype != ScalarType.Int64)
+                    throw new ArgumentException("Element type of 'index' must be 'Int64'");
+                var res = THSTensor_index_add_(Handle, dim, index.Handle, source.Handle, alpha.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_index_copy(IntPtr tensor, long dim, IntPtr index, IntPtr source);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_index_copy_(IntPtr tensor, long dim, IntPtr index, IntPtr source);
+
+            /// <summary>
+            /// Copies the elements of the source tensor into the input tensor by selecting the indices in the order given in index.
+            ///
+            /// For example, if dim == 0 and index[i] == j, then the ith row of tensor is copied to the jth row of the input tensor.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// </summary>
+            /// <param name="dim">Dimension along which to index</param>
+            /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+            /// <param name="source">The tensor containing values to copy</param>
+            /// <returns></returns>
+            public Tensor index_copy(long dim, Tensor index, Tensor source)
+            {
+                if (index.dtype != ScalarType.Int64)
+                    throw new ArgumentException("Element type of 'index' must be 'Int64'");
+                var res = THSTensor_index_copy(Handle, dim, index.Handle, source.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Copies, in place, the elements of the source tensor into the input tensor by selecting the indices in the order given in index.
+            ///
+            /// For example, if dim == 0 and index[i] == j, then the ith row of tensor is copied to the jth row of the input tensor.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// </summary>
+            /// <param name="dim">Dimension along which to index</param>
+            /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+            /// <param name="source">The tensor containing values to copy</param>
+            /// <returns></returns>
+            public Tensor index_copy_(long dim, Tensor index, Tensor source)
+            {
+                if (index.dtype != ScalarType.Int64)
+                    throw new ArgumentException("Element type of 'index' must be 'Int64'");
+                var res = THSTensor_index_copy_(Handle, dim, index.Handle, source.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_index_fill(IntPtr tensor, long dim, IntPtr index, IntPtr value);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_index_fill_(IntPtr tensor, long dim, IntPtr index, IntPtr value);
+
+            /// <summary>
+            /// Fills the elements of the input tensor with value value by selecting the indices in the order given in index.
+            /// 
+            /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// </summary>
+            /// <param name="dim">Dimension along which to index</param>
+            /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+            /// <param name="value">The scalar multiplier for source</param>
+            /// <returns></returns>
+            public Tensor index_fill(long dim, Tensor index, Scalar value)
+            {
+                if (index.dtype != ScalarType.Int64)
+                    throw new ArgumentException("Element type of 'index' must be 'Int64'");
+                var res = THSTensor_index_fill(Handle, dim, index.Handle, value.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Fills, in place, the elements of the input tensor with value value by selecting the indices in the order given in index.
+            /// 
+            /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// </summary>
+            /// <param name="dim">Dimension along which to index</param>
+            /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
+            /// <param name="value">The scalar multiplier for source</param>
+            /// <returns></returns>
+            public Tensor index_fill_(long dim, Tensor index, Scalar value)
+            {
+                if (index.dtype != ScalarType.Int64)
+                    throw new ArgumentException("Element type of 'index' must be 'Int64'");
+                var res = THSTensor_index_fill_(Handle, dim, index.Handle, value.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_reshape(IntPtr tensor, IntPtr shape, int length);
 
             /// <summary>
@@ -4337,7 +4475,7 @@ namespace TorchSharp
             /// Alias for torch.linalg.inv()
             /// </summary>
             public Tensor inverse() => torch.linalg.inv(this);
-            
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_prelu(IntPtr tensor, IntPtr trg);
 
@@ -4534,21 +4672,21 @@ namespace TorchSharp
             // private, shared implementation
             private unsafe Tensor _std(ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
-                    fixed (long* pdims = dimensions) {
-                        var res = THSTensor_std_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, unbiased, keepDimension);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
-                    }
+                fixed (long* pdims = dimensions) {
+                    var res = THSTensor_std_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, unbiased, keepDimension);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
             }
 
             // private, shared implementation
             private unsafe Tensor _var(ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
-                    fixed (long* pdims = dimensions) {
-                        var res = THSTensor_var_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, unbiased, keepDimension);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new Tensor(res);
-                    }
+                fixed (long* pdims = dimensions) {
+                    var res = THSTensor_var_along_dimensions(Handle, (IntPtr)pdims, dimensions.Length, unbiased, keepDimension);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
             }
 
             /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
@@ -4701,7 +4839,7 @@ namespace TorchSharp
             /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
             /// <param name="type"></param>
             /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-            
+
             [Pure]
             public (Tensor std, Tensor mean) var_mean(long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
             {
@@ -6860,7 +6998,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_stft(IntPtr x, long n_fft, long hop_length, long win_length, IntPtr window, bool normalized, bool onesided, bool return_complex);
+            extern static IntPtr THSTensor_stft(IntPtr x, long n_fft, long hop_length, long win_length, IntPtr window, bool normalized, long onesided, bool return_complex);
 
             /// <summary>
             /// Short-time Fourier transform (STFT).
@@ -6879,7 +7017,11 @@ namespace TorchSharp
             {
                 IntPtr _input = Handle;
                 IntPtr _window = (window is null) ? IntPtr.Zero : window.Handle;
-                bool _onesided = onesided.HasValue ? onesided.Value : !is_complex();
+
+                long _onesided = -1; // encoding of null
+                if (onesided.HasValue) {
+                    _onesided = (onesided.Value ? 1 : 0);
+                }
                 bool _return_complex = return_complex.HasValue ? return_complex.Value : is_complex();
 
                 if (center) {
@@ -6908,7 +7050,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_istft(IntPtr x, long n_fft, long hop_length, long win_length, IntPtr window, bool center, bool normalized, bool onesided, long length, bool return_complex);
+            extern static IntPtr THSTensor_istft(IntPtr x, long n_fft, long hop_length, long win_length, IntPtr window, bool center, bool normalized, long onesided, long length, bool return_complex);
 
             /// <summary>
             /// Inverse short time Fourier Transform. This is expected to be the inverse of stft().
@@ -6927,8 +7069,14 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor istft(long n_fft, long hop_length = -1, long win_length = -1, Tensor? window = null, bool center = true, bool normalized = false, bool? onesided = null, long length = -1, bool return_complex = false)
             {
+                var fft_size = shape[1];
                 IntPtr _window = (window is null) ? IntPtr.Zero : window.Handle;
-                bool _onesided = onesided.HasValue ? onesided.Value : !is_complex();
+
+                long _onesided = -1; // encoding of null
+                if (onesided.HasValue) {
+                    _onesided = (onesided.Value ? 1 : 0);
+                }
+
                 var res = THSTensor_istft(Handle, n_fft, hop_length, win_length, _window, center, normalized, _onesided, length, return_complex);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -7026,6 +7174,35 @@ namespace TorchSharp
             //QUInt8 = 13,
             //QUInt32 = 14,
             BFloat16 = 15
+        }
+
+        internal static ScalarType ToScalarType(Type t)
+        {
+            switch (true) {
+            case bool _ when t == typeof(bool):
+                return ScalarType.Bool;
+            case bool _ when t == typeof(byte):
+                return ScalarType.Byte;
+            case bool _ when t == typeof(byte):
+                return ScalarType.Byte;
+            case bool _ when t == typeof(sbyte):
+                return ScalarType.Int8;
+            case bool _ when t == typeof(short):
+                return ScalarType.Int16;
+            case bool _ when t == typeof(int):
+                return ScalarType.Int32;
+            case bool _ when t == typeof(long):
+                return ScalarType.Int64;
+            case bool _ when t == typeof(float):
+                return ScalarType.Float32;
+            case bool _ when t == typeof(double):
+                return ScalarType.Float64;
+            case bool _ when t == typeof((float, float)):
+                return ScalarType.ComplexFloat32;
+            case bool _ when t == typeof(System.Numerics.Complex):
+                return ScalarType.ComplexFloat64;
+            }
+            throw new NotSupportedException($"The type {t.FullName} is not supported.");
         }
 
         public struct FInfo

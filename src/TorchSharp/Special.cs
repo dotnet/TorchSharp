@@ -389,6 +389,18 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Alias for torch.special.expit()
+            /// </summary>
+            /// <returns></returns>
+            public static Tensor sigmoid(Tensor input) => input.sigmoid();
+
+            /// <summary>
+            /// Alias for torch.special.expit()
+            /// </summary>
+            /// <returns></returns>
+            public static Tensor sigmoid_(Tensor input) => input.sigmoid_();
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSSpecial_xlog1py(IntPtr tensor, IntPtr other);
 

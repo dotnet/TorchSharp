@@ -8,6 +8,7 @@ using System.Globalization;
 using Xunit;
 using Xunit.Sdk;
 using static TorchSharp.torch;
+using ICSharpCode.SharpZipLib;
 
 #nullable enable
 
@@ -670,62 +671,158 @@ namespace TorchSharp
             {
                 var array = new bool[8];
                 var t = torch.tensor(array);
-                Assert.Equal(1, t.ndim);
-                Assert.Equal(ScalarType.Bool, t.dtype);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(ScalarType.Bool, t.dtype));
             }
 
             {
                 var array = new bool[8];
                 var t = torch.tensor(array, new long[] { 8 });
-                Assert.Equal(1, t.ndim);
-                Assert.Equal(ScalarType.Bool, t.dtype);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(ScalarType.Bool, t.dtype));
             }
 
             {
                 var array = new int[8];
                 var t = torch.tensor(array);
-                Assert.Equal(1, t.ndim);
-                Assert.Equal(ScalarType.Int32, t.dtype);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(ScalarType.Int32, t.dtype));
             }
 
             {
                 var array = new float[8];
                 var t = torch.tensor(array);
-                Assert.Equal(1, t.ndim);
-                Assert.Equal(ScalarType.Float32, t.dtype);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(ScalarType.Float32, t.dtype));
             }
 
             {
                 var array = new double[1, 2];
                 var t = torch.from_array(array);
-                Assert.Equal(2, t.ndim);
-                Assert.Equal(new long[] { 1, 2 }, t.shape);
-                Assert.Equal(ScalarType.Float64, t.dtype);
+                Assert.Multiple(
+                    () => Assert.Equal(2, t.ndim),
+                    () => Assert.Equal(new long[] { 1, 2 }, t.shape),
+                    () => Assert.Equal(ScalarType.Float64, t.dtype));
             }
 
             {
                 var array = new long[1, 2, 3];
                 var t = torch.from_array(array);
-                Assert.Equal(3, t.ndim);
-                Assert.Equal(new long[] { 1, 2, 3 }, t.shape);
-                Assert.Equal(ScalarType.Int64, t.dtype);
+                Assert.Multiple(
+                    () => Assert.Equal(3, t.ndim),
+                    () => Assert.Equal(new long[] { 1, 2, 3 }, t.shape),
+                    () => Assert.Equal(ScalarType.Int64, t.dtype));
             }
 
             {
                 var array = new int[1, 2, 3, 4];
                 var t = torch.from_array(array);
-                Assert.Equal(4, t.ndim);
-                Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
-                Assert.Equal(ScalarType.Int32, t.dtype);
+                Assert.Multiple(
+                    () => Assert.Equal(4, t.ndim),
+                    () => Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape),
+                    () => Assert.Equal(ScalarType.Int32, t.dtype));
+            }
+
+            {
+                var array = new System.Numerics.Complex[1, 2, 3, 4];
+                var t = torch.from_array(array);
+                Assert.Multiple(
+                    () => Assert.Equal(4, t.ndim),
+                    () => Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape),
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype));
             }
 
             {
                 var array = new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
                 var t = torch.from_array(array);
-                Assert.Equal(3, t.ndim);
-                Assert.Equal(new long[] { 2, 2, 2 }, t.shape);
-                Assert.Equal(ScalarType.Float64, t.dtype);
-                Assert.Equal(array.Cast<double>().ToArray(), t.data<double>().ToArray());
+                Assert.Multiple(
+                    () => Assert.Equal(3, t.ndim),
+                    () => Assert.Equal(new long[] { 2, 2, 2 }, t.shape),
+                    () => Assert.Equal(ScalarType.Float64, t.dtype),
+                    () => Assert.Equal(array.Cast<double>().ToArray(), t.data<double>().ToArray()));
+            }
+        }
+
+        [Fact]
+        public void TestFromBufferFactory()
+        {
+            {
+                var array = new double[8];
+                var t = torch.frombuffer(array, ScalarType.Bool);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(8, t.shape[0]),
+                    () => Assert.Equal(ScalarType.Bool, t.dtype));
+            }
+            {
+                var array = new double[8];
+                var t = torch.frombuffer(array, ScalarType.Bool, 5, 2);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(ScalarType.Bool, t.dtype));
+            }
+            {
+                // The number of input dimensions shouldn't matter.
+                var array = new double[2,4];
+                var t = torch.frombuffer(array, ScalarType.Bool, 5, 2);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(ScalarType.Bool, t.dtype));
+            }
+            {
+                var array = new double[] { 0, 1, 2, 3, 4, 5, 6, 7};
+                var t = torch.frombuffer(array, ScalarType.Float64, 5, 2);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(3, t[1].item<double>()),
+                    () => Assert.Equal(6, t[4].item<double>()),
+                    () => Assert.Equal(ScalarType.Float64, t.dtype)); ;
+            }
+            {
+                var array = new double[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+                var t = torch.frombuffer(array, ScalarType.Float64, 5, 2);
+                t[4] = 15.0;
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(3, t[1].item<double>()),
+                    () => Assert.Equal(15, array[6]),
+                    () => Assert.Equal(ScalarType.Float64, t.dtype)); ;
+            }
+            {
+                var array = new System.Numerics.Complex[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = new System.Numerics.Complex(i, -i); }
+                var t = torch.frombuffer(array, ScalarType.ComplexFloat64, 5, 2);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(3, t.real[1].item<double>()),
+                    () => Assert.Equal(6, t.real[4].item<double>()),
+                    () => Assert.Equal(-3, t.imag[1].item<double>()),
+                    () => Assert.Equal(-6, t.imag[4].item<double>()),
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
+            }
+            {
+                var array = new System.Numerics.Complex[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = new System.Numerics.Complex(i, -i); }
+                var t = torch.frombuffer(array, ScalarType.ComplexFloat64, 5, 2);
+                t.real[4] = 15.0;
+                t.imag[4] = 25.0;
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(5, t.shape[0]),
+                    () => Assert.Equal(3, t.real[1].item<double>()),
+                    () => Assert.Equal(15, array[6].Real),
+                    () => Assert.Equal(-3, t.imag[1].item<double>()),
+                    () => Assert.Equal(25.0, array[6].Imaginary),
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
             }
         }
 
@@ -735,56 +832,63 @@ namespace TorchSharp
             {
                 var array = new sbyte[8];
                 var t = torch.tensor(array);
-                Assert.Equal(1, t.ndim);
-                Assert.Equal(ScalarType.Int8, t.dtype);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(ScalarType.Int8, t.dtype));
             }
 
             {
                 var array = new sbyte[8];
                 var t = torch.tensor(array, new long[] { 8 });
-                Assert.Equal(1, t.ndim);
-                Assert.Equal(ScalarType.Int8, t.dtype);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(ScalarType.Int8, t.dtype));
             }
 
             {
                 var array = new sbyte[1, 2];
                 var t = torch.tensor(array);
-                Assert.Equal(2, t.ndim);
-                Assert.Equal(new long[] { 1, 2 }, t.shape);
-                Assert.Equal(ScalarType.Int8, t.dtype);
+                Assert.Multiple(
+                () => Assert.Equal(2, t.ndim),
+                () => Assert.Equal(new long[] { 1, 2 }, t.shape),
+                () => Assert.Equal(ScalarType.Int8, t.dtype));
             }
 
             {
                 var array = new sbyte[1, 2, 3];
                 var t = torch.tensor(array);
-                Assert.Equal(3, t.ndim);
-                Assert.Equal(new long[] { 1, 2, 3 }, t.shape);
-                Assert.Equal(ScalarType.Int8, t.dtype);
+                Assert.Multiple(
+                () => Assert.Equal(3, t.ndim),
+                () => Assert.Equal(new long[] { 1, 2, 3 }, t.shape),
+                () => Assert.Equal(ScalarType.Int8, t.dtype));
             }
 
             {
                 var array = new sbyte[1, 2, 3, 4];
                 var t = torch.tensor(array);
-                Assert.Equal(4, t.ndim);
-                Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
-                Assert.Equal(ScalarType.Int8, t.dtype);
+                Assert.Multiple(
+                () => Assert.Equal(4, t.ndim),
+                () => Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape),
+                () => Assert.Equal(ScalarType.Int8, t.dtype));
             }
 
             {
                 var array = new sbyte[100, 100, 100];
                 var t = torch.tensor(array);
-                Assert.Equal(3, t.ndim);
-                Assert.Equal(new long[] { 100, 100, 100 }, t.shape);
-                Assert.Equal(ScalarType.Int8, t.dtype);
+                Assert.Multiple(
+                () => Assert.Equal(3, t.ndim),
+                () => Assert.Equal(new long[] { 100, 100, 100 }, t.shape),
+                () => Assert.Equal(ScalarType.Int8, t.dtype));
             }
 
             {
                 var array = new sbyte[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
                 var t = torch.tensor(array);
-                Assert.Equal(3, t.ndim);
-                Assert.Equal(new long[] { 2, 2, 2 }, t.shape);
-                Assert.Equal(ScalarType.Int8, t.dtype);
-                Assert.Equal(array.Cast<sbyte>().ToArray(), t.data<sbyte>().ToArray());
+                Assert.Multiple(
+                () => Assert.Equal(3, t.ndim),
+                () => Assert.Equal(new long[] { 2, 2, 2 }, t.shape),
+                () => Assert.Equal(ScalarType.Int8, t.dtype),
+                () => Assert.Equal(array.Cast<sbyte>().ToArray(), t.data<sbyte>().ToArray()));
             }
         }
 
@@ -1143,6 +1247,34 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
                 Assert.Equal(ScalarType.ComplexFloat32, t.dtype);
             }
+            {
+                var array = new (float Real, float Imaginary)[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = (i, -i); }
+                var t = torch.tensor(array);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(8, t.shape[0]),
+                    () => Assert.Equal(3, t.real[3].item<float>()),
+                    () => Assert.Equal(6, t.real[6].item<float>()),
+                    () => Assert.Equal(-3, t.imag[3].item<float>()),
+                    () => Assert.Equal(-6, t.imag[6].item<float>()),
+                    () => Assert.Equal(ScalarType.ComplexFloat32, t.dtype)); ;
+            }
+            {
+                var array = new (float Real, float Imaginary)[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = (i, -i); }
+                var t = torch.tensor(array);
+                t.real[6] = 17;
+                t.imag[6] = 15;
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(8, t.shape[0]),
+                    () => Assert.Equal(3, t.real[3].item<float>()),
+                    () => Assert.Equal(6, array[6].Real),
+                    () => Assert.Equal(-3, t.imag[3].item<float>()),
+                    () => Assert.Equal(-6, array[6].Imaginary),
+                    () => Assert.Equal(ScalarType.ComplexFloat32, t.dtype)); ;
+            }
         }
 
         [Fact]
@@ -1160,6 +1292,18 @@ namespace TorchSharp
                 var t = torch.tensor(array, new long[] { 8 });
                 Assert.Equal(1, t.ndim);
                 Assert.Equal(ScalarType.ComplexFloat64, t.dtype);
+            }
+            {
+                var array = new System.Numerics.Complex[8];
+                var t = torch.tensor(array);
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.ComplexFloat64, t.dtype);
+
+                var s = t.reshape(2, 4);
+                Assert.Multiple(
+                    () => Assert.Equal(2, s.ndim),
+                    () => Assert.Equal(2, s.shape[0]),
+                    () => Assert.Equal(4, s.shape[1]));
             }
 
             {
@@ -1192,6 +1336,33 @@ namespace TorchSharp
                 Assert.Equal(3, t.ndim);
                 Assert.Equal(new long[] { 100, 500, 125 }, t.shape);
                 Assert.Equal(ScalarType.ComplexFloat64, t.dtype);
+            }
+            {
+                var array = new System.Numerics.Complex[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = new System.Numerics.Complex(i, -i); }
+                var t = torch.tensor(array);
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(8, t.shape[0]),
+                    () => Assert.Equal(3, t.real[3].item<double>()),
+                    () => Assert.Equal(6, t.real[6].item<double>()),
+                    () => Assert.Equal(-3, t.imag[3].item<double>()),
+                    () => Assert.Equal(-6, t.imag[6].item<double>()),
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
+            }
+            {
+                var array = new System.Numerics.Complex[8];
+                for (var i = 0; i < array.Length; i++) { array[i] = new System.Numerics.Complex(i, -i); }
+                var t = torch.tensor(array);
+                t.real[6] = 17;
+                t.imag[6] = 15;
+                Assert.Multiple(
+                    () => Assert.Equal(1, t.ndim),
+                    () => Assert.Equal(8, t.shape[0]),
+                    () => Assert.Equal(3, t.real[3].item<double>()),
+                    () => Assert.Equal(6, array[6].Real),
+                    () => Assert.Equal(-6, array[6].Imaginary),
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
             }
         }
 
@@ -2385,6 +2556,136 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void IndexAdd1()
+        {
+            using var _ = NewDisposeScope();
+
+            var y = torch.ones(3, 3);
+            var t = torch.tensor(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+            var index = torch.tensor(new long[] { 2, 0 });
+            var x = y.index_add(0, index, t, 2.0);
+
+            Assert.Multiple(
+                () => Assert.Equal(9.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(3.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(11.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(5.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(13.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(7.0, x[2, 2].ToSingle()));
+        }
+
+        [Fact]
+        public void IndexAdd2()
+        {
+            using var _ = NewDisposeScope();
+
+            var x = torch.ones(3, 3);
+            var t = torch.tensor(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+            var index = torch.tensor(new long[] { 2, 0 });
+            var y = x.index_add_(0, index, t, 2.0);
+
+            Assert.Multiple(
+                () => Assert.Equal(9.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(3.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(11.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(5.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(13.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(7.0, x[2, 2].ToSingle()));
+        }
+
+        [Fact]
+        public void IndexCopy1()
+        {
+            using var _ = NewDisposeScope();
+
+            var y = torch.zeros(3, 3);
+            var t = torch.tensor(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+            var index = torch.tensor(new long[] { 2, 0 });
+            var x = y.index_copy(0, index, t);
+
+            Assert.Multiple(
+                () => Assert.Equal(4.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(5.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(2.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(6.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(3.0, x[2, 2].ToSingle()));
+        }
+
+        [Fact]
+        public void IndexCopy2()
+        {
+            using var _ = NewDisposeScope();
+
+            var x = torch.zeros(3, 3);
+            var t = torch.tensor(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } });
+            var index = torch.tensor(new long[] { 2, 0 });
+            var y = x.index_copy_(0, index, t);
+
+            Assert.Multiple(
+                () => Assert.Equal(4.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(5.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(2.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(6.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(3.0, x[2, 2].ToSingle()));
+        }
+
+        [Fact]
+        public void IndexFill1()
+        {
+            using var _ = NewDisposeScope();
+
+            var y = torch.zeros(3, 3);
+            var index = torch.tensor(new long[] { 0, 2 });
+            var x = y.index_fill(1, index, 1.0);
+
+            Assert.Multiple(
+                () => Assert.Equal(1.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(0.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(1.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 2].ToSingle()));
+        }
+
+        [Fact]
+        public void IndexFill2()
+        {
+            using var _ = NewDisposeScope();
+
+            var x = torch.zeros(3, 3);
+            var index = torch.tensor(new long[] { 0, 2 });
+            var y = x.index_fill_(1, index, 1.0);
+
+            Assert.Multiple(
+                () => Assert.Equal(1.0, x[0, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 0].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 0].ToSingle()),
+                () => Assert.Equal(0.0, x[0, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[1, 1].ToSingle()),
+                () => Assert.Equal(0.0, x[2, 1].ToSingle()),
+                () => Assert.Equal(1.0, x[0, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[1, 2].ToSingle()),
+                () => Assert.Equal(1.0, x[2, 2].ToSingle()));
+        }
+
+        [Fact]
         public void TestScalarToTensor()
         {
             Assert.Throws<ArgumentException>(() => 1.ToTensor(requiresGrad: true));
@@ -2554,6 +2855,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.zeros_(tensor)) { }
+                using (var res = torch.nn.init.zeros_(tensor)) { }
             }
         }
 
@@ -2563,6 +2865,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.ones_(tensor)) { }
                 using (var res = torch.nn.init.ones_(tensor)) { }
             }
         }
@@ -2574,6 +2877,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.dirac_(tensor)) { }
+                using (var res = torch.nn.init.dirac_(tensor)) { }
             }
         }
 
@@ -2583,6 +2887,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.eye_(tensor)) { }
                 using (var res = torch.nn.init.eye_(tensor)) { }
             }
         }
@@ -2594,6 +2899,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.constant_(tensor, Math.PI)) { }
+                using (var res = torch.nn.init.constant_(tensor, Math.PI)) { }
             }
         }
 
@@ -2604,6 +2910,8 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.uniform_(tensor)) { }
+                using (var gen = new torch.Generator(4711L))
+                using (var res = torch.nn.init.uniform_(tensor, generator: gen)) { }
             }
         }
 
@@ -2614,6 +2922,20 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.normal_(tensor)) { }
+                using (var gen = new torch.Generator(4711L))
+                using (var res = torch.nn.init.normal_(tensor, generator: gen)) { }
+            }
+        }
+
+        [Fact]
+        public void InitTruncNormal()
+        {
+            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
+                // Really just testing that the native interop works and that the fact
+                // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.trunc_normal_(tensor, 0, 1, -0.5, 0.5)) { }
+                using (var gen = new torch.Generator(4711L))
+                using (var res = torch.nn.init.trunc_normal_(tensor, generator: gen)) { }
             }
         }
 
@@ -2623,6 +2945,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.orthogonal_(tensor)) { }
                 using (var res = torch.nn.init.orthogonal_(tensor)) { }
             }
         }
@@ -2634,6 +2957,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.sparse_(tensor, 0.25)) { }
+                using (var res = torch.nn.init.sparse_(tensor, 0.25)) { }
             }
         }
 
@@ -2643,6 +2967,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.kaiming_uniform_(tensor)) { }
                 using (var res = torch.nn.init.kaiming_uniform_(tensor)) { }
             }
         }
@@ -2654,6 +2979,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.kaiming_normal_(tensor)) { }
+                using (var res = torch.nn.init.kaiming_normal_(tensor)) { }
             }
         }
 
@@ -2664,6 +2990,7 @@ namespace TorchSharp
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
                 using (var res = torch.nn.init.xavier_uniform_(tensor)) { }
+                using (var res = torch.nn.init.xavier_uniform_(tensor)) { }
             }
         }
 
@@ -2673,6 +3000,7 @@ namespace TorchSharp
             using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
                 // Really just testing that the native interop works and that the fact
                 // that there are two handles to the tensor is okay.
+                using (var res = torch.nn.init.xavier_normal_(tensor)) { }
                 using (var res = torch.nn.init.xavier_normal_(tensor)) { }
             }
         }
@@ -5238,7 +5566,7 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 10, 1, 10 }, mean.shape);
             }
             {
-                var t = torch.from_array(new float[,]{ { 1f, 2f }, { 3f, 4f } });
+                var t = torch.from_array(new float[,] { { 1f, 2f }, { 3f, 4f } });
                 var stdExpected = torch.std(t);
                 var meanExpected = torch.mean(t);
                 var (std, mean) = torch.std_mean(t);
@@ -6665,7 +6993,8 @@ namespace TorchSharp
             var inverted = fft.ifft2(output);
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
-#if false
+
+#if true
         [Fact]
         public void Float32FFTN()
         {
@@ -6714,6 +7043,7 @@ namespace TorchSharp
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
 #endif
+
         [Fact]
         public void Float32RFFTN()
         {
@@ -6736,6 +7066,63 @@ namespace TorchSharp
 
             var inverted = fft.irfftn(output);
             Assert.Equal(ScalarType.Float64, inverted.dtype);
+        }
+
+        [Fact]
+        public void Float32HFFT2()
+        {
+            var input = torch.rand(new long[] { 5, 5, 5, 5 });
+            var output = fft.hfft2(input);
+            Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
+            Assert.Equal(input.dtype, output.dtype);
+
+            var inverted = fft.ihfft2(output);
+            Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.dtype);
+        }
+
+        [Fact]
+        public void Float64HFFT2()
+        {
+            var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
+            var output = fft.hfft2(input);
+            Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
+            Assert.Equal(input.dtype, output.dtype);
+
+            var inverted = fft.ihfft2(output);
+            Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
+            Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
+        }
+
+        [Fact]
+        public void Float32HFFTN()
+        {
+            var input = torch.rand(new long[] { 5, 5, 5, 5 });
+            var output = fft.hfft2(input);
+            Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
+            Assert.Equal(input.dtype, output.dtype);
+
+            var inverted = fft.ihfft2(output);
+            Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
+            Assert.Equal(ScalarType.ComplexFloat32, inverted.dtype);
+        }
+
+        [Fact]
+        public void Float64HFFTN()
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+
+                // TODO: Something in this test makes if fail on Windows / Release
+
+                var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
+                var output = fft.hfftn(input);
+                Assert.Equal(new long[] { 5, 5, 5, 8 }, output.shape);
+                Assert.Equal(input.dtype, output.dtype);
+
+                var inverted = fft.ihfftn(output);
+                Assert.Equal(new long[] { 5, 5, 5, 5 }, inverted.shape);
+                Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
+            }
         }
 
         [Fact]

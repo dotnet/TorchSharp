@@ -97,60 +97,64 @@ namespace TorchSharp
         public static Tensor as_tensor(Tensor data, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
             if (dtype != null && device != null && (data.dtype != dtype || data.device != device)) {
-                return data.clone().to(dtype.Value, device).requires_grad_(data.requires_grad);
-            } else {
-                return data;
+                return data.to(dtype.Value, device).requires_grad_(data.requires_grad);
+            } else if (dtype != null && data.dtype != dtype) {
+                return data.to(dtype.Value).requires_grad_(data.requires_grad);
+            } else if (device != null && data.device != device) {
+                return data.to(device).requires_grad_(data.requires_grad);
+            } else { 
+                return data.alias();
             }
         }
 
         public static Tensor as_tensor(IList<bool> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
-            return torch.tensor(rawArray, dtype, device);
+            return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
         public static Tensor as_tensor(IList<byte> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
-            return torch.tensor(rawArray, dtype, device);
+            return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
         public static Tensor as_tensor(IList<sbyte> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
-            return torch.tensor(rawArray, dtype, device);
+            return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
         public static Tensor as_tensor(IList<short> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
-            return torch.tensor(rawArray, dtype, device);
+            return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
         public static Tensor as_tensor(IList<int> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
-            return torch.tensor(rawArray, dtype, device);
+            return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
         public static Tensor as_tensor(IList<long> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
-            return torch.tensor(rawArray, dtype, device);
+            return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
         public static Tensor as_tensor(IList<float> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
-            return torch.tensor(rawArray, dtype, device);
+            return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
         public static Tensor as_tensor(IList<double> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
-            return torch.tensor(rawArray, dtype, device);
+            return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
         public static Tensor as_tensor(IList<(float, float)> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
-            return torch.tensor(rawArray, dtype, device);
+            return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
         public static Tensor as_tensor(IList<System.Numerics.Complex> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
-            return torch.tensor(rawArray, dtype, device);
+            return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
         // randperm()
@@ -1363,7 +1367,7 @@ namespace TorchSharp
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
         public static Tensor tensor(IList<bool> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return tensor(rawArray.ToArray(), dimensions, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Bool, dtype, device, requiresGrad, false);
         }
 
         /// <summary>
@@ -1372,7 +1376,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(bool[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.Bool, dtype, device, requiresGrad); 
+            return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.Bool, dtype, device, requiresGrad);
         }
 
         public static Tensor tensor(bool[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
@@ -1380,14 +1384,14 @@ namespace TorchSharp
             return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Bool, dtype, device, requiresGrad);
         }
 
-        private static Tensor _tensor_generic(Array rawArray, ReadOnlySpan<long> dimensions, sbyte origType, ScalarType? dtype, Device? device, bool requiresGrad)
+        private static Tensor _tensor_generic(Array rawArray, ReadOnlySpan<long> dimensions, sbyte origType, ScalarType? dtype, Device? device, bool requiresGrad, bool clone = true)
         {
             {
                 // Validate the sizes before handing over storage to native code...
                 var prod = 1L;
                 foreach (var sz in dimensions) prod *= sz;
 
-                if (origType == (sbyte)ScalarType.ComplexFloat32 || origType == (sbyte)ScalarType.ComplexFloat64)
+                if (origType == (sbyte)ScalarType.ComplexFloat32)
                     prod *= 2;
 
                 if (prod != rawArray.LongLength)
@@ -1395,6 +1399,8 @@ namespace TorchSharp
             }
 
             torch.InitializeDeviceType(DeviceType.CPU);
+
+            if (clone) { rawArray = (Array)rawArray.Clone(); } 
 
             var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
             var dataArrayAddr = dataHandle.AddrOfPinnedObject();
@@ -1419,10 +1425,12 @@ namespace TorchSharp
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                     var tensor = new Tensor(handle);
 
+                    var needsConversion = dtype.HasValue && dtype.Value != (ScalarType)origType;
+
                     if (device is not null) {
-                        tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-                    } else if (dtype.HasValue) {
-                        tensor = tensor.to_type(dtype.Value);
+                        tensor = needsConversion ? tensor.to(dtype!.Value, device) : tensor.to(device);
+                    } else if (needsConversion) {
+                        tensor = tensor.to_type(dtype!.Value);
                     }
                     return tensor;
                 }
@@ -1509,7 +1517,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(IList<byte> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return tensor(rawArray.ToArray(), dimensions, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Byte, dtype, device, requiresGrad, false);
         }
 
         /// <summary>
@@ -1611,7 +1619,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(IList<sbyte> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return tensor(rawArray.ToArray(), dimensions, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Int8, dtype, device, requiresGrad, false);
         }
 
         /// <summary>
@@ -1713,7 +1721,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(IList<short> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return tensor(rawArray.ToArray(), dimensions, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Int16, dtype, device, requiresGrad, false);
         }
 
         /// <summary>
@@ -1814,7 +1822,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(IList<int> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return tensor(rawArray.ToArray(), dimensions, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Int32, dtype, device, requiresGrad, false);
         }
 
         /// <summary>
@@ -1914,7 +1922,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(IList<long> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return tensor(rawArray.ToArray(), dimensions, dtype, device, requiresGrad);
+            return _tensor_i64(rawArray.ToArray(), dimensions, dtype, device, requiresGrad, false);
         }
 
         /// <summary>
@@ -1936,7 +1944,7 @@ namespace TorchSharp
         }
 
         [System.Diagnostics.Contracts.Pure]
-        private static Tensor _tensor_i64(Array rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype, Device? device, bool requiresGrad) =>
+        private static Tensor _tensor_i64(Array rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype, Device? device, bool requiresGrad, bool clone = false) =>
             _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Int64, dtype, device, requiresGrad);
 
         /// <summary>
@@ -2019,7 +2027,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(IList<float> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return tensor(rawArray.ToArray(), dimensions, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Float32, dtype, device, requiresGrad, false);
         }
 
         /// <summary>
@@ -2121,7 +2129,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(IList<double> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return tensor(rawArray.ToArray(), dtype: dtype, device: device, requiresGrad: requiresGrad);
+            return _tensor_generic(rawArray.ToArray(), stackalloc long[] { rawArray.Count }, (sbyte)ScalarType.Float64, dtype: dtype, device: device, requiresGrad: requiresGrad, false);
         }
 
         /// <summary>
@@ -2151,7 +2159,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(IList<double> rawArray, long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return tensor(rawArray.ToArray(), stackalloc long[] { rows, columns }, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray.ToArray(), stackalloc long[] { rows, columns }, (sbyte)ScalarType.Float64, dtype, device, requiresGrad);
         }
 
         /// <summary>
@@ -2163,7 +2171,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(IList<double> rawArray, long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return tensor(rawArray.ToArray(), stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray.ToArray(), stackalloc long[] { dim0, dim1, dim2 }, (sbyte)ScalarType.Float64, dtype, device, requiresGrad);
         }
 
         /// <summary>
@@ -2175,7 +2183,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(IList<double> rawArray, long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            return tensor(rawArray.ToArray(), stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray.ToArray(), stackalloc long[] { dim0, dim1, dim2, dim3 }, (sbyte)ScalarType.Float64, dtype, device, requiresGrad);
         }
 
         /// <summary>
@@ -2184,7 +2192,6 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(double[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.Float64, dtype, device, requiresGrad);
         }
 
@@ -2194,17 +2201,15 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(double[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.Float64, dtype, device, requiresGrad);
         }
 
         /// <summary>
-        /// Create a four-dimensional tensor from a four-dimensional array of values.
+        /// Create a four-dimensional tensor from a four-dimensional array of values.from
         /// </summary>
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(double[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.Float64, dtype, device, requiresGrad);
         }
 
@@ -2368,13 +2373,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(System.Numerics.Complex[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            var dataArray = new double[rawArray.Length * 2];
-            for (var i = 0; i < rawArray.Length; i++) {
-                dataArray[i * 2] = rawArray[i].Real;
-                dataArray[i * 2 + 1] = rawArray[i].Imaginary;
-            }
-
-            return _tensor_generic(dataArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
         }
 
         /// <summary>
@@ -2383,13 +2382,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(System.Numerics.Complex[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            var dataArray = new double[rawArray.Length * 2];
-            for (var i = 0; i < rawArray.Length; i++) {
-                dataArray[i * 2] = rawArray[i].Real;
-                dataArray[i * 2 + 1] = rawArray[i].Imaginary;
-            }
-
-            return _tensor_generic(dataArray, dimensions, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
         }
 
         /// <summary>
@@ -2443,15 +2436,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(System.Numerics.Complex[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            var dataArray = new double[rawArray.GetLongLength(0), rawArray.GetLongLength(1) * 2];
-            for (var i = 0; i < rawArray.GetLongLength(0); i++) {
-                for (var j = 0; j < rawArray.GetLongLength(1); j++) {
-                    dataArray[i, j * 2] = rawArray[i, j].Real;
-                    dataArray[i, j * 2 + 1] = rawArray[i, j].Imaginary;
-                }
-            }
-
-            return _tensor_generic(dataArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
         }
 
         /// <summary>
@@ -2460,17 +2445,7 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(System.Numerics.Complex[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            var dataArray = new double[rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) * 2];
-            for (var i = 0; i < rawArray.GetLongLength(0); i++) {
-                for (var j = 0; j < rawArray.GetLongLength(1); j++) {
-                    for (var k = 0; k < rawArray.GetLongLength(2); k++) {
-                        dataArray[i, j, k * 2] = rawArray[i, j, k].Real;
-                        dataArray[i, j, k * 2 + 1] = rawArray[i, j, k].Imaginary;
-                    }
-                }
-            }
-
-            return _tensor_generic(dataArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
         }
 
         /// <summary>
@@ -2479,29 +2454,18 @@ namespace TorchSharp
         [System.Diagnostics.Contracts.Pure]
         public static Tensor tensor(System.Numerics.Complex[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
         {
-            var dataArray = new double[rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) * 2];
-            for (var i = 0; i < rawArray.GetLongLength(0); i++) {
-                for (var j = 0; j < rawArray.GetLongLength(1); j++) {
-                    for (var k = 0; k < rawArray.GetLongLength(2); k++) {
-                        for (var l = 0; l < rawArray.GetLongLength(3); l++) {
-                            dataArray[i, j, k, l * 2] = rawArray[i, j, k, l].Real;
-                            dataArray[i, j, k, l * 2 + 1] = rawArray[i, j, k, l].Imaginary;
-                        }
-                    }
-                }
-            }
-
-            return _tensor_generic(dataArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
+            return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requiresGrad);
         }
 
         /// <summary>
         /// Creates a <see cref="torch.Tensor">torch tensor</see> from an arbitrary <see cref="Array">array</see>.
         /// </summary>
         /// <param name="rawArray">The arbitrary array to create the tensor from.</param>
-        /// <param name="dtype">The torch data type.</param>
-        /// <param name="device">The torch device.</param>
-        /// <param name="requiresGrad">Set <value>true</value> if gradients need to be computed for this Tensor; <value>false</value> otherwise.</param>
         /// <returns>A <see cref="torch.Tensor">torch tensor</see></returns>
+        /// <remarks>
+        /// This function roughly corresponds to torch.from_numpy(). It shares the underlying buffer between the input and output.
+        /// torch.tensor() always makes a copy, which can be orders of magnitude slower.
+        /// </remarks>
         /// <exception cref="InvalidOperationException">
         /// When <see cref="Type.GetElementType()">Array.GetType().GetElementType()</see> does not return the .NET element type.
         /// </exception>
@@ -2529,7 +2493,19 @@ namespace TorchSharp
         /// </code>
         /// </example>
         [System.Diagnostics.Contracts.Pure]
-        public static Tensor from_array(Array rawArray, ScalarType? dtype = null, Device? device = null, bool requiresGrad = false)
+        public static Tensor from_array(Array rawArray)
+        {
+            var t = rawArray.GetType().GetElementType();
+            if (t == typeof((float, float)))
+                throw new NotImplementedException("from_array() for (float,float) elements.");
+
+            var dtype = ToScalarType(t!);
+
+            return from_array(rawArray, dtype, CPU, false);
+        }
+
+        [System.Diagnostics.Contracts.Pure]
+        internal static Tensor from_array(Array rawArray, ScalarType? dtype, Device? device = null, bool requiresGrad = false)
         {
             // enumerates over all dimensions of the arbitrary array
             // and returns the length of the dimension
@@ -2549,43 +2525,101 @@ namespace TorchSharp
             // call the existing factory methods to construct the tensor
 
             if (t == typeof((float, float))) return tensor(rawArray.Cast<(float, float)>().ToArray(), shape, dtype, device, requiresGrad);
-            if (t == typeof(System.Numerics.Complex)) return tensor(rawArray.Cast<System.Numerics.Complex>().ToArray(), shape, dtype, device, requiresGrad);
 
-            if (t == typeof(bool)) {
-                return _tensor_generic(rawArray, shape, (sbyte)ScalarType.Bool, dtype, device, requiresGrad);
-            }
-            if (t == typeof(byte)) {
-                return _tensor_generic(rawArray, shape, (sbyte)ScalarType.Byte, dtype, device, requiresGrad);
-            }
-            if (t == typeof(sbyte)) {
-                return _tensor_generic(rawArray, shape, (sbyte)ScalarType.Int8, dtype, device, requiresGrad);
-            }
-            if (t == typeof(short)) {
-                return _tensor_generic(rawArray, shape, (sbyte)ScalarType.Int16, dtype, device, requiresGrad);
-            }
-            if (t == typeof(int)) {
-                return _tensor_generic(rawArray, shape, (sbyte)ScalarType.Int32, dtype, device, requiresGrad);
-            }
-            if (t == typeof(long)) {
-                return _tensor_generic(rawArray, shape, (sbyte)ScalarType.Int64, dtype, device, requiresGrad);
-            }
-#if NET50_OR_GREATER
-            // TODO: implement the required factory method
-            // if (t == typeof(half)) return tensor(rawArray.Cast<half>().ToArray(), shape, dtype, device, requiresGrad);
-#endif
-            if (t == typeof(float)) {
-                return _tensor_generic(rawArray, shape, (sbyte)ScalarType.Float32, dtype, device, requiresGrad);
-            }
-            if (t == typeof(double)) {
-                return _tensor_generic(rawArray, shape, (sbyte)ScalarType.Float64, dtype, device, requiresGrad);
-            }
-
-            throw new NotSupportedException($"The type {t.FullName} is not supported.");
+            var origType = ToScalarType(t);
+            return _tensor_generic(rawArray, shape, (sbyte)origType, dtype, device, requiresGrad, false);
         }
 
         // https://pytorch.org/docs/stable/generated/torch.as_tensor
-        static Tensor as_tensor(Array data, ScalarType? dtype = null, Device? device = null)
-            => from_array(data, dtype, device, false);
+        public static Tensor as_tensor(Array data, ScalarType? dtype = null, Device? device = null) => from_array(data, dtype, device, false);
+
+        /// <summary>
+        /// Creates a 1-dimensional Tensor from an array of n dimensions.
+        /// 
+        /// Skips the first offset bytes in the buffer, and interprets the rest of the raw bytes as a 1-dimensional tensor of type dtype with count elements.
+        /// </summary>
+        /// <param name="rawArray">The input array</param>
+        /// <param name="dtype">The torch data type.</param>
+        /// <param name="count"></param>
+        /// <param name="offset"></param>
+        /// <param name="requiresGrad">Set <value>true</value> if gradients need to be computed for this Tensor; <value>false</value> otherwise.</param>
+        /// <param name="device">The torch device.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="IndexOutOfRangeException"></exception>
+        /// <remarks>The returned tensor and buffer share the same memory. Modifications to the tensor will be reflected in the buffer and vice versa.</remarks>
+        public static Tensor frombuffer(Array rawArray, ScalarType dtype, long count = -1, long offset = 0, bool requiresGrad = false, Device? device = null)
+        {
+            torch.InitializeDeviceType(DeviceType.CPU);
+
+            var lLength = rawArray.LongLength;
+
+            if (offset < 0 || offset >= lLength) {
+                throw new ArgumentException($"invalid value for 'offset': {offset}");
+            }
+
+            if (count < 0) { count = lLength - offset; }
+
+            if (count > lLength - offset) {
+                throw new IndexOutOfRangeException($"element count is too large: {count}");
+            }
+
+            var t = rawArray.GetType().GetElementType();
+            ScalarType origType = ToScalarType(t!);
+
+            switch(origType) {
+            case ScalarType.Int16:
+                offset *= 2;
+                break;
+            case ScalarType.Int32:
+            case ScalarType.Float32:
+                offset *= 4;
+                break;
+            case ScalarType.Int64:
+            case ScalarType.Float64:
+                offset *= 8;
+                break;
+            case ScalarType.ComplexFloat64:
+                offset *= 16;
+                break;
+            case ScalarType.ComplexFloat32:
+                // Since we are not allowed to make a copy of the buffer, it's currently not
+                // feasible to support complex types, which GCHandle.Alloc() doesn't like.
+                throw new NotImplementedException("frombuffer(ComplexFloat32)");
+            }
+
+            var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
+            var dataArrayAddr = dataHandle.AddrOfPinnedObject();
+            var gchp = GCHandle.ToIntPtr(dataHandle);
+            GCHandleDeleter deleter = null!;
+            deleter = new GCHandleDeleter((IntPtr ptr) => {
+                GCHandle.FromIntPtr(gchp).Free();
+                deleters.TryRemove(deleter, out deleter!);
+            });
+            deleters.TryAdd(deleter, deleter); // keep the delegate alive
+
+            unsafe {
+                var handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, requiresGrad);
+
+                if (handle == IntPtr.Zero) {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, requiresGrad);
+                }
+
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                var tensor = new Tensor(handle);
+
+                var needsConversion = dtype != origType;
+
+                if (device is not null) {
+                    tensor = needsConversion ? tensor.to(dtype, device) : tensor.to(device);
+                } else if (needsConversion) {
+                    tensor = tensor.to_type(dtype);
+                }
+                return tensor;
+            }
+        }
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, bool requiresGrad);
@@ -2866,6 +2900,9 @@ namespace TorchSharp
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_newComplexFloat64Scalar(double real, double imaginary, int deviceType, int deviceIndex, bool requiresGrad);
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_frombuffer(IntPtr rawArray, GCHandleDeleter deleter, long count, long offset, sbyte type, bool requiresGrad);
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, IntPtr dimensions, int numDimensions, sbyte type, bool requiresGrad);

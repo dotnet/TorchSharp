@@ -93,7 +93,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with values drawn from the uniform distribution
                 /// </summary>
-                public static Tensor uniform_(Tensor tensor, double low = 0, double high = 1)
+                public static Tensor uniform_(Tensor tensor, double low = 0, double high = 1, Generator generator = null)
                 {
                     var res = THSInit_uniform_(tensor.Handle, low, high);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -103,11 +103,30 @@ namespace TorchSharp
                 /// <summary>
                 /// Fills the input Tensor with values drawn from the normal distribution
                 /// </summary>
-                public static Tensor normal_(Tensor tensor, double mean = 0, double std = 1)
+                public static Tensor normal_(Tensor tensor, double mean = 0, double std = 1, Generator generator = null)
                 {
                     var res = THSInit_normal_(tensor.Handle, mean, std);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Fills the input Tensor with values drawn from a truncated normal distribution.
+                /// </summary>
+                /// <param name="tensor">Input tensor</param>
+                /// <param name="mean">The mean of the normal distribution</param>
+                /// <param name="std">The standard deviation of the normal distribution</param>
+                /// <param name="a">The minimum cutoff value</param>
+                /// <param name="b">The maximum cutoff value</param>
+                /// <param name="generator">An optional random number generator.</param>
+                /// <returns></returns>
+                public static Tensor trunc_normal_(Tensor tensor, double mean = 0.0, double std = 1.0, double a = -2.0, double b = 2.0, Generator generator = null)
+                {
+                    using (torch.no_grad()) {
+                        var res = THSInit_trunc_normal_(tensor.Handle, mean, std, a, b);
+                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return tensor.alias();
+                    }
                 }
 
                 /// <summary>
@@ -206,6 +225,7 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_dirac_(IntPtr tensor);
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_eye_(IntPtr matrix);
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_normal_(IntPtr tensor, double mean, double std);
+                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_trunc_normal_(IntPtr tensor, double mean, double std, double a, double b);
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_ones_(IntPtr tensor);
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_orthogonal_(IntPtr tensor, double gain);
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_sparse_(IntPtr tensor, double sparsity, double std);
@@ -215,6 +235,9 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_xavier_normal_(IntPtr tensor, double gain);
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_xavier_uniform_(IntPtr tensor, double gain);
                 [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_zeros_(IntPtr tensor);
+
+                [DllImport("LibTorchSharp")] private static extern double THSSpecial_erf_scalar(double x);
+                [DllImport("LibTorchSharp")] private static extern double THSSpecial_erfc_scalar(double x);
 
             }
         }

@@ -167,6 +167,22 @@ Tensor THSTensor_new(
     CATCH_TENSOR(torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
 }
 
+Tensor THSTensor_frombuffer(
+    void* data,
+    void (*deleter)(void*),
+    const int64_t count,
+    const ptrdiff_t offset,
+    int8_t scalar_type,
+    const bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .requires_grad(requires_grad);
+
+    auto dataPtr = reinterpret_cast<char*>(data);
+    CATCH_TENSOR(torch::from_blob(dataPtr+offset, at::ArrayRef<int64_t>(count), deleter, options));
+}
+
 Tensor THSTensor_newInt64(
     int64_t* data,
     void (*deleter)(void*),
