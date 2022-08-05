@@ -109,6 +109,50 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestLaplace1()
+        {
+            var dist = Laplace(torch.tensor(0.0), torch.tensor(3.5));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestLaplace2()
+        {
+            var gen = new Generator(4711);
+
+            var dist = Laplace(torch.tensor(0.0), torch.tensor(3.5), gen);
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
         public void TestPoisson1()
         {
             var dist = Poisson(torch.tensor(0.5));
