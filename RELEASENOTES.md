@@ -4,9 +4,31 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.97.2
 
+__Breaking Changes:__
+
+This release contains a breaking change__ related to `torch.tensor()` and `torch.from_array()` which were not adhering to the semantics of the Pytorch equivalents (`torch.from_numpy()` in the case of `torch.from_array()`).
+
+With this change, there will be a number of different APIs to create a tensor form a .NET array. The most significant difference between them is whether the underlying storage is shared, or whether a copy is made. Depending on the size of the input array, copying can take orders of magnitude more time in creation than sharing storage, which is done in constant time (a few μs).
+
+The resulting tensors may be reshaped, but not resized.
+
+```C#
+// Never copy:
+public static Tensor from_array(Array input)
+
+// Copy only if dtype or device arguments require it:
+public static Tensor frombuffer(Array input, ScalarType dtype, long count = -1, long offset = 0, bool requiresGrad = false, Device? device = null)
+public static Tensor as_tensor(Array input,  ScalarType? dtype = null, Device? device = null)
+public static Tensor as_tensor(Tensor input, ScalarType? dtype = null, Device? device = null)
+
+// Always copy:
+public static Tensor as_tensor(IList<<VARIOUS TYPES>> input,  ScalarType? dtype = null, Device? device = null)
+public static Tensor tensor(<<VARIOUS TYPES>> input, torch.Device? device = null, bool requiresGrad = false)
+```
+
 __Fixed Bugs:__
 
-#670 Better align methods for creating tensors from .NET arrays with Pytorch APIs.<br/>
+#670 Better align methods for creating tensors from .NET arrays with Pytorch APIs. _This is the breaking change mentioned earlier._<br/>
 #679 The default value of onesided or torch.istft() is not aligned with PyTorch<br/>
 
 __API Changes__:
@@ -14,7 +36,7 @@ __API Changes__:
 Added torch.nn.init.trunc_normal_<br/>
 Added index_add, index_copy, index_fill<br/>
 Added torch.frombuffer()<br/>
-Rationalizing torch.tensor(), torch.as_tensor(), and torch.from_array()<br/>
+Added torch.fft.hfft2, hfftn, ihfft2, ihfftn<br/>
 
 ## NuGet Version 0.97.1
 
