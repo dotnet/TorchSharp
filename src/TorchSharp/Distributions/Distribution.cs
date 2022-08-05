@@ -33,6 +33,11 @@ namespace TorchSharp
                 public abstract Tensor mean { get; }
 
                 /// <summary>
+                /// The mode of the distribution.
+                /// </summary>
+                public virtual Tensor mode { get { throw new NotImplementedException($"{this.GetType().FullName} does not implement mode"); } } 
+
+                /// <summary>
                 /// The variance of the distribution
                 /// </summary>
                 public abstract Tensor variance { get; }

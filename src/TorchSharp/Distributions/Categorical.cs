@@ -67,7 +67,7 @@ namespace TorchSharp
 
             internal Tensor _probs;
             internal Tensor _logits;
-            private long num_events;
+            internal long num_events;
 
             /// <summary>
             ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples

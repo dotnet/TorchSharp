@@ -387,7 +387,6 @@ namespace TorchSharp
             }
         }
 
-
         [Fact]
         public void TestCategorical1()
         {
@@ -428,6 +427,48 @@ namespace TorchSharp
 
                 Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
                 Assert.All<long>(sample.data<long>().ToArray(), l => Assert.True(l >= 0 && l < categories));
+            }
+        }
+
+        [Fact]
+        public void TestOneHotCategorical1()
+        {
+            var categories = 7;
+            var dist = OneHotCategorical(torch.rand(3, categories, dtype: ScalarType.Float64));
+            {
+                var sample = dist.sample();
+
+                Assert.Equal(2, sample.ndim);
+                Assert.Equal(3, sample.shape[0]);
+                Assert.Equal(categories, sample.shape[1]);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(4, sample.ndim);
+                Assert.Equal(new long[] { 2, 3, 3, 7 }, sample.shape);
+            }
+        }
+
+
+        [Fact]
+        public void TestOneHotCategorical2()
+        {
+            var gen = new Generator(4711);
+            var categories = 7;
+            var dist = OneHotCategorical(torch.rand(3, categories, dtype: ScalarType.Float64, generator:gen));
+            {
+                var sample = dist.sample();
+
+                Assert.Equal(2, sample.ndim);
+                Assert.Equal(3, sample.shape[0]);
+                Assert.Equal(categories, sample.shape[1]);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(4, sample.ndim);
+                Assert.Equal(new long[] { 2, 3, 3, 7 }, sample.shape);
             }
         }
 
