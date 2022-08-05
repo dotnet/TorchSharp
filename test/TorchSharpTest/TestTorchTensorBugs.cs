@@ -745,5 +745,32 @@ namespace TorchSharp
             var z = x.to(y);
             Assert.Equal(torch.float64, z.dtype);
         }
+
+        [Fact]
+        public void ValidateBug679()
+        {
+            // Per bug report.
+            // https://github.com/dotnet/TorchSharp/issues/679
+            //
+            var dtype = torch.float32;
+            var spec = torch.rand(1, 1024, 500, 2, dtype: dtype);
+            Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => torch.istft(spec, 512, 160, 400, null));
+
+            spec = torch.rand(1, 512, 500, 2, dtype: dtype);
+            var x = torch.istft(spec, 512, 160, 400, null);
+
+            spec = torch.rand(1, 257, 500, 2, dtype: dtype);
+            x = torch.istft(spec, 512, 160, 400, null);
+
+            dtype = torch.complex64;
+            spec = torch.rand(1, 1024, 500, dtype: dtype);
+            Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => torch.istft(spec, 512, 160, 400, null));
+
+            spec = torch.rand(1, 512, 500, dtype: dtype);
+            x = torch.istft(spec, 512, 160, 400, null);
+
+            spec = torch.rand(1, 257, 500, dtype: dtype);
+            x = torch.istft(spec, 512, 160, 400, null);
+        }
     }
 }

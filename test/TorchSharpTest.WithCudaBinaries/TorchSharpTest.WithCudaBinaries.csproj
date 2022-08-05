@@ -23,6 +23,10 @@
     <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs" />
     <Compile Include="..\TorchSharpTest\TestDistributions.cs" Link="TestDistributions.cs" />
     <Compile Include="..\TorchSharpTest\TestLoadSave.cs" Link="TestLoadSave.cs" />
+    <Compile Include="..\TorchSharpTest\TestNNUtils.cs" Link="TestNNUtils.cs" />
+    <Compile Include="..\TorchSharpTest\TestSaveSD.cs" Link="TestSaveSD.cs" />
+    <Compile Include="..\TorchSharpTest\TestTorchAudio.cs" Link="TestTorchAudio.cs" />
+    <Compile Include="..\TorchSharpTest\TestTorchAudioModels.cs" Link="TestTorchAudioModels.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchSharp.cs" Link="TestTorchSharp.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchTensor.cs" Link="TestTorchTensor.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchTensorBugs.cs" Link="TestTorchTensorBugs.cs" />
