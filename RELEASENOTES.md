@@ -37,6 +37,7 @@ Added torch.nn.init.trunc_normal_<br/>
 Added index_add, index_copy, index_fill<br/>
 Added torch.frombuffer()<br/>
 Added torch.fft.hfft2, hfftn, ihfft2, ihfftn<br/>
+Adding SequentialLR to the collection of LR schedulers.<br/>
 
 ## NuGet Version 0.97.1
 

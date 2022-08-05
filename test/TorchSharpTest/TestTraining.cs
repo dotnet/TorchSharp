@@ -213,7 +213,7 @@ namespace TorchSharp
             return finalLoss;
         }
 
-        private static float TrainLoop(Module seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true)
+        private static float TrainLoop(Module seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true, int iters = 10)
         {
             var loss = mse_loss(Reduction.Sum);
 
@@ -223,7 +223,7 @@ namespace TorchSharp
             var pgFirst = optimizer.ParamGroups.First();
             var lastLR = pgFirst.LearningRate;
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < iters; i++) {
                 using var eval = seq.forward(x);
                 using var output = loss(eval, y);
                 var lossVal = output.ToSingle();
@@ -1445,6 +1445,26 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer, scheduler);
 
             LossIsClose(209.71f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingSGDSequentialLR()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler0 = torch.optim.lr_scheduler.LinearLR(optimizer, end_factor: 0.75, total_iters: 10);
+            var scheduler1 = torch.optim.lr_scheduler.ConstantLR(optimizer);
+            var scheduler = torch.optim.lr_scheduler.SequentialLR(optimizer, new[] { scheduler0, scheduler1, torch.optim.lr_scheduler.ExponentialLR(optimizer) }, new[] { 10, 15 });
+
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false, iters: 20);
+
+            LossIsClose(240.24f, loss);
         }
 
         [Fact]

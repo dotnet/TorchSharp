@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 // All LR schedulers in this file are directly based on the Pytorch implementation at:
@@ -44,8 +45,17 @@ namespace TorchSharp
                     /// <remarks>Typically, this is done once per epoch or once every N batches.</remarks>
                     public virtual void step()
                     {
+                        step(null);
+                    }
+
+                    /// <summary>
+                    /// Advance the learning rate schedule.                 
+                    /// </summary>
+                    /// <remarks>Typically, this is done once per epoch or once every N batches.</remarks>
+                    public virtual void step(int? epoch)
+                    {
                         _step_count += 1;
-                        _last_epoch += 1;
+                        _last_epoch = (epoch.HasValue) ? epoch.Value : _last_epoch + 1;
 
                         // NOTE: It is super-important to use the 'get_lr()' method no more than once per step(), since
                         //       for many LR schedulers, it will modify the internal state of the scheduler,
@@ -67,12 +77,12 @@ namespace TorchSharp
                     /// </summary>
                     protected virtual IEnumerable<double> get_lr() => _optimizer.ParamGroups.Select(pg => pg.LearningRate);
 
-                    protected Optimizer _optimizer;
-                    protected int _last_epoch = -1;
-                    protected bool _verbose = false;
+                    internal Optimizer _optimizer;
+                    internal int _last_epoch = -1;
+                    internal bool _verbose = false;
                     protected int _step_count = 0;
-                    protected IList<double> _last_lrs;
-                    protected IList<double> _base_lrs;
+                    internal IList<double> _last_lrs;
+                    internal IList<double> _base_lrs;
                 }
 
                 public static partial class impl
@@ -384,6 +394,62 @@ namespace TorchSharp
                         private double _start_factor;
                         private double _end_factor;
                         private int _total_iters;
+                    }
+
+                    /// <summary>
+                    /// Receives the list of schedulers that is expected to be called sequentially during optimization process and milestone points that provides exact intervals to reflect which scheduler is supposed to be called at a given epoch.
+                    /// </summary>
+                    public class SequentialLR : LRScheduler
+                    {
+                        public SequentialLR(Optimizer optimizer, IEnumerable<LRScheduler> schedulers, IEnumerable<int> milestones, int last_epoch = -1) : base(optimizer, last_epoch + 1, false)
+                        {
+                            if (optimizer == null) throw new ArgumentNullException("optimizer");
+
+                            foreach (var scheduler in schedulers) {
+                                if (scheduler._optimizer != optimizer)
+                                    throw new ArgumentException($"The SequentialLR scheduler expects all its sub-schedulers to be bound to the same optimizer.");
+                            }
+
+                            if (milestones.Count() != schedulers.Count() - 1) {
+                                throw new ArgumentException($"Received {schedulers.Count()} schedulers and {milestones.Count()} milestones. The SequentialLR scheduler expects the number of schedulers to be one more than the number of milestones. ");
+                            }
+
+                            _schedulers = schedulers.ToArray();
+                            _milestones = milestones.ToArray();
+
+                            foreach (var group in optimizer.ParamGroups) {
+                                group.LearningRate = group.InitialLearningRate;
+                            }
+                            foreach (var scheduler in _schedulers) {
+                                scheduler._last_epoch -= 1;
+                            }
+                            _schedulers[0].step();
+                            _last_lrs = _schedulers[0]._last_lrs;
+                        }
+
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override IEnumerable<double> get_lr()
+                        {
+
+                            var idx = _milestones.Length;
+                            for (; idx > 0 ;) {
+                                if (_milestones[idx-1] <= _last_epoch) break;
+                                idx -= 1;
+                            }
+
+                            var scheduler = _schedulers[idx];
+                            if (idx > 0 && _milestones[idx - 1] == _last_epoch)
+                                scheduler.step(0);
+                            else
+                                scheduler.step();
+
+                            return _optimizer.ParamGroups.Select(pg => pg.LearningRate);
+                        }
+
+                        private LRScheduler[] _schedulers;
+                        private int[] _milestones;
                     }
 
 
@@ -998,11 +1064,25 @@ namespace TorchSharp
                 /// batch instead of after each epoch, this number represents the total number of *batches* computed, not the total number of epochs computed.
                 /// When last_epoch = -1, the schedule is started from the beginning.
                 /// </param>
-                /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
+                /// <param name="verbose">If true, prints a message to stdout for each update. Default: false.</param>
                 /// <returns>A scheduler</returns>
                 public static LRScheduler ConstantLR(Optimizer optimizer, double factor = 1.0 / 3, int total_iters = 5, int last_epoch = -1, bool verbose = false)
                 {
                     return new impl.ConstantLR(optimizer, factor, total_iters, last_epoch, verbose);
+                }
+
+                /// <summary>
+                /// Uses a list of schedulers, chosen based on the epoch. A sequence of milestones determines when a switch occurs from one scheduler to the next.
+                /// </summary>
+                /// <param name="optimizer">Wrapped optimizer. All sub-schedulers must be bound to the same optimizer.</param>
+                /// <param name="schedulers">List of chained schedulers. Should be one more than the number of milestones.</param>
+                /// <param name="milestones">List of integers reflecting the milestone points.</param>
+                /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
+                /// <returns></returns>
+                /// <remarks>The 'verbose' flag should be passed to each individual sub-scheduler.</remarks>
+                public static LRScheduler SequentialLR(Optimizer optimizer, IEnumerable<LRScheduler> schedulers, IEnumerable<int> milestones, int last_epoch = -1)
+                {
+                    return new impl.SequentialLR(optimizer, schedulers, milestones, last_epoch);
                 }
 
                 /// <summary>
@@ -1018,7 +1098,7 @@ namespace TorchSharp
                 /// batch instead of after each epoch, this number represents the total number of *batches* computed, not the total number of epochs computed.
                 /// When last_epoch = -1, the schedule is started from the beginning.
                 /// </param>
-                /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
+                /// <param name="verbose">If true, prints a message to stdout for each update. Default: false.</param>
                 /// <returns>A scheduler</returns>
                 public static LRScheduler LinearLR(Optimizer optimizer, double start_factor = 1.0 / 3, double end_factor = 5, int total_iters = 5, int last_epoch = -1, bool verbose = false)
                 {
