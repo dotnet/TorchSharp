@@ -109,6 +109,50 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestLaplace1()
+        {
+            var dist = Laplace(torch.tensor(0.0), torch.tensor(3.5));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestLaplace2()
+        {
+            var gen = new Generator(4711);
+
+            var dist = Laplace(torch.tensor(0.0), torch.tensor(3.5), gen);
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
         public void TestPoisson1()
         {
             var dist = Poisson(torch.tensor(0.5));
@@ -197,6 +241,53 @@ namespace TorchSharp
 
                 Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
                 Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d == 0 || d == 1));
+            }
+        }
+
+        [Fact]
+        public void TestLogitRelaxedBernoulli1()
+        {
+            var temp = torch.rand(3, dtype: ScalarType.Float64);
+
+            var dist = LogitRelaxedBernoulli(temp, torch.rand(3, dtype: ScalarType.Float64));
+            {
+                var sample = dist.sample();
+
+                Assert.Single(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestLogitRelaxedBernoulli2()
+        {
+            var gen = new Generator(4711);
+            var temp = torch.rand(3, dtype: ScalarType.Float64);
+
+            var dist = LogitRelaxedBernoulli(temp, torch.rand(3, dtype: ScalarType.Float64), generator: gen);
+            {
+                var sample = dist.sample();
+
+                Assert.Single(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
@@ -296,7 +387,6 @@ namespace TorchSharp
             }
         }
 
-
         [Fact]
         public void TestCategorical1()
         {
@@ -337,6 +427,48 @@ namespace TorchSharp
 
                 Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
                 Assert.All<long>(sample.data<long>().ToArray(), l => Assert.True(l >= 0 && l < categories));
+            }
+        }
+
+        [Fact]
+        public void TestOneHotCategorical1()
+        {
+            var categories = 7;
+            var dist = OneHotCategorical(torch.rand(3, categories, dtype: ScalarType.Float64));
+            {
+                var sample = dist.sample();
+
+                Assert.Equal(2, sample.ndim);
+                Assert.Equal(3, sample.shape[0]);
+                Assert.Equal(categories, sample.shape[1]);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(4, sample.ndim);
+                Assert.Equal(new long[] { 2, 3, 3, 7 }, sample.shape);
+            }
+        }
+
+
+        [Fact]
+        public void TestOneHotCategorical2()
+        {
+            var gen = new Generator(4711);
+            var categories = 7;
+            var dist = OneHotCategorical(torch.rand(3, categories, dtype: ScalarType.Float64, generator:gen));
+            {
+                var sample = dist.sample();
+
+                Assert.Equal(2, sample.ndim);
+                Assert.Equal(3, sample.shape[0]);
+                Assert.Equal(categories, sample.shape[1]);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(4, sample.ndim);
+                Assert.Equal(new long[] { 2, 3, 3, 7 }, sample.shape);
             }
         }
 
