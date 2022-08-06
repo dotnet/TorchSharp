@@ -15,7 +15,7 @@ using ICSharpCode.SharpZipLib;
 namespace TorchSharp
 {
     [TraitDiscoverer("CategoryDiscoverer", "TraitExtensibility")]
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
     public sealed class TestOfAttribute : Attribute, ITraitAttribute
     {
         public TestOfAttribute(string name) { Name = name; }
@@ -54,6 +54,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.tolist))]
         public void Test1DToList()
         {
             {
@@ -82,6 +83,8 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        [TestOf(nameof(TensorExtensionMethods.jlstr))]
         public void TestScalarToString()
         {
             {
@@ -104,6 +107,8 @@ namespace TorchSharp
         private string _sep = Environment.NewLine;
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        [TestOf(nameof(TensorExtensionMethods.jlstr))]
         public void Test1DToString()
         {
             {
@@ -136,6 +141,8 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        [TestOf(nameof(TensorExtensionMethods.jlstr))]
         public void Test2DToString()
         {
             {
@@ -171,6 +178,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(TensorExtensionMethods.jlstr))]
         public void Test3DToString()
         {
             {
@@ -186,6 +194,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
         public void Test4DToString()
         {
             {
@@ -204,6 +213,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
         public void Test5DToString()
         {
             {
@@ -228,6 +238,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
         public void Test6DToString()
         {
             {
@@ -265,6 +276,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
         public void TestToString1()
         {
             Tensor t = torch.zeros(2, 2);
@@ -274,6 +286,7 @@ namespace TorchSharp
 
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
         public void Test1DToNumpyString()
         {
             Assert.Equal("[0 0 0 0]", torch.zeros(4).ToString(TensorStringStyle.Numpy));
@@ -289,6 +302,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
         public void Test2DToNumpyString()
         {
             Assert.Equal($"[[0 3.141 6.2834 3.1415]{_sep} [6.28e-06 -13.142 0.01 4713.1]]", torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4).ToString(TensorStringStyle.Numpy, cultureInfo: CultureInfo.InvariantCulture));
@@ -309,6 +323,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
         public void Test3DToNumpyString()
         {
             {
@@ -326,6 +341,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
         public void Test4DToNumpyString()
         {
             Assert.Equal($"[[[[0 3.141 6.2834 3.1415]{_sep}   [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}  [[0.01 0 0 0]{_sep}   [0 0 0 0]]]{_sep}{_sep}{_sep} [[[0 3.141 6.2834 3.1415]{_sep}   [6.28e-06 -13.142 0.01 4713.1]]{_sep}{_sep}  [[0.01 0 0 0]{_sep}   [0 0 0 0]]]]", torch.tensor(new float[] {
@@ -337,6 +353,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
         public void Test5DToNumpyString()
         {
             Assert.Equal(
@@ -353,6 +370,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ToString))]
         public void Test6DToNumpyString()
         {
             Assert.Equal(
@@ -373,8 +391,8 @@ namespace TorchSharp
                     }, new long[] { 2, 2, 2, 2, 2, 4 }).ToString(TensorStringStyle.Numpy, cultureInfo: CultureInfo.InvariantCulture));
         }
 
-
         [Fact]
+        [TestOf(nameof(Tensor.alias))]
         public void TestAlias()
         {
             var t = torch.randn(5);
@@ -386,6 +404,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.Dispose))]
         public void TestAliasDispose()
         {
             var t = torch.randn(5);
@@ -400,6 +419,7 @@ namespace TorchSharp
         }
 
         [Fact(Skip = "Sensitive to parallelism in the xUnit test driver")]
+        [TestOf(nameof(torch.randn))]
         public void TestUsings()
         {
             var tCount = Tensor.TotalCount;
@@ -410,6 +430,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataBool()
         {
             var x = torch.ones(5, torch.@bool);
@@ -426,6 +447,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataByte()
         {
             var x = torch.ones(5, torch.uint8);
@@ -442,6 +464,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataInt8()
         {
             var x = torch.ones(5, torch.int8);
@@ -458,6 +481,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataInt16()
         {
             var x = torch.ones(5, torch.int16);
@@ -474,6 +498,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataInt32()
         {
             var x = torch.ones(5, torch.int32);
@@ -490,6 +515,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataInt64()
         {
             var x = torch.ones(5, torch.int64);
@@ -506,6 +532,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataFloat32()
         {
             var x = torch.ones(5, torch.float32);
@@ -522,6 +549,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataFloat64()
         {
             var x = torch.ones(5, torch.float64);
@@ -538,6 +566,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataItemBool()
         {
             var x = torch.ones(1, torch.@bool);
@@ -554,6 +583,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataItemByte()
         {
             var x = torch.ones(1, torch.uint8);
@@ -570,6 +600,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataItemInt8()
         {
             var x = torch.ones(1, torch.int8);
@@ -586,6 +617,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataItemInt16()
         {
             var x = torch.ones(1, torch.int16);
@@ -602,6 +634,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataItemInt32()
         {
             var x = torch.ones(1, torch.int32);
@@ -618,6 +651,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataItemInt64()
         {
             var x = torch.ones(1, torch.int64);
@@ -634,6 +668,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataItemFloat32()
         {
             var x = torch.ones(1, torch.float32);
@@ -650,6 +685,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void TestDataItemFloat64()
         {
             var x = torch.ones(1, torch.float64);
@@ -666,6 +702,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void TestFromArrayFactory()
         {
             {
@@ -748,6 +785,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.frombuffer))]
         public void TestFromBufferFactory()
         {
             {
@@ -768,7 +806,7 @@ namespace TorchSharp
             }
             {
                 // The number of input dimensions shouldn't matter.
-                var array = new double[2,4];
+                var array = new double[2, 4];
                 var t = torch.frombuffer(array, ScalarType.Bool, 5, 2);
                 Assert.Multiple(
                     () => Assert.Equal(1, t.ndim),
@@ -776,7 +814,7 @@ namespace TorchSharp
                     () => Assert.Equal(ScalarType.Bool, t.dtype));
             }
             {
-                var array = new double[] { 0, 1, 2, 3, 4, 5, 6, 7};
+                var array = new double[] { 0, 1, 2, 3, 4, 5, 6, 7 };
                 var t = torch.frombuffer(array, ScalarType.Float64, 5, 2);
                 Assert.Multiple(
                     () => Assert.Equal(1, t.ndim),
@@ -827,6 +865,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void TestMDTensorFactorySByte()
         {
             {
@@ -893,6 +932,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void TestMDTensorFactoryInt16()
         {
             {
@@ -951,6 +991,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void TestMDTensorFactoryInt32()
         {
             {
@@ -1010,6 +1051,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void TestMDTensorFactoryInt64()
         {
             {
@@ -1082,6 +1124,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void TestMDTensorFactoryFloat32()
         {
             {
@@ -1141,6 +1184,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void TestMDTensorFactoryFloat64()
         {
             {
@@ -1200,6 +1244,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void TestMDTensorFactoryComplexFloat32()
         {
             {
@@ -1278,6 +1323,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void TestMDTensorFactoryComplexFloat64()
         {
             {
@@ -1367,6 +1413,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateFloat32TensorZeros()
         {
             var shape = new long[] { 2, 2 };
@@ -1377,6 +1424,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateFloat32TensorZeros_()
         {
             var shape = new long[] { 2, 2 };
@@ -1387,6 +1435,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateByteTensorZeros()
         {
             var shape = new long[] { 2, 2 };
@@ -1397,6 +1446,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateByteTensorZeros_()
         {
             var shape = new long[] { 2, 2 };
@@ -1407,6 +1457,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateInt32TensorZeros()
         {
             var shape = new long[] { 2, 2 };
@@ -1417,6 +1468,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateInt32TensorZeros_()
         {
             var shape = new long[] { 2, 2 };
@@ -1427,6 +1479,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateInt64TensorZeros()
         {
             var shape = new long[] { 2, 2 };
@@ -1438,6 +1491,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateBoolTensorZeros()
         {
             var shape = new long[] { 2, 2 };
@@ -1449,6 +1503,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateFloat16TensorZeros()
         {
             foreach (var device in new Device[] { torch.CUDA }) {
@@ -1464,6 +1519,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateBFloat16TensorZeros()
         {
             foreach (var device in new Device[] { torch.CUDA }) {
@@ -1479,6 +1535,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.empty))]
         public void CreateFloat32TensorEmpty()
         {
             var shape = new long[] { 2, 2 };
@@ -1487,6 +1544,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.full))]
         public void CreateFloat32TensorFull()
         {
             var shape = new long[] { 2, 2 };
@@ -1497,6 +1555,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.empty))]
         public void CreateByteTensorEmpty()
         {
             var shape = new long[] { 2, 2 };
@@ -1505,6 +1564,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.empty))]
         public void CreateInt32TensorEmpty()
         {
             var shape = new long[] { 2, 2 };
@@ -1513,6 +1573,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.full))]
         public void CreateInt32TensorFull()
         {
             var shape = new long[] { 2, 2 };
@@ -1523,6 +1584,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.empty))]
         public void CreateInt64TensorEmpty()
         {
             var shape = new long[] { 2, 2 };
@@ -1532,6 +1594,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.empty))]
         public void CreateBoolTensorEmpty()
         {
             var shape = new long[] { 2, 2 };
@@ -1541,6 +1604,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.empty_strided))]
         public void CreateTensorEmptyStrided()
         {
             var shape = new long[] { 2, 3 };
@@ -1557,6 +1621,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.as_strided))]
         public void CreateTensorEmptyAsStrided()
         {
             var shape = new long[] { 2, 3 };
@@ -1573,6 +1638,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.empty))]
         public void CreateFloat16TensorEmpty()
         {
             foreach (var device in new Device[] { torch.CUDA }) {
@@ -1586,6 +1652,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.empty))]
         public void CreateBFloat16TensorEmpty()
         {
             foreach (var device in new Device[] { torch.CUDA }) {
@@ -1599,6 +1666,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.linspace))]
         public void CreateFloat32Linspace()
         {
             Tensor t = torch.linspace(0.0f, 10.0f, 101);
@@ -1608,6 +1676,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.logspace))]
         public void CreateFloat32Logspace()
         {
             Tensor t = torch.logspace(0.0f, 10.0f, 101);
@@ -1617,6 +1686,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateFloat32TensorOnes()
         {
             var shape = new long[] { 2, 2 };
@@ -1627,6 +1697,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateByteTensorOnes()
         {
             var shape = new long[] { 2, 2 };
@@ -1637,6 +1708,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateInt32TensorOnes()
         {
             var shape = new long[] { 2, 2 };
@@ -1647,6 +1719,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateInt64TensorOnes()
         {
             var shape = new long[] { 2, 2 };
@@ -1658,6 +1731,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateBoolTensorOnes()
         {
             var shape = new long[] { 2, 2 };
@@ -1669,6 +1743,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateFloat16TensorOnes()
         {
             foreach (var device in new Device[] { torch.CUDA }) {
@@ -1684,6 +1759,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateBFloat16TensorOnes()
         {
             foreach (var device in new Device[] { torch.CUDA }) {
@@ -1699,6 +1775,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateComplexFloat32TensorZeros()
         {
             var shape = new long[] { 2, 2 };
@@ -1713,6 +1790,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateComplexFloat32TensorOnes()
         {
             var shape = new long[] { 2, 2 };
@@ -1727,6 +1805,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.complex))]
         public void CreateComplex32()
         {
             var shape = new long[] { 2, 2 };
@@ -1742,6 +1821,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.complex))]
         public void CreateComplex64()
         {
             var shape = new long[] { 2, 2 };
@@ -1757,6 +1837,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.polar))]
         public void CreatePolar32()
         {
             var shape = new long[] { 2, 2 };
@@ -1774,6 +1855,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.polar))]
         public void CreatePolar64()
         {
             var shape = new long[] { 2, 2 };
@@ -1791,6 +1873,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.rand))]
         public void CreateComplexFloat32TensorRand()
         {
             var shape = new long[] { 2, 2 };
@@ -1801,6 +1884,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.randn))]
         public void CreateComplexFloat32TensorRandn()
         {
             var shape = new long[] { 2, 2 };
@@ -1810,6 +1894,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateComplexFloat64TensorZeros()
         {
             var shape = new long[] { 2, 2 };
@@ -1824,6 +1909,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateComplexFloat64TensorOnes()
         {
             var shape = new long[] { 2, 2 };
@@ -1838,19 +1924,17 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateFloat32TensorCheckMemory()
         {
-            Tensor? ones = null;
-
             for (int i = 0; i < 10; i++) {
-                using (var tmp = torch.ones(new long[] { 100, 100, 100 })) {
-                    ones = tmp;
-                    Assert.NotNull(ones);
-                }
+                using var tmp = torch.ones(new long[] { 100, 100, 100 });
+                Assert.NotNull(tmp);
             }
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateFloat32TensorOnesCheckData()
         {
             var ones = torch.ones(new long[] { 2, 2 });
@@ -1862,6 +1946,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
         public void CreateFloat32TensorZerosCheckData()
         {
             var zeros = torch.zeros(new long[] { 2, 2 });
@@ -1873,6 +1958,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateInt32TensorOnesCheckData()
         {
             var ones = torch.ones(new long[] { 2, 2 }, int32);
@@ -1884,6 +1970,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.eye))]
         public void CreateInt32TensorEyeCheckData1()
         {
             var ones = torch.eye(4, 4, int32);
@@ -1900,6 +1987,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.eye))]
         public void CreateInt32TensorEyeCheckData2()
         {
             var ones = torch.eye(4, dtype: torch.int32);
@@ -1916,6 +2004,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.eye))]
         public void CreateComplexFloat32TensorEyeCheckData()
         {
             var ones = torch.eye(4, 4, torch.complex64);
@@ -1937,6 +2026,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.eye))]
         public void CreateComplexFloat64TensorEyeCheckData()
         {
             var ones = torch.eye(4, 4, torch.complex128);
@@ -1958,6 +2048,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones))]
         public void CreateFloat32TensorCheckDevice()
         {
             var ones = torch.ones(new long[] { 2, 2 });
@@ -1967,40 +2058,40 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void CreateFloat32TensorFromData()
         {
             var data = new float[1000];
             data[100] = 1;
 
-            using (var tensor = torch.tensor(data, new long[] { 100, 10 })) {
-                Assert.Equal(1, tensor.data<float>()[100]);
-            }
+            using var tensor = torch.tensor(data, new long[] { 100, 10 });
+            Assert.Equal(1, tensor.data<float>()[100]);
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void CreateFloat32TensorFromDataCheckDispose()
         {
             var data = new float[1000];
             data[100] = 1;
 
-            using (var tensor = torch.tensor(data, new long[] { 100, 10 })) {
-                Assert.Equal(1, tensor.data<float>()[100]);
-            }
-
+            using var tensor = torch.tensor(data, new long[] { 100, 10 });
+            Assert.Equal(1, tensor.data<float>()[100]);
             Assert.Equal(1, data[100]);
         }
 
         [Fact]
+        [TestOf(nameof(TensorExtensionMethods.ToTensor))]
         public void CreateFloat32TensorFromData2()
         {
             var data = new float[1000];
 
-            using (var tensor = data.ToTensor(new long[] { 10, 100 })) {
-                Assert.Equal(default(float), tensor.data<float>()[100]);
-            }
+            using var tensor = data.ToTensor(new long[] { 10, 100 });
+            Assert.Equal(default(float), tensor.data<float>()[100]);
         }
 
         [Fact]
+        [TestOf(nameof(TensorExtensionMethods.ToTensor))]
         public void CreateFloat32TensorFromDataCheckStrides()
         {
             var data = new double[] { 0.2663158, 0.1144736, 0.1147367, 0.1249998, 0.1957895, 0.1231576, 0.1944732, 0.111842, 0.1065789, 0.667881, 0.5682123, 0.5824502, 0.4824504, 0.4844371, 0.6463582, 0.5334439, 0.5079474, 0.2281452 };
@@ -2023,8 +2114,8 @@ namespace TorchSharp
             }
         }
 
-
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void CreateFloat16TensorFromDataCheckStrides()
         {
             var data = new float[] { 0.2663158f, 0.1144736f, 0.1147367f, 0.1249998f, 0.1957895f, 0.1231576f, 0.1944732f, 0.111842f, 0.1065789f, 0.667881f, 0.5682123f, 0.5824502f, 0.4824504f, 0.4844371f, 0.6463582f, 0.5334439f, 0.5079474f, 0.2281452f };
@@ -2048,6 +2139,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void CreateBFloat16TensorFromDataCheckStrides()
         {
             var data = new float[] { 0.2663158f, 0.1144736f, 0.1147367f, 0.1249998f, 0.1957895f, 0.1231576f, 0.1944732f, 0.111842f, 0.1065789f, 0.667881f, 0.5682123f, 0.5824502f, 0.4824504f, 0.4844371f, 0.6463582f, 0.5334439f, 0.5079474f, 0.2281452f };
@@ -2071,6 +2163,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.bartlett_window))]
         public void CreateFloat32BartlettWindow()
         {
             Tensor t = torch.bartlett_window(100);
@@ -2078,6 +2171,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.blackman_window))]
         public void CreateFloat32BlackmanWindow()
         {
             Tensor t = torch.blackman_window(100);
@@ -2085,6 +2179,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.hamming_window))]
         public void CreateFloat32HammingWindow()
         {
             Tensor t = torch.hamming_window(100);
@@ -2092,6 +2187,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.hann_window))]
         public void CreateFloat32HannWindow()
         {
             Tensor t = torch.hann_window(100);
@@ -2099,6 +2195,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.kaiser_window))]
         public void CreateFloat32KaiserWindow()
         {
             Tensor t = torch.kaiser_window(100);
@@ -2106,46 +2203,45 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void CreateFloat32TensorFromScalar()
         {
             float scalar = 333.0f;
 
-            using (var tensor = torch.tensor(scalar)) {
-                Assert.Equal(333.0f, tensor.ToSingle());
-            }
+            using var tensor = torch.tensor(scalar);
+            Assert.Equal(333.0f, tensor.ToSingle());
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void CreateFloat16TensorFromScalar()
         {
             float scalar = 333.0f;
 
-            using (var tensor = torch.tensor(scalar, float16)) {
-                Assert.Equal(333.0f, tensor.ToSingle());
-            }
+            using var tensor = torch.tensor(scalar, float16);
+            Assert.Equal(333.0f, tensor.ToSingle());
         }
 
         [Fact]
+        [TestOf(nameof(torch.tensor))]
         public void CreateBFloat16TensorFromScalar()
         {
             float scalar = 333.0f;
-
-            using (var tensor = torch.tensor(scalar, bfloat16)) {
-                Assert.Equal(332.0f, tensor.ToSingle()); // NOTE: bfloat16 loses precision, this really is 332.0f
-            }
+            using var tensor = torch.tensor(scalar, bfloat16);
+            Assert.Equal(332.0f, tensor.ToSingle()); // NOTE: bfloat16 loses precision, this really is 332.0f
         }
 
         [Fact]
+        [TestOf(nameof(TensorExtensionMethods.ToTensor))]
         public void CreateFloat32TensorFromScalar2()
         {
             float scalar = 333.0f;
-
-            using (var tensor = scalar.ToTensor()) {
-                Assert.Equal(333, tensor.ToSingle());
-            }
+            using var tensor = scalar.ToTensor();
+            Assert.Equal(333, tensor.ToSingle());
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones_like))]
         public void CreateFloat32TensorOnesLike()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2161,6 +2257,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.ones_like))]
         public void CreateFloat32TensorOnesLikeWithType()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2176,6 +2273,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros_like))]
         public void CreateFloat32TensorZerosLike()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2191,6 +2289,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros_like))]
         public void CreateFloat32TensorZerosLikeWithType()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2206,6 +2305,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.empty_like))]
         public void CreateFloat32TensorEmptyLike()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2220,6 +2320,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.empty_like))]
         public void CreateFloat32TensorEmptyLikeWithType()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2234,6 +2335,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.full_like))]
         public void CreateFloat32TensorFullLike()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2250,6 +2352,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.full_like))]
         public void CreateFloat32TensorFullLikeWithType()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2266,6 +2369,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.rand_like))]
         public void CreateFloat32TensorRandLike()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2281,6 +2385,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.rand_like))]
         public void CreateFloat32TensorRandLikeWithType()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2296,6 +2401,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.rand_like))]
         public void CreateComplexFloat32TensorRandLike()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2310,6 +2416,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.rand_like))]
         public void CreateComplexFloat32TensorRandLikeWithType()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2324,6 +2431,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.randn_like))]
         public void CreateFloat32TensorRandnLike()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2338,6 +2446,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.randn_like))]
         public void CreateFloat32TensorRandnLikeWithType()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2352,6 +2461,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.randn_like))]
         public void CreateComplexFloat32TensorRandnLike()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2366,6 +2476,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.randn_like))]
         public void CreateComplexFloat32TensorRandnLikeWithType()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2380,6 +2491,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.randint_like))]
         public void CreateFloat32TensorRandintLike()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2395,6 +2507,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.randint_like))]
         public void CreateFloat32TensorRandintLikeWithType()
         {
             var shape = new long[] { 10, 20, 30 };
@@ -2410,26 +2523,27 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.mean))]
         public void Float32Mean()
         {
-            using (var tensor = torch.arange(1, 100, float32)) {
-                var mean = tensor.mean().item<float>();
-                Assert.Equal(50.0f, mean);
-            }
+            using var tensor = torch.arange(1, 100, float32);
+            var mean = tensor.mean().item<float>();
+            Assert.Equal(50.0f, mean);
         }
 
 
         [Fact]
+        [TestOf(nameof(Tensor.mode))]
         public void Int32Mode()
         {
-            using (var tensor = torch.tensor(new int[] { 1, 5, 4, 5, 3, 3, 5, 5 })) {
-                var mode = tensor.mode();
-                Assert.Equal(new int[] { 5 }, mode.values.data<int>().ToArray());
-                Assert.Equal(new long[] { 7 }, mode.indices.data<long>().ToArray());
-            }
+            using var tensor = torch.tensor(new int[] { 1, 5, 4, 5, 3, 3, 5, 5 });
+            var mode = tensor.mode();
+            Assert.Equal(new int[] { 5 }, mode.values.data<int>().ToArray());
+            Assert.Equal(new long[] { 7 }, mode.indices.data<long>().ToArray());
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void GetSetItem2()
         {
             var shape = new long[] { 2, 3 };
@@ -2442,6 +2556,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void GetSetItemComplexFloat2()
         {
             var shape = new long[] { 2, 3 };
@@ -2461,6 +2576,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void GetSetItemComplexDouble2()
         {
             var shape = new long[] { 2, 3 };
@@ -2484,6 +2600,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void GetSetItem3()
         {
             var shape = new long[] { 2, 3, 4 };
@@ -2496,6 +2613,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void GetSetItem4()
         {
             var shape = new long[] { 2, 3, 4, 5 };
@@ -2508,6 +2626,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void GetSetItem5()
         {
             var shape = new long[] { 2, 3, 4, 5, 6 };
@@ -2521,6 +2640,7 @@ namespace TorchSharp
 
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void GetSetItem6()
         {
             var shape = new long[] { 2, 3, 4, 5, 6, 7 };
@@ -2534,6 +2654,7 @@ namespace TorchSharp
 
         // regression for https://github.com/dotnet/TorchSharp/issues/521
         [Fact]
+        [TestOf(nameof(ones))]
         public void SetItemSlice()
         {
             var shape = new long[] { 2, 2, 2, 2, 2, 2, 2 };
@@ -2556,6 +2677,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.index_add))]
         public void IndexAdd1()
         {
             using var _ = NewDisposeScope();
@@ -2578,6 +2700,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.index_add_))]
         public void IndexAdd2()
         {
             using var _ = NewDisposeScope();
@@ -2600,6 +2723,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.index_copy))]
         public void IndexCopy1()
         {
             using var _ = NewDisposeScope();
@@ -2622,6 +2746,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.index_copy_))]
         public void IndexCopy2()
         {
             using var _ = NewDisposeScope();
@@ -2644,6 +2769,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.index_fill))]
         public void IndexFill1()
         {
             using var _ = NewDisposeScope();
@@ -2665,6 +2791,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.index_fill))]
         public void IndexFill2()
         {
             using var _ = NewDisposeScope();
@@ -2686,12 +2813,14 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(TensorExtensionMethods.ToTensor))]
         public void TestScalarToTensor()
         {
             Assert.Throws<ArgumentException>(() => 1.ToTensor(requiresGrad: true));
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void TestScalarToTensor2()
         {
             using (Tensor tensor = 1) {
@@ -2739,6 +2868,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(TensorExtensionMethods.ToTensor))]
         public void TestScalarToTensor3()
         {
             using (Tensor tensor = 1.ToTensor()) {
@@ -2772,6 +2902,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void TestNegativeScalarToTensor()
         {
             Scalar s = 10;
@@ -2783,6 +2914,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.calculate_gain))]
         public void TestCalculateGain()
         {
             Assert.Equal(1, torch.nn.init.calculate_gain(torch.nn.init.NonlinearityType.Linear));
@@ -2795,26 +2927,31 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.isposinf))]
+        [TestOf(nameof(Tensor.isinf))]
+        [TestOf(nameof(Tensor.isneginf))]
+        [TestOf(nameof(Tensor.isfinite))]
+        [TestOf(nameof(Tensor.isnan))]
         public void InfinityTest()
         {
-            using (Tensor tensor = torch.empty(new long[] { 2, 2 })) {
-                tensor.fill_(float.PositiveInfinity);
-                Assert.True(tensor.isposinf().data<bool>().ToArray().All(b => b));
-                Assert.True(tensor.isinf().data<bool>().ToArray().All(b => b));
-                Assert.False(tensor.isneginf().data<bool>().ToArray().All(b => b));
-                Assert.False(tensor.isfinite().data<bool>().ToArray().All(b => b));
-                Assert.False(tensor.isnan().data<bool>().ToArray().All(b => b));
+            using Tensor tensor = torch.empty(new long[] { 2, 2 });
+            tensor.fill_(float.PositiveInfinity);
+            Assert.True(tensor.isposinf().data<bool>().ToArray().All(b => b));
+            Assert.True(tensor.isinf().data<bool>().ToArray().All(b => b));
+            Assert.False(tensor.isneginf().data<bool>().ToArray().All(b => b));
+            Assert.False(tensor.isfinite().data<bool>().ToArray().All(b => b));
+            Assert.False(tensor.isnan().data<bool>().ToArray().All(b => b));
 
-                tensor.fill_(float.NegativeInfinity);
-                Assert.True(tensor.isneginf().data<bool>().ToArray().All(b => b));
-                Assert.True(tensor.isinf().data<bool>().ToArray().All(b => b));
-                Assert.False(tensor.isposinf().data<bool>().ToArray().All(b => b));
-                Assert.False(tensor.isfinite().data<bool>().ToArray().All(b => b));
-                Assert.False(tensor.isnan().data<bool>().ToArray().All(b => b));
-            }
+            tensor.fill_(float.NegativeInfinity);
+            Assert.True(tensor.isneginf().data<bool>().ToArray().All(b => b));
+            Assert.True(tensor.isinf().data<bool>().ToArray().All(b => b));
+            Assert.False(tensor.isposinf().data<bool>().ToArray().All(b => b));
+            Assert.False(tensor.isfinite().data<bool>().ToArray().All(b => b));
+            Assert.False(tensor.isnan().data<bool>().ToArray().All(b => b));
         }
 
-        [Fact, TestOf(nameof(torch.isnan))]
+        [Fact]
+        [TestOf(nameof(torch.isnan))]
         public void IsNaNTest()
         {
             var array = new float[] { float.NaN, float.PositiveInfinity, 1f, 0f, -1f, float.NegativeInfinity };
@@ -2825,295 +2962,295 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.bernoulli))]
         public void TorchBernoulli()
         {
-            using (var tensor = torch.bernoulli(torch.rand(5))) {
-                Assert.Equal(5, tensor.shape[0]);
-            }
+            using var tensor = torch.bernoulli(torch.rand(5));
+            Assert.Equal(5, tensor.shape[0]);
         }
 
         [Fact]
+        [TestOf(nameof(torch.multinomial))]
         public void TorchMultinomial()
         {
-            using (var tensor = torch.multinomial(torch.rand(5), 17, true)) {
-                Assert.Equal(17, tensor.shape[0]);
-            }
+            using var tensor = torch.multinomial(torch.rand(5), 17, true);
+            Assert.Equal(17, tensor.shape[0]);
         }
 
         [Fact]
+        [TestOf(nameof(torch.poisson))]
         public void TorchPoisson()
         {
-            using (var tensor = torch.poisson(torch.rand(5))) {
-                Assert.Equal(5, tensor.shape[0]);
-            }
+            using var tensor = torch.poisson(torch.rand(5));
+            Assert.Equal(5, tensor.shape[0]);
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.zeros_))]
         public void InitZeros()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.zeros_(tensor)) { }
-                using (var res = torch.nn.init.zeros_(tensor)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.zeros_(tensor)) { }
+            using (var res = torch.nn.init.zeros_(tensor)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.ones_))]
         public void InitOnes()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.ones_(tensor)) { }
-                using (var res = torch.nn.init.ones_(tensor)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.ones_(tensor)) { }
+            using (var res = torch.nn.init.ones_(tensor)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.dirac_))]
         public void InitDirac()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.dirac_(tensor)) { }
-                using (var res = torch.nn.init.dirac_(tensor)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.dirac_(tensor)) { }
+            using (var res = torch.nn.init.dirac_(tensor)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.eye_))]
         public void InitEye()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.eye_(tensor)) { }
-                using (var res = torch.nn.init.eye_(tensor)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.eye_(tensor)) { }
+            using (var res = torch.nn.init.eye_(tensor)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.constant_))]
         public void InitConstant()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.constant_(tensor, Math.PI)) { }
-                using (var res = torch.nn.init.constant_(tensor, Math.PI)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.constant_(tensor, Math.PI)) { }
+            using (var res = torch.nn.init.constant_(tensor, Math.PI)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.uniform_))]
         public void InitUniform()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.uniform_(tensor)) { }
-                using (var gen = new torch.Generator(4711L))
-                using (var res = torch.nn.init.uniform_(tensor, generator: gen)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.uniform_(tensor)) { }
+            using (var gen = new torch.Generator(4711L))
+            using (var res = torch.nn.init.uniform_(tensor, generator: gen)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.normal_))]
         public void InitNormal()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.normal_(tensor)) { }
-                using (var gen = new torch.Generator(4711L))
-                using (var res = torch.nn.init.normal_(tensor, generator: gen)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.normal_(tensor)) { }
+            using (var gen = new torch.Generator(4711L))
+            using (var res = torch.nn.init.normal_(tensor, generator: gen)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.trunc_normal_))]
         public void InitTruncNormal()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.trunc_normal_(tensor, 0, 1, -0.5, 0.5)) { }
-                using (var gen = new torch.Generator(4711L))
-                using (var res = torch.nn.init.trunc_normal_(tensor, generator: gen)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.trunc_normal_(tensor, 0, 1, -0.5, 0.5)) { }
+            using (var gen = new torch.Generator(4711L))
+            using (var res = torch.nn.init.trunc_normal_(tensor, generator: gen)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.orthogonal_))]
         public void InitOrthogonal()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.orthogonal_(tensor)) { }
-                using (var res = torch.nn.init.orthogonal_(tensor)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.orthogonal_(tensor)) { }
+            using (var res = torch.nn.init.orthogonal_(tensor)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.sparse_))]
         public void InitSparse()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.sparse_(tensor, 0.25)) { }
-                using (var res = torch.nn.init.sparse_(tensor, 0.25)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.sparse_(tensor, 0.25)) { }
+            using (var res = torch.nn.init.sparse_(tensor, 0.25)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.kaiming_uniform_))]
         public void InitKaimingUniform()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.kaiming_uniform_(tensor)) { }
-                using (var res = torch.nn.init.kaiming_uniform_(tensor)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.kaiming_uniform_(tensor)) { }
+            using (var res = torch.nn.init.kaiming_uniform_(tensor)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.kaiming_normal_))]
         public void InitKaimingNormal()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.kaiming_normal_(tensor)) { }
-                using (var res = torch.nn.init.kaiming_normal_(tensor)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.kaiming_normal_(tensor)) { }
+            using (var res = torch.nn.init.kaiming_normal_(tensor)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.xavier_uniform_))]
         public void InitXavierUniform()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.xavier_uniform_(tensor)) { }
-                using (var res = torch.nn.init.xavier_uniform_(tensor)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.xavier_uniform_(tensor)) { }
+            using (var res = torch.nn.init.xavier_uniform_(tensor)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.init.xavier_normal_))]
         public void InitXavierNormal()
         {
-            using (Tensor tensor = torch.zeros(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = torch.nn.init.xavier_normal_(tensor)) { }
-                using (var res = torch.nn.init.xavier_normal_(tensor)) { }
-            }
+            using Tensor tensor = torch.zeros(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = torch.nn.init.xavier_normal_(tensor)) { }
+            using (var res = torch.nn.init.xavier_normal_(tensor)) { }
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.bernoulli_))]
         public void InplaceBernoulli()
         {
-            using (Tensor tensor = torch.empty(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = tensor.bernoulli_()) { }
-                using (var gen = new torch.Generator(4711L))
-                using (var res = tensor.bernoulli_(generator: gen)) { }
-            }
+            using Tensor tensor = torch.empty(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = tensor.bernoulli_()) { }
+            using (var gen = new torch.Generator(4711L))
+            using (var res = tensor.bernoulli_(generator: gen)) { }
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.cauchy_))]
         public void InplaceCauchy()
         {
-            using (Tensor tensor = torch.empty(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = tensor.cauchy_()) { }
-                using (var gen = new torch.Generator(4711L))
-                using (var res = tensor.cauchy_(generator: gen)) { }
-            }
+            using Tensor tensor = torch.empty(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = tensor.cauchy_()) { }
+            using (var gen = new torch.Generator(4711L))
+            using (var res = tensor.cauchy_(generator: gen)) { }
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.exponential_))]
         public void InplaceExponential()
         {
-            using (Tensor tensor = torch.empty(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = tensor.exponential_()) { }
-                using (var gen = new torch.Generator(4711L))
-                using (var res = tensor.exponential_(generator: gen)) { }
-            }
+            using Tensor tensor = torch.empty(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = tensor.exponential_()) { }
+            using (var gen = new torch.Generator(4711L))
+            using (var res = tensor.exponential_(generator: gen)) { }
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.geometric_))]
         public void InplaceGeometric()
         {
-            using (Tensor tensor = torch.empty(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = tensor.geometric_(0.25)) { }
-                using (var gen = new torch.Generator(4711L))
-                using (var res = tensor.geometric_(0.25, generator: gen)) { }
-            }
+            using Tensor tensor = torch.empty(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = tensor.geometric_(0.25)) { }
+            using (var gen = new torch.Generator(4711L))
+            using (var res = tensor.geometric_(0.25, generator: gen)) { }
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.log_normal_))]
         public void InplaceLogNormal()
         {
-            using (Tensor tensor = torch.empty(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = tensor.log_normal_()) { }
-                using (var gen = new torch.Generator(4711L))
-                using (var res = tensor.log_normal_(generator: gen)) { }
-            }
+            using Tensor tensor = torch.empty(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = tensor.log_normal_()) { }
+            using (var gen = new torch.Generator(4711L))
+            using (var res = tensor.log_normal_(generator: gen)) { }
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.normal_))]
         public void InplaceNormal()
         {
-            using (Tensor tensor = torch.empty(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = tensor.normal_()) { }
-                using (var gen = new torch.Generator(4711L))
-                using (var res = tensor.normal_(generator: gen)) { }
-            }
+            using Tensor tensor = torch.empty(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = tensor.normal_()) { }
+            using (var gen = new torch.Generator(4711L))
+            using (var res = tensor.normal_(generator: gen)) { }
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.random_))]
         public void InplaceRandom()
         {
-            using (Tensor tensor = torch.empty(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = tensor.random_(0.0, 1.0)) { }
-                using (var gen = new torch.Generator(4711L))
-                using (var res = tensor.random_(0, 1, generator: gen)) { }
-            }
+            using Tensor tensor = torch.empty(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = tensor.random_(0.0, 1.0)) { }
+            using (var gen = new torch.Generator(4711L))
+            using (var res = tensor.random_(0, 1, generator: gen)) { }
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.uniform_))]
         public void InplaceUniform()
         {
-            using (Tensor tensor = torch.empty(new long[] { 2, 2 })) {
-                // Really just testing that the native interop works and that the fact
-                // that there are two handles to the tensor is okay.
-                using (var res = tensor.uniform_(0.0, 1.0)) { }
-                using (var gen = new torch.Generator(4711L))
-                using (var res = tensor.uniform_(0, 1, generator: gen)) { }
-            }
+            using Tensor tensor = torch.empty(new long[] { 2, 2 });
+            // Really just testing that the native interop works and that the fact
+            // that there are two handles to the tensor is okay.
+            using (var res = tensor.uniform_(0.0, 1.0)) { }
+            using (var gen = new torch.Generator(4711L))
+            using (var res = tensor.uniform_(0, 1, generator: gen)) { }
         }
 
         [Fact]
+        [TestOf(nameof(torch.sparse))]
         public void TestSparse()
         {
-            using (var i = torch.tensor(new long[] { 0, 1, 1, 2, 0, 2 }, new long[] { 2, 3 }))
-            using (Tensor v = new float[] { 3, 4, 5 }) {
-                var sparse = torch.sparse(i, v, new long[] { 2, 3 });
+            using var i = torch.tensor(new long[] { 0, 1, 1, 2, 0, 2 }, new long[] { 2, 3 });
+            using Tensor v = new float[] { 3, 4, 5 };
+            var sparse = torch.sparse(i, v, new long[] { 2, 3 });
 
-                Assert.True(sparse.is_sparse);
-                Assert.False(i.is_sparse);
-                Assert.False(v.is_sparse);
-                Assert.Equal(sparse.SparseIndices.data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
-                Assert.Equal(sparse.SparseValues.data<float>().ToArray(), new float[] { 3, 4, 5 });
-            }
+            Assert.True(sparse.is_sparse);
+            Assert.False(i.is_sparse);
+            Assert.False(v.is_sparse);
+            Assert.Equal(sparse.SparseIndices.data<long>().ToArray(), new long[] { 0, 1, 1, 2, 0, 2 });
+            Assert.Equal(sparse.SparseValues.data<float>().ToArray(), new float[] { 3, 4, 5 });
         }
 
         [Fact]
@@ -3128,120 +3265,116 @@ namespace TorchSharp
         [Fact]
         public void TestIndexSingle()
         {
-            using (var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-                Assert.Equal(0, i.index(new TensorIndex[] { TensorIndex.Single(0), TensorIndex.Single(0) }).ToInt32());
-                Assert.Equal(1, i.index(new TensorIndex[] { TensorIndex.Single(0), TensorIndex.Single(1) }).ToInt32());
-                Assert.Equal(2, i.index(new TensorIndex[] { TensorIndex.Single(0), TensorIndex.Single(2) }).ToInt32());
-                Assert.Equal(6, i.index(new TensorIndex[] { TensorIndex.Single(1), TensorIndex.Single(0) }).ToInt32());
-                Assert.Equal(5, i.index(new TensorIndex[] { TensorIndex.Single(1), TensorIndex.Single(1) }).ToInt32());
-                Assert.Equal(4, i.index(new TensorIndex[] { TensorIndex.Single(1), TensorIndex.Single(2) }).ToInt32());
-            }
+            using var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 });
+            Assert.Equal(0, i.index(new TensorIndex[] { TensorIndex.Single(0), TensorIndex.Single(0) }).ToInt32());
+            Assert.Equal(1, i.index(new TensorIndex[] { TensorIndex.Single(0), TensorIndex.Single(1) }).ToInt32());
+            Assert.Equal(2, i.index(new TensorIndex[] { TensorIndex.Single(0), TensorIndex.Single(2) }).ToInt32());
+            Assert.Equal(6, i.index(new TensorIndex[] { TensorIndex.Single(1), TensorIndex.Single(0) }).ToInt32());
+            Assert.Equal(5, i.index(new TensorIndex[] { TensorIndex.Single(1), TensorIndex.Single(1) }).ToInt32());
+            Assert.Equal(4, i.index(new TensorIndex[] { TensorIndex.Single(1), TensorIndex.Single(2) }).ToInt32());
         }
 
         [Fact]
         public void TestIndexEllipsis()
         {
-            using (var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-                var t1 = i.index(new TensorIndex[] { TensorIndex.Ellipsis, TensorIndex.Single(0) });
-                Assert.Equal(0, t1[0].ToInt32());
-                Assert.Equal(6, t1[1].ToInt32());
-            }
+            using var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 });
+            var t1 = i.index(new TensorIndex[] { TensorIndex.Ellipsis, TensorIndex.Single(0) });
+            Assert.Equal(0, t1[0].ToInt32());
+            Assert.Equal(6, t1[1].ToInt32());
         }
 
         [Fact]
         public void TestIndexNull()
         {
-            using (var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-                var t1 = i.index(new TensorIndex[] { TensorIndex.None, TensorIndex.Single(0) });
-                Assert.Equal(0, t1[0, 0].ToInt32());
-                Assert.Equal(1, t1[0, 1].ToInt32());
-                Assert.Equal(2, t1[0, 2].ToInt32());
-            }
+            using var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 });
+            var t1 = i.index(new TensorIndex[] { TensorIndex.None, TensorIndex.Single(0) });
+            Assert.Equal(0, t1[0, 0].ToInt32());
+            Assert.Equal(1, t1[0, 1].ToInt32());
+            Assert.Equal(2, t1[0, 2].ToInt32());
         }
 
         [Fact]
         public void TestIndexNone()
         {
-            using (var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-                var t1 = i.index(new TensorIndex[] { TensorIndex.None, TensorIndex.Single(0) });
-                Assert.Equal(0, t1[0, 0].ToInt32());
-                Assert.Equal(1, t1[0, 1].ToInt32());
-                Assert.Equal(2, t1[0, 2].ToInt32());
-            }
+            using var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 });
+            var t1 = i.index(new TensorIndex[] { TensorIndex.None, TensorIndex.Single(0) });
+            Assert.Equal(0, t1[0, 0].ToInt32());
+            Assert.Equal(1, t1[0, 1].ToInt32());
+            Assert.Equal(2, t1[0, 2].ToInt32());
         }
 
         [Fact]
         public void TestIndexSlice1()
         {
-            using (var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
-                var t1 = i.index(new TensorIndex[] { TensorIndex.Slice(0, 2), TensorIndex.Single(0) });
-                Assert.Equal(0, t1[0].ToInt32());
-                Assert.Equal(6, t1[1].ToInt32());
+            using var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 });
+            var t1 = i.index(new TensorIndex[] { TensorIndex.Slice(0, 2), TensorIndex.Single(0) });
+            Assert.Equal(0, t1[0].ToInt32());
+            Assert.Equal(6, t1[1].ToInt32());
 
-                // one slice
-                var t2 = i.index(new TensorIndex[] { TensorIndex.Slice(1, 2), TensorIndex.Single(0) });
-                Assert.Equal(6, t2[0].ToInt32());
+            // one slice
+            var t2 = i.index(new TensorIndex[] { TensorIndex.Slice(1, 2), TensorIndex.Single(0) });
+            Assert.Equal(6, t2[0].ToInt32());
 
-                // two slice
-                var t3 = i.index(new TensorIndex[] { TensorIndex.Slice(1, 2), TensorIndex.Slice(1, 3) });
-                Assert.Equal(5, t3[0, 0].ToInt32());
-                Assert.Equal(4, t3[0, 1].ToInt32());
+            // two slice
+            var t3 = i.index(new TensorIndex[] { TensorIndex.Slice(1, 2), TensorIndex.Slice(1, 3) });
+            Assert.Equal(5, t3[0, 0].ToInt32());
+            Assert.Equal(4, t3[0, 1].ToInt32());
 
-                // slice with step
-                var t4 = i.index(new TensorIndex[] { TensorIndex.Slice(1, 2), TensorIndex.Slice(0, 3, step: 2) });
-                Assert.Equal(6, t4[0, 0].ToInt32());
-                Assert.Equal(4, t4[0, 1].ToInt32());
+            // slice with step
+            var t4 = i.index(new TensorIndex[] { TensorIndex.Slice(1, 2), TensorIndex.Slice(0, 3, step: 2) });
+            Assert.Equal(6, t4[0, 0].ToInt32());
+            Assert.Equal(4, t4[0, 1].ToInt32());
 
-                // end absent
-                var t5 = i.index(new TensorIndex[] { TensorIndex.Slice(start: 1), TensorIndex.Slice(start: 1) });
-                Assert.Equal(5, t5[0, 0].ToInt32());
-                Assert.Equal(4, t5[0, 1].ToInt32());
+            // end absent
+            var t5 = i.index(new TensorIndex[] { TensorIndex.Slice(start: 1), TensorIndex.Slice(start: 1) });
+            Assert.Equal(5, t5[0, 0].ToInt32());
+            Assert.Equal(4, t5[0, 1].ToInt32());
 
-                // start absent
-                var t6 = i.index(new TensorIndex[] { TensorIndex.Slice(start: 1), TensorIndex.Slice(stop: 2) });
-                Assert.Equal(6, t6[0, 0].ToInt32());
-                Assert.Equal(5, t6[0, 1].ToInt32());
+            // start absent
+            var t6 = i.index(new TensorIndex[] { TensorIndex.Slice(start: 1), TensorIndex.Slice(stop: 2) });
+            Assert.Equal(6, t6[0, 0].ToInt32());
+            Assert.Equal(5, t6[0, 1].ToInt32());
 
-                // start and end absent
-                var t7 = i.index(new TensorIndex[] { TensorIndex.Slice(start: 1), TensorIndex.Slice(step: 2) });
-                Assert.Equal(6, t7[0, 0].ToInt32());
-                Assert.Equal(4, t7[0, 1].ToInt32());
-            }
+            // start and end absent
+            var t7 = i.index(new TensorIndex[] { TensorIndex.Slice(start: 1), TensorIndex.Slice(step: 2) });
+            Assert.Equal(6, t7[0, 0].ToInt32());
+            Assert.Equal(4, t7[0, 1].ToInt32());
         }
 
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void TestIndexSlice2()
         {
-            using (var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 })) {
+            using var i = torch.tensor(new long[] { 0, 1, 2, 6, 5, 4 }, new long[] { 2, 3 });
 #if NET472_OR_GREATER
-                var t1 = i[(0, 2), 0];
-                Assert.Equal(0, t1[0].ToInt32());
-                Assert.Equal(6, t1[1].ToInt32());
+            var t1 = i[(0, 2), 0];
+            Assert.Equal(0, t1[0].ToInt32());
+            Assert.Equal(6, t1[1].ToInt32());
 
-                // one slice
-                var t2 = i[(1, 2), 0];
-                Assert.Equal(6, t2[0].ToInt32());
+            // one slice
+            var t2 = i[(1, 2), 0];
+            Assert.Equal(6, t2[0].ToInt32());
 
-                // two slice
-                var t3 = i[(1, 2), (1, 3)];
-                Assert.Equal(5, t3[0, 0].ToInt32());
-                Assert.Equal(4, t3[0, 1].ToInt32());
+            // two slice
+            var t3 = i[(1, 2), (1, 3)];
+            Assert.Equal(5, t3[0, 0].ToInt32());
+            Assert.Equal(4, t3[0, 1].ToInt32());
 
-                // both absent
-                var t4 = i[(0, null), (0, null)];
-                Assert.Equal(0, t4[0, 0].ToInt32());
-                Assert.Equal(1, t4[0, 1].ToInt32());
+            // both absent
+            var t4 = i[(0, null), (0, null)];
+            Assert.Equal(0, t4[0, 0].ToInt32());
+            Assert.Equal(1, t4[0, 1].ToInt32());
 
-                // end absent
-                var t5 = i[(1, null), (1, null)];
-                Assert.Equal(5, t5[0, 0].ToInt32());
-                Assert.Equal(4, t5[0, 1].ToInt32());
+            // end absent
+            var t5 = i[(1, null), (1, null)];
+            Assert.Equal(5, t5[0, 0].ToInt32());
+            Assert.Equal(4, t5[0, 1].ToInt32());
 
-                // start absent
-                var t6 = i[(1, null), (0, 2)];
-                Assert.Equal(6, t6[0, 0].ToInt32());
-                Assert.Equal(5, t6[0, 1].ToInt32());
+            // start absent
+            var t6 = i[(1, null), (0, 2)];
+            Assert.Equal(6, t6[0, 0].ToInt32());
+            Assert.Equal(5, t6[0, 1].ToInt32());
 #else
                 var t1 = i[0..2, 0];
                 Assert.Equal(0, t1[0].ToInt32());
@@ -3271,10 +3404,10 @@ namespace TorchSharp
                 Assert.Equal(6, t6[0, 0].ToInt32());
                 Assert.Equal(5, t6[0, 1].ToInt32());
 #endif // NET472_OR_GREATER
-            }
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.cuda))]
         public void CopyCpuToCuda()
         {
             Tensor cpu = torch.ones(new long[] { 2, 2 });
@@ -3294,10 +3427,10 @@ namespace TorchSharp
             } else {
                 Assert.Throws<InvalidOperationException>(() => cpu.cuda());
             }
-
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.cpu))]
         public void CopyCudaToCpu()
         {
             if (torch.cuda.is_available()) {
@@ -3357,6 +3490,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.copy_))]
         public void TestCopy()
         {
             var first = torch.rand(new long[] { 1, 9 });
@@ -3368,6 +3502,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.copy_))]
         public void TestCopyCuda()
         {
             if (torch.cuda.is_available()) {
@@ -3441,6 +3576,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.to))]
         public void TestMoveAndCast()
         {
             var input = torch.rand(new long[] { 128 }, float64, torch.CPU);
@@ -3457,6 +3593,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.to))]
         public void TestMeta()
         {
             var input = torch.rand(new long[] { 128 }, float64, torch.CPU);
@@ -3475,6 +3612,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.masked_scatter))]
         public void TestMaskedScatter()
         {
             var input = torch.zeros(new long[] { 4, 4 });
@@ -3493,6 +3631,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.masked_select))]
         public void TestMaskedSelect()
         {
             var input = torch.zeros(new long[] { 4, 4 });
@@ -3503,12 +3642,14 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.CPU))]
         public void TestStackCpu()
         {
             TestStackGen(torch.CPU);
         }
 
         [Fact]
+        [TestOf(nameof(torch.CUDA))]
         public void TestStackCuda()
         {
             if (torch.cuda.is_available()) {
@@ -3517,6 +3658,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.block_diag))]
         public void TestBlockDiag()
         {
             // Example from PyTorch documentation
@@ -3542,6 +3684,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.diag))]
         public void TestDiag1D()
         {
             var input = torch.ones(new long[] { 3 }, int64);
@@ -3553,6 +3696,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.diag))]
         public void TestDiag2D()
         {
             var input = torch.zeros(new long[] { 5, 5 }, int64);
@@ -3567,8 +3711,8 @@ namespace TorchSharp
             Assert.Equal(expected, res.data<long>().ToArray());
         }
 
-
         [Fact]
+        [TestOf(nameof(Tensor.diagflat))]
         public void TestDiagFlat1D()
         {
             var input = torch.ones(new long[] { 3 }, int64);
@@ -3580,6 +3724,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.diagflat))]
         public void TestDiagFlat2D()
         {
             var input = torch.ones(new long[] { 2, 2 }, int64);
@@ -3592,6 +3737,8 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.dim))]
+        [TestOf(nameof(Tensor.Dimensions))]
         public void TestDimensions()
         {
             {
@@ -3617,6 +3764,8 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.numel))]
+        [TestOf(nameof(Tensor.NumberOfElements))]
         public void TestNumberofElements()
         {
             {
@@ -3642,6 +3791,8 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.element_size))]
+        [TestOf(nameof(Tensor.ElementSize))]
         public void TestElementSize()
         {
             {
@@ -3677,6 +3828,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.atleast_1d))]
         public void TestAtleast1d()
         {
             {
@@ -3722,6 +3874,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.atleast_2d))]
         public void TestAtleast2d()
         {
             {
@@ -3752,6 +3905,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.atleast_3d))]
         public void TestAtleast3d()
         {
             {
@@ -3782,6 +3936,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.requires_grad))]
         public void TestSetGrad()
         {
             var x = torch.rand(new long[] { 10, 10 });
@@ -3794,6 +3949,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.grad))]
         public void TestAutoGradMode()
         {
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
@@ -3840,6 +3996,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.sub_))]
         public void TestSubInPlace()
         {
             var x = torch.ones(new long[] { 100, 100 }, int32);
@@ -3857,6 +4014,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.Dispose))]
         public void TestMemoryDisposalZeros()
         {
             for (int i = 0; i < 1024; i++) {
@@ -3866,6 +4024,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.Dispose))]
         public void TestMemoryDisposalOnes()
         {
             for (int i = 0; i < 1024; i++) {
@@ -3875,6 +4034,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.Dispose))]
         public void TestMemoryDisposalScalarTensors()
         {
             for (int i = 0; i < 5; i++) {
@@ -3886,6 +4046,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.Dispose))]
         public void TestMemoryDisposalScalars()
         {
             for (int i = 0; i < 5; i++) {
@@ -3898,6 +4059,8 @@ namespace TorchSharp
 
 
         [Fact]
+        [TestOf(nameof(Tensor.save))]
+        [TestOf(nameof(Tensor.load))]
         public void TestSaveLoadTensorDouble()
         {
             var file = ".saveload.double.ts";
@@ -3912,6 +4075,8 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.save))]
+        [TestOf(nameof(Tensor.load))]
         public void TestSaveLoadTensorFloat()
         {
             var file = ".saveload.float.ts";
@@ -3925,8 +4090,8 @@ namespace TorchSharp
             Assert.Equal(tensorLoaded, tensor);
         }
 
-
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void TestArithmeticOperatorsFloat16()
         {
             // Float16 arange_cuda not available on cuda in LibTorch 1.8.0
@@ -3975,6 +4140,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void TestArithmeticOperatorsBFloat16()
         {
             // BFloat16 arange_cuda not available on cuda in LibTorch 1.8.0
@@ -4023,6 +4189,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void TestArithmeticOperatorsFloat32()
         {
             foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
@@ -4069,6 +4236,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void TestArithmeticOperatorsFloat64()
         {
             foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
@@ -4115,6 +4283,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void TestArithmeticOperatorsComplexFloat64()
         {
             foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
@@ -4161,6 +4330,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void TestComparisonOperatorsFloat32()
         {
             foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
@@ -4319,6 +4489,11 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.eq))]
+        [TestOf(nameof(Tensor.ne))]
+        [TestOf(nameof(Tensor.lt))]
+        [TestOf(nameof(Tensor.gt))]
+        [TestOf(nameof(Tensor.le))]
         public void TestComparison()
         {
             var A = torch.tensor(new float[] { 1.2f, 3.4f, 1.4f, 3.3f }).reshape(2, 2);
@@ -4338,6 +4513,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.lu))]
         public void TestLUSolve()
         {
             var A = torch.randn(2, 3, 3);
@@ -4380,6 +4556,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.lu_unpack))]
         public void TestLUUnpack()
         {
             var A = torch.randn(2, 3, 3);
@@ -4400,6 +4577,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.mul))]
         public void TestMul()
         {
             var x = torch.ones(new long[] { 100, 100 });
@@ -4442,12 +4620,14 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.CPU))]
         public void TestMmCpu()
         {
             TestMmGen(torch.CPU);
         }
 
         [Fact]
+        [TestOf(nameof(torch.CUDA))]
         public void TestMmCuda()
         {
             if (torch.cuda.is_available()) {
@@ -4481,12 +4661,14 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.CPU))]
         public void TestMVCpu()
         {
             TestMVGen(torch.CPU);
         }
 
         [Fact]
+        [TestOf(nameof(torch.CUDA))]
         public void TestMVCuda()
         {
             if (torch.cuda.is_available()) {
@@ -4501,6 +4683,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.CUDA))]
         public void TestAddMVCuda()
         {
             if (torch.cuda.is_available()) {
@@ -4521,8 +4704,8 @@ namespace TorchSharp
             }
         }
 
-
         [Fact]
+        [TestOf(nameof(Tensor.positive))]
         public void TestPositive()
         {
             var a = torch.randn(25, 25);
@@ -4535,6 +4718,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.frexp))]
         public void TestFrexp()
         {
             var x = torch.arange(9, float32);
@@ -4545,12 +4729,14 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.CPU))]
         public void TestAddRCpu()
         {
             TestAddRGen(torch.CPU);
         }
 
         [Fact]
+        [TestOf(nameof(torch.CUDA))]
         public void TestAddRCuda()
         {
             if (torch.cuda.is_available()) {
@@ -4559,6 +4745,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.deg2rad))]
         public void Deg2RadTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4568,6 +4755,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.clamp))]
         public void ClampTest1()
         {
             var data = torch.rand(3, 3, 3) * 10;
@@ -4577,6 +4765,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.clamp))]
         public void ClampTest2()
         {
             var data = torch.rand(3, 3, 3) * 10;
@@ -4586,6 +4775,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.clamp))]
         public void ClampTest3()
         {
             var data = torch.rand(3, 3, 3) * 10;
@@ -4595,6 +4785,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.clamp))]
         public void ClampTest4()
         {
             var data = torch.rand(3, 3, 3) * 10;
@@ -4604,6 +4795,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.rad2deg))]
         public void Rad2DegTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4613,6 +4805,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.abs))]
         public void AbsTest()
         {
             var data = torch.arange(-10.0f, 10.0f, 1.0f);
@@ -4622,6 +4815,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.abs))]
         public void AbsTestC32()
         {
             var data = torch.rand(new long[] { 25 }, complex64);
@@ -4631,6 +4825,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.abs))]
         public void AbsTestC64()
         {
             var data = torch.rand(new long[] { 25 }, complex128);
@@ -4640,6 +4835,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.angle))]
         public void AngleTestC32()
         {
             var data = torch.randn(new long[] { 25 }, complex64);
@@ -4653,6 +4849,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.angle))]
         public void AngleTestC64()
         {
             var data = torch.randn(new long[] { 25 }, complex128);
@@ -4666,6 +4863,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.sqrt))]
         public void SqrtTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4675,6 +4873,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.sin))]
         public void SinTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4686,6 +4885,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.cos))]
         public void CosTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4697,6 +4897,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.i0))]
         public void I0Test()
         {
             var data = torch.arange(0, 5, 1, float32);
@@ -4706,6 +4907,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.hypot))]
         public void HypotTest()
         {
             var a = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4716,6 +4918,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.vdot))]
         public void VdotTest()
         {
             var a = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4726,6 +4929,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.where))]
         public void WhereTest()
         {
             var bits = 3;
@@ -4740,6 +4944,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.heaviside))]
         public void HeavisideTest()
         {
             var input = new float[] { -1.0f, 0.0f, 3.0f };
@@ -4750,6 +4955,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.maximum))]
         public void MaximumTest()
         {
             var a = torch.tensor(new float[] { 1.0f, 2.0f, 3.0f });
@@ -4760,6 +4966,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.minimum))]
         public void MinimumTest()
         {
             var a = torch.tensor(new float[] { 1.0f, 2.0f, 3.0f });
@@ -4770,6 +4977,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.argmax))]
         public void ArgMaxTest()
         {
             var a = torch.randn(new long[] { 15, 5 });
@@ -4782,6 +4990,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.argmin))]
         public void ArgMinTest()
         {
             var a = torch.randn(new long[] { 15, 5 });
@@ -4794,6 +5003,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.amax))]
         public void AMaxTest()
         {
             var a = torch.randn(new long[] { 15, 5, 4, 3 });
@@ -4804,6 +5014,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.amin))]
         public void AMinTest()
         {
             var a = torch.randn(new long[] { 15, 5, 4, 3 });
@@ -4814,6 +5025,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.aminmax))]
         public void AMinMaxTest()
         {
             var a = torch.randn(new long[] { 15, 5, 4, 3 });
@@ -4826,6 +5038,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.tan))]
         public void TanTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4835,6 +5048,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.sinh))]
         public void SinhTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4844,6 +5058,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.cosh))]
         public void CoshTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4854,6 +5069,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.tanh))]
         public void TanhTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4863,6 +5079,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.asinh))]
         public void ArcSinhTest()
         {
             var data = new float[] { -0.1f, 0.0f, 0.1f };
@@ -4872,6 +5089,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.acosh))]
         public void ArcCoshTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4881,6 +5099,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.atanh))]
         public void ArcTanhTest()
         {
             var data = new float[] { -0.1f, 0.0f, 0.1f };
@@ -4890,6 +5109,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.asin))]
         public void AsinTest()
         {
             var data = new float[] { 1.0f, 0.2f, -0.1f };
@@ -4905,6 +5125,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.acos))]
         public void AcosTest()
         {
             var data = new float[] { 1.0f, 0.2f, -0.1f };
@@ -4920,6 +5141,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.atan))]
         public void AtanTest()
         {
             var data = new float[] { 1.0f, 0.2f, -0.1f };
@@ -4936,6 +5158,7 @@ namespace TorchSharp
 
 
         [Fact]
+        [TestOf(nameof(Tensor.cov))]
         public void CovarianceTest()
         {
             var data = new float[] { 0, 2, 1, 1, 2, 0 };
@@ -4946,6 +5169,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.log))]
         public void LogTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4955,6 +5179,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.log10))]
         public void Log10Test()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -4964,6 +5189,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.log2))]
         public void Log2Test()
         {
             var data = new float[] { 1.0f, 2.0f, 32.0f };
@@ -4973,6 +5199,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.logit))]
         public void LogitTest()
         {
             // From the PyTorch reference docs.
@@ -4983,6 +5210,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.logcumsumexp))]
         public void LogCumSumExpTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f, 10.0f, 20.0f, 30.0f };
@@ -4998,6 +5226,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.logaddexp))]
         public void LogAddExpTest()
         {
             var x = new float[] { 1.0f, 2.0f, 3.0f };
@@ -5011,6 +5240,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.logaddexp2))]
         public void LogAddExp2Test()
         {
             var x = new float[] { 1.0f, 2.0f, 3.0f };
@@ -5024,6 +5254,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.reciprocal))]
         public void ReciprocalTest()
         {
             var x = torch.ones(new long[] { 10, 10 });
@@ -5038,6 +5269,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.outer))]
         public void OuterTest()
         {
             var x = torch.arange(1, 5, 1, float32);
@@ -5049,6 +5281,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.exp2))]
         public void Exp2Test()
         {
             var x = new float[] { 1.0f, 2.0f, 3.0f };
@@ -5058,6 +5291,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.floor))]
         public void FloorTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
@@ -5071,6 +5305,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.trunc))]
         public void TruncTest()
         {
             var input = torch.randn(new long[] { 25 });
@@ -5083,6 +5318,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ceil))]
         public void CeilTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
@@ -5096,6 +5332,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.conj))]
         public void ConjTest()
         {
             var input = torch.randn(10, dtype: complex64);
@@ -5115,6 +5352,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.round))]
         public void RoundTest()
         {
             var rnd = new Random();
@@ -5168,6 +5406,8 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.round))]
+        [TestOf(nameof(torch.round_))]
         public void RoundTestWithDecimals()
         {
             const long n = 7L;
@@ -5189,6 +5429,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.bucketize))]
         public void BucketizeTest()
         {
             var boundaries = torch.tensor(new int[] { 1, 3, 5, 7, 9 });
@@ -5206,6 +5447,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.channel_shuffle))]
         public void ChannelShuffleTest()
         {
             var tensor = torch.tensor(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, 1, 4, 2, 2);
@@ -5217,6 +5459,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.vander))]
         public void VanderTest()
         {
             var x = torch.tensor(new int[] { 1, 2, 3, 5 });
@@ -5238,6 +5481,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.expand))]
         public void ExpandTest()
         {
             Tensor ones = torch.ones(new long[] { 2 });
@@ -5252,6 +5496,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.movedim))]
         public void MovedimTest()
         {
             Tensor input = torch.randn(new long[] { 3, 2, 1 });
@@ -5266,6 +5511,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.count_nonzero))]
         public void CountNZTest()
         {
             Tensor input = torch.tensor(new float[] { 0, 1, 1, 0, 0, 0, 0, 0, 1 }, 3, 3);
@@ -5280,6 +5526,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.sort))]
         public void SortTest1()
         {
             var input = torch.tensor(new double[] {
@@ -5306,6 +5553,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.sort))]
         public void SortTest2()
         {
             var input = torch.tensor(new double[] {
@@ -5332,6 +5580,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.sort))]
         public void SortTest3()
         {
             var input = torch.tensor(new double[] {
@@ -5358,6 +5607,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.sort))]
         public void SortTest4()
         {
             var input = torch.tensor(new double[] {
@@ -5384,6 +5634,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.msort))]
         public void MSortTest()
         {
             var input = torch.tensor(new double[] {
@@ -5403,6 +5654,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.repeat))]
         public void RepeatTest()
         {
             var input = torch.tensor(new int[] { 1, 2, 3 });
@@ -5418,6 +5670,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.fliplr))]
         public void FlipLRTest()
         {
             var input = torch.tensor(new int[] {
@@ -5437,6 +5690,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.flipud))]
         public void FlipUDTest()
         {
             var input = torch.tensor(new int[] {
@@ -5456,6 +5710,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.topk))]
         public void TopKTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
@@ -5478,6 +5733,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.sum))]
         public void SumTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
@@ -5506,6 +5762,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.std))]
         public void StdTest()
         {
             var data = torch.rand(10, 10, 10);
@@ -5533,6 +5790,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.std_mean))]
         public void StdMeanTest()
         {
             var data = torch.rand(10, 10, 10);
@@ -5578,6 +5836,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.var_mean))]
         public void VarMeanTest()
         {
             var data = torch.rand(10, 10, 10);
@@ -5623,6 +5882,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.unbind))]
         public void UnbindTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
@@ -5638,6 +5898,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.unfold))]
         public void UnfoldTest()
         {
             var data = torch.arange(1, 8);
@@ -5650,6 +5911,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.split))]
         public void SplitWithSizeTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
@@ -5667,6 +5929,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.split))]
         public void SplitWithSizesTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
@@ -5681,6 +5944,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.tensor_split))]
         public void TensorSplitWithSizeTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
@@ -5697,6 +5961,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.tensor_split))]
         public void TensorSplitWithSizesTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
@@ -5714,6 +5979,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.vsplit))]
         public void VSplitWithSizeTest()
         {
             var a = torch.arange(64, int32).reshape(4, 4, 4);
@@ -5726,6 +5992,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.vsplit))]
         public void VSplitWithSizesTest()
         {
             var a = torch.arange(80, int32).reshape(5, 4, 4);
@@ -5737,6 +6004,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.hsplit))]
         public void HSplitWithSizeTest()
         {
             var a = torch.arange(64, int32).reshape(4, 4, 4);
@@ -5749,6 +6017,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.hsplit))]
         public void HSplitWithSizesTest()
         {
             var a = torch.arange(80, int32).reshape(4, 5, 4);
@@ -5760,6 +6029,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.dsplit))]
         public void DSplitWithSizeTest()
         {
             var a = torch.arange(64, int32).reshape(4, 4, 4);
@@ -5772,6 +6042,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.dsplit))]
         public void DSplitWithSizesTest()
         {
             var a = torch.arange(80, int32).reshape(4, 4, 5);
@@ -5783,6 +6054,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.tensor_split))]
         public void TensorSplitWithTensorSizesTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
@@ -5800,6 +6072,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.chunk))]
         public void TensorChunkTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f, 4.2f, 5.3f };
@@ -5816,25 +6089,26 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.nonzero))]
+        [TestOf(nameof(Tensor.nonzero_as_list))]
         public void TensorNonZeroTest()
         {
             var data = new double[] { 0.6, 0.0, 0.0, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.0, 1.2, 0.5 };
-            using (var t = torch.tensor(data, 3, 4)) {
-
-                {
-                    var res = t.nonzero();
-                    Assert.Equal(new long[] { 4, 2 }, res.shape);
-                }
-                {
-                    var res = t.nonzero_as_list();
-                    Assert.Equal(2, res.Count);
-                    Assert.Equal(4, res[0].shape[0]);
-                }
+            using var t = torch.tensor(data, 3, 4);
+            {
+                var res = t.nonzero();
+                Assert.Equal(new long[] { 4, 2 }, res.shape);
+            }
+            {
+                var res = t.nonzero_as_list();
+                Assert.Equal(2, res.Count);
+                Assert.Equal(4, res[0].shape[0]);
             }
         }
 
         [Fact]
-        public void TakeAlongTest()
+        [TestOf(nameof(Tensor.take_along_dim))]
+        public void TakeAlongDimTest()
         {
             var t = torch.tensor(new int[] { 10, 30, 20, 60, 40, 50 }).reshape(2, 3);
             var max_idx = t.argmax();
@@ -5848,6 +6122,8 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.rand))]
+        [TestOf(nameof(torch.randint))]
         public void RandomTest()
         {
             var res = torch.rand(new long[] { 2 });
@@ -5891,6 +6167,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.squeeze))]
         public void SqueezeTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
@@ -5918,6 +6195,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.narrow))]
         public void NarrowTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
@@ -5929,6 +6207,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.slice))]
         public void SliceTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f, 4.0f };
@@ -5947,6 +6226,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.roll))]
         public void RollTest()
         {
             using var x = torch.tensor(new long[] { 1, 2, 3, 4, 5, 6, 7, 8 }).view(4, 2);
@@ -5964,6 +6244,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.functional.conv1d))]
         public void Conv1DTest()
         {
             var t1 =
@@ -6035,6 +6316,7 @@ namespace TorchSharp
 
 
         [Fact]
+        [TestOf(nameof(torch.nn.functional.conv1d))]
         public void Conv1DTest2()
         {
             var t1 =
@@ -6093,6 +6375,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.nn.functional.conv1d))]
         public void Conv1DTestPadding2Dilation3()
         {
             var t1 =
@@ -6163,6 +6446,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.cholesky))]
         public void CholeskyTest()
         {
             var a = torch.randn(new long[] { 3, 2, 2 }, float64);
@@ -6173,6 +6457,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.cholesky_ex))]
         public void CholeskyExTest()
         {
             var a = torch.randn(new long[] { 3, 2, 2 }, float64);
@@ -6183,6 +6468,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.inv))]
         public void InvTest()
         {
             var a = torch.randn(new long[] { 3, 2, 2 }, float64);
@@ -6192,6 +6478,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.inv_ex))]
         public void InvExTest()
         {
             var a = torch.randn(new long[] { 3, 2, 2 }, float64);
@@ -6201,41 +6488,45 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.cond))]
         public void CondTestF64()
         {
             {
                 var a = torch.randn(new long[] { 3, 3, 3 }, float64);
                 // The following mostly checks that the runtime interop doesn't blow up.
-                var l = linalg.cond(a);
-                l = linalg.cond(a, "fro");
-                l = linalg.cond(a, "nuc");
-                l = linalg.cond(a, 1);
-                l = linalg.cond(a, -1);
-                l = linalg.cond(a, 2);
-                l = linalg.cond(a, -2);
-                l = linalg.cond(a, Double.PositiveInfinity);
-                l = linalg.cond(a, Double.NegativeInfinity);
+                _ = linalg.cond(a);
+                _ = linalg.cond(a, "fro");
+                _ = linalg.cond(a, "nuc");
+                _ = linalg.cond(a, 1);
+                _ = linalg.cond(a, -1);
+                _ = linalg.cond(a, 2);
+                _ = linalg.cond(a, -2);
+                _ = linalg.cond(a, Double.PositiveInfinity);
+                _ = linalg.cond(a, Double.NegativeInfinity);
             }
         }
+
         [Fact]
+        [TestOf(nameof(linalg.cond))]
         public void CondTestCF64()
         {
             {
                 var a = torch.randn(new long[] { 3, 3, 3 }, complex128);
                 // The following mostly checks that the runtime interop doesn't blow up.
-                var l = linalg.cond(a);
-                l = linalg.cond(a, "fro");
-                l = linalg.cond(a, "nuc");
-                l = linalg.cond(a, 1);
-                l = linalg.cond(a, -1);
-                l = linalg.cond(a, 2);
-                l = linalg.cond(a, -2);
-                l = linalg.cond(a, Double.PositiveInfinity);
-                l = linalg.cond(a, Double.NegativeInfinity);
+                _ = linalg.cond(a);
+                _ = linalg.cond(a, "fro");
+                _ = linalg.cond(a, "nuc");
+                _ = linalg.cond(a, 1);
+                _ = linalg.cond(a, -1);
+                _ = linalg.cond(a, 2);
+                _ = linalg.cond(a, -2);
+                _ = linalg.cond(a, Double.PositiveInfinity);
+                _ = linalg.cond(a, Double.NegativeInfinity);
             }
         }
 
         [Fact]
+        [TestOf(nameof(linalg.qr))]
         public void QRTest()
         {
             var a = torch.randn(new long[] { 4, 25, 25 });
@@ -6247,6 +6538,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.svd))]
         public void SVDTest()
         {
             var a = torch.randn(new long[] { 4, 25, 15 });
@@ -6266,6 +6558,7 @@ namespace TorchSharp
 
 
         [Fact]
+        [TestOf(nameof(linalg.svdvals))]
         public void SVDValsTest()
         {
             var a = torch.tensor(new double[] { -1.3490, -0.1723, 0.7730,
@@ -6279,6 +6572,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.lstsq))]
         public void LSTSQTest()
         {
             var a = torch.randn(new long[] { 4, 25, 15 });
@@ -6294,6 +6588,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.matrix_power))]
         public void MatrixPowerTest()
         {
             var a = torch.randn(new long[] { 25, 25 });
@@ -6301,30 +6596,31 @@ namespace TorchSharp
             Assert.Equal(new long[] { 25, 25 }, b.shape);
         }
 
-
         [Fact]
+        [TestOf(nameof(Tensor.matrix_exp))]
         public void MatrixExpTest1()
         {
             var a = torch.randn(new long[] { 25, 25 });
             var b = a.matrix_exp();
             Assert.Equal(new long[] { 25, 25 }, b.shape);
 
-            var c = torch.matric_exp(a);
+            var c = torch.matrix_exp(a);
             Assert.Equal(new long[] { 25, 25 }, c.shape);
         }
 
-
         [Fact]
+        [TestOf(nameof(torch.matrix_exp))]
         public void MatrixExpTest2()
         {
             var a = torch.randn(new long[] { 16, 25, 25 });
             var b = a.matrix_exp();
             Assert.Equal(new long[] { 16, 25, 25 }, b.shape);
-            var c = torch.matric_exp(a);
+            var c = torch.matrix_exp(a);
             Assert.Equal(new long[] { 16, 25, 25 }, c.shape);
         }
 
         [Fact]
+        [TestOf(nameof(linalg.matrix_rank))]
         public void MatrixRankTest()
         {
             var mr1 = torch.linalg.matrix_rank(torch.randn(4, 3, 2));
@@ -6349,6 +6645,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.multi_dot))]
         public void MultiDotTest()
         {
             var a = torch.randn(new long[] { 25, 25 });
@@ -6359,6 +6656,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.det))]
         public void DeterminantTest()
         {
             {
@@ -6378,8 +6676,8 @@ namespace TorchSharp
             }
         }
 
-
         [Fact]
+        [TestOf(nameof(linalg.matrix_norm))]
         public void MatrixNormTest()
         {
             {
@@ -6393,8 +6691,8 @@ namespace TorchSharp
             }
         }
 
-
         [Fact]
+        [TestOf(nameof(linalg.vector_norm))]
         public void VectorNormTest()
         {
             {
@@ -6410,6 +6708,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.pinv))]
         public void PinvTest()
         {
             var mr1 = torch.linalg.pinv(torch.randn(4, 3, 5));
@@ -6431,6 +6730,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.eig))]
         public void EigTest32()
         {
             {
@@ -6449,6 +6749,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.eigvals))]
         public void EighvalsTest32()
         {
             {
@@ -6462,6 +6763,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.eigvals))]
         public void EighvalsTest64()
         {
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
@@ -6476,6 +6778,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.eigvalsh))]
         public void EighvalshTest32()
         {
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
@@ -6491,6 +6794,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.eigvalsh))]
         public void EighvalshTest64()
         {
             {
@@ -6505,6 +6809,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.norm))]
         public void LinalgNormTest()
         {
             {
@@ -6535,6 +6840,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.entr))]
         public void TestSpecialEntropy()
         {
             var a = torch.tensor(new float[] { -0.5f, 1.0f, 0.5f });
@@ -6545,6 +6851,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.erf))]
         public void TestSpecialErrorFunction()
         {
             var a = torch.tensor(new float[] { 0.0f, -1.0f, 10.0f });
@@ -6555,6 +6862,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.erfc))]
         public void TestSpecialComplementaryErrorFunction()
         {
             var a = torch.tensor(new float[] { 0.0f, -1.0f, 10.0f });
@@ -6565,6 +6873,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.erfinv))]
         public void TestSpecialInverseErrorFunction()
         {
             var a = torch.tensor(new float[] { 0.0f, 0.5f, -1.0f });
@@ -6575,6 +6884,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.expit))]
         public void TestSpecialExpit()
         {
             var a = torch.randn(new long[] { 10 });
@@ -6584,6 +6894,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.expm1))]
         public void TestSpecialExpm1()
         {
             var a = torch.randn(new long[] { 10 });
@@ -6593,6 +6904,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.exp2))]
         public void TestSpecialExp2()
         {
             var a = torch.randn(new long[] { 10 });
@@ -6602,6 +6914,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.gammaln))]
         public void TestSpecialGammaLN()
         {
             var a = torch.arange(0.5f, 2f, 0.5f);
@@ -6611,6 +6924,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.i0))]
         public void TestSpeciali0()
         {
             var a = torch.arange(0.0f, 5.0f, 1.0f);
@@ -6620,6 +6934,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.i0e))]
         public void TestSpeciali0e()
         {
             var a = torch.arange(0.0f, 5.0f, 1.0f);
@@ -6629,6 +6944,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.i1))]
         public void TestSpeciali1()
         {
             var a = torch.arange(0.0f, 5.0f, 1.0f);
@@ -6638,6 +6954,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.i1e))]
         public void TestSpeciali1e()
         {
             var a = torch.arange(0.0f, 5.0f, 1.0f);
@@ -6647,6 +6964,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.nan_to_num))]
         public void NanToNumTest()
         {
             {
@@ -6672,6 +6990,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.diff))]
         public void TensorDiffTest()
         {
             var a = torch.tensor(new float[] { 1, 3, 2 });
@@ -6684,6 +7003,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.ravel))]
         public void RavelTest()
         {
             var expected = torch.tensor(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 });
@@ -6693,6 +7013,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.stride))]
         public void StrideTest_1()
         {
             var x = torch.zeros(new long[] { 2, 2, 2 }, int32);
@@ -6704,6 +7025,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.stride))]
         public void StrideTest_2()
         {
             var x = torch.zeros(new long[] { 2, 2, 2 }, int32);
@@ -6711,6 +7033,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void Complex32PartsTest()
         {
             var x = torch.zeros(new long[] { 20 }, complex64);
@@ -6740,6 +7063,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor))]
         public void Complex64PartsTest()
         {
             var x = torch.zeros(new long[] { 20 }, complex128);
@@ -6769,6 +7093,8 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.view_as_real))]
+        [TestOf(nameof(Tensor.view_as_complex))]
         public void Complex32TensorView()
         {
             var x = torch.zeros(new long[] { 20, 20, 20 }, complex64);
@@ -6781,10 +7107,11 @@ namespace TorchSharp
             var vasc = y.view_as_complex();
             Assert.Equal(ScalarType.ComplexFloat32, vasc.dtype);
             Assert.Equal(x.shape, vasc.shape);
-
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.view_as_real))]
+        [TestOf(nameof(Tensor.view_as_complex))]
         public void Complex64TensorView()
         {
             var x = torch.zeros(new long[] { 20, 20, 20 }, complex128);
@@ -6801,6 +7128,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fft_))]
         public void Float32FFT()
         {
             var input = torch.arange(4);
@@ -6813,6 +7141,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fft_))]
         public void Float64FFT()
         {
             var input = torch.arange(4, float64);
@@ -6825,6 +7154,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.hfft))]
         public void Float32HFFT()
         {
             var input = torch.arange(4);
@@ -6837,6 +7167,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.hfft))]
         public void Float64HFFT()
         {
             var input = torch.arange(4, float64);
@@ -6849,6 +7180,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.rfft))]
         public void Float32RFFT()
         {
             var input = torch.arange(4);
@@ -6861,6 +7193,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.rfft))]
         public void Float64RFFT()
         {
             var input = torch.arange(4, float64);
@@ -6873,6 +7206,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fft_))]
         public void ComplexFloat32FFT()
         {
             var input = torch.arange(4, complex64);
@@ -6886,6 +7220,7 @@ namespace TorchSharp
 
 
         [Fact]
+        [TestOf(nameof(fft.fft_))]
         public void ComplexFloat64FFT()
         {
             var input = torch.arange(4, complex128);
@@ -6898,6 +7233,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.hfft))]
         public void ComplexFloat32HFFT()
         {
             var input = torch.arange(4, complex64);
@@ -6909,8 +7245,8 @@ namespace TorchSharp
             Assert.Equal(ScalarType.ComplexFloat32, inverted.dtype);
         }
 
-
         [Fact]
+        [TestOf(nameof(fft.hfft))]
         public void ComplexFloat64HFFT()
         {
             var input = torch.arange(4, complex128);
@@ -6923,6 +7259,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fft2))]
         public void Float32FFT2()
         {
             var input = torch.rand(new long[] { 5, 5 });
@@ -6935,6 +7272,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fft2))]
         public void Float64FFT2()
         {
             var input = torch.rand(new long[] { 5, 5 }, float64);
@@ -6947,6 +7285,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.rfft2))]
         public void Float32RFFT2()
         {
             var input = torch.rand(new long[] { 5, 5 });
@@ -6959,6 +7298,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.rfft2))]
         public void Float64RFFT2()
         {
             var input = torch.rand(new long[] { 5, 5 }, float64);
@@ -6971,6 +7311,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fft2))]
         public void ComplexFloat32FFT2()
         {
             var input = torch.rand(new long[] { 5, 5 }, complex64);
@@ -6983,6 +7324,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fft2))]
         public void ComplexFloat64FFT2()
         {
             var input = torch.rand(new long[] { 5, 5 }, complex128);
@@ -6994,8 +7336,8 @@ namespace TorchSharp
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
 
-#if true
         [Fact]
+        [TestOf(nameof(fft.fftn))]
         public void Float32FFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 });
@@ -7008,6 +7350,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fftn))]
         public void Float64FFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
@@ -7020,6 +7363,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fftn))]
         public void ComplexFloat32FFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex64);
@@ -7032,6 +7376,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fftn))]
         public void ComplexFloat64FFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, complex128);
@@ -7042,9 +7387,9 @@ namespace TorchSharp
             var inverted = fft.ifftn(output);
             Assert.Equal(ScalarType.ComplexFloat64, inverted.dtype);
         }
-#endif
 
         [Fact]
+        [TestOf(nameof(fft.fftn))]
         public void Float32RFFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 });
@@ -7057,6 +7402,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.rfftn))]
         public void Float64RFFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
@@ -7069,6 +7415,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.hfft2))]
         public void Float32HFFT2()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 });
@@ -7082,6 +7429,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.hfft2))]
         public void Float64HFFT2()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 }, float64);
@@ -7095,6 +7443,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.hfft2))]
         public void Float32HFFTN()
         {
             var input = torch.rand(new long[] { 5, 5, 5, 5 });
@@ -7108,6 +7457,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.hfftn))]
         public void Float64HFFTN()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
@@ -7126,6 +7476,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fftfreq))]
         public void Float32FFTFrequency()
         {
             var x = torch.fft.fftfreq(5);
@@ -7135,6 +7486,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fftfreq))]
         public void Float64FFTFrequency()
         {
             var x = torch.fft.fftfreq(5, dtype: float64);
@@ -7144,6 +7496,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fftshift))]
         public void Float32FFTShift()
         {
             var x = torch.fft.fftfreq(4, dtype: float32);
@@ -7158,6 +7511,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(fft.fftshift))]
         public void Float64FFTShift()
         {
             var x = torch.fft.fftfreq(4, dtype: float64);
@@ -7172,6 +7526,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(TensorExtensionMethods.crop))]
         public void CropTensor()
         {
             {
@@ -7210,6 +7565,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(TensorExtensionMethods.crop))]
         public void CroppedTensorWithPadding()
         {
             {
@@ -7235,6 +7591,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.RandomResizedCrop))]
         public void RandomResizeCropTensor()
         {
             {
@@ -7246,6 +7603,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.CenterCrop))]
         public void CenterCropTensor()
         {
             {
@@ -7284,6 +7642,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.Resize))]
         public void ResizeTensorDown()
         {
             {
@@ -7301,6 +7660,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.Resize))]
         public void ResizeTensorUp()
         {
             {
@@ -7318,6 +7678,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.Grayscale))]
         public void GrayscaleTensor()
         {
             {
@@ -7341,220 +7702,211 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.Invert))]
         public void InvertTensor()
         {
             {
-                using (var input = torch.rand(25)) {
-                    var iData = input.data<float>();
+                using var input = torch.rand(25);
+                var iData = input.data<float>();
 
-                    var poster = torchvision.transforms.Invert().forward(input);
-                    var pData = poster.data<float>();
+                var poster = torchvision.transforms.Invert().forward(input);
+                var pData = poster.data<float>();
 
-                    Assert.Equal(new long[] { 25 }, poster.shape);
-                    for (int i = 0; i < poster.shape[0]; i++) {
-                        Assert.Equal(1.0f - iData[i], pData[i]);
-                    }
+                Assert.Equal(new long[] { 25 }, poster.shape);
+                for (int i = 0; i < poster.shape[0]; i++) {
+                    Assert.Equal(1.0f - iData[i], pData[i]);
                 }
             }
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.Posterize))]
         public void PosterizeTensor()
         {
             {
-                using (var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8)) {
-                    var poster = torchvision.transforms.Posterize(4).forward(input);
+                using var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8);
+                var poster = torchvision.transforms.Posterize(4).forward(input);
 
-                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
-
-                }
+                Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
             {
-                using (var input = torch.randint(255, new long[] { 25 }, torch.uint8)) {
-                    var poster = torchvision.transforms.Posterize(4).forward(input);
+                using var input = torch.randint(255, new long[] { 25 }, torch.uint8);
+                var poster = torchvision.transforms.Posterize(4).forward(input);
 
-                    Assert.Equal(new long[] { 25 }, poster.shape);
-                    Assert.All(poster.data<byte>().ToArray(), b => Assert.Equal(0, b & 0xf));
-                }
+                Assert.Equal(new long[] { 25 }, poster.shape);
+                Assert.All(poster.data<byte>().ToArray(), b => Assert.Equal(0, b & 0xf));
             }
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.AdjustSharpness))]
         public void AdjustSharpnessTensor()
         {
             {
-                using (var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8)) {
-                    var poster = torchvision.transforms.AdjustSharpness(1.5).forward(input);
+                using var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8);
+                var poster = torchvision.transforms.AdjustSharpness(1.5).forward(input);
 
-                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
-                }
+                Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
             {
-                using (var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8)) {
-                    var poster = torchvision.transforms.AdjustSharpness(0.5).forward(input);
+                using var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8);
+                var poster = torchvision.transforms.AdjustSharpness(0.5).forward(input);
 
-                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
-                }
+                Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.functional.adjust_hue))]
         public void AdjustHueTensor()
         {
             {
-                using (var input = torch.stack(new Tensor[] { torch.zeros(1, 2, 2), torch.ones(1, 2, 2), torch.zeros(1, 2, 2) }, dimension: -3)) {
+                using var input = torch.stack(new Tensor[] { torch.zeros(1, 2, 2), torch.ones(1, 2, 2), torch.zeros(1, 2, 2) }, dimension: -3);
+                {
+                    var poster = torchvision.transforms.functional.adjust_hue(input, 0.0);
 
-                    {
-                        var poster = torchvision.transforms.functional.adjust_hue(input, 0.0);
+                    var istr = input.ToString(TensorStringStyle.Julia);
+                    var pstr = poster.ToString(TensorStringStyle.Julia);
 
-                        var istr = input.ToString(TensorStringStyle.Julia);
-                        var pstr = poster.ToString(TensorStringStyle.Julia);
+                    Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
+                    Assert.True(poster.allclose(input));
+                }
 
-                        Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
-                        Assert.True(poster.allclose(input));
-                    }
+                {
+                    var poster = torchvision.transforms.functional.adjust_hue(input, 0.15);
 
-                    {
-                        var poster = torchvision.transforms.functional.adjust_hue(input, 0.15);
+                    var istr = input.ToString(TensorStringStyle.Julia);
+                    var pstr = poster.ToString(TensorStringStyle.Julia);
 
-                        var istr = input.ToString(TensorStringStyle.Julia);
-                        var pstr = poster.ToString(TensorStringStyle.Julia);
-
-                        Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
-                        Assert.False(poster.allclose(input));
-                    }
+                    Assert.Equal(new long[] { 1, 3, 2, 2 }, poster.shape);
+                    Assert.False(poster.allclose(input));
                 }
             }
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.Rotate))]
         public void RotateTensor()
         {
             {
-                using (var input = torch.rand(16, 3, 25, 50)) {
-                    var poster = torchvision.transforms.Rotate(90).forward(input);
+                using var input = torch.rand(16, 3, 25, 50);
+                var poster = torchvision.transforms.Rotate(90).forward(input);
 
-                    Assert.Equal(new long[] { 16, 3, 25, 50 }, poster.shape);
-                }
+                Assert.Equal(new long[] { 16, 3, 25, 50 }, poster.shape);
             }
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.Equalize))]
         public void EqualizeTensor()
         {
             var eq = torchvision.transforms.Equalize();
             {
-                using (var input = torch.randint(0, 256, new long[] { 3, 25, 50 }, dtype: torch.uint8)) {
-                    var poster = eq.forward(input);
+                using var input = torch.randint(0, 256, new long[] { 3, 25, 50 }, dtype: torch.uint8);
+                var poster = eq.forward(input);
 
-                    Assert.Equal(new long[] { 3, 25, 50 }, poster.shape);
-                }
+                Assert.Equal(new long[] { 3, 25, 50 }, poster.shape);
             }
             {
-                using (var input = torch.randint(0, 256, new long[] { 16, 3, 25, 50 }, dtype: torch.uint8)) {
-                    var poster = eq.forward(input);
+                using var input = torch.randint(0, 256, new long[] { 16, 3, 25, 50 }, dtype: torch.uint8);
+                var poster = eq.forward(input);
 
-                    Assert.Equal(new long[] { 16, 3, 25, 50 }, poster.shape);
-                }
+                Assert.Equal(new long[] { 16, 3, 25, 50 }, poster.shape);
             }
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.AutoContrast))]
         public void AutocontrastTensor()
         {
             var ac = torchvision.transforms.AutoContrast();
             {
-                using (var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8)) {
-                    var poster = ac.forward(input);
+                using var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8);
+                var poster = ac.forward(input);
 
-                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
-                }
+                Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.functional.perspective))]
         public void PerspectiveTest()
         {
             {
-                using (var input = torch.ones(1, 3, 8, 8)) {
+                using var input = torch.ones(1, 3, 8, 8);
+                var startpoints = new List<IList<int>>();
+                startpoints.Add(new int[] { 0, 0 });
+                startpoints.Add(new int[] { 7, 0 });
+                startpoints.Add(new int[] { 7, 7 });
+                startpoints.Add(new int[] { 0, 7 });
 
-                    var startpoints = new List<IList<int>>();
-                    startpoints.Add(new int[] { 0, 0 });
-                    startpoints.Add(new int[] { 7, 0 });
-                    startpoints.Add(new int[] { 7, 7 });
-                    startpoints.Add(new int[] { 0, 7 });
+                var endpoints = new List<IList<int>>();
+                endpoints.Add(new int[] { 1, 1 });
+                endpoints.Add(new int[] { 5, 2 });
+                endpoints.Add(new int[] { 5, 6 });
+                endpoints.Add(new int[] { 3, 7 });
 
-                    var endpoints = new List<IList<int>>();
-                    endpoints.Add(new int[] { 1, 1 });
-                    endpoints.Add(new int[] { 5, 2 });
-                    endpoints.Add(new int[] { 5, 6 });
-                    endpoints.Add(new int[] { 3, 7 });
+                var poster = torchvision.transforms.functional.perspective(input, startpoints, endpoints);
 
-                    var poster = torchvision.transforms.functional.perspective(input, startpoints, endpoints);
+                var pStr = poster.ToString(TensorStringStyle.Julia);
 
-                    var pStr = poster.ToString(TensorStringStyle.Julia);
-
-                    Assert.Equal(new long[] { 1, 3, 8, 8 }, poster.shape);
-                }
+                Assert.Equal(new long[] { 1, 3, 8, 8 }, poster.shape);
             }
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.GaussianBlur))]
         public void GaussianBlurTest()
         {
             var gb4 = torchvision.transforms.GaussianBlur(4);
             var gb5 = torchvision.transforms.GaussianBlur(5);
 
             {
-                using (var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8)) {
-                    var poster = gb4.forward(input);
+                using var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8);
+                var poster = gb4.forward(input);
 
-                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
-
-                }
+                Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
             {
-                using (var input = torch.rand(16, 3, 25, 25)) {
-                    // Test even-number kernel size.
-                    var poster = gb4.forward(input);
+                using var input = torch.rand(16, 3, 25, 25);
+                // Test even-number kernel size.
+                var poster = gb4.forward(input);
 
-                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
-                }
+                Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
             {
-                using (var input = torch.rand(16, 3, 25, 25)) {
-                    // Test odd-number kernel size.
-                    var poster = gb5.forward(input);
+                using var input = torch.rand(16, 3, 25, 25);
+                // Test odd-number kernel size.
+                var poster = gb5.forward(input);
 
-                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
-                }
+                Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
             {
-                using (var input = torch.rand(16, 3, 25, 25)) {
-                    var random = torchvision.transforms.Randomize(gb4, 0.5);
-                    var poster = random.forward(input);
+                using var input = torch.rand(16, 3, 25, 25);
+                var random = torchvision.transforms.Randomize(gb4, 0.5);
+                var poster = random.forward(input);
 
-                    Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
-                }
+                Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.Solarize))]
         public void SolarizeTensor()
         {
             {
-                using (var input = torch.rand(25)) {
-                    var poster = torchvision.transforms.Solarize(0.55).forward(input);
+                using var input = torch.rand(25);
+                var poster = torchvision.transforms.Solarize(0.55).forward(input);
 
-                    Assert.Equal(new long[] { 25 }, poster.shape);
-                    Assert.All(poster.data<float>().ToArray(), f => Assert.True(f < 0.55f));
-                }
+                Assert.Equal(new long[] { 25 }, poster.shape);
+                Assert.All(poster.data<float>().ToArray(), f => Assert.True(f < 0.55f));
             }
         }
 
 
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.HorizontalFlip))]
         public void HorizontalFlipTest()
         {
             var input = torch.tensor(new int[] {
@@ -7574,6 +7926,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torchvision.transforms.VerticalFlip))]
         public void VerticalFlipTest()
         {
             var input = torch.tensor(new int[] {
@@ -7593,18 +7946,19 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.pin_memory))]
         public void TestPinnedMemory()
         {
-            using (var t = torch.rand(512)) {
-                Assert.False(t.is_pinned());
-                if (torch.cuda.is_available()) {
-                    var s = t.pin_memory();
-                    Assert.True(s.is_pinned());
-                }
+            using var t = torch.rand(512);
+            Assert.False(t.is_pinned());
+            if (torch.cuda.is_available()) {
+                var s = t.pin_memory();
+                Assert.True(s.is_pinned());
             }
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.reshape))]
         public void TestReshape()
         {
             var input = torch.ones(4, 4, 4, 4);
@@ -7624,6 +7978,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.unique))]
         public void TestUnique()
         {
             var input = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
@@ -7659,6 +8014,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.unique_consecutive))]
         public void TestUniqueConsequtive()
         {
             var input = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
@@ -7694,6 +8050,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.storage))]
         public void TestStorage_Basic()
         {
             var x = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
@@ -7705,6 +8062,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.storage))]
         public void TestStorage_ToArray()
         {
             var data = new long[] { 1, 1, 2, 2, 3, 1, 1, 2 };
@@ -7719,6 +8077,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.storage))]
         public void TestStorage_Modify1()
         {
             var data = new long[] { 1, 1, 2, 2, 3, 1, 1, 2 };
@@ -7736,6 +8095,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.storage))]
         public void TestStorage_Modify2()
         {
             var data = new long[] { 1, 1, 2, 2, 3, 1, 1, 2 };
@@ -7752,6 +8112,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.storage))]
         public void TestStorage_Modify3()
         {
             var data = new long[] { 1, 1, 2, 2, 3, 1, 1, 2 };
@@ -7769,6 +8130,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.storage))]
         public void TestStorage_Modify4()
         {
             var data = new long[] { 1, 1, 2, 2, 3, 1, 1, 2 };
@@ -7786,6 +8148,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.storage))]
         public void TestStorage_Fill()
         {
             var x = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
@@ -7801,6 +8164,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.storage))]
         public void TestStorage_Copy()
         {
             var x = torch.tensor(new long[] { 1, 1, 2, 2, 3, 1, 1, 2 });
@@ -7818,6 +8182,7 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.stft))]
         public void Float32STFT()
         {
             long n_fft = 512;
