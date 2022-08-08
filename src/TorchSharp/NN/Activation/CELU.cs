@@ -39,7 +39,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_CELU_ctor(double alpha, bool inplace, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_CELU_ctor(double alpha, [MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
 
             /// <summary>
             /// Continuously Differentiable Exponential Linear Unit

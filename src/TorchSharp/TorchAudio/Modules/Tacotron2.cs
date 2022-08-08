@@ -336,7 +336,7 @@ namespace TorchSharp.Modules
             public override Tensor forward(Tensor x)
             {
                 foreach (var linear in this.layers) {
-                    x = F.Dropout(F.relu(linear.forward(x)), probability: 0.5);
+                    x = F.dropout(F.relu(linear.forward(x)), probability: 0.5);
                 }
                 return x;
             }
@@ -384,13 +384,13 @@ namespace TorchSharp.Modules
                     var conv = this.convolutions[i];
                     if (i < this.n_convs - 1) {
                         if (this.training) {
-                            x = F.Dropout(torch.tanh(conv.forward(x)), 0.5);
+                            x = F.dropout(torch.tanh(conv.forward(x)), 0.5);
                         } else {
                             x = torch.tanh(conv.forward(x));
                         }
                     } else {
                         if (this.training) {
-                            x = F.Dropout(conv.forward(x), 0.5);
+                            x = F.dropout(conv.forward(x), 0.5);
                         } else {
                             x = conv.forward(x);
                         }
@@ -443,7 +443,7 @@ namespace TorchSharp.Modules
             {
                 foreach (var conv in this.convolutions) {
                     if (this.training) {
-                        x = F.Dropout(F.relu(conv.forward(x)), 0.5);
+                        x = F.dropout(F.relu(conv.forward(x)), 0.5);
                     } else {
                         x = F.relu(conv.forward(x));
                     }
@@ -621,7 +621,7 @@ namespace TorchSharp.Modules
 
                 (attention_hidden, attention_cell) = this.attention_rnn.forward(cell_input, (attention_hidden, attention_cell));
                 if (this.training) {
-                    attention_hidden = F.Dropout(attention_hidden, this.attention_dropout);
+                    attention_hidden = F.dropout(attention_hidden, this.attention_dropout);
                 }
 
                 var attention_weights_cat = torch.cat(new[] { attention_weights.unsqueeze(1), attention_weights_cum.unsqueeze(1) }, dimension: 1);
@@ -633,7 +633,7 @@ namespace TorchSharp.Modules
 
                 (decoder_hidden, decoder_cell) = this.decoder_rnn.forward(decoder_input, (decoder_hidden, decoder_cell));
                 if (this.training) {
-                    decoder_hidden = F.Dropout(decoder_hidden, this.decoder_dropout);
+                    decoder_hidden = F.dropout(decoder_hidden, this.decoder_dropout);
                 }
 
                 var decoder_hidden_attention_context = torch.cat(new[] { decoder_hidden, attention_context }, dimension: 1);
