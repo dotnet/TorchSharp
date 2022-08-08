@@ -113,6 +113,83 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestAmplitudeToDB()
+        {
+            var x = torch.linspace(0, 3.0, 101)[torch.TensorIndex.None, torch.TensorIndex.Colon];
+            var y = torchaudio.functional.amplitude_to_DB(x, 20, 1e-10, 0.0, 80);
+            var z = 20.0 * torch.log10(torch.clamp(x, min: 1e-10));
+            z = torch.clamp(z, min: torch.max(z) - 80);
+            var mse = torch.mean(torch.square(y - z)).item<float>();
+            Assert.InRange(mse, 0f, 1e-10f);
+        }
+
+        [Fact]
+        public void TestDBToAmplitude()
+        {
+            var x = torch.linspace(-20.0, 0.0, 101)[torch.TensorIndex.None, torch.TensorIndex.Colon];
+            var y = torchaudio.functional.DB_to_amplitude(x, 1.0, 0.5);
+            var z = torch.pow(torch.pow(10.0, 0.1 * x), 0.5);
+            var mse = torch.mean(torch.square(y - z)).item<float>();
+            Assert.InRange(mse, 0f, 1e-10f);
+        }
+
+        [Fact]
+        public void TestGriffinLim()
+        {
+            var waveform = make_waveform();
+            var window = torch.hann_window(400);
+            var specgram = torchaudio.functional.spectrogram(
+                waveform: waveform,
+                pad: 200,
+                window: window,
+                n_fft: 512,
+                hop_length: 160,
+                win_length: 400,
+                power: 2.0,
+                normalized: false);
+            var recovered_waveform = torchaudio.functional.griffinlim(
+                specgram: specgram,
+                window: window,
+                n_fft: 512,
+                hop_length: 160,
+                win_length: 400,
+                power: 2.0,
+                n_iter: 32,
+                momentum: 0.99,
+                length: null,
+                rand_init: true);
+            Assert.Equal(new long[] { 1, 80320 }, recovered_waveform.shape);
+        }
+
+        [Fact]
+        public void TestMelscaleFbanks()
+        {
+            int n_freqs = 257;
+            double f_min = 50;
+            double f_max = 7600;
+            int n_mels = 64;
+            int sample_rate = 16000;
+            var fb = torchaudio.functional.melscale_fbanks(n_freqs, f_min, f_max, n_mels, sample_rate);
+            Assert.Equal(new long[] { n_freqs, n_mels }, fb.shape);
+            // Sum of all banks should be 1.0
+            Assert.True((fb.sum(dim: 1)[torch.TensorIndex.Slice(3, -23)] == 1.0).all().item<bool>());
+        }
+
+        [Fact]
+        public void TestLinearFbanks()
+        {
+            int n_freqs = 257;
+            double f_min = 50;
+            double f_max = 7600;
+            int n_filter = 64;
+            int sample_rate = 16000;
+            var fb = torchaudio.functional.linear_fbanks(n_freqs, f_min, f_max, n_filter, sample_rate);
+            Assert.Equal(new long[] { n_freqs, n_filter }, fb.shape);
+            // Sum of all banks should be 1.0
+            Assert.True((fb.sum(dim: 1)[torch.TensorIndex.Slice(6, -17)] == 1.0).all().item<bool>());
+        }
+
+        [Fact]
         public void TestFunctionalResampleIdent()
         {
             var waveform = make_waveform();
