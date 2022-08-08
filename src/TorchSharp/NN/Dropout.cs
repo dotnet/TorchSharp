@@ -38,7 +38,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Dropout_ctor(double probability, bool inPlace, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_Dropout_ctor(double probability, [MarshalAs(UnmanagedType.U1)] bool inPlace, out IntPtr pBoxedModule);
 
             /// <summary>
             /// During training, randomly zeroes some of the elements of the input tensor with probability p using samples from a Bernoulli distribution.
@@ -57,7 +57,7 @@ namespace TorchSharp
             public static partial class functional
             {
                 [DllImport("LibTorchSharp")]
-                extern static IntPtr THSNN_dropout(IntPtr input, double probability, bool training, bool inPlace);
+                extern static IntPtr THSNN_dropout(IntPtr input, double probability, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inPlace);
 
                 /// <summary>
                 /// During training, randomly zeroes some of the elements of the input tensor with probability p using samples from a Bernoulli distribution.

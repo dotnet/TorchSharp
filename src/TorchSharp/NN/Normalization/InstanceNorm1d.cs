@@ -37,7 +37,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_InstanceNorm1d_ctor(long features, double eps, double momentum, bool affine, bool track_running_stats, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_InstanceNorm1d_ctor(long features, double eps, double momentum, [MarshalAs(UnmanagedType.U1)] bool affine, [MarshalAs(UnmanagedType.U1)] bool track_running_stats, out IntPtr pBoxedModule);
 
             /// <summary>
             /// Applies Instance Normalization over a 3D input (a mini-batch of 1D inputs with optional additional channel dimension) as described in the paper Instance Normalization: The Missing Ingredient for Fast Stylization.

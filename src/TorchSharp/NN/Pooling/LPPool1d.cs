@@ -35,7 +35,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LPPool1d_ctor(double norm_type, IntPtr pkernelSize, IntPtr pstrides, bool ceil_mode, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_LPPool1d_ctor(double norm_type, IntPtr pkernelSize, IntPtr pstrides, [MarshalAs(UnmanagedType.U1)] bool ceil_mode, out IntPtr pBoxedModule);
 
             /// <summary>
             /// Applies a 1D power-average pooling over an input signal composed of several input planes.

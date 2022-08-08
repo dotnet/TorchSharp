@@ -273,7 +273,7 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_bool_to_scalar(bool value);
+        extern static IntPtr THSTorch_bool_to_scalar([MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
@@ -396,6 +396,7 @@ namespace TorchSharp
         }
 
         [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.U1)]
         extern static bool THSTorch_scalar_to_bool(IntPtr handle);
 
         /// <summary>

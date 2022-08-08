@@ -33,7 +33,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Dropout3d_ctor(double probability, bool inPlace, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_Dropout3d_ctor(double probability, [MarshalAs(UnmanagedType.U1)] bool inPlace, out IntPtr pBoxedModule);
 
             /// <summary>
             /// Randomly zero out entire channels (a channel is a 3D feature map, e.g., the jj -th channel of the ii -th sample in the batched input is a 3D tensor \text{input}[i, j]input[i,j] ).
@@ -52,7 +52,7 @@ namespace TorchSharp
             public static partial class functional
             {
                 [DllImport("LibTorchSharp")]
-                extern static IntPtr THSNN_dropout3d(IntPtr input, double probability, bool training, bool inPlace);
+                extern static IntPtr THSNN_dropout3d(IntPtr input, double probability, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inPlace);
 
                 /// <summary>
                 /// Randomly zero out entire channels (a channel is a 3D feature map, e.g., the jj -th channel of the ii -th sample in the batched input is a 3D tensor \text{input}[i, j]input[i,j] ).

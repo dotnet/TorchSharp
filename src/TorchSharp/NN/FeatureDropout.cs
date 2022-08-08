@@ -54,7 +54,7 @@ namespace TorchSharp
             public static partial class functional
             {
                 [DllImport("LibTorchSharp")]
-                extern static IntPtr THSNN_feature_alpha_dropout(IntPtr input, double probability, bool training, bool inPlace);
+                extern static IntPtr THSNN_feature_alpha_dropout(IntPtr input, double probability, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inPlace);
 
                 /// <summary>
                 /// Randomly masks out entire channels (a channel is a feature map, e.g. the j-th channel of the i-th sample in the batch input is a tensor input[i,j]) of the input tensor.

@@ -38,7 +38,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Hardtanh_ctor(double min_val, double max_val, bool inplace, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_Hardtanh_ctor(double min_val, double max_val, [MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
 
             /// <summary>
             /// Hardtanh
