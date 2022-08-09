@@ -38,6 +38,9 @@ Added index_add, index_copy, index_fill<br/>
 Added torch.frombuffer()<br/>
 Added torch.fft.hfft2, hfftn, ihfft2, ihfftn<br/>
 Adding SequentialLR to the collection of LR schedulers.<br/>
+Add 'training' flag to functional dropout methods.<br/>
+Add missing functions to torchaudio.functional<br/>
+Adding TestOfAttribute to unit tests<br/>
 
 ## NuGet Version 0.97.1
 
