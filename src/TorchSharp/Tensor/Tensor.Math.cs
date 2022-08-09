@@ -3198,6 +3198,9 @@ namespace TorchSharp
         /// Computes the matrix exponential of a square matrix or of each square matrix in a batch.
         /// </summary>
         /// <param name="input">The input tensor.</param>
+        public static Tensor matrix_exp(Tensor input) => input.matrix_exp();
+
+        [Obsolete("This method has a typo and will get removed in future versions. Use 'matrix_exp' instead.", false)]
         public static Tensor matric_exp(Tensor input) => input.matrix_exp();
 
         /// <summary>

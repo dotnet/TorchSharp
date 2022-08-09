@@ -53,19 +53,20 @@ namespace TorchSharp
 
             public static partial class functional
             {
+                [DllImport("LibTorchSharp")]
+                extern static IntPtr THSNN_feature_alpha_dropout(IntPtr input, double probability, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inPlace);
+
                 /// <summary>
                 /// Randomly masks out entire channels (a channel is a feature map, e.g. the j-th channel of the i-th sample in the batch input is a tensor input[i,j]) of the input tensor.
                 /// Instead of setting activations to zero, as in regular Dropout, the activations are set to the negative saturation value of the SELU activation function.
                 /// Each element will be masked independently on every forward call with probability p using samples from a Bernoulli distribution.The elements to be masked are
                 /// randomized on every forward call, and scaled and shifted to maintain zero mean and unit variance.
                 /// </summary>
-                /// <param name="x">Input tensor</param>
-                /// <param name="p">Dropout probability of a channel to be zeroed. Default: 0.5</param>
-                static public Tensor feature_alpha_dropout(Tensor x, double p = 0.5)
+                static public Tensor feature_alpha_dropout(Tensor input, double p = 0.5, bool training = false, bool inplace = false)
                 {
-                    using (var f = nn.FeatureAlphaDropout(p)) {
-                        return f.forward(x);
-                    }
+                    var res = THSNN_feature_alpha_dropout(input.Handle, p, training, inplace);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
         }

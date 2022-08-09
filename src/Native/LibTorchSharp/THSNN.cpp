@@ -84,6 +84,56 @@ void THSNN_Bilinear_set_weight(const NNModule module, const Tensor weight)
     set_weight<torch::nn::Bilinear>(module, weight);
 }
 
+Tensor THSNN_dropout(const Tensor input, const double p, bool training, bool inplace)
+{
+    auto opts = torch::nn::functional::DropoutFuncOptions()
+        .inplace(inplace)
+        .training(training)
+        .p(p);
+
+    CATCH_TENSOR(torch::nn::functional::dropout(*input, opts));
+}
+
+Tensor THSNN_dopout2d(const Tensor input, const double p, bool training, bool inplace)
+{
+    auto opts = torch::nn::functional::Dropout2dFuncOptions()
+        .inplace(inplace)
+        .training(training)
+        .p(p);
+
+    CATCH_TENSOR(torch::nn::functional::dropout2d(*input, opts));
+}
+
+Tensor THSNN_dropout3d(const Tensor input, const double p, bool training, bool inplace)
+{
+    auto opts = torch::nn::functional::Dropout3dFuncOptions()
+        .inplace(inplace)
+        .training(training)
+        .p(p);
+
+    CATCH_TENSOR(torch::nn::functional::dropout3d(*input, opts));
+}
+
+Tensor THSNN_alpha_dropout(const Tensor input, const double p, bool training, bool inplace)
+{
+    auto opts = torch::nn::functional::AlphaDropoutFuncOptions()
+        .inplace(inplace)
+        .training(training)
+        .p(p);
+
+    CATCH_TENSOR(torch::nn::functional::alpha_dropout(*input, opts));
+}
+
+Tensor THSNN_feature_alpha_dropout(const Tensor input, const double p, bool training, bool inplace)
+{
+    auto opts = torch::nn::functional::FeatureAlphaDropoutFuncOptions()
+        .inplace(inplace)
+        .training(training)
+        .p(p);
+
+    CATCH_TENSOR(torch::nn::functional::feature_alpha_dropout(*input, opts));
+}
+
 NNModule THSNN_Dropout_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(

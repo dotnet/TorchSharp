@@ -20,7 +20,7 @@ namespace TorchSharp
 
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
+            extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requireGrad);
 
             /// <summary>
             /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -47,7 +47,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_newComplexFloat32Scalar(float real, float imaginary, int deviceType, int deviceIndex, bool requiresGrad);
+            extern static IntPtr THSTensor_newComplexFloat32Scalar(float real, float imaginary, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
 
             /// <summary>
             /// Create a scalar tensor from a single value
@@ -72,13 +72,13 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+            extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
 
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_view_as_complex(IntPtr tensor);
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_copy_(IntPtr handle, IntPtr source, bool non_blocking);
+            extern static IntPtr THSTensor_copy_(IntPtr handle, IntPtr source, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
             [DllImport("LibTorchSharp")]
             extern static void THSTensor_dispose(IntPtr handle);
@@ -141,7 +141,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type);
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, bool requireGrad);
+            extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requireGrad);
 
             /// <summary>
             /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
@@ -168,7 +168,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_newComplexFloat64Scalar(double real, double imaginary, int deviceType, int deviceIndex, bool requiresGrad);
+            extern static IntPtr THSTensor_newComplexFloat64Scalar(double real, double imaginary, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
 
             /// <summary>
             /// Create a scalar tensor from a single value
@@ -193,13 +193,13 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, bool requiresGrad);
+            extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
 
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_view_as_complex(IntPtr tensor);
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_copy_(IntPtr handle, IntPtr source, bool non_blocking);
+            extern static IntPtr THSTensor_copy_(IntPtr handle, IntPtr source, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
             [DllImport("LibTorchSharp")]
             extern static void THSTensor_dispose(IntPtr handle);

@@ -38,7 +38,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LeakyReLU_ctor(double negative_slope, bool inplace, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_LeakyReLU_ctor(double negative_slope, [MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
 
             /// <summary>
             /// Continuously Differentiable Exponential Linear Unit

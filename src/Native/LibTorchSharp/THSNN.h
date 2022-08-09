@@ -250,6 +250,14 @@ EXPORT_API(Tensor)   THSNN_AlphaDropout_forward(const NNModule module, const Ten
 EXPORT_API(NNModule) THSNN_FeatureAlphaDropout_ctor(double probability, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_FeatureAlphaDropout_forward(const NNModule module, const Tensor tensor);
 
+EXPORT_API(Tensor) THSNN_dropout(const Tensor input, const double p, bool training, bool inplace);
+EXPORT_API(Tensor) THSNN_dopout2d(const Tensor input, const double p, bool training, bool inplace);
+EXPORT_API(Tensor) THSNN_dropout3d(const Tensor input, const double p, bool training, bool inplace);
+
+EXPORT_API(Tensor) THSNN_alpha_dropout(const Tensor input, const double p, bool training, bool inplace);
+
+EXPORT_API(Tensor) THSNN_feature_alpha_dropout(const Tensor input, const double p, bool training, bool inplace);
+
 // Linear
 
 EXPORT_API(NNModule) THSNN_Identity_ctor(NNAnyModule* outAsAnyModule);

@@ -45,7 +45,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_MaxPool3d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr pPadding, int paddingLength, IntPtr pDilation, int dilationLength, bool ceilMode, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_MaxPool3d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr pPadding, int paddingLength, IntPtr pDilation, int dilationLength, [MarshalAs(UnmanagedType.U1)] bool ceilMode, out IntPtr pBoxedModule);
 
             /// <summary>
             /// Applies a 3D max pooling over an input signal composed of several input planes.

@@ -73,7 +73,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_GroupNorm_ctor(long num_groups, long num_channels, double eps, bool affine, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_GroupNorm_ctor(long num_groups, long num_channels, double eps, [MarshalAs(UnmanagedType.U1)] bool affine, out IntPtr pBoxedModule);
 
             /// <summary>
             /// Applies Group Normalization over a mini-batch of inputs as described in the paper Group Normalization

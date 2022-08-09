@@ -38,7 +38,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Dropout_ctor(double probability, bool inPlace, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_Dropout_ctor(double probability, [MarshalAs(UnmanagedType.U1)] bool inPlace, out IntPtr pBoxedModule);
 
             /// <summary>
             /// During training, randomly zeroes some of the elements of the input tensor with probability p using samples from a Bernoulli distribution.
@@ -56,19 +56,19 @@ namespace TorchSharp
 
             public static partial class functional
             {
+                [DllImport("LibTorchSharp")]
+                extern static IntPtr THSNN_dropout(IntPtr input, double probability, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inPlace);
+
                 /// <summary>
                 /// During training, randomly zeroes some of the elements of the input tensor with probability p using samples from a Bernoulli distribution.
                 /// Each channel will be zeroed out independently on every forward call.
                 /// </summary>
-                /// <param name="x">Input tensor</param>
-                /// <param name="probability">Probability of an element to be zeroed. Default: 0.5</param>
-                /// <param name="inPlace">If set to true, will do this operation in-place. Default: false</param>
                 /// <returns></returns>
-                static public Tensor Dropout(Tensor x, double probability = 0.5, bool inPlace = false)
+                static public Tensor dropout(Tensor input, double probability = 0.5, bool training = true, bool inPlace = false)
                 {
-                    using (var d = nn.Dropout(probability, inPlace)) {
-                        return d.forward(x);
-                    }
+                    var res = THSNN_dropout(input.Handle, probability, training, inPlace);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
         }

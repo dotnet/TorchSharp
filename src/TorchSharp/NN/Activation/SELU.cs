@@ -38,7 +38,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_SELU_ctor(bool inplace, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_SELU_ctor([MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
 
             /// <summary>
             /// Scaled Exponential Linear Unit

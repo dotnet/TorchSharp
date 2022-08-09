@@ -35,7 +35,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_PairwiseDistance_ctor(double p, double eps, bool keep_dim, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_PairwiseDistance_ctor(double p, double eps, [MarshalAs(UnmanagedType.U1)] bool keep_dim, out IntPtr pBoxedModule);
 
             static public PairwiseDistance PairwiseDistance(double p = 2.0, double eps = 1e-6, bool keep_dim = false)
             {
