@@ -33,3 +33,18 @@ void THSAutograd_grad(
     for (size_t i = 0; i < sz; i++)
         result[i] = ResultTensor(res[i]);
 }
+
+void THSAutograd_backward(
+    Tensor* tensors, const int64_t tLength,
+    Tensor* grad_tensors, const int64_t gtLength,
+    bool retain_graph, bool create_graph,
+    Tensor* inputs, const int64_t iLength)
+{
+    CATCH(
+        torch::autograd::backward(
+            toTensors<at::Tensor>((torch::Tensor**)tensors, tLength),
+            toTensors<at::Tensor>((torch::Tensor**)grad_tensors, gtLength),
+            retain_graph, create_graph,
+            toTensors<at::Tensor>((torch::Tensor**)inputs, iLength));
+    );
+}

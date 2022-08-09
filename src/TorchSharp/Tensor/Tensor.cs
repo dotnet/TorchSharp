@@ -620,6 +620,9 @@ namespace TorchSharp
                 }
             }
 
+            public void backward(IList<Tensor>? grad_tensors = null, bool create_graph = false, bool retain_graph = false, IList<Tensor>? inputs = null) =>
+                torch.autograd.backward(new[] { this }, grad_tensors, create_graph, retain_graph, inputs);
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_load([MarshalAs(UnmanagedType.LPStr)] string location);
 
