@@ -105,7 +105,9 @@ namespace TorchSharp
              IntPtr outputs, long oLength,
              IntPtr inputs, long iLength,
              IntPtr grad_outs, long gLength,
-             bool retain_graph, bool create_graph, bool allow_unused,
+             [MarshalAs(UnmanagedType.U1)] bool retain_graph,
+             [MarshalAs(UnmanagedType.U1)] bool create_graph,
+             [MarshalAs(UnmanagedType.U1)] bool allow_unused,
              AllocatePinnedArray allocator);
 
             /// <summary>
@@ -149,9 +151,123 @@ namespace TorchSharp
                 }
 
                 return result.Select(x => new Tensor(x)).ToList();
-
-
             }
+
+            [DllImport("LibTorchSharp")]
+            private static extern void THSAutograd_backward(
+                 IntPtr tensors, long tLength,
+                 IntPtr grad_tensors, long gtLength,
+                 [MarshalAs(UnmanagedType.U1)] bool retain_graph,
+                 [MarshalAs(UnmanagedType.U1)] bool create_graph,
+                 IntPtr inputs, long iLength);
+
+            /// <summary>
+            /// Computes the sum of gradients of given tensors with respect to graph leaves.
+            /// </summary>
+            /// <param name="tensors">Tensors of which the derivative will be computed.</param>
+            /// <param name="grad_tensors">
+            /// The “vector” in the Jacobian-vector product, usually gradients w.r.t. each element of corresponding tensors.
+            /// Null values can be specified for scalar Tensors or ones that don’t require grad.
+            /// If a null value would be acceptable for all grad_tensors, then this argument is optional.
+            /// </param>
+            /// <param name="retain_graph">If false, the graph used to compute the grad will be freed.
+            /// Note that in nearly all cases setting this option to true is not needed and often can be worked around in a much more efficient way.
+            /// Defaults to the value of create_graph.</param>
+            /// <param name="create_graph">If true, graph of the derivative will be constructed, allowing to compute higher order derivative products. Defaults to false.</param>
+            /// <param name="inputs">
+            /// Inputs w.r.t. which the gradient be will accumulated into .grad. All other Tensors will be ignored.
+            /// If not provided, the gradient is accumulated into all the leaf Tensors that were used to compute the attr::tensors.
+            /// </param>
+            /// <remarks>
+            /// The graph is differentiated using the chain rule. If any of tensors are non-scalar (i.e. their data has more than one element) and require gradient,
+            /// then the Jacobian-vector product would be computed, in this case the function additionally requires specifying grad_tensors.
+            /// 
+            /// It should be a sequence of matching length, that contains the “vector” in the Jacobian-vector product, usually the gradient of the differentiated
+            /// function w.r.t. corresponding tensors (null is an acceptable value for all tensors that don’t need gradient tensors).
+            /// 
+            /// This function accumulates gradients in the leaves - you might need to zero the .grad properties or set them to null before calling it.
+            /// </remarks>
+            public static void backward(IList<Tensor> tensors, IList<Tensor> grad_tensors = null, bool? retain_graph = null, bool create_graph = false, IList<Tensor> inputs = null)
+            {
+                bool rt = retain_graph.HasValue ? retain_graph.Value : create_graph;
+
+                using (var ts = new PinnedArray<IntPtr>())
+                using (var gts = new PinnedArray<IntPtr>())
+                using (var ins = new PinnedArray<IntPtr>()) {
+
+                    IntPtr tensRef = ts.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                    IntPtr gradsRef = grad_tensors == null ? IntPtr.Zero : gts.CreateArray(grad_tensors.Select(p => p.Handle).ToArray());
+                    IntPtr insRef = inputs == null ? IntPtr.Zero : ins.CreateArray(inputs.Select(p => p.Handle).ToArray());
+                    long insLength = inputs == null ? 0 : ins.Array.Length;
+                    long gradsLength = grad_tensors == null ? 0 : gts.Array.Length;
+
+                    THSAutograd_backward(tensRef, ts.Array.Length, gradsRef, gradsLength, rt, create_graph, insRef, insLength);
+                    torch.CheckForErrors();
+                }
+            }
+
+            /// <summary>
+            /// Computes the sum of gradients of given tensors with respect to graph leaves.
+            /// </summary>
+            /// <param name="tensor">Tensor of which the derivative will be computed.</param>
+            /// <param name="grad_tensors">
+            /// The “vector” in the Jacobian-vector product, usually gradients w.r.t. each element of corresponding tensors.
+            /// Null values can be specified for scalar Tensors or ones that don’t require grad.
+            /// If a null value would be acceptable for all grad_tensors, then this argument is optional.
+            /// </param>
+            /// <param name="retain_graph">If false, the graph used to compute the grad will be freed.
+            /// Note that in nearly all cases setting this option to true is not needed and often can be worked around in a much more efficient way.
+            /// Defaults to the value of create_graph.</param>
+            /// <param name="create_graph">If true, graph of the derivative will be constructed, allowing to compute higher order derivative products. Defaults to false.</param>
+            /// <param name="inputs">
+            /// Inputs w.r.t. which the gradient be will accumulated into .grad. All other Tensors will be ignored.
+            /// If not provided, the gradient is accumulated into all the leaf Tensors that were used to compute the attr::tensors.
+            /// </param>
+            /// <remarks>
+            /// The graph is differentiated using the chain rule. If any of tensors are non-scalar (i.e. their data has more than one element) and require gradient,
+            /// then the Jacobian-vector product would be computed, in this case the function additionally requires specifying grad_tensors.
+            /// 
+            /// It should be a sequence of matching length, that contains the “vector” in the Jacobian-vector product, usually the gradient of the differentiated
+            /// function w.r.t. corresponding tensors (null is an acceptable value for all tensors that don’t need gradient tensors).
+            /// 
+            /// This function accumulates gradients in the leaves - you might need to zero the .grad properties or set them to null before calling it.
+            /// </remarks>
+            public static void backward(Tensor tensor, IList<Tensor> grad_tensors = null, bool? retain_graph = null, bool create_graph = false, IList<Tensor> inputs = null)
+            {
+                backward(new[] { tensor }, grad_tensors, retain_graph, create_graph, inputs);
+            }
+
+            /// <summary>
+            /// Computes the sum of gradients of given tensors with respect to graph leaves.
+            /// </summary>
+            /// <param name="tensor">Tensor of which the derivative will be computed.</param>
+            /// <param name="grad_tensor">
+            /// The “vector” in the Jacobian-vector product, usually gradients w.r.t. each element of corresponding tensors.
+            /// Null values can be specified for scalar Tensors or ones that don’t require grad.
+            /// If a null value would be acceptable for all grad_tensors, then this argument is optional.
+            /// </param>
+            /// <param name="retain_graph">If false, the graph used to compute the grad will be freed.
+            /// Note that in nearly all cases setting this option to true is not needed and often can be worked around in a much more efficient way.
+            /// Defaults to the value of create_graph.</param>
+            /// <param name="create_graph">If true, graph of the derivative will be constructed, allowing to compute higher order derivative products. Defaults to false.</param>
+            /// <param name="inputs">
+            /// Inputs w.r.t. which the gradient be will accumulated into .grad. All other Tensors will be ignored.
+            /// If not provided, the gradient is accumulated into all the leaf Tensors that were used to compute the attr::tensors.
+            /// </param>
+            /// <remarks>
+            /// The graph is differentiated using the chain rule. If any of tensors are non-scalar (i.e. their data has more than one element) and require gradient,
+            /// then the Jacobian-vector product would be computed, in this case the function additionally requires specifying grad_tensors.
+            /// 
+            /// It should be a sequence of matching length, that contains the “vector” in the Jacobian-vector product, usually the gradient of the differentiated
+            /// function w.r.t. corresponding tensors (null is an acceptable value for all tensors that don’t need gradient tensors).
+            /// 
+            /// This function accumulates gradients in the leaves - you might need to zero the .grad properties or set them to null before calling it.
+            /// </remarks>
+            public static void backward(Tensor tensor, Tensor grad_tensor, bool? retain_graph = null, bool create_graph = false, IList<Tensor> inputs = null)
+            {
+                backward(new[] { tensor }, new[] { grad_tensor }, retain_graph, create_graph, inputs);
+            }
+
         }
     }
 }

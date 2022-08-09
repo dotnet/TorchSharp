@@ -17,3 +17,9 @@ EXPORT_API(void) THSAutograd_grad(
     Tensor* grad_outs, const int64_t gLenght,
     bool retain_graph, bool create_graph, bool allow_unused,
     Tensor* (*allocator)(size_t length));
+
+EXPORT_API(void) THSAutograd_backward(
+    Tensor* tensors, const int64_t tLength,
+    Tensor* grad_tensors, const int64_t gtLength,
+    bool retain_graph, bool create_graph,
+    Tensor* inputs, const int64_t iLength);

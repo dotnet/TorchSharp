@@ -50,5 +50,53 @@ namespace TorchSharp
             packed_sequence.Dispose();
             Assert.True(torch.max(torch.square(inverted_sequences - padded_sequences)).item<long>() == 0);
         }
+
+        [Fact]
+        public void TestAutoGradGrad()
+        {
+            using var _ = torch.NewDisposeScope();
+            var x1 = torch.rand(1, requiresGrad: true);
+            var x2 = torch.rand(1, requiresGrad: true);
+
+            var y = x1.pow(2) + 5 * x2;
+
+            var grad = torch.autograd.grad(new[] { y }, new[] { x1, x2 }, new[] { torch.ones_like(y) });
+            Assert.Equal(x1.shape, grad[0].shape);
+            Assert.Equal(x2.shape, grad[1].shape);
+            Assert.Equal(2.0f * x1.item<float>(), grad[0].item<float>());
+            Assert.Equal(5.0f, grad[1].item<float>());
+        }
+
+        [Fact]
+        public void TestAutoGradBackward1()
+        {
+            using var _ = torch.NewDisposeScope();
+            var x1 = torch.rand(1, requiresGrad: true);
+            var x2 = torch.rand(1, requiresGrad: true);
+
+            var y = x1.pow(2) + 5 * x2;
+
+            torch.autograd.backward(new[] { y }, new[] { torch.ones_like(y) });
+            Assert.Equal(x1.shape, x1.grad().shape);
+            Assert.Equal(x2.shape, x2.grad().shape);
+            Assert.Equal(2.0f*x1.item<float>(), x1.grad().item<float>());
+            Assert.Equal(5.0f, x2.grad().item<float>());
+        }
+
+        [Fact]
+        public void TestAutoGradBackward2()
+        {
+            using var _ = torch.NewDisposeScope();
+            var x1 = torch.rand(1, requiresGrad: true);
+            var x2 = torch.rand(1, requiresGrad: true);
+
+            var y = x1.pow(2) + 5 * x2;
+
+            y.backward(new[] { torch.ones_like(y) });
+            Assert.Equal(x1.shape, x1.grad().shape);
+            Assert.Equal(x2.shape, x2.grad().shape);
+            Assert.Equal(2.0f * x1.item<float>(), x1.grad().item<float>());
+            Assert.Equal(5.0f, x2.grad().item<float>());
+        }
     }
 }
