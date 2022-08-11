@@ -6177,9 +6177,10 @@ namespace TorchSharp
             extern static IntPtr THSTensor_nonzero(IntPtr tensor);
 
             /// <summary>
-            ///
+            /// Returns a tensor containing the indices of all non-zero elements of input.
+            /// Each row in the result contains the indices of a non-zero element in input.
+            /// The result is sorted lexicographically, with the last index changing the fastest (C-style).
             /// </summary>
-
             public Tensor nonzero()
             {
                 var res = THSTensor_nonzero(Handle);

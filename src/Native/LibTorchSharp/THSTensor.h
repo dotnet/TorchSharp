@@ -1176,6 +1176,8 @@ EXPORT_API(Tensor) THSTensor_column_stack(const Tensor* tensor, const int length
 
 EXPORT_API(Tensor) THSTensor_row_stack(const Tensor* tensor, const int length);
 
+EXPORT_API(void) THSTensor_meshgrid(const Tensor* tensors, const int64_t length, const char* indexing, Tensor* (*allocator)(size_t length));
+
 EXPORT_API(int64_t) THSTensor_stride(const Tensor tensor, const int64_t dim);
 
 EXPORT_API(void) THSTensor_strides(const Tensor tensor, int64_t* (*allocator)(size_t length));
