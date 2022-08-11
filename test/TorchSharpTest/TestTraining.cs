@@ -235,7 +235,7 @@ namespace TorchSharp
                 output.backward();
 
                 optimizer.step();
-                scheduler.step();
+                scheduler.step(lossVal);
 
                 if (check_lr) {
                     // For most LR schedulers, the LR decreases monotonically with each step. However,
@@ -940,6 +940,40 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
             LossIsClose(58.589f, loss);
+        }
+
+        /// <summary>
+        /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
+        /// </summary>
+        [Fact]
+        public void TestTrainingRAdamReduceLROnPlateau_PG()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var lr = 0.0002;
+            var optimizer = torch.optim.SGD(new SGD.ParamGroup[]
+            {
+                new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.003f } },
+                new () { Parameters = lin2.parameters(), Options = new () { LearningRate = lr } }
+            }, lr);
+
+            var scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer);
+
+            Assert.Throws<InvalidOperationException>(() => scheduler.step());
+            Assert.Throws<InvalidOperationException>(() => scheduler.step(epoch: 10));
+
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false, 500);
+
+            LossIsClose(52.6109f, loss);
+
+            var pgs = optimizer.ParamGroups.ToList();
+
+            Assert.NotEqual(0.0002, pgs[0].LearningRate);
+            Assert.NotEqual(0.003,  pgs[1].LearningRate);
         }
 
         [Fact]

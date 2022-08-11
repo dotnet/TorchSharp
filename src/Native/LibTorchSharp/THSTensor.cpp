@@ -452,6 +452,20 @@ Tensor THSTensor_repeat(const Tensor tensor, const int64_t* sizes, const int len
     CATCH_TENSOR(tensor->repeat(at::ArrayRef<int64_t>(sizes, length)));
 }
 
+Tensor THSTensor_repeat_interleave(const Tensor tensor, const Tensor repeats, const int64_t dim, const int64_t output_size)
+{
+    auto _dim = dim == INT64_MIN ? c10::optional<int64_t>() : c10::optional<int64_t>(dim);
+    auto _output_size = output_size == INT64_MIN ? c10::optional<int64_t>() : c10::optional<int64_t>(output_size);
+    CATCH_TENSOR(tensor->repeat_interleave(*repeats, _dim, _output_size));
+}
+
+Tensor THSTensor_repeat_interleave_int64(const Tensor tensor, const int64_t repeats, const int64_t dim, const int64_t output_size)
+{
+    auto _dim = dim == INT64_MIN ? c10::optional<int64_t>() : c10::optional<int64_t>(dim);
+    auto _output_size = output_size == INT64_MIN ? c10::optional<int64_t>() : c10::optional<int64_t>(output_size);
+    CATCH_TENSOR(tensor->repeat_interleave(repeats, _dim, _output_size));
+}
+
 Tensor THSTensor_movedim(const Tensor tensor, const int64_t* src, const int src_len, const int64_t* dst, const int dst_len)
 {
     CATCH_TENSOR(tensor->movedim(at::ArrayRef<int64_t>(src, src_len), at::ArrayRef<int64_t>(dst, dst_len)));
@@ -1049,6 +1063,16 @@ Tensor THSTensor_outer(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->outer(*right));
 }
 
+Tensor THSTensor_mH(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->mH());
+}
+
+Tensor THSTensor_mT(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->mT());
+}
+
 
 Tensor THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int length)
 {
@@ -1552,6 +1576,19 @@ Tensor THSTensor_column_stack(const Tensor* tensors, const int length)
 Tensor THSTensor_row_stack(const Tensor* tensors, const int length)
 {
     CATCH_TENSOR(torch::row_stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
+}
+
+void THSTensor_meshgrid(const Tensor* tensors, const int64_t length, const char* indexing, Tensor* (*allocator)(size_t length))
+{
+    std::string str = indexing;
+    at::TensorList tList = toTensors<at::Tensor>((torch::Tensor**)tensors, length);
+    CATCH(
+        auto res = torch::meshgrid(tList, indexing);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
+    )
 }
 
 Tensor THSTensor_std(const Tensor tensor)

@@ -76,6 +76,14 @@ namespace TorchSharp
             return ptrArray.Select(x => new Tensor(x)).ToList();
         }
 
+        /// <summary>
+        /// Returns a tensor containing the indices of all non-zero elements of input.
+        /// Each row in the result contains the indices of a non-zero element in input.
+        /// The result is sorted lexicographically, with the last index changing the fastest (C-style).
+        /// </summary>
+        public static Tensor nonzero(Tensor input) => input.nonzero();
+
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_cat(IntPtr tensor, int len, long dim);
 
@@ -302,6 +310,29 @@ namespace TorchSharp
             }
         }
 
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_meshgrid(IntPtr tensor, long len, [MarshalAs(UnmanagedType.LPStr)] string indexing, AllocatePinnedArray allocator);
+
+        /// <summary>
+        /// Creates grids of coordinates specified by the 1D inputs in tensors.
+        /// This is helpful when you want to visualize data over some range of inputs.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>All tensors need to be of the same size.</remarks>
+        public static Tensor[] meshgrid(IEnumerable<Tensor> tensors, string indexing = "ij")
+        {
+            IntPtr[] ptrArray;
+
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                var res = THSTensor_meshgrid(tensorsRef, parray.Array.LongLength, indexing, parray.CreateArray);
+                torch.CheckForErrors();
+                ptrArray = parray.Array;
+            }
+            return ptrArray.Select(x => new Tensor(x)).ToArray();
+        }
+
         /// <summary>
         /// Returns the k largest elements of the given input tensor along a given dimension.
         /// </summary>
@@ -310,7 +341,6 @@ namespace TorchSharp
         /// <param name="dimension">The dimension to sort along. If dim is not given, the last dimension of the input is chosen.</param>
         /// <param name="largest">Controls whether to return largest or smallest elements</param>
         /// <param name="sorted">Controls whether to return the elements in sorted order</param>
-        /// <returns></returns>
         public static (Tensor values, Tensor indexes) topk(Tensor tensor, int k, int dimension = -1, bool largest = true, bool sorted = true) => tensor.topk(k, dimension, largest, sorted);
 
         /// <summary>
@@ -556,5 +586,60 @@ namespace TorchSharp
         /// <param name="value">The scalar multiplier for source</param>
         /// <returns></returns>
         public static Tensor index_fill_(Tensor input, long dim, Tensor index, Scalar value) => input.index_fill_(dim, index, value);
+
+        /// <summary>
+        /// Repeat elements of a tensor.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="repeats">The number of repeats</param>
+        /// <param name="dim">The dimension to repeat</param>
+        /// <param name="output_size">The size of output</param>
+        /// <returns></returns>
+        public static Tensor repeat_interleave(Tensor input, long repeats, long? dim = null, long? output_size = null) => input.repeat_interleave(repeats, dim, output_size);
+
+        /// <summary>
+        /// Repeat elements of a tensor.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="repeats">The number of repeats</param>
+        /// <param name="dim">The dimension to repeat</param>
+        /// <param name="output_size">The size of output</param>
+        /// <returns></returns>
+        public static Tensor repeat_interleave(Tensor input, Tensor repeats, long? dim = null, long? output_size = null) => input.repeat_interleave(repeats, dim, output_size);
+
+        /// <summary>
+        /// Constructs a tensor by repeating the elements of input. The dims argument specifies the number of repetitions in each dimension.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dims">The number of repetitions per dimension.</param>
+        public static Tensor tile(Tensor input, long[] dims) => input.tile(dims);
+
+        /// <summary>
+        /// Tests if all elements in input evaluate to true.
+        /// <param name="input">The input tensor</param>
+        /// </summary>
+        public static Tensor all(Tensor input) => input.all();
+
+        /// <summary>
+        /// Tests if all elements in input evaluate to true.
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">The dimension to reduce</param>
+        /// <param name="keepdim">Keep the dimension to reduce</param>
+        /// </summary>
+        public static Tensor all(Tensor input, long dim, bool keepdim = false) => input.all(dim, keepdim);
+
+        /// <summary>
+        /// Tests if all elements in input evaluate to true.
+        /// <param name="input">The input tensor</param>
+        /// </summary>
+        public static Tensor any(Tensor input) => input.any();
+
+        /// <summary>
+        /// Tests if any element in input evaluate to true.
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">The dimension to reduce</param>
+        /// <param name="keepdim">Keep the dimension to reduce</param>
+        /// </summary>
+        public static Tensor any(Tensor input, long dim, bool keepdim = false) => input.any(dim, keepdim);
     }
 }

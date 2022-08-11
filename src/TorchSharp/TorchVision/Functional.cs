@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 using static TorchSharp.torch;
 
-// A number of implementation details in this file have been translated from the Python version or torchvision,
+// A number of implementation details in this file have been translated from the Python version of torchvision,
 // largely located in the files found in this folder:
 //
 // https://github.com/pytorch/vision/tree/993325dd82567f5d4f28ccb321e3a9a16984d2d8/torchvision/transforms
