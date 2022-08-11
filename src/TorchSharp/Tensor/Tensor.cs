@@ -1988,7 +1988,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_all(IntPtr tensor);
 
             /// <summary>
-            ///
+            /// Tests if all elements in input evaluate to true.
             /// </summary>
 
             public Tensor all()
@@ -2003,10 +2003,10 @@ namespace TorchSharp
             static extern IntPtr THSTensor_all_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            ///
+            /// Tests if all elements in input evaluate to true.
             /// </summary>
-            /// <param name="dimension"></param>
-            /// <param name="keepDim"></param>
+            /// <param name="dimension">The dimension to reduce</param>
+            /// <param name="keepDim">Keep the dimension to reduce</param>
 
             public Tensor all(long dimension, bool keepDim = false)
             {
@@ -2128,7 +2128,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_any(IntPtr tensor);
 
             /// <summary>
-            ///
+            /// Tests if any element in input evaluate to true.
             /// </summary>
 
             public Tensor any()
@@ -2143,10 +2143,10 @@ namespace TorchSharp
             static extern IntPtr THSTensor_any_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            ///
+            /// Tests if any element in input evaluate to true.
             /// </summary>
-            /// <param name="dimension"></param>
-            /// <param name="keepDim"></param>
+            /// <param name="dimension">The dimension to reduce</param>
+            /// <param name="keepDim">Keep the dimension to reduce</param>
 
             public Tensor any(long dimension, bool keepDim = false)
             {
@@ -5104,6 +5104,30 @@ namespace TorchSharp
                         return new Tensor(res);
                     }
                 }
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_repeat_interleave(IntPtr tensor, IntPtr repeats, long dim, long output_size);
+
+            public Tensor repeat_interleave(Tensor repeats, long? dim = null, long? output_size = null)
+            {
+                long _dim = dim ?? long.MinValue;
+                long _output_size = output_size ?? long.MinValue;
+                var res = THSTensor_repeat_interleave(Handle, repeats.Handle, _dim, _output_size);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_repeat_interleave_int64(IntPtr tensor, long repeats, long dim, long output_size);
+
+            public Tensor repeat_interleave(long repeats, long? dim = null, long? output_size = null)
+            {
+                long _dim = dim ?? long.MinValue;
+                long _output_size = output_size ?? long.MinValue;
+                var res = THSTensor_repeat_interleave_int64(Handle, repeats, _dim, _output_size);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
