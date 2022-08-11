@@ -1063,6 +1063,16 @@ Tensor THSTensor_outer(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->outer(*right));
 }
 
+Tensor THSTensor_mH(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->mH());
+}
+
+Tensor THSTensor_mT(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->mT());
+}
+
 
 Tensor THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int length)
 {
@@ -1566,6 +1576,19 @@ Tensor THSTensor_column_stack(const Tensor* tensors, const int length)
 Tensor THSTensor_row_stack(const Tensor* tensors, const int length)
 {
     CATCH_TENSOR(torch::row_stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
+}
+
+void THSTensor_meshgrid(const Tensor* tensors, const int64_t length, const char* indexing, Tensor* (*allocator)(size_t length))
+{
+    std::string str = indexing;
+    at::TensorList tList = toTensors<at::Tensor>((torch::Tensor**)tensors, length);
+    CATCH(
+        auto res = torch::meshgrid(tList, indexing);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
+    )
 }
 
 Tensor THSTensor_std(const Tensor tensor)

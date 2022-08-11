@@ -1844,6 +1844,48 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_H(IntPtr tensor);
+
+            /// <summary>
+            /// Is this Tensor with its dimensions reversed.
+            /// </summary>
+            public Tensor H {
+                get {
+                    return is_complex() ? transpose(0, 1).conj() : transpose(0, 1);
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_mT(IntPtr tensor);
+
+            /// <summary>
+            /// Returns a view of this tensor with the last two dimensions transposed.
+            /// </summary>
+            public Tensor mT {
+                get {
+                    var res = THSTensor_mT(Handle);
+                    if (res == IntPtr.Zero)
+                        torch.CheckForErrors();
+                    return new Tensor(res);
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
+            extern static IntPtr THSTensor_mH(IntPtr tensor);
+
+            /// <summary>
+            /// Accessing this property is equivalent to calling adjoint().
+            /// </summary>
+            public Tensor mH {
+                get {
+                    var res = THSTensor_mH(Handle);
+                    if (res == IntPtr.Zero)
+                        torch.CheckForErrors();
+                    return new Tensor(res);
+                }
+            }
+
+            [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_transpose(IntPtr tensor, long dim1, long dim2);
 
             /// <summary>
@@ -6159,9 +6201,10 @@ namespace TorchSharp
             extern static IntPtr THSTensor_nonzero(IntPtr tensor);
 
             /// <summary>
-            ///
+            /// Returns a tensor containing the indices of all non-zero elements of input.
+            /// Each row in the result contains the indices of a non-zero element in input.
+            /// The result is sorted lexicographically, with the last index changing the fastest (C-style).
             /// </summary>
-
             public Tensor nonzero()
             {
                 var res = THSTensor_nonzero(Handle);

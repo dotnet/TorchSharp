@@ -9,6 +9,7 @@ using Xunit;
 using Xunit.Sdk;
 using static TorchSharp.torch;
 using ICSharpCode.SharpZipLib;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable enable
 
@@ -8251,6 +8252,37 @@ namespace TorchSharp
 
             var mse = torch.mean(torch.square(input - inverted)).item<float>();
             Assert.True(mse < 1e-10);
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.Tensor.permute))]
+        public void Permute()
+        {
+            using var t = torch.ones(32, 16, 8, 4);
+            Assert.Multiple(
+            () => Assert.Equal(new long[] { 32, 8, 16, 4 }, t.permute(0, 2, 1, 3).shape),
+            () => Assert.Equal(new long[] { 32, 8, 4, 16 }, t.permute(0, 2, 3, 1).shape)
+            );
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.Tensor.T))]
+        public void Tensor_T()
+        {
+            using var t = torch.ones(32, 16, 8);
+            Assert.Multiple(
+            () => Assert.Equal(new long[] { 8, 16, 32 }, t.T.shape)
+            );
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.Tensor.mT))]
+        public void Tensor_mT()
+        {
+            using var t = torch.ones(32, 16, 8);
+            Assert.Multiple(
+            () => Assert.Equal(new long[] { 32, 8, 16 }, t.mT.shape)
+            );
         }
     }
 }
