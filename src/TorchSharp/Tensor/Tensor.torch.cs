@@ -310,7 +310,6 @@ namespace TorchSharp
         /// <param name="dimension">The dimension to sort along. If dim is not given, the last dimension of the input is chosen.</param>
         /// <param name="largest">Controls whether to return largest or smallest elements</param>
         /// <param name="sorted">Controls whether to return the elements in sorted order</param>
-        /// <returns></returns>
         public static (Tensor values, Tensor indexes) topk(Tensor tensor, int k, int dimension = -1, bool largest = true, bool sorted = true) => tensor.topk(k, dimension, largest, sorted);
 
         /// <summary>
