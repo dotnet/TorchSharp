@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
-// A number of implementation details in this file have been translated from the Python version or torchvision,
+// A number of implementation details in this file have been translated from the Python version of torchaudio,
 // largely located in the files found in this folder:
 //
 // https://github.com/pytorch/audio/blob/e502df0106403f7666f89fee09715256ea2e0df3/torchaudio/models/tacotron2.py
@@ -336,7 +336,7 @@ namespace TorchSharp.Modules
             public override Tensor forward(Tensor x)
             {
                 foreach (var linear in this.layers) {
-                    x = F.dropout(F.relu(linear.forward(x)), probability: 0.5);
+                    x = F.dropout(F.relu(linear.forward(x)), probability: 0.5, training: true);
                 }
                 return x;
             }
@@ -383,17 +383,9 @@ namespace TorchSharp.Modules
                 for (int i = 0; i < this.convolutions.Count; i++) {
                     var conv = this.convolutions[i];
                     if (i < this.n_convs - 1) {
-                        if (this.training) {
-                            x = F.dropout(torch.tanh(conv.forward(x)), 0.5);
-                        } else {
-                            x = torch.tanh(conv.forward(x));
-                        }
+                        x = F.dropout(torch.tanh(conv.forward(x)), 0.5, training: this.training);
                     } else {
-                        if (this.training) {
-                            x = F.dropout(conv.forward(x), 0.5);
-                        } else {
-                            x = conv.forward(x);
-                        }
+                        x = F.dropout(conv.forward(x), 0.5, training: this.training);
                     }
                 }
                 return x;
@@ -442,11 +434,7 @@ namespace TorchSharp.Modules
             public override Tensor forward(Tensor x, Tensor input_lengths)
             {
                 foreach (var conv in this.convolutions) {
-                    if (this.training) {
-                        x = F.dropout(F.relu(conv.forward(x)), 0.5);
-                    } else {
-                        x = F.relu(conv.forward(x));
-                    }
+                    x = F.dropout(F.relu(conv.forward(x)), 0.5, training: this.training);
                 }
 
                 x = x.transpose(1, 2);
@@ -620,9 +608,7 @@ namespace TorchSharp.Modules
                 var cell_input = torch.cat(new[] { decoder_input, attention_context }, -1);
 
                 (attention_hidden, attention_cell) = this.attention_rnn.forward(cell_input, (attention_hidden, attention_cell));
-                if (this.training) {
-                    attention_hidden = F.dropout(attention_hidden, this.attention_dropout);
-                }
+                attention_hidden = F.dropout(attention_hidden, this.attention_dropout, training: this.training);
 
                 var attention_weights_cat = torch.cat(new[] { attention_weights.unsqueeze(1), attention_weights_cum.unsqueeze(1) }, dimension: 1);
                 (attention_context, attention_weights) = this.attention_layer.forward(
@@ -632,9 +618,7 @@ namespace TorchSharp.Modules
                 decoder_input = torch.cat(new[] { attention_hidden, attention_context }, -1);
 
                 (decoder_hidden, decoder_cell) = this.decoder_rnn.forward(decoder_input, (decoder_hidden, decoder_cell));
-                if (this.training) {
-                    decoder_hidden = F.dropout(decoder_hidden, this.decoder_dropout);
-                }
+                decoder_hidden = F.dropout(decoder_hidden, this.decoder_dropout, training: this.training);
 
                 var decoder_hidden_attention_context = torch.cat(new[] { decoder_hidden, attention_context }, dimension: 1);
                 var decoder_output = this.linear_projection.forward(decoder_hidden_attention_context);
@@ -782,7 +766,7 @@ namespace TorchSharp.Modules
                     mel_specgram_lengths[~finished] += 1;
 
                     finished |= torch.sigmoid(gate_output.squeeze(1)) > this.gate_threshold;
-                    if (this.decoder_early_stopping && finished.all().item<bool>()) {
+                    if (this.decoder_early_stopping && torch.all(finished).item<bool>()) {
                         break;
                     }
 

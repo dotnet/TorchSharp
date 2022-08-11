@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 using System.Diagnostics;
 
-// A number of implementation details in this file have been translated from the Python version or torchvision,
+// A number of implementation details in this file have been translated from the Python version of torchaudio,
 // largely located in the files found in this folder:
 //
 // https://github.com/pytorch/audio/blob/39c2c0a77e11b82ce152d60df3a92f6854d5f52b/torchaudio/functional/functional.py

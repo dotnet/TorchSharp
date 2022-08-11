@@ -3041,19 +3041,19 @@ namespace TorchSharp
         public static Tensor logsumexp(Tensor input, long dim, Boolean keepdim = false) => input.logsumexp(dim, keepdim);
 
         /// <summary>
-        /// Returns a new tensorwith the logarithm to the base 10 of the elements of input.
+        /// Returns a new tensor with the logarithm to the base 10 of the elements of input.
         /// </summary>
         /// <param name="input">The input tensor.</param>
-        public static Tensor log10(Tensor input) => input.log();
+        public static Tensor log10(Tensor input) => input.log10();
 
         /// <summary>
         /// Replaces each elements with the logarithm to the base 10 of the elements of input.
         /// </summary>
         /// <param name="input">The input tensor.</param>
-        public static Tensor log10_(Tensor input) => input.log_();
+        public static Tensor log10_(Tensor input) => input.log10_();
 
         /// <summary>
-        /// Returns a new tensorwith the logarithm to the base 10 of the elements of input.
+        /// Returns a new tensor with the logarithm to the base 10 of the elements of input.
         /// </summary>
         /// <param name="input">The input tensor.</param>
         public static Tensor log2(Tensor input) => input.log2();

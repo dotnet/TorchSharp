@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Transactions;
 
 // All LR schedulers in this file are directly based on the Pytorch implementation at:
 //
@@ -70,6 +71,18 @@ namespace TorchSharp
                                 Console.WriteLine($"Adjusting learning rate to {lr[i]}");
                             _last_lrs[i] = lr[i];
                         }
+                    }
+
+                    /// <summary>
+                    /// Advance the learning rate scheduler, passing in the current value of some metric.
+                    /// </summary>
+                    /// <remarks>
+                    /// The metric value is ignored by most LR schedulers.
+                    /// </remarks>
+                    public virtual void step(double current, int? epoch = null)
+                    {
+                        // Ignore the metric
+                        step(epoch);
                     }
 
                     /// <summary>
@@ -347,7 +360,6 @@ namespace TorchSharp
                         private int _total_iters;
                     }
 
-
                     /// <summary>
                     /// Decays the learning rate of each parameter group by linearly changing small multiplicative factor until the
                     /// number of epoch reaches a pre-defined milestone: total_iters.
@@ -452,7 +464,6 @@ namespace TorchSharp
                         private int[] _milestones;
                     }
 
-
                     /// <summary>
                     /// Set the learning rate of each parameter group using a cosine annealing schedule.
                     /// When last_epoch=-1, sets initial lr as lr.
@@ -495,6 +506,166 @@ namespace TorchSharp
 
                         private double _T_max;
                         private double _eta_min;
+                    }
+
+                    /// <summary>
+                    /// Set the learning rate of each parameter group using a cosine annealing schedule.
+                    /// When last_epoch=-1, sets initial lr as lr.
+                    /// </summary>
+                    public class ReduceLROnPlateau : LRScheduler
+                    {
+                        /// <summary>
+                        /// Constructor
+                        /// </summary>
+                        /// <returns>A scheduler</returns>
+                        public ReduceLROnPlateau(Optimizer optimizer, string mode = "min", double factor = 0.1, int patience = 10, double threshold = 1e-4, string threshold_mode = "rel", int cooldown = 0, IList<double> min_lr = null, double eps = 1e-8, bool verbose = false)
+                            :base(optimizer, -1, verbose)
+                        {
+                            if (optimizer == null) throw new ArgumentNullException("optimizer");
+                            if (factor >= 1.0) throw new ArgumentException("Factor should be < 1.0");
+
+                            switch (mode) {
+                            case "min":
+                            case "max":
+                                break;
+                            default:
+                                throw new ArgumentException($"mode {mode} is unknown!");
+                            }
+                            switch (threshold_mode) {
+                            case "rel":
+                            case "abs":
+                                break;
+                            default:
+                                throw new ArgumentException($"threshold mode {threshold_mode} is unknown!");
+                            }
+
+                            this._optimizer = optimizer;
+                            this.factor = factor;
+
+                            var pgLength = optimizer.ParamGroups.Count();
+                            if (min_lr == null || min_lr.Count == 0) {
+                                this.min_lrs = Enumerable.Repeat(0.0, pgLength).ToList();
+                            }
+                            else if (min_lr.Count == 1) {
+                                this.min_lrs = Enumerable.Repeat(min_lr[0], pgLength).ToList();
+                            }
+                            else {
+                                this.min_lrs = min_lr.ToList();
+                            }
+
+                            this.patience = patience;
+                            this.cooldown = cooldown;
+                            this.cooldown_counter = 0;
+                            this.mode = mode;
+                            this.threshold = threshold;
+                            this.threshold_mode = threshold_mode;
+                            this.best = -1;
+                            this.num_bad_epochs = -1;
+                            this.eps = eps;
+
+                            this.mode_worst = (mode == "min") ? double.PositiveInfinity : double.NegativeInfinity;
+
+                            reset();
+                        }
+
+                        /// <summary>
+                        /// Advance the LR scheduler one epoch.
+                        /// Unlike other LR schedulers, you're supposed to pass in the most recent value of the metric
+                        /// that is used to decided whether to modify the learning rates. 
+                        /// </summary>
+                        /// <param name="current">The current value of the metric that we're interested in imvproving.</param>
+                        /// <param name="epoch">The current epoch.</param>
+                        public override void step(double current, int? epoch = null)
+                        {
+                            if (epoch == null) {
+                                epoch = _last_epoch + 1;
+                            }
+                            _last_epoch = epoch.Value;
+
+                            if (is_better(current, best)) {
+                                best = current;
+                                num_bad_epochs = 0;
+                            }
+                            else {
+                                num_bad_epochs += 1;
+                            }
+
+                            if (cooldown_counter > 0) {
+                                cooldown_counter -= 1;
+                                num_bad_epochs = 0;
+                            }
+
+                            if (num_bad_epochs > patience) {
+                                reduce_lr(_last_epoch);
+                                cooldown_counter = cooldown;
+                                num_bad_epochs = 0;
+                            }
+                        }
+
+                        public override void step()
+                        {
+                            throw new InvalidOperationException("step() should not be used with the ReduceLROnPlateau scheduler. Use step(double, int?), instead.");
+                        }
+
+                        public override void step(int? epoch)
+                        {
+                            throw new InvalidOperationException("step(int?) should not be used with the ReduceLROnPlateau scheduler. Use step(double, int?), instead.");
+                        }
+
+                        private bool is_better(double a, double best)
+                        {
+                            if (mode == "min" && threshold_mode == "rel") {
+                                return a < best * (1 - threshold);
+                            }
+                            else if (mode == "min" && threshold_mode == "abs") {
+                                return a < best - threshold;
+                            }
+                            else if (mode == "max" && threshold_mode == "rel") {
+                                return a > best * (threshold + 1);
+                            }
+                            else {
+                                return a > best + threshold;
+                            }
+                        }
+
+                        private void reduce_lr(long epoch)
+                        {
+                            var pgs = _optimizer.ParamGroups.ToList();
+
+                            for (var i = 0; i < pgs.Count; i++) {
+                                var param_group = pgs[i];
+
+                                var old_lr = param_group.LearningRate;
+                                var new_lr = Math.Max(old_lr * factor, min_lrs[i]);
+                                if (old_lr - new_lr > eps) {
+                                    param_group.LearningRate = new_lr;
+                                    if (_verbose) {
+                                        Console.WriteLine($"Epoch {epoch}: reducing learning rate of group {i} to {new_lr:g4}.");
+                                    }
+                                }
+                            }
+                        }
+
+                        private void reset()
+                        {
+                            best = mode_worst;
+                            cooldown_counter = 0;
+                            num_bad_epochs = 0;
+                        }
+
+                        private int patience;
+                        private int cooldown;
+                        private int cooldown_counter;
+                        private string mode;
+                        private double threshold;
+                        private string threshold_mode;
+                        private double best;
+                        private double mode_worst;
+                        private int num_bad_epochs;
+                        private double eps;
+
+                        private double factor;
+                        private List<double> min_lrs;
                     }
 
                     /// <summary>
@@ -1457,6 +1628,34 @@ namespace TorchSharp
                             bool verbose = false)
                 {
                     return new impl.CyclicLR(optimizer, base_lr, max_lr, step_size_up, step_size_down, mode, gamma, scale_fn, scale_mode, cycle_momentum, base_momentum, max_momentum, last_epoch, verbose);
+                }
+
+                /// <summary>
+                /// Reduce learning rate when a metric has stopped improving.
+                /// Models often benefit from reducing the learning rate by a factor of 2-10 once learning stagnates.
+                /// This scheduler reads a metrics quantity and if no improvement is seen for a ‘patience’ number of epochs, the learning rate is reduced.
+                /// </summary>
+                /// <param name="optimizer">Wrapped optimizer.</param>
+                /// <param name="mode">
+                /// One of min, max. In min mode, lr will be reduced when the quantity monitored has stopped decreasing;
+                /// in max mode it will be reduced when the quantity monitored has stopped increasing. Default: ‘min’
+                /// </param>
+                /// <param name="factor">Factor by which the learning rate will be reduced. new_lr = lr * factor.</param>
+                /// <param name="patience">
+                /// Number of epochs with no improvement after which learning rate will be reduced. For example, if patience = 2,
+                /// then we will ignore the first 2 epochs with no improvement, and will only decrease the LR after the 3rd epoch if
+                /// the loss still hasn’t improved then. Default: 10.</param>
+                /// <param name="threshold">Threshold for measuring the new optimum, to only focus on significant changes. </param>
+                /// <param name="threshold_mode">
+                /// One of rel, abs. In rel mode, dynamic_threshold = best * ( 1 + threshold ) in ‘max’ mode or best * ( 1 - threshold ) in min mode. In abs mode, dynamic_threshold = best + threshold in max mode or best - threshold in min mode. Default: ‘rel’.
+                /// </param>
+                /// <param name="cooldown">Number of epochs to wait before resuming normal operation after lr has been reduced.</param>
+                /// <param name="min_lr">A scalar or a list of scalars. A lower bound on the learning rate of all param groups or each group respectively. Default: 0.</param>
+                /// <param name="eps">Minimal decay applied to lr. If the difference between new and old lr is smaller than eps, the update is ignored. Default: 1e-8.</param>
+                /// <param name="verbose">Indicates whether to print a message to stdout for each update</param>
+                public static LRScheduler ReduceLROnPlateau(Optimizer optimizer, string mode = "min", double factor = 0.1, int patience = 10, double threshold = 1e-4, string threshold_mode = "rel", int cooldown = 0, IList<double> min_lr = null, double eps = 1e-8, bool verbose = false)
+                {
+                    return new impl.ReduceLROnPlateau(optimizer, mode, factor, patience, threshold, threshold_mode, cooldown, min_lr, eps, verbose);
                 }
             }
         }

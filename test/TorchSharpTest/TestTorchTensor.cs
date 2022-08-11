@@ -9,6 +9,7 @@ using Xunit;
 using Xunit.Sdk;
 using static TorchSharp.torch;
 using ICSharpCode.SharpZipLib;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable enable
 
@@ -5670,6 +5671,56 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.repeat_interleave))]
+        public void RepeatInterleaveTest()
+        {
+            {
+                var input = torch.tensor(new int[] { 1, 2, 3 });
+                var expected = torch.tensor(new int[] {
+                    1, 1, 1, 2, 2, 2, 3, 3, 3
+                });
+
+                var res = input.repeat_interleave(torch.tensor(new long[] { 3 }));
+                Assert.Equal(res, expected);
+            }
+
+            {
+                var input = torch.tensor(new int[] { 1, 2, 3 });
+                var expected = torch.tensor(new int[] {
+                    1, 1, 1, 2, 2, 2, 3, 3, 3
+                });
+
+                var res = input.repeat_interleave(3, output_size: 9);
+                Assert.Equal(res, expected);
+            }
+
+            {
+                var input = torch.tensor(new int[] { 1, 2, 3, 4, 5, 6 }).reshape(2, 3);
+                var expected = torch.tensor(new int[] {
+                    1, 2, 3,
+                    1, 2, 3,
+                    4, 5, 6,
+                    4, 5, 6,
+                    4, 5, 6
+                }).reshape(5, 3);
+
+                var res = input.repeat_interleave(torch.tensor(new long[] { 2, 3 }), dim: 0);
+                Assert.Equal(res, expected);
+            }
+
+            {
+                var input = torch.tensor(new int[] { 1, 2, 3, 4, 5, 6 }).reshape(2, 3);
+                var expected = torch.tensor(new int[] {
+                    1, 1, 1, 2, 2, 2, 3, 3, 3,
+                    4, 4, 4, 5, 5, 5, 6, 6, 6
+                }).reshape(2, 9);
+
+                var res = input.repeat_interleave(3, dim: 1);
+                Assert.Equal(res, expected);
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.fliplr))]
         public void FlipLRTest()
         {
@@ -8201,6 +8252,37 @@ namespace TorchSharp
 
             var mse = torch.mean(torch.square(input - inverted)).item<float>();
             Assert.True(mse < 1e-10);
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.Tensor.permute))]
+        public void Permute()
+        {
+            using var t = torch.ones(32, 16, 8, 4);
+            Assert.Multiple(
+            () => Assert.Equal(new long[] { 32, 8, 16, 4 }, t.permute(0, 2, 1, 3).shape),
+            () => Assert.Equal(new long[] { 32, 8, 4, 16 }, t.permute(0, 2, 3, 1).shape)
+            );
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.Tensor.T))]
+        public void Tensor_T()
+        {
+            using var t = torch.ones(32, 16, 8);
+            Assert.Multiple(
+            () => Assert.Equal(new long[] { 8, 16, 32 }, t.T.shape)
+            );
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.Tensor.mT))]
+        public void Tensor_mT()
+        {
+            using var t = torch.ones(32, 16, 8);
+            Assert.Multiple(
+            () => Assert.Equal(new long[] { 32, 8, 16 }, t.mT.shape)
+            );
         }
     }
 }

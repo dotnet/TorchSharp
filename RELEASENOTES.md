@@ -2,6 +2,23 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.97.3
+
+__Fixed Bugs:__
+
+#694 torch.log10() computes torch.log()<br/>
+#691 torch.autograd.backward()<br/>
+#686 torch.nn.functional.Dropout() doesn't have the training argument.<br/>
+
+__API Changes__:
+
+Add `repeat_interleave()`<br/>
+Added meshgrid, mT, mH, and H<br/>
+Added torchvision -- sigmoid_focal_loss()<br/>
+Update the arguments of `dropout()` in `Tacotron2`<br/>
+Add static function for `all()`, `any()`, `tile()`, `repeat_interleave()`.<br/>
+Add an implementation of the ReduceLROnPlateau learning rate scheduler.<br/>
+
 ## NuGet Version 0.97.2
 
 __Breaking Changes:__
