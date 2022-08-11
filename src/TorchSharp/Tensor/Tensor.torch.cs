@@ -556,5 +556,60 @@ namespace TorchSharp
         /// <param name="value">The scalar multiplier for source</param>
         /// <returns></returns>
         public static Tensor index_fill_(Tensor input, long dim, Tensor index, Scalar value) => input.index_fill_(dim, index, value);
+
+        /// <summary>
+        /// Repeat elements of a tensor.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="repeats">The number of repeats</param>
+        /// <param name="dim">The dimension to repeat</param>
+        /// <param name="output_size">The size of output</param>
+        /// <returns></returns>
+        public static Tensor repeat_interleave(Tensor input, long repeats, long? dim = null, long? output_size = null) => input.repeat_interleave(repeats, dim, output_size);
+
+        /// <summary>
+        /// Repeat elements of a tensor.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="repeats">The number of repeats</param>
+        /// <param name="dim">The dimension to repeat</param>
+        /// <param name="output_size">The size of output</param>
+        /// <returns></returns>
+        public static Tensor repeat_interleave(Tensor input, Tensor repeats, long? dim = null, long? output_size = null) => input.repeat_interleave(repeats, dim, output_size);
+
+        /// <summary>
+        /// Constructs a tensor by repeating the elements of input. The dims argument specifies the number of repetitions in each dimension.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dims">The number of repetitions per dimension.</param>
+        public static Tensor tile(Tensor input, long[] dims) => input.tile(dims);
+
+        /// <summary>
+        /// Tests if all elements in input evaluate to true.
+        /// <param name="input">The input tensor</param>
+        /// </summary>
+        public static Tensor all(Tensor input) => input.all();
+
+        /// <summary>
+        /// Tests if all elements in input evaluate to true.
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">The dimension to reduce</param>
+        /// <param name="keepdim">Keep the dimension to reduce</param>
+        /// </summary>
+        public static Tensor all(Tensor input, long dim, bool keepdim = false) => input.all(dim, keepdim);
+
+        /// <summary>
+        /// Tests if all elements in input evaluate to true.
+        /// <param name="input">The input tensor</param>
+        /// </summary>
+        public static Tensor any(Tensor input) => input.any();
+
+        /// <summary>
+        /// Tests if any element in input evaluate to true.
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">The dimension to reduce</param>
+        /// <param name="keepdim">Keep the dimension to reduce</param>
+        /// </summary>
+        public static Tensor any(Tensor input, long dim, bool keepdim = false) => input.any(dim, keepdim);
     }
 }

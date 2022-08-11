@@ -452,6 +452,20 @@ Tensor THSTensor_repeat(const Tensor tensor, const int64_t* sizes, const int len
     CATCH_TENSOR(tensor->repeat(at::ArrayRef<int64_t>(sizes, length)));
 }
 
+Tensor THSTensor_repeat_interleave(const Tensor tensor, const Tensor repeats, const int64_t dim, const int64_t output_size)
+{
+    auto _dim = dim == INT64_MIN ? c10::optional<int64_t>() : c10::optional<int64_t>(dim);
+    auto _output_size = output_size == INT64_MIN ? c10::optional<int64_t>() : c10::optional<int64_t>(output_size);
+    CATCH_TENSOR(tensor->repeat_interleave(*repeats, _dim, _output_size));
+}
+
+Tensor THSTensor_repeat_interleave_int64(const Tensor tensor, const int64_t repeats, const int64_t dim, const int64_t output_size)
+{
+    auto _dim = dim == INT64_MIN ? c10::optional<int64_t>() : c10::optional<int64_t>(dim);
+    auto _output_size = output_size == INT64_MIN ? c10::optional<int64_t>() : c10::optional<int64_t>(output_size);
+    CATCH_TENSOR(tensor->repeat_interleave(repeats, _dim, _output_size));
+}
+
 Tensor THSTensor_movedim(const Tensor tensor, const int64_t* src, const int src_len, const int64_t* dst, const int dst_len)
 {
     CATCH_TENSOR(tensor->movedim(at::ArrayRef<int64_t>(src, src_len), at::ArrayRef<int64_t>(dst, dst_len)));

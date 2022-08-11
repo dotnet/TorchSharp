@@ -5670,6 +5670,56 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.repeat_interleave))]
+        public void RepeatInterleaveTest()
+        {
+            {
+                var input = torch.tensor(new int[] { 1, 2, 3 });
+                var expected = torch.tensor(new int[] {
+                    1, 1, 1, 2, 2, 2, 3, 3, 3
+                });
+
+                var res = input.repeat_interleave(torch.tensor(new long[] { 3 }));
+                Assert.Equal(res, expected);
+            }
+
+            {
+                var input = torch.tensor(new int[] { 1, 2, 3 });
+                var expected = torch.tensor(new int[] {
+                    1, 1, 1, 2, 2, 2, 3, 3, 3
+                });
+
+                var res = input.repeat_interleave(3, output_size: 9);
+                Assert.Equal(res, expected);
+            }
+
+            {
+                var input = torch.tensor(new int[] { 1, 2, 3, 4, 5, 6 }).reshape(2, 3);
+                var expected = torch.tensor(new int[] {
+                    1, 2, 3,
+                    1, 2, 3,
+                    4, 5, 6,
+                    4, 5, 6,
+                    4, 5, 6
+                }).reshape(5, 3);
+
+                var res = input.repeat_interleave(torch.tensor(new long[] { 2, 3 }), dim: 0);
+                Assert.Equal(res, expected);
+            }
+
+            {
+                var input = torch.tensor(new int[] { 1, 2, 3, 4, 5, 6 }).reshape(2, 3);
+                var expected = torch.tensor(new int[] {
+                    1, 1, 1, 2, 2, 2, 3, 3, 3,
+                    4, 4, 4, 5, 5, 5, 6, 6, 6
+                }).reshape(2, 9);
+
+                var res = input.repeat_interleave(3, dim: 1);
+                Assert.Equal(res, expected);
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.fliplr))]
         public void FlipLRTest()
         {

@@ -1022,6 +1022,10 @@ EXPORT_API(Tensor) THSTensor_relu6_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_repeat(const Tensor tensor, const int64_t* sizes, const int length);
 
+EXPORT_API(Tensor) THSTensor_repeat_interleave(const Tensor tensor, const Tensor repeats, const int64_t dim, const int64_t output_size);
+
+EXPORT_API(Tensor) THSTensor_repeat_interleave_int64(const Tensor tensor, const int64_t repeats, const int64_t dim, const int64_t output_size);
+
 EXPORT_API(int) THSTensor_requires_grad(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int length);
