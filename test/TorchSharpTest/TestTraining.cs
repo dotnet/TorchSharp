@@ -235,44 +235,6 @@ namespace TorchSharp
                 output.backward();
 
                 optimizer.step();
-                scheduler.step();
-
-                if (check_lr) {
-                    // For most LR schedulers, the LR decreases monotonically with each step. However,
-                    // that is not always the case, so the test must be disabled in some circumstances.
-                    Assert.True(pgFirst.LearningRate < lastLR);
-                    lastLR = pgFirst.LearningRate;
-                }
-            }
-
-            // After 10 iterations, the final loss should always be less than the initial loss.
-            Assert.True(finalLoss < initialLoss);
-
-            return finalLoss;
-        }
-
-        private static float TrainLoop(Module seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.impl.ReduceLROnPlateau scheduler, bool check_lr = true, int iters = 10)
-        {
-            var loss = mse_loss(Reduction.Sum);
-
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
-            float finalLoss = float.MaxValue;
-
-            var pgFirst = optimizer.ParamGroups.First();
-            var lastLR = pgFirst.LearningRate;
-
-            for (int i = 0; i < iters; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss(eval, y);
-                var lossVal = output.ToSingle();
-
-                finalLoss = lossVal;
-
-                optimizer.zero_grad();
-
-                output.backward();
-
-                optimizer.step();
                 scheduler.step(lossVal);
 
                 if (check_lr) {
@@ -998,11 +960,20 @@ namespace TorchSharp
                 new () { Parameters = lin1.parameters(), Options = new () { LearningRate = 0.003f } },
                 new () { Parameters = lin2.parameters(), Options = new () { LearningRate = lr } }
             }, lr);
+
             var scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer);
 
-            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false, 1000);
+            Assert.Throws<InvalidOperationException>(() => scheduler.step());
+            Assert.Throws<InvalidOperationException>(() => scheduler.step(epoch: 10));
+
+            var loss = TrainLoop(seq, x, y, optimizer, scheduler, false, 500);
 
             LossIsClose(52.6109f, loss);
+
+            var pgs = optimizer.ParamGroups.ToList();
+
+            Assert.NotEqual(0.0002, pgs[0].LearningRate);
+            Assert.NotEqual(0.003,  pgs[1].LearningRate);
         }
 
         [Fact]

@@ -74,6 +74,18 @@ namespace TorchSharp
                     }
 
                     /// <summary>
+                    /// Advance the learning rate scheduler, passing in the current value of some metric.
+                    /// </summary>
+                    /// <remarks>
+                    /// The metric value is ignored by most LR schedulers.
+                    /// </remarks>
+                    public virtual void step(double current, int? epoch = null)
+                    {
+                        // Ignore the metric
+                        step(epoch);
+                    }
+
+                    /// <summary>
                     /// Compute the current learning rate for the scheduler.
                     /// </summary>
                     protected virtual IEnumerable<double> get_lr() => _optimizer.ParamGroups.Select(pg => pg.LearningRate);
@@ -500,13 +512,14 @@ namespace TorchSharp
                     /// Set the learning rate of each parameter group using a cosine annealing schedule.
                     /// When last_epoch=-1, sets initial lr as lr.
                     /// </summary>
-                    public class ReduceLROnPlateau
+                    public class ReduceLROnPlateau : LRScheduler
                     {
                         /// <summary>
                         /// Constructor
                         /// </summary>
                         /// <returns>A scheduler</returns>
-                        public ReduceLROnPlateau(Optimizer optimizer, string mode = "min", double factor = 0.1, int patience = 10, double threshold = 1e-4, string threshold_mode = "rel", int cooldown = 0, IList<double> min_lr = null, double eps = 1e-8, bool verbose = false)                           
+                        public ReduceLROnPlateau(Optimizer optimizer, string mode = "min", double factor = 0.1, int patience = 10, double threshold = 1e-4, string threshold_mode = "rel", int cooldown = 0, IList<double> min_lr = null, double eps = 1e-8, bool verbose = false)
+                            :base(optimizer, -1, verbose)
                         {
                             if (optimizer == null) throw new ArgumentNullException("optimizer");
                             if (factor >= 1.0) throw new ArgumentException("Factor should be < 1.0");
@@ -548,8 +561,6 @@ namespace TorchSharp
                             this.threshold_mode = threshold_mode;
                             this.best = -1;
                             this.num_bad_epochs = -1;
-                            this.last_epoch = 0;
-                            this.verbose = verbose;
                             this.eps = eps;
 
                             this.mode_worst = (mode == "min") ? double.PositiveInfinity : double.NegativeInfinity;
@@ -563,13 +574,13 @@ namespace TorchSharp
                         /// that is used to decided whether to modify the learning rates. 
                         /// </summary>
                         /// <param name="current">The current value of the metric that we're interested in imvproving.</param>
-                        /// <param name="epoch">The epoch.</param>
-                        public void step(double current, long epoch = -1)
+                        /// <param name="epoch">The current epoch.</param>
+                        public override void step(double current, int? epoch = null)
                         {
-                            if (epoch == -1) {
-                                epoch = last_epoch + 1;
+                            if (epoch == null) {
+                                epoch = _last_epoch + 1;
                             }
-                            last_epoch = epoch;
+                            _last_epoch = epoch.Value;
 
                             if (is_better(current, best)) {
                                 best = current;
@@ -585,12 +596,20 @@ namespace TorchSharp
                             }
 
                             if (num_bad_epochs > patience) {
-                                reduce_lr(epoch);
+                                reduce_lr(_last_epoch);
                                 cooldown_counter = cooldown;
                                 num_bad_epochs = 0;
                             }
+                        }
 
+                        public override void step()
+                        {
+                            throw new InvalidOperationException("step() should not be used with the ReduceLROnPlateau scheduler. Use step(double, int?), instead.");
+                        }
 
+                        public override void step(int? epoch)
+                        {
+                            throw new InvalidOperationException("step(int?) should not be used with the ReduceLROnPlateau scheduler. Use step(double, int?), instead.");
                         }
 
                         private bool is_better(double a, double best)
@@ -620,7 +639,7 @@ namespace TorchSharp
                                 var new_lr = Math.Max(old_lr * factor, min_lrs[i]);
                                 if (old_lr - new_lr > eps) {
                                     param_group.LearningRate = new_lr;
-                                    if (verbose) {
+                                    if (_verbose) {
                                         Console.WriteLine($"Epoch {epoch}: reducing learning rate of group {i} to {new_lr:g4}.");
                                     }
                                 }
@@ -636,8 +655,6 @@ namespace TorchSharp
 
                         private int patience;
                         private int cooldown;
-                        private long last_epoch;
-                        private bool verbose;
                         private int cooldown_counter;
                         private string mode;
                         private double threshold;
@@ -649,8 +666,6 @@ namespace TorchSharp
 
                         private double factor;
                         private List<double> min_lrs;
-
-                        private Optimizer _optimizer;
                     }
 
                     /// <summary>
@@ -1638,7 +1653,7 @@ namespace TorchSharp
                 /// <param name="min_lr">A scalar or a list of scalars. A lower bound on the learning rate of all param groups or each group respectively. Default: 0.</param>
                 /// <param name="eps">Minimal decay applied to lr. If the difference between new and old lr is smaller than eps, the update is ignored. Default: 1e-8.</param>
                 /// <param name="verbose">Indicates whether to print a message to stdout for each update</param>
-                public static impl.ReduceLROnPlateau ReduceLROnPlateau(Optimizer optimizer, string mode = "min", double factor = 0.1, int patience = 10, double threshold = 1e-4, string threshold_mode = "rel", int cooldown = 0, IList<double> min_lr = null, double eps = 1e-8, bool verbose = false)
+                public static LRScheduler ReduceLROnPlateau(Optimizer optimizer, string mode = "min", double factor = 0.1, int patience = 10, double threshold = 1e-4, string threshold_mode = "rel", int cooldown = 0, IList<double> min_lr = null, double eps = 1e-8, bool verbose = false)
                 {
                     return new impl.ReduceLROnPlateau(optimizer, mode, factor, patience, threshold, threshold_mode, cooldown, min_lr, eps, verbose);
                 }
