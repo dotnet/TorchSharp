@@ -958,6 +958,10 @@ EXPORT_API(Tensor) THSTensor_ones_like(const Tensor input, const int8_t scalar_t
 
 EXPORT_API(Tensor) THSTensor_outer(const Tensor left, const Tensor right);
 
+EXPORT_API(Tensor) THSTensor_mT(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_mH(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int length);
 
 EXPORT_API(Tensor) THSTensor_polar(const Tensor abs, const Tensor angle);
@@ -1175,6 +1179,8 @@ EXPORT_API(Tensor) THSTensor_dstack(const Tensor* tensor, const int length);
 EXPORT_API(Tensor) THSTensor_column_stack(const Tensor* tensor, const int length);
 
 EXPORT_API(Tensor) THSTensor_row_stack(const Tensor* tensor, const int length);
+
+EXPORT_API(void) THSTensor_meshgrid(const Tensor* tensors, const int64_t length, const char* indexing, Tensor* (*allocator)(size_t length));
 
 EXPORT_API(int64_t) THSTensor_stride(const Tensor tensor, const int64_t dim);
 

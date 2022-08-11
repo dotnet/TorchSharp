@@ -76,6 +76,14 @@ namespace TorchSharp
             return ptrArray.Select(x => new Tensor(x)).ToList();
         }
 
+        /// <summary>
+        /// Returns a tensor containing the indices of all non-zero elements of input.
+        /// Each row in the result contains the indices of a non-zero element in input.
+        /// The result is sorted lexicographically, with the last index changing the fastest (C-style).
+        /// </summary>
+        public static Tensor nonzero(Tensor input) => input.nonzero();
+
+
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_cat(IntPtr tensor, int len, long dim);
 
@@ -300,6 +308,29 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+        }
+
+        [DllImport("LibTorchSharp")]
+        extern static IntPtr THSTensor_meshgrid(IntPtr tensor, long len, [MarshalAs(UnmanagedType.LPStr)] string indexing, AllocatePinnedArray allocator);
+
+        /// <summary>
+        /// Creates grids of coordinates specified by the 1D inputs in tensors.
+        /// This is helpful when you want to visualize data over some range of inputs.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>All tensors need to be of the same size.</remarks>
+        public static Tensor[] meshgrid(IEnumerable<Tensor> tensors, string indexing = "ij")
+        {
+            IntPtr[] ptrArray;
+
+            using (var parray = new PinnedArray<IntPtr>()) {
+                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+                var res = THSTensor_meshgrid(tensorsRef, parray.Array.LongLength, indexing, parray.CreateArray);
+                torch.CheckForErrors();
+                ptrArray = parray.Array;
+            }
+            return ptrArray.Select(x => new Tensor(x)).ToArray();
         }
 
         /// <summary>
