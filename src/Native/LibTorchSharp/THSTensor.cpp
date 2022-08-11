@@ -1049,6 +1049,16 @@ Tensor THSTensor_outer(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->outer(*right));
 }
 
+Tensor THSTensor_mH(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->mH());
+}
+
+Tensor THSTensor_mT(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->mT());
+}
+
 
 Tensor THSTensor_permute(const Tensor tensor, const int64_t* sizes, const int length)
 {
