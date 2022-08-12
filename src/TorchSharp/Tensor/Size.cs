@@ -3,6 +3,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
+using System.Net;
 
 #nullable enable
 namespace TorchSharp
@@ -156,6 +157,8 @@ namespace TorchSharp
             public static implicit operator Size((long, long, long, long, long) size) => new Size(size);
             public static implicit operator Size((long, long, long, long, long, long) size) => new Size(size);
 
+            public static implicit operator Size(long[] size) => new Size(size);
+
             public static Size operator +(Size left, Size right)
             {
                 return new Size(left._shape.AsEnumerable<long>().Concat<long>(right._shape).ToArray());
@@ -228,6 +231,28 @@ namespace TorchSharp
             internal long[] Shape { get { return _shape; } }
 
             private long[] _shape;
+        }
+
+        public static Size broadcast_shapes(params long[][] shapes)
+        {
+            var max_len = 0;
+            foreach (var shape in shapes) {
+                var s = shape.Length;
+                if (s > max_len) max_len = s;
+            }
+
+            var result = Enumerable.Repeat<long>(1, max_len).ToArray();
+
+            foreach (var shape in shapes) {
+                for (var i = shape.Length - 1; i >= 0; i--) {
+                    if (shape.Length == 0 || shape[i] == 1 || shape[i] == result[i])
+                        continue;
+                    if (result[i] != 1)
+                        throw new System.ArgumentException("Shape mismatch: objects cannot be broadcast to a single shape");
+                    result[i] = shape[i];
+                }
+            }
+            return result;
         }
     }
 }

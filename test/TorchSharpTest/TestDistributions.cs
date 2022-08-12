@@ -109,6 +109,90 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestHalfNormal1()
+        {
+            var dist = HalfNormal(torch.tensor(3.5));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestHalfNormal2()
+        {
+            var dist = HalfNormal(torch.tensor(3.5), new Generator(4711));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestGumbel1()
+        {
+            var dist = Gumbel(torch.tensor(0.0), torch.tensor(3.5));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestGumbel2()
+        {
+            var dist = Gumbel(torch.tensor(0.0), torch.tensor(3.5), new Generator(4711));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
         public void TestLaplace1()
         {
             var dist = Laplace(torch.tensor(0.0), torch.tensor(3.5));
