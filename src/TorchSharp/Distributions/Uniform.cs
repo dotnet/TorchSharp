@@ -101,7 +101,7 @@ namespace TorchSharp
                     throw new ArgumentException("expand(): 'instance' must be a Uniform distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Uniform(low.expand(batch_shape), high.expand(batch_shape)) :
+                    new Uniform(low.expand(batch_shape), high.expand(batch_shape), generator) :
                     instance) as Uniform;
 
                 newDistribution.batch_shape = batch_shape;

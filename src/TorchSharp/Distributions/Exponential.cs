@@ -105,7 +105,7 @@ namespace TorchSharp
 
                 var r = rate.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new Exponential(r) : instance) as Exponential;
+                var newDistribution = ((instance == null) ? new Exponential(r, generator) : instance) as Exponential;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

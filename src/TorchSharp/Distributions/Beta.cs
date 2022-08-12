@@ -89,7 +89,7 @@ namespace TorchSharp
                 var c0 = concentration0.expand(batch_shape);
                 var c1 = concentration1.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new Beta(c1, c0) : instance) as Beta;
+                var newDistribution = ((instance == null) ? new Beta(c1, c0, generator) : instance) as Beta;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

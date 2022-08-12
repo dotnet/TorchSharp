@@ -109,7 +109,7 @@ namespace TorchSharp
                 if (instance != null && !(instance is Laplace))
                     throw new ArgumentException("expand(): 'instance' must be a Normal distribution");
 
-                var newDistribution = ((instance == null) ? new Laplace(loc.expand(batch_shape), scale.expand(batch_shape)) : instance) as Laplace;
+                var newDistribution = ((instance == null) ? new Laplace(loc.expand(batch_shape), scale.expand(batch_shape), generator) : instance) as Laplace;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

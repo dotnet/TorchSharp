@@ -12,10 +12,10 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class HalfNormal : TransformedDistribution
+        public class HalfCauchy : TransformedDistribution
         {
-            internal HalfNormal(Tensor scale, torch.Generator generator = null) :
-                base(Normal(torch.tensor(0).to(scale.dtype), scale, generator), new torch.distributions.transforms.Transform[] { new torch.distributions.transforms.AbsTransform() }, generator)
+            internal HalfCauchy(Tensor scale, torch.Generator generator = null) :
+                base(Cauchy(torch.tensor(0).to(scale.dtype), scale, generator), new torch.distributions.transforms.AbsTransform(), generator)
             {
                 this.scale = scale;
             }
@@ -26,20 +26,36 @@ namespace TorchSharp
 
             public override Tensor mode => torch.zeros_like(scale);
 
-            public override Tensor variance => scale.pow(2) * (1 - 2 / Math.PI);
+            public override Tensor variance => base_distribution.variance;
 
             public override Tensor log_prob(Tensor value)
             {
+                value = torch.as_tensor(value, scale.dtype, scale.device);
                 var lp = base_distribution.log_prob(value) + Math.Log(2);
                 lp[value.expand(lp.shape) < 0] = Double.NegativeInfinity;
                 return lp;
             }
 
+            public override Tensor cdf(Tensor value)
+            {
+                return 2 * base_distribution.cdf(value) - 1;
+            }
+
+            public override Tensor icdf(Tensor value)
+            {
+                return base_distribution.icdf((value + 1) / 2);
+            }
+
+            public override Tensor entropy()
+            {
+                return base_distribution.entropy() - Math.Log(2);
+            }
+
             public override Distribution expand(long[] batch_shape, Distribution instance = null)
             {
                 var newDistribution = ((instance == null)
-                    ? new HalfNormal(scale.expand(batch_shape), generator)
-                    : instance) as HalfNormal;
+                    ? new HalfCauchy(scale.expand(batch_shape), generator)
+                    : instance) as HalfCauchy;
                 return base.expand(batch_shape, newDistribution);
             }
         }
@@ -56,10 +72,10 @@ namespace TorchSharp
             /// <param name="scale">Scale parameter of the distribution.</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static HalfNormal HalfNormal(Tensor scale, torch.Generator generator = null)
+            public static HalfCauchy HalfCauchy(Tensor scale, torch.Generator generator = null)
             {
                 
-                return new HalfNormal(scale, generator);
+                return new HalfCauchy(scale, generator);
             }
         }
     }

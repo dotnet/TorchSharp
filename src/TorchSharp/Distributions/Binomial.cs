@@ -102,7 +102,7 @@ namespace TorchSharp
                     throw new ArgumentException("expand(): 'instance' must be a Binomial distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Binomial(total_count.expand(batch_shape), p: _probs?.expand(batch_shape), l: logits?.expand(batch_shape)) :
+                    new Binomial(total_count.expand(batch_shape), p: _probs?.expand(batch_shape), l: logits?.expand(batch_shape), generator) :
                     instance) as Binomial;
 
                 newDistribution.batch_shape = batch_shape;

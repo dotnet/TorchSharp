@@ -86,7 +86,7 @@ namespace TorchSharp
                 var c = concentration.expand(batch_shape);
                 var r = rate.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new Gamma(c, r) : instance) as Gamma;
+                var newDistribution = ((instance == null) ? new Gamma(c, r, generator) : instance) as Gamma;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

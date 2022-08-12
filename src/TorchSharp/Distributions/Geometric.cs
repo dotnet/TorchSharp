@@ -111,7 +111,7 @@ namespace TorchSharp
                     throw new ArgumentException("expand(): 'instance' must be a Geometric distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Geometric(probs: _probs?.expand(batch_shape), logits: logits?.expand(batch_shape)) :
+                    new Geometric(probs: _probs?.expand(batch_shape), logits: logits?.expand(batch_shape), generator) :
                     instance) as Geometric;
 
                 newDistribution.batch_shape = batch_shape;

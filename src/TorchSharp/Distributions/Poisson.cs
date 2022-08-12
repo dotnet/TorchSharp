@@ -89,7 +89,7 @@ namespace TorchSharp
 
                 var r = rate.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new Poisson(r) : instance) as Poisson;
+                var newDistribution = ((instance == null) ? new Poisson(r, generator) : instance) as Poisson;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

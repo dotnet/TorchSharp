@@ -97,7 +97,7 @@ namespace TorchSharp
 
                 var c = concentration.expand(shape.ToArray());
 
-                var newDistribution = ((instance == null) ? new Dirichlet(c) : instance) as Dirichlet;
+                var newDistribution = ((instance == null) ? new Dirichlet(c, generator) : instance) as Dirichlet;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

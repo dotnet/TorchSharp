@@ -35,7 +35,7 @@ namespace TorchSharp
                     throw new ArgumentException("expand(): 'instance' must be a Chi2 distribution");
 
                 if (instance == null) {
-                    instance = new Chi2(concentration);
+                    instance = new Chi2(concentration, generator);
                 }
                 return base.expand(batch_shape, instance);
             }

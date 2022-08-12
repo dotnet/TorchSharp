@@ -104,7 +104,7 @@ namespace TorchSharp
                 var df1 = this.df1.expand(batch_shape);
                 var df2 = this.df2.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new FisherSnedecor(df1, df2) : instance) as FisherSnedecor;
+                var newDistribution = ((instance == null) ? new FisherSnedecor(df1, df2, generator) : instance) as FisherSnedecor;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

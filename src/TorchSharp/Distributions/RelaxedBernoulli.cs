@@ -4,47 +4,38 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
+    using System.Linq;
     using Modules;
+    using TorchSharp.torchvision;
+    using static torch.distributions;
 
     namespace Modules
     {
         /// <summary>
         /// A Bernoulli distribution parameterized by `probs` or `logits` (but not both).
         /// </summary>
-        public class Bernoulli : torch.distributions.Distribution
+        public class RelaxedBernoulli : TransformedDistribution
         {
-            /// <summary>
-            /// The mean of the distribution.
-            /// </summary>
-            public override Tensor mean => probs;
-
-            /// <summary>
-            /// The variance of the distribution
-            /// </summary>
-            public override Tensor variance => probs * (1 - probs);
-
             /// <summary>
             /// Constructor
             /// </summary>
-            /// <param name="p"></param>
-            /// <param name="l"></param>
+            /// <param name="temperature">Relaxation temperature</param>
+            /// <param name="p">the probability of sampling `1`</param>
+            /// <param name="l">the log-odds of sampling `1`</param>
             /// <param name="generator"></param>
-            public Bernoulli(Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
+            public RelaxedBernoulli(Tensor temperature, Tensor p = null, Tensor l = null, torch.Generator generator = null) :
+                base(LogitRelaxedBernoulli(temperature, p, l, generator), new distributions.transforms.SigmoidTransform(), generator)
             {
-                if ((p is null && logits is null) || (p is not null && l is not null))
-                    throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
-
-                this.batch_shape = p is null ? l.size() : p.size();
-                this._probs = p;
-                this._logits = l;
             }
+
+            private LogitRelaxedBernoulli base_dist => this.base_distribution as LogitRelaxedBernoulli;
 
             /// <summary>
             /// The probability of sampling 1
             /// </summary>
             public Tensor probs {
                 get {
-                    return _probs ?? LogitsToProbs(_logits, true);
+                    return base_dist.probs;
                 }
             }
 
@@ -53,43 +44,14 @@ namespace TorchSharp
             /// </summary>
             public Tensor logits {
                 get {
-                    return _logits ?? ProbsToLogits(_probs);
+                    return base_dist.logits;
                 }
             }
 
-            private Tensor _probs;
-            private Tensor _logits;
-
-            /// <summary>
-            ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
-            ///  if the distribution parameters are batched.
-            /// </summary>
-            /// <param name="sample_shape">The sample shape.</param>
-            /// <returns></returns>
-            public override Tensor rsample(params long[] sample_shape)
-            {
-                var shape = ExtendedShape(sample_shape);
-                return torch.bernoulli(probs.expand(shape), generator);
-            }
-
-            /// <summary>
-            /// Returns the log of the probability density/mass function evaluated at `value`.
-            /// </summary>
-            /// <param name="value"></param>
-            /// <returns></returns>
-
-            public override Tensor log_prob(Tensor value)
-            {
-                var logitsValue = torch.broadcast_tensors(logits, value);
-                return -torch.nn.functional.binary_cross_entropy_with_logits(logitsValue[0], logitsValue[1], reduction: nn.Reduction.None);
-            }
-
-            /// <summary>
-            /// Returns entropy of distribution, batched over batch_shape.
-            /// </summary>
-            public override Tensor entropy()
-            {
-                return torch.nn.functional.binary_cross_entropy_with_logits(logits, probs, reduction: nn.Reduction.None);
+            public Tensor temperature {
+                get {
+                    return base_dist.logits;
+                }
             }
 
             /// <summary>
@@ -105,16 +67,9 @@ namespace TorchSharp
                 if (instance != null && !(instance is Bernoulli))
                     throw new ArgumentException("expand(): 'instance' must be a Bernoulli distribution");
 
-                var p = _probs?.expand(batch_shape);
-                var l = _logits?.expand(batch_shape);
-
-                var newDistribution = ((instance == null) ? new Bernoulli(p, l, generator) : instance) as Bernoulli;
+                var newDistribution = ((instance == null) ? new RelaxedBernoulli(temperature, probs, logits, generator) : instance) as RelaxedBernoulli;
 
                 newDistribution.batch_shape = batch_shape;
-                if (newDistribution == instance) {
-                    newDistribution._probs = p;
-                    newDistribution._logits = l;
-                }
                 return newDistribution;
             }
         }
@@ -127,28 +82,30 @@ namespace TorchSharp
             /// <summary>
             /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
             /// </summary>
+            /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Bernoulli Bernoulli(Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
+            public static RelaxedBernoulli RelaxedBernoulli(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
             {
-                return new Bernoulli(probs, logits, generator);
+                return new RelaxedBernoulli(temperature, probs, logits, generator);
             }
 
             /// <summary>
             /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
             /// </summary>
+            /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Bernoulli Bernoulli(float? probs, float? logits, torch.Generator generator = null)
+            public static RelaxedBernoulli RelaxedBernoulli(Tensor temperature, float? probs, float? logits, torch.Generator generator = null)
             {
                 if (probs.HasValue && !logits.HasValue)
-                    return new Bernoulli(torch.tensor(probs.Value), null, generator);
+                    return new RelaxedBernoulli(temperature, torch.tensor(probs.Value), null, generator);
                 else if (!probs.HasValue && logits.HasValue)
-                    return new Bernoulli(null, torch.tensor(logits.Value), generator);
+                    return new RelaxedBernoulli(temperature, null, torch.tensor(logits.Value), generator);
                 else
                     throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
             }
@@ -157,16 +114,17 @@ namespace TorchSharp
             /// <summary>
             /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
             /// </summary>
+            /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Bernoulli Bernoulli(double? probs, double? logits, torch.Generator generator = null)
+            public static RelaxedBernoulli RelaxedBernoulli(Tensor temperature, double? probs, double? logits, torch.Generator generator = null)
             {
                 if (probs.HasValue && !logits.HasValue)
-                    return new Bernoulli(torch.tensor(probs.Value), null, generator);
+                    return new RelaxedBernoulli(temperature, torch.tensor(probs.Value), null, generator);
                 else if (!probs.HasValue && logits.HasValue)
-                    return new Bernoulli(null, torch.tensor(logits.Value), generator);
+                    return new RelaxedBernoulli(temperature, null, torch.tensor(logits.Value), generator);
                 else
                     throw new ArgumentException("One and only one of 'probs' and 'logits' should be non-null");
             }

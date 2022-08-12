@@ -15,7 +15,7 @@ namespace TorchSharp
     public class TestDistributions
     {
         [Fact]
-        public void TestUniform1()
+        public void TestUniform()
         {
             var dist = Uniform(torch.tensor(0.0), torch.tensor(3.5));
             {
@@ -39,7 +39,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestUniform2()
+        public void TestUniformGen()
         {
             var gen = new Generator(4711);
 
@@ -65,7 +65,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestNormal1()
+        public void TestNormal()
         {
             var dist = Normal(torch.tensor(0.0), torch.tensor(3.5));
             {
@@ -86,7 +86,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestNormal2()
+        public void TestNormalGen()
         {
             var gen = new Generator(4711);
 
@@ -109,7 +109,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestHalfNormal1()
+        public void TestHalfNormal()
         {
             var dist = HalfNormal(torch.tensor(3.5));
             {
@@ -130,7 +130,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestHalfNormal2()
+        public void TestHalfNormalGen()
         {
             var dist = HalfNormal(torch.tensor(3.5), new Generator(4711));
             {
@@ -151,7 +151,133 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestGumbel1()
+        public void TestHalfCauchy()
+        {
+            var dist = HalfCauchy(torch.tensor(3.5));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestHalfCauchyGen()
+        {
+            var dist = HalfCauchy(torch.tensor(3.5), new Generator(4711));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestPareto()
+        {
+            var dist = Pareto(torch.tensor(1.5), torch.tensor(1.0));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestParetoGen()
+        {
+            var dist = Pareto(torch.tensor(1.5), torch.tensor(1.0), new Generator(4711));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestLogNormal()
+        {
+            var dist = LogNormal(torch.tensor(0.25), torch.tensor(3.5));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestLogNormalGen()
+        {
+            var dist = LogNormal(torch.tensor(0.25), torch.tensor(3.5), new Generator(4711));
+            {
+                var sample = dist.sample();
+
+                Assert.Empty(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestGumbel()
         {
             var dist = Gumbel(torch.tensor(0.0), torch.tensor(3.5));
             {
@@ -172,7 +298,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestGumbel2()
+        public void TestGumbelGen()
         {
             var dist = Gumbel(torch.tensor(0.0), torch.tensor(3.5), new Generator(4711));
             {
@@ -193,7 +319,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestLaplace1()
+        public void TestLaplace()
         {
             var dist = Laplace(torch.tensor(0.0), torch.tensor(3.5));
             {
@@ -214,7 +340,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestLaplace2()
+        public void TestLaplaceGen()
         {
             var gen = new Generator(4711);
 
@@ -237,7 +363,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestPoisson1()
+        public void TestPoisson()
         {
             var dist = Poisson(torch.tensor(0.5));
             {
@@ -258,7 +384,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestPoisson2()
+        public void TestPoissonGen()
         {
             var gen = new Generator(4711);
             var dist = Poisson(torch.tensor(0.5), gen);
@@ -280,7 +406,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestBernoulli1()
+        public void TestBernoulli()
         {
             var dist = Bernoulli(torch.rand(3, dtype: ScalarType.Float64));
             {
@@ -304,7 +430,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestBernoulli2()
+        public void TestBernoulliGen()
         {
             var gen = new Generator(4711);
             var dist = Bernoulli(torch.rand(3, dtype: ScalarType.Float64), generator: gen);
@@ -329,7 +455,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestLogitRelaxedBernoulli1()
+        public void TestLogitRelaxedBernoulli()
         {
             var temp = torch.rand(3, dtype: ScalarType.Float64);
 
@@ -352,7 +478,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestLogitRelaxedBernoulli2()
+        public void TestLogitRelaxedBernoulliGen()
         {
             var gen = new Generator(4711);
             var temp = torch.rand(3, dtype: ScalarType.Float64);
@@ -376,7 +502,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestBeta1()
+        public void TestBeta()
         {
             var dist = Beta(torch.rand(3, 3) * 0.5f, torch.tensor(0.5f));
             {
@@ -399,7 +525,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestBeta2()
+        public void TestBetaGen()
         {
             var gen = new Generator(4711);
             var dist = Beta(torch.rand(3, 3) * 0.5f, torch.tensor(0.5f), gen);
@@ -423,7 +549,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestBinomial1()
+        public void TestBinomial()
         {
             var dist = Binomial(torch.tensor(100), torch.rand(3, dtype: ScalarType.Float64));
             {
@@ -447,7 +573,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestBinomial2()
+        public void TestBinomialGen()
         {
             var gen = new Generator(4711);
             var dist = Binomial(torch.tensor(100), torch.rand(3, dtype: ScalarType.Float64), generator: gen);
@@ -472,7 +598,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestCategorical1()
+        public void TestCategorical()
         {
             var gen = new Generator(4711);
             var categories = 7;
@@ -494,7 +620,7 @@ namespace TorchSharp
 
 
         [Fact]
-        public void TestCategorical2()
+        public void TestCategoricalGen()
         {
             var gen = new Generator(4711);
             var categories = 7;
@@ -515,7 +641,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestOneHotCategorical1()
+        public void TestOneHotCategorical()
         {
             var categories = 7;
             var dist = OneHotCategorical(torch.rand(3, categories, dtype: ScalarType.Float64));
@@ -536,7 +662,7 @@ namespace TorchSharp
 
 
         [Fact]
-        public void TestOneHotCategorical2()
+        public void TestOneHotCategoricalGen()
         {
             var gen = new Generator(4711);
             var categories = 7;
@@ -557,7 +683,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestCauchy1()
+        public void TestCauchy()
         {
             var dist = Cauchy(torch.rand(3, 3), torch.tensor(1.0f));
             {
@@ -578,7 +704,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestCauchy2()
+        public void TestCauchyGen()
         {
             var gen = new Generator(4711);
             var dist = Cauchy(torch.rand(3, 3), torch.tensor(1.0f), gen);
@@ -600,7 +726,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestChi21()
+        public void TestChi2()
         {
             var dist = Chi2(torch.rand(3, 3));
             {
@@ -623,7 +749,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestChi22()
+        public void TestChi2Gen()
         {
             var gen = new Generator(4711);
             var dist = Chi2(torch.rand(3, 3), gen);
@@ -647,7 +773,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestDirichlet1()
+        public void TestDirichlet()
         {
             var dist = Dirichlet(torch.rand(3, 3) * 0.5f);
             {
@@ -670,7 +796,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestDirichlet2()
+        public void TestDirichletGen()
         {
             var gen = new Generator(4711);
             var dist = Dirichlet(torch.rand(3, 3) * 0.5f, gen);
@@ -694,7 +820,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestExponential1()
+        public void TestExponential()
         {
             var dist = Exponential(torch.rand(3, 3) * 0.5f);
             {
@@ -717,7 +843,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestExponential2()
+        public void TestExponentialGen()
         {
             var gen = new Generator(4711);
             var dist = Exponential(torch.rand(3, 3) * 0.5f, gen);
@@ -741,7 +867,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestFisherSnedecor1()
+        public void TestFisherSnedecor()
         {
             var dist = FisherSnedecor(torch.rand(3, 3) * 1.5f, torch.tensor(2.0f));
             {
@@ -762,7 +888,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestFisherSnedecor2()
+        public void TestFisherSnedecorGen()
         {
             var gen = new Generator(4711);
             var dist = FisherSnedecor(torch.rand(3, 3) * 1.5f, torch.tensor(2.0f), gen);
@@ -784,7 +910,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestGamma1()
+        public void TestGamma()
         {
             var dist = Gamma(torch.rand(3, 3), torch.tensor(1.0f));
             {
@@ -807,7 +933,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestGamma2()
+        public void TestGammaGen()
         {
             var gen = new Generator(4711);
             var dist = Gamma(torch.rand(3, 3), torch.tensor(1.0f), gen);
@@ -831,7 +957,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestGeometric1()
+        public void TestGeometric()
         {
             var dist = Geometric(torch.rand(3, 3));
             {
@@ -854,7 +980,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestGeometric2()
+        public void TestGeometricGen()
         {
             var gen = new Generator(4711);
             var dist = Geometric(torch.rand(3, 3), generator: gen);
@@ -878,7 +1004,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestMultinomial1()
+        public void TestMultinomial()
         {
             var categories = 17;
             var dist = Multinomial(100, torch.rand(3, categories));
@@ -903,7 +1029,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestMultinomial2()
+        public void TestMultinomialGen()
         {
             var gen = new Generator(4711);
             var categories = 17;

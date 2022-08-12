@@ -121,7 +121,7 @@ namespace TorchSharp
                 var p = _probs?.expand(batch_shape);
                 var l = _logits?.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new LogitRelaxedBernoulli(_temperature, p, l) : instance) as LogitRelaxedBernoulli;
+                var newDistribution = ((instance == null) ? new LogitRelaxedBernoulli(_temperature, p, l, generator) : instance) as LogitRelaxedBernoulli;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

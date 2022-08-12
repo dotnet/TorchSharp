@@ -61,7 +61,7 @@ namespace TorchSharp
 
                 var finfo = torch.finfo(loc.dtype);
 
-                var base_dist = Uniform(torch.full_like(loc, finfo.tiny), torch.full_like(loc, 1 - finfo.eps));
+                var base_dist = Uniform(torch.full_like(loc, finfo.tiny), torch.full_like(loc, 1 - finfo.eps), generator);
                 var transforms = new torch.distributions.transforms.Transform[] {
                     new torch.distributions.transforms.ExpTransform().inv,
                     new torch.distributions.transforms.AffineTransform(0, -torch.ones_like(scale)),

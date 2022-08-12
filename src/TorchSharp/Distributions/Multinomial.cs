@@ -116,7 +116,7 @@ namespace TorchSharp
                     throw new ArgumentException("expand(): 'instance' must be a Multinomial distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Multinomial(total_count, categorical.expand(batch_shape) as Categorical) :
+                    new Multinomial(total_count, categorical.expand(batch_shape) as Categorical, generator) :
                     instance) as Multinomial;
 
                 if (newDistribution == instance) {

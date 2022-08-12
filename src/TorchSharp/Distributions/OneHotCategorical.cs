@@ -124,7 +124,7 @@ namespace TorchSharp
                 var p = _probs?.expand(batch_shape);
                 var l = _logits?.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new OneHotCategorical(p, l) : instance) as OneHotCategorical;
+                var newDistribution = ((instance == null) ? new OneHotCategorical(p, l, generator) : instance) as OneHotCategorical;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {
