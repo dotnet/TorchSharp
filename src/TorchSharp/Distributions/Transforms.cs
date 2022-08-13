@@ -452,7 +452,7 @@ namespace TorchSharp
                 {
                     private Tensor exponent;
 
-                    public PowerTransform(double exponent)
+                    public PowerTransform(Tensor exponent)
                     {
                         this.exponent = exponent;
                     }

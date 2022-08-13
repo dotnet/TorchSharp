@@ -24,10 +24,27 @@ namespace TorchSharp
             /// <summary>
             /// Constructor
             /// </summary>
+            public Size()
+            {
+                _shape = new long[0];
+            }
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
             /// <param name="shape">An array of longs, the size of an N-D tensor.</param>
             public Size(long[] shape)
             {
                 _shape = shape;
+            }
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="shape">An enumerable of longs, the size of an N-D tensor.</param>
+            public Size(IEnumerable<long> shape)
+            {
+                _shape = shape.ToArray();
             }
 
             /// <summary>
@@ -164,6 +181,11 @@ namespace TorchSharp
                 return new Size(left._shape.AsEnumerable<long>().Concat<long>(right._shape).ToArray());
             }
 
+            public static Size operator +(Size left, IEnumerable<long> right)
+            {
+                return new Size(left._shape.AsEnumerable<long>().Concat<long>(right).ToArray());
+            }
+
             //public static implicit operator Size(long[] size) => new Size(size);
             //public static implicit operator long[](Size size) => size._shape;
 
@@ -176,6 +198,33 @@ namespace TorchSharp
                 if (obj is null || !(obj is Size)) return false;
 
                 return _shape.Equals(((Size)obj)._shape);
+            }
+
+            public IEnumerable<long> Slice(int start, int length)
+            {
+                if (length <= 0) {
+                    length = _shape.Length + length;
+                }
+
+                if (start < 0) {
+                    start = _shape.Length + start;
+                }
+
+                if (start == 0) {
+                    if (length == _shape.Length) {
+                        return this;
+                    }
+                    else {
+                        return new Size(_shape.Take(length));
+                    }
+                }
+                else {
+                    if (length == _shape.Length) {
+                        return new Size(_shape.Skip(start));
+                    } else {
+                        return new Size(_shape.Skip(start).Take(length));
+                    }
+                }
             }
 
             public override int GetHashCode()

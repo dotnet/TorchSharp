@@ -79,7 +79,7 @@ namespace TorchSharp
                 throw new NotImplementedException();
             }
 
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is TransformedDistribution))
                     throw new ArgumentException("expand(): 'instance' must be a TransformedDistribution distribution");

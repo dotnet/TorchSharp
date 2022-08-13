@@ -36,7 +36,7 @@ namespace TorchSharp
                 return base_distribution.entropy() + loc;
             }
 
-            public override Distribution expand(long[] batch_shape, Distribution instance = null)
+            public override Distribution expand(Size batch_shape, Distribution instance = null)
             {
                 var newDistribution = ((instance == null)
                     ? new LogNormal(loc.expand(batch_shape), scale.expand(batch_shape), generator)

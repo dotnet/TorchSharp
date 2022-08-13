@@ -1100,5 +1100,48 @@ namespace TorchSharp
                 Assert.All<float>(sample.data<float>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
             }
         }
+
+        [Fact]
+        public void TestWeibull()
+        {
+            var dist = Weibull(torch.ones(3,3), torch.ones(3, 3));
+            {
+                var sample = dist.sample();
+
+                Assert.Equal(new long[] { 3, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 3, 3 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3, 3 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestWeibullGen()
+        {
+            var gen = new Generator(4711);
+            var dist = Weibull(torch.ones(3, 3), torch.ones(3, 3), generator: gen);
+            {
+                var sample = dist.sample();
+
+                Assert.Equal(new long[] { 3, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 3, 3 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3, 3 }, sample.shape);
+            }
+        }
     }
 }

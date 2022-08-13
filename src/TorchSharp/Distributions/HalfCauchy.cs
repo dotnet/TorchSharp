@@ -51,7 +51,7 @@ namespace TorchSharp
                 return base_distribution.entropy() - Math.Log(2);
             }
 
-            public override Distribution expand(long[] batch_shape, Distribution instance = null)
+            public override Distribution expand(Size batch_shape, Distribution instance = null)
             {
                 var newDistribution = ((instance == null)
                     ? new HalfCauchy(scale.expand(batch_shape), generator)

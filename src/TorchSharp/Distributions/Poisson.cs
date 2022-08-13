@@ -82,7 +82,7 @@ namespace TorchSharp
             /// Note that this enumerates over all batched tensors in lock-step `[[0, 0], [1, 1], ...]`. With `expand=False`, enumeration happens
             /// along dim 0, but with the remaining batch dimensions being singleton dimensions, `[[0], [1], ..`
             /// </summary>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Poisson))
                     throw new ArgumentException("expand(): 'instance' must be a Poisson distribution");

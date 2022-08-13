@@ -48,7 +48,7 @@ namespace TorchSharp
                 return lp;
             }
 
-            public override Distribution expand(long[] batch_shape, Distribution instance = null)
+            public override Distribution expand(Size batch_shape, Distribution instance = null)
             {
                 var newDistribution = ((instance == null)
                     ? torch.distributions.Pareto(scale.expand(batch_shape), alpha.expand(batch_shape), generator)

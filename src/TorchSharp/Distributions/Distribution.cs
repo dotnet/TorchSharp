@@ -13,19 +13,25 @@ namespace TorchSharp
                 public Distribution(torch.Generator generator, long[] batch_shape = null, long[] event_shape = null)
                 {
                     this.generator = generator;
-                    this.batch_shape = batch_shape != null ? batch_shape : new long[0];
-                    this.event_shape = event_shape != null ? event_shape : new long[0];
+                    _init(batch_shape != null ? batch_shape : new Size(),
+                         event_shape != null ? event_shape : new Size());
+                }
+
+                protected void _init(Size? batch_shape = null, Size? event_shape = null)
+                {
+                    this.batch_shape = batch_shape != null ? batch_shape.Value : new Size();
+                    this.event_shape = event_shape != null ? event_shape.Value : new Size();
                 }
 
                 /// <summary>
                 /// The shape over which parameters are batched.
                 /// </summary>
-                public long [] batch_shape { get; protected set; }
+                public Size batch_shape { get; protected set; }
 
                 /// <summary>
                 /// The shape of a single sample (without batching).
                 /// </summary>
-                public long[] event_shape { get; protected set; }
+                public Size event_shape { get; protected set; }
 
                 /// <summary>
                 /// The mean of the distribution.
@@ -86,7 +92,7 @@ namespace TorchSharp
                 /// <param name="batch_shape">Tthe desired expanded size.</param>
                 /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
                 /// <returns></returns>
-                public abstract Distribution expand(long[] batch_shape, Distribution instance = null);
+                public abstract Distribution expand(Size batch_shape, Distribution instance = null);
 
                 /// <summary>
                 /// Returns the cumulative density/mass function evaluated at `value`.
