@@ -20,13 +20,18 @@ namespace TorchSharp
             /// Constructor
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
-            /// <param name="p">the probability of sampling `1`</param>
-            /// <param name="l">the log-odds of sampling `1`</param>
+            /// <param name="probs">the probability of sampling `1`</param>
+            /// <param name="logits">the log-odds of sampling `1`</param>
             /// <param name="generator"></param>
-            public RelaxedBernoulli(Tensor temperature, Tensor p = null, Tensor l = null, torch.Generator generator = null) :
-                base(LogitRelaxedBernoulli(temperature, p, l, generator), new distributions.transforms.SigmoidTransform(), generator)
+            public RelaxedBernoulli(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null) :
+                base(LogitRelaxedBernoulli(temperature, probs, logits, generator), new distributions.transforms.SigmoidTransform(), generator)
             {
+                this._probs = probs;
+                this._logits = logits;
             }
+
+            private Tensor _probs;
+            private Tensor _logits;
 
             private LogitRelaxedBernoulli base_dist => this.base_distribution as LogitRelaxedBernoulli;
 
@@ -67,10 +72,10 @@ namespace TorchSharp
                 if (instance != null && !(instance is Bernoulli))
                     throw new ArgumentException("expand(): 'instance' must be a Bernoulli distribution");
 
-                var newDistribution = ((instance == null) ? new RelaxedBernoulli(temperature, probs, logits, generator) : instance) as RelaxedBernoulli;
+                var newDistribution = ((instance == null) ? new RelaxedBernoulli(temperature, _probs, _logits, generator) : instance) as RelaxedBernoulli;
 
                 newDistribution.batch_shape = batch_shape;
-                return newDistribution;
+                return base.expand(batch_shape, newDistribution);
             }
         }
 

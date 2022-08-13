@@ -27,19 +27,19 @@ namespace TorchSharp
             /// Constructor
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
-            /// <param name="p"></param>
-            /// <param name="l"></param>
+            /// <param name="probs"></param>
+            /// <param name="logits"></param>
             /// <param name="generator"></param>
-            public LogitRelaxedBernoulli(Tensor temperature, Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
+            public LogitRelaxedBernoulli(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null) : base(generator)
             {
                 _temperature = temperature;
 
-                if ((p is null && logits is null) || (p is not null && l is not null))
+                if ((probs is null && logits is null) || (probs is not null && logits is not null))
                     throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
 
-                this.batch_shape = p is null ? l.size() : p.size();
-                this._probs = p;
-                this._logits = l;
+                this.batch_shape = probs is null ? logits.size() : probs.size();
+                this._probs = probs;
+                this._logits = logits;
             }
 
             /// <summary>

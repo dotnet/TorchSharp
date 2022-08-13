@@ -502,6 +502,53 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestRelaxedBernoulli()
+        {
+            var temp = torch.rand(3, dtype: ScalarType.Float64);
+
+            var dist = RelaxedBernoulli(temp, torch.rand(3, dtype: ScalarType.Float64));
+            {
+                var sample = dist.sample();
+
+                Assert.Single(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
+            }
+        }
+
+        [Fact]
+        public void TestRelaxedBernoulliGen()
+        {
+            var gen = new Generator(4711);
+            var temp = torch.rand(3, dtype: ScalarType.Float64);
+
+            var dist = RelaxedBernoulli(temp, torch.rand(3, dtype: ScalarType.Float64), generator: gen);
+            {
+                var sample = dist.sample();
+
+                Assert.Single(sample.shape);
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
+            }
+        }
+
+        [Fact]
         public void TestBeta()
         {
             var dist = Beta(torch.rand(3, 3) * 0.5f, torch.tensor(0.5f));
