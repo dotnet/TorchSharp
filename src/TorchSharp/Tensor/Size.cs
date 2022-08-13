@@ -22,6 +22,11 @@ namespace TorchSharp
         public struct Size : IEnumerable<long>
         {
             /// <summary>
+            /// Represents an empty size.
+            /// </summary>
+            public static Size Empty = new Size();
+
+            /// <summary>
             /// Constructor
             /// </summary>
             public Size()
@@ -200,29 +205,33 @@ namespace TorchSharp
                 return _shape.Equals(((Size)obj)._shape);
             }
 
-            public IEnumerable<long> Slice(int start, int length)
+            public Size Slice(int first, int next)
             {
-                if (length <= 0) {
-                    length = _shape.Length + length;
+                if (next < 0) {
+                    next = _shape.Length + next;
                 }
 
-                if (start < 0) {
-                    start = _shape.Length + start;
+                if (first < 0) {
+                    first = _shape.Length + first;
                 }
 
-                if (start == 0) {
-                    if (length == _shape.Length) {
+                if (next <= first) {
+                    return Size.Empty;
+                }
+
+                if (first == 0) {
+                    if (next == _shape.Length) {
                         return this;
                     }
                     else {
-                        return new Size(_shape.Take(length));
+                        return new Size(_shape.Take(next));
                     }
                 }
                 else {
-                    if (length == _shape.Length) {
-                        return new Size(_shape.Skip(start));
+                    if (next == _shape.Length) {
+                        return new Size(_shape.Skip(first));
                     } else {
-                        return new Size(_shape.Skip(start).Take(length));
+                        return new Size(_shape.Skip(first).Take(next-first));
                     }
                 }
             }
@@ -244,6 +253,10 @@ namespace TorchSharp
                 }
                 return size;
             }
+
+            public bool IsEmpty => _shape.Length == 0;
+
+            public bool IsScalar => IsEmpty;
 
             public int Length => _shape.Length;
 
@@ -277,7 +290,7 @@ namespace TorchSharp
                 get { return _shape[(int)idx]; }
             }
 
-            internal long[] Shape { get { return _shape; } }
+            public long[] Shape { get { return _shape; } }
 
             private long[] _shape;
         }

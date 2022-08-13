@@ -4,6 +4,7 @@ using System.Linq;
 using Xunit;
 
 using TorchSharp;
+using System.Drawing;
 
 namespace TorchSharp
 {
@@ -97,6 +98,23 @@ namespace TorchSharp
             Assert.Equal(x2.shape, x2.grad().shape);
             Assert.Equal(2.0f * x1.item<float>(), x1.grad().item<float>());
             Assert.Equal(5.0f, x2.grad().item<float>());
+        }
+
+        [Fact]
+        public void TestSizeSlice()
+        {
+            var shape = Enumerable.Range(0, 10).Select(i => (long)i).ToArray();
+            var sz = new torch.Size(shape);
+            Assert.Multiple(
+            () => Assert.Equal(new long[] { 0, 1, 2, 3, 4, 5 }, sz.Slice(0, 6).Shape),
+            () => Assert.Equal(new long[] { 2, 3, 4, 5 }, sz.Slice(2, 6).Shape),
+            () => Assert.Equal(new long[] { 0, 1, 2, 3, 4, 5 }, sz.Slice(0, -4).Shape),
+            () => Assert.Equal(new long[] { 2, 3, 4, 5 }, sz.Slice(2, -4).Shape),
+            () => Assert.Equal(new long[] { 8, 9 }, sz.Slice(-2, sz.Length).Shape),
+            () => Assert.True(sz.Slice(0, 0).IsEmpty),
+            () => Assert.True(sz.Slice(-2, 0).IsEmpty)
+            );
+
         }
     }
 }
