@@ -190,6 +190,36 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestCreateDCT()
+        {
+            float eps = 1e-7f;
+            var n_mfcc = 40;
+            var n_mels = 128;
+            var dct_mat = torchaudio.functional.create_dct(n_mfcc, n_mels, torchaudio.DCTNorm.ortho);
+            Assert.Equal(new long[] { n_mels, n_mfcc }, dct_mat.shape);
+            Assert.InRange(dct_mat[0, 10].item<float>() - 0.12405993789434433, -eps, eps);
+            Assert.InRange(dct_mat[10, 0].item<float>() - 0.0883883461356163, -eps, eps);
+            Assert.InRange(dct_mat[15, 20].item<float>() - 0.030372507870197296, -eps, eps);
+            Assert.InRange(dct_mat[127, 39].item<float>() + 0.1109548956155777, -eps, eps);
+            // dct_mat is normalized along axis=0
+            Assert.InRange(torch.square(torch.square(dct_mat).sum(dim: 0) - 1.0).sum().item<float>(), -eps, eps);
+        }
+
+        [Fact]
+        public void TestMuLawEncodeDecode()
+        {
+            int quantization_channels = 256;
+            var waveform = make_waveform();
+            var encoded = torchaudio.functional.mu_law_encoding(waveform, quantization_channels);
+            Assert.Equal(torch.int64, encoded.dtype);
+            Assert.True(torch.min(encoded).item<long>() >= 0);
+            Assert.True(torch.max(encoded).item<long>() < quantization_channels);
+            var decoded = torchaudio.functional.mu_law_decoding(encoded, quantization_channels);
+            var mse = torch.mean(torch.square(waveform - decoded)).item<float>();
+            Assert.InRange(mse, 0f, 0.01);
+        }
+
+        [Fact]
         public void TestFunctionalResampleIdent()
         {
             var waveform = make_waveform();
