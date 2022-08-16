@@ -40,9 +40,10 @@ namespace TorchSharp
             /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
+                using var _ = torch.NewDisposeScope();
                 var shape = ExtendedShape(sample_shape);
                 using(torch.no_grad())
-                    return torch.poisson(rate.expand(shape), generator: generator);
+                    return torch.poisson(rate.expand(shape), generator: generator).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -51,10 +52,11 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
+                using var _ = torch.NewDisposeScope();
                 var bcast = torch.broadcast_tensors(rate, value);
                 var r = bcast[0];
                 var v = bcast[1];
-                return value.xlogy(r) - r - (value + 1).lgamma();
+                return (value.xlogy(r) - r - (value + 1).lgamma()).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -63,7 +65,7 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
-                return 1 - torch.exp(-rate * value);
+                return torch.WrappedTensorDisposeScope(() => 1 - torch.exp(-rate * value));
             }
 
             /// <summary>
@@ -72,7 +74,7 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor icdf(Tensor value)
             {
-                return -torch.log(1 - value) / rate;
+                return torch.WrappedTensorDisposeScope(() => -torch.log(1 - value) / rate);
             }
 
             /// <summary>

@@ -35,14 +35,15 @@ namespace TorchSharp
             public override Tensor mode => scale * ((concentration - 1) / concentration).pow(concentration_reciprocal);
 
             public override Tensor variance =>
-                scale.pow(2) * (torch.exp(torch.lgamma(1 + 2 * concentration_reciprocal)) -
-                torch.exp(2 * torch.lgamma(1 + concentration_reciprocal)));
+                torch.WrappedTensorDisposeScope(() =>
+                    scale.pow(2) * (torch.exp(torch.lgamma(1 + 2 * concentration_reciprocal)) - torch.exp(2 * torch.lgamma(1 + concentration_reciprocal)))
+                );
 
             /// <summary>
             /// Returns entropy of distribution, batched over batch_shape.
             /// </summary>
             public override Tensor entropy() =>
-                euler_constant * (1 - concentration_reciprocal) + torch.log(scale * concentration_reciprocal) + 1;
+                torch.WrappedTensorDisposeScope(() => euler_constant * (1 - concentration_reciprocal) + torch.log(scale * concentration_reciprocal) + 1);
 
             /// <summary>
             /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
@@ -67,8 +68,6 @@ namespace TorchSharp
                     : instance) as Weibull;
                 return newDistribution;
             }
-
-            private const double euler_constant = 0.57721566490153286060; // Euler Mascheroni Constant
         }
     }
 

@@ -21,14 +21,24 @@ namespace TorchSharp
             private torch.distributions.transforms.Transform[] transforms;
             private torch.distributions.transforms.Transform[] reverse_transforms;
 
+            public TransformedDistribution(torch.Generator generator = null) : base(generator)
+            {
+            }
+
             public TransformedDistribution(Distribution base_distribution, torch.distributions.transforms.Transform transform, torch.Generator generator = null) :
                 this(base_distribution, new torch.distributions.transforms.Transform[] { transform}, generator)
             {
+                _init(base_distribution, transforms);
             }
 
             public TransformedDistribution(Distribution base_distribution, IEnumerable<torch.distributions.transforms.Transform> transforms, torch.Generator generator = null) : base(generator)
             {
-                this.transforms = transforms.ToArray();
+                _init(base_distribution, transforms.ToArray());
+            }
+
+            protected void _init(Distribution base_distribution, torch.distributions.transforms.Transform[] transforms)
+            {
+                this.transforms = transforms;
                 this.reverse_transforms = transforms.Reverse().ToArray();
 
                 var base_shape = base_distribution.batch_shape.Concat(base_distribution.event_shape).ToArray();

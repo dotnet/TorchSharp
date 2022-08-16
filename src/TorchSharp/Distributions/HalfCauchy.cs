@@ -33,10 +33,11 @@ namespace TorchSharp
 
             public override Tensor log_prob(Tensor value)
             {
+                using var _ = torch.NewDisposeScope();
                 value = torch.as_tensor(value, scale.dtype, scale.device);
                 var lp = base_distribution.log_prob(value) + Math.Log(2);
                 lp[value.expand(lp.shape) < 0] = Double.NegativeInfinity;
-                return lp;
+                return lp.MoveToOuterDisposeScope();
             }
 
             public override Tensor cdf(Tensor value)
