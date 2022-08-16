@@ -24,15 +24,7 @@ namespace TorchSharp
             /// <summary>
             /// Represents an empty size.
             /// </summary>
-            public static Size Empty = new Size();
-
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            public Size()
-            {
-                _shape = new long[0];
-            }
+            public static Size Empty = new Size(System.Array.Empty<long>());
 
             /// <summary>
             /// Constructor

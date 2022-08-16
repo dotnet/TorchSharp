@@ -330,7 +330,7 @@ namespace TorchSharp
 
                     public override Tensor check(Tensor value)
                     {
-                        return (value <= upper_bound);
+                        return (value < upper_bound);
                     }
 
                     public override string ToString()

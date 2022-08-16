@@ -15,8 +15,6 @@ namespace TorchSharp
         /// <summary>
         /// Creates a half-normal distribution parameterized by `scale`
         /// </summary>
-        /// <param name="scale">Scale parameter of the distribution.</param>
-        /// <param name="generator">An optional random number generator object.</param>
         public class HalfNormal : TransformedDistribution
         {
             internal HalfNormal(Tensor scale, torch.Generator generator = null) :
