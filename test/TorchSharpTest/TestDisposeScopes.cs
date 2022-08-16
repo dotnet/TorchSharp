@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -29,18 +29,23 @@ namespace TorchSharp
                 var a3 = 3.ToTensor().MoveToOuterDisposeScope(); // This one is lost also
                 using var a4 = 4.ToTensor(); // This one was manually disposed
                 var disposables = scope1.DisposablesView;
-                Assert.True(Contains(disposables, a1));
-                Assert.False(Contains(disposables, a2));
-                Assert.False(Contains(disposables, a3));
-                Assert.True(Contains(disposables, a4));
+                Assert.Multiple(
+                    () => Assert.True(Contains(disposables, a1)),
+                    () => Assert.False(Contains(disposables, a2)),
+                    () => Assert.False(Contains(disposables, a3)),
+                    () => Assert.True(Contains(disposables, a4))
+                );
             }
 
-            Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount);
-            // These numbers are higher than I expected them to be.
-            // Assert.Equal(4, DisposeScopeManager.Statistics.CreatedInScopeCount);
-            // Assert.Equal(2, DisposeScopeManager.Statistics.DisposedInScopeCount);
-            Assert.Equal(2, DisposeScopeManager.Statistics.DetachedFromScopeCount);
-            Assert.Equal(0, DisposeScopeManager.Statistics.CreatedOutsideScopeCount);
+            Assert.Multiple(
+                () => Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount),
+                // These numbers are higher than I expected them to be.
+                // () => Assert.Equal(4, DisposeScopeManager.Statistics.CreatedInScopeCount),
+                // () => Assert.Equal(2, DisposeScopeManager.Statistics.DisposedInScopeCount),
+                () => Assert.Equal(2, DisposeScopeManager.Statistics.DetachedFromScopeCount),
+                () => Assert.Equal(0, DisposeScopeManager.Statistics.CreatedOutsideScopeCount)
+            );
+            DisposeScopeManager.Statistics.Reset();
         }
 
         [Fact]
@@ -53,18 +58,22 @@ namespace TorchSharp
                 var a4 = 4.ToTensor();
 
                 var disposables = scope.DisposablesView;
-                Assert.True(Contains(disposables, a1));
-                Assert.True(Contains(disposables, a2));
-                Assert.True(Contains(disposables, a3));
-                Assert.True(Contains(disposables, a4));
-
+                Assert.Multiple(
+                    () => Assert.True(Contains(disposables, a1)),
+                    () => Assert.True(Contains(disposables, a2)),
+                    () => Assert.True(Contains(disposables, a3)),
+                    () => Assert.True(Contains(disposables, a4))
+                );
                 scope.DisposeEverythingBut(a4);
                 disposables = scope.DisposablesView;
-                Assert.False(Contains(disposables, a1));
-                Assert.False(Contains(disposables, a2));
-                Assert.False(Contains(disposables, a3));
-                Assert.True(Contains(disposables, a4));
+                Assert.Multiple(
+                    () => Assert.False(Contains(disposables, a1)),
+                    () => Assert.False(Contains(disposables, a2)),
+                    () => Assert.False(Contains(disposables, a3)),
+                    () => Assert.True(Contains(disposables, a4))
+                );
             }
+            DisposeScopeManager.Statistics.Reset();
         }
 
         [Fact]
@@ -108,6 +117,7 @@ namespace TorchSharp
             }
 
             Assert.True(a1.IsInvalid);
+            DisposeScopeManager.Statistics.Reset();
         }
 
         [Fact]
@@ -127,6 +137,7 @@ namespace TorchSharp
             foreach (var disposable in disposables) {
                 Assert.True(disposable.IsInvalid);
             }
+            DisposeScopeManager.Statistics.Reset();
         }
 
         [Fact]
@@ -141,6 +152,7 @@ namespace TorchSharp
 
             // One was kept
             Assert.False(undisposed.IsInvalid);
+            DisposeScopeManager.Statistics.Reset();
         }
 
         [Fact]
@@ -158,14 +170,15 @@ namespace TorchSharp
 
             Assert.True(t2.IsInvalid);
             Assert.False(data.IsInvalid);
+            DisposeScopeManager.Statistics.Reset();
         }
 
         [Fact]
         public void DisposeScopesCanBeNestled()
         {
             DisposeScopeManager.Statistics.Reset();
-            torch.Tensor data = torch.rand(10, 10);
             using (torch.NewDisposeScope()) {
+                torch.Tensor data = torch.rand(10, 10);
                 var t1 = data * data + data;
 
                 var innerCount = DisposeScopeManager.Statistics.ThreadTotalLiveCount;
@@ -179,6 +192,7 @@ namespace TorchSharp
 
             // It was all disposed
             Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount);
+            DisposeScopeManager.Statistics.Reset();
         }
 
         [Fact]
@@ -193,6 +207,7 @@ namespace TorchSharp
             _testOutputHelper.WriteLine(
                 $"Undisposed Tensors with DisposeScope: {DisposeScopeManager.Statistics.ThreadTotalLiveCount}");
             Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount);
+            DisposeScopeManager.Statistics.Reset();
         }
 
         [Fact]
@@ -208,6 +223,7 @@ namespace TorchSharp
             Assert.Equal(0, DisposeScopeManager.Statistics.ThreadTotalLiveCount);
             _testOutputHelper.WriteLine(
                 $"Undisposed Tensors after DisposeScope: {DisposeScopeManager.Statistics.ThreadTotalLiveCount}");
+            DisposeScopeManager.Statistics.Reset();
         }
 
         // Assert Contains causes problems!

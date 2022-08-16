@@ -96,7 +96,7 @@ namespace TorchSharp
 
             public override Tensor log_prob(Tensor value)
             {
-                var _ = torch.NewDisposeScope();
+                using var _ = torch.NewDisposeScope();
                 var indices = value.max(-1).indexes;
                 return _categorical.log_prob(indices).MoveToOuterDisposeScope();
             }

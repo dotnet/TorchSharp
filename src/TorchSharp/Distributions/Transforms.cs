@@ -246,7 +246,7 @@ namespace TorchSharp
 
                     protected internal override Tensor _call(Tensor x)
                     {
-                        var _ = torch.NewDisposeScope();
+                        using var _ = torch.NewDisposeScope();
                         foreach (var p in _parts) {
                             x = p._call(x);
                         }

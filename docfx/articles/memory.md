@@ -175,10 +175,14 @@ total_acc <- total_acc + (predicted_labels.argmax(1) == labels).sum().cpu().item
 
 If you need to dispose some tensors before the scope is disposed, you can use `DisposeEverything()`, or `DisposeEverythingBut(...)` if you want to exclude a few tensors from disposal. These can be useful when tensor lifetimes aren't cleanly nested in dynamic scopes. 
 
+__NOTE: It is absolutely essential for the proper functioning of dynamic dispose scopes that the scope is created with a 'using' statemen (C#) or 'use' expression (F#).__
 
 It's important to note that these scopes are dynamic -- if any functions are called, the tensors inside them are also registered and disposed, unless there's a nested scope within those functions.
 
-It is advisable to place a dispose scope around your training and test code, and in any library code that can be called from contexts that do not have dispose scopes.
+It is advisable to place a dispose scope around your training and test code, and in any library code that can be called from contexts that do not have dispose scopes. 
+
+That said, you should use dispose scope very carefully: having _too few_ scope raises the pressure on native memory, which is particularly bad for GPUs. Having too _many_ scopes, managing too few temporaries, will add runtime overhead to computations. For example, it may be better to put a scope outside an inner loop that contains multiple computations than to place it inside the loop. There is no single best answer.
+
 
 ### Passing Tensors Out of Scopes
 
@@ -267,6 +271,30 @@ public Tensor foo() {
 These examples show how to move a tensor up one level in the stack of scopes. To completely remove a tensor from scoped management, use `DetatchFromDisposeScope()` instead of `MoveToOuterDisposeScope()`.
 
 Even with this technique, it is a good practice to use `Sequential` when possible.
+<br/>
+
+### torch.WrappedTensorDisposeScope
+
+A conveniece method was added in 0.97.3 -- it is useful for wrapping a complex expression with multiple temporaries without having to set up a scope explicitly.
+
+It is defined as:
+
+```C#
+public static Tensor WrappedTensorDisposeScope(Func<Tensor> expr)
+{
+    using var scope = torch.NewDisposeScope();
+    var result = expr();
+    return result.MoveToOuterDisposeScope();
+}
+```
+
+This is particularly useful in one-line functions and properties, such as in this example from the the Pareto distribution class:
+
+```C#
+public override Tensor entropy() => torch.WrappedTensorDisposeScope(() => ((scale / alpha).log() + (1 + alpha.reciprocal())));
+
+```
+
 
 ## Links and resources
 

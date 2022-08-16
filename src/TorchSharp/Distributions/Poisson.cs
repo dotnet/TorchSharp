@@ -40,7 +40,7 @@ namespace TorchSharp
             /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
-                var _ = torch.NewDisposeScope();
+                using var _ = torch.NewDisposeScope();
                 var shape = ExtendedShape(sample_shape);
                 using(torch.no_grad())
                     return torch.poisson(rate.expand(shape), generator: generator).MoveToOuterDisposeScope();
@@ -52,7 +52,7 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
-                var _ = torch.NewDisposeScope();
+                using var _ = torch.NewDisposeScope();
                 var bcast = torch.broadcast_tensors(rate, value);
                 var r = bcast[0];
                 var v = bcast[1];

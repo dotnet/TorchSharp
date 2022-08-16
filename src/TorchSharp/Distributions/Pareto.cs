@@ -27,7 +27,7 @@ namespace TorchSharp
 
             public override Tensor mean {
                 get {
-                    var _ = torch.NewDisposeScope();
+                    using var _ = torch.NewDisposeScope();
                     var a = alpha.clamp(min: 2);
                     return (a * scale / (a - 1)).MoveToOuterDisposeScope();
                 }
@@ -37,14 +37,15 @@ namespace TorchSharp
 
             public override Tensor variance {
                 get {
-                    var _ = torch.NewDisposeScope(); var a = alpha.clamp(min: 2);
+                    using var _ = torch.NewDisposeScope();
+                    var a = alpha.clamp(min: 2);
                     return (scale.pow(2) * a / ((a - 1).pow(2) * (a - 2))).MoveToOuterDisposeScope();
                 }
             }
 
             public override Tensor log_prob(Tensor value)
             {
-                var _ = torch.NewDisposeScope();
+                using var _ = torch.NewDisposeScope();
                 var lp = base_distribution.log_prob(value) + Math.Log(2);
                 lp[value.expand(lp.shape) < 0] = Double.NegativeInfinity;
                 return lp.MoveToOuterDisposeScope();
@@ -58,10 +59,7 @@ namespace TorchSharp
                 return base.expand(batch_shape, newDistribution);
             }
 
-            public override Tensor entropy()
-            {
-                return ((scale / alpha).log() + (1 + alpha.reciprocal()));
-            }
+            public override Tensor entropy() => torch.WrappedTensorDisposeScope(() => (scale / alpha).log() + 1 + alpha.reciprocal());
         }
     }
 

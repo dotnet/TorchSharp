@@ -7415,7 +7415,7 @@ namespace TorchSharp
         /// </summary>
         public static Tensor WrappedTensorDisposeScope(Func<Tensor> expr)
         {
-            var scope = torch.NewDisposeScope();
+            using var scope = torch.NewDisposeScope();
             var result = expr();
             return result.MoveToOuterDisposeScope();
         }
