@@ -30,10 +30,17 @@ namespace TorchSharp
                     /// Number of rightmost dimensions that together define an event.
                     /// The check() method will remove this many dimensions when computing validity.
                     /// </param>
-                    protected Constraint(bool is_discrete = false, int event_dim = 0)
+                    protected Constraint(bool is_discrete, int event_dim)
                     {
                         this.is_discrete = is_discrete;
                         this.event_dim = event_dim;
+                    }
+
+                    /// <summary>
+                    /// Constructor
+                    /// </summary>
+                    protected Constraint() : this(false, 0)
+                    {
                     }
 
                     /// <summary>
@@ -116,7 +123,7 @@ namespace TorchSharp
                 /// </summary>
                 public class _Boolean : Constraint
                 {
-                    public _Boolean() : base(true) { }
+                    public _Boolean() : base(true, 0) { }
 
                     public override Tensor check(Tensor value) => (value == 0) | (value == 1);
                 }
@@ -141,7 +148,7 @@ namespace TorchSharp
                 /// </summary>
                 public class _IntegerInterval : Constraint
                 {
-                    public _IntegerInterval(long lower_bound, long upper_bound) : base(true)
+                    public _IntegerInterval(long lower_bound, long upper_bound) : base(true, 0)
                     {
                         this.lower_bound = lower_bound;
                         this.upper_bound = upper_bound;
@@ -167,7 +174,7 @@ namespace TorchSharp
                 /// </summary>
                 public class _IntegerLessThan : Constraint
                 {
-                    public _IntegerLessThan(long upper_bound) : base(true)
+                    public _IntegerLessThan(long upper_bound) : base(true, 0)
                     {
                         this.upper_bound = upper_bound;
                     }
@@ -190,7 +197,7 @@ namespace TorchSharp
                 /// </summary>
                 public class _IntegerGreaterThan : Constraint
                 {
-                    public _IntegerGreaterThan(long lower_bound) : base(true)
+                    public _IntegerGreaterThan(long lower_bound) : base(true, 0)
                     {
                         this.lower_bound = lower_bound;
                     }
@@ -213,7 +220,7 @@ namespace TorchSharp
                 /// </summary>
                 public class _Real : Constraint
                 {
-                    public _Real() : base(false) { }
+                    public _Real() : base(false, 0) { }
 
                     public override Tensor check(Tensor value) => value.eq(value); // False only for NaN.
                 }
@@ -223,7 +230,7 @@ namespace TorchSharp
                 /// </summary>
                 public class _Interval : Constraint
                 {
-                    public _Interval(double lower_bound, double upper_bound) : base(true)
+                    public _Interval(double lower_bound, double upper_bound) : base(true, 0)
                     {
                         this.lower_bound = lower_bound;
                         this.upper_bound = upper_bound;
@@ -249,7 +256,7 @@ namespace TorchSharp
                 /// </summary>
                 public class _HalfOpenInterval : Constraint
                 {
-                    public _HalfOpenInterval(double lower_bound, double upper_bound) : base(true)
+                    public _HalfOpenInterval(double lower_bound, double upper_bound) : base(true, 0)
                     {
                         this.lower_bound = lower_bound;
                         this.upper_bound = upper_bound;
@@ -275,7 +282,7 @@ namespace TorchSharp
                 /// </summary>
                 public class _GreaterThan : Constraint
                 {
-                    public _GreaterThan(double lower_bound) : base(true)
+                    public _GreaterThan(double lower_bound) : base(true, 0)
                     {
                         this.lower_bound = lower_bound;
                     }
@@ -298,7 +305,7 @@ namespace TorchSharp
                 /// </summary>
                 public class _GreaterThanEq : Constraint
                 {
-                    public _GreaterThanEq(double lower_bound) : base(true)
+                    public _GreaterThanEq(double lower_bound) : base(true, 0)
                     {
                         this.lower_bound = lower_bound;
                     }
@@ -321,7 +328,7 @@ namespace TorchSharp
                 /// </summary>
                 public class _LessThan : Constraint
                 {
-                    public _LessThan(double upper_bound) : base(true)
+                    public _LessThan(double upper_bound) : base(true, 0)
                     {
                         this.upper_bound = upper_bound;
                     }
