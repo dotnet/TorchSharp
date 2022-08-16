@@ -12,8 +12,8 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
-        /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
+        /// Creates a RelaxedOneHotCategorical distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
+        /// This is a relaxed version of the `OneHotCategorical` distribution, so its samples are on simplex, and are reparametrizable..
         /// </summary>
         public class RelaxedOneHotCategorical : TransformedDistribution
         {
@@ -87,7 +87,7 @@ namespace TorchSharp
         {
             /// <summary>
             /// Creates a RelaxedOneHotCategorical distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
-            /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
+            /// This is a relaxed version of the `OneHotCategorical` distribution, so its samples are on simplex, and are reparametrizable..
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
@@ -101,7 +101,7 @@ namespace TorchSharp
 
             /// <summary>
             /// Creates a RelaxedOneHotCategorical distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
-            /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
+            /// This is a relaxed version of the `OneHotCategorical` distribution, so its samples are on simplex, and are reparametrizable..
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
@@ -121,7 +121,7 @@ namespace TorchSharp
 
             /// <summary>
             /// Creates a RelaxedOneHotCategorical distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
-            /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
+            /// This is a relaxed version of the `OneHotCategorical` distribution, so its samples are on simplex, and are reparametrizable..
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>

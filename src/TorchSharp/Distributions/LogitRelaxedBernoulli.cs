@@ -74,8 +74,8 @@ namespace TorchSharp
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
-                var probs = clamp_probs(_probs.expand(shape));
-                var uniforms = clamp_probs(torch.rand(shape, dtype: probs.dtype, device: probs.device));
+                var probs = ClampProbs(_probs.expand(shape));
+                var uniforms = ClampProbs(torch.rand(shape, dtype: probs.dtype, device: probs.device));
                 return (uniforms.log() - (-uniforms).log1p() + probs.log() - (-probs).log1p()) / _temperature;
             }
 

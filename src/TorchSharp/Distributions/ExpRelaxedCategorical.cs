@@ -128,6 +128,11 @@ namespace TorchSharp
                 score = (score - score.logsumexp(dim: -1, keepdim: true)).sum(-1);
                 return score + log_scale;
             }
+
+            public override Tensor entropy()
+            {
+                throw new NotImplementedException();
+            }
         }
 
     }
@@ -136,8 +141,8 @@ namespace TorchSharp
         public static partial class distributions
         {
             /// <summary>
-            /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
-            /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
+            /// Creates a ExpRelaxedCategorical parameterized by `temperature`, and either `probs` or `logits` (but not both).
+            /// Returns the log of a point in the simplex.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
@@ -150,8 +155,8 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
-            /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
+            /// Creates a ExpRelaxedCategorical parameterized by `temperature`, and either `probs` or `logits` (but not both).
+            /// Returns the log of a point in the simplex.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
@@ -170,8 +175,8 @@ namespace TorchSharp
 
 
             /// <summary>
-            /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
-            /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
+            /// Creates a ExpRelaxedCategorical parameterized by `temperature`, and either `probs` or `logits` (but not both).
+            /// Returns the log of a point in the simplex.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
@@ -181,7 +186,7 @@ namespace TorchSharp
             public static ExpRelaxedCategorical ExpRelaxedCategorical(Tensor temperature, double? probs, double? logits, torch.Generator generator = null)
             {
                 if (probs.HasValue && !logits.HasValue)
-                    return new RelaxedBernoulli(temperature, torch.tensor(probs.Value), null, generator);
+                    return new ExpRelaxedCategorical(temperature, torch.tensor(probs.Value), null, generator);
                 else if (!probs.HasValue && logits.HasValue)
                     return new ExpRelaxedCategorical(temperature, null, torch.tensor(logits.Value), generator);
                 else
