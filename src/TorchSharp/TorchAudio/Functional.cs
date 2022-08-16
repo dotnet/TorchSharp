@@ -413,6 +413,64 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Create a DCT transformation matrix with shape (``n_mels``, ``n_mfcc``)
+            /// </summary>
+            /// <param name="n_mfcc">Number of mfc coefficients to retain</param>
+            /// <param name="n_mels">Number of mel filterbanks</param>
+            /// <param name="norm">Norm to use</param>
+            /// <returns>The transformation matrix</returns>
+            public static Tensor create_dct(int n_mfcc, int n_mels, DCTNorm norm)
+            {
+                // http://en.wikipedia.org/wiki/Discrete_cosine_transform#DCT-II
+                var n = torch.arange((float)n_mels);
+                var k = torch.arange((float)n_mfcc).unsqueeze(1);
+                var dct = torch.cos(Math.PI / n_mels * (n + 0.5) * k);
+
+                if (norm == DCTNorm.none) {
+                    dct *= 2.0;
+                } else {
+                    dct[0] *= 1.0 / Math.Sqrt(2.0);
+                    dct *= Math.Sqrt(2.0 / n_mels);
+                }
+                return dct.t();
+            }
+
+            /// <summary>
+            /// Encode signal based on mu-law companding.
+            /// </summary>
+            /// <param name="x">Input tensor</param>
+            /// <param name="quantization_channels">Number of channels</param>
+            /// <returns>Input after mu-law encoding</returns>
+            /// <exception cref="ArgumentException"></exception>
+            public static Tensor mu_law_encoding(Tensor x, int quantization_channels)
+            {
+                if (!x.is_floating_point()) {
+                    throw new ArgumentException("The input Tensor must be of floating type. ");
+                }
+                var mu = torch.tensor(quantization_channels - 1.0, dtype: x.dtype);
+                var x_mu = torch.sign(x) * torch.log1p(mu * torch.abs(x)) / torch.log1p(mu);
+                x_mu = ((x_mu + 1) / 2 * mu + 0.5).to(torch.int64);
+                return x_mu;
+            }
+
+            /// <summary>
+            /// Decode mu-law encoded signal.
+            /// </summary>
+            /// <param name="x_mu">Input tensor</param>
+            /// <param name="quantization_channels">Number of channels</param>
+            /// <returns>Input after mu-law decoding</returns>
+            public static Tensor mu_law_decoding(Tensor x_mu, int quantization_channels)
+            {
+                if (!x_mu.is_floating_point()) {
+                    x_mu = x_mu.to(torch.@float);
+                }
+                var mu = torch.tensor(quantization_channels - 1.0, dtype: x_mu.dtype);
+                var x = x_mu / mu * 2 - 1.0;
+                x = torch.sign(x) * (torch.exp(torch.abs(x) * torch.log1p(mu)) - 1.0) / mu;
+                return x;
+            }
+
+            /// <summary>
             /// Resample the waveform
             /// </summary>
             /// <param name="waveform">The input waveform</param>
