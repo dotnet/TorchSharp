@@ -189,6 +189,8 @@ namespace TorchSharp
                 protected Tensor ClampByZero(Tensor x) => (x.clamp_min(0) + x - x.clamp_max(0)) / 2;
 
                 protected torch.Generator generator;
+
+                protected const double euler_constant = 0.57721566490153286060; // Euler Mascheroni Constant
             }
         }
     }

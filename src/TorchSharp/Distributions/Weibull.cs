@@ -67,8 +67,6 @@ namespace TorchSharp
                     : instance) as Weibull;
                 return newDistribution;
             }
-
-            private const double euler_constant = 0.57721566490153286060; // Euler Mascheroni Constant
         }
     }
 

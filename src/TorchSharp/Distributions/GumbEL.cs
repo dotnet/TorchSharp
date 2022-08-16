@@ -43,7 +43,6 @@ namespace TorchSharp
             public override Tensor entropy() => scale.log() + (1 + euler_constant);
 
             private readonly double pioversqrtsix = 1.282549830161864095544036359671; // Math.PI / Math.Sqrt(6);
-            private const double euler_constant = 0.57721566490153286060; // Euler Mascheroni Constant
         }
     }
 
