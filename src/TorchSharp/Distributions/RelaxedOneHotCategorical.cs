@@ -15,7 +15,7 @@ namespace TorchSharp
         /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
         /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
         /// </summary>
-        public class RelaxedBernoulli : TransformedDistribution
+        public class RelaxedOneHotCategorical : TransformedDistribution
         {
             /// <summary>
             /// Constructor
@@ -24,8 +24,8 @@ namespace TorchSharp
             /// <param name="probs">the probability of sampling `1`</param>
             /// <param name="logits">the log-odds of sampling `1`</param>
             /// <param name="generator"></param>
-            public RelaxedBernoulli(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null) :
-                base(LogitRelaxedBernoulli(temperature, probs, logits, generator), new distributions.transforms.SigmoidTransform(), generator)
+            public RelaxedOneHotCategorical(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null) :
+                base(ExpRelaxedCategorical(temperature, probs, logits, generator), new distributions.transforms.ExpTransform(), generator)
             {
                 this._probs = probs;
                 this._logits = logits;
@@ -34,7 +34,7 @@ namespace TorchSharp
             private Tensor _probs;
             private Tensor _logits;
 
-            private LogitRelaxedBernoulli base_dist => this.base_distribution as LogitRelaxedBernoulli;
+            private ExpRelaxedCategorical base_dist => this.base_distribution as ExpRelaxedCategorical;
 
             /// <summary>
             /// The probability of sampling 1
@@ -70,10 +70,10 @@ namespace TorchSharp
             /// <returns></returns>
             public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
-                if (instance != null && !(instance is RelaxedBernoulli))
-                    throw new ArgumentException("expand(): 'instance' must be a RelaxedBernoulli distribution");
+                if (instance != null && !(instance is RelaxedOneHotCategorical))
+                    throw new ArgumentException("expand(): 'instance' must be a RelaxedOneHotCategorical distribution");
 
-                var newDistribution = ((instance == null) ? new RelaxedBernoulli(temperature, _probs, _logits, generator) : instance) as RelaxedBernoulli;
+                var newDistribution = ((instance == null) ? new RelaxedOneHotCategorical(temperature, _probs, _logits, generator) : instance) as RelaxedOneHotCategorical;
 
                 newDistribution.batch_shape = batch_shape;
                 return base.expand(batch_shape, newDistribution);
@@ -86,7 +86,7 @@ namespace TorchSharp
         public static partial class distributions
         {
             /// <summary>
-            /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
+            /// Creates a RelaxedOneHotCategorical distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
             /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
@@ -94,13 +94,13 @@ namespace TorchSharp
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static RelaxedBernoulli RelaxedBernoulli(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
+            public static RelaxedOneHotCategorical RelaxedOneHotCategorical(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
             {
-                return new RelaxedBernoulli(temperature, probs, logits, generator);
+                return new RelaxedOneHotCategorical(temperature, probs, logits, generator);
             }
 
             /// <summary>
-            /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
+            /// Creates a RelaxedOneHotCategorical distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
             /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
@@ -108,19 +108,19 @@ namespace TorchSharp
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static RelaxedBernoulli RelaxedBernoulli(Tensor temperature, float? probs, float? logits, torch.Generator generator = null)
+            public static RelaxedOneHotCategorical RelaxedOneHotCategorical(Tensor temperature, float? probs, float? logits, torch.Generator generator = null)
             {
                 if (probs.HasValue && !logits.HasValue)
-                    return new RelaxedBernoulli(temperature, torch.tensor(probs.Value), null, generator);
+                    return new RelaxedOneHotCategorical(temperature, torch.tensor(probs.Value), null, generator);
                 else if (!probs.HasValue && logits.HasValue)
-                    return new RelaxedBernoulli(temperature, null, torch.tensor(logits.Value), generator);
+                    return new RelaxedOneHotCategorical(temperature, null, torch.tensor(logits.Value), generator);
                 else
                     throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
             }
 
 
             /// <summary>
-            /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
+            /// Creates a RelaxedOneHotCategorical distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
             /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
@@ -128,12 +128,12 @@ namespace TorchSharp
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static RelaxedBernoulli RelaxedBernoulli(Tensor temperature, double? probs, double? logits, torch.Generator generator = null)
+            public static RelaxedOneHotCategorical RelaxedOneHotCategorical(Tensor temperature, double? probs, double? logits, torch.Generator generator = null)
             {
                 if (probs.HasValue && !logits.HasValue)
-                    return new RelaxedBernoulli(temperature, torch.tensor(probs.Value), null, generator);
+                    return new RelaxedOneHotCategorical(temperature, torch.tensor(probs.Value), null, generator);
                 else if (!probs.HasValue && logits.HasValue)
-                    return new RelaxedBernoulli(temperature, null, torch.tensor(logits.Value), generator);
+                    return new RelaxedOneHotCategorical(temperature, null, torch.tensor(logits.Value), generator);
                 else
                     throw new ArgumentException("One and only one of 'probs' and 'logits' should be non-null");
             }

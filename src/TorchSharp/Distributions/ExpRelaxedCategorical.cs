@@ -12,10 +12,10 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
-        /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
+        /// Creates a ExpRelaxedCategorical parameterized by `temperature`, and either `probs` or `logits` (but not both).
+        /// Returns the log of a point in the simplex.
         /// </summary>
-        public class RelaxedBernoulli : TransformedDistribution
+        public class ExpRelaxedCategorical : Distribution
         {
             /// <summary>
             /// Constructor
@@ -24,24 +24,27 @@ namespace TorchSharp
             /// <param name="probs">the probability of sampling `1`</param>
             /// <param name="logits">the log-odds of sampling `1`</param>
             /// <param name="generator"></param>
-            public RelaxedBernoulli(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null) :
-                base(LogitRelaxedBernoulli(temperature, probs, logits, generator), new distributions.transforms.SigmoidTransform(), generator)
+            internal ExpRelaxedCategorical(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null) :
+                base(generator)
             {
+                this._categorical = Categorical(probs, logits, generator);
                 this._probs = probs;
                 this._logits = logits;
+                this._temperature = temperature;
+                base._init(_categorical.batch_shape, _categorical.event_shape);
             }
 
             private Tensor _probs;
             private Tensor _logits;
-
-            private LogitRelaxedBernoulli base_dist => this.base_distribution as LogitRelaxedBernoulli;
+            private Tensor _temperature;
+            private Categorical _categorical;
 
             /// <summary>
             /// The probability of sampling 1
             /// </summary>
             public Tensor probs {
                 get {
-                    return base_dist.probs;
+                    return _categorical.probs;
                 }
             }
 
@@ -50,15 +53,23 @@ namespace TorchSharp
             /// </summary>
             public Tensor logits {
                 get {
-                    return base_dist.logits;
+                    return _categorical.logits;
                 }
             }
 
             public Tensor temperature {
                 get {
-                    return base_dist.logits;
+                    return _temperature;
                 }
             }
+
+            public override Tensor mean => throw new NotImplementedException();
+
+            public override Tensor mode => base.mode;
+
+            public override Tensor variance => throw new NotImplementedException();
+
+            public override Tensor stddev => base.stddev;
 
             /// <summary>
             /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
@@ -70,13 +81,52 @@ namespace TorchSharp
             /// <returns></returns>
             public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
-                if (instance != null && !(instance is RelaxedBernoulli))
-                    throw new ArgumentException("expand(): 'instance' must be a RelaxedBernoulli distribution");
+                if (instance != null && !(instance is ExpRelaxedCategorical))
+                    throw new ArgumentException("expand(): 'instance' must be a ExpRelaxedCategorical distribution");
 
-                var newDistribution = ((instance == null) ? new RelaxedBernoulli(temperature, _probs, _logits, generator) : instance) as RelaxedBernoulli;
+                var newDistribution = ((instance == null) ? new ExpRelaxedCategorical(temperature, _probs, _logits, generator) : instance) as ExpRelaxedCategorical;
 
                 newDistribution.batch_shape = batch_shape;
-                return base.expand(batch_shape, newDistribution);
+                if (newDistribution == instance) {
+                    newDistribution._temperature = _temperature;
+                    newDistribution._categorical = _categorical.expand(batch_shape) as Categorical;
+                }
+                return newDistribution;
+            }
+
+            /// <summary>
+            ///  The shape of the input parameter.
+            /// </summary>
+            public long[] param_shape {
+                get {
+                    return _categorical.param_shape;
+                }
+            }
+
+            public override Tensor sample(params long[] sample_shape)
+            {
+                return rsample(sample_shape);
+            }
+
+            public override Tensor rsample(params long[] sample_shape)
+            {
+                var shape = ExtendedShape(sample_shape);
+                var uniforms = ClampProbs(torch.rand(shape, dtype: _logits.dtype, device: _logits.device));
+                var gumbels = -((-(uniforms.log())).log());
+                var scores = (_logits + gumbels) / _temperature;
+                return scores - scores.logsumexp(dim: -1, keepdim: true);
+            }
+
+            public override Tensor log_prob(Tensor value)
+            {
+                float K = _categorical.num_events;
+                var logitsValue = broadcast_tensors(_logits, value);
+                var logits = logitsValue[0];
+                value = logitsValue[1];
+                var log_scale = (torch.full_like(_temperature, K).lgamma() - _temperature.log().mul(-(K - 1)));
+                var score = logits - value.mul(_temperature);
+                score = (score - score.logsumexp(dim: -1, keepdim: true)).sum(-1);
+                return score + log_scale;
             }
         }
 
@@ -94,9 +144,9 @@ namespace TorchSharp
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static RelaxedBernoulli RelaxedBernoulli(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
+            public static ExpRelaxedCategorical ExpRelaxedCategorical(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
             {
-                return new RelaxedBernoulli(temperature, probs, logits, generator);
+                return new ExpRelaxedCategorical(temperature, probs, logits, generator);
             }
 
             /// <summary>
@@ -108,12 +158,12 @@ namespace TorchSharp
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static RelaxedBernoulli RelaxedBernoulli(Tensor temperature, float? probs, float? logits, torch.Generator generator = null)
+            public static ExpRelaxedCategorical ExpRelaxedCategorical(Tensor temperature, float? probs, float? logits, torch.Generator generator = null)
             {
                 if (probs.HasValue && !logits.HasValue)
-                    return new RelaxedBernoulli(temperature, torch.tensor(probs.Value), null, generator);
+                    return new ExpRelaxedCategorical(temperature, torch.tensor(probs.Value), null, generator);
                 else if (!probs.HasValue && logits.HasValue)
-                    return new RelaxedBernoulli(temperature, null, torch.tensor(logits.Value), generator);
+                    return new ExpRelaxedCategorical(temperature, null, torch.tensor(logits.Value), generator);
                 else
                     throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
             }
@@ -128,12 +178,12 @@ namespace TorchSharp
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static RelaxedBernoulli RelaxedBernoulli(Tensor temperature, double? probs, double? logits, torch.Generator generator = null)
+            public static ExpRelaxedCategorical ExpRelaxedCategorical(Tensor temperature, double? probs, double? logits, torch.Generator generator = null)
             {
                 if (probs.HasValue && !logits.HasValue)
                     return new RelaxedBernoulli(temperature, torch.tensor(probs.Value), null, generator);
                 else if (!probs.HasValue && logits.HasValue)
-                    return new RelaxedBernoulli(temperature, null, torch.tensor(logits.Value), generator);
+                    return new ExpRelaxedCategorical(temperature, null, torch.tensor(logits.Value), generator);
                 else
                     throw new ArgumentException("One and only one of 'probs' and 'logits' should be non-null");
             }

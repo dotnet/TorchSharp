@@ -65,12 +65,6 @@ namespace TorchSharp
             private Tensor _probs;
             private Tensor _logits;
 
-            private Tensor clamp_probs(Tensor probs)
-            {
-                var eps = torch.finfo(probs.dtype).eps;
-                return probs.clamp(min: eps, max: 1 - eps);
-            }
-
             /// <summary>
             ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
             ///  if the distribution parameters are batched.
