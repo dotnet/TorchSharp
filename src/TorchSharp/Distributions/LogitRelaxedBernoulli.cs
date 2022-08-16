@@ -73,10 +73,11 @@ namespace TorchSharp
             /// <returns></returns>
             public override Tensor rsample(params long[] sample_shape)
             {
+                using var _ = NewDisposeScope();
                 var shape = ExtendedShape(sample_shape);
                 var probs = ClampProbs(_probs.expand(shape));
                 var uniforms = ClampProbs(torch.rand(shape, dtype: probs.dtype, device: probs.device));
-                return (uniforms.log() - (-uniforms).log1p() + probs.log() - (-probs).log1p()) / _temperature;
+                return ((uniforms.log() - (-uniforms).log1p() + probs.log() - (-probs).log1p()) / _temperature).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -87,9 +88,10 @@ namespace TorchSharp
 
             public override Tensor log_prob(Tensor value)
             {
+                using var _ = NewDisposeScope();
                 var logitsValue = torch.broadcast_tensors(logits, value);
                 var diff = logitsValue[0] - logitsValue[1].mul(_temperature);
-                return _temperature.log() + diff - 2 * diff.exp().log1p();
+                return (_temperature.log() + diff - 2 * diff.exp().log1p()).MoveToOuterDisposeScope();
             }
 
             /// <summary>

@@ -36,9 +36,10 @@ namespace TorchSharp
 
             public override Tensor mode {
                 get {
+                    using var _ = torch.NewDisposeScope();
                     var log_mode = concentration0.reciprocal() * (-concentration0).log1p() - (-concentration0 * concentration1).log1p();
                     log_mode[(concentration0 < 1) | (concentration1 < 1)] = double.NaN;
-                    return log_mode.exp();
+                    return log_mode.exp().MoveToOuterDisposeScope();
                 }
             }
 
@@ -46,10 +47,11 @@ namespace TorchSharp
 
             public override Tensor entropy()
             {
+                using var _ = torch.NewDisposeScope();
                 var t1 = (1 - concentration1.reciprocal());
                 var t0 = (1 - concentration0.reciprocal());
                 var H0 = torch.digamma(concentration0 + 1) + euler_constant;
-                return t0 + t1 * H0 - torch.log(concentration1) - torch.log(concentration0);
+                return (t0 + t1 * H0 - torch.log(concentration1) - torch.log(concentration0)).MoveToOuterDisposeScope();
             }
 
             public override Distribution expand(Size batch_shape, Distribution instance = null)
@@ -67,9 +69,10 @@ namespace TorchSharp
 
             private Tensor moments(Tensor a, Tensor b, int n)
             {
+                using var _ = torch.NewDisposeScope();
                 var arg1 = 1 + n / a;
                 var log_value = torch.lgamma(arg1) + torch.lgamma(b) - torch.lgamma(arg1 + b);
-                return b * torch.exp(log_value);
+                return (b * torch.exp(log_value)).MoveToOuterDisposeScope();
             }
         }
     }

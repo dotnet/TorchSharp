@@ -110,15 +110,17 @@ namespace TorchSharp
 
             public override Tensor rsample(params long[] sample_shape)
             {
+                using var _ = torch.NewDisposeScope();
                 var shape = ExtendedShape(sample_shape);
                 var uniforms = ClampProbs(torch.rand(shape, dtype: _logits.dtype, device: _logits.device));
                 var gumbels = -((-(uniforms.log())).log());
                 var scores = (_logits + gumbels) / _temperature;
-                return scores - scores.logsumexp(dim: -1, keepdim: true);
+                return (scores - scores.logsumexp(dim: -1, keepdim: true)).MoveToOuterDisposeScope();
             }
 
             public override Tensor log_prob(Tensor value)
             {
+                using var _ = torch.NewDisposeScope();
                 float K = _categorical.num_events;
                 var logitsValue = broadcast_tensors(_logits, value);
                 var logits = logitsValue[0];
@@ -126,7 +128,7 @@ namespace TorchSharp
                 var log_scale = (torch.full_like(_temperature, K).lgamma() - _temperature.log().mul(-(K - 1)));
                 var score = logits - value.mul(_temperature);
                 score = (score - score.logsumexp(dim: -1, keepdim: true)).sum(-1);
-                return score + log_scale;
+                return (score + log_scale).MoveToOuterDisposeScope();
             }
 
             public override Tensor entropy()

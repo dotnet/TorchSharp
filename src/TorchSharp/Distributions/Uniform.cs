@@ -46,9 +46,10 @@ namespace TorchSharp
             /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
+                var _ = torch.NewDisposeScope();
                 var shape = ExtendedShape(sample_shape);
                 var rand = torch.rand(shape, dtype: low.dtype, device: low.device, generator: generator);
-                return low + rand * (high - low);
+                return (low + rand * (high - low)).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -57,9 +58,10 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
+                var _ = torch.NewDisposeScope();
                 var lb = low.le(value).type_as(low);
                 var ub = high.gt(value).type_as(low);
-                return torch.log(lb.mul(ub)) - torch.log(high - low);
+                return (torch.log(lb.mul(ub)) - torch.log(high - low)).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -68,7 +70,7 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
-                return (value - low) / (high - low).clamp(0, 1);
+                return torch.WrappedTensorDisposeScope(() => (value - low) / (high - low).clamp(0, 1));
             }
 
             /// <summary>
@@ -77,7 +79,7 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor icdf(Tensor value)
             {
-                return value * (high - low) + low;
+                return torch.WrappedTensorDisposeScope(() => value * (high - low) + low);
             }
 
             /// <summary>
@@ -85,7 +87,7 @@ namespace TorchSharp
             /// </summary>
             public override Tensor entropy()
             {
-                return (high - low).log();
+                return torch.WrappedTensorDisposeScope(() => (high - low).log());
             }
 
             /// <summary>

@@ -67,7 +67,9 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
-                return -torch.log(2 * scale) - torch.abs(value - loc) / scale;
+                return torch.WrappedTensorDisposeScope(() =>
+                    -torch.log(2 * scale) - torch.abs(value - loc) / scale
+                );
             }
 
             /// <summary>
@@ -75,7 +77,9 @@ namespace TorchSharp
             /// </summary>
             public override Tensor entropy()
             {
-                return 1 + torch.log(2 * scale);
+                return torch.WrappedTensorDisposeScope(() =>
+                    1 + torch.log(2 * scale)
+                );
             }
 
             /// <summary>
@@ -84,7 +88,9 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
-                return 0.5 - 0.5 * (value - loc).sign() * torch.expm1(-(value - loc).abs() / scale);
+                return torch.WrappedTensorDisposeScope(() =>
+                    0.5 - 0.5 * (value - loc).sign() * torch.expm1(-(value - loc).abs() / scale)
+                );
             }
 
             /// <summary>
@@ -93,8 +99,9 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor icdf(Tensor value)
             {
+                using var _ = NewDisposeScope();
                 var term = value - 0.5;
-                return loc - scale * (term).sign() * torch.log1p(-2 * term.abs());
+                return (loc - scale * (term).sign() * torch.log1p(-2 * term.abs())).MoveToOuterDisposeScope();
             }
 
             /// <summary>

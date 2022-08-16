@@ -7409,5 +7409,15 @@ namespace TorchSharp
         /// be automatically disposed once the dispose scope is disposed.
         /// </summary>
         public static DisposeScope NewDisposeScope() => DisposeScopeManager.NewDisposeScope();
+
+        /// <summary>
+        /// Creates a new dispose scope for the current thread, wrapping an expression.
+        /// </summary>
+        public static Tensor WrappedTensorDisposeScope(Func<Tensor> expr)
+        {
+            var scope = torch.NewDisposeScope();
+            var result = expr();
+            return result.MoveToOuterDisposeScope();
+        }
     }
 }

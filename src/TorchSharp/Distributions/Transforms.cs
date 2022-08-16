@@ -246,10 +246,11 @@ namespace TorchSharp
 
                     protected internal override Tensor _call(Tensor x)
                     {
+                        var _ = torch.NewDisposeScope();
                         foreach (var p in _parts) {
                             x = p._call(x);
                         }
-                        return x;
+                        return x.MoveToOuterDisposeScope();
                     }
 
                     protected internal override Tensor _inverse(Tensor y)
@@ -344,9 +345,10 @@ namespace TorchSharp
 
                     protected internal override Tensor log_abs_det_jacobian(Tensor x, Tensor y)
                     {
+                        using var _ = torch.NewDisposeScope();
                         var result = base_transform.log_abs_det_jacobian(x, y);
                         result = _sum_rightmost(result, reinterpreted_batch_dims);
-                        return result;
+                        return result.MoveToOuterDisposeScope();
                     }
 
                     protected internal override Tensor _call(Tensor x)
@@ -477,7 +479,7 @@ namespace TorchSharp
 
                     protected internal override Tensor log_abs_det_jacobian(Tensor x, Tensor y)
                     {
-                        return (exponent * y / x).abs().log();
+                        return torch.WrappedTensorDisposeScope(() => (exponent * y / x).abs().log());
                     }
 
                     protected internal override Tensor _call(Tensor x)
@@ -506,14 +508,15 @@ namespace TorchSharp
                     protected internal override Tensor _call(Tensor x)
                     {
                         var finfo = torch.finfo(x.dtype);
-                        return torch.clamp(torch.sigmoid(x), min: finfo.tiny, max: 1 - finfo.eps);
+                        return torch.WrappedTensorDisposeScope(() => torch.clamp(torch.sigmoid(x), min: finfo.tiny, max: 1 - finfo.eps));
                     }
 
                     protected internal override Tensor _inverse(Tensor y)
                     {
+                        using var _ = torch.NewDisposeScope();
                         var finfo = torch.finfo(y.dtype);
                         y = y.clamp(min: finfo.tiny, max: 1 - finfo.eps);
-                        return y.log() - (-y).log1p();
+                        return (y.log() - (-y).log1p()).MoveToOuterDisposeScope();
                     }
                 }
 
@@ -527,11 +530,11 @@ namespace TorchSharp
 
                     protected internal override Tensor _sign() => 1;
 
-                    protected internal override Tensor log_abs_det_jacobian(Tensor x, Tensor y) => -nn.functional.softplus(-x);
+                    protected internal override Tensor log_abs_det_jacobian(Tensor x, Tensor y) => torch.WrappedTensorDisposeScope(() => -nn.functional.softplus(-x));
 
                     protected internal override Tensor _call(Tensor x) => nn.functional.softplus(x);
 
-                    protected internal override Tensor _inverse(Tensor y) => (-y).expm1().neg().log() + y;
+                    protected internal override Tensor _inverse(Tensor y) => torch.WrappedTensorDisposeScope(() => (-y).expm1().neg().log() + y);
                 }
 
                 public class SoftmaxTransform : Transform
@@ -566,7 +569,7 @@ namespace TorchSharp
 
                     protected internal override Tensor _sign() => 1;
 
-                    protected internal override Tensor log_abs_det_jacobian(Tensor x, Tensor y) => 2.0 * (Math.Log(2.0) - x - -nn.functional.softplus(-2.0 * x));
+                    protected internal override Tensor log_abs_det_jacobian(Tensor x, Tensor y) => torch.WrappedTensorDisposeScope(() => 2.0 * (Math.Log(2.0) - x - -nn.functional.softplus(-2.0 * x)));
 
                     protected internal override Tensor _call(Tensor x) => x.tanh();
 
@@ -644,9 +647,9 @@ namespace TorchSharp
                         return result.expand(shape).MoveToOuterDisposeScope();
                     }
 
-                    protected internal override Tensor _call(Tensor x) => loc + scale * x;
+                    protected internal override Tensor _call(Tensor x) => torch.WrappedTensorDisposeScope(() => loc + scale * x);
 
-                    protected internal override Tensor _inverse(Tensor y) => (y - loc) / scale;
+                    protected internal override Tensor _inverse(Tensor y) => torch.WrappedTensorDisposeScope(() => (y - loc) / scale);
 
                     protected internal override Tensor _sign()
                     {

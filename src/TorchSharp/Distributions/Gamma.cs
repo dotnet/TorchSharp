@@ -48,9 +48,10 @@ namespace TorchSharp
             /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
+                using var _ = torch.NewDisposeScope();
                 var shape = ExtendedShape(sample_shape);
                 var value = torch._standard_gamma(concentration.expand(shape), generator: generator) / rate.expand(shape);
-                return value.detach().clamp_(min: torch.finfo(value.dtype).tiny);
+                return value.detach().clamp_(min: torch.finfo(value.dtype).tiny).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -59,8 +60,10 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
+                using var _ = torch.NewDisposeScope();
                 value = torch.as_tensor(value, dtype: rate.dtype, device: rate.device);
-                return concentration * rate.log() + (concentration - 1) * value.log() - rate * value - torch.lgamma(concentration);
+                var result = concentration * rate.log() + (concentration - 1) * value.log() - rate * value - torch.lgamma(concentration);
+                return result.MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -68,7 +71,9 @@ namespace TorchSharp
             /// </summary>
             public override Tensor entropy()
             {
-                return concentration - rate.log() + concentration.lgamma() + (1.0 - concentration) * concentration.digamma();
+                return torch.WrappedTensorDisposeScope(() =>
+                    concentration - rate.log() + concentration.lgamma() + (1.0 - concentration) * concentration.digamma()
+                );
             }
 
             /// <summary>
