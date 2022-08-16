@@ -12,7 +12,8 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// A Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+        /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
+        /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
         /// </summary>
         public class RelaxedBernoulli : TransformedDistribution
         {
@@ -85,7 +86,8 @@ namespace TorchSharp
         public static partial class distributions
         {
             /// <summary>
-            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
+            /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
@@ -98,7 +100,8 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
+            /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
@@ -117,7 +120,8 @@ namespace TorchSharp
 
 
             /// <summary>
-            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a RelaxedBernoulli distribution, parametrized by `temperature`, and either `probs` or `logits` (but not both).
+            /// This is a relaxed version of the `Bernoulli` distribution, so the values are in (0, 1), and has reparametrizable samples.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>

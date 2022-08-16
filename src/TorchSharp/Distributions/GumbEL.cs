@@ -12,6 +12,9 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// Samples from a Gumbel Distribution.
+        /// </summary>
         public class Gumbel : TransformedDistribution
         {
             internal Gumbel(Tensor loc, Tensor scale, Distribution base_distribution, torch.distributions.transforms.Transform[] transforms, torch.Generator generator = null) :
@@ -34,6 +37,9 @@ namespace TorchSharp
 
             public override Tensor stddev => pioversqrtsix * scale;
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
             public override Tensor entropy() => scale.log() + (1 + euler_constant);
 
             private double pioversqrtsix = Math.PI / Math.Sqrt(6);

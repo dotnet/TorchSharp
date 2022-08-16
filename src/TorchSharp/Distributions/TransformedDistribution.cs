@@ -12,6 +12,9 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// Extension of the Distribution class, which applies a sequence of Transforms to a base distribution.
+        /// </summary>
         public class TransformedDistribution : Distribution
         {
             protected Distribution base_distribution;

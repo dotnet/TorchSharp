@@ -12,6 +12,11 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// Creates a half-normal distribution parameterized by `scale`
+        /// </summary>
+        /// <param name="scale">Scale parameter of the distribution.</param>
+        /// <param name="generator">An optional random number generator object.</param>
         public class HalfNormal : TransformedDistribution
         {
             internal HalfNormal(Tensor scale, torch.Generator generator = null) :
@@ -35,6 +40,14 @@ namespace TorchSharp
                 return lp;
             }
 
+
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override Distribution expand(Size batch_shape, Distribution instance = null)
             {
                 var newDistribution = ((instance == null)

@@ -9,7 +9,8 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// A Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+        /// Creates a LogitRelaxedBernoulli distribution parameterized by `probs` or 'logits` (but not both),
+        /// which is the logit of a RelaxedBernoulli distribution.
         /// </summary>
         public class LogitRelaxedBernoulli : torch.distributions.Distribution
         {
@@ -139,7 +140,8 @@ namespace TorchSharp
         public static partial class distributions
         {
             /// <summary>
-            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a LogitRelaxedBernoulli distribution parameterized by `probs` or 'logits` (but not both),
+            /// which is the logit of a RelaxedBernoulli distribution.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
@@ -152,7 +154,8 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a LogitRelaxedBernoulli distribution parameterized by `probs` or 'logits` (but not both),
+            /// which is the logit of a RelaxedBernoulli distribution.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
@@ -171,7 +174,8 @@ namespace TorchSharp
 
 
             /// <summary>
-            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a LogitRelaxedBernoulli distribution parameterized by `probs` or 'logits` (but not both),
+            /// which is the logit of a RelaxedBernoulli distribution.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>

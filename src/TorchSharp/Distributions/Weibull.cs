@@ -13,6 +13,9 @@ namespace TorchSharp
 
     namespace Modules
     {
+        /// <summary>
+        /// Samples from a two-parameter Weibull distribution.
+        /// </summary>
         public class Weibull : TransformedDistribution
         {
             internal Weibull(Tensor scale, Tensor concentration, Tensor concentration_reciprocal, Distribution base_distribution, torch.distributions.transforms.Transform[] transforms, torch.Generator generator = null) :
@@ -35,9 +38,19 @@ namespace TorchSharp
                 scale.pow(2) * (torch.exp(torch.lgamma(1 + 2 * concentration_reciprocal)) -
                 torch.exp(2 * torch.lgamma(1 + concentration_reciprocal)));
 
+            /// <summary>
+            /// Returns entropy of distribution, batched over batch_shape.
+            /// </summary>
             public override Tensor entropy() =>
                 euler_constant * (1 - concentration_reciprocal) + torch.log(scale * concentration_reciprocal) + 1;
 
+            /// <summary>
+            /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to
+            /// `batch_shape`. This method calls `torch.Tensor.expand()` on the distribution's parameters. As such, this does not allocate new
+            /// memory for the expanded distribution instance.
+            /// </summary>
+            /// <param name="batch_shape">Tthe desired expanded size.</param>
+            /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override Distribution expand(Size batch_shape, Distribution instance = null)
             {
                 var cExp = concentration.expand(batch_shape);
@@ -65,7 +78,7 @@ namespace TorchSharp
         public static partial class distributions
         {
             /// <summary>
-            /// Samples from a Weibull Distribution.
+            /// Samples from a two-parameter Weibull distribution.
             /// </summary>
             /// <param name="concentration">Concentration parameter of distribution (k/shape).</param>
             /// <param name="scale">Scale parameter of the distribution.</param>
