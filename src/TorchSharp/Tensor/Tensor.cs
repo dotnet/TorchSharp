@@ -5108,6 +5108,11 @@ namespace TorchSharp
                 }
             }
 
+            public Tensor expand(Size sizes, bool isImplicit = false)
+            {
+                return expand((ReadOnlySpan<long>)sizes.Shape, isImplicit);
+            }
+
             /// <summary>
             ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
             /// </summary>

@@ -13,11 +13,13 @@ __Fixed Bugs:__
 __API Changes__:
 
 Add `repeat_interleave()`<br/>
+Add torch.broadcast_shapes()<br/>
 Added meshgrid, mT, mH, and H<br/>
 Added torchvision -- sigmoid_focal_loss()<br/>
 Update the arguments of `dropout()` in `Tacotron2`<br/>
 Add static function for `all()`, `any()`, `tile()`, `repeat_interleave()`.<br/>
 Add an implementation of the ReduceLROnPlateau learning rate scheduler.<br/>
+Added additional distributions.<br/>
 
 ## NuGet Version 0.97.2
 

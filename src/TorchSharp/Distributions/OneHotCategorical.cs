@@ -116,7 +116,7 @@ namespace TorchSharp
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             /// <returns></returns>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Bernoulli))
                     throw new ArgumentException("expand(): 'instance' must be a Bernoulli distribution");
@@ -124,7 +124,7 @@ namespace TorchSharp
                 var p = _probs?.expand(batch_shape);
                 var l = _logits?.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new OneHotCategorical(p, l) : instance) as OneHotCategorical;
+                var newDistribution = ((instance == null) ? new OneHotCategorical(p, l, generator) : instance) as OneHotCategorical;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

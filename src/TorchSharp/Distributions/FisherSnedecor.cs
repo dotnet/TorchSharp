@@ -96,7 +96,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is FisherSnedecor))
                     throw new ArgumentException("expand(): 'instance' must be a FisherSnedecor distribution");
@@ -104,7 +104,7 @@ namespace TorchSharp
                 var df1 = this.df1.expand(batch_shape);
                 var df2 = this.df2.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new FisherSnedecor(df1, df2) : instance) as FisherSnedecor;
+                var newDistribution = ((instance == null) ? new FisherSnedecor(df1, df2, generator) : instance) as FisherSnedecor;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

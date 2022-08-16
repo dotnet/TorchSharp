@@ -29,13 +29,13 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Chi2))
                     throw new ArgumentException("expand(): 'instance' must be a Chi2 distribution");
 
                 if (instance == null) {
-                    instance = new Chi2(concentration);
+                    instance = new Chi2(concentration, generator);
                 }
                 return base.expand(batch_shape, instance);
             }

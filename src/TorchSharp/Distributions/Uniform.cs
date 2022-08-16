@@ -95,13 +95,13 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Uniform))
                     throw new ArgumentException("expand(): 'instance' must be a Uniform distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Uniform(low.expand(batch_shape), high.expand(batch_shape)) :
+                    new Uniform(low.expand(batch_shape), high.expand(batch_shape), generator) :
                     instance) as Uniform;
 
                 newDistribution.batch_shape = batch_shape;

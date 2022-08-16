@@ -3,6 +3,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections;
+using System.Net;
 
 #nullable enable
 namespace TorchSharp
@@ -21,12 +22,26 @@ namespace TorchSharp
         public struct Size : IEnumerable<long>
         {
             /// <summary>
+            /// Represents an empty size.
+            /// </summary>
+            public static Size Empty = new Size(System.Array.Empty<long>());
+
+            /// <summary>
             /// Constructor
             /// </summary>
             /// <param name="shape">An array of longs, the size of an N-D tensor.</param>
             public Size(long[] shape)
             {
                 _shape = shape;
+            }
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="shape">An enumerable of longs, the size of an N-D tensor.</param>
+            public Size(IEnumerable<long> shape)
+            {
+                _shape = shape.ToArray();
             }
 
             /// <summary>
@@ -156,9 +171,16 @@ namespace TorchSharp
             public static implicit operator Size((long, long, long, long, long) size) => new Size(size);
             public static implicit operator Size((long, long, long, long, long, long) size) => new Size(size);
 
+            public static implicit operator Size(long[] size) => new Size(size);
+
             public static Size operator +(Size left, Size right)
             {
                 return new Size(left._shape.AsEnumerable<long>().Concat<long>(right._shape).ToArray());
+            }
+
+            public static Size operator +(Size left, IEnumerable<long> right)
+            {
+                return new Size(left._shape.AsEnumerable<long>().Concat<long>(right).ToArray());
             }
 
             //public static implicit operator Size(long[] size) => new Size(size);
@@ -173,6 +195,37 @@ namespace TorchSharp
                 if (obj is null || !(obj is Size)) return false;
 
                 return _shape.Equals(((Size)obj)._shape);
+            }
+
+            public Size Slice(int first, int next)
+            {
+                if (next < 0) {
+                    next = _shape.Length + next;
+                }
+
+                if (first < 0) {
+                    first = _shape.Length + first;
+                }
+
+                if (next <= first) {
+                    return Size.Empty;
+                }
+
+                if (first == 0) {
+                    if (next == _shape.Length) {
+                        return this;
+                    }
+                    else {
+                        return new Size(_shape.Take(next));
+                    }
+                }
+                else {
+                    if (next == _shape.Length) {
+                        return new Size(_shape.Skip(first));
+                    } else {
+                        return new Size(_shape.Skip(first).Take(next-first));
+                    }
+                }
             }
 
             public override int GetHashCode()
@@ -192,6 +245,10 @@ namespace TorchSharp
                 }
                 return size;
             }
+
+            public bool IsEmpty => _shape.Length == 0;
+
+            public bool IsScalar => IsEmpty;
 
             public int Length => _shape.Length;
 
@@ -225,9 +282,31 @@ namespace TorchSharp
                 get { return _shape[(int)idx]; }
             }
 
-            internal long[] Shape { get { return _shape; } }
+            public long[] Shape { get { return _shape; } }
 
             private long[] _shape;
+        }
+
+        public static Size broadcast_shapes(params long[][] shapes)
+        {
+            var max_len = 0;
+            foreach (var shape in shapes) {
+                var s = shape.Length;
+                if (s > max_len) max_len = s;
+            }
+
+            var result = Enumerable.Repeat<long>(1, max_len).ToArray();
+
+            foreach (var shape in shapes) {
+                for (var i = shape.Length - 1; i >= 0; i--) {
+                    if (shape.Length == 0 || shape[i] == 1 || shape[i] == result[i])
+                        continue;
+                    if (result[i] != 1)
+                        throw new System.ArgumentException("Shape mismatch: objects cannot be broadcast to a single shape");
+                    result[i] = shape[i];
+                }
+            }
+            return result;
         }
     }
 }

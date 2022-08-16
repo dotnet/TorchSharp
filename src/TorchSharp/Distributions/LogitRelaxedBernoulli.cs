@@ -9,7 +9,8 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// A Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+        /// Creates a LogitRelaxedBernoulli distribution parameterized by `probs` or 'logits` (but not both),
+        /// which is the logit of a RelaxedBernoulli distribution.
         /// </summary>
         public class LogitRelaxedBernoulli : torch.distributions.Distribution
         {
@@ -27,19 +28,19 @@ namespace TorchSharp
             /// Constructor
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
-            /// <param name="p"></param>
-            /// <param name="l"></param>
+            /// <param name="probs"></param>
+            /// <param name="logits"></param>
             /// <param name="generator"></param>
-            public LogitRelaxedBernoulli(Tensor temperature, Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
+            public LogitRelaxedBernoulli(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null) : base(generator)
             {
                 _temperature = temperature;
 
-                if ((p is null && logits is null) || (p is not null && l is not null))
+                if ((probs is null && logits is null) || (probs is not null && logits is not null))
                     throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
 
-                this.batch_shape = p is null ? l.size() : p.size();
-                this._probs = p;
-                this._logits = l;
+                this.batch_shape = probs is null ? logits.size() : probs.size();
+                this._probs = probs;
+                this._logits = logits;
             }
 
             /// <summary>
@@ -113,7 +114,7 @@ namespace TorchSharp
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             /// <returns></returns>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Bernoulli))
                     throw new ArgumentException("expand(): 'instance' must be a Bernoulli distribution");
@@ -121,7 +122,7 @@ namespace TorchSharp
                 var p = _probs?.expand(batch_shape);
                 var l = _logits?.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new LogitRelaxedBernoulli(_temperature, p, l) : instance) as LogitRelaxedBernoulli;
+                var newDistribution = ((instance == null) ? new LogitRelaxedBernoulli(_temperature, p, l, generator) : instance) as LogitRelaxedBernoulli;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {
@@ -139,7 +140,8 @@ namespace TorchSharp
         public static partial class distributions
         {
             /// <summary>
-            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a LogitRelaxedBernoulli distribution parameterized by `probs` or 'logits` (but not both),
+            /// which is the logit of a RelaxedBernoulli distribution.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
@@ -152,7 +154,8 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a LogitRelaxedBernoulli distribution parameterized by `probs` or 'logits` (but not both),
+            /// which is the logit of a RelaxedBernoulli distribution.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>
@@ -171,7 +174,8 @@ namespace TorchSharp
 
 
             /// <summary>
-            /// Creates a Bernoulli distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a LogitRelaxedBernoulli distribution parameterized by `probs` or 'logits` (but not both),
+            /// which is the logit of a RelaxedBernoulli distribution.
             /// </summary>
             /// <param name="temperature">Relaxation temperature</param>
             /// <param name="probs">The probability of sampling '1'</param>

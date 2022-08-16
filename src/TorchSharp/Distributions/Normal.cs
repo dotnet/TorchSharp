@@ -115,12 +115,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Normal))
                     throw new ArgumentException("expand(): 'instance' must be a Normal distribution");
 
-                var newDistribution = ((instance == null) ? new Normal(loc.expand(batch_shape), scale.expand(batch_shape)) : instance) as Normal;
+                var newDistribution = ((instance == null) ? new Normal(loc.expand(batch_shape), scale.expand(batch_shape), generator) : instance) as Normal;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

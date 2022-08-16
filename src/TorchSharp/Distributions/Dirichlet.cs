@@ -86,7 +86,7 @@ namespace TorchSharp
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             /// <returns></returns>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Dirichlet))
                     throw new ArgumentException("expand(): 'instance' must be a Dirichlet distribution");
@@ -97,7 +97,7 @@ namespace TorchSharp
 
                 var c = concentration.expand(shape.ToArray());
 
-                var newDistribution = ((instance == null) ? new Dirichlet(c) : instance) as Dirichlet;
+                var newDistribution = ((instance == null) ? new Dirichlet(c, generator) : instance) as Dirichlet;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

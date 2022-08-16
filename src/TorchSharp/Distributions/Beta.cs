@@ -81,7 +81,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Beta))
                     throw new ArgumentException("expand(): 'instance' must be a Beta distribution");
@@ -89,7 +89,7 @@ namespace TorchSharp
                 var c0 = concentration0.expand(batch_shape);
                 var c1 = concentration1.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new Beta(c1, c0) : instance) as Beta;
+                var newDistribution = ((instance == null) ? new Beta(c1, c0, generator) : instance) as Beta;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

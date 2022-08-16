@@ -110,13 +110,13 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Multinomial))
                     throw new ArgumentException("expand(): 'instance' must be a Multinomial distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Multinomial(total_count, categorical.expand(batch_shape) as Categorical) :
+                    new Multinomial(total_count, categorical.expand(batch_shape) as Categorical, generator) :
                     instance) as Multinomial;
 
                 if (newDistribution == instance) {
