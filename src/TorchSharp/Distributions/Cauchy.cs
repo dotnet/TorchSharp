@@ -98,12 +98,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Cauchy))
                     throw new ArgumentException("expand(): 'instance' must be a Cauchy distribution");
 
-                var newDistribution = ((instance == null) ? new Cauchy(loc.expand(batch_shape), scale.expand(batch_shape)) : instance) as Cauchy;
+                var newDistribution = ((instance == null) ? new Cauchy(loc.expand(batch_shape), scale.expand(batch_shape), generator) : instance) as Cauchy;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

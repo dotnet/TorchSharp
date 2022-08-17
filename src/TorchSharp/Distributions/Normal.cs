@@ -77,9 +77,10 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
+                using var _ = NewDisposeScope();
                 var v = scale.pow(2);
                 var log_scale = scale.log();
-                return -((value - loc).pow(2)) / (2 * v) - log_scale - Math.Log(Math.Sqrt(2 * Math.PI));
+                return (-((value - loc).pow(2)) / (2 * v) - log_scale - Math.Log(Math.Sqrt(2 * Math.PI))).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -87,7 +88,9 @@ namespace TorchSharp
             /// </summary>
             public override Tensor entropy()
             {
-                return 0.5 + 0.5 * Math.Log(2 * Math.PI) + torch.log(scale);
+                return torch.WrappedTensorDisposeScope(() =>
+                    0.5 + 0.5 * Math.Log(2 * Math.PI) + torch.log(scale)
+                );
             }
 
             /// <summary>
@@ -96,7 +99,9 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
-                return 0.5 * (1 + torch.special.erf((value - loc) * scale.reciprocal() / Math.Sqrt(2)));
+                return torch.WrappedTensorDisposeScope(() =>
+                    0.5 * (1 + torch.special.erf((value - loc) * scale.reciprocal() / Math.Sqrt(2)))
+                );
             }
 
             /// <summary>
@@ -105,7 +110,9 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor icdf(Tensor value)
             {
-                return loc + scale * torch.special.erfinv(2 * value - 1) * Math.Sqrt(2);
+                return torch.WrappedTensorDisposeScope(() =>
+                    loc + scale * torch.special.erfinv(2 * value - 1) * Math.Sqrt(2)
+                );
             }
 
             /// <summary>
@@ -115,12 +122,12 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Normal))
                     throw new ArgumentException("expand(): 'instance' must be a Normal distribution");
 
-                var newDistribution = ((instance == null) ? new Normal(loc.expand(batch_shape), scale.expand(batch_shape)) : instance) as Normal;
+                var newDistribution = ((instance == null) ? new Normal(loc.expand(batch_shape), scale.expand(batch_shape), generator) : instance) as Normal;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

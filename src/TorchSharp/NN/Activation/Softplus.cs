@@ -62,7 +62,7 @@ namespace TorchSharp
                 /// <param name="beta">The β value for the Softplus formulation.</param>
                 /// <param name="threshold">Values above this revert to a linear function</param>
                 /// <returns></returns>
-                static public Tensor Softplus(Tensor x, double beta = 1.0, double threshold = 20.0)
+                static public Tensor softplus(Tensor x, double beta = 1.0, double threshold = 20.0)
                 {
                     using (var m = nn.Softplus(beta, threshold)) {
                         return m.forward(x);

@@ -96,13 +96,13 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Binomial))
                     throw new ArgumentException("expand(): 'instance' must be a Binomial distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Binomial(total_count.expand(batch_shape), p: _probs?.expand(batch_shape), l: logits?.expand(batch_shape)) :
+                    new Binomial(total_count.expand(batch_shape), p: _probs?.expand(batch_shape), l: logits?.expand(batch_shape), generator) :
                     instance) as Binomial;
 
                 newDistribution.batch_shape = batch_shape;

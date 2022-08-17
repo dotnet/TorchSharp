@@ -68,11 +68,12 @@ namespace TorchSharp
             /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
+                using var _ = torch.NewDisposeScope();
                 var shape = ExtendedShape(sample_shape);
                 var tiny = torch.finfo(probs.dtype).tiny;
                 using (torch.no_grad()) {
                     var u = probs.new_empty(shape).uniform_(tiny, 1, generator: generator);
-                    return (u.log() / (-probs).log1p()).floor();
+                    return (u.log() / (-probs).log1p()).floor().MoveToOuterDisposeScope();
                 }
             }
 
@@ -82,11 +83,12 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
+                using var _ = torch.NewDisposeScope();
                 var bcast = torch.broadcast_tensors(value, probs);
                 value = bcast[0];
                 var p = bcast[1].clone();
                 p[(p == 1) & (value == 0)] = torch.tensor(0);
-                return value * (-p).log1p() + probs.log();
+                return (value * (-p).log1p() + probs.log()).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -105,13 +107,13 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Geometric))
                     throw new ArgumentException("expand(): 'instance' must be a Geometric distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Geometric(probs: _probs?.expand(batch_shape), logits: logits?.expand(batch_shape)) :
+                    new Geometric(probs: _probs?.expand(batch_shape), logits: logits?.expand(batch_shape), generator) :
                     instance) as Geometric;
 
                 newDistribution.batch_shape = batch_shape;

@@ -76,6 +76,7 @@ namespace TorchSharp
             {
                 var cShape = new List<long>(); cShape.Add(total_count); cShape.AddRange(sample_shape);
 
+                using var _ = NewDisposeScope();
                 var samples = categorical.sample(cShape.ToArray());
                 var shifted_idx = Enumerable.Range(0, (int)samples.dim()).ToList();
                 var tc = shifted_idx[0];
@@ -84,7 +85,7 @@ namespace TorchSharp
                 samples = samples.permute(shifted_idx.Select(i => (long)i).ToArray());
                 var counts = samples.new_zeros(ExtendedShape(sample_shape));
                 counts.scatter_add_(-1, samples, torch.ones_like(samples));
-                return counts.type_as(probs);
+                return counts.type_as(probs).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -93,6 +94,7 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
+                using var _ = NewDisposeScope();
                 var bcast = torch.broadcast_tensors(logits, value);
                 var l = bcast[0].clone();
                 value = bcast[1];
@@ -100,7 +102,7 @@ namespace TorchSharp
                 var log_factorial_xs = torch.lgamma(value + 1).sum(-1);
                 l[(value == 0) & (l == float.NegativeInfinity)] = torch.tensor(0.0f);
                 var log_powers = (logits * value).sum(-1);
-                return log_factorial_n - log_factorial_xs + log_powers;
+                return (log_factorial_n - log_factorial_xs + log_powers).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -110,13 +112,13 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Multinomial))
                     throw new ArgumentException("expand(): 'instance' must be a Multinomial distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Multinomial(total_count, categorical.expand(batch_shape) as Categorical) :
+                    new Multinomial(total_count, categorical.expand(batch_shape) as Categorical, generator) :
                     instance) as Multinomial;
 
                 if (newDistribution == instance) {

@@ -13,19 +13,32 @@ namespace TorchSharp
                 public Distribution(torch.Generator generator, long[] batch_shape = null, long[] event_shape = null)
                 {
                     this.generator = generator;
-                    this.batch_shape = batch_shape != null ? batch_shape : new long[0];
-                    this.event_shape = event_shape != null ? event_shape : new long[0];
+                    _init(batch_shape != null ? batch_shape : Size.Empty,
+                          event_shape != null ? event_shape : Size.Empty);
+                }
+
+                public Distribution(torch.Generator generator, Size batch_shape, Size? event_shape = null)
+                {
+                    this.generator = generator;
+                    _init(batch_shape,
+                          event_shape != null ? event_shape : Size.Empty);
+                }
+
+                protected void _init(Size? batch_shape = null, Size? event_shape = null)
+                {
+                    this.batch_shape = batch_shape != null ? batch_shape.Value : Size.Empty;
+                    this.event_shape = event_shape != null ? event_shape.Value : Size.Empty;
                 }
 
                 /// <summary>
                 /// The shape over which parameters are batched.
                 /// </summary>
-                public long [] batch_shape { get; protected set; }
+                public Size batch_shape { get; protected set; }
 
                 /// <summary>
                 /// The shape of a single sample (without batching).
                 /// </summary>
-                public long[] event_shape { get; protected set; }
+                public Size event_shape { get; protected set; }
 
                 /// <summary>
                 /// The mean of the distribution.
@@ -50,20 +63,35 @@ namespace TorchSharp
                 /// <summary>
                 /// Generates a sample_shape shaped sample or sample_shape shaped batch of samples if the distribution parameters are batched.
                 /// </summary>
-                /// <param name="sample_shape"></param>
-                /// <returns></returns>
+                /// <param name="sample_shape">A list of dimension sizes</param>
+                /// <returns>A tensor containing the sample.</returns>
                 public virtual Tensor sample(params long[] sample_shape)
                 {
                     return rsample(sample_shape);
                 }
 
                 /// <summary>
+                /// Generates a sample_shape shaped sample or sample_shape shaped batch of samples if the distribution parameters are batched.
+                /// </summary>
+                /// <param name="sample_shape">A list of dimension sizes</param>
+                /// <returns>A tensor containing the sample.</returns>
+                public Tensor sample(Size sample_shape) => sample(sample_shape.Shape);
+
+                /// <summary>
                 ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
                 ///  if the distribution parameters are batched.
                 /// </summary>
                 /// <param name="sample_shape">The sample shape.</param>
-                /// <returns></returns>
+                /// <returns>A tensor containing the sample.</returns>
                 public abstract Tensor rsample(params long[] sample_shape);
+
+                /// <summary>
+                ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
+                ///  if the distribution parameters are batched.
+                /// </summary>
+                /// <param name="sample_shape">The sample shape.</param>
+                /// <returns>A tensor containing the sample.</returns>
+                public Tensor rsample(Size sample_shape) => rsample(sample_shape.Shape);
 
                 /// <summary>
                 /// Returns the log of the probability density/mass function evaluated at `value`.
@@ -86,7 +114,7 @@ namespace TorchSharp
                 /// <param name="batch_shape">Tthe desired expanded size.</param>
                 /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
                 /// <returns></returns>
-                public abstract Distribution expand(long[] batch_shape, Distribution instance = null);
+                public abstract Distribution expand(Size batch_shape, Distribution instance = null);
 
                 /// <summary>
                 /// Returns the cumulative density/mass function evaluated at `value`.
@@ -161,6 +189,8 @@ namespace TorchSharp
                 protected Tensor ClampByZero(Tensor x) => (x.clamp_min(0) + x - x.clamp_max(0)) / 2;
 
                 protected torch.Generator generator;
+
+                protected const double euler_constant = 0.57721566490153286060; // Euler Mascheroni Constant
             }
         }
     }

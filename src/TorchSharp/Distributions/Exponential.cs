@@ -98,14 +98,14 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Exponential))
                     throw new ArgumentException("expand(): 'instance' must be a Exponential distribution");
 
                 var r = rate.expand(batch_shape);
 
-                var newDistribution = ((instance == null) ? new Exponential(r) : instance) as Exponential;
+                var newDistribution = ((instance == null) ? new Exponential(r, generator) : instance) as Exponential;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {

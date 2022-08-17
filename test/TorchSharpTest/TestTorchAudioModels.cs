@@ -35,6 +35,21 @@ namespace TorchSharp
                 );
         }
 
+        private Modules.WaveRNN CreateWaveRNN()
+        {
+            return torchaudio.models.WaveRNN(
+                upsample_scales: new long[] { 5, 5, 11 },
+                n_classes: 1 << 8,  // n_bits = 8
+                hop_length: 275,
+                n_res_block: 10,
+                n_rnn: 512,
+                n_fc: 512,
+                kernel_size: 5,
+                n_freq: 80,
+                n_hidden: 128,
+                n_output: 128);
+        }
+
         [Fact]
         public void Tacotron2ModelForward()
         {
@@ -85,6 +100,21 @@ namespace TorchSharp
                     Assert.Equal(new long[] { batch_size }, spec_lengths.shape);
                     Assert.Equal(new long[] { batch_size, spec.shape[2], token.shape[1] }, alignments.shape);
                 }
+            }
+        }
+
+        [Fact]
+        public void WaveRNNModelForward()
+        {
+            using (var scope = torch.NewDisposeScope()) {
+                var wavernn = CreateWaveRNN();
+                long batch_size = 2;
+                var specgram = torch.randn(new long[] { batch_size, 1, 80, 6 });
+                var waveform_len = (specgram.shape[3] - 5 + 1) * (5 * 5 * 11);
+                var waveform = torch.randn(new long[] { batch_size, 1, waveform_len });
+                // specgram: (n_batch, n_freq, (n_time - kernel_size + 1) * total_scale)
+                var output = wavernn.forward(waveform, specgram);
+                Assert.Equal(new long[] { batch_size, 1, waveform.shape[2], 1 << 8 }, output.shape);
             }
         }
     }

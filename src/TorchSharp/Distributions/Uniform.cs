@@ -46,9 +46,10 @@ namespace TorchSharp
             /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
+                using var _ = torch.NewDisposeScope();
                 var shape = ExtendedShape(sample_shape);
                 var rand = torch.rand(shape, dtype: low.dtype, device: low.device, generator: generator);
-                return low + rand * (high - low);
+                return (low + rand * (high - low)).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -57,9 +58,10 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
+                using var _ = torch.NewDisposeScope();
                 var lb = low.le(value).type_as(low);
                 var ub = high.gt(value).type_as(low);
-                return torch.log(lb.mul(ub)) - torch.log(high - low);
+                return (torch.log(lb.mul(ub)) - torch.log(high - low)).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -68,7 +70,7 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
-                return (value - low) / (high - low).clamp(0, 1);
+                return torch.WrappedTensorDisposeScope(() => (value - low) / (high - low).clamp(0, 1));
             }
 
             /// <summary>
@@ -77,7 +79,7 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor icdf(Tensor value)
             {
-                return value * (high - low) + low;
+                return torch.WrappedTensorDisposeScope(() => value * (high - low) + low);
             }
 
             /// <summary>
@@ -85,7 +87,7 @@ namespace TorchSharp
             /// </summary>
             public override Tensor entropy()
             {
-                return (high - low).log();
+                return torch.WrappedTensorDisposeScope(() => (high - low).log());
             }
 
             /// <summary>
@@ -95,13 +97,13 @@ namespace TorchSharp
             /// </summary>
             /// <param name="batch_shape">Tthe desired expanded size.</param>
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
-            public override distributions.Distribution expand(long[] batch_shape, distributions.Distribution instance = null)
+            public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
                 if (instance != null && !(instance is Uniform))
                     throw new ArgumentException("expand(): 'instance' must be a Uniform distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Uniform(low.expand(batch_shape), high.expand(batch_shape)) :
+                    new Uniform(low.expand(batch_shape), high.expand(batch_shape), generator) :
                     instance) as Uniform;
 
                 newDistribution.batch_shape = batch_shape;

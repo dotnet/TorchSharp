@@ -1,4 +1,4 @@
-// Copyright</param>
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
 using System;
 using static TorchSharp.torch;
@@ -84,6 +84,46 @@ namespace TorchSharp
                     postnet_kernel_size,
                     postnet_embedding_dim,
                     gate_threshold);
+            }
+
+            /// <summary>
+            /// WaveRNN model based on the implementation from `fatchord https://github.com/fatchord/WaveRNN`.
+            /// </summary>
+            /// <param name="upsample_scales">The list of upsample scales.</param>
+            /// <param name="n_classes">The number of output classes.</param>
+            /// <param name="hop_length">The number of samples between the starts of consecutive frames.</param>
+            /// <param name="n_res_block">The number of ResBlock in stack.</param>
+            /// <param name="n_rnn">The dimension of RNN layer.</param>
+            /// <param name="n_fc">The dimension of fully connected layer.</param>
+            /// <param name="kernel_size">The number of kernel size in the first Conv1d layer.</param>
+            /// <param name="n_freq">The number of bins in a spectrogram.</param>
+            /// <param name="n_hidden">The number of hidden dimensions of resblock.</param>
+            /// <param name="n_output">The number of output dimensions of melresnet.</param>
+            /// <returns>The WaveRNN model</returns>
+            public static Modules.WaveRNN WaveRNN(
+                long[] upsample_scales,
+                int n_classes,
+                int hop_length,
+                int n_res_block = 10,
+                int n_rnn = 512,
+                int n_fc = 512,
+                int kernel_size = 5,
+                int n_freq = 128,
+                int n_hidden = 128,
+                int n_output = 128)
+            {
+                return new Modules.WaveRNN(
+                    "wavernn",
+                    upsample_scales,
+                    n_classes,
+                    hop_length,
+                    n_res_block,
+                    n_rnn,
+                    n_fc,
+                    kernel_size,
+                    n_freq,
+                    n_hidden,
+                    n_output);
             }
         }
     }

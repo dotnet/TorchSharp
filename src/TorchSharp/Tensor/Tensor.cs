@@ -5108,6 +5108,11 @@ namespace TorchSharp
                 }
             }
 
+            public Tensor expand(Size sizes, bool isImplicit = false)
+            {
+                return expand((ReadOnlySpan<long>)sizes.Shape, isImplicit);
+            }
+
             /// <summary>
             ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
             /// </summary>
@@ -7097,15 +7102,12 @@ namespace TorchSharp
                 if (center) {
                     long signalDim = dim();
                     long pad = n_fft / 2;
-                    var _shape = shape;
+                    var extendedShape = Enumerable.Repeat<long>(1, (int)(3 - signalDim)).Concat(shape).ToArray();
 
                     unsafe {
-                        var extendedShape = new long[] { 1, 1, 1 };
-                        for (int i = 0; i < signalDim; i++) {
-                            extendedShape[3 + i - signalDim] = _shape[i];
-                        }
                         var paddedInput = torch.nn.functional.pad(view(extendedShape), stackalloc long[] { pad, pad }, pad_mode);
                         var paddedShape = paddedInput.shape;
+                        var _shape = new long[signalDim];
                         for (int i = 0; i < signalDim; i++) {
                             _shape[i] = paddedShape[paddedShape.Length + i - signalDim];
                         }
@@ -7404,5 +7406,15 @@ namespace TorchSharp
         /// be automatically disposed once the dispose scope is disposed.
         /// </summary>
         public static DisposeScope NewDisposeScope() => DisposeScopeManager.NewDisposeScope();
+
+        /// <summary>
+        /// Creates a new dispose scope for the current thread, wrapping an expression.
+        /// </summary>
+        public static Tensor WrappedTensorDisposeScope(Func<Tensor> expr)
+        {
+            using var scope = torch.NewDisposeScope();
+            var result = expr();
+            return result.MoveToOuterDisposeScope();
+        }
     }
 }
