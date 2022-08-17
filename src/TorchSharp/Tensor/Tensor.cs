@@ -7102,15 +7102,12 @@ namespace TorchSharp
                 if (center) {
                     long signalDim = dim();
                     long pad = n_fft / 2;
-                    var _shape = shape;
+                    var extendedShape = Enumerable.Repeat<long>(1, (int)(3 - signalDim)).Concat(shape).ToArray();
 
                     unsafe {
-                        var extendedShape = new long[] { 1, 1, 1 };
-                        for (int i = 0; i < signalDim; i++) {
-                            extendedShape[3 + i - signalDim] = _shape[i];
-                        }
                         var paddedInput = torch.nn.functional.pad(view(extendedShape), stackalloc long[] { pad, pad }, pad_mode);
                         var paddedShape = paddedInput.shape;
+                        var _shape = new long[signalDim];
                         for (int i = 0; i < signalDim; i++) {
                             _shape[i] = paddedShape[paddedShape.Length + i - signalDim];
                         }

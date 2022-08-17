@@ -32,7 +32,7 @@ namespace TorchSharp
             /// <param name="shape">An array of longs, the size of an N-D tensor.</param>
             public Size(long[] shape)
             {
-                _shape = shape;
+                _shape = (long[])shape.Clone();
             }
 
             /// <summary>
