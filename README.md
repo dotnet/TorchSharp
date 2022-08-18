@@ -33,7 +33,7 @@ Things that you can try:
 
 ```csharp
 using TorchSharp;
-using static torch.nn;
+using static TorchSharp.torch.nn;
 
 var lin1 = Linear(1000, 100);
 var lin2 = Linear(100, 10);
