@@ -2836,6 +2836,100 @@ namespace TorchSharp
                 Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2 })));
             }
         }
+
+        private Tensor NormalizeTensor(Tensor x, long[] dim, double eps = 1e-5)
+        {
+            var x_mean = torch.mean(x, dimensions: dim, keepDimension: true);
+            var x_var = torch.var(x, unbiased: false, dimensions: dim, keepDimension: true);
+            return NormalizeTensor(x, x_mean, x_var, eps);
+        }
+
+        private Tensor NormalizeTensor(Tensor x, Tensor x_mean, Tensor x_var, double eps = 1e-5)
+        {
+            return (x - x_mean) / torch.sqrt(eps + x_var);
+        }
+
+        [Fact]
+        public void TestBatchNormFunc()
+        {
+            var x = torch.randn(3, 2, 4);
+            var running_mean = torch.randn(2);
+            var running_var = torch.square(torch.randn(2));
+            var y = torch.nn.functional.batch_norm(x, running_mean, running_var);
+            var z = NormalizeTensor(x, torch.unsqueeze(running_mean, 1), torch.unsqueeze(running_var, 1));
+            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+
+            var weight = torch.randn(2);
+            var bias = torch.randn(2);
+            y = torch.nn.functional.batch_norm(x, running_mean, running_var, weight, bias);
+            z = torch.unsqueeze(weight, 1) * z + torch.unsqueeze(bias, 1);
+            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+
+            y = torch.nn.functional.batch_norm(x, running_mean, running_var, weight, bias, training: true);
+            Assert.Equal(x.shape, y.shape);
+        }
+
+        [Fact]
+        public void TestGroupNormFunc()
+        {
+            var x = torch.randn(3, 12, 5);
+            var y = torch.nn.functional.group_norm(x, 4);
+            y = y[TensorIndex.Colon, TensorIndex.Slice(3, 6)];
+            var z = NormalizeTensor(x[TensorIndex.Colon, TensorIndex.Slice(3, 6)], new long[] { 1, 2 });
+            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+
+            var weight = torch.randn(12);
+            var bias = torch.randn(12);
+            y = torch.nn.functional.group_norm(x, 4, weight, bias);
+            y = y[TensorIndex.Colon, TensorIndex.Slice(3, 6)];
+            z = weight[TensorIndex.Slice(3, 6), TensorIndex.None] * z + bias[TensorIndex.Slice(3, 6), TensorIndex.None];
+            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+        }
+
+        [Fact]
+        public void TestInstanceNormFunc()
+        {
+            var x = torch.randn(3, 2, 5);
+            var y = torch.nn.functional.instance_norm(x);
+            var z = NormalizeTensor(x, new long[] { 2 });
+            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+
+            var running_mean = torch.randn(2);
+            var running_var = torch.square(torch.randn(2));
+            y = torch.nn.functional.instance_norm(x, running_mean, running_var);
+            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+
+            var weight = torch.randn(2);
+            var bias = torch.randn(2);
+            y = torch.nn.functional.instance_norm(x, running_mean, running_var, weight, bias);
+            z = torch.unsqueeze(weight, 1) * z + torch.unsqueeze(bias, 1);
+            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+        }
+
+        [Fact]
+        public void TestLayerNormFunc()
+        {
+            var x = torch.randn(3, 5, 12);
+            var y = torch.nn.functional.layer_norm(x, new long[] { 12 });
+            var z = NormalizeTensor(x, new long[] { 2 });
+            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+
+            var weight = torch.randn(12);
+            var bias = torch.randn(12);
+            y = torch.nn.functional.layer_norm(x, new long[] { 12 }, weight, bias);
+            z = weight * z + bias;
+            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+        }
+
+        [Fact]
+        public void TestLocalResponseNormFunc()
+        {
+            var x = torch.randn(3, 6, 4);
+            var y = torch.nn.functional.local_response_norm(x, 5, alpha: 0.5);
+            y = y[TensorIndex.Colon, 3];
+            var z = x[TensorIndex.Colon, 3] * torch.pow(torch.square(x[TensorIndex.Colon, TensorIndex.Slice(1, 6)]).sum(dim: 1) * 0.5 / 5 + 1, torch.tensor(-0.75f));
+            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+        }
         #endregion
 
         #region Embedding, Encoding, Transformer

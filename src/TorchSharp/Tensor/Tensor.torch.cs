@@ -114,6 +114,11 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Returns a new tensor which indexes the input tensor along dimension dim using the entries in index which is a LongTensor.
+        /// </summary>
+        public static Tensor index_select(Tensor input, long dim, Tensor index) => input.index_select(dim, index);
+
+        /// <summary>
         /// Roll the tensor along the given dimension(s).
         /// Elements that are shifted beyond the last position are re-introduced at the first position.
         /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
