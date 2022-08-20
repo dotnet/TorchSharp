@@ -404,8 +404,8 @@ Tensor THSNN_batch_norm(const Tensor input, Tensor running_mean, const Tensor ru
         .training(training)
         .momentum(momentum)
         .eps(eps);
-    if (weight != NULL) opts.weight(*weight);
-    if (bias != NULL) opts.bias(*bias);
+    if (weight != nullptr) opts.weight(*weight);
+    if (bias != nullptr) opts.bias(*bias);
     CATCH_TENSOR(torch::nn::functional::batch_norm(*input, *running_mean, *running_var, opts));
 }
 
@@ -413,8 +413,8 @@ Tensor THSNN_group_norm(const Tensor input, const int64_t num_groups, const Tens
 {
     auto opts = torch::nn::functional::GroupNormFuncOptions(num_groups)
         .eps(eps);
-    if (weight != NULL) opts.weight(*weight);
-    if (bias != NULL) opts.bias(*bias);
+    if (weight != nullptr) opts.weight(*weight);
+    if (bias != nullptr) opts.bias(*bias);
     CATCH_TENSOR(torch::nn::functional::group_norm(*input, opts));
 }
 
@@ -424,10 +424,10 @@ Tensor THSNN_instance_norm(const Tensor input, const Tensor running_mean, const 
         .use_input_stats(use_input_stats)
         .momentum(momentum)
         .eps(eps);
-    if (running_mean != NULL) opts.running_mean(*running_mean);
-    if (running_var != NULL) opts.running_var(*running_var);
-    if (weight != NULL) opts.weight(*weight);
-    if (bias != NULL) opts.bias(*bias);
+    if (running_mean != nullptr) opts.running_mean(*running_mean);
+    if (running_var != nullptr) opts.running_var(*running_var);
+    if (weight != nullptr) opts.weight(*weight);
+    if (bias != nullptr) opts.bias(*bias);
     CATCH_TENSOR(torch::nn::functional::instance_norm(*input, opts));
 }
 
@@ -436,8 +436,8 @@ Tensor THSNN_layer_norm(const Tensor input, const int64_t* normalized_shape, con
     auto opts = torch::nn::functional::LayerNormFuncOptions(
         std::vector<int64_t>(normalized_shape, normalized_shape + normalized_shape_len))
         .eps(eps);
-    if (weight != NULL) opts.weight(*weight);
-    if (bias != NULL) opts.bias(*bias);
+    if (weight != nullptr) opts.weight(*weight);
+    if (bias != nullptr) opts.bias(*bias);
     CATCH_TENSOR(torch::nn::functional::layer_norm(*input, opts));
 }
 
