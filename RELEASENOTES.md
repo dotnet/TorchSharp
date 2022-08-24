@@ -2,6 +2,17 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.97.4
+
+__Fixed Bugs:__
+
+
+
+__API Changes__:
+
+Add functional normalizations<br/>
+
+
 ## NuGet Version 0.97.3
 
 __Fixed Bugs:__
