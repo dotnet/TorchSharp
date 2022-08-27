@@ -3181,14 +3181,14 @@ namespace TorchSharp
         static public (Tensor values, Tensor indexes) min(Tensor input, long dim, bool keepDim = false) => input.min(dim, keepDim);
 
         /// <summary>
-        /// Divides each element of the input by the corresponding element of other.
+        /// Multiplies each element of the input by the corresponding element of other.
         /// </summary>
         /// <param name="left">The left-hand operand.</param>
         /// <param name="right">The right-hand operand.</param>
         public static Tensor mul(Tensor left, Tensor right) => left.mul(right);
 
         /// <summary>
-        /// Divides each element of the input by the corresponding element of other.
+        /// Multiplies each element of the input by the corresponding element of other.
         /// </summary>
         /// <param name="left">The left-hand operand.</param>
         /// <param name="right">The right-hand operand.</param>
