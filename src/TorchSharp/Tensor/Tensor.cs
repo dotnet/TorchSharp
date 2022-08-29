@@ -7091,7 +7091,6 @@ namespace TorchSharp
             public Tensor stft(long n_fft, long hop_length = -1, long win_length = -1, Tensor? window = null, bool center = true, PaddingModes pad_mode = PaddingModes.Reflect, bool normalized = false, bool? onesided = null, bool? return_complex = null)
             {
                 IntPtr _input = Handle;
-                IntPtr _window = (window is null) ? IntPtr.Zero : window.Handle;
 
                 long _onesided = -1; // encoding of null
                 if (onesided.HasValue) {
@@ -7116,6 +7115,7 @@ namespace TorchSharp
                     }
                 }
 
+                IntPtr _window = (window is null) ? IntPtr.Zero : window.Handle;
                 var res = THSTensor_stft(_input, n_fft, hop_length, win_length, _window, normalized, _onesided, _return_complex);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
