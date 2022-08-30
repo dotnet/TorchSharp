@@ -646,5 +646,46 @@ namespace TorchSharp
         /// <param name="keepdim">Keep the dimension to reduce</param>
         /// </summary>
         public static Tensor any(Tensor input, long dim, bool keepdim = false) => input.any(dim, keepdim);
+
+        /// <summary>
+        ///  Returns the sum of each row of the input tensor in the given dimensions.
+        /// </summary>
+        public static Tensor sum(Tensor input, ScalarType? type = null) => input.sum(type);
+
+        /// <summary>
+        /// Returns the sum of each row of the input tensor in the given dimensions.
+        /// </summary>
+        public static Tensor sum(Tensor input, ReadOnlySpan<long> dim, bool keepdim = false, ScalarType? type = null) => input.sum(dim, keepdim, type);
+
+        /// <summary>
+        /// Returns the sum of each row of the input tensor in the given dimension.
+        /// </summary>
+        public static Tensor sum(Tensor input, long dim, bool keepdim = false, ScalarType? type = null) => input.sum(dim, keepdim, type);
+
+        /// <summary>
+        /// Returns the indices of the maximum value of all elements in the input tensor.
+        /// </summary>
+        public static Tensor argmax(Tensor input) => input.argmax();
+
+        /// <summary>
+        /// Returns the indices of the maximum value of all elements in the input tensor.
+        /// </summary>
+        public static Tensor argmax(Tensor input, long dim, bool keepdim = false) => input.argmax(dim, keepdim);
+
+        /// <summary>
+        /// Returns the indices of the minimum value of all elements in the input tensor.
+        /// </summary>
+        public static Tensor argmin(Tensor input) => input.argmin();
+
+        /// <summary>
+        /// Returns the indices of the minimum value of all elements in the input tensor.
+        /// </summary>
+        public static Tensor argmin(Tensor input, long dim, bool keepdim = false) => input.argmin(dim, keepdim);
+
+        /// <summary>
+        /// Returns the indices that sort a tensor along a given dimension in ascending order by value.
+        /// </summary>
+        public static Tensor argsort(Tensor input, long dim = -1, bool descending = false) => input.argsort(dim, descending);
+
     }
 }

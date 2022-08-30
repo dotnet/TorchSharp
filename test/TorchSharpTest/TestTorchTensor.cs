@@ -3204,6 +3204,19 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.normal))]
+        public void Normal()
+        {
+            long[] size = new long[] { 2, 3 };
+            var mean = torch.randn(size: size);
+            var std = torch.randn(size: size);
+            var a = torch.normal(mean, std);
+            Assert.Equal(size, a.shape);
+            var b = torch.normal(1.0, 2.0, size: size);
+            Assert.Equal(size, a.shape);
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.normal_))]
         public void InplaceNormal()
         {
@@ -4991,6 +5004,17 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.argmax))]
+        public void ArgMaxFuncTest()
+        {
+            var a = torch.arange(3, 15).reshape(3, 4);
+            var b = torch.argmax(a);
+            Assert.Equal(11, b.item<long>());
+            var c = torch.argmax(a, dim: 0, keepdim: true);
+            Assert.Equal(new long[] { 1, 4 }, c.shape);
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.argmin))]
         public void ArgMinTest()
         {
@@ -5001,6 +5025,17 @@ namespace TorchSharp
             Assert.Equal(new long[] { 1, 5 }, c.shape);
             var d = a.argmin(0, keepDim: false);
             Assert.Equal(new long[] { 5 }, d.shape);
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.argmin))]
+        public void ArgMinFuncTest()
+        {
+            var a = torch.arange(3, 15).reshape(3, 4);
+            var b = torch.argmin(a);
+            Assert.Equal(0, b.item<long>());
+            var c = torch.argmin(a, dim: 1, keepdim: true);
+            Assert.Equal(new long[] { 3, 1 }, c.shape);
         }
 
         [Fact]
@@ -5810,6 +5845,17 @@ namespace TorchSharp
             var res4_0 = res4.ToInt32();
             Assert.Equal(6L, res4_0);
 
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.sum))]
+        public void SumFuncTest()
+        {
+            var a = torch.arange(3, 15).reshape(3, 4);
+            var b = torch.sum(a);
+            Assert.Equal(102L, b.item<long>());
+            var c = torch.sum(a, dim: 1);
+            Assert.Equal(new long[] { 18, 34, 50 }, c.data<long>());
         }
 
         [Fact]
