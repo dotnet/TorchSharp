@@ -2202,7 +2202,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmax(IntPtr tensor);
 
             /// <summary>
-            ///
+            /// Returns the indices of the maximum value of all elements in the input tensor.
             /// </summary>
 
             public Tensor argmax()
@@ -2217,7 +2217,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmax_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            ///
+            /// Returns the indices of the maximum value of all elements in the input tensor.
             /// </summary>
             /// <param name="dimension"></param>
             /// <param name="keepDim"></param>
@@ -2234,7 +2234,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmin(IntPtr tensor);
 
             /// <summary>
-            ///
+            /// Returns the indices of the minimum value of all elements in the input tensor.
             /// </summary>
 
             public Tensor argmin()
@@ -2249,7 +2249,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_argmin_along_dimension(IntPtr tensor, long dimension, bool keep_dim);
 
             /// <summary>
-            ///
+            /// Returns the indices of the minimum value of all elements in the input tensor.
             /// </summary>
             /// <param name="dimension"></param>
             /// <param name="keepDim"></param>

@@ -951,6 +951,22 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Similar to the function above, but the means and standard deviations are shared among all drawn elements. The resulting tensor has size given by size.
+        /// </summary>
+        /// <param name="mean">The mean for all distributions</param>
+        /// <param name="std">The standard deviation for all distributions</param>
+        /// <param name="size">A sequence of integers defining the shape of the output tensor.</param>
+        /// <param name="dtype"></param>
+        /// <param name="device"></param>
+        /// <param name="requires_grad"></param>
+        /// <param name="generator">An optional random number generator</param>
+        /// <returns></returns>
+        public static Tensor normal(double mean, double std, ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null)
+        {
+            return randn(size, dtype: dtype, device: device, requiresGrad: requires_grad, generator: generator) * std + mean;
+        }
+
+        /// <summary>
         ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
         private static Tensor _rand(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false, torch.Generator? generator = null)
