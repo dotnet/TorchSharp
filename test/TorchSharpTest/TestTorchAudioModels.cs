@@ -117,5 +117,43 @@ namespace TorchSharp
                 Assert.Equal(new long[] { batch_size, 1, waveform.shape[2], 1 << 8 }, output.shape);
             }
         }
+
+        [Fact]
+        public void Wav2Vec2ModelForward()
+        {
+            using (var scope = torch.NewDisposeScope()) {
+                var model = torchaudio.models.wav2vec2_model(
+                    extractor_mode: torchaudio.models.FeatureExtractorNormMode.group_norm,
+                    extractor_conv_layer_config: new long[][] {
+                        new long[] { 512, 10, 5 },
+
+                        new long[] { 512, 3, 2 },
+                        new long[] { 512, 3, 2 },
+                        new long[] { 512, 3, 2 },
+                        new long[] { 512, 3, 2 },
+
+                        new long[] { 512, 2, 2 },
+                        new long[] { 512, 2, 2 }
+                    },
+                    extractor_conv_bias: false,
+                    encoder_embed_dim: 768,
+                    encoder_projection_dropout: 0.1,
+                    encoder_pos_conv_kernel: 128,
+                    encoder_pos_conv_groups: 16,
+                    encoder_num_layers: 12,
+                    encoder_num_heads: 12,
+                    encoder_attention_dropout: 0.1,
+                    encoder_ff_interm_features: 3072,
+                    encoder_ff_interm_dropout: 0.0,
+                    encoder_dropout: 0.1,
+                    encoder_layer_norm_first: false,
+                    encoder_layer_drop: 0.05,
+                    aux_num_out: 29);
+                model.eval();
+                var waveform = torch.randn(new long[] { 2, 1000 }, torch.float32);
+                var (output, length) = model.forward(waveform);
+                Assert.Equal(2, output.size(0));
+            }
+        }
     }
 }
