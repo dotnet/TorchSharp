@@ -43,6 +43,7 @@ namespace TorchSharp.Modules
                 this.weight = torch.nn.Parameter(torch.ones(normalized_shape));
                 this.bias = torch.nn.Parameter(torch.zeros(normalized_shape));
                 this.eps = eps;
+                RegisterComponents();
             }
 
             public override Tensor forward(Tensor input)
@@ -82,6 +83,7 @@ namespace TorchSharp.Modules
                     kernelSize: kernel_size,
                     stride: stride,
                     bias: bias);
+                RegisterComponents();
             }
 
             /// <param name="x">Shape: ``[batch, in_channels, in_frame]``</param>
@@ -123,6 +125,7 @@ namespace TorchSharp.Modules
                 ModuleList conv_layers) : base(name)
             {
                 this.conv_layers = conv_layers;
+                RegisterComponents();
             }
 
             /// <param name="x">Input Tensor representing a batch of audio, shape: ``[batch, time]``.</param>
@@ -175,6 +178,7 @@ namespace TorchSharp.Modules
                     in_features,
                     out_features);
                 this.dropout = nn.Dropout(dropout);
+                RegisterComponents();
             }
 
             /// <param name="x">Feature Tensor. shape: ``[batch, frame, in_feature]``</param>
@@ -220,6 +224,7 @@ namespace TorchSharp.Modules
                     padding: kernel_size / 2,
                     groups: groups);
                 this.num_remove = kernel_size % 2 == 0 ? 1 : 0;
+                RegisterComponents();
             }
 
             /// <param name="x">shape ``[batch, frame, feature]``.</param>
@@ -324,6 +329,7 @@ namespace TorchSharp.Modules
                 this.v_proj = nn.Linear(embed_dim, embed_dim, hasBias: true);
                 this.q_proj = nn.Linear(embed_dim, embed_dim, hasBias: true);
                 this.out_proj = nn.Linear(embed_dim, embed_dim, hasBias: true);
+                RegisterComponents();
             }
 
             /// <param name="x">shape: ``[batch_size, sequence_length, embed_dim]``.</param>
@@ -391,6 +397,7 @@ namespace TorchSharp.Modules
                 this.intermediate_dropout = nn.Dropout(intermediate_dropout);
                 this.output_dense = nn.Linear(intermediate_features, io_features);
                 this.output_dropout = nn.Dropout(output_dropout);
+                RegisterComponents();
             }
 
             /// <param name="x">shape: `(batch, sequence_length, io_features)`</param>
@@ -432,6 +439,7 @@ namespace TorchSharp.Modules
                 this.layer_norm_first = layer_norm_first;
                 this.feed_forward = feed_forward;
                 this.final_layer_norm = nn.LayerNorm(new long[] { attention.embed_dim });
+                RegisterComponents();
             }
 
             /// <param name="x">shape: `(batch, sequence_length, embed_dim)`</param>
@@ -485,6 +493,7 @@ namespace TorchSharp.Modules
                 this.layer_drop = layer_drop;
                 this.dropout = nn.Dropout(dropout);
                 this.layers = layers;
+                RegisterComponents();
             }
 
             public Tensor _preprocess(Tensor x)
@@ -552,6 +561,7 @@ namespace TorchSharp.Modules
             {
                 this.feature_projection = feature_projection;
                 this.transformer = transformer;
+                RegisterComponents();
             }
 
             public (Tensor, Tensor?) _preprocess(
@@ -1060,6 +1070,7 @@ namespace TorchSharp.Modules
                 this.mask_channel_min_space = mask_channel_min_space;
                 this.mask_embedding = Parameter(torch.empty(encoder_embed_dim, dtype: torch.float32));
                 torch.nn.init.uniform_(this.mask_embedding);
+                RegisterComponents();
             }
 
             /// <param name="x">The encoded representations after feature extraction module.</param>
@@ -1167,6 +1178,7 @@ namespace TorchSharp.Modules
                 this.final_proj = torch.nn.Linear(encoder_embed_dim, final_dim);
                 this.skip_masked = skip_masked;
                 this.skip_nomask = skip_nomask;
+                RegisterComponents();
             }
 
             /// <param name="x">The feature representation of the last transformer layer.</param>
