@@ -28,22 +28,16 @@
 #define CRC32C_MSC
 #endif
 
-#ifndef CRC32C_STATIC
-#ifdef CRC32C_EXPORTS
-#ifdef CRC32C_GCC
-#define CRC32C_API __attribute__ ((dllexport))
+// ALTERED SOURCE VERSION
+//
+// Per #2 in the copyright notice above:
+//
+// The definition of CRC32C_API has been altered from the original.
+
+#ifndef _WIN32
+#define CRC32C_API __attribute__((visibility("default")))
 #else
 #define CRC32C_API __declspec(dllexport)
-#endif
-#else
-#ifdef CRC32C_GCC
-#define CRC32C_API __attribute__ ((dllimport))
-#else
-#define CRC32C_API __declspec(dllimport)
-#endif
-#endif
-#else
-#define CRC32C_API
 #endif
 
 #include <stdint.h>
