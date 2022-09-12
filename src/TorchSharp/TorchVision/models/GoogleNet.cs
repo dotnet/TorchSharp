@@ -71,19 +71,18 @@ namespace TorchSharp.torchvision
 
             private readonly Module conv1;
             private readonly Module maxpool1;
-            private readonly Module maxpool2;
-            private readonly Module maxpool3;
-            private readonly Module maxpool4;
             private readonly Module conv2;
             private readonly Module conv3;
+            private readonly Module maxpool2;
             private readonly Module inception3a;
             private readonly Module inception3b;
-
+            private readonly Module maxpool3;
             private readonly Module inception4a;
             private readonly Module inception4b;
             private readonly Module inception4c;
             private readonly Module inception4d;
             private readonly Module inception4e;
+            private readonly Module maxpool4;
             private readonly Module inception5a;
             private readonly Module inception5b;
             //private readonly Module aux1;

@@ -70,11 +70,11 @@ namespace TorchSharp.torchvision
             private readonly Module Conv2d_1a_3x3;
             private readonly Module Conv2d_2a_3x3;
             private readonly Module Conv2d_2b_3x3;
+            private readonly Module maxpool1;
             private readonly Module Conv2d_3b_1x1;
             private readonly Module Conv2d_4a_3x3;
-
-            private readonly Module maxpool1;
             private readonly Module maxpool2;
+
             private readonly Module Mixed_5b;
             private readonly Module Mixed_5c;
             private readonly Module Mixed_5d;
