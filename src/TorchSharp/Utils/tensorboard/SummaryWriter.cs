@@ -81,7 +81,6 @@ namespace TorchSharp
                 if (!String.IsNullOrEmpty(_suffix)) {
                     fileName = fileName + "." + _suffix;
                 }
-                    
 
                 if (File.Exists(fileName)) {
                     File.Delete(fileName);
@@ -143,6 +142,8 @@ namespace TorchSharp
 
                     if (!_fileNames.TryGetValue(key, out var fileName)) {
 
+                        // We haven't logged this tag from this session, yet. Create a clean file.
+
                         var fileDir = Path.Combine(_log_dir, $"{main_tag}_{key}");
                         if (!Directory.Exists(fileDir)) {
                             Directory.CreateDirectory(fileDir);
@@ -150,9 +151,11 @@ namespace TorchSharp
 
                         fileName = Path.Combine(fileDir, $"events.out.tfevents.{DateTime.Now.Ticks}.{System.Net.Dns.GetHostName()}.{Process.GetCurrentProcess().Id}.{Interlocked.Increment(ref _global_uid)}");
 
-                        if (!File.Exists(fileName)) {
-                            InitFile(fileName);
+                        if (File.Exists(fileName)) {
+                            File.Delete(fileName);
                         }
+
+                        InitFile(fileName);
 
                         _fileNames[key] = fileName;
                     }
@@ -173,7 +176,7 @@ namespace TorchSharp
             {
                 var wt = walltime.HasValue ? walltime.Value : DateTime.Now.Ticks;
 
-                foreach (var (key,scalar_value) in tag_scalar_dict) {
+                foreach (var (key, scalar_value) in tag_scalar_dict) {
 
                     var summary = new Summary();
                     summary.Value.Add(new Summary.Types.Value() { SimpleValue = scalar_value, Tag = main_tag });
@@ -230,7 +233,7 @@ namespace TorchSharp
             }
 
             private string _log_dir = null;
-            private Dictionary<string,string> _fileNames = new Dictionary<string, string>();
+            private Dictionary<string, string> _fileNames = new Dictionary<string, string>();
 
             private string _suffix = null;
 
