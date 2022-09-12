@@ -5,6 +5,11 @@ using System.Linq;
 using TorchSharp.Modules;
 using static TorchSharp.torch.nn;
 using Xunit;
+using Google.Protobuf;
+using Tensorboard;
+using static TorchSharp.torch.utils.tensorboard;
+using ICSharpCode.SharpZipLib;
+using System.Collections.Generic;
 
 #nullable enable
 
@@ -30,7 +35,7 @@ namespace TorchSharp
             Assert.Equal(params0, params1);
 
             loadedLinear = Linear(100, 10, true);
-            loadedLinear.load(".model.ts", skip: new [] { "weight"});
+            loadedLinear.load(".model.ts", skip: new[] { "weight" });
             var params2 = loadedLinear.parameters();
             File.Delete(".model.ts");
 
@@ -295,7 +300,7 @@ namespace TorchSharp
             using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
             Assert.NotEqual(params0, loaded.parameters());
 
-            var (m,u) = loaded.load_state_dict(sd, false);
+            var (m, u) = loaded.load_state_dict(sd, false);
             Assert.NotEqual(params0, loaded.parameters());
 
             Assert.NotEmpty(m);
@@ -514,6 +519,77 @@ namespace TorchSharp
 
                 File.Delete(".model.ts");
                 Assert.Equal(params0, params1);
+            }
+        }
+
+        [Fact]
+        public void TestSummaryWriterLogDir()
+        {
+            var w1 = torch.utils.tensorboard.SummaryWriter("runs/123");
+            Assert.Equal("runs/123", w1.LogDir);
+            if (Directory.Exists(w1.LogDir)) {
+                Directory.Delete(w1.LogDir, recursive: true);
+            }
+
+            var w2 = torch.utils.tensorboard.SummaryWriter("garbage", createRunName: true);
+            Assert.NotEqual("garbage", w2.LogDir);
+            Assert.StartsWith("garbage", w2.LogDir);
+            if (Directory.Exists(w2.LogDir)) {
+                Directory.Delete(w2.LogDir, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void TestTensorBoardScalar()
+        { 
+            var writer = torch.utils.tensorboard.SummaryWriter();
+            Assert.StartsWith("runs", writer.LogDir);
+
+            for (var i = 0; i < 100; i++) {
+                writer.add_scalar("a/b", MathF.Sin(i * MathF.PI / 8), i);
+            }
+
+            // Comment this out to look at the output data in tensorboard
+            if (Directory.Exists(writer.LogDir)) {
+                Directory.Delete(writer.LogDir, recursive:true);
+            }
+        }
+
+        [Fact]
+        public void TestTensorBoardScalars1()
+        {
+            var writer = torch.utils.tensorboard.SummaryWriter();
+            for (var i = 0; i < 100; i++) {
+                float f = i;
+                writer.add_scalars("run_14h", new Dictionary<string, float> {
+                    { "sin",i* MathF.Sin(f / 5) },
+                    { "cos", i* MathF.Cos(f / 5) },
+                    { "tan", MathF.Tan(f / 5) }
+                }, i);
+            }
+
+            // Comment this out to look at the output data in tensorboard
+            if (Directory.Exists(writer.LogDir)) {
+                Directory.Delete(writer.LogDir, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void TestTensorBoardScalars2()
+        {
+            var writer = torch.utils.tensorboard.SummaryWriter(); 
+            for (var i = 0; i < 100; i++) {
+                float f = i;
+                writer.add_scalars("run_14h", new[] {
+                    ("sin",i* MathF.Sin(f / 5)),
+                    ("cos", i* MathF.Cos(f / 5)),
+                    ("tan", MathF.Tan(f / 5))
+                }, i);
+            }
+
+            // Comment this out to look at the output data in tensorboard
+            if (Directory.Exists(writer.LogDir)) {
+                Directory.Delete(writer.LogDir, recursive: true);
             }
         }
     }

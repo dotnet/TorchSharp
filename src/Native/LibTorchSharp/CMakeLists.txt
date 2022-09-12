@@ -8,6 +8,7 @@ find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
 
 set(SOURCES
     cifar10.h
+	crc32c.h
     THSAutograd.h
     THSData.h
     THSJIT.h
@@ -18,6 +19,7 @@ set(SOURCES
 	THSVision.h
     Utils.h
     cifar10.cpp
+	crc32c.c
 	THSActivation.cpp
     THSAutograd.cpp
 	THSConvolution.cpp
