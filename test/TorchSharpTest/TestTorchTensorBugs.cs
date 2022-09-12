@@ -5,12 +5,13 @@ using System.Linq;
 using System.IO;
 
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 using static TorchSharp.torch.nn;
 using Xunit;
 
 using static TorchSharp.torch;
-using System.Runtime.CompilerServices;
+using static TorchSharp.torchvision.models;
 
 #nullable enable
 
@@ -771,6 +772,20 @@ namespace TorchSharp
 
             spec = torch.rand(1, 257, 500, dtype: dtype);
             x = torch.istft(spec, 512, 160, 400, null);
+        }
+
+        [Fact]
+        public void ValidateBug715()
+        {
+            var resnet = resnet18();
+            var resnetlist = resnet.named_children();
+            var list = resnetlist.Take(6);
+            var bone = nn.Sequential(list);
+
+            var x = torch.zeros(1, 3, 64, 160);
+
+            // This should not blow up.
+            var tmp = bone.forward(x);
         }
     }
 }

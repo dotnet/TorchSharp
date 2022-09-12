@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using TorchSharp.Modules;
 using TorchSharp.torchvision.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
@@ -218,18 +219,17 @@ namespace TorchSharp.torchvision
 
             private readonly Module conv1;
             private readonly Module bn1;
-            private readonly Module relu1;
+            private readonly Module relu;
+            private readonly Module maxpool;
 
-            private readonly TorchSharp.Modules.ModuleList layer1 = new TorchSharp.Modules.ModuleList();
-            private readonly TorchSharp.Modules.ModuleList layer2 = new TorchSharp.Modules.ModuleList();
-            private readonly TorchSharp.Modules.ModuleList layer3 = new TorchSharp.Modules.ModuleList();
-            private readonly TorchSharp.Modules.ModuleList layer4 = new TorchSharp.Modules.ModuleList();
+            private readonly Sequential layer1 = Sequential();
+            private readonly Sequential layer2 = Sequential();
+            private readonly Sequential layer3 = Sequential();
+            private readonly Sequential layer4 = Sequential();
 
             private readonly Module avgpool;
-            private readonly Module maxpool;
             private readonly Module flatten;
             private readonly Module fc;
-
 
             private int in_planes = 64;
 
@@ -320,7 +320,7 @@ namespace TorchSharp.torchvision
 
                 conv1 = Conv2d(3, 64, kernelSize: 7, stride: 2, padding: 3, bias: false);
                 bn1 = BatchNorm2d(64);
-                relu1 = ReLU(inPlace: true);
+                relu = ReLU(inPlace: true);
                 maxpool = MaxPool2d(kernelSize: 2, stride: 2, padding: 1);
                 MakeLayer(layer1, block, expansion, 64, num_blocks[0], 1);
                 MakeLayer(layer2, block, expansion, 128, num_blocks[1], 2);
@@ -356,7 +356,7 @@ namespace TorchSharp.torchvision
                     this.to(device);
             }
 
-            private void MakeLayer(TorchSharp.Modules.ModuleList modules, Func<int, int, int, Module> block, int expansion, int planes, int num_blocks, int stride)
+            private void MakeLayer(Sequential modules, Func<int, int, int, Module> block, int expansion, int planes, int num_blocks, int stride)
             {
                 var strides = new List<int>();
                 strides.Add(stride);
@@ -373,12 +373,12 @@ namespace TorchSharp.torchvision
             {
                 using (var scope = NewDisposeScope()) {
 
-                    var x = maxpool.forward(relu1.forward(bn1.forward(conv1.forward(input))));
+                    var x = maxpool.forward(relu.forward(bn1.forward(conv1.forward(input))));
 
-                    foreach (var m in layer1) x = m.forward(x);
-                    foreach (var m in layer2) x = m.forward(x);
-                    foreach (var m in layer3) x = m.forward(x);
-                    foreach (var m in layer4) x = m.forward(x);
+                    x = layer1.forward(x);
+                    x = layer2.forward(x);
+                    x = layer3.forward(x);
+                    x = layer4.forward(x);
 
                     var res = fc.forward(flatten.forward(avgpool.forward(x)));
                     scope.MoveToOuter(res);
