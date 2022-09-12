@@ -230,3 +230,63 @@ Sometimes, a module needs to allocate tensor that are not trainable, i.e. their 
 
 Each buffer should be declared as a field of type 'Tensor' (not 'Parameter'). This will ensure that the buffer is registered properly when `RegisterComponents()` is called.
 
+
+## Modules, 'children()' and 'named_children()'
+
+It is sometimes necessary to create a new model from an existing one and discard some of the final layers. The submodules will appear in the 'named_children' list in the same order that they are declared within the module itself, and when constructing a model based on the children, the layers may be reordered unless the submodules are declared in the same order that they are meant to be invoked.
+
+So, for example:
+
+```C#
+        private class TestModule1 : Module
+        {
+            public TestModule1()
+                : base("TestModule1")
+            {
+                lin1 = Linear(100, 10);
+                lin2 = Linear(10, 5);
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                using (var x = lin1.forward(input))
+                return lin2.forward(x);
+            }
+
+            // Correct -- the layers are declared in the same order they are invoked.
+            private Module lin1;
+            private Module lin2;
+        }
+
+        private class TestModule2 : Module
+        {
+            public TestModule2()
+                : base("TestModule2")
+            {
+                lin1 = Linear(100, 10);
+                lin2 = Linear(10, 5);
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                using (var x = lin1.forward(input))
+                return lin2.forward(x);
+            }
+
+            // Incorrect -- the layers are not declared in the same order they are invoked.
+            private Module lin2;
+            private Module lin1;
+        }
+
+        ...
+        TestModule1 mod1 = ...
+        TestModule2 mod2 = ...
+        var seq1 = nn.Sequential(mod1.named_children());
+        seq1.forward(t);                 // Does the same as mod1.forward(t)
+        var seq2 = nn.Sequential(mod2.named_children());
+        seq2.forward(t);                 // This probably blows up.
+```
+
+
