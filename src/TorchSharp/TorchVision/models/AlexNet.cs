@@ -60,7 +60,7 @@ namespace TorchSharp.torchvision
         public class AlexNet : Module
         {
             private readonly Module features;
-            private readonly Module avgPool;
+            private readonly Module avgpool;
             private readonly Module classifier;
 
             public AlexNet(int numClasses, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null) : base(nameof(AlexNet))
@@ -81,7 +81,7 @@ namespace TorchSharp.torchvision
                     MaxPool2d(kernelSize: 3, stride: 2)
                 );
 
-                avgPool = AdaptiveAvgPool2d(new long[] { 6, 6 });
+                avgpool = AdaptiveAvgPool2d(new long[] { 6, 6 });
 
                 classifier = Sequential(
                     Dropout(probability: dropout),
@@ -108,7 +108,7 @@ namespace TorchSharp.torchvision
             {
                 using (var _ = NewDisposeScope()) {
                     var f = features.forward(input);
-                    var avg = avgPool.forward(f);
+                    var avg = avgpool.forward(f);
                     var x = avg.flatten(1);
                     return classifier.forward(x).MoveToOuterDisposeScope();
                 }
