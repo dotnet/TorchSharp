@@ -26,7 +26,7 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="log_dir">
                 /// Save directory location. Default is runs/CURRENT_DATETIME_HOSTNAME, which changes after each run.
-                /// Use hierarchical folder structure to compare between runs easily. e.g. pass in ‘runs/exp1’, ‘runs/exp2’, etc.
+                /// Use hierarchical folder structure to compare between runs easily. e.g. pass in â€˜runs/exp1â€™, â€˜runs/exp2â€™, etc.
                 /// for each new experiment to compare across them
                 /// </param>
                 /// <param name="filename_suffix">Suffix added to all event filenames in the log_dir directory.</param>
@@ -43,7 +43,8 @@ namespace TorchSharp
                 internal static string CreateRunName(string log_dir)
                 {
                     var now = DateTime.Now;
-                    var name = $"{Modules.SummaryWriter._months[now.Month - 1]}{now.Day}_{now.Hour}-{now.Minute}-{now.Second}_{System.Net.Dns.GetHostName()}";
+                    var _months = System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat.AbbreviatedMonthNames;
+                    var name = $"{_months[now.Month - 1]}{now.Day}_{now.Hour}-{now.Minute}-{now.Second}_{System.Net.Dns.GetHostName()}";
                     log_dir = Path.Combine(log_dir, name);
                     return log_dir;
                 }
@@ -234,8 +235,6 @@ namespace TorchSharp
             private string _suffix = null;
 
             private int _global_uid;
-
-            internal static string[] _months = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
             private static uint GetMaskedCrc(byte[] data)
             {
