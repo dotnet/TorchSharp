@@ -216,7 +216,7 @@ namespace TorchSharp
                 uint header_crc = GetMaskedCrc(header);
                 uint footer_crc = GetMaskedCrc(bytes);
 
-                using (var fStream = File.OpenWrite(fileName)) {
+                using (var fStream = File.Open(fileName,FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read)) {
                     fStream.Seek(0, SeekOrigin.End);
 
                     using (var writers = new BinaryWriter(fStream)) {
