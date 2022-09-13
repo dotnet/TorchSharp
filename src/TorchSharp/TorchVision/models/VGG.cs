@@ -334,8 +334,8 @@ namespace TorchSharp.torchvision
             };
 
             private readonly Module features;
-            private readonly Module classifier;
             private readonly Module avgpool;
+            private readonly Module classifier;
 
             public VGG(string name,
                 int numClasses,

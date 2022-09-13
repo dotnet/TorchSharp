@@ -2,15 +2,16 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.97.4
+## NuGet Version 0.97.5
 
 __Fixed Bugs:__
 
-
+#715 How to implement the following code <br/>
 
 __API Changes__:
 
 Add functional normalizations<br/>
+Added torch.utils.tensorboard.SummaryWriter. Support for scalars only.<br/>
 
 
 ## NuGet Version 0.97.3
