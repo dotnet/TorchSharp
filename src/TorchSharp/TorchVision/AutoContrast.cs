@@ -2,29 +2,32 @@
 
 using static TorchSharp.torch;
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    internal class AutoContrast : ITransform
+    public static partial class torchvision
     {
-        internal AutoContrast()
+        internal class AutoContrast : ITransform
         {
+            internal AutoContrast()
+            {
+            }
+
+            public Tensor forward(Tensor input)
+            {
+                return transforms.functional.autocontrast(input);
+            }
         }
 
-        public Tensor forward(Tensor input)
+        public static partial class transforms
         {
-            return transforms.functional.autocontrast(input);
-        }
-    }
-
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Autocontrast the pixels of the given image
-        /// </summary>
-        /// <returns></returns>
-        static public ITransform AutoContrast()
-        {
-            return new AutoContrast();
+            /// <summary>
+            /// Autocontrast the pixels of the given image
+            /// </summary>
+            /// <returns></returns>
+            static public ITransform AutoContrast()
+            {
+                return new AutoContrast();
+            }
         }
     }
 }

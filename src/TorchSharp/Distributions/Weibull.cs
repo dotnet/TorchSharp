@@ -8,7 +8,7 @@ namespace TorchSharp
     using System.Linq;
     using System.Net.WebSockets;
     using Modules;
-    using TorchSharp.torchvision;
+    using static TorchSharp.torchvision;
     using static torch.distributions;
 
     namespace Modules

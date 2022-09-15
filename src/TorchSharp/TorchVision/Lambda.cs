@@ -3,33 +3,36 @@ using System;
 using static TorchSharp.torch;
 
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    internal class Lambda : ITransform
+    public static partial class torchvision
     {
-        internal Lambda(Func<Tensor, Tensor> lambda)
+        internal class Lambda : ITransform
         {
-            this.lambda = lambda;
+            internal Lambda(Func<Tensor, Tensor> lambda)
+            {
+                this.lambda = lambda;
+            }
+
+            public Tensor forward(Tensor img)
+            {
+                return lambda(img);
+            }
+
+            private Func<Tensor, Tensor> lambda;
         }
 
-        public Tensor forward(Tensor img)
+        public static partial class transforms
         {
-            return lambda(img);
-        }
-
-        private Func<Tensor,Tensor> lambda;
-    }
-
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Apply a user-defined function as a transform. 
-        /// </summary>
-        /// <param name="lambda">Lambda/function to be used for transform.</param>
-        /// <returns></returns>
-        static public ITransform Lambda(Func<Tensor, Tensor> lambda)
-        {
-            return new Lambda(lambda);
+            /// <summary>
+            /// Apply a user-defined function as a transform. 
+            /// </summary>
+            /// <param name="lambda">Lambda/function to be used for transform.</param>
+            /// <returns></returns>
+            static public ITransform Lambda(Func<Tensor, Tensor> lambda)
+            {
+                return new Lambda(lambda);
+            }
         }
     }
 }
