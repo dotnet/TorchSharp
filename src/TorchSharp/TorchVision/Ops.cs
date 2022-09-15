@@ -38,10 +38,10 @@ namespace TorchSharp.torchvision
         /// <summary>
         /// Performs non-maximum suppression (NMS) on the boxes according to their intersection-over-union (IoU). NMS iteratively removes lower scoring boxes which have an IoU greater than iou_threshold with another(higher scoring) box.
         /// </summary>
-        /// <param name="boxes">boxes (Tensor[N, 4]) to perform NMS on. They are expected to be in (x1, y1, x2, y2) format with 0 <= x1 < x2 and 0 <= y1 < y2.</param>
-        /// <param name="scores">scores (Tensor[N]) for each one of the boxes.</param>
-        /// <param name="iou_threshold">discards all overlapping boxes with IoU > iou_threshold.</param>
-        /// <returns>the indices (Tensor) of the elements that have been kept by NMS, sorted in decreasing order of scores.</returns>
+        /// <param name="boxes">Boxes (Tensor[N, 4]) to perform NMS on..</param>
+        /// <param name="scores">Scores (Tensor[N]) for each one of the boxes.</param>
+        /// <param name="iou_threshold">Discards all overlapping boxes with IoU > iou_threshold.</param>
+        /// <returns>The indices (Tensor) of the elements that have been kept by NMS, sorted in decreasing order of scores.</returns>
         public static Tensor nms(Tensor boxes, Tensor scores, double iou_threshold = 0.5)
         {
             using (var _ = torch.NewDisposeScope())
