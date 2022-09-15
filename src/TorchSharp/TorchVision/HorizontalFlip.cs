@@ -3,29 +3,32 @@
 using static TorchSharp.torch;
 
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    internal class HorizontalFlip : ITransform
+    public static partial class torchvision
     {
-        internal HorizontalFlip()
+        internal class HorizontalFlip : ITransform
         {
+            internal HorizontalFlip()
+            {
+            }
+
+            public Tensor forward(Tensor input)
+            {
+                return input.flip(-1);
+            }
         }
 
-        public Tensor forward(Tensor input)
+        public static partial class transforms
         {
-            return input.flip(-1);
-        }
-    }
-
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Flip the image horizontally.
-        /// </summary>
-        /// <returns></returns>
-        static public ITransform HorizontalFlip()
-        {
-            return new HorizontalFlip();
+            /// <summary>
+            /// Flip the image horizontally.
+            /// </summary>
+            /// <returns></returns>
+            static public ITransform HorizontalFlip()
+            {
+                return new HorizontalFlip();
+            }
         }
     }
 }

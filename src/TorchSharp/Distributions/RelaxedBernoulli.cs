@@ -6,7 +6,7 @@ namespace TorchSharp
 {
     using System.Linq;
     using Modules;
-    using TorchSharp.torchvision;
+    using static TorchSharp.torchvision;
     using static torch.distributions;
 
     namespace Modules

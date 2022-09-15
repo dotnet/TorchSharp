@@ -2,8 +2,10 @@
 using System;
 using static TorchSharp.torch;
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
+    public static partial class torchvision
+    {
     internal class AdjustBrightness : ITransform
     {
         internal AdjustBrightness(double brightness_factor)
@@ -21,19 +23,20 @@ namespace TorchSharp.torchvision
         private double brightness_factor;
     }
 
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Adjust the sharpness of the image. 
-        /// </summary>
-        /// <param name="brightness_factor">
-        /// How much to adjust the brightness. Can be any non negative number.
-        /// 0 gives a black image, 1 gives the original image while 2 increases the brightness by a factor of 2.
-        /// </param>
-        /// <returns></returns>
-        static public ITransform AdjustBrightness(double brightness_factor)
+        public static partial class transforms
         {
-            return new AdjustBrightness(brightness_factor);
+            /// <summary>
+            /// Adjust the sharpness of the image. 
+            /// </summary>
+            /// <param name="brightness_factor">
+            /// How much to adjust the brightness. Can be any non negative number.
+            /// 0 gives a black image, 1 gives the original image while 2 increases the brightness by a factor of 2.
+            /// </param>
+            /// <returns></returns>
+            static public ITransform AdjustBrightness(double brightness_factor)
+            {
+                return new AdjustBrightness(brightness_factor);
+            }
         }
     }
 }

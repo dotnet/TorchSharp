@@ -3,42 +3,45 @@
 using System;
 using static TorchSharp.torch;
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    internal class RandomChoice : IDisposable, ITransform
+    public static partial class torchvision
     {
-        public RandomChoice(ITransform[] transforms)
+        internal class RandomChoice : IDisposable, ITransform
         {
-            this.transforms = transforms;
-        }
+            public RandomChoice(ITransform[] transforms)
+            {
+                this.transforms = transforms;
+            }
 
-        public void Dispose()
-        {
-            foreach (var t in transforms) {
-                if (t is IDisposable) {
-                    ((IDisposable)t).Dispose();
+            public void Dispose()
+            {
+                foreach (var t in transforms) {
+                    if (t is IDisposable) {
+                        ((IDisposable)t).Dispose();
+                    }
                 }
             }
+
+            public Tensor forward(Tensor input)
+            {
+                using (var chance = torch.randint(transforms.Length, new long[] { 1 }, ScalarType.Int32))
+                    return transforms[chance.item<int>()].forward(input);
+            }
+
+            private ITransform[] transforms;
         }
 
-        public Tensor forward(Tensor input)
+        public static partial class transforms
         {
-            using (var chance = torch.randint(transforms.Length, new long[] { 1 }, ScalarType.Int32))
-                return transforms[chance.item<int>()].forward(input);
-        }
-
-        private ITransform[] transforms;
-    }
-
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Apply a single transformation randomly picked from a list. 
-        /// </summary>
-        /// <param name="transforms">A list of transforms to apply.</param>
-        static public ITransform RandomChoice(params ITransform[] transforms)
-        {
-            return new RandomChoice(transforms);
+            /// <summary>
+            /// Apply a single transformation randomly picked from a list. 
+            /// </summary>
+            /// <param name="transforms">A list of transforms to apply.</param>
+            static public ITransform RandomChoice(params ITransform[] transforms)
+            {
+                return new RandomChoice(transforms);
+            }
         }
     }
 }
