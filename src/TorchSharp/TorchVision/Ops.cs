@@ -35,9 +35,9 @@ namespace TorchSharp.torchvision
             }
         }
 
-        public static Tensor nme(Tensor boxes, Tensor scores, double iou_threshold = 0.5)
+        public static Tensor nms(Tensor boxes, Tensor scores, double iou_threshold = 0.5)
         {
-            using (var nmsScope = torch.NewDisposeScope())
+            using (var _ = torch.NewDisposeScope())
             {
                 var x1 = boxes.select(1, 0);
                 var y1 = boxes.select(1, 1);
