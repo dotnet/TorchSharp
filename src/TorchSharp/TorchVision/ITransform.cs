@@ -2,10 +2,13 @@
 
 using static TorchSharp.torch;
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    public interface ITransform
+    public static partial class torchvision
     {
-        Tensor forward(Tensor input);
+        public interface ITransform
+        {
+            Tensor forward(Tensor input);
+        }
     }
 }

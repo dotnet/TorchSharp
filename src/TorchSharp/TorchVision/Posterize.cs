@@ -3,34 +3,37 @@
 using static TorchSharp.torch;
 
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    internal class Posterize : ITransform
+    public static partial class torchvision
     {
-        internal Posterize(int bits)
+        internal class Posterize : ITransform
         {
-            this.bits = bits;
+            internal Posterize(int bits)
+            {
+                this.bits = bits;
+            }
+
+            public Tensor forward(Tensor input)
+            {
+                return transforms.functional.posterize(input, bits);
+            }
+
+            protected int bits;
         }
 
-        public Tensor forward(Tensor input)
+        public static partial class transforms
         {
-            return transforms.functional.posterize(input, bits);
-        }
-
-        protected int bits;
-    }
-
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Posterize the image by reducing the number of bits for each color channel. 
-        /// </summary>
-        /// <param name="bits">Number of high-order bits to keep for each channel.</param>
-        /// <returns></returns>
-        /// <remarks>The tensor must be an integer tensor.</remarks>
-        static public ITransform Posterize(int bits)
-        {
-            return new Posterize(bits);
+            /// <summary>
+            /// Posterize the image by reducing the number of bits for each color channel. 
+            /// </summary>
+            /// <param name="bits">Number of high-order bits to keep for each channel.</param>
+            /// <returns></returns>
+            /// <remarks>The tensor must be an integer tensor.</remarks>
+            static public ITransform Posterize(int bits)
+            {
+                return new Posterize(bits);
+            }
         }
     }
 }

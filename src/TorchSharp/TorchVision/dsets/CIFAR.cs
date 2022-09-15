@@ -6,72 +6,75 @@ using System.Net;
 using static TorchSharp.torch;
 using static TorchSharp.torch.utils.data;
 
-namespace TorchSharp.torchvision
+namespace TorchSharp 
 {
-    public static partial class datasets
+    public static partial class torchvision
     {
-        /// <summary>
-        /// CIFAR10 Dataset.
-        /// </summary>
-        /// <remarks>
-        /// The dataset for this example can be found at: https://www.cs.toronto.edu/~kriz/cifar.html
-        /// </remarks>
-        /// <param name="root">Root directory of dataset where directory CIFAR{10,100} exists or will be saved to if download is set to true.</param>
-        /// <param name="train">If true, creates dataset from training set, otherwise creates from test set</param>
-        /// <param name="download">If true, downloads the dataset from the internet and puts it in root directory. If dataset is already downloaded, it is not downloaded again</param>
-        /// <param name="target_transform">A transform that takes in the target tensor and transforms it.</param>
-        /// <returns>A CIFAR dataset.</returns>
-        public static Dataset CIFAR10(string root, bool train, bool download = false, ITransform target_transform = null)
+        public static partial class datasets
         {
-            return new Modules.CIFAR10(root, train, "https://www.cs.toronto.edu/~kriz/", download, target_transform);
-        }
+            /// <summary>
+            /// CIFAR10 Dataset.
+            /// </summary>
+            /// <remarks>
+            /// The dataset for this example can be found at: https://www.cs.toronto.edu/~kriz/cifar.html
+            /// </remarks>
+            /// <param name="root">Root directory of dataset where directory CIFAR{10,100} exists or will be saved to if download is set to true.</param>
+            /// <param name="train">If true, creates dataset from training set, otherwise creates from test set</param>
+            /// <param name="download">If true, downloads the dataset from the internet and puts it in root directory. If dataset is already downloaded, it is not downloaded again</param>
+            /// <param name="target_transform">A transform that takes in the target tensor and transforms it.</param>
+            /// <returns>A CIFAR dataset.</returns>
+            public static Dataset CIFAR10(string root, bool train, bool download = false, torchvision.ITransform target_transform = null)
+            {
+                return new Modules.CIFAR10(root, train, "https://www.cs.toronto.edu/~kriz/", download, target_transform);
+            }
 
-        /// <summary>
-        /// CIFAR10 Dataset.
-        /// </summary>
-        /// <remarks>
-        /// The dataset for this example can be found at: https://www.cs.toronto.edu/~kriz/cifar.html
-        /// </remarks>
-        /// <param name="root">Root directory of dataset where directory CIFAR{10,100} exists or will be saved to if download is set to true.</param>
-        /// <param name="train">If true, creates dataset from training set, otherwise creates from test set</param>
-        /// <param name="download">If true, downloads the dataset from the internet and puts it in root directory. If dataset is already downloaded, it is not downloaded again</param>
-        /// <param name="target_transform">A function that takes in the target tensor and transforms it.</param>
-        /// <returns>A CIFAR dataset.</returns>
-        public static Dataset CIFAR10(string root, bool train, bool download, Func<Tensor,Tensor> target_transform)
-        {
-            return new Modules.CIFAR10(root, train, "https://www.cs.toronto.edu/~kriz/", download, new torchvision.Lambda(target_transform));
-        }
+            /// <summary>
+            /// CIFAR10 Dataset.
+            /// </summary>
+            /// <remarks>
+            /// The dataset for this example can be found at: https://www.cs.toronto.edu/~kriz/cifar.html
+            /// </remarks>
+            /// <param name="root">Root directory of dataset where directory CIFAR{10,100} exists or will be saved to if download is set to true.</param>
+            /// <param name="train">If true, creates dataset from training set, otherwise creates from test set</param>
+            /// <param name="download">If true, downloads the dataset from the internet and puts it in root directory. If dataset is already downloaded, it is not downloaded again</param>
+            /// <param name="target_transform">A function that takes in the target tensor and transforms it.</param>
+            /// <returns>A CIFAR dataset.</returns>
+            public static Dataset CIFAR10(string root, bool train, bool download, Func<Tensor, Tensor> target_transform)
+            {
+                return new Modules.CIFAR10(root, train, "https://www.cs.toronto.edu/~kriz/", download, new torchvision.Lambda(target_transform));
+            }
 
-        /// <summary>
-        /// CIFAR100 Dataset.
-        /// </summary>
-        /// <remarks>
-        /// The dataset for this example can be found at: https://www.cs.toronto.edu/~kriz/cifar.html
-        /// </remarks>
-        /// <param name="root">Root directory of dataset where directory CIFAR{10,100} exists or will be saved to if download is set to true.</param>
-        /// <param name="train">If true, creates dataset from training set, otherwise creates from test set</param>
-        /// <param name="download">If true, downloads the dataset from the internet and puts it in root directory. If dataset is already downloaded, it is not downloaded again</param>
-        /// <param name="target_transform">A transform that takes in the target and transforms it.</param>
-        /// <returns>A CIFAR dataset.</returns>
-        public static Dataset CIFAR100(string root, bool train, bool download = false, ITransform target_transform = null)
-        {
-            return new Modules.CIFAR100(root, train, "https://www.cs.toronto.edu/~kriz/", download, target_transform);
-        }
+            /// <summary>
+            /// CIFAR100 Dataset.
+            /// </summary>
+            /// <remarks>
+            /// The dataset for this example can be found at: https://www.cs.toronto.edu/~kriz/cifar.html
+            /// </remarks>
+            /// <param name="root">Root directory of dataset where directory CIFAR{10,100} exists or will be saved to if download is set to true.</param>
+            /// <param name="train">If true, creates dataset from training set, otherwise creates from test set</param>
+            /// <param name="download">If true, downloads the dataset from the internet and puts it in root directory. If dataset is already downloaded, it is not downloaded again</param>
+            /// <param name="target_transform">A transform that takes in the target and transforms it.</param>
+            /// <returns>A CIFAR dataset.</returns>
+            public static Dataset CIFAR100(string root, bool train, bool download = false, torchvision.ITransform target_transform = null)
+            {
+                return new Modules.CIFAR100(root, train, "https://www.cs.toronto.edu/~kriz/", download, target_transform);
+            }
 
-        /// <summary>
-        /// CIFAR100 Dataset.
-        /// </summary>
-        /// <remarks>
-        /// The dataset for this example can be found at: https://www.cs.toronto.edu/~kriz/cifar.html
-        /// </remarks>
-        /// <param name="root">Root directory of dataset where directory CIFAR{10,100} exists or will be saved to if download is set to true.</param>
-        /// <param name="train">If true, creates dataset from training set, otherwise creates from test set</param>
-        /// <param name="download">If true, downloads the dataset from the internet and puts it in root directory. If dataset is already downloaded, it is not downloaded again</param>
-        /// <param name="target_transform">A function that takes in the target and transforms it.</param>
-        /// <returns>A CIFAR dataset.</returns>
-        public static Dataset CIFAR100(string root, bool train, bool download, Func<Tensor, Tensor> target_transform)
-        {
-            return new Modules.CIFAR100(root, train, "https://www.cs.toronto.edu/~kriz/", download, new torchvision.Lambda(target_transform));
+            /// <summary>
+            /// CIFAR100 Dataset.
+            /// </summary>
+            /// <remarks>
+            /// The dataset for this example can be found at: https://www.cs.toronto.edu/~kriz/cifar.html
+            /// </remarks>
+            /// <param name="root">Root directory of dataset where directory CIFAR{10,100} exists or will be saved to if download is set to true.</param>
+            /// <param name="train">If true, creates dataset from training set, otherwise creates from test set</param>
+            /// <param name="download">If true, downloads the dataset from the internet and puts it in root directory. If dataset is already downloaded, it is not downloaded again</param>
+            /// <param name="target_transform">A function that takes in the target and transforms it.</param>
+            /// <returns>A CIFAR dataset.</returns>
+            public static Dataset CIFAR100(string root, bool train, bool download, Func<Tensor, Tensor> target_transform)
+            {
+                return new Modules.CIFAR100(root, train, "https://www.cs.toronto.edu/~kriz/", download, new torchvision.Lambda(target_transform));
+            }
         }
     }
 
@@ -122,7 +125,7 @@ namespace TorchSharp.torchvision
 
         internal class CIFAR10 : CIFAR, IDisposable
         {
-            public CIFAR10(string root, bool train, string baseUrl, bool download, ITransform transform)
+            public CIFAR10(string root, bool train, string baseUrl, bool download, torchvision.ITransform transform)
             {
                 var targetDir = JoinPaths(root, "CIFAR10");
 
@@ -206,7 +209,7 @@ namespace TorchSharp.torchvision
             private List<Tensor> data = new();
             private List<Tensor> labels = new();
 
-            private ITransform transform;
+            private torchvision.ITransform transform;
             public override long Count => _count;
 
             private int _count = 0;
@@ -214,7 +217,7 @@ namespace TorchSharp.torchvision
 
         internal class CIFAR100 : CIFAR, IDisposable
         {
-            public CIFAR100(string root, bool train, string baseUrl, bool download, ITransform transform)
+            public CIFAR100(string root, bool train, string baseUrl, bool download, torchvision.ITransform transform)
             {
                 var targetDir = JoinPaths(root, "CIFAR100");
 
@@ -299,7 +302,7 @@ namespace TorchSharp.torchvision
             private List<Tensor> coarse_labels = new();
             private List<Tensor> fine_labels = new();
 
-            private ITransform transform;
+            private torchvision.ITransform transform;
             public override long Count => _count;
 
             private int _count = 0;

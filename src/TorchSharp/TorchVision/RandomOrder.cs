@@ -4,50 +4,53 @@ using System.Collections.Generic;
 using System.Linq;
 using static TorchSharp.torch;
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    internal class RandomOrder : IDisposable, ITransform
+    public static partial class torchvision
     {
-        public RandomOrder(ITransform[] transforms)
+        internal class RandomOrder : IDisposable, ITransform
         {
-            this.transforms = transforms;
-        }
+            public RandomOrder(ITransform[] transforms)
+            {
+                this.transforms = transforms;
+            }
 
-        public void Dispose()
-        {
-            foreach (var t in transforms) {
-                if (t is IDisposable) {
-                    ((IDisposable)t).Dispose();
+            public void Dispose()
+            {
+                foreach (var t in transforms) {
+                    if (t is IDisposable) {
+                        ((IDisposable)t).Dispose();
+                    }
                 }
             }
-        }
 
-        public Tensor forward(Tensor input)
-        {
-            var rng = new Random();
-            foreach (var t in transforms.OrderBy(t => rng.NextDouble())) {
-                input = t.forward(input);
+            public Tensor forward(Tensor input)
+            {
+                var rng = new Random();
+                foreach (var t in transforms.OrderBy(t => rng.NextDouble())) {
+                    input = t.forward(input);
+                }
+                return input;
             }
-            return input;
+
+            private IList<ITransform> transforms;
         }
 
-        private IList<ITransform> transforms;
-    }
-
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Apply a list of transformations in a random order.
-        /// </summary>
-        /// <param name="transforms">A list of transforms to apply.</param>
-        /// <remarks>
-        /// This transform uses the .NET Random API, not the Torch RNG.
-        /// Each invocation of 'forward()' will randomize the order in which transforms
-        /// are applied.
-        /// </remarks>
-        static public ITransform RandomOrder(params ITransform[] transforms)
+        public static partial class transforms
         {
-            return new RandomOrder(transforms);
+            /// <summary>
+            /// Apply a list of transformations in a random order.
+            /// </summary>
+            /// <param name="transforms">A list of transforms to apply.</param>
+            /// <remarks>
+            /// This transform uses the .NET Random API, not the Torch RNG.
+            /// Each invocation of 'forward()' will randomize the order in which transforms
+            /// are applied.
+            /// </remarks>
+            static public ITransform RandomOrder(params ITransform[] transforms)
+            {
+                return new RandomOrder(transforms);
+            }
         }
     }
 }

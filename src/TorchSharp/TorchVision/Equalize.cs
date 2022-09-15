@@ -2,30 +2,33 @@
 
 using static TorchSharp.torch;
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    internal class Equalize : ITransform
+    public static partial class torchvision
     {
-        internal Equalize()
+        internal class Equalize : ITransform
         {
+            internal Equalize()
+            {
+            }
+
+            public Tensor forward(Tensor input)
+            {
+                return transforms.functional.equalize(input);
+            }
         }
 
-        public Tensor forward(Tensor input)
+        public static partial class transforms
         {
-            return transforms.functional.equalize(input);
-        }
-    }
-
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Equalize the histogram of an image by applying a non-linear mapping to the input
-        /// in order to create a uniform distribution of grayscale values in the output.
-        /// </summary>
-        /// <returns></returns>
-        static public ITransform Equalize()
-        {
-            return new Equalize();
+            /// <summary>
+            /// Equalize the histogram of an image by applying a non-linear mapping to the input
+            /// in order to create a uniform distribution of grayscale values in the output.
+            /// </summary>
+            /// <returns></returns>
+            static public ITransform Equalize()
+            {
+                return new Equalize();
+            }
         }
     }
 }

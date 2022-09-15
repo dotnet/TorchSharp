@@ -2,38 +2,41 @@
 using System;
 using static TorchSharp.torch;
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    internal class AdjustBrightness : ITransform
+    public static partial class torchvision
     {
-        internal AdjustBrightness(double brightness_factor)
+        internal class AdjustBrightness : ITransform
         {
-            if (brightness_factor < 0.0)
-                throw new ArgumentException($"The sharpness factor ({brightness_factor}) must be non-negative.");
-            this.brightness_factor = brightness_factor;
+            internal AdjustBrightness(double brightness_factor)
+            {
+                if (brightness_factor < 0.0)
+                    throw new ArgumentException($"The sharpness factor ({brightness_factor}) must be non-negative.");
+                this.brightness_factor = brightness_factor;
+            }
+
+            public Tensor forward(Tensor input)
+            {
+                return transforms.functional.adjust_brightness(input, brightness_factor);
+            }
+
+            private double brightness_factor;
         }
 
-        public Tensor forward(Tensor input)
+        public static partial class transforms
         {
-            return transforms.functional.adjust_brightness(input, brightness_factor);
-        }
-
-        private double brightness_factor;
-    }
-
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Adjust the sharpness of the image. 
-        /// </summary>
-        /// <param name="brightness_factor">
-        /// How much to adjust the brightness. Can be any non negative number.
-        /// 0 gives a black image, 1 gives the original image while 2 increases the brightness by a factor of 2.
-        /// </param>
-        /// <returns></returns>
-        static public ITransform AdjustBrightness(double brightness_factor)
-        {
-            return new AdjustBrightness(brightness_factor);
+            /// <summary>
+            /// Adjust the sharpness of the image. 
+            /// </summary>
+            /// <param name="brightness_factor">
+            /// How much to adjust the brightness. Can be any non negative number.
+            /// 0 gives a black image, 1 gives the original image while 2 increases the brightness by a factor of 2.
+            /// </param>
+            /// <returns></returns>
+            static public ITransform AdjustBrightness(double brightness_factor)
+            {
+                return new AdjustBrightness(brightness_factor);
+            }
         }
     }
 }
