@@ -45,6 +45,8 @@ namespace TorchSharp
         static bool nativeBackendLoaded = false;
         static bool nativeBackendCudaLoaded = false;
 
+        public static string __version__ => libtorchPackageVersion;
+
         internal static bool TryLoadNativeLibraryFromFile(string path, StringBuilder trace) {
             bool ok;
             try {

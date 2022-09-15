@@ -1550,9 +1550,42 @@ namespace TorchSharp
         {
             var shape = new long[] { 2, 2 };
             Tensor t = torch.full(2, 2, 3.14f);
-            Assert.Equal(shape, t.shape);
-            Assert.Equal(3.14f, t[0, 0].ToSingle());
-            Assert.Equal(3.14f, t[1, 1].ToSingle());
+            Assert.Multiple(
+                () => Assert.Equal(shape, t.shape),
+                () => Assert.Equal(torch.float32, t.dtype),
+                () => Assert.Equal(3.14f, t[0, 0].ToSingle()),
+                () => Assert.Equal(3.14f, t[1, 1].ToSingle())
+            );
+
+            var u = t.new_full(shape, 3.14f);
+            Assert.Multiple(
+                () => Assert.Equal(shape, u.shape),
+                () => Assert.Equal(torch.float32, u.dtype),
+                () => Assert.Equal(3.14f, u[0, 0].ToSingle()),
+                () => Assert.Equal(3.14f, u[1, 1].ToSingle())
+            );
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.full))]
+        public void CreateFloat64TensorFull()
+        {
+            var shape = new long[] { 2, 2 };
+            Tensor t = torch.full(2, 2, 3.14f, dtype: float64);
+            Assert.Multiple(
+                () => Assert.Equal(shape, t.shape),
+                () => Assert.Equal(torch.float64, t.dtype),
+                () => Assert.Equal(3.14f, t[0, 0].ToSingle()),
+                () => Assert.Equal(3.14f, t[1, 1].ToSingle())
+            );
+
+            var u = t.new_full(shape, 3.14f);
+            Assert.Multiple(
+                () => Assert.Equal(shape, u.shape),
+                () => Assert.Equal(torch.float64, u.dtype),
+                () => Assert.Equal(3.14f, u[0, 0].ToSingle()),
+                () => Assert.Equal(3.14f, u[1, 1].ToSingle())
+            );
         }
 
         [Fact]
