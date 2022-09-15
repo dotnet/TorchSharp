@@ -6,22 +6,22 @@ namespace TorchSharp
 {
     public static partial class torchvision
     {
-    internal class AdjustBrightness : ITransform
-    {
-        internal AdjustBrightness(double brightness_factor)
+        internal class AdjustBrightness : ITransform
         {
-            if (brightness_factor < 0.0)
-                throw new ArgumentException($"The sharpness factor ({brightness_factor}) must be non-negative.");
-            this.brightness_factor = brightness_factor;
-        }
+            internal AdjustBrightness(double brightness_factor)
+            {
+                if (brightness_factor < 0.0)
+                    throw new ArgumentException($"The sharpness factor ({brightness_factor}) must be non-negative.");
+                this.brightness_factor = brightness_factor;
+            }
 
-        public Tensor forward(Tensor input)
-        {
-            return transforms.functional.adjust_brightness(input, brightness_factor);
-        }
+            public Tensor forward(Tensor input)
+            {
+                return transforms.functional.adjust_brightness(input, brightness_factor);
+            }
 
-        private double brightness_factor;
-    }
+            private double brightness_factor;
+        }
 
         public static partial class transforms
         {
