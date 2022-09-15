@@ -321,7 +321,7 @@ namespace TorchSharp.torchvision
                 conv1 = Conv2d(3, 64, kernelSize: 7, stride: 2, padding: 3, bias: false);
                 bn1 = BatchNorm2d(64);
                 relu = ReLU(inPlace: true);
-                maxpool = MaxPool2d(kernelSize: 2, stride: 2, padding: 1);
+                maxpool = MaxPool2d(kernelSize: 3, stride: 2, padding: 1);
                 MakeLayer(layer1, block, expansion, 64, num_blocks[0], 1);
                 MakeLayer(layer2, block, expansion, 128, num_blocks[1], 2);
                 MakeLayer(layer3, block, expansion, 256, num_blocks[2], 2);
