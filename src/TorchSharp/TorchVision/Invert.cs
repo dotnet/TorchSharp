@@ -3,29 +3,32 @@
 using static TorchSharp.torch;
 
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    internal class Invert : ITransform
+    public static partial class torchvision
     {
-        internal Invert()
+        internal class Invert : ITransform
         {
+            internal Invert()
+            {
+            }
+
+            public Tensor forward(Tensor input)
+            {
+                return transforms.functional.invert(input);
+            }
         }
 
-        public Tensor forward(Tensor input)
+        public static partial class transforms
         {
-            return transforms.functional.invert(input);
-        }
-    }
-
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Invert the image colors.
-        /// </summary>
-        /// <remarks>The code assumes that integer color values lie in the range [0,255], and floating point colors in [0,1[.</remarks>
-        static public ITransform Invert()
-        {
-            return new Invert();
+            /// <summary>
+            /// Invert the image colors.
+            /// </summary>
+            /// <remarks>The code assumes that integer color values lie in the range [0,255], and floating point colors in [0,1[.</remarks>
+            static public ITransform Invert()
+            {
+                return new Invert();
+            }
         }
     }
 }

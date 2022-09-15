@@ -7,58 +7,61 @@ using TorchSharp.Utils;
 using static TorchSharp.torch;
 using static TorchSharp.torch.utils.data;
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    public static partial class datasets
+    public static partial class torchvision
     {
-        /// <summary>
-        /// MNIST Dataset
-        /// http://yann.lecun.com/exdb/mnist/
-        /// </summary>
-        /// <param name="root">Root directory of dataset where the MNIST .gz data files exist.</param>
-        /// <param name="train">If true, creates dataset from the 'train' files, otherwise from the 't10k' files.</param>
-        /// <param name="download">
-        /// If true, downloads the dataset from the internet and puts it in root directory.
-        /// If the dataset is already downloaded, it is not downloaded again.
-        /// </param>
-        /// <param name="target_transform">A function/transform that takes in the target and transforms it.</param>
-        /// <returns>An iterable dataset.</returns>
-        public static Dataset MNIST(string root, bool train, bool download = false, ITransform target_transform = null)
+        public static partial class datasets
         {
-            return new Modules.MNIST(root, train, download, target_transform);
-        }
+            /// <summary>
+            /// MNIST Dataset
+            /// http://yann.lecun.com/exdb/mnist/
+            /// </summary>
+            /// <param name="root">Root directory of dataset where the MNIST .gz data files exist.</param>
+            /// <param name="train">If true, creates dataset from the 'train' files, otherwise from the 't10k' files.</param>
+            /// <param name="download">
+            /// If true, downloads the dataset from the internet and puts it in root directory.
+            /// If the dataset is already downloaded, it is not downloaded again.
+            /// </param>
+            /// <param name="target_transform">A function/transform that takes in the target and transforms it.</param>
+            /// <returns>An iterable dataset.</returns>
+            public static Dataset MNIST(string root, bool train, bool download = false, torchvision.ITransform target_transform = null)
+            {
+                return new Modules.MNIST(root, train, download, target_transform);
+            }
 
-        /// <summary>
-        /// Fashion-MNIST Dataset
-        /// https://github.com/zalandoresearch/fashion-mnist/raw/master/data/fashion/
-        /// </summary>
-        /// <param name="root">Root directory of dataset where the MNIST .gz data files exist.</param>
-        /// <param name="train">If true, creates dataset from the 'train' files, otherwise from the 't10k' files.</param>
-        /// <param name="download">
-        /// If true, downloads the dataset from the internet and puts it in root directory.
-        /// If the dataset is already downloaded, it is not downloaded again.
-        /// </param>
-        /// <param name="target_transform">A function/transform that takes in the target and transforms it.</param>
-        /// <returns>An iterable dataset.</returns>
-        public static Dataset FashionMNIST(string root, bool train, bool download = false, ITransform target_transform = null)
-        {
-            return new Modules.FashionMNIST(root, train, download, target_transform);
-        }
+            /// <summary>
+            /// Fashion-MNIST Dataset
+            /// https://github.com/zalandoresearch/fashion-mnist/raw/master/data/fashion/
+            /// </summary>
+            /// <param name="root">Root directory of dataset where the MNIST .gz data files exist.</param>
+            /// <param name="train">If true, creates dataset from the 'train' files, otherwise from the 't10k' files.</param>
+            /// <param name="download">
+            /// If true, downloads the dataset from the internet and puts it in root directory.
+            /// If the dataset is already downloaded, it is not downloaded again.
+            /// </param>
+            /// <param name="target_transform">A function/transform that takes in the target and transforms it.</param>
+            /// <returns>An iterable dataset.</returns>
+            public static Dataset FashionMNIST(string root, bool train, bool download = false, torchvision.ITransform target_transform = null)
+            {
+                return new Modules.FashionMNIST(root, train, download, target_transform);
+            }
 
-        /// <summary>
-        /// Kuzushiji-MNIST Dataset (https://github.com/rois-codh/kmnist)
-        /// </summary>
-        /// <param name="root">Root directory of dataset where the KMNIST .gz data files exist.</param>
-        /// <param name="train">If true, creates dataset from the 'train' files, otherwise from the 't10k' files.</param>
-        /// <param name="download">
-        /// If true, downloads the dataset from the internet and puts it in root directory.
-        /// If the dataset is already downloaded, it is not downloaded again.
-        /// </param>
-        /// <param name="target_transform">A function/transform that takes in the target and transforms it.</param>
-        /// <returns>An iterable dataset.</returns>
-        public static Dataset KMNIST(string root, bool train, bool download = false, ITransform target_transform = null)
-        {
-            return new Modules.KMNIST(root, train, download, target_transform);
+            /// <summary>
+            /// Kuzushiji-MNIST Dataset (https://github.com/rois-codh/kmnist)
+            /// </summary>
+            /// <param name="root">Root directory of dataset where the KMNIST .gz data files exist.</param>
+            /// <param name="train">If true, creates dataset from the 'train' files, otherwise from the 't10k' files.</param>
+            /// <param name="download">
+            /// If true, downloads the dataset from the internet and puts it in root directory.
+            /// If the dataset is already downloaded, it is not downloaded again.
+            /// </param>
+            /// <param name="target_transform">A function/transform that takes in the target and transforms it.</param>
+            /// <returns>An iterable dataset.</returns>
+            public static Dataset KMNIST(string root, bool train, bool download = false, torchvision.ITransform target_transform = null)
+            {
+                return new Modules.KMNIST(root, train, download, target_transform);
+            }
         }
     }
 
@@ -79,12 +82,12 @@ namespace TorchSharp.torchvision
             /// <param name="train">The file name prefix, either 'train' or 't10k' (the latter being the test data set).</param>
             /// <param name="download"></param>
             /// <param name="transform">Transform for input MNIST image</param>
-            public MNIST(string root, bool train, bool download = false, ITransform transform = null) :
+            public MNIST(string root, bool train, bool download = false, torchvision.ITransform transform = null) :
                 this(root, "mnist", train ? "train" : "t10k", "http://yann.lecun.com/exdb/mnist/", download, transform)
             {
             }
 
-            protected MNIST(string root, string datasetName, string prefix, string baseUrl, bool download, ITransform transform)
+            protected MNIST(string root, string datasetName, string prefix, string baseUrl, bool download, torchvision.ITransform transform)
             {
                 if (download) Download(root, baseUrl, datasetName);
 
@@ -205,7 +208,7 @@ namespace TorchSharp.torchvision
                 }
             }
 
-            private ITransform transform;
+            private torchvision.ITransform transform;
 
             /// <summary>
             /// Size of dataset
@@ -246,7 +249,7 @@ namespace TorchSharp.torchvision
             /// <param name="train">The file name prefix, either 'train' or 't10k' (the latter being the test data set).</param>
             /// <param name="download"></param>
             /// <param name="transform">Transform for input MNIST image</param>
-            public FashionMNIST(string root, bool train, bool download = false, ITransform transform = null) :
+            public FashionMNIST(string root, bool train, bool download = false, torchvision.ITransform transform = null) :
                 base(root, "fashion-mnist", train ? "train" : "t10k", "https://github.com/zalandoresearch/fashion-mnist/raw/master/data/fashion/", download, transform)
             {
             }
@@ -261,7 +264,7 @@ namespace TorchSharp.torchvision
             /// <param name="train">The file name prefix, either 'train' or 't10k' (the latter being the test data set).</param>
             /// <param name="download"></param>
             /// <param name="transform">Transform for input MNIST image</param>
-            public KMNIST(string root, bool train, bool download = false, ITransform transform = null) :
+            public KMNIST(string root, bool train, bool download = false, torchvision.ITransform transform = null) :
                 base(root, "kmnist", train ? "train" : "t10k", "http://codh.rois.ac.jp/kmnist/dataset/kmnist/", download, transform)
             {
             }

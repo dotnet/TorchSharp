@@ -3,32 +3,35 @@
 using static TorchSharp.torch;
 
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    internal class ConvertImageDType : ITransform
+    public static partial class torchvision
     {
-        internal ConvertImageDType(ScalarType dtype)
+        internal class ConvertImageDType : ITransform
         {
-            this.dtype = dtype;
+            internal ConvertImageDType(ScalarType dtype)
+            {
+                this.dtype = dtype;
+            }
+
+            public Tensor forward(Tensor image)
+            {
+                return transforms.functional.convert_image_dtype(image, dtype);
+            }
+
+            private ScalarType dtype;
         }
 
-        public Tensor forward(Tensor image)
+        public static partial class transforms
         {
-            return transforms.functional.convert_image_dtype(image, dtype);
-        }
-
-        private ScalarType dtype;
-    }
-
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Convert a tensor image to the given dtype and scale the values accordingly
-        /// </summary>
-        /// <param name="dtype">Desired data type of the output</param>
-        static public ITransform ConvertImageDType(ScalarType dtype)
-        {
-            return new ConvertImageDType(dtype);
+            /// <summary>
+            /// Convert a tensor image to the given dtype and scale the values accordingly
+            /// </summary>
+            /// <param name="dtype">Desired data type of the output</param>
+            static public ITransform ConvertImageDType(ScalarType dtype)
+            {
+                return new ConvertImageDType(dtype);
+            }
         }
     }
 }

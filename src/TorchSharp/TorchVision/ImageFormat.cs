@@ -1,21 +1,24 @@
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    /// <summary>
-    /// File format for an image.
-    /// </summary>
-    public enum ImageFormat
+    public static partial class torchvision
     {
-        Unknown,
-        Png,
-        Jpeg,
-        Bmp,
-        Gif,
-        Tiff,
-        Emf,
-        Exif,
-        Wmf,
-        Pbm,
-        Tga,
-        Webp,
+        /// <summary>
+        /// File format for an image.
+        /// </summary>
+        public enum ImageFormat
+        {
+            Unknown,
+            Png,
+            Jpeg,
+            Bmp,
+            Gif,
+            Tiff,
+            Emf,
+            Exif,
+            Wmf,
+            Pbm,
+            Tga,
+            Webp,
+        }
     }
 }

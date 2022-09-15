@@ -8,8 +8,8 @@ using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
-using TorchSharp.torchvision;
 using static TorchSharp.torch;
+using static TorchSharp.torchvision;
 
 namespace TorchSharp.Examples.Utils
 {

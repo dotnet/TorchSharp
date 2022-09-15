@@ -4,59 +4,60 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using TorchSharp.Modules;
-using TorchSharp.torchvision.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.utils.data;
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    public static partial class models
+    public static partial class torchvision
     {
-        /// <summary>
-        /// ResNet-18
-        /// </summary>
-        /// <param name="num_classes">The number of output classes.</param>
-        /// <param name="dropout"></param>
-        /// <param name="transform_input"></param>
-        /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
-        /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
-        /// <param name="device">The device to locate the model on.</param>
-        /// <remarks>
-        /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
-        /// using the exportsd.py script, then loading into the .NET instance:
-        ///
-        /// from torchvision import models
-        /// import exportsd
-        /// 
-        /// model = models.inception_v3(pretrained=True)
-        /// f = open("model_weights.dat", "wb")
-        /// exportsd.save_state_dict(model.state_dict(), f)
-        /// f.close()
-        ///
-        /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
-        ///
-        /// In order for the weights to be loaded, the number of classes has to be the same as
-        /// in the pre-trained model, which is 1000.
-        ///
-        /// It is also possible to skip loading the last linear layer and use it for transfer-learning
-        /// with a different number of output classes. To do so, pass skipfc=true.
-        ///
-        /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
-        /// images of shape (3 x H x W), where H and W are expected to be 299x299. The images have to be loaded
-        /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
-        /// </remarks>
-        public static Modules.InceptionV3 inception_v3(
-                int num_classes = 1000,
-                float dropout = 0.5f,
-                bool transform_input = false,
-                string weights_file = null,
-                bool skipfc = true,
-                Device device = null)
+        public static partial class models
         {
-            return new Modules.InceptionV3(num_classes, dropout, transform_input, weights_file, skipfc, device);
+            /// <summary>
+            /// ResNet-18
+            /// </summary>
+            /// <param name="num_classes">The number of output classes.</param>
+            /// <param name="dropout"></param>
+            /// <param name="transform_input"></param>
+            /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
+            /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
+            /// <param name="device">The device to locate the model on.</param>
+            /// <remarks>
+            /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
+            /// using the exportsd.py script, then loading into the .NET instance:
+            ///
+            /// from torchvision import models
+            /// import exportsd
+            /// 
+            /// model = models.inception_v3(pretrained=True)
+            /// f = open("model_weights.dat", "wb")
+            /// exportsd.save_state_dict(model.state_dict(), f)
+            /// f.close()
+            ///
+            /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
+            ///
+            /// In order for the weights to be loaded, the number of classes has to be the same as
+            /// in the pre-trained model, which is 1000.
+            ///
+            /// It is also possible to skip loading the last linear layer and use it for transfer-learning
+            /// with a different number of output classes. To do so, pass skipfc=true.
+            ///
+            /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
+            /// images of shape (3 x H x W), where H and W are expected to be 299x299. The images have to be loaded
+            /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
+            /// </remarks>
+            public static Modules.InceptionV3 inception_v3(
+                    int num_classes = 1000,
+                    float dropout = 0.5f,
+                    bool transform_input = false,
+                    string weights_file = null,
+                    bool skipfc = true,
+                    Device device = null)
+            {
+                return new Modules.InceptionV3(num_classes, dropout, transform_input, weights_file, skipfc, device);
+            }
         }
-
     }
 
     namespace Modules

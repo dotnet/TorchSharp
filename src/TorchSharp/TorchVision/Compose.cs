@@ -3,45 +3,48 @@
 using System;
 using static TorchSharp.torch;
 
-namespace TorchSharp.torchvision
+namespace TorchSharp
 {
-    internal class ComposedTransforms : IDisposable, ITransform
+    public static partial class torchvision
     {
-        public ComposedTransforms(ITransform[] transforms)
+        internal class ComposedTransforms : IDisposable, ITransform
         {
-            this.transforms = transforms;
-        }
+            public ComposedTransforms(ITransform[] transforms)
+            {
+                this.transforms = transforms;
+            }
 
-        public void Dispose()
-        {
-            foreach (var t in transforms) {
-                if (t is IDisposable) {
-                    ((IDisposable)t).Dispose();
+            public void Dispose()
+            {
+                foreach (var t in transforms) {
+                    if (t is IDisposable) {
+                        ((IDisposable)t).Dispose();
+                    }
                 }
             }
-        }
 
-        public Tensor forward(Tensor input)
-        {
-            foreach (var t in transforms) {
-                input = t.forward(input);
+            public Tensor forward(Tensor input)
+            {
+                foreach (var t in transforms) {
+                    input = t.forward(input);
+                }
+                return input;
             }
-            return input;
+
+            private ITransform[] transforms;
         }
 
-        private ITransform[] transforms;
-    }
-
-    public static partial class transforms
-    {
-        /// <summary>
-        /// Composes several transforms together.
-        /// </summary>
-        /// <param name="transforms">A list of transforms to compose serially.</param>
-        /// <returns></returns>
-        static public ITransform Compose(params ITransform[] transforms)
+        public static partial class transforms
         {
-            return new ComposedTransforms(transforms);
+            /// <summary>
+            /// Composes several transforms together.
+            /// </summary>
+            /// <param name="transforms">A list of transforms to compose serially.</param>
+            /// <returns></returns>
+            static public ITransform Compose(params ITransform[] transforms)
+            {
+                return new ComposedTransforms(transforms);
+            }
         }
     }
 }

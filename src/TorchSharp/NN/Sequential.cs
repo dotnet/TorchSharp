@@ -18,6 +18,11 @@ namespace TorchSharp
         /// </summary>
         public class Sequential : torch.nn.Module
         {
+            public void append(string name, torch.nn.Module module)
+            {
+                Add(name, module);
+            }
+
             internal void Add(string name, torch.nn.Module submodule)
             {
                 Debug.Assert(!handle.IsInvalid);
@@ -26,6 +31,12 @@ namespace TorchSharp
                 // Keep the sub-module alive for at least as long as the Sequential object is alive.
                 _modules.Add(submodule);
                 _names.Add(name);
+            }
+
+            public void append(torch.nn.Module module)
+            {
+                var name = _modules.Count.ToString();
+                Add(name, module);
             }
 
             internal void Add(torch.nn.Module module)
