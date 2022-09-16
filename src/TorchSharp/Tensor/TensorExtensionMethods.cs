@@ -35,6 +35,9 @@ namespace TorchSharp
             }
         }
 
+        public const TensorStringStyle julia = TensorStringStyle.Julia;
+        public const TensorStringStyle numpy = TensorStringStyle.Numpy;
+
         private static TensorStringStyle _style = TensorStringStyle.Julia;
     }
 
