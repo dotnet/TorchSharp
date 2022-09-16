@@ -17,6 +17,8 @@ __Fixed Bugs:__
 __API Changes__:
 
 Adding 'append()' to torch.nn.Sequential<br/>
+Adding torch.numel() and torch.__version__<br/>
+Adding modifiable global default for tensor string formatting<br/>
 
 ## NuGet Version 0.97.5
 

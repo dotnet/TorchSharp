@@ -77,6 +77,11 @@ namespace TorchSharp
         }
 
         /// <summary>
+        ///  Get the number of elements in the input tensor.
+        /// </summary>
+        public static Tensor numel(Tensor input) => input.numel();
+
+        /// <summary>
         /// Returns a tensor containing the indices of all non-zero elements of input.
         /// Each row in the result contains the indices of a non-zero element in input.
         /// The result is sorted lexicographically, with the last index changing the fastest (C-style).
