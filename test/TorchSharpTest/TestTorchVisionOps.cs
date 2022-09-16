@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static TorchSharp.torchvision.ops;

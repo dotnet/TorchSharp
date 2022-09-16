@@ -6653,13 +6653,13 @@ namespace TorchSharp
                                    string fltFormat = "g5",
                                    int width = 100,
                                    CultureInfo? cultureInfo = null,
-                                   string newLine = "") => disamb ? ToString(TensorStringStyle.Julia, fltFormat, width, cultureInfo, newLine) : ToMetadataString();
+                                   string newLine = "") => disamb ? ToString(torch.TensorStringStyle, fltFormat, width, cultureInfo, newLine) : ToMetadataString();
 
             /// <summary>
             /// Tensor-specific ToString()
             /// </summary>
             /// <param name="style">
-            /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
+            /// The style to use -- either 'default,' 'metadata,' 'julia,' or 'numpy'
             /// </param>
             /// <param name="fltFormat">The floating point format to use for each individual number.</param>
             /// <param name="width">The line width to enforce</param>
@@ -6679,6 +6679,7 @@ namespace TorchSharp
                     return ToMetadataString();
 
                 return style switch {
+                    TensorStringStyle.Default => ToString(torch.TensorStringStyle, fltFormat, width, cultureInfo, newLine),
                     TensorStringStyle.Metadata => ToMetadataString(),
                     TensorStringStyle.Julia => ToJuliaString(fltFormat, width, cultureInfo, newLine),
                     TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fltFormat, cultureInfo, newLine),
