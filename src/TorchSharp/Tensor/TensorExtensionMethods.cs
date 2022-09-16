@@ -12,10 +12,10 @@ namespace TorchSharp
 
     public enum TensorStringStyle
     {
-        Metadata,
-        Julia,
-        Numpy,
-        Default,
+        Metadata,   // Print only shape, dtype, and device
+        Julia,      // Print tensor in the style of Julia
+        Numpy,      // Print tensor in the style of NumPy
+        Default,    // Pick up the style to use from torch.TensorStringStyle
     }
 
     public static partial class torch
@@ -62,7 +62,7 @@ namespace TorchSharp
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
         /// <param name="style">
-        /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
+        /// The style to use -- either 'default,' 'metadata,' 'julia,' or 'numpy'
         /// </param>
         /// <remarks>
         /// This method does exactly the same as ToString(bool, string, int), but is shorter,
@@ -146,7 +146,7 @@ namespace TorchSharp
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
         /// <param name="style">
-        /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
+        /// The style to use -- either 'default,' 'metadata,' 'julia,' or 'numpy'
         /// </param>
         /// <returns></returns>
         public static Tensor print(this Tensor t, string fltFormat = "g5", int width = 100, string newLine = "", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)

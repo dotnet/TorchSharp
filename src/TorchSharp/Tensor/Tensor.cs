@@ -6659,7 +6659,7 @@ namespace TorchSharp
             /// Tensor-specific ToString()
             /// </summary>
             /// <param name="style">
-            /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
+            /// The style to use -- either 'default,' 'metadata,' 'julia,' or 'numpy'
             /// </param>
             /// <param name="fltFormat">The floating point format to use for each individual number.</param>
             /// <param name="width">The line width to enforce</param>
