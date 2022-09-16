@@ -14,7 +14,28 @@ namespace TorchSharp
     {
         Metadata,
         Julia,
-        Numpy
+        Numpy,
+        Default,
+    }
+
+    public static partial class torch
+    {
+        /// <summary>
+        /// The default string formatting style used by ToString(), print(), and str()
+        /// </summary>
+        public static TensorStringStyle TensorStringStyle {
+            get {
+                return _style;
+            }
+            set {
+
+                if (value == TensorStringStyle.Default)
+                    throw new ArgumentException("The style cannot be set to 'Default'");
+                _style = value;
+            }
+        }
+
+        private static TensorStringStyle _style = TensorStringStyle.Julia;
     }
 
     /// <summary>
@@ -50,7 +71,7 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string str(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Julia)
+        public static string str(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
         {
             return tensor.ToString(style, fltFormat, width, cultureInfo, newLine);
         }
@@ -128,7 +149,7 @@ namespace TorchSharp
         /// The style to use -- either 'metadata,' 'julia,' or 'numpy'
         /// </param>
         /// <returns></returns>
-        public static Tensor print(this Tensor t, string fltFormat = "g5", int width = 100, string newLine = "", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Julia)
+        public static Tensor print(this Tensor t, string fltFormat = "g5", int width = 100, string newLine = "", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
         {
             Console.WriteLine(t.ToString(style, fltFormat, width, cultureInfo, newLine));
             return t;
@@ -220,10 +241,10 @@ namespace TorchSharp
 
             // First, write the type
             writer.Encode((int)tensor.dtype); // 4 bytes
-                                                // Then, the shape.
+                                              // Then, the shape.
             writer.Encode(tensor.shape.Length); // 4 bytes
             foreach (var s in tensor.shape) writer.Encode(s); // n * 8 bytes
-                                                                // Then, the data
+                                                              // Then, the data
 #if NETSTANDARD2_0_OR_GREATER
             // TODO: NETSTANDARD2_0_OR_GREATER Try to optimize to avoid the allocation
             writer.Write(tensor.bytes.ToArray()); // ElementSize * NumberOfElements
@@ -360,7 +381,7 @@ namespace TorchSharp
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>
         /// <param name="value">The input tensor</param>
-        public static (float Real,float Imaginary) ToComplexFloat32(this Tensor value) => value.ToScalar().ToComplexFloat32();
+        public static (float Real, float Imaginary) ToComplexFloat32(this Tensor value) => value.ToScalar().ToComplexFloat32();
 
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
