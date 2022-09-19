@@ -7,7 +7,7 @@
 //
 // The origin has the following copyright notice and license:
 //
-// https://github.com/pytorch/audio/blob/main/LICENSE
+// https://github.com/pytorch/vision/blob/main/LICENSE
 //
 
 using System;
