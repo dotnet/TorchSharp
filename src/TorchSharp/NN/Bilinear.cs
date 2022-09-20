@@ -74,6 +74,9 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_Bilinear_ctor(long in1_features, long in2_features, long output_size, bool bias, out IntPtr pBoxedModule);
 
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_functional_bilinear(IntPtr input1, IntPtr input2, IntPtr weights, IntPtr bias);
+
             /// <summary>
             /// Applies a bilinear transformation to the incoming data
             /// </summary>
@@ -94,20 +97,18 @@ namespace TorchSharp
                 /// <summary>
                 /// Applies a bilinear transformation to the incoming data
                 /// </summary>
-                /// <returns></returns>
+                /// <param name="input1">Input tensor of shape (N,*,H1)</param>
+                /// <param name="input2">Input tensor of shape (N,*,H2)</param>
+                /// <param name="weight">Weights of shape (Hout,H1, H2)</param>
+                /// <param name="bias">Optional bias of shape (Hout)</param>
+                /// <returns>Tensor of shape (N,*,Hout)</returns>
+                /// <remarks>The '*' sub-shape must be the same among the two inputs.</remarks>
                 static public Tensor bilinear(Tensor input1, Tensor input2, Modules.Parameter weight, Modules.Parameter? bias = null)
                 {
-                    var in1Features = input1.shape[input1.shape.Length - 1];
-                    var in2Features = input2.shape[input2.shape.Length - 1];
-                    var outFeatures = weight.shape[0];
-
-                    using (var d = nn.Bilinear(in1Features, in2Features, outFeatures, bias is not null)) {
-                        d.weight = weight;
-                        if (bias is not null) {
-                            d.bias = bias;
-                        }
-                        return d.forward(input1, input2);
-                    }
+                    IntPtr bPtr = bias is null ? IntPtr.Zero : bias.Handle;
+                    var res = THSNN_functional_bilinear(input1.Handle, input2.Handle, weight.Handle, bPtr);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
         }

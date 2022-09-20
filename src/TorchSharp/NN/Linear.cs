@@ -78,6 +78,9 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_Linear_ctor(long input_size, long output_size, bool bias, out IntPtr pBoxedModule);
 
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_functional_linear(IntPtr input, IntPtr weights, IntPtr bias);
+
             /// <summary>
             /// Applies a linear transformation to the incoming data.
             /// </summary>
@@ -97,15 +100,16 @@ namespace TorchSharp
                 /// <summary>
                 /// Applies a linear transformation to the incoming data.
                 /// </summary>
-                /// <param name="x">Input tensor</param>
-                /// <param name="inputSize">Size of each input sample</param>
-                /// <param name="outputSize">Size of each output sample</param>
-                /// <param name="hasBias">If set to false, the layer will not learn an additive bias.</param>
-                static public Tensor linear(Tensor x, long inputSize, long outputSize, bool hasBias = true)
+                /// <param name="input">Input tensor of shape (*,Hin)</param>
+                /// <param name="weights">Weights of shape (Hout,Hin) or (Hin)</param>
+                /// <param name="bias">Bias of shape (Hout) or ()</param>
+                /// <returns>A tensor of shape (*,Hout) where '*' is the same as the subshape of the input.</returns>
+                static public Tensor linear(Tensor input, Modules.Parameter weights, Modules.Parameter? bias = null)
                 {
-                    using (var d = nn.Linear(inputSize, outputSize, hasBias)) {
-                        return d.forward(x);
-                    }
+                    IntPtr bPtr = bias is null ? IntPtr.Zero : bias.Handle;
+                    var res = THSNN_functional_linear(input.Handle, weights.Handle, bPtr);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
         }
