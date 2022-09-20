@@ -170,7 +170,7 @@ namespace TorchSharp
 
                 // building classifier
                 this.classifier = nn.Sequential(
-                    nn.Dropout(probability: dropout),
+                    nn.Dropout(p: dropout),
                     nn.Linear(this.last_channel, num_classes));
 
                 RegisterComponents();
