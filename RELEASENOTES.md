@@ -6,6 +6,20 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __Breaking Changes:__
 
+Some parameter names were changed to align with PyTorch. This affects names like 'dimension,' 'probability,' and 'keepDims' and will break code that is passing these parameters by name.
+
+__Fixed Bugs:__
+
+#749 functional.linear is wrong<br/>
+#744 Some of functions with inconsistent argument names<br/>
+
+__API Changes__:
+
+
+## NuGet Version 0.97.6
+
+__Breaking Changes:__
+
 This release changes TorchSharp.torchvision from a namespace to a static class. This will break any using directives that assumes that it is a namespace.
 
 __Fixed Bugs:__

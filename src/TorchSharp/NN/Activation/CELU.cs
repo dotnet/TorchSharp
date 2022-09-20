@@ -45,11 +45,11 @@ namespace TorchSharp
             /// Continuously Differentiable Exponential Linear Unit
             /// </summary>
             /// <param name="alpha">The α value for the CELU formulation. Default: 1.0</param>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
+            /// <param name="inplace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
-            static public CELU CELU(double alpha = 1.0, bool inPlace = false)
+            static public CELU CELU(double alpha = 1.0, bool inplace = false)
             {
-                var handle = THSNN_CELU_ctor(alpha, inPlace, out var boxedHandle);
+                var handle = THSNN_CELU_ctor(alpha, inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new CELU(handle, boxedHandle);
             }
@@ -61,11 +61,11 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="x">The input tensor</param>
                 /// <param name="alpha">The α value for the CELU formulation. Default: 1.0</param>
-                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                static public Tensor celu(Tensor x, double alpha, bool inPlace = false)
+                static public Tensor celu(Tensor x, double alpha, bool inplace = false)
                 {
-                    using (var m = nn.CELU(alpha, inPlace)) {
+                    using (var m = nn.CELU(alpha, inplace)) {
                         return m.forward(x);
                     }
                 }

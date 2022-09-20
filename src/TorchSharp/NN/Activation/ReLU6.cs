@@ -45,11 +45,11 @@ namespace TorchSharp
             ///
             /// This ReLU version caps positive values at 6.
             /// </summary>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
+            /// <param name="inplace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
-            static public ReLU6 ReLU6(bool inPlace = false)
+            static public ReLU6 ReLU6(bool inplace = false)
             {
-                var handle = THSNN_ReLU6_ctor(inPlace, out var boxedHandle);
+                var handle = THSNN_ReLU6_ctor(inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ReLU6(handle, boxedHandle);
             }
@@ -62,11 +62,11 @@ namespace TorchSharp
                 /// This ReLU version caps positive values at 6.
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                static public Tensor relu6(Tensor x, bool inPlace = false)
+                static public Tensor relu6(Tensor x, bool inplace = false)
                 {
-                    using (var m = nn.ReLU6(inPlace)) {
+                    using (var m = nn.ReLU6(inplace)) {
                         return m.forward(x);
                     }
                 }

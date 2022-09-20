@@ -45,11 +45,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="lower">Lower bound of the uniform distribution. Default: 1/8</param>
             /// <param name="upper">Upper bound of the uniform distribution. Default: 1/3</param>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
+            /// <param name="inplace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
-            static public RReLU RReLU(double lower = one_eighth, double upper = one_third, bool inPlace = false)
+            static public RReLU RReLU(double lower = one_eighth, double upper = one_third, bool inplace = false)
             {
-                var handle = THSNN_RReLU_ctor(lower, upper, inPlace, out var boxedHandle);
+                var handle = THSNN_RReLU_ctor(lower, upper, inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new RReLU(handle, boxedHandle);
             }
@@ -65,11 +65,11 @@ namespace TorchSharp
                 /// <param name="x">The input tensor</param>
                 /// <param name="lower">Lower bound of the uniform distribution. Default: 1/8</param>
                 /// <param name="upper">Upper bound of the uniform distribution. Default: 1/3</param>
-                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                static public Tensor rrelu(Tensor x, double lower, double upper, bool inPlace = false)
+                static public Tensor rrelu(Tensor x, double lower, double upper, bool inplace = false)
                 {
-                    using (var m = nn.RReLU(lower, upper, inPlace)) {
+                    using (var m = nn.RReLU(lower, upper, inplace)) {
                         return m.forward(x);
                     }
                 }

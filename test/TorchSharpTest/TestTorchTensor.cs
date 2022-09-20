@@ -5030,9 +5030,9 @@ namespace TorchSharp
             var a = torch.randn(new long[] { 15, 5 });
             var b = a.argmax();
             Assert.Equal(1, b.NumberOfElements);
-            var c = a.argmax(0, keepDim: true);
+            var c = a.argmax(0, keepdim: true);
             Assert.Equal(new long[] { 1, 5 }, c.shape);
-            var d = a.argmax(0, keepDim: false);
+            var d = a.argmax(0, keepdim: false);
             Assert.Equal(new long[] { 5 }, d.shape);
         }
 
@@ -5054,9 +5054,9 @@ namespace TorchSharp
             var a = torch.randn(new long[] { 15, 5 });
             var b = a.argmin();
             Assert.Equal(1, b.NumberOfElements);
-            var c = a.argmin(0, keepDim: true);
+            var c = a.argmin(0, keepdim: true);
             Assert.Equal(new long[] { 1, 5 }, c.shape);
-            var d = a.argmin(0, keepDim: false);
+            var d = a.argmin(0, keepdim: false);
             Assert.Equal(new long[] { 5 }, d.shape);
         }
 
@@ -5078,7 +5078,7 @@ namespace TorchSharp
             var a = torch.randn(new long[] { 15, 5, 4, 3 });
             var b = a.amax(0, 1);
             Assert.Equal(new long[] { 4, 3 }, b.shape);
-            var c = a.amax(new long[] { 0, 1 }, keepDim: true);
+            var c = a.amax(new long[] { 0, 1 }, keepdim: true);
             Assert.Equal(new long[] { 1, 1, 4, 3 }, c.shape);
         }
 
@@ -5089,7 +5089,7 @@ namespace TorchSharp
             var a = torch.randn(new long[] { 15, 5, 4, 3 });
             var b = a.amin(0, 1);
             Assert.Equal(new long[] { 4, 3 }, b.shape);
-            var c = a.amin(new long[] { 0, 1 }, keepDim: true);
+            var c = a.amin(new long[] { 0, 1 }, keepdim: true);
             Assert.Equal(new long[] { 1, 1, 4, 3 }, c.shape);
         }
 
@@ -5101,7 +5101,7 @@ namespace TorchSharp
             var b = a.aminmax(0);
             Assert.Equal(new long[] { 5, 4, 3 }, b.min.shape);
             Assert.Equal(new long[] { 5, 4, 3 }, b.max.shape);
-            var c = a.aminmax(0, keepDim: true);
+            var c = a.aminmax(0, keepdim: true);
             Assert.Equal(new long[] { 1, 5, 4, 3 }, c.min.shape);
             Assert.Equal(new long[] { 1, 5, 4, 3 }, c.max.shape);
         }
@@ -5913,7 +5913,7 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 10, 10 }, std.shape);
             }
             {
-                var std = torch.std(data, 1, keepDimension: true);
+                var std = torch.std(data, 1, keepdim: true);
                 Assert.NotNull(std);
                 Assert.Equal(new long[] { 10, 1, 10 }, std.shape);
             }
@@ -5947,7 +5947,7 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 10, 10 }, mean.shape);
             }
             {
-                var (std, mean) = torch.std_mean(data, 1, keepDimension: true);
+                var (std, mean) = torch.std_mean(data, 1, keepdim: true);
                 Assert.NotNull(std);
                 Assert.NotNull(mean);
                 Assert.Equal(new long[] { 10, 1, 10 }, std.shape);
@@ -5993,7 +5993,7 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 10, 10 }, mean.shape);
             }
             {
-                var (@var, mean) = torch.var_mean(data, 1, keepDimension: true);
+                var (@var, mean) = torch.var_mean(data, 1, keepdim: true);
                 Assert.NotNull(@var);
                 Assert.NotNull(mean);
                 Assert.Equal(new long[] { 10, 1, 10 }, @var.shape);
@@ -6242,10 +6242,10 @@ namespace TorchSharp
         {
             var t = torch.tensor(new int[] { 10, 30, 20, 60, 40, 50 }).reshape(2, 3);
             var max_idx = t.argmax();
-            var sort_idx = t.argsort(dimension: 1);
+            var sort_idx = t.argsort(dim: 1);
 
             var x = t.take_along_dim(max_idx);
-            var y = t.take_along_dim(sort_idx, dimension: 1);
+            var y = t.take_along_dim(sort_idx, dim: 1);
 
             Assert.Equal(60, x.item<int>());
             Assert.Equal(new int[] { 10, 20, 30, 40, 50, 60 }, y.data<int>().ToArray());
@@ -7891,7 +7891,7 @@ namespace TorchSharp
         public void AdjustHueTensor()
         {
             {
-                using var input = torch.stack(new Tensor[] { torch.zeros(1, 2, 2), torch.ones(1, 2, 2), torch.zeros(1, 2, 2) }, dimension: -3);
+                using var input = torch.stack(new Tensor[] { torch.zeros(1, 2, 2), torch.ones(1, 2, 2), torch.zeros(1, 2, 2) }, dim: -3);
                 {
                     var poster = torchvision.transforms.functional.adjust_hue(input, 0.0);
 

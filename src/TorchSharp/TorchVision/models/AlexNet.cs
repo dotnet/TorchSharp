@@ -70,29 +70,29 @@ namespace TorchSharp
             {
                 features = Sequential(
                     Conv2d(3, 64, kernelSize: 11, stride: 4, padding: 2),
-                    ReLU(inPlace: true),
+                    ReLU(inplace: true),
                     MaxPool2d(kernelSize: 3, stride: 2),
                     Conv2d(64, 192, kernelSize: 5, padding: 2),
-                    ReLU(inPlace: true),
+                    ReLU(inplace: true),
                     MaxPool2d(kernelSize: 3, stride: 2),
                     Conv2d(192, 384, kernelSize: 3, padding: 1),
-                    ReLU(inPlace: true),
+                    ReLU(inplace: true),
                     Conv2d(384, 256, kernelSize: 3, padding: 1),
-                    ReLU(inPlace: true),
+                    ReLU(inplace: true),
                     Conv2d(256, 256, kernelSize: 3, padding: 1),
-                    ReLU(inPlace: true),
+                    ReLU(inplace: true),
                     MaxPool2d(kernelSize: 3, stride: 2)
                 );
 
                 avgpool = AdaptiveAvgPool2d(new long[] { 6, 6 });
 
                 classifier = Sequential(
-                    Dropout(probability: dropout),
+                    Dropout(p: dropout),
                     Linear(256 * 6 * 6, 4096),
-                    ReLU(inPlace: true),
-                    Dropout(probability: dropout),
+                    ReLU(inplace: true),
+                    Dropout(p: dropout),
                     Linear(4096, 4096),
-                    ReLU(inPlace: true),
+                    ReLU(inplace: true),
                     Linear(4096, numClasses)
                 );
 

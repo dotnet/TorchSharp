@@ -703,19 +703,19 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            static extern void THSTensor_cummax(IntPtr tensor, AllocatePinnedArray allocator, long dimension);
+            static extern void THSTensor_cummax(IntPtr tensor, AllocatePinnedArray allocator, long dim);
 
             /// <summary>
             /// Returns a tuple (values, indices) where values is the cumulative maximum of elements of input in the dimension dim.
             /// Indices is the index location of each maximum value found in the dimension dim.
             /// </summary>
-            /// <param name="dimension">The dimension to do the operation over</param>
-            public (Tensor values, Tensor indexes) cummax(long dimension)
+            /// <param name="dim">The dimension to do the operation over</param>
+            public (Tensor values, Tensor indexes) cummax(long dim)
             {
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    THSTensor_cummax(Handle, pa.CreateArray, dimension);
+                    THSTensor_cummax(Handle, pa.CreateArray, dim);
                     torch.CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -724,19 +724,19 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            static extern void THSTensor_cummin(IntPtr tensor, AllocatePinnedArray allocator, long dimension);
+            static extern void THSTensor_cummin(IntPtr tensor, AllocatePinnedArray allocator, long dim);
 
             /// <summary>
             /// Returns a tuple (values, indices) where values is the cumulative minimum of elements of input in the dimension dim.
             /// Indices is the index location of each minimum value found in the dimension dim.
             /// </summary>
-            /// <param name="dimension">The dimension to do the operation over</param>
-            public (Tensor values, Tensor indexes) cummin(long dimension)
+            /// <param name="dim">The dimension to do the operation over</param>
+            public (Tensor values, Tensor indexes) cummin(long dim)
             {
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    THSTensor_cummin(Handle, pa.CreateArray, dimension);
+                    THSTensor_cummin(Handle, pa.CreateArray, dim);
                     torch.CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -745,35 +745,35 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cumsum(IntPtr tensor, long dimension, bool has_type, sbyte scalar_type);
+            static extern IntPtr THSTensor_cumsum(IntPtr tensor, long dim, bool has_type, sbyte scalar_type);
 
             /// <summary>
             /// Returns the cumulative sum of elements of input in the dimension dim.
             /// </summary>
-            /// <param name="dimension">The dimension to do the operation over</param>
+            /// <param name="dim">The dimension to do the operation over</param>
             /// <param name="type">The desired data type of returned tensor. If specified, the input tensor is casted to dtype before the operation is performed.
             /// This is useful for preventing data type overflows.</param>
             /// <returns></returns>
-            public Tensor cumsum(long dimension, ScalarType? type = null)
+            public Tensor cumsum(long dim, ScalarType? type = null)
             {
-                var res = THSTensor_cumsum(Handle, dimension, type.HasValue, (sbyte)type.GetValueOrDefault());
+                var res = THSTensor_cumsum(Handle, dim, type.HasValue, (sbyte)type.GetValueOrDefault());
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cumprod(IntPtr tensor, long dimension, bool has_type, sbyte scalar_type);
+            static extern IntPtr THSTensor_cumprod(IntPtr tensor, long dim, bool has_type, sbyte scalar_type);
 
             /// <summary>
             /// Returns the cumulative product of elements of input in the dimension dim.
             /// </summary>
-            /// <param name="dimension">The dimension to do the operation over</param>
+            /// <param name="dim">The dimension to do the operation over</param>
             /// <param name="type">The desired data type of returned tensor. If specified, the input tensor is casted to dtype before the operation is performed.
             /// This is useful for preventing data type overflows.</param>
             /// <returns></returns>
-            public Tensor cumprod(long dimension, ScalarType? type = null)
+            public Tensor cumprod(long dim, ScalarType? type = null)
             {
-                var res = THSTensor_cumprod(Handle, dimension, type.HasValue, (sbyte)type.GetValueOrDefault());
+                var res = THSTensor_cumprod(Handle, dim, type.HasValue, (sbyte)type.GetValueOrDefault());
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -2563,10 +2563,10 @@ namespace TorchSharp
         /// Returns the cumulative sum of elements of input in the dimension dim.
         /// </summary>
         /// <param name="input">The input tensor.</param>
-        /// <param name="dimension">The dimension to do the operation over</param>
+        /// <param name="dim">The dimension to do the operation over</param>
         /// <param name="type">The desired data type of returned tensor. If specified, the input tensor is casted to dtype before the operation is performed.
         /// This is useful for preventing data type overflows.</param>
-        public static Tensor cumsum(Tensor input, long dimension, ScalarType? type = null) => input.cumsum(dimension, type);
+        public static Tensor cumsum(Tensor input, long dim, ScalarType? type = null) => input.cumsum(dim, type);
 
         /// <summary>
         /// Divides each element of the input by the corresponding element of other.
@@ -3132,11 +3132,11 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor</param>
         /// <param name="dim">the dimension to reduce.</param>
-        /// <param name="keepDim">whether the output tensor has dim retained or not. Default: false.</param>
-        /// <remarks>If keepDim is true, the output tensors are of the same size as input except in the dimension dim where they are of size 1.
+        /// <param name="keepdim">whether the output tensor has dim retained or not. Default: false.</param>
+        /// <remarks>If keepdim is true, the output tensors are of the same size as input except in the dimension dim where they are of size 1.
         /// Otherwise, dim is squeezed(see torch.squeeze()), resulting in the output tensors having 1 fewer dimension than input.</remarks>
 
-        static public (Tensor values, Tensor indexes) max(Tensor input, long dim, bool keepDim = false) => input.max(dim, keepDim);
+        static public (Tensor values, Tensor indexes) max(Tensor input, long dim, bool keepdim = false) => input.max(dim, keepdim);
 
         /// <summary>
         /// Returns the mean value of all elements in the input tensor.
@@ -3148,13 +3148,13 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor</param>
         /// <param name="dimensions">The dimension or dimensions to reduce.</param>
-        /// <param name="keepDimension">Whether the output tensor has dim retained or not.</param>
+        /// <param name="keepdim">Whether the output tensor has dim retained or not.</param>
         /// <param name="type">The desired data type of returned tensor. If specified, the input tensor is cast to dtype before the operation is performed. This is useful for preventing data type overflows.</param>
         /// <remarks>
         /// If keepdim is True, the output tensor is of the same size as input except in the dimension(s) dim where it is of size 1.
         /// Otherwise, dim is squeezed(see torch.squeeze()), resulting in the output tensor having 1 (or len(dim)) fewer dimension(s).
         /// </remarks>
-        public static Tensor mean(Tensor input, long[] dimensions, bool keepDimension = false, ScalarType? type = null) => input.mean(dimensions, keepDimension, type);
+        public static Tensor mean(Tensor input, long[] dimensions, bool keepdim = false, ScalarType? type = null) => input.mean(dimensions, keepdim, type);
 
         /// <summary>
         /// Returns the minimum value of all elements in the input tensor.
@@ -3175,10 +3175,10 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor</param>
         /// <param name="dim">the dimension to reduce.</param>
-        /// <param name="keepDim">whether the output tensor has dim retained or not. Default: false.</param>
-        /// <remarks>If keepDim is true, the output tensors are of the same size as input except in the dimension dim where they are of size 1.
+        /// <param name="keepdim">whether the output tensor has dim retained or not. Default: false.</param>
+        /// <remarks>If keepdim is true, the output tensors are of the same size as input except in the dimension dim where they are of size 1.
         /// Otherwise, dim is squeezed(see torch.squeeze()), resulting in the output tensors having 1 fewer dimension than input.</remarks>
-        static public (Tensor values, Tensor indexes) min(Tensor input, long dim, bool keepDim = false) => input.min(dim, keepDim);
+        static public (Tensor values, Tensor indexes) min(Tensor input, long dim, bool keepdim = false) => input.min(dim, keepdim);
 
         /// <summary>
         /// Multiplies each element of the input by the corresponding element of other.
@@ -3464,11 +3464,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor std(Tensor input, long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.std(dimensions, unbiased, keepDimension, type);
+        public static Tensor std(Tensor input, long[] dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.std(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the variance of all elements in the tensor.</summary>
         /// <remarks>
@@ -3478,11 +3478,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor var(Tensor input, long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.var(dimensions, unbiased, keepDimension, type);
+        public static Tensor var(Tensor input, long[] dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.var(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
         /// <remarks>
@@ -3492,11 +3492,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor std(Tensor input, long dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.std(dimensions, unbiased, keepDimension, type);
+        public static Tensor std(Tensor input, long dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.std(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the variance of all elements in the tensor.</summary>
         /// <remarks>
@@ -3506,11 +3506,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor var(Tensor input, long dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.var(dimensions, unbiased, keepDimension, type);
+        public static Tensor var(Tensor input, long dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.var(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
         /// <remarks>
@@ -3520,11 +3520,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor std(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.std(dimensions, unbiased, keepDimension, type);
+        public static Tensor std(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.std(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the variance of all elements in the tensor.</summary>
         /// <remarks>
@@ -3534,11 +3534,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor var(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.var(dimensions, unbiased, keepDimension, type);
+        public static Tensor var(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.var(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
         /// <remarks>
@@ -3548,11 +3548,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor std(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.std(dimensions, unbiased, keepDimension, type);
+        public static Tensor std(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.std(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the variance of all elements in the tensor.</summary>
         /// <remarks>
@@ -3562,11 +3562,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>The <see cref="Tensor">output tensor</see>.</returns>
-        public static Tensor var(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.var(dimensions, unbiased, keepDimension, type);
+        public static Tensor var(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.var(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
         /// <remarks>
@@ -3576,11 +3576,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-        public static (Tensor std, Tensor mean) std_mean(Tensor input, long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.std_mean(dimensions, unbiased, keepDimension, type);
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, long[] dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.std_mean(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the variance and mean of all elements in the tensor.</summary>
         /// <remarks>
@@ -3590,11 +3590,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the variance and the mean.</returns>
-        public static (Tensor @var, Tensor mean) var_mean(Tensor input, long[] dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.var_mean(dimensions, unbiased, keepDimension, type);
+        public static (Tensor @var, Tensor mean) var_mean(Tensor input, long[] dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.var_mean(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
         /// <remarks>
@@ -3604,11 +3604,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-        public static (Tensor std, Tensor mean) std_mean(Tensor input, ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.std_mean(dimensions, unbiased, keepDimension, type);
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.std_mean(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the variance and mean of all elements in the tensor.</summary>
         /// <remarks>
@@ -3618,11 +3618,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the variance and the mean.</returns>
-        public static (Tensor @var, Tensor mean) var_mean(Tensor input, ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.var_mean(dimensions, unbiased, keepDimension, type);
+        public static (Tensor @var, Tensor mean) var_mean(Tensor input, ReadOnlySpan<long> dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.var_mean(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
         /// <remarks>
@@ -3632,11 +3632,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-        public static (Tensor std, Tensor mean) std_mean(Tensor input, long dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.std_mean(dimensions, unbiased, keepDimension, type);
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, long dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.std_mean(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the variance and mean of all elements in the tensor.</summary>
         /// <remarks>
@@ -3646,11 +3646,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the variance and the mean.</returns>
-        public static (Tensor @var, Tensor mean) var_mean(Tensor input, long dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.var_mean(dimensions, unbiased, keepDimension, type);
+        public static (Tensor @var, Tensor mean) var_mean(Tensor input, long dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.var_mean(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
         /// <remarks>
@@ -3660,11 +3660,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-        public static (Tensor std, Tensor mean) std_mean(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.std_mean(dimensions, unbiased, keepDimension, type);
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.std_mean(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the variance and mean of all elements in the tensor.</summary>
         /// <remarks>
@@ -3674,11 +3674,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the variance and the mean.</returns>
-        public static (Tensor @var, Tensor mean) var_mean(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.var_mean(dimensions, unbiased, keepDimension, type);
+        public static (Tensor @var, Tensor mean) var_mean(Tensor input, (long, long) dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.var_mean(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
         /// <remarks>
@@ -3688,11 +3688,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the standard deviation and the mean.</returns>
-        public static (Tensor std, Tensor mean) std_mean(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.std_mean(dimensions, unbiased, keepDimension, type);
+        public static (Tensor std, Tensor mean) std_mean(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.std_mean(dimensions, unbiased, keepdim, type);
 
         /// <summary>Calculates the variance and mean of all elements in the tensor.</summary>
         /// <remarks>
@@ -3702,11 +3702,11 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         /// <param name="dimensions">The dimensions to reduce.</param>
         /// <param name="unbiased">Whether to use Bessel’s correction (δN=1).</param>
-        /// <param name="keepDimension">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
+        /// <param name="keepdim">Whether the <see cref="Tensor">output tensor</see> has dim retained or not.</param>
         /// <param name="type"></param>
         /// <returns>A <see cref="Tensor">tensor</see> tuple of the variance and the mean.</returns>
-        public static (Tensor @var, Tensor mean) var_mean(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepDimension = false, ScalarType? type = null)
-            => input.var_mean(dimensions, unbiased, keepDimension, type);
+        public static (Tensor @var, Tensor mean) var_mean(Tensor input, (long, long, long) dimensions, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
+            => input.var_mean(dimensions, unbiased, keepdim, type);
 
         /// <summary>
         /// Element-wise subtraction

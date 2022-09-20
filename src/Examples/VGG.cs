@@ -42,7 +42,7 @@ namespace TorchSharp.Examples
                 } else {
                     modules.Add(($"conv2d-{i}a", Conv2d(in_channels, channels[i], kernelSize: 3, padding: 1)));
                     modules.Add(($"bnrm2d-{i}a", BatchNorm2d(channels[i])));
-                    modules.Add(($"relu-{i}b", ReLU(inPlace: true)));
+                    modules.Add(($"relu-{i}b", ReLU(inplace: true)));
                     in_channels = channels[i];
                 }
             }
