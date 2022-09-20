@@ -43,11 +43,11 @@ namespace TorchSharp
             /// <summary>
             /// Scaled Exponential Linear Unit
             /// </summary>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
+            /// <param name="inplace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
-            static public SELU SELU(bool inPlace = false)
+            static public SELU SELU(bool inplace = false)
             {
-                var handle = THSNN_SELU_ctor(inPlace, out var boxedHandle);
+                var handle = THSNN_SELU_ctor(inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new SELU(handle, boxedHandle);
             }
@@ -58,11 +58,11 @@ namespace TorchSharp
                 /// Scaled Exponential Linear Unit
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                static public Tensor selu(Tensor x, bool inPlace = false)
+                static public Tensor selu(Tensor x, bool inplace = false)
                 {
-                    using (var m = nn.SELU(inPlace)) {
+                    using (var m = nn.SELU(inplace)) {
                         return m.forward(x);
                     }
                 }

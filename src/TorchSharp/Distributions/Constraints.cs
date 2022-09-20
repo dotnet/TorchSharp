@@ -357,7 +357,7 @@ namespace TorchSharp
                     public override Tensor check(Tensor value)
                     {
                         var is_positive = value >= 0;
-                        return is_positive.all(dimension: -1) & ((value.sum(-1) - 1).abs() < 1e-6);
+                        return is_positive.all(dim: -1) & ((value.sum(-1) - 1).abs() < 1e-6);
                     }
                 }
 
@@ -375,7 +375,7 @@ namespace TorchSharp
 
                     public override Tensor check(Tensor x)
                     {
-                        return (x >= 0).all(dimension: -1) & (x.sum(dim: -1) <= upper_bound);
+                        return (x >= 0).all(dim: -1) & (x.sum(dim: -1) <= upper_bound);
                     }
 
                     public override string ToString()
@@ -435,7 +435,7 @@ namespace TorchSharp
                     {
                         var tol = torch.finfo(value.dtype).eps * value.size(-1) * 10;  // 10 is an adjustable fudge factor
                         var row_norm = torch.linalg.norm(value.detach(), dims: new[] { -1L });
-                        var unit_row_norm = (row_norm - 1.0).abs().le(tol).all(dimension: -1);
+                        var unit_row_norm = (row_norm - 1.0).abs().le(tol).all(dim: -1);
                         return lc.check(value) & unit_row_norm;
                     }
 

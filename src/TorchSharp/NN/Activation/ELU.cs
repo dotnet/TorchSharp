@@ -44,11 +44,11 @@ namespace TorchSharp
             /// Exponential Linear Unit
             /// </summary>
             /// <param name="alpha">The α value for the ELU formulation. Default: 1.0</param>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
+            /// <param name="inplace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
-            static public ELU ELU(double alpha = 1.0, bool inPlace = false)
+            static public ELU ELU(double alpha = 1.0, bool inplace = false)
             {
-                var handle = THSNN_ELU_ctor(alpha, inPlace, out var boxedHandle);
+                var handle = THSNN_ELU_ctor(alpha, inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ELU(handle, boxedHandle);
             }
@@ -60,11 +60,11 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="x">The input tensor</param>
                 /// <param name="alpha">The α value for the ELU formulation. Default: 1.0</param>
-                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                static public Tensor elu(Tensor x, double alpha, bool inPlace = false)
+                static public Tensor elu(Tensor x, double alpha, bool inplace = false)
                 {
-                    using (var m = nn.ELU(alpha, inPlace)) {
+                    using (var m = nn.ELU(alpha, inplace)) {
                         return m.forward(x);
                     }
                 }

@@ -129,7 +129,7 @@ namespace TorchSharp
                 //aux2 = inception_aux_block(528, numClasses, dropout_aux);
 
                 avgpool = nn.AdaptiveAvgPool2d((1, 1));
-                this.dropout = nn.Dropout(probability: dropout);
+                this.dropout = nn.Dropout(p: dropout);
                 fc = nn.Linear(1024, numClasses);
 
                 RegisterComponents();
@@ -302,7 +302,7 @@ namespace TorchSharp
                     conv = conv_block(in_channels, 128, kernel_size: 1);
                     fc1 = nn.Linear(2048, 1024);
                     fc2 = nn.Linear(1024, num_classes);
-                    this.dropout = nn.Dropout(probability: dropout);
+                    this.dropout = nn.Dropout(p: dropout);
 
                     RegisterComponents();
                 }
@@ -317,7 +317,7 @@ namespace TorchSharp
                     x = torch.flatten(x);
                     // N x 2048
                     // Adaptive average pooling
-                    x = functional.relu(fc1.forward(x), inPlace:true);
+                    x = functional.relu(fc1.forward(x), inplace:true);
                     // N x 1024
                     x = dropout.forward(x);
                     // N x 1024
