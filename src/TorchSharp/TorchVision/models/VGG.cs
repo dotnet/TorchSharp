@@ -362,7 +362,7 @@ namespace TorchSharp
                         if (batch_norm) {
                             layers.Add(BatchNorm2d(channels[i]));
                         }
-                        layers.Add(ReLU(inPlace: true));
+                        layers.Add(ReLU(inplace: true));
                         in_channels = channels[i];
                     }
                 }
@@ -374,10 +374,10 @@ namespace TorchSharp
                 classifier = Sequential(
                     Linear(512 * 7 * 7, 4096),
                     ReLU(true),
-                    Dropout(probability: dropout),
+                    Dropout(p: dropout),
                     Linear(4096, 4096),
                     ReLU(true),
-                    Dropout(probability: dropout),
+                    Dropout(p: dropout),
                     Linear(4096, numClasses)
                     );
 

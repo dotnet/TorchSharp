@@ -42,11 +42,11 @@ namespace TorchSharp
             /// <summary>
             /// Rectified Linear Unit
             /// </summary>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
+            /// <param name="inplace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
-            static public ReLU ReLU(bool inPlace = false)
+            static public ReLU ReLU(bool inplace = false)
             {
-                var handle = THSNN_ReLU_ctor(inPlace, out var boxedHandle);
+                var handle = THSNN_ReLU_ctor(inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ReLU(handle, boxedHandle);
             }
@@ -57,11 +57,11 @@ namespace TorchSharp
                 /// Rectified Linear Unit
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                static public Tensor relu(Tensor x, bool inPlace = false)
+                static public Tensor relu(Tensor x, bool inplace = false)
                 {
-                    using (var m = nn.ReLU(inPlace)) {
+                    using (var m = nn.ReLU(inplace)) {
                         return m.forward(x);
                     }
                 }

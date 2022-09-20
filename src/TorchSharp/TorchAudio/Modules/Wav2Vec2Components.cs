@@ -1138,7 +1138,7 @@ namespace TorchSharp.Modules
             var negs = label_embeddings.unsqueeze(1).expand(-1, proj_x.size(0), -1);
             var neg_is_pos = (pos == negs).all(-1);
             pos = pos.unsqueeze(0);
-            var targets = torch.cat(new Tensor[] { pos, negs }, dimension: 0);
+            var targets = torch.cat(new Tensor[] { pos, negs }, dim: 0);
 
             var logits = torch.nn.functional.cosine_similarity(proj_x.@float(), targets.@float(), dim: -1).type_as(proj_x);
             logits /= logit_temp;

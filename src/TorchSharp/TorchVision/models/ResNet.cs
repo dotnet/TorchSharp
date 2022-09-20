@@ -322,7 +322,7 @@ namespace TorchSharp
 
                 conv1 = Conv2d(3, 64, kernelSize: 7, stride: 2, padding: 3, bias: false);
                 bn1 = BatchNorm2d(64);
-                relu = ReLU(inPlace: true);
+                relu = ReLU(inplace: true);
                 maxpool = MaxPool2d(kernelSize: 3, stride: 2, padding: 1);
                 MakeLayer(layer1, block, expansion, 64, num_blocks[0], 1);
                 MakeLayer(layer2, block, expansion, 128, num_blocks[1], 2);
@@ -396,7 +396,7 @@ namespace TorchSharp
 
                     conv1 = Conv2d(in_planes, planes, kernelSize: 3, stride: stride, padding: 1, bias: false);
                     bn1 = BatchNorm2d(planes);
-                    relu1 = ReLU(inPlace: true);
+                    relu1 = ReLU(inplace: true);
                     conv2 = Conv2d(planes, planes, kernelSize: 3, stride: 1, padding: 1, bias: false);
                     bn2 = BatchNorm2d(planes);
 
@@ -438,10 +438,10 @@ namespace TorchSharp
 
                     conv1 = Conv2d(in_planes, planes, kernelSize: 1, bias: false);
                     bn1 = BatchNorm2d(planes);
-                    relu1 = ReLU(inPlace: true);
+                    relu1 = ReLU(inplace: true);
                     conv2 = Conv2d(planes, planes, kernelSize: 3, stride: stride, padding: 1, bias: false);
                     bn2 = BatchNorm2d(planes);
-                    relu2 = ReLU(inPlace: true);
+                    relu2 = ReLU(inplace: true);
                     conv3 = Conv2d(planes, expansion * planes, kernelSize: 1, bias: false);
                     bn3 = BatchNorm2d(expansion * planes);
 

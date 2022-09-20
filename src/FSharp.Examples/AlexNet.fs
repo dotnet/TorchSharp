@@ -47,26 +47,26 @@ type Model(name,device:torch.Device) as this =
     inherit Module(name)
 
     let features = Sequential(("c1", Conv2d(3L, 64L, kernelSize=3L, stride=2L, padding=1L) :> Module),
-                              ("r1", ReLU(inPlace=true) :> Module),
+                              ("r1", ReLU(inplace=true) :> Module),
                               ("mp1", MaxPool2d(kernelSize=[|2L; 2L|]) :> Module),
                               ("c2", Conv2d(64L, 192L, kernelSize=3L, padding=1L) :> Module),
-                              ("r2", ReLU(inPlace=true) :> Module),
+                              ("r2", ReLU(inplace=true) :> Module),
                               ("mp2", MaxPool2d(kernelSize=[|2L; 2L|]) :> Module),
                               ("c3", Conv2d(192L, 384L, kernelSize=3L, padding=1L) :> Module),
-                              ("r3", ReLU(inPlace=true) :> Module),
+                              ("r3", ReLU(inplace=true) :> Module),
                               ("c4", Conv2d(384L, 256L, kernelSize=3L, padding=1L) :> Module),
-                              ("r4", ReLU(inPlace=true) :> Module),
+                              ("r4", ReLU(inplace=true) :> Module),
                               ("c5", Conv2d(256L, 256L, kernelSize=3L, padding=1L) :> Module),
-                              ("r5", ReLU(inPlace=true) :> Module),
+                              ("r5", ReLU(inplace=true) :> Module),
                               ("mp3", MaxPool2d(kernelSize=[|2L; 2L|]) :> Module),
                               ("avg", AdaptiveAvgPool2d([|2L; 2L|]) :> Module))
 
     let classifier = Sequential(("d1", Dropout() :> Module),
                                 ("l1", Linear(256L * 2L * 2L, 4096L) :> Module),
-                                ("r6", ReLU(inPlace=true) :> Module),
+                                ("r6", ReLU(inplace=true) :> Module),
                                 ("d2", Dropout() :> Module),
                                 ("l2", Linear(4096L, 4096L) :> Module),
-                                ("r7", ReLU(inPlace=true) :> Module),
+                                ("r7", ReLU(inplace=true) :> Module),
                                 ("d3", Dropout() :> Module),
                                 ("l3", Linear(4096L, numClasses) :> Module),
                                 ("logsm", LogSoftmax(1L) :> Module))

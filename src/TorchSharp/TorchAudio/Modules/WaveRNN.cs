@@ -80,8 +80,8 @@ namespace TorchSharp.Modules
             this.rnn1 = nn.GRU(n_rnn, n_rnn, batchFirst: true);
             this.rnn2 = nn.GRU(n_rnn + this.n_aux, n_rnn, batchFirst: true);
 
-            this.relu1 = nn.ReLU(inPlace: true);
-            this.relu2 = nn.ReLU(inPlace: true);
+            this.relu1 = nn.ReLU(inplace: true);
+            this.relu2 = nn.ReLU(inplace: true);
 
             this.fc1 = nn.Linear(n_rnn + this.n_aux, n_fc);
             this.fc2 = nn.Linear(n_fc + this.n_aux, n_fc);
@@ -129,22 +129,22 @@ namespace TorchSharp.Modules
             var a3 = aux[TensorIndex.Colon, TensorIndex.Colon, TensorIndex.Slice(aux_idx[2], aux_idx[3])];
             var a4 = aux[TensorIndex.Colon, TensorIndex.Colon, TensorIndex.Slice(aux_idx[3], aux_idx[4])];
 
-            var x = torch.cat(new Tensor[] { waveform.unsqueeze(-1), specgram, a1 }, dimension: -1);
+            var x = torch.cat(new Tensor[] { waveform.unsqueeze(-1), specgram, a1 }, dim: -1);
             x = this.fc.forward(x);
             var res = x;
             (x, _) = this.rnn1.forward(x, h1);
 
             x = x + res;
             res = x;
-            x = torch.cat(new Tensor[] { x, a2 }, dimension: -1);
+            x = torch.cat(new Tensor[] { x, a2 }, dim: -1);
             (x, _) = this.rnn2.forward(x, h2);
 
             x = x + res;
-            x = torch.cat(new Tensor[] { x, a3 }, dimension: -1);
+            x = torch.cat(new Tensor[] { x, a3 }, dim: -1);
             x = this.fc1.forward(x);
             x = this.relu1.forward(x);
 
-            x = torch.cat(new Tensor[] { x, a4 }, dimension: -1);
+            x = torch.cat(new Tensor[] { x, a4 }, dim: -1);
             x = this.fc2.forward(x);
             x = this.relu2.forward(x);
             x = this.fc3.forward(x);
@@ -193,19 +193,19 @@ namespace TorchSharp.Modules
                 var a3_t = aux_split[2][TensorIndex.Colon, TensorIndex.Colon, i];
                 var a4_t = aux_split[3][TensorIndex.Colon, TensorIndex.Colon, i];
 
-                x = torch.cat(new Tensor[] { x, m_t, a1_t }, dimension: 1);
+                x = torch.cat(new Tensor[] { x, m_t, a1_t }, dim: 1);
                 x = this.fc.forward(x);
                 (_, h1) = this.rnn1.forward(x.unsqueeze(1), h1);
 
                 x = x + h1[0];
-                var inp = torch.cat(new Tensor[] { x, a2_t }, dimension: 1);
+                var inp = torch.cat(new Tensor[] { x, a2_t }, dim: 1);
                 (_, h2) = this.rnn2.forward(inp.unsqueeze(1), h2);
 
                 x = x + h2[0];
-                x = torch.cat(new Tensor[] { x, a3_t }, dimension: 1);
+                x = torch.cat(new Tensor[] { x, a3_t }, dim: 1);
                 x = F.relu(this.fc1.forward(x));
 
-                x = torch.cat(new Tensor[] { x, a4_t }, dimension: 1);
+                x = torch.cat(new Tensor[] { x, a4_t }, dim: 1);
                 x = F.relu(this.fc2.forward(x));
 
                 var logits = this.fc3.forward(x);
@@ -231,7 +231,7 @@ namespace TorchSharp.Modules
                 this.resblock_model = nn.Sequential(
                     nn.Conv1d(inputChannel: n_freq, outputChannel: n_freq, kernelSize: 1, bias: false),
                     nn.BatchNorm1d(n_freq),
-                    nn.ReLU(inPlace: true),
+                    nn.ReLU(inplace: true),
                     nn.Conv1d(inputChannel: n_freq, outputChannel: n_freq, kernelSize: 1, bias: false),
                     nn.BatchNorm1d(n_freq));
                 RegisterComponents();
@@ -258,7 +258,7 @@ namespace TorchSharp.Modules
                 var modules = new List<nn.Module>();
                 modules.Add(nn.Conv1d(inputChannel: n_freq, outputChannel: n_hidden, kernelSize: kernel_size, bias: false));
                 modules.Add(nn.BatchNorm1d(n_hidden));
-                modules.Add(nn.ReLU(inPlace: true));
+                modules.Add(nn.ReLU(inplace: true));
                 for (int i = 0; i < n_res_block; i++) {
                     modules.Add(new ResBlock("resblock", n_hidden));
                 }

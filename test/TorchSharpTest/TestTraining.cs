@@ -1746,11 +1746,11 @@ namespace TorchSharp
 
             var seq = Sequential(
                 ("conv1", conv1),
-                ("r1", ReLU(inPlace: true)),
+                ("r1", ReLU(inplace: true)),
                 ("drop1", Dropout(0.1)),
                 ("flat1", Flatten()),
                 ("lin1", lin1),
-                ("r2", ReLU(inPlace: true)),
+                ("r2", ReLU(inplace: true)),
                 ("lin2", lin2));
 
             var x = torch.randn(new long[] { 64, 3, 28, 28 });
@@ -1774,11 +1774,11 @@ namespace TorchSharp
 
                 using (var seq = Sequential(
                         ("conv1", conv1),
-                        ("r1", ReLU(inPlace: true)),
+                        ("r1", ReLU(inplace: true)),
                         ("drop1", Dropout(0.1)),
                         ("flat1", Flatten()),
                         ("lin1", lin1),
-                        ("r2", ReLU(inPlace: true)),
+                        ("r2", ReLU(inplace: true)),
                         ("lin2", lin2))) {
 
                     seq.to((Device)device);

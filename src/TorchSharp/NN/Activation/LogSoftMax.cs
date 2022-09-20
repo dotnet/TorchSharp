@@ -35,20 +35,20 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LogSoftmax_ctor(long dimension, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_LogSoftmax_ctor(long dim, out IntPtr pBoxedModule);
 
-            static public LogSoftmax LogSoftmax(long dimension)
+            static public LogSoftmax LogSoftmax(long dim)
             {
-                var handle = THSNN_LogSoftmax_ctor(dimension, out var boxedHandle);
+                var handle = THSNN_LogSoftmax_ctor(dim, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new LogSoftmax(handle, boxedHandle);
             }
 
             public static partial class functional
             {
-                static public Tensor log_softmax(Tensor x, long dimension)
+                static public Tensor log_softmax(Tensor x, long dim)
                 {
-                    using (var l = nn.LogSoftmax(dimension)) {
+                    using (var l = nn.LogSoftmax(dim)) {
                         return l.forward(x);
                     }
                 }

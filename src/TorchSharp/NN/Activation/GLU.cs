@@ -60,7 +60,7 @@ namespace TorchSharp
                 /// <param name="dim">the dimension on which to split the input. Default: -1</param>
                 /// <param name="x">The input tensor</param>
                 /// <returns></returns>
-                static public Tensor GLU(Tensor x, int dim = -1)
+                static public Tensor glu(Tensor x, int dim = -1)
                 {
                     using (var m = nn.GLU(dim)) {
                         return m.forward(x);

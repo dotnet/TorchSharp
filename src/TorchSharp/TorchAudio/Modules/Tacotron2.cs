@@ -336,7 +336,7 @@ namespace TorchSharp.Modules
             public override Tensor forward(Tensor x)
             {
                 foreach (var linear in this.layers) {
-                    x = F.dropout(F.relu(linear.forward(x)), probability: 0.5, training: true);
+                    x = F.dropout(F.relu(linear.forward(x)), p: 0.5, training: true);
                 }
                 return x;
             }
@@ -610,7 +610,7 @@ namespace TorchSharp.Modules
                 (attention_hidden, attention_cell) = this.attention_rnn.forward(cell_input, (attention_hidden, attention_cell));
                 attention_hidden = F.dropout(attention_hidden, this.attention_dropout, training: this.training);
 
-                var attention_weights_cat = torch.cat(new[] { attention_weights.unsqueeze(1), attention_weights_cum.unsqueeze(1) }, dimension: 1);
+                var attention_weights_cat = torch.cat(new[] { attention_weights.unsqueeze(1), attention_weights_cum.unsqueeze(1) }, dim: 1);
                 (attention_context, attention_weights) = this.attention_layer.forward(
                     attention_hidden, memory, processed_memory, attention_weights_cat, mask);
 
@@ -620,7 +620,7 @@ namespace TorchSharp.Modules
                 (decoder_hidden, decoder_cell) = this.decoder_rnn.forward(decoder_input, (decoder_hidden, decoder_cell));
                 decoder_hidden = F.dropout(decoder_hidden, this.decoder_dropout, training: this.training);
 
-                var decoder_hidden_attention_context = torch.cat(new[] { decoder_hidden, attention_context }, dimension: 1);
+                var decoder_hidden_attention_context = torch.cat(new[] { decoder_hidden, attention_context }, dim: 1);
                 var decoder_output = this.linear_projection.forward(decoder_hidden_attention_context);
 
                 var gate_prediction = this.gate_layer.forward(decoder_hidden_attention_context);
@@ -642,7 +642,7 @@ namespace TorchSharp.Modules
             {
                 var decoder_input = this._get_initial_frame(memory).unsqueeze(0);
                 var decoder_inputs = this._parse_decoder_inputs(mel_specgram_truth);
-                decoder_inputs = torch.cat(new[] { decoder_input, decoder_inputs }, dimension: 0);
+                decoder_inputs = torch.cat(new[] { decoder_input, decoder_inputs }, dim: 0);
                 decoder_inputs = this.prenet.forward(decoder_inputs);
 
                 var mask = _get_mask_from_lengths(memory_lengths);
@@ -777,9 +777,9 @@ namespace TorchSharp.Modules
                     Debug.WriteLine("Reached max decoder steps. The generated spectrogram might not cover the whole transcript.");
                 }
 
-                var mel_specgrams = torch.cat(mel_specgram_list, dimension: 0);
-                var gate_outputs = torch.cat(gate_output_list, dimension: 0);
-                var alignments = torch.cat(alignment_list, dimension: 0);
+                var mel_specgrams = torch.cat(mel_specgram_list, dim: 0);
+                var gate_outputs = torch.cat(gate_output_list, dim: 0);
+                var alignments = torch.cat(alignment_list, dim: 0);
 
                 (mel_specgrams, gate_outputs, alignments) = this._parse_decoder_outputs(mel_specgrams, gate_outputs, alignments);
 

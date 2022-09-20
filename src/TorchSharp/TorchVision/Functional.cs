@@ -62,7 +62,7 @@ namespace TorchSharp
                     var dtype = torch.is_floating_point(img) ? img.dtype : torch.float32;
                     using var t0 = transforms.functional.rgb_to_grayscale(img);
                     using var t1 = t0.to_type(dtype);
-                    using var mean = torch.mean(t1, new long[] { -3, -2, -1 }, keepDimension: true);
+                    using var mean = torch.mean(t1, new long[] { -3, -2, -1 }, keepdim: true);
 
                     return Blend(img, mean, contrast_factor);
                 }
@@ -243,8 +243,8 @@ namespace TorchSharp
                     var bound = input.IsIntegral() ? 255.0f : 1.0f;
                     var dtype = input.IsIntegral() ? ScalarType.Float32 : input.dtype;
 
-                    using var t0 = input.amin(new long[] { -2, -1 }, keepDim: true);
-                    using var t1 = input.amax(new long[] { -2, -1 }, keepDim: true);
+                    using var t0 = input.amin(new long[] { -2, -1 }, keepdim: true);
+                    using var t1 = input.amax(new long[] { -2, -1 }, keepdim: true);
 
                     using var minimum = t0.to(dtype);
                     using var maximum = t1.to(dtype);

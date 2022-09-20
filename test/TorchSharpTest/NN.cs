@@ -2907,8 +2907,8 @@ namespace TorchSharp
 
         private Tensor NormalizeTensor(Tensor x, long[] dim, double eps = 1e-5)
         {
-            var x_mean = torch.mean(x, dimensions: dim, keepDimension: true);
-            var x_var = torch.var(x, unbiased: false, dimensions: dim, keepDimension: true);
+            var x_mean = torch.mean(x, dimensions: dim, keepdim: true);
+            var x_var = torch.var(x, unbiased: false, dimensions: dim, keepdim: true);
             return NormalizeTensor(x, x_mean, x_var, eps);
         }
 
@@ -3320,7 +3320,7 @@ namespace TorchSharp
         [Fact]
         public void TestDropoutInPlace()
         {
-            var drop = Dropout(0.75, inPlace: true);
+            var drop = Dropout(0.75, inplace: true);
             var data = torch.rand(new long[] { 12, 23, 24 });
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
@@ -3346,7 +3346,7 @@ namespace TorchSharp
         [Fact]
         public void TestDropout2dInPlace()
         {
-            var drop = Dropout2d(0.75, inPlace: true);
+            var drop = Dropout2d(0.75, inplace: true);
             var data = torch.rand(new long[] { 12, 23, 24, 5 });
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
@@ -3372,7 +3372,7 @@ namespace TorchSharp
         [Fact]
         public void TestDropout3dInPlace()
         {
-            var drop = Dropout3d(0.75, inPlace: true);
+            var drop = Dropout3d(0.75, inplace: true);
             var data = torch.rand(new long[] { 12, 23, 24, 5, 6 });
             var output = drop.forward(data);
             Assert.Equal(data.shape, output.shape);
