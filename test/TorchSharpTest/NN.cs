@@ -109,9 +109,11 @@ namespace TorchSharp
             var forward = lin.forward(input);
             var matmul = input.matmul(weight).add(bias);
 
-            Assert.Equal(forward.shape.Length, matmul.shape.Length);
-            Assert.Equal(forward.shape[0], matmul.shape[0]);
-            Assert.Equal(forward.shape[1], matmul.shape[1]);
+            Assert.Multiple(
+                () => Assert.Equal(forward.shape.Length, matmul.shape.Length),
+                () => Assert.Equal(forward.shape[0], matmul.shape[0]),
+                () => Assert.Equal(forward.shape[1], matmul.shape[1])
+            );
 
             for (int i = 0; i < 100; i++) {
                 Assert.InRange(forward.data<float>()[i], matmul.data<float>()[i] - 10e5f, matmul.data<float>()[i] + 10e5f);
@@ -119,16 +121,40 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestBilinearWithBias()
+        public void FunctionalLinearWithBias()
         {
-            var lin = Bilinear(20, 30, 40);
-            var input1 = torch.randn(new long[] { 128, 20 });
-            var input2 = torch.randn(new long[] { 128, 30 });
-            var forward = lin.forward(input1, input2);
+            var input = torch.randn(4, 1000);
+            var weight = torch.randn(100, 1000);
+            var bias = torch.randn(100);
+            var forward = torch.nn.functional.linear(input, weight, bias);
+            var matmul = input.matmul(weight.t()).add(bias);
 
-            Assert.Equal(2, forward.shape.Length);
-            Assert.Equal(128, forward.shape[0]);
-            Assert.Equal(40, forward.shape[1]);
+            Assert.Multiple(
+                () => Assert.Equal(forward.shape.Length, matmul.shape.Length),
+                () => Assert.Equal(forward.shape[0], matmul.shape[0]),
+                () => Assert.Equal(forward.shape[1], matmul.shape[1])
+            );
+            for (int i = 0; i < 100; i++) {
+                Assert.InRange(forward.data<float>()[i], matmul.data<float>()[i] - 10e5f, matmul.data<float>()[i] + 10e5f);
+            }
+        }
+
+        [Fact]
+        public void FunctionalLinearNoBias()
+        {
+            var input = torch.randn(4, 1000);
+            var weight = torch.randn(100, 1000);
+            var forward = torch.nn.functional.linear(input, weight);
+            var matmul = input.matmul(weight.t());
+
+            Assert.Multiple(
+                () => Assert.Equal(forward.shape.Length, matmul.shape.Length),
+                () => Assert.Equal(forward.shape[0], matmul.shape[0]),
+                () => Assert.Equal(forward.shape[1], matmul.shape[1])
+            );
+            for (int i = 0; i < 100; i++) {
+                Assert.InRange(forward.data<float>()[i], matmul.data<float>()[i] - 10e5f, matmul.data<float>()[i] + 10e5f);
+            }
         }
 
         [Fact]
@@ -149,6 +175,48 @@ namespace TorchSharp
             for (int i = 0; i < 100; i++) {
                 Assert.Equal(forward.data<float>()[i], matmul.data<float>()[i]);
             }
+        }
+
+        [Fact]
+        public void TestBilinearWithBias()
+        {
+            var lin = Bilinear(20, 30, 40);
+            var input1 = torch.randn(new long[] { 128, 20 });
+            var input2 = torch.randn(new long[] { 128, 30 });
+            var forward = lin.forward(input1, input2);
+
+            Assert.Equal(2, forward.shape.Length);
+            Assert.Equal(128, forward.shape[0]);
+            Assert.Equal(40, forward.shape[1]);
+        }
+
+        [Fact]
+        public void FunctionalBilinearWithBias()
+        {
+            var input1 = torch.randn(new long[] { 128, 20 });
+            var input2 = torch.randn(new long[] { 128, 30 });
+            var weight = torch.randn(40, 20, 30);
+            var bias = torch.randn(40);
+
+            var forward = torch.nn.functional.bilinear(input1, input2, weight, bias);
+
+            Assert.Equal(2, forward.shape.Length);
+            Assert.Equal(128, forward.shape[0]);
+            Assert.Equal(40, forward.shape[1]);
+        }
+
+        [Fact]
+        public void FunctionalBilinearNoBias()
+        {
+            var input1 = torch.randn(new long[] { 128, 20 });
+            var input2 = torch.randn(new long[] { 128, 30 });
+            var weight = torch.randn(40, 20, 30);
+
+            var forward = torch.nn.functional.bilinear(input1, input2, weight);
+
+            Assert.Equal(2, forward.shape.Length);
+            Assert.Equal(128, forward.shape[0]);
+            Assert.Equal(40, forward.shape[1]);
         }
 
         [Fact]

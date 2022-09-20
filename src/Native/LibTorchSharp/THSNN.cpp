@@ -50,6 +50,20 @@ void THSNN_Linear_set_weight(const NNModule module, const Tensor weight)
     set_weight<torch::nn::Linear>(module, weight);
 }
 
+Tensor THSNN_functional_linear(const Tensor input, const Tensor weights, const Tensor bias)
+{
+    CATCH_TENSOR(bias == nullptr ?
+        torch::nn::functional::linear(*input, *weights) :
+        torch::nn::functional::linear(*input, *weights, *bias));
+}
+
+Tensor THSNN_functional_bilinear(const Tensor input1, const Tensor input2, const Tensor weights, const Tensor bias)
+{
+    CATCH_TENSOR(bias == nullptr ?
+        torch::nn::functional::bilinear(*input1, *input2, *weights) :
+        torch::nn::functional::bilinear(*input1, *input2, *weights, *bias));
+}
+
 NNModule THSNN_Bilinear_ctor(const int64_t input_size_1, const int64_t input_size_2, const int64_t output_size, const bool bias,
     NNAnyModule* outAsAnyModule)
 {

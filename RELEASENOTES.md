@@ -4,6 +4,15 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.97.6
 
+__Fixed Bugs:__
+
+#749 functional.linear is wrong<br/>
+
+__API Changes__:
+
+
+## NuGet Version 0.97.6
+
 __Breaking Changes:__
 
 This release changes TorchSharp.torchvision from a namespace to a static class. This will break any using directives that assumes that it is a namespace.

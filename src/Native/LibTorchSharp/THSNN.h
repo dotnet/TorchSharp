@@ -275,6 +275,9 @@ EXPORT_API(void)     THSNN_Linear_set_bias(const NNModule module, const Tensor t
 EXPORT_API(Tensor)   THSNN_Linear_weight(const NNModule module);
 EXPORT_API(void)     THSNN_Linear_set_weight(const NNModule module, const Tensor tensor);
 
+EXPORT_API(Tensor) THSNN_functional_linear(const Tensor input, const Tensor weights, const Tensor bias);
+EXPORT_API(Tensor) THSNN_functional_bilinear(const Tensor input1, const Tensor input2, const Tensor weights, const Tensor bias);
+
 EXPORT_API(NNModule) THSNN_Bilinear_ctor(const int64_t input_size_1, const int64_t input_size_2, const int64_t output_size, const bool with_bias, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Bilinear_forward(const NNModule module, const Tensor x1, const Tensor x2);
 EXPORT_API(Tensor)   THSNN_Bilinear_bias(const NNModule module);
