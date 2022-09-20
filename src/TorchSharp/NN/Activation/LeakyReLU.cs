@@ -44,11 +44,11 @@ namespace TorchSharp
             /// Continuously Differentiable Exponential Linear Unit
             /// </summary>
             /// <param name="negativeSlope">The α value for the LeakyReLU formulation. Default: 1.0</param>
-            /// <param name="inPlace">Do the operation in-place. Default: False</param>
+            /// <param name="inplace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
-            static public LeakyReLU LeakyReLU(double negativeSlope = 1.0, bool inPlace = false)
+            static public LeakyReLU LeakyReLU(double negativeSlope = 1.0, bool inplace = false)
             {
-                var handle = THSNN_LeakyReLU_ctor(negativeSlope, inPlace, out var boxedHandle);
+                var handle = THSNN_LeakyReLU_ctor(negativeSlope, inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new LeakyReLU(handle, boxedHandle);
             }
@@ -60,11 +60,11 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="x">The input tensor</param>
                 /// <param name="negativeSlope">The α value for the LeakyReLU formulation. Default: 1.0</param>
-                /// <param name="inPlace">Do the operation in-place. Default: False</param>
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                static public Tensor leaky_relu(Tensor x, double negativeSlope, bool inPlace = false)
+                static public Tensor leaky_relu(Tensor x, double negativeSlope, bool inplace = false)
                 {
-                    using (var m = nn.LeakyReLU(negativeSlope, inPlace)) {
+                    using (var m = nn.LeakyReLU(negativeSlope, inplace)) {
                         return m.forward(x);
                     }
                 }

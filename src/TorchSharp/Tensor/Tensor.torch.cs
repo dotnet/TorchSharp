@@ -96,10 +96,10 @@ namespace TorchSharp
         /// Concatenates the given sequence of seq tensors in the given dimension.
         /// </summary>
         /// <param name="tensors"></param>
-        /// <param name="dimension"></param>
+        /// <param name="dim"></param>
         /// <returns></returns>
         /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
-        public static Tensor cat(IList<Tensor> tensors, long dimension)
+        public static Tensor cat(IList<Tensor> tensors, long dim)
         {
             if (tensors.Count == 0) {
                 throw new ArgumentException(nameof(tensors));
@@ -111,7 +111,7 @@ namespace TorchSharp
             using (var parray = new PinnedArray<IntPtr>()) {
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-                var res = THSTensor_cat(tensorsRef, parray.Array.Length, dimension);
+                var res = THSTensor_cat(tensorsRef, parray.Array.Length, dim);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -205,12 +205,12 @@ namespace TorchSharp
         /// </summary>
         /// <returns></returns>
         /// <remarks>All tensors need to be of the same size.</remarks>
-        public static Tensor stack(IEnumerable<Tensor> tensors, long dimension = 0)
+        public static Tensor stack(IEnumerable<Tensor> tensors, long dim = 0)
         {
             using (var parray = new PinnedArray<IntPtr>()) {
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-                var res = THSTensor_stack(tensorsRef, parray.Array.Length, dimension);
+                var res = THSTensor_stack(tensorsRef, parray.Array.Length, dim);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -348,18 +348,18 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensor">The input tensor</param>
         /// <param name="k">The 'k' in 'top-k'.</param>
-        /// <param name="dimension">The dimension to sort along. If dim is not given, the last dimension of the input is chosen.</param>
+        /// <param name="dim">The dimension to sort along. If dim is not given, the last dimension of the input is chosen.</param>
         /// <param name="largest">Controls whether to return largest or smallest elements</param>
         /// <param name="sorted">Controls whether to return the elements in sorted order</param>
-        public static (Tensor values, Tensor indexes) topk(Tensor tensor, int k, int dimension = -1, bool largest = true, bool sorted = true) => tensor.topk(k, dimension, largest, sorted);
+        public static (Tensor values, Tensor indexes) topk(Tensor tensor, int k, int dim = -1, bool largest = true, bool sorted = true) => tensor.topk(k, dim, largest, sorted);
 
         /// <summary>
         /// Removes a tensor dimension.
         /// </summary>
         /// <param name="tensor">The input tensor</param>
-        /// <param name="dimension">The dimension to remove.</param>
+        /// <param name="dim">The dimension to remove.</param>
         /// <returns>An array of all slices along a given dimension, already without it.</returns>
-        public static Tensor[] unbind(Tensor tensor, int dimension = 0) => tensor.unbind(dimension);
+        public static Tensor[] unbind(Tensor tensor, int dim = 0) => tensor.unbind(dim);
 
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTorch_lstsq(IntPtr input, IntPtr A, out IntPtr pQR);
@@ -383,28 +383,28 @@ namespace TorchSharp
         ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
         ///  corresponding value in index for dimension = dim.
         /// </summary>
-        public static Tensor scatter(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter(dimension, index, src);
+        public static Tensor scatter(Tensor input, long dim, Tensor index, Tensor src) => input.scatter(dim, index, src);
 
         /// <summary>
         ///  Writes all values from the tensor src into input at the indices specified in the index tensor. For each
         ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
         ///  corresponding value in index for dimension = dim.
         /// </summary>
-        public static Tensor scatter_(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter_(dimension, index, src);
+        public static Tensor scatter_(Tensor input, long dim, Tensor index, Tensor src) => input.scatter_(dim, index, src);
 
         /// <summary>
         /// Adds all values from the tensor other into input at the indices specified in the index tensor in a similar fashion as scatter_().
         /// For each value in src, it is added to an index in self which is specified by its index in src for dimension != dim and by the
         /// corresponding value in index for dimension = dim.
         /// </summary>
-        public static Tensor scatter_add(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter_add(dimension, index, src);
+        public static Tensor scatter_add(Tensor input, long dim, Tensor index, Tensor src) => input.scatter_add(dim, index, src);
 
         /// <summary>
         /// Adds all values from the tensor other into input at the indices specified in the index tensor in a similar fashion as scatter_().
         /// For each value in src, it is added to an index in self which is specified by its index in src for dimension != dim and by the
         /// corresponding value in index for dimension = dim.
         /// </summary>
-        public static Tensor scatter_add_(Tensor input, long dimension, Tensor index, Tensor src) => input.scatter_add_(dimension, index, src);
+        public static Tensor scatter_add_(Tensor input, long dim, Tensor index, Tensor src) => input.scatter_add_(dim, index, src);
 
         /// <summary>
         /// Clamps all elements in input into the range [ min, max ].
@@ -451,18 +451,18 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor</param>
         /// <param name="dims">The dimension or dimensions to reduce.</param>
-        /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+        /// <param name="keepdim">Whether the output tensor has dim retained or not.</param>
         /// <param name="out">The output tensor -- optional.</param>
-        static public Tensor amax(Tensor input, long[] dims, bool keepDim = false, Tensor @out = null) => input.amax(dims, keepDim, @out);
+        static public Tensor amax(Tensor input, long[] dims, bool keepdim = false, Tensor @out = null) => input.amax(dims, keepdim, @out);
 
         /// <summary>
         /// Returns the minimum value of each slice of the input tensor in the given dimension(s) dim.
         /// </summary>
         /// <param name="input">The input tensor</param>
         /// <param name="dims">The dimension or dimensions to reduce.</param>
-        /// <param name="keepDim">Whether the output tensor has dim retained or not.</param>
+        /// <param name="keepdim">Whether the output tensor has dim retained or not.</param>
         /// <param name="out">The output tensor -- optional.</param>
-        static public Tensor amin(Tensor input, long[] dims, bool keepDim = false, Tensor @out = null) => input.amin(dims, keepDim, @out);
+        static public Tensor amin(Tensor input, long[] dims, bool keepdim = false, Tensor @out = null) => input.amin(dims, keepdim, @out);
 
         /// <summary>
         /// Returns a tensor with the same data and number of elements as the input but with the specified shape.

@@ -38,18 +38,18 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Dropout_ctor(double probability, [MarshalAs(UnmanagedType.U1)] bool inPlace, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_Dropout_ctor(double p, [MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
 
             /// <summary>
             /// During training, randomly zeroes some of the elements of the input tensor with probability p using samples from a Bernoulli distribution.
             /// Each channel will be zeroed out independently on every forward call.
             /// </summary>
-            /// <param name="probability">Probability of an element to be zeroed. Default: 0.5</param>
-            /// <param name="inPlace">If set to true, will do this operation in-place. Default: false</param>
+            /// <param name="p">Probability of an element to be zeroed. Default: 0.5</param>
+            /// <param name="inplace">If set to true, will do this operation in-place. Default: false</param>
             /// <returns></returns>
-            static public Dropout Dropout(double probability = 0.5, bool inPlace = false)
+            static public Dropout Dropout(double p = 0.5, bool inplace = false)
             {
-                var handle = THSNN_Dropout_ctor(probability, inPlace, out var boxedHandle);
+                var handle = THSNN_Dropout_ctor(p, inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Dropout(handle, boxedHandle);
             }
@@ -57,16 +57,16 @@ namespace TorchSharp
             public static partial class functional
             {
                 [DllImport("LibTorchSharp")]
-                extern static IntPtr THSNN_dropout(IntPtr input, double probability, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inPlace);
+                extern static IntPtr THSNN_dropout(IntPtr input, double p, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inplace);
 
                 /// <summary>
                 /// During training, randomly zeroes some of the elements of the input tensor with probability p using samples from a Bernoulli distribution.
                 /// Each channel will be zeroed out independently on every forward call.
                 /// </summary>
                 /// <returns></returns>
-                static public Tensor dropout(Tensor input, double probability = 0.5, bool training = true, bool inPlace = false)
+                static public Tensor dropout(Tensor input, double p = 0.5, bool training = true, bool inplace = false)
                 {
-                    var res = THSNN_dropout(input.Handle, probability, training, inPlace);
+                    var res = THSNN_dropout(input.Handle, p, training, inplace);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }

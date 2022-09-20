@@ -35,7 +35,7 @@ namespace TorchSharp
         public static partial class nn
         {
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_FeatureAlphaDropout_ctor(double probability, out IntPtr pBoxedModule);
+            extern static IntPtr THSNN_FeatureAlphaDropout_ctor(double p, out IntPtr pBoxedModule);
 
             /// <summary>
             /// Randomly masks out entire channels (a channel is a feature map, e.g. the j-th channel of the i-th sample in the batch input is a tensor input[i,j]) of the input tensor.
@@ -54,7 +54,7 @@ namespace TorchSharp
             public static partial class functional
             {
                 [DllImport("LibTorchSharp")]
-                extern static IntPtr THSNN_feature_alpha_dropout(IntPtr input, double probability, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inPlace);
+                extern static IntPtr THSNN_feature_alpha_dropout(IntPtr input, double p, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inplace);
 
                 /// <summary>
                 /// Randomly masks out entire channels (a channel is a feature map, e.g. the j-th channel of the i-th sample in the batch input is a tensor input[i,j]) of the input tensor.

@@ -124,7 +124,7 @@ namespace TorchSharp
                 Mixed_7b = inception_e(1280);
                 Mixed_7c = inception_e(2048);
                 avgpool = nn.AdaptiveAvgPool2d((1, 1));
-                this.dropout = nn.Dropout(probability: dropout);
+                this.dropout = nn.Dropout(p: dropout);
                 fc = nn.Linear(2048, numClasses);
 
                 RegisterComponents();

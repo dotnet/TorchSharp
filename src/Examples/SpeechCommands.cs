@@ -269,7 +269,7 @@ namespace TorchSharp.Examples
                 x = avg_pool1d(x, x.shape[x.dim() - 1]);
                 x = x.permute(0, 2, 1);
                 x = fc1.forward(x);
-                return log_softmax(x, dimension: 2);
+                return log_softmax(x, dim: 2);
             }
         }
     }

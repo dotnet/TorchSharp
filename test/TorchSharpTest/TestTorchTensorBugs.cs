@@ -528,7 +528,7 @@ namespace TorchSharp
                 this.stack = Sequential(
                     Conv1d(in_channels, out_channels, 3, stride: stride, padding: padding, bias: false),
                     temp,
-                    ReLU(inPlace: true)
+                    ReLU(inplace: true)
                 );
 
                 temp.weight = Parameter(torch.randn(temp.weight.shape));
@@ -625,7 +625,7 @@ namespace TorchSharp
                 seq = Sequential(
                     conv,
                     batch,
-                    ReLU(inPlace: true)
+                    ReLU(inplace: true)
                 );
 
                 this.RegisterComponents();
