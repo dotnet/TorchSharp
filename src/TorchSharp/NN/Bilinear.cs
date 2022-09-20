@@ -103,7 +103,7 @@ namespace TorchSharp
                 /// <param name="bias">Optional bias of shape (Hout)</param>
                 /// <returns>Tensor of shape (N,*,Hout)</returns>
                 /// <remarks>The '*' sub-shape must be the same among the two inputs.</remarks>
-                static public Tensor bilinear(Tensor input1, Tensor input2, Modules.Parameter weight, Modules.Parameter? bias = null)
+                static public Tensor bilinear(Tensor input1, Tensor input2, Tensor weight, Tensor? bias = null)
                 {
                     IntPtr bPtr = bias is null ? IntPtr.Zero : bias.Handle;
                     var res = THSNN_functional_bilinear(input1.Handle, input2.Handle, weight.Handle, bPtr);

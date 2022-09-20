@@ -104,7 +104,7 @@ namespace TorchSharp
                 /// <param name="weights">Weights of shape (Hout,Hin) or (Hin)</param>
                 /// <param name="bias">Bias of shape (Hout) or ()</param>
                 /// <returns>A tensor of shape (*,Hout) where '*' is the same as the subshape of the input.</returns>
-                static public Tensor linear(Tensor input, Modules.Parameter weights, Modules.Parameter? bias = null)
+                static public Tensor linear(Tensor input, Tensor weights, Tensor? bias = null)
                 {
                     IntPtr bPtr = bias is null ? IntPtr.Zero : bias.Handle;
                     var res = THSNN_functional_linear(input.Handle, weights.Handle, bPtr);

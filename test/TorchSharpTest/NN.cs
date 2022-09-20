@@ -124,8 +124,8 @@ namespace TorchSharp
         public void FunctionalLinearWithBias()
         {
             var input = torch.randn(4, 1000);
-            var weight = torch.randn(100, 1000).AsParameter();
-            var bias = torch.randn(100).AsParameter();
+            var weight = torch.randn(100, 1000);
+            var bias = torch.randn(100);
             var forward = torch.nn.functional.linear(input, weight, bias);
             var matmul = input.matmul(weight.t()).add(bias);
 
@@ -143,7 +143,7 @@ namespace TorchSharp
         public void FunctionalLinearNoBias()
         {
             var input = torch.randn(4, 1000);
-            var weight = torch.randn(100, 1000).AsParameter();
+            var weight = torch.randn(100, 1000);
             var forward = torch.nn.functional.linear(input, weight);
             var matmul = input.matmul(weight.t());
 
@@ -195,8 +195,8 @@ namespace TorchSharp
         {
             var input1 = torch.randn(new long[] { 128, 20 });
             var input2 = torch.randn(new long[] { 128, 30 });
-            var weight = torch.randn(40, 20, 30).AsParameter();
-            var bias = torch.randn(40).AsParameter();
+            var weight = torch.randn(40, 20, 30);
+            var bias = torch.randn(40);
 
             var forward = torch.nn.functional.bilinear(input1, input2, weight, bias);
 
@@ -210,7 +210,7 @@ namespace TorchSharp
         {
             var input1 = torch.randn(new long[] { 128, 20 });
             var input2 = torch.randn(new long[] { 128, 30 });
-            var weight = torch.randn(40, 20, 30).AsParameter();
+            var weight = torch.randn(40, 20, 30);
 
             var forward = torch.nn.functional.bilinear(input1, input2, weight);
 
