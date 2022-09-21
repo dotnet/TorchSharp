@@ -167,6 +167,13 @@ namespace TorchSharp
                     THSNN_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index);
                     CheckForErrors();
 
+                    _toEpilog(device, dtype);
+
+                    return this;
+                }
+
+                protected void _toEpilog(Device device, ScalarType dtype)
+                {
                     foreach (var (_, sm) in named_children()) sm.to(device, dtype);
 
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
@@ -201,8 +208,6 @@ namespace TorchSharp
                     _deviceIndex = device.index;
 
                     Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
-
-                    return this;
                 }
 
 
@@ -224,43 +229,48 @@ namespace TorchSharp
                         THSNN_Module_to_device(handle, (int)deviceType, deviceIndex);
                         CheckForErrors();
 
-                        foreach (var (_, sm) in named_children()) sm.to(deviceType, deviceIndex);
-
-                        foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
-
-                            var fieldName = field.Name;
-                            var value = field.GetValue(this);
-
-                            switch (value) {
-                            // This test must come before the Tensor test
-                            case Parameter param when deviceType == param.device_type && deviceIndex == param.device_index:
-                                continue;
-
-                            case Parameter param: {
-                                    var t = param.to(deviceType, deviceIndex);
-                                    t.retain_grad();
-                                    var p = new Parameter(t, param.requires_grad);
-                                    field.SetValue(this, p);
-                                    ConditionallyRegisterParameter(fieldName, p);
-                                    break;
-                                }
-
-                            case Tensor tensor when (deviceType != tensor.device_type || deviceIndex != tensor.device_index): {
-                                    var t = tensor.to(deviceType, deviceIndex);
-                                    field.SetValue(this, t);
-                                    ConditionallyRegisterBuffer(fieldName, t);
-                                    break;
-                                }
-                            }
-                        }
-
-                        _deviceType = deviceType;
-                        _deviceIndex = deviceIndex;
+                        _toEpilog(deviceType, deviceIndex);
                     }
 
                     Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
 
                     return this;
+                }
+
+                protected void _toEpilog(DeviceType deviceType, int deviceIndex)
+                {
+                    foreach (var (_, sm) in named_children()) sm.to(deviceType, deviceIndex);
+
+                    foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
+
+                        var fieldName = field.Name;
+                        var value = field.GetValue(this);
+
+                        switch (value) {
+                        // This test must come before the Tensor test
+                        case Parameter param when deviceType == param.device_type && deviceIndex == param.device_index:
+                            continue;
+
+                        case Parameter param: {
+                                var t = param.to(deviceType, deviceIndex);
+                                t.retain_grad();
+                                var p = new Parameter(t, param.requires_grad);
+                                field.SetValue(this, p);
+                                ConditionallyRegisterParameter(fieldName, p);
+                                break;
+                            }
+
+                        case Tensor tensor when (deviceType != tensor.device_type || deviceIndex != tensor.device_index): {
+                                var t = tensor.to(deviceType, deviceIndex);
+                                field.SetValue(this, t);
+                                ConditionallyRegisterBuffer(fieldName, t);
+                                break;
+                            }
+                        }
+                    }
+
+                    _deviceType = deviceType;
+                    _deviceIndex = deviceIndex;
                 }
 
                 private DeviceType _deviceType = DeviceType.CPU;
@@ -290,6 +300,13 @@ namespace TorchSharp
                     THSNN_Module_to_dtype(handle, (sbyte)dtype);
                     CheckForErrors();
 
+                    _toEpilog(dtype);
+
+                    return this;
+                }
+
+                protected void _toEpilog(ScalarType dtype)
+                {
                     foreach (var (_, sm) in named_children()) sm.to(dtype);
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
@@ -321,8 +338,6 @@ namespace TorchSharp
                             }
                         }
                     }
-
-                    return this;
                 }
 
                 /// <summary>

@@ -175,47 +175,12 @@ namespace TorchSharp
 
                     if (device.type == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
 
-                    if (device.type != _deviceType || device.index != _deviceIndex) {
 
-                        InitializeDeviceType(device.type);
-                        THSJIT_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index);
-                        CheckForErrors();
+                    InitializeDeviceType(device.type);
+                    THSJIT_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index);
+                    CheckForErrors();
 
-                        foreach (var (_, sm) in named_children()) sm.to(device.type, device.index);
-
-                        foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
-
-                            var fieldName = field.Name;
-                            var value = field.GetValue(this);
-
-                            switch (value) {
-                            // This test must come before the Tensor test
-                            case Modules.Parameter param when dtype == param.dtype && device.type == param.device_type && device.index == param.device_index:
-                                continue;
-
-                            case Modules.Parameter param: {
-                                    var t = param.to(dtype, device);
-                                    t.retain_grad();
-                                    var p = new Modules.Parameter(t, param.requires_grad);
-                                    field.SetValue(this, p);
-                                    ConditionallyRegisterParameter(fieldName, p);
-                                    break;
-                                }
-
-                            case Tensor tensor when (device.type != tensor.device_type || device.index != tensor.device_index): {
-                                    var t = tensor.to(dtype, device);
-                                    field.SetValue(this, t);
-                                    ConditionallyRegisterBuffer(fieldName, t);
-                                    break;
-                                }
-                            }
-                        }
-
-                        _deviceType = device.type;
-                        _deviceIndex = device.index;
-                    }
-
-                    Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
+                    _toEpilog(device, dtype);
 
                     return this;
                 }
@@ -238,38 +203,7 @@ namespace TorchSharp
                         THSJIT_Module_to_device(handle, (int)deviceType, deviceIndex);
                         CheckForErrors();
 
-                        foreach (var (_, sm) in named_children()) sm.to(deviceType, deviceIndex);
-
-                        foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
-
-                            var fieldName = field.Name;
-                            var value = field.GetValue(this);
-
-                            switch (value) {
-                            // This test must come before the Tensor test
-                            case Modules.Parameter param when deviceType == param.device_type && deviceIndex == param.device_index:
-                                continue;
-
-                            case Modules.Parameter param: {
-                                    var t = param.to(deviceType, deviceIndex);
-                                    t.retain_grad();
-                                    var p = new Modules.Parameter(t, param.requires_grad);
-                                    field.SetValue(this, p);
-                                    ConditionallyRegisterParameter(fieldName, p);
-                                    break;
-                                }
-
-                            case Tensor tensor when (deviceType != tensor.device_type || deviceIndex != tensor.device_index): {
-                                    var t = tensor.to(deviceType, deviceIndex);
-                                    field.SetValue(this, t);
-                                    ConditionallyRegisterBuffer(fieldName, t);
-                                    break;
-                                }
-                            }
-                        }
-
-                        _deviceType = deviceType;
-                        _deviceIndex = deviceIndex;
+                        _toEpilog(deviceType, deviceIndex);
                     }
 
                     Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
@@ -289,37 +223,7 @@ namespace TorchSharp
                     THSJIT_Module_to_dtype(handle, (sbyte)dtype);
                     CheckForErrors();
 
-                    foreach (var (_, sm) in named_children()) sm.to(dtype);
-                    foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
-
-                        var fieldName = field.Name;
-                        var value = field.GetValue(this);
-
-                        switch (value) {
-                        // This test must come before the Tensor test
-                        case Modules.Parameter param when dtype == param.dtype:
-                            continue;
-
-                        case Modules.Parameter param: {
-                                var t = param.to(dtype);
-                                t.retain_grad();
-                                var p = new Modules.Parameter(t, param.requires_grad);
-                                field.SetValue(this, p);
-                                ConditionallyRegisterParameter(fieldName, p);
-                                break;
-                            }
-
-                        case Tensor tensor when dtype == tensor.dtype:
-                            continue;
-
-                        case Tensor tensor: {
-                                var t = tensor.to(dtype);
-                                field.SetValue(this, t);
-                                ConditionallyRegisterBuffer(fieldName, t);
-                                break;
-                            }
-                        }
-                    }
+                    _toEpilog(dtype);
 
                     return this;
                 }
@@ -434,8 +338,7 @@ namespace TorchSharp
                         if (res == IntPtr.Zero)
                             CheckForErrors();
                         return new Tensor(res);
-                    }
-                    else {
+                    } else {
                         // It the unlikely event that there's a great number of arguments, use heap allocation.
                         var tensorRefs = new IntPtr[count];
                         tensorRefs[0] = x.Handle;
