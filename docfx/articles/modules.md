@@ -290,3 +290,23 @@ So, for example:
 ```
 
 
+## Moving and Converting Modules
+
+There are a few ways to move and/or convert the parameters and buffers in a module, whether custom or not. The actual methods that are used are declared as extension methods on 'Module,' but the implementation is found in three virtual methods declared as part of Module itself:
+
+```C#
+protected virtual Module _to(ScalarType dtype)
+protected virtual Module _to(DeviceType deviceType, int deviceIndex = -1)
+protected virtual Module _to(Device device, ScalarType dtype)
+```
+
+The most likely reason for overriding any or all of these is to "hook" calls to moves and conversions rather than implementing it differently. The Module base class already goes through all children modules, declared parameters and buffers, so it should generally not be necessary to implement these methods separately. In th "hook" scenario, it is advisable to end the body with a call to 'base._to(...)' like the TransformerModel in the SequenceToSequence example does:
+
+```C#
+protected override Module _to(DeviceType deviceType, int deviceIndex = -1)
+{
+    this.device = new Device(deviceType, deviceIndex);
+    return base._to(deviceType, deviceIndex);
+}
+```
+In this case, the model needs to know what device the parameters and buffers are, because it repeatedly generates a mask during training, and this mask must live on the same device as the model parameters.
