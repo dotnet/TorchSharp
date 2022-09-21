@@ -422,7 +422,7 @@ namespace TorchSharp
             var input = torch.randn(new long[] { 8, 8, 8 });
             var output = rel.forward(input);
             var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, new long[] { 8, 8, 8 });
+            Assert.Equal(output.shape, new long[] { 8, 8, 8 });
         }
 
         [Fact]
@@ -432,7 +432,17 @@ namespace TorchSharp
             var input = torch.randn(new long[] { 8, 8, 8 });
             var output = rel.forward(input);
             var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, new long[] { 8, 8, 8 });
+            Assert.Equal(output.shape, new long[] { 8, 8, 8 });
+        }
+
+        [Fact]
+        public void EvaluateHardswish()
+        {
+            var rel = Hardswish();
+            var input = torch.from_array(new float[] { -3.5f, 0.6f, 3.25f });
+            var output = rel.forward(input);
+            var values = output.data<float>().ToArray();
+            Assert.Equal(new float[] { 0f, 0.36f, 3.25f }, values);
         }
 
         [Fact]
@@ -442,7 +452,7 @@ namespace TorchSharp
             var input = torch.randn(new long[] { 8, 8, 8 });
             var output = rel.forward(input);
             var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, new long[] { 8, 8, 8 });
+            Assert.Equal(output.shape, new long[] { 8, 8, 8 });
         }
 
         [Fact]
