@@ -152,56 +152,59 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 static extern void THSNN_Module_to_dtype(HType module, sbyte dtype);
 
+                /// <summary>
+                /// Moves and converts the parameters and buffers.
+                /// </summary>
+                /// <param name="device">The target device.</param>
+                /// <param name="dtype">The target element type.</param>
                 public virtual Module to(Device device, ScalarType dtype)
                 {
                     if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
 
                     if (device.type == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
 
-                    if (device.type != _deviceType || device.index != _deviceIndex) {
+                    InitializeDeviceType(device.type);
+                    THSNN_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index);
+                    CheckForErrors();
 
-                        InitializeDeviceType(device.type);
-                        THSNN_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index);
-                        CheckForErrors();
+                    foreach (var (_, sm) in named_children()) sm.to(device, dtype);
 
-                        foreach (var (_, sm) in named_children()) sm.to(device, dtype);
+                    foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
-                        foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
+                        var fieldName = field.Name;
+                        var value = field.GetValue(this);
 
-                            var fieldName = field.Name;
-                            var value = field.GetValue(this);
+                        switch (value) {
+                        // This test must come before the Tensor test
+                        case Parameter param when dtype == param.dtype && device.type == param.device_type && device.index == param.device_index:
+                            continue;
 
-                            switch (value) {
-                            // This test must come before the Tensor test
-                            case Parameter param when dtype == param.dtype && device.type == param.device_type && device.index == param.device_index:
-                                continue;
+                        case Parameter param: {
+                                var t = param.to(dtype, device);
+                                t.retain_grad();
+                                var p = new Parameter(t, param.requires_grad);
+                                field.SetValue(this, p);
+                                ConditionallyRegisterParameter(fieldName, p);
+                                break;
+                            }
 
-                            case Parameter param: {
-                                    var t = param.to(dtype, device);
-                                    t.retain_grad();
-                                    var p = new Parameter(t, param.requires_grad);
-                                    field.SetValue(this, p);
-                                    ConditionallyRegisterParameter(fieldName, p);
-                                    break;
-                                }
-
-                            case Tensor tensor when (device.type != tensor.device_type || device.index != tensor.device_index): {
-                                    var t = tensor.to(dtype, device);
-                                    field.SetValue(this, t);
-                                    ConditionallyRegisterBuffer(fieldName, t);
-                                    break;
-                                }
+                        case Tensor tensor when (device.type != tensor.device_type || device.index != tensor.device_index): {
+                                var t = tensor.to(dtype, device);
+                                field.SetValue(this, t);
+                                ConditionallyRegisterBuffer(fieldName, t);
+                                break;
                             }
                         }
-
-                        _deviceType = device.type;
-                        _deviceIndex = device.index;
                     }
+
+                    _deviceType = device.type;
+                    _deviceIndex = device.index;
 
                     Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
 
                     return this;
                 }
+
 
                 /// <summary>
                 /// Moves the parameters and buffers.
