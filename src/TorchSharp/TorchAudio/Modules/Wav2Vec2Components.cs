@@ -652,8 +652,8 @@ namespace TorchSharp.Modules
                 Module? normalization = null;
                 if (norm_mode == FeatureExtractorNormMode.group_norm && i == 0) {
                     normalization = nn.GroupNorm(
-                        numGroups: out_channels,
-                        numChannels: out_channels,
+                        num_groups: out_channels,
+                        num_channels: out_channels,
                         affine: true);
                 } else if (norm_mode == FeatureExtractorNormMode.layer_norm) {
                     normalization = new Wav2Vec2Model.LayerNorm(

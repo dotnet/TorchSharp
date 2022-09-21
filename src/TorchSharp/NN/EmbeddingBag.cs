@@ -3,6 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
+#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -89,14 +90,14 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_EmbeddingBag_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Parameter weight {
+            public Parameter? weight {
                 get {
                     var res = THSNN_EmbeddingBag_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_EmbeddingBag_set_weight(handle, value.Handle);
+                    THSNN_EmbeddingBag_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight", value);
                 }
@@ -127,15 +128,17 @@ namespace TorchSharp
             /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
             /// <param name="include_last_offset">If true, offsets has one additional element, where the last element is equivalent to the size of indices. This matches the CSR format.</param>
             /// <param name="padding_index"> If specified, the entries at padding_idx do not contribute to the gradient; therefore, the embedding vector at padding_idx is not updated during training, i.e. it remains as a fixed “pad”. For a newly constructed EmbeddingBag, the embedding vector at padding_idx will default to all zeros, but can be updated to another value to be used as the padding vector. Note that the embedding vector at padding_idx is excluded from the reduction.</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-            static public EmbeddingBag EmbeddingBag(long num_embeddings, long embedding_dims, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1)
+            static public EmbeddingBag EmbeddingBag(long num_embeddings, long embedding_dims, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_EmbeddingBag_ctor(num_embeddings, embedding_dims,
                     max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
                     norm_type, scale_grad_by_freq, (long)mode, sparse, include_last_offset, padding_index, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new EmbeddingBag(res, boxedHandle);
+                return new EmbeddingBag(res, boxedHandle).MoveModule<EmbeddingBag>(device, dtype);
             }
 
             [DllImport("LibTorchSharp")]
@@ -154,15 +157,17 @@ namespace TorchSharp
             /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
             /// <param name="include_last_offset">If true, offsets has one additional element, where the last element is equivalent to the size of indices. This matches the CSR format.</param>
             /// <param name="padding_index"> If specified, the entries at padding_idx do not contribute to the gradient; therefore, the embedding vector at padding_idx is not updated during training, i.e. it remains as a fixed “pad”. For a newly constructed EmbeddingBag, the embedding vector at padding_idx will default to all zeros, but can be updated to another value to be used as the padding vector. Note that the embedding vector at padding_idx is excluded from the reduction.</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-            public static EmbeddingBag EmbeddingBag_from_pretrained(Tensor embeddings, bool freeze = true, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1)
+            public static EmbeddingBag EmbeddingBag_from_pretrained(Tensor embeddings, bool freeze = true, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_EmbeddingBag_from_pretrained(embeddings.Handle, freeze,
                     max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
                     norm_type, scale_grad_by_freq, (long)mode, sparse, include_last_offset, padding_index, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new EmbeddingBag(res, boxedHandle);
+                return new EmbeddingBag(res, boxedHandle).MoveModule<EmbeddingBag>(device, dtype);
 
             }
         }

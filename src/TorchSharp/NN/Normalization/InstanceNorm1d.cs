@@ -3,6 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
+#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -29,6 +30,93 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_InstanceNorm1d_bias(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_InstanceNorm1d_set_bias(torch.nn.Module.HType module, IntPtr bias);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_InstanceNorm1d_weight(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_InstanceNorm1d_set_weight(torch.nn.Module.HType module, IntPtr weight);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_InstanceNorm1d_reset_stats(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_InstanceNorm1d_get_mean(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_InstanceNorm1d_get_var(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern IntPtr THSNN_InstanceNorm1d_get_batches(torch.nn.Module.HType module);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_InstanceNorm1d_set_mean(torch.nn.Module.HType module, IntPtr weight);
+            [DllImport("LibTorchSharp")]
+            private static extern void THSNN_InstanceNorm1d_set_var(torch.nn.Module.HType module, IntPtr weight);
+
+            public Parameter? bias {
+                get {
+                    var res = THSNN_InstanceNorm1d_bias(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
+                }
+                set {
+                    THSNN_InstanceNorm1d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("bias", value);
+                }
+            }
+
+            public Parameter? weight {
+                get {
+                    var res = THSNN_InstanceNorm1d_weight(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
+                }
+                set {
+                    THSNN_InstanceNorm1d_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
+                    torch.CheckForErrors();
+                    ConditionallyRegisterParameter("weight", value);
+                }
+            }
+
+            public Tensor? running_mean {
+                get {
+                    var res = THSNN_InstanceNorm1d_get_mean(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
+                    return new Tensor(res);
+                }
+                set {
+                    THSNN_InstanceNorm1d_set_mean(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterBuffer("running_mean", value);
+                }
+            }
+
+            public Tensor? running_var {
+                get {
+                    var res = THSNN_InstanceNorm1d_get_var(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
+                    return new Tensor(res);
+                }
+                set {
+                    THSNN_InstanceNorm1d_set_var(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    torch.CheckForErrors();
+                    ConditionallyRegisterBuffer("running_var", value);
+                }
+            }
+
+            public Tensor? num_batches_tracked {
+                get {
+                    var res = THSNN_InstanceNorm1d_get_batches(handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); return null; }
+                    return new Tensor(res);
+                }
+            }
+
+            public void reset_running_stats()
+            {
+                THSNN_InstanceNorm1d_reset_stats(handle);
+                torch.CheckForErrors();
+            }
         }
     }
 
@@ -49,13 +137,15 @@ namespace TorchSharp
             /// <param name="track_running_stats">A boolean value that when set to True, this module tracks the running mean and variance, and when set to False,
             /// this module does not track such statistics, and initializes statistics buffers running_mean and running_var as None.
             /// When these buffers are None, this module always uses batch statistics. in both training and eval modes. Default: true</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public InstanceNorm1d InstanceNorm1d(long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
+            static public InstanceNorm1d InstanceNorm1d(long features, double eps = 1e-05, double momentum = 0.1, bool affine = false, bool track_running_stats = false, Device? device = null, ScalarType? dtype = null)
             {
                 unsafe {
                     var handle = THSNN_InstanceNorm1d_ctor(features, eps, momentum, affine, track_running_stats, out var boxedHandle);
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new InstanceNorm1d(handle, boxedHandle);
+                    return new InstanceNorm1d(handle, boxedHandle).MoveModule<InstanceNorm1d>(device, dtype);
                 }
             }
         }

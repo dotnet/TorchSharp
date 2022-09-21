@@ -52,14 +52,14 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Bilinear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Parameter weight {
+            public Parameter? weight {
                 get {
                     var res = THSNN_Bilinear_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_Bilinear_set_weight(handle, value.Handle);
+                    THSNN_Bilinear_set_weight(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight", value);
                 }
@@ -84,12 +84,15 @@ namespace TorchSharp
             /// <param name="in2Features">size of each second input sample</param>
             /// <param name="outputSize">size of each output sample</param>
             /// <param name="hasBias">If set to false, the layer will not learn an additive bias</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public Bilinear Bilinear(long in1Features, long in2Features, long outputSize, bool hasBias = true)
+            static public Bilinear Bilinear(long in1Features, long in2Features, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Bilinear_ctor(in1Features, in2Features, outputSize, hasBias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Bilinear(res, boxedHandle);
+
+                return new Bilinear(res, boxedHandle).MoveModule<Bilinear>(device, dtype);
             }
 
             public static partial class functional

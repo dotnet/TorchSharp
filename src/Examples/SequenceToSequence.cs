@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+using TorchSharp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
@@ -263,11 +264,10 @@ namespace TorchSharp.Examples
                 return decoder.forward(enc);
             }
 
-            public new TransformerModel to(Device device)
+            protected override Module _to(DeviceType deviceType, int deviceIndex = -1)
             {
-                base.to(device);
-                this.device = device;
-                return this;
+                this.device = new Device(deviceType, deviceIndex);
+                return base._to(deviceType, deviceIndex);
             }
         }
 

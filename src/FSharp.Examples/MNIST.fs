@@ -39,7 +39,7 @@ let datasetPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalAppli
 
 torch.random.manual_seed(1L) |> ignore
 
-let hasCUDA = torch.cuda.is_available()
+let hasCUDA = TorchText.Datasets.cuda_is_available() //torch.cuda.is_available()
 
 let device = if hasCUDA then torch.CUDA else torch.CPU
 

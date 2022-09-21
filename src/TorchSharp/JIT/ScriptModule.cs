@@ -164,7 +164,26 @@ namespace TorchSharp
                 static extern void THSJIT_Module_to_device(HType module, long deviceType, long deviceIndex);
 
                 [DllImport("LibTorchSharp")]
+                static extern void THSJIT_Module_to_device_dtype(HType module, sbyte dtype, long deviceType, long deviceIndex);
+
+                [DllImport("LibTorchSharp")]
                 static extern void THSJIT_Module_to_dtype(HType module, sbyte dtype);
+
+                internal protected override nn.Module _to(Device device, ScalarType dtype)
+                {
+                    if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
+
+                    if (device.type == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
+
+
+                    InitializeDeviceType(device.type);
+                    THSJIT_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index);
+                    CheckForErrors();
+
+                    _toEpilog(device, dtype);
+
+                    return this;
+                }
 
                 /// <summary>
                 /// Moves the parameters and buffers.
@@ -172,7 +191,7 @@ namespace TorchSharp
                 /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
                 /// <param name="deviceIndex">The optional device index.</param>
                 /// <returns></returns>
-                public override nn.Module to(DeviceType deviceType, int deviceIndex = -1)
+                internal protected override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
@@ -184,38 +203,7 @@ namespace TorchSharp
                         THSJIT_Module_to_device(handle, (int)deviceType, deviceIndex);
                         CheckForErrors();
 
-                        foreach (var (_, sm) in named_children()) sm.to(deviceType, deviceIndex);
-
-                        foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
-
-                            var fieldName = field.Name;
-                            var value = field.GetValue(this);
-
-                            switch (value) {
-                            // This test must come before the Tensor test
-                            case Modules.Parameter param when deviceType == param.device_type && deviceIndex == param.device_index:
-                                continue;
-
-                            case Modules.Parameter param: {
-                                    var t = param.to(deviceType, deviceIndex);
-                                    t.retain_grad();
-                                    var p = new Modules.Parameter(t, param.requires_grad);
-                                    field.SetValue(this, p);
-                                    ConditionallyRegisterParameter(fieldName, p);
-                                    break;
-                                }
-
-                            case Tensor tensor when (deviceType != tensor.device_type || deviceIndex != tensor.device_index): {
-                                    var t = tensor.to(deviceType, deviceIndex);
-                                    field.SetValue(this, t);
-                                    ConditionallyRegisterBuffer(fieldName, t);
-                                    break;
-                                }
-                            }
-                        }
-
-                        _deviceType = deviceType;
-                        _deviceIndex = deviceIndex;
+                        _toEpilog(deviceType, deviceIndex);
                     }
 
                     Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
@@ -230,42 +218,12 @@ namespace TorchSharp
                 /// Convert the parameters and buffers.
                 /// </summary>
                 /// <returns></returns>
-                public override nn.Module to(ScalarType dtype)
+                internal protected override nn.Module _to(ScalarType dtype)
                 {
                     THSJIT_Module_to_dtype(handle, (sbyte)dtype);
                     CheckForErrors();
 
-                    foreach (var (_, sm) in named_children()) sm.to(dtype);
-                    foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
-
-                        var fieldName = field.Name;
-                        var value = field.GetValue(this);
-
-                        switch (value) {
-                        // This test must come before the Tensor test
-                        case Modules.Parameter param when dtype == param.dtype:
-                            continue;
-
-                        case Modules.Parameter param: {
-                                var t = param.to(dtype);
-                                t.retain_grad();
-                                var p = new Modules.Parameter(t, param.requires_grad);
-                                field.SetValue(this, p);
-                                ConditionallyRegisterParameter(fieldName, p);
-                                break;
-                            }
-
-                        case Tensor tensor when dtype == tensor.dtype:
-                            continue;
-
-                        case Tensor tensor: {
-                                var t = tensor.to(dtype);
-                                field.SetValue(this, t);
-                                ConditionallyRegisterBuffer(fieldName, t);
-                                break;
-                            }
-                        }
-                    }
+                    _toEpilog(dtype);
 
                     return this;
                 }
@@ -380,8 +338,7 @@ namespace TorchSharp
                         if (res == IntPtr.Zero)
                             CheckForErrors();
                         return new Tensor(res);
-                    }
-                    else {
+                    } else {
                         // It the unlikely event that there's a great number of arguments, use heap allocation.
                         var tensorRefs = new IntPtr[count];
                         tensorRefs[0] = x.Handle;

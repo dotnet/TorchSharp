@@ -130,18 +130,18 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_RNN_weight_hh(torch.nn.Module.HType module, long idx);
 
-            public Parameter get_weight_ih(long idx)
+            public Parameter? get_weight_ih(long idx)
             {
                 var res = THSNN_RNN_weight_ih(handle, idx);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Parameter(res);
+                return (res == IntPtr.Zero) ? null : new Parameter(res);
             }
 
-            public Parameter get_weight_hh(long idx)
+            public Parameter? get_weight_hh(long idx)
             {
                 var res = THSNN_RNN_weight_hh(handle, idx);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Parameter(res);
+                return (res == IntPtr.Zero) ? null : new Parameter(res);
             }
 
 #if false   // Disabled until we can figure out how to set the native code parameters.
@@ -190,12 +190,14 @@ namespace TorchSharp
             /// <param name="batchFirst">if true, then the input and output tensors are provided as (batch, seq, feature). Default: False</param>
             /// <param name="dropout">If non-zero, introduces a Dropout layer on the outputs of each RNN layer except the last layer, with dropout probability equal to dropout. Default: 0</param>
             /// <param name="bidirectional">if true, becomes a bidirectional RNN. Default: False</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public RNN RNN(long inputSize, long hiddenSize, long numLayers = 1, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false)
+            static public RNN RNN(long inputSize, long hiddenSize, long numLayers = 1, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_RNN_ctor(inputSize, hiddenSize, numLayers, (long)nonLinearity, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new RNN(res, boxedHandle, hiddenSize, numLayers, batchFirst, bidirectional);
+                return new RNN(res, boxedHandle, hiddenSize, numLayers, batchFirst, bidirectional).MoveModule<RNN>(device, dtype);
             }
         }
     }
