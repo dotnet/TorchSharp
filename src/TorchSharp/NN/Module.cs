@@ -1042,14 +1042,10 @@ namespace TorchSharp
                 internal T MoveModule<T>(Device device, ScalarType? dtype) where T : Module
                 {
                     T module = (T)this;
-                    if (device != null && dtype.HasValue) {
-                        module = (T)module._to(device, dtype.Value);
-                    } else if (device != null) {
-                        module = (T)module._to(device.type, device.index);
-                    } else if (dtype.HasValue) {
-                        module = (T)module._to(dtype.Value);
-                    }
-                    return module;
+
+                    return device != null ?
+                       (dtype.HasValue ? (T)module._to(device, dtype.Value) : (T)module._to(device.type, device.index)) :
+                       (dtype.HasValue ? (T)module._to(dtype.Value) : module);
                 }
 
                 private bool _areComponentsRegistered;
