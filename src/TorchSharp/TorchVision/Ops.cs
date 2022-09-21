@@ -6,11 +6,12 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torchvision
     {
-        public static class ops
+        public static partial class ops
         {
             public static Tensor sigmoid_focal_loss(Tensor inputs, Tensor targets, float alpha = 0.25f, float gamma = 2.0f, nn.Reduction reduction = nn.Reduction.None)
             {
