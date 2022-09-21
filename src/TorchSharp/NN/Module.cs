@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -143,10 +144,64 @@ namespace TorchSharp
                 }
 
                 [DllImport("LibTorchSharp")]
+                static extern void THSNN_Module_to_device_dtype(HType module, sbyte dtype, long deviceType, long deviceIndex);
+
+                [DllImport("LibTorchSharp")]
                 static extern void THSNN_Module_to_device(HType module, long deviceType, long deviceIndex);
 
                 [DllImport("LibTorchSharp")]
                 static extern void THSNN_Module_to_dtype(HType module, sbyte dtype);
+
+                public virtual Module to(Device device, ScalarType dtype)
+                {
+                    if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
+
+                    if (device.type == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
+
+                    if (device.type != _deviceType || device.index != _deviceIndex) {
+
+                        InitializeDeviceType(device.type);
+                        THSNN_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index);
+                        CheckForErrors();
+
+                        foreach (var (_, sm) in named_children()) sm.to(device.type, device.index);
+
+                        foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
+
+                            var fieldName = field.Name;
+                            var value = field.GetValue(this);
+
+                            switch (value) {
+                            // This test must come before the Tensor test
+                            case Parameter param when dtype == param.dtype && device.type == param.device_type && device.index == param.device_index:
+                                continue;
+
+                            case Parameter param: {
+                                    var t = param.to(dtype, device);
+                                    t.retain_grad();
+                                    var p = new Parameter(t, param.requires_grad);
+                                    field.SetValue(this, p);
+                                    ConditionallyRegisterParameter(fieldName, p);
+                                    break;
+                                }
+
+                            case Tensor tensor when (device.type != tensor.device_type || device.index != tensor.device_index): {
+                                    var t = tensor.to(dtype, device);
+                                    field.SetValue(this, t);
+                                    ConditionallyRegisterBuffer(fieldName, t);
+                                    break;
+                                }
+                            }
+                        }
+
+                        _deviceType = device.type;
+                        _deviceIndex = device.index;
+                    }
+
+                    Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
+
+                    return this;
+                }
 
                 /// <summary>
                 /// Moves the parameters and buffers.
@@ -978,6 +1033,30 @@ namespace TorchSharp
                     }
 
                     _areComponentsRegistered = true;
+                }
+
+                protected static (Device device, ScalarType dtype) GetDefaultDeviceAndType(Device device = null, ScalarType? dtype = null)
+                {
+                    if (!dtype.HasValue)
+                        dtype = get_default_dtype();
+
+                    if (device == null)
+                        device = torch.CPU;
+
+                    return (device, dtype.Value);
+                }
+
+                internal T MoveModule<T>(Device device, ScalarType? dtype) where T : Module
+                {
+                    T module = (T)this;
+                    if (device != null && dtype.HasValue) {
+                        module = (T)module.to(device, dtype.Value);
+                    } else if (device != null) {
+                        module = (T)module.to(device);
+                    } else if (dtype.HasValue) {
+                        module = (T)module.to(dtype.Value);
+                    }
+                    return module;
                 }
 
                 private bool _areComponentsRegistered;

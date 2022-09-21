@@ -46,15 +46,15 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_ConvTranspose2d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Parameter weight
+            public Parameter? weight
                 {
                 get {
                     var res = THSNN_ConvTranspose2d_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_ConvTranspose2d_set_weight(handle, value.Handle);
+                    THSNN_ConvTranspose2d_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight", value);
                 }
@@ -82,12 +82,14 @@ namespace TorchSharp
             /// <param name="paddingMode">'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'</param>
             /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns>Tensor of shape (N,C_out,L_out)</returns>
-            static public ConvTranspose2d ConvTranspose2d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long outputPadding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true)
+            static public ConvTranspose2d ConvTranspose2d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long outputPadding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_ConvTranspose2d_ctor(inputChannel, outputChannel, kernelSize, stride, padding, outputPadding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ConvTranspose2d(res, boxedHandle);
+                return new ConvTranspose2d(res, boxedHandle).MoveModule<ConvTranspose2d>(device, dtype);
             }
         }
     }

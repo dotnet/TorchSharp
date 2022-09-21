@@ -51,11 +51,11 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern void THSNN_BatchNorm2d_set_var(torch.nn.Module.HType module, IntPtr weight);
 
-            public Parameter bias {
+            public Parameter? bias {
                 get {
                     var res = THSNN_BatchNorm2d_bias(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
                     THSNN_BatchNorm2d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
@@ -64,14 +64,14 @@ namespace TorchSharp
                 }
             }
 
-            public Parameter weight {
+            public Parameter? weight {
                 get {
                     var res = THSNN_BatchNorm2d_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_BatchNorm2d_set_weight(handle, value.Handle);
+                    THSNN_BatchNorm2d_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight", value);
                 }
@@ -136,13 +136,15 @@ namespace TorchSharp
             /// <param name="track_running_stats">A boolean value that when set to True, this module tracks the running mean and variance, and when set to False,
             /// this module does not track such statistics, and initializes statistics buffers running_mean and running_var as None.
             /// When these buffers are None, this module always uses batch statistics. in both training and eval modes. Default: true</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public BatchNorm2d BatchNorm2d(long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true)
+            static public BatchNorm2d BatchNorm2d(long features, double eps = 1e-05, double momentum = 0.1, bool affine = true, bool track_running_stats = true, Device? device = null, ScalarType? dtype = null)
             {
                 unsafe {
                     var handle = THSNN_BatchNorm2d_ctor(features, eps, momentum, affine, track_running_stats, out var boxedHandle);
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new BatchNorm2d(handle, boxedHandle);
+                    return new BatchNorm2d(handle, boxedHandle).MoveModule<BatchNorm2d>(device, dtype);
                 }
             }
         }

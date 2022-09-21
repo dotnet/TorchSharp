@@ -31,6 +31,7 @@ EXPORT_API(int) THSJIT_Module_is_training(JITModule module);
 EXPORT_API(void) THSJIT_Module_train(JITModule module, bool on);
 EXPORT_API(void) THSJIT_Module_eval(JITModule module);
 
+EXPORT_API(void) THSJIT_Module_to_device_dtype(JITModule module, int8_t dtype, int64_t device, int64_t index);
 EXPORT_API(void) THSJIT_Module_to_device(JITModule module, int64_t device, int64_t index);
 EXPORT_API(void) THSJIT_Module_to_dtype(JITModule module, int8_t dtype);
 

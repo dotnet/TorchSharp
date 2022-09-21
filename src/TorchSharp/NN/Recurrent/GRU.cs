@@ -104,12 +104,14 @@ namespace TorchSharp
             /// <param name="batchFirst">if true, then the input and output tensors are provided as (batch, seq, feature). Default: False</param>
             /// <param name="dropout">If non-zero, introduces a Dropout layer on the outputs of each RNN layer except the last layer, with dropout probability equal to dropout. Default: 0</param>
             /// <param name="bidirectional">if true, becomes a bidirectional RNN. Default: False</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public GRU GRU(long inputSize, long hiddenSize, long numLayers = 1, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false)
+            static public GRU GRU(long inputSize, long hiddenSize, long numLayers = 1, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false, Device device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_GRU_ctor(inputSize, hiddenSize, numLayers, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new GRU(res, boxedHandle, hiddenSize, numLayers, batchFirst, bidirectional);
+                return new GRU(res, boxedHandle, hiddenSize, numLayers, batchFirst, bidirectional).MoveModule<GRU>(device, dtype);
             }
         }
     }

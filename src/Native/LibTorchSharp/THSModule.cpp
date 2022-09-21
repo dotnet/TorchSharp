@@ -38,6 +38,14 @@ void THSNN_Module_to_dtype(NNModule module, int8_t dtype)
     (*module)->to((at::ScalarType)dtype);
 }
 
+void THSNN_Module_to_device_dtype(NNModule module, int8_t dtype, int64_t device, int64_t index)
+{
+    c10::DeviceType dev = c10::kCPU;
+    if (device == 1)
+        dev = c10::kCUDA;
+    (*module)->to(torch::Device(dev, index), (at::ScalarType)dtype);
+}
+
 void THSNN_Module_dispose(const NNModule module)
 {
     delete module; // NOTE: this only deletes the shared_ptr

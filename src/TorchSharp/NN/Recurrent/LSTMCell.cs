@@ -82,27 +82,27 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_LSTMCell_set_weight_hh(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Parameter weight_ih {
+            public Parameter? weight_ih {
                 get {
                     var res = THSNN_LSTMCell_weight_ih(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_LSTMCell_set_weight_ih(handle, value.Handle);
+                    THSNN_LSTMCell_set_weight_ih(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight_ih", value);
                 }
             }
 
-            public Parameter weight_hh {
+            public Parameter? weight_hh {
                 get {
                     var res = THSNN_LSTMCell_weight_hh(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_LSTMCell_set_weight_hh(handle, value.Handle);
+                    THSNN_LSTMCell_set_weight_hh(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight_hh", value);
                 }
@@ -123,11 +123,13 @@ namespace TorchSharp
             /// <param name="inputSize">The number of expected features in the input x</param>
             /// <param name="hiddenSize">The number of features in the hidden state h</param>
             /// <param name="bias">If False, then the layer does not use bias weights b_ih and b_hh. Default: True</param>
-            static public LSTMCell LSTMCell(long inputSize, long hiddenSize, bool bias = true)
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
+            static public LSTMCell LSTMCell(long inputSize, long hiddenSize, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_LSTMCell_ctor(inputSize, hiddenSize, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new LSTMCell(res, boxedHandle);
+                return new LSTMCell(res, boxedHandle).MoveModule<LSTMCell>(device, dtype);
             }
         }
     }
