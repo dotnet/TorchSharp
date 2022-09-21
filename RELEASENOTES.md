@@ -2,19 +2,25 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.97.6
+## NuGet Version 0.97.7
 
 __Breaking Changes:__
 
 Some parameter names were changed to align with PyTorch. This affects names like 'dimension,' 'probability,' and 'keepDims' and will break code that is passing these parameters by name.
 
+Module.to(), cpu(), and cuda() were moved to a static class for extension methods. This means that it is necessary to have a 'using TorchSharp;' (C#) or 'open TorchSharp' (F#) in each file using them.
+Doing so (rather than qualifying names with 'TorchSharp.') was already recommended as a best practice, since such a using/open directive will allows qualified names to align with the PyTorch module hierarchy.
+
 __Fixed Bugs:__
 
-#749 functional.linear is wrong<br/>
+#742 Ease of use: Module.to method should be generic T -> T<br/>
+#743 Ease of use: module factories should have dtype and device<br/>
 #744 Some of functions with inconsistent argument names<br/>
+#749 functional.linear is wrong<br/>
 
 __API Changes__:
 
+Module.to(), cpu(), and cuda() were redone as extension methods. The virtual methods to override, if necessary, are now named '_to'. A need to do so should be extremely rare.<br/>
 
 ## NuGet Version 0.97.6
 

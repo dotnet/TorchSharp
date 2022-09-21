@@ -3,6 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
+#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -29,14 +30,14 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Embedding_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Parameter weight {
+            public Parameter? weight {
                 get {
                     var res = THSNN_Embedding_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_Embedding_set_weight(handle, value.Handle);
+                    THSNN_Embedding_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight", value);
                 }
@@ -62,16 +63,18 @@ namespace TorchSharp
             /// <param name="norm_type">The p of the p-norm to compute for the max_norm option. Default 2.</param>
             /// <param name="scale_grad_by_freq">If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default: false.</param>
             /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-            static public Embedding Embedding(long num_embeddings, long embedding_dims, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false)
+            static public Embedding Embedding(long num_embeddings, long embedding_dims, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Embedding_ctor(num_embeddings, embedding_dims,
                     padding_idx.HasValue ? padding_idx.Value : -1, padding_idx.HasValue,
                     max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
                     norm_type, scale_grad_by_freq, sparse, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Embedding(res, boxedHandle);
+                return new Embedding(res, boxedHandle).MoveModule<Embedding>(device,dtype);
             }
 
 
@@ -90,16 +93,18 @@ namespace TorchSharp
             /// <param name="norm_type">The p of the p-norm to compute for the max_norm option. Default 2.</param>
             /// <param name="scale_grad_by_freq">If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default: false.</param>
             /// <param name="sparse">If true, gradient w.r.t. weight matrix will be a sparse tensor. Default: false</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-            public static Embedding Embedding_from_pretrained(Tensor embeddings, bool freeze = true, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false)
+            public static Embedding Embedding_from_pretrained(Tensor embeddings, bool freeze = true, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Embedding_from_pretrained(embeddings.Handle, freeze,
                     padding_idx.HasValue ? padding_idx.Value : -1, padding_idx.HasValue,
                     max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
                     norm_type, scale_grad_by_freq, sparse, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Embedding(res, boxedHandle);
+                return new Embedding(res, boxedHandle).MoveModule<Embedding>(device, dtype);
 
             }
         }

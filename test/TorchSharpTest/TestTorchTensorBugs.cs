@@ -531,8 +531,8 @@ namespace TorchSharp
                     ReLU(inplace: true)
                 );
 
-                temp.weight = Parameter(torch.randn(temp.weight.shape));
-                temp.bias = Parameter(torch.randn(temp.bias.shape));
+                temp.weight = Parameter(torch.randn(temp.weight!.shape));
+                temp.bias = Parameter(torch.randn(temp.bias!.shape));
                 if (temp.running_mean is not null) temp.running_mean = torch.randn(temp.running_mean.shape);
                 if (temp.running_var is not null) temp.running_var = torch.randn(temp.running_var.shape);
 

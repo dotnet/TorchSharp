@@ -198,11 +198,5 @@ namespace TorchSharp.Examples
         {
             return fc.forward(embedding.forward(input, offsets));
         }
-
-        public new TextClassificationModel to(Device device)
-        {
-            base.to(device);
-            return this;
-        }
     }
 }

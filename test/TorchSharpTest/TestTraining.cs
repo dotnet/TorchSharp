@@ -173,7 +173,7 @@ namespace TorchSharp
             // Therefore, we need to set the initial parameters based on the generator we do have control over
             // and which is unique to the unit test.
 
-            var w = rand(linear.weight.shape, generator: gen);
+            var w = rand(linear.weight!.shape, generator: gen);
             var wBound = 1 / Math.Sqrt(w.shape[1]);
 
             linear.weight = Parameter(w * (2 * wBound) - wBound);

@@ -1,11 +1,13 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using TorchSharp.Modules;
+using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
 
 namespace TorchSharp
@@ -34,7 +36,7 @@ namespace TorchSharp
                     public HType(IntPtr preexistingHandle, bool ownsHandle, Action<HType> dispose = null)
                         : base(IntPtr.Zero, ownsHandle)
                     {
-                        _dispose = dispose??THSNN_Module_dispose;
+                        _dispose = dispose ?? THSNN_Module_dispose;
                         SetHandle(preexistingHandle);
                     }
 
@@ -132,7 +134,7 @@ namespace TorchSharp
                             b.Dispose();
                         }
 
-                        foreach (var (_,m) in named_modules()) {
+                        foreach (var (_, m) in named_modules()) {
                             m.Dispose();
                         }
 
@@ -143,10 +145,72 @@ namespace TorchSharp
                 }
 
                 [DllImport("LibTorchSharp")]
+                static extern void THSNN_Module_to_device_dtype(HType module, sbyte dtype, long deviceType, long deviceIndex);
+
+                [DllImport("LibTorchSharp")]
                 static extern void THSNN_Module_to_device(HType module, long deviceType, long deviceIndex);
 
                 [DllImport("LibTorchSharp")]
                 static extern void THSNN_Module_to_dtype(HType module, sbyte dtype);
+
+                /// <summary>
+                /// Moves and converts the parameters and buffers.
+                /// </summary>
+                /// <param name="device">The target device.</param>
+                /// <param name="dtype">The target element type.</param>
+                internal protected virtual Module _to(Device device, ScalarType dtype)
+                {
+                    if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
+
+                    if (device.type == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
+
+                    InitializeDeviceType(device.type);
+                    THSNN_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index);
+                    CheckForErrors();
+
+                    _toEpilog(device, dtype);
+
+                    return this;
+                }
+
+                protected void _toEpilog(Device device, ScalarType dtype)
+                {
+                    foreach (var (_, sm) in named_children()) sm._to(device, dtype);
+
+                    foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
+
+                        var fieldName = field.Name;
+                        var value = field.GetValue(this);
+
+                        switch (value) {
+                        // This test must come before the Tensor test
+                        case Parameter param when dtype == param.dtype && device.type == param.device_type && device.index == param.device_index:
+                            continue;
+
+                        case Parameter param: {
+                                var t = param.to(dtype, device);
+                                t.retain_grad();
+                                var p = new Parameter(t, param.requires_grad);
+                                field.SetValue(this, p);
+                                ConditionallyRegisterParameter(fieldName, p);
+                                break;
+                            }
+
+                        case Tensor tensor when (device.type != tensor.device_type || device.index != tensor.device_index): {
+                                var t = tensor.to(dtype, device);
+                                field.SetValue(this, t);
+                                ConditionallyRegisterBuffer(fieldName, t);
+                                break;
+                            }
+                        }
+                    }
+
+                    _deviceType = device.type;
+                    _deviceIndex = device.index;
+
+                    Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
+                }
+
 
                 /// <summary>
                 /// Moves the parameters and buffers.
@@ -154,7 +218,7 @@ namespace TorchSharp
                 /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
                 /// <param name="deviceIndex">The optional device index.</param>
                 /// <returns></returns>
-                public virtual Module to(DeviceType deviceType, int deviceIndex = -1)
+                internal protected virtual Module _to(DeviceType deviceType, int deviceIndex = -1)
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
@@ -166,38 +230,7 @@ namespace TorchSharp
                         THSNN_Module_to_device(handle, (int)deviceType, deviceIndex);
                         CheckForErrors();
 
-                        foreach (var (_, sm) in named_children()) sm.to(deviceType, deviceIndex);
-
-                        foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
-
-                            var fieldName = field.Name;
-                            var value = field.GetValue(this);
-
-                            switch (value) {
-                            // This test must come before the Tensor test
-                            case Parameter param when deviceType == param.device_type && deviceIndex == param.device_index:
-                                continue;
-
-                            case Parameter param: {
-                                    var t = param.to(deviceType, deviceIndex);
-                                    t.retain_grad();
-                                    var p = new Parameter(t, param.requires_grad);
-                                    field.SetValue(this, p);
-                                    ConditionallyRegisterParameter(fieldName, p);
-                                    break;
-                                }
-
-                            case Tensor tensor when (deviceType != tensor.device_type || deviceIndex != tensor.device_index): {
-                                    var t = tensor.to(deviceType, deviceIndex);
-                                    field.SetValue(this, t);
-                                    ConditionallyRegisterBuffer(fieldName, t);
-                                    break;
-                                }
-                            }
-                        }
-
-                        _deviceType = deviceType;
-                        _deviceIndex = deviceIndex;
+                        _toEpilog(deviceType, deviceIndex);
                     }
 
                     Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
@@ -205,34 +238,62 @@ namespace TorchSharp
                     return this;
                 }
 
+                protected void _toEpilog(DeviceType deviceType, int deviceIndex)
+                {
+                    foreach (var (_, sm) in named_children()) sm._to(deviceType, deviceIndex);
+
+                    foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
+
+                        var fieldName = field.Name;
+                        var value = field.GetValue(this);
+
+                        switch (value) {
+                        // This test must come before the Tensor test
+                        case Parameter param when deviceType == param.device_type && deviceIndex == param.device_index:
+                            continue;
+
+                        case Parameter param: {
+                                var t = param.to(deviceType, deviceIndex);
+                                t.retain_grad();
+                                var p = new Parameter(t, param.requires_grad);
+                                field.SetValue(this, p);
+                                ConditionallyRegisterParameter(fieldName, p);
+                                break;
+                            }
+
+                        case Tensor tensor when (deviceType != tensor.device_type || deviceIndex != tensor.device_index): {
+                                var t = tensor.to(deviceType, deviceIndex);
+                                field.SetValue(this, t);
+                                ConditionallyRegisterBuffer(fieldName, t);
+                                break;
+                            }
+                        }
+                    }
+
+                    _deviceType = deviceType;
+                    _deviceIndex = deviceIndex;
+                }
+
                 private DeviceType _deviceType = DeviceType.CPU;
                 private int _deviceIndex = -1;
-
-                /// <summary>
-                /// Moves the parameters and buffers.
-                /// </summary>
-                /// <param name="device">A string denoting the target device.</param>
-                /// <returns></returns>
-                /// <remarks>Relies on the Device constructor to parse the string.</remarks>
-                public Module to(string device) => to(new Device(device));
-
-                /// <summary>
-                /// Moves the parameters and buffers.
-                /// </summary>
-                /// <param name="device">The target device</param>
-                /// <returns></returns>
-                public Module to(Device device) => to(device.type, device.index);
 
                 /// <summary>
                 /// Convert the parameters and buffers.
                 /// </summary>
                 /// <returns></returns>
-                public virtual Module to(ScalarType dtype)
+                internal protected virtual Module _to(ScalarType dtype)
                 {
                     THSNN_Module_to_dtype(handle, (sbyte)dtype);
                     CheckForErrors();
 
-                    foreach (var (_, sm) in named_children()) sm.to(dtype);
+                    _toEpilog(dtype);
+
+                    return this;
+                }
+
+                protected void _toEpilog(ScalarType dtype)
+                {
+                    foreach (var (_, sm) in named_children()) sm._to(dtype);
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
                         var fieldName = field.Name;
@@ -263,8 +324,6 @@ namespace TorchSharp
                             }
                         }
                     }
-
-                    return this;
                 }
 
                 /// <summary>
@@ -272,16 +331,13 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="other">The tensor serving as a template.</param>
                 /// <returns></returns>
-                public Module to(Tensor other)
+                public Module _to(Tensor other)
                 {
-                    to(other.dtype);
-                    return to(other.device_type, other.device_index);
+                    _to(other.dtype);
+                    return _to(other.device_type, other.device_index);
                 }
 
-                /// <summary>
-                /// Moves all model parameters and buffers to the CPU.
-                /// </summary>
-                public Module cpu() => to(DeviceType.CPU);
+
 
                 /// <summary>
                 /// Applies a function recursively to every submodule as well as this.
@@ -294,14 +350,6 @@ namespace TorchSharp
                     fn(this);
                     return this;
                 }
-
-                /// <summary>
-                /// Moves all model parameters and buffers to a GPU.
-                ///
-                /// This also makes associated parameters and buffers different objects.So it should be called before constructing optimizer if the module will live on GPU while being optimized.
-                /// </summary>
-                /// <param name="deviceIndex">If specified, all parameters will be copied to that device</param>
-                public Module cuda(int deviceIndex = -1) => to(DeviceType.CUDA, deviceIndex);
 
                 [DllImport("LibTorchSharp")]
                 static extern IntPtr THSNN_Module_load([MarshalAs(UnmanagedType.LPStr)] string location);
@@ -844,14 +892,14 @@ namespace TorchSharp
                     var dt = _deviceType;
                     var di = _deviceIndex;
 
-                    cpu();
+                    this.cpu();
 
                     try {
                         using var stream = System.IO.File.OpenRead(location);
                         using var reader = new System.IO.BinaryReader(stream);
                         load(reader, strict, skip);
                     } finally {
-                        to(dt, di);
+                        _to(dt, di);
                     }
 
                     return this;
@@ -980,6 +1028,26 @@ namespace TorchSharp
                     _areComponentsRegistered = true;
                 }
 
+                protected static (Device device, ScalarType dtype) GetDefaultDeviceAndType(Device device = null, ScalarType? dtype = null)
+                {
+                    if (!dtype.HasValue)
+                        dtype = get_default_dtype();
+
+                    if (device == null)
+                        device = torch.CPU;
+
+                    return (device, dtype.Value);
+                }
+
+                internal T MoveModule<T>(Device device, ScalarType? dtype) where T : Module
+                {
+                    T module = (T)this;
+
+                    return device != null ?
+                       (dtype.HasValue ? (T)module._to(device, dtype.Value) : (T)module._to(device.type, device.index)) :
+                       (dtype.HasValue ? (T)module._to(dtype.Value) : module);
+                }
+
                 private bool _areComponentsRegistered;
 
                 protected Utils.OrderedDict<string, Module> _internal_submodules = new Utils.OrderedDict<string, Module>();
@@ -1053,5 +1121,81 @@ namespace TorchSharp
                 }
             }
         }
+    }
+
+    public static class ModuleExtensionMethods
+    {
+        public static T to<T>(this T module, torch.ScalarType type) where T : torch.nn.Module
+        {
+            return (T)module._to(type);
+        }
+
+        /// <summary>
+        /// Moves and converts the parameters and buffers.
+        /// </summary>
+        /// <param name="module">The module to move</param>
+        /// <param name="device">The target device.</param>
+        /// <param name="type">The target element type.</param>
+        public static T to<T>(this T module, torch.Device device, torch.ScalarType type) where T : torch.nn.Module
+        {
+            return (T)module._to(device, type);
+        }
+
+        /// <summary>
+        /// Moves the parameters and buffers.
+        /// </summary>
+        /// <param name="module">The module to move</param>
+        /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
+        /// <param name="deviceIndex">The optional device index.</param>
+        public static T to<T>(this T module, DeviceType deviceType, int deviceIndex = -1) where T : torch.nn.Module
+        {
+            return (T)module._to(deviceType, deviceIndex);
+        }
+
+        /// <summary>
+        /// Moves the parameters and buffers.
+        /// </summary>
+        /// <param name="module">The module to move</param>"
+        /// <param name="device">The target device</param>
+        /// <returns></returns>
+        public static T to<T>(this T module, Device device) where T : torch.nn.Module => (T)module._to(device.type, device.index);
+
+        /// <summary>
+        /// Moves the parameters and buffers.
+        /// </summary>
+        /// <param name="module">The module to move</param>
+        /// <param name="device">A string denoting the target device.</param>
+        /// <returns></returns>
+        /// <remarks>Relies on the Device constructor to parse the string.</remarks>
+        public static T to<T>(this T module, string device) where T : torch.nn.Module
+        {
+            var dev = new Device(device);
+            return (T)module._to(dev.type, dev.index);
+        }
+
+        /// <summary>
+        /// Moves and converts the parameters and buffers.
+        /// </summary>
+        /// <param name="module">The module to move</param>
+        /// <param name="other">The tensor serving as a template.</param>
+        /// <returns></returns>
+        public static T to<T>(this T module, Tensor other) where T : torch.nn.Module
+        {
+            return (T)module._to(other.device, other.dtype);
+        }
+
+        /// <summary>
+        /// Moves all model parameters and buffers to the CPU.
+        /// </summary>
+        public static T cpu<T>(this T module) where T : torch.nn.Module => (T)module._to(DeviceType.CPU);
+
+        /// <summary>
+        /// Moves all model parameters and buffers to a GPU.
+        ///
+        /// This also makes associated parameters and buffers different objects.So it should be called before constructing optimizer if the module will live on GPU while being optimized.
+        /// </summary>
+        /// <param name="module">The module to move</param>
+        /// <param name="deviceIndex">If specified, all parameters will be copied to that device</param>
+        public static T cuda<T>(this T module, int deviceIndex = -1) where T : torch.nn.Module => (T)module._to(DeviceType.CUDA, deviceIndex);
     }
 }

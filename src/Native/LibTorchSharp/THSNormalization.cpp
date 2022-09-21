@@ -398,6 +398,204 @@ void THSNN_BatchNorm3d_set_weight(const NNModule module, const Tensor weight)
     set_weight<torch::nn::BatchNorm3d>(module, weight);
 }
 
+void THSNN_InstanceNorm1d_reset_stats(const NNModule module)
+{
+    CATCH((*module)->as<torch::nn::InstanceNorm1d>()->reset_running_stats(););
+}
+
+Tensor THSNN_InstanceNorm1d_get_mean(const NNModule module)
+{
+    CATCH(
+        auto m = (*module)->as<torch::nn::InstanceNorm1d>()->running_mean;
+    return m.defined() ? ResultTensor(m) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_InstanceNorm1d_get_var(const NNModule module)
+{
+    CATCH(
+        auto v = (*module)->as<torch::nn::InstanceNorm1d>()->running_var;
+    return v.defined() ? ResultTensor(v) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_InstanceNorm1d_get_batches(const NNModule module)
+{
+    CATCH(
+        auto v = (*module)->as<torch::nn::InstanceNorm1d>()->num_batches_tracked;
+    return v.defined() ? ResultTensor(v) : nullptr;
+    );
+    return nullptr;
+}
+
+void THSNN_InstanceNorm1d_set_mean(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::InstanceNorm1d>()->running_mean = *bias;
+    );
+}
+
+void THSNN_InstanceNorm1d_set_var(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::InstanceNorm1d>()->running_var = *bias;
+    );
+}
+
+Tensor THSNN_InstanceNorm1d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::InstanceNorm1d>(module);
+}
+
+void THSNN_InstanceNorm1d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::InstanceNorm1d>(module, bias);
+}
+
+Tensor THSNN_InstanceNorm1d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::InstanceNorm1d>(module);
+}
+
+void THSNN_InstanceNorm1d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::InstanceNorm1d>(module, weight);
+}
+
+void THSNN_InstanceNorm2d_reset_stats(const NNModule module)
+{
+    CATCH((*module)->as<torch::nn::InstanceNorm2d>()->reset_running_stats(););
+}
+
+Tensor THSNN_InstanceNorm2d_get_mean(const NNModule module)
+{
+    CATCH(
+        auto m = (*module)->as<torch::nn::InstanceNorm2d>()->running_mean;
+    return m.defined() ? ResultTensor(m) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_InstanceNorm2d_get_var(const NNModule module)
+{
+    CATCH(
+        auto v = (*module)->as<torch::nn::InstanceNorm2d>()->running_var;
+    return v.defined() ? ResultTensor(v) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_InstanceNorm2d_get_batches(const NNModule module)
+{
+    CATCH(
+        auto v = (*module)->as<torch::nn::InstanceNorm2d>()->num_batches_tracked;
+    return v.defined() ? ResultTensor(v) : nullptr;
+    );
+    return nullptr;
+}
+
+void THSNN_InstanceNorm2d_set_mean(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::InstanceNorm2d>()->running_mean = *bias;
+    );
+}
+
+void THSNN_InstanceNorm2d_set_var(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::InstanceNorm2d>()->running_var = *bias;
+    );
+}
+
+Tensor THSNN_InstanceNorm2d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::InstanceNorm2d>(module);
+}
+
+void THSNN_InstanceNorm2d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::InstanceNorm2d>(module, bias);
+}
+
+Tensor THSNN_InstanceNorm2d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::InstanceNorm2d>(module);
+}
+
+void THSNN_InstanceNorm2d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::InstanceNorm2d>(module, weight);
+}
+
+void THSNN_InstanceNorm3d_reset_stats(const NNModule module)
+{
+    CATCH((*module)->as<torch::nn::InstanceNorm3d>()->reset_running_stats(););
+}
+
+Tensor THSNN_InstanceNorm3d_get_mean(const NNModule module)
+{
+    CATCH(
+        auto m = (*module)->as<torch::nn::InstanceNorm3d>()->running_mean;
+    return m.defined() ? ResultTensor(m) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_InstanceNorm3d_get_var(const NNModule module)
+{
+    CATCH(
+        auto v = (*module)->as<torch::nn::InstanceNorm3d>()->running_var;
+    return v.defined() ? ResultTensor(v) : nullptr;
+    );
+    return nullptr;
+}
+
+Tensor THSNN_InstanceNorm3d_get_batches(const NNModule module)
+{
+    CATCH(
+        auto v = (*module)->as<torch::nn::InstanceNorm3d>()->num_batches_tracked;
+    return v.defined() ? ResultTensor(v) : nullptr;
+    );
+    return nullptr;
+}
+
+void THSNN_InstanceNorm3d_set_mean(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::InstanceNorm3d>()->running_mean = *bias;
+    );
+}
+
+void THSNN_InstanceNorm3d_set_var(const NNModule module, const Tensor bias)
+{
+    CATCH(
+        (*module)->as<torch::nn::InstanceNorm3d>()->running_var = *bias;
+    );
+}
+
+Tensor THSNN_InstanceNorm3d_bias(const NNModule module)
+{
+    return get_bias<torch::nn::InstanceNorm3d>(module);
+}
+
+void THSNN_InstanceNorm3d_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::InstanceNorm3d>(module, bias);
+}
+
+Tensor THSNN_InstanceNorm3d_weight(const NNModule module)
+{
+    return get_weight<torch::nn::InstanceNorm3d>(module);
+}
+
+void THSNN_InstanceNorm3d_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::InstanceNorm3d>(module, weight);
+}
+
 Tensor THSNN_batch_norm(const Tensor input, Tensor running_mean, const Tensor running_var, const Tensor weight, const Tensor bias, const bool training, const double momentum, const double eps)
 {
     auto opts = torch::nn::functional::BatchNormFuncOptions()

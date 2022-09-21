@@ -56,14 +56,14 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_Linear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Parameter weight {
+            public Parameter? weight {
                 get {
                     var res = THSNN_Linear_weight(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_Linear_set_weight(handle, value.Handle);
+                    THSNN_Linear_set_weight(handle, value!.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight", value);
                 }
@@ -87,12 +87,14 @@ namespace TorchSharp
             /// <param name="inputSize">Size of each input sample</param>
             /// <param name="outputSize">Size of each output sample</param>
             /// <param name="hasBias">If set to false, the layer will not learn an additive bias.</param>
-            /// <returns></returns>
-            static public Linear Linear(long inputSize, long outputSize, bool hasBias = true)
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
+            static public Linear Linear(long inputSize, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Linear_ctor(inputSize, outputSize, hasBias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Linear(res, boxedHandle);
+
+                return new Linear(res, boxedHandle).MoveModule<Linear>(device, dtype);
             }
 
             public static partial class functional
