@@ -164,7 +164,7 @@ namespace TorchSharp
                         THSNN_Module_to_device_dtype(handle, (sbyte)dtype, (int)device.type, device.index);
                         CheckForErrors();
 
-                        foreach (var (_, sm) in named_children()) sm.to(device.type, device.index);
+                        foreach (var (_, sm) in named_children()) sm.to(device, dtype);
 
                         foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
