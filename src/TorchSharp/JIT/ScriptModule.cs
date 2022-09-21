@@ -169,7 +169,7 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 static extern void THSJIT_Module_to_dtype(HType module, sbyte dtype);
 
-                public override nn.Module to(Device device, ScalarType dtype)
+                internal protected override nn.Module _to(Device device, ScalarType dtype)
                 {
                     if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
 
@@ -191,7 +191,7 @@ namespace TorchSharp
                 /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
                 /// <param name="deviceIndex">The optional device index.</param>
                 /// <returns></returns>
-                public override nn.Module to(DeviceType deviceType, int deviceIndex = -1)
+                internal protected override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
@@ -218,7 +218,7 @@ namespace TorchSharp
                 /// Convert the parameters and buffers.
                 /// </summary>
                 /// <returns></returns>
-                public override nn.Module to(ScalarType dtype)
+                internal protected override nn.Module _to(ScalarType dtype)
                 {
                     THSJIT_Module_to_dtype(handle, (sbyte)dtype);
                     CheckForErrors();

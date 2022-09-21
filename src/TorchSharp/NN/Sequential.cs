@@ -163,15 +163,21 @@ namespace TorchSharp
                 foreach (var m in _modules) { m.eval(); }
             }
 
-            public override nn.Module to(ScalarType dtype)
+            internal protected override nn.Module _to(ScalarType dtype)
             {
-                foreach (var m in _modules) { m.to(dtype); }
+                foreach (var m in _modules) { m._to(dtype); }
                 return this;
             }
 
-            public override nn.Module to(DeviceType deviceType, int deviceIndex = -1)
+            internal protected override nn.Module _to(Device device, ScalarType dtype)
             {
-                foreach (var m in _modules) { m.to(deviceType, deviceIndex); }
+                foreach (var m in _modules) { m._to(device, dtype); }
+                return this;
+            }
+
+            internal protected override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+            {
+                foreach (var m in _modules) { m._to(deviceType, deviceIndex); }
                 return this;
             }
 
