@@ -109,6 +109,14 @@ Tensor THSNN_AdaptiveMaxPool1d_forward(const NNModule module, const Tensor tenso
     CATCH_TENSOR((*module)->as<torch::nn::AdaptiveMaxPool1d>()->forward(*tensor));
 }
 
+Tensor THSNN_AdaptiveMaxPool1d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = (*module)->as<torch::nn::AdaptiveMaxPool1d>()->forward_with_indices(*tensor););
+    *indices = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 NNModule THSNN_AdaptiveMaxPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength,
     NNAnyModule* outAsAnyModule)
 {
@@ -123,6 +131,14 @@ Tensor THSNN_AdaptiveMaxPool2d_forward(const NNModule module, const Tensor tenso
     CATCH_TENSOR((*module)->as<torch::nn::AdaptiveMaxPool2d>()->forward(*tensor));
 }
 
+Tensor THSNN_AdaptiveMaxPool2d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = (*module)->as<torch::nn::AdaptiveMaxPool2d>()->forward_with_indices(*tensor););
+    *indices = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 NNModule THSNN_AdaptiveMaxPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength,
     NNAnyModule* outAsAnyModule)
 {
@@ -135,6 +151,14 @@ NNModule THSNN_AdaptiveMaxPool3d_ctor(const int64_t* kernelSize, const int kerne
 Tensor THSNN_AdaptiveMaxPool3d_forward(const NNModule module, const Tensor tensor)
 {
     CATCH_TENSOR((*module)->as<torch::nn::AdaptiveMaxPool3d>()->forward(*tensor));
+}
+
+Tensor THSNN_AdaptiveMaxPool3d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = (*module)->as<torch::nn::AdaptiveMaxPool3d>()->forward_with_indices(*tensor););
+    *indices = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
 }
 
 NNModule THSNN_LPPool1d_ctor(double norm_type, const int64_t* kernelSize, const int64_t* stride, const bool ceil_mode,
@@ -359,7 +383,7 @@ Tensor  THSNN_FractionalMaxPool2d_forward(const NNModule module, const Tensor te
     CATCH_TENSOR((*module)->as<torch::nn::FractionalMaxPool2d>()->forward(*tensor));
 }
 
-Tensor  THSNN_FractionalMaxPool2d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices)
+Tensor THSNN_FractionalMaxPool2d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices)
 {
     std::tuple<at::Tensor, at::Tensor> res;
     CATCH(res = (*module)->as<torch::nn::FractionalMaxPool2d>()->forward_with_indices(*tensor););

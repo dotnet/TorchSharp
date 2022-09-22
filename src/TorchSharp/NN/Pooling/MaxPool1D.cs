@@ -28,7 +28,9 @@ namespace TorchSharp
             {
                 if (_return_indices)
                     new InvalidOperationException("MaxPool1d is set to return indices, so you cannot call forward(Tensor). Use forward(object), instead.");
-                return (Tensor)this.forward((object)tensor);
+                var res = THSNN_MaxPool1d_forward(handle, tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
 
             [DllImport("LibTorchSharp")]

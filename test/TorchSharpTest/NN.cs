@@ -2042,7 +2042,7 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 2, 0].ToSingle());
             }
-            using (var pool = MaxPool1d(3, 1, 1, 2, true)) {
+            using (var pool = MaxPool1d(3, 1, 1, 2, ceilMode:true)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 32, 38 };
                 Assert.Equal(expShape, pooled.shape);
@@ -2136,7 +2136,7 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 2, 0].ToSingle());
             }
-            using (var pool = MaxPool2d(3, 1, 1, 2, true)) {
+            using (var pool = MaxPool2d(3, 1, 1, 2, ceilMode: true)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 30, 38 };
                 Assert.Equal(expShape, pooled.shape);
@@ -2144,7 +2144,7 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 1, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 2, 0].ToSingle());
             }
-            using (var pool = MaxPool2d((3, 3), (1, 1), (1, 1), (2, 2), true)) {
+            using (var pool = MaxPool2d((3, 3), (1, 1), (1, 1), (2, 2), ceilMode: true)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 30, 38 };
                 Assert.Equal(expShape, pooled.shape);
@@ -2230,7 +2230,7 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
             }
-            using (var pool = MaxPool3d(3, 1, 1, 2, true)) {
+            using (var pool = MaxPool3d(3, 1, 1, 2, ceilMode: true)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 30, 38, 38 };
                 Assert.Equal(expShape, pooled.shape);
@@ -2246,7 +2246,7 @@ namespace TorchSharp
                 Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
             }
-            using (var pool = MaxPool3d((3, 3, 3), (1, 1, 1), (1, 1, 1), (2, 2, 2), true)) {
+            using (var pool = MaxPool3d((3, 3, 3), (1, 1, 1), (1, 1, 1), (2, 2, 2), ceilMode: true)) {
                 var pooled = pool.forward(ones);
                 var expShape = new long[] { 16, 30, 38, 38 };
                 Assert.Equal(expShape, pooled.shape);
