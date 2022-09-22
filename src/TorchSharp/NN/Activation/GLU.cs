@@ -45,7 +45,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="dim">the dimension on which to split the input. Default: -1</param>
             /// <returns></returns>
-            static public GLU GLU(int dim = -1)
+            static public GLU GLU(long dim = -1)
             {
                 var handle = THSNN_GLU_ctor(dim, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -60,7 +60,7 @@ namespace TorchSharp
                 /// <param name="input">The input tensor</param>
                 /// <param name="dim">the dimension on which to split the input. Default: -1</param>
                 /// <returns></returns>
-                static public Tensor glu(Tensor input, int dim = -1)
+                static public Tensor glu(Tensor input, long dim = -1)
                 {
                     using (var m = nn.GLU(dim)) {
                         return m.forward(input);
