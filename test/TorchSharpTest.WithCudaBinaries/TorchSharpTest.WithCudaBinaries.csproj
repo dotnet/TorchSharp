@@ -22,6 +22,7 @@
     <Compile Include="..\TorchSharpTest\NN.cs" Link="NN.cs" />
     <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs" />
     <Compile Include="..\TorchSharpTest\TestDistributions.cs" Link="TestDistributions.cs" />
+    <Compile Include="..\TorchSharpTest\TestJIT.cs" Link="TestJIT.cs" />
     <Compile Include="..\TorchSharpTest\TestLoadSave.cs" Link="TestLoadSave.cs" />
     <Compile Include="..\TorchSharpTest\TestNNUtils.cs" Link="TestNNUtils.cs" />
     <Compile Include="..\TorchSharpTest\TestSaveSD.cs" Link="TestSaveSD.cs" />
@@ -71,6 +72,15 @@
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="list_out.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="tuple_out.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

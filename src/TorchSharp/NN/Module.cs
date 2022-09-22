@@ -809,30 +809,6 @@ namespace TorchSharp
                     case Tensor tensor:
                         return this.forward(tensor);
 
-                    case IList<Tensor> tensors:
-
-                        switch (tensors.Count) {
-                        case 0:
-                            throw new ArgumentException("forward() must be passed at least one argument.");
-                        case 1:
-                            return forward(tensors[0]);
-                        case 2:
-                            return forward(tensors[0], tensors[1]);
-                        case 3:
-                            return forward(tensors[0], tensors[1], tensors[2]);
-                        default:
-                            throw new ArgumentException($"forward() does not accept a list of {tensors.Count} tensors.");
-                        }
-
-                    case ValueTuple<object> tuple when typeof(Tensor) == tuple.Item1.GetType():
-                        return forward((Tensor)tuple.Item1);
-
-                    case ValueTuple<object, object> tuple when typeof(Tensor) == tuple.Item1.GetType() && typeof(Tensor) == tuple.Item2.GetType():
-                        return forward((Tensor)tuple.Item1, (Tensor)tuple.Item2);
-
-                    case ValueTuple<object, object, object> tuple when typeof(Tensor) == tuple.Item1.GetType() && typeof(Tensor) == tuple.Item2.GetType() && typeof(Tensor) == tuple.Item3.GetType():
-                        return forward((Tensor)tuple.Item1, (Tensor)tuple.Item2, (Tensor)tuple.Item3);
-
                     case ValueTuple<Tensor> tuple:
                         return forward(tuple.Item1);
 
@@ -851,6 +827,15 @@ namespace TorchSharp
                     case Tuple<Tensor, Tensor, Tensor> tuple:
                         return forward(tuple.Item1, tuple.Item2, tuple.Item3);
 
+                    case ValueTuple<object> tuple when typeof(Tensor) == tuple.Item1.GetType():
+                        return forward((Tensor)tuple.Item1);
+
+                    case ValueTuple<object, object> tuple when typeof(Tensor) == tuple.Item1.GetType() && typeof(Tensor) == tuple.Item2.GetType():
+                        return forward((Tensor)tuple.Item1, (Tensor)tuple.Item2);
+
+                    case ValueTuple<object, object, object> tuple when typeof(Tensor) == tuple.Item1.GetType() && typeof(Tensor) == tuple.Item2.GetType() && typeof(Tensor) == tuple.Item3.GetType():
+                        return forward((Tensor)tuple.Item1, (Tensor)tuple.Item2, (Tensor)tuple.Item3);
+
                     case Tuple<object> tuple when typeof(Tensor) == tuple.Item1.GetType():
                         return forward((Tensor)tuple.Item1);
 
@@ -859,6 +844,35 @@ namespace TorchSharp
 
                     case Tuple<object, object, object> tuple when typeof(Tensor) == tuple.Item1.GetType() && typeof(Tensor) == tuple.Item2.GetType() && typeof(Tensor) == tuple.Item3.GetType():
                         return forward((Tensor)tuple.Item1, (Tensor)tuple.Item2, (Tensor)tuple.Item3);
+
+                    case IList<Tensor> tensors when tensors.Count < 4:
+
+                        switch (tensors.Count) {
+                        case 0:
+                            throw new ArgumentException("forward() must be passed at least one argument.");
+                        case 1:
+                            return forward(tensors[0]);
+                        case 2:
+                            return forward(tensors[0], tensors[1]);
+                        case 3:
+                            return forward(tensors[0], tensors[1], tensors[2]);
+                        }
+                        break;
+
+                    case IList<object> tensors when tensors.All(t => typeof(Tensor) == t.GetType()) && tensors.Count < 4:
+
+                        switch (tensors.Count) {
+                        case 0:
+                            throw new ArgumentException("forward() must be passed at least one argument.");
+                        case 1:
+                            return forward((Tensor)tensors[0]);
+                        case 2:
+                            return forward((Tensor)tensors[0], (Tensor)tensors[1]);
+                        case 3:
+                            return forward((Tensor)tensors[0], (Tensor)tensors[1], (Tensor)tensors[2]);
+                        }
+                        break;
+
                     }
                     throw new ArgumentException($"{this.GetType().Name}.forward() does not accept a {input.GetType().Name}.");
                 }

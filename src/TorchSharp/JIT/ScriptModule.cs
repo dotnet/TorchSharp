@@ -268,92 +268,114 @@ namespace TorchSharp
 #endif
 
                 [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSJIT_Module_forward(HType module, IntPtr tensors, int length);
+                private static extern void THSJIT_Module_forward(HType module, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
 
-                /// <summary>
-                /// Invoke the 'forward' function of the script with one tensor as its argument
-                /// </summary>
-                /// <param name="tensor">The input tensor</param>
-                /// <returns></returns>
-                public unsafe override Tensor forward(Tensor tensor)
+                public override object forward(object input)
                 {
-                    var tensorRefs = stackalloc[] { tensor.Handle };
-                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 1);
-                    if (res == IntPtr.Zero)
-                        CheckForErrors();
-                    return new Tensor(res);
-                }
+                    IntPtr[] ptrArray = null;
+                    sbyte typeCode = 0;
 
-                /// <summary>
-                /// Invoke the 'forward' function of the script with two tensors as its argument
-                /// </summary>
-                /// <param name="x">The first input tensor</param>
-                /// <param name="y">The second input tensor</param>
-                /// <returns></returns>
-                public unsafe override Tensor forward(Tensor x, Tensor y)
-                {
-                    var tensorRefs = stackalloc[] { x.Handle, y.Handle };
-                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 2);
-                    if (res == IntPtr.Zero)
-                        CheckForErrors();
-                    return new Tensor(res);
-                }
+                    using (var parray = new PinnedArray<IntPtr>()) {
 
-                /// <summary>
-                /// Invoke the 'forward' function of the script with three tensors as its argument
-                /// </summary>
-                /// <param name="x">The first input tensor</param>
-                /// <param name="y">The second input tensor</param>
-                /// <param name="z">The third input tensor</param>
-                /// <returns></returns>
-                public unsafe override Tensor forward(Tensor x, Tensor y, Tensor z)
-                {
-                    var tensorRefs = stackalloc[] { x.Handle, y.Handle, z.Handle };
-                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 3);
-                    if (res == IntPtr.Zero)
-                        CheckForErrors();
-                    return new Tensor(res);
-                }
+                        switch (input) {
+                        case Tensor tensor: {
 
-                /// <summary>
-                /// Invoke the 'forward' function of the script with four or more tensors as its argument
-                /// </summary>
-                /// <param name="x">The first input tensor</param>
-                /// <param name="y">The second input tensor</param>
-                /// <param name="z">The third input tensor</param>
-                /// <param name="tensors">The remaining tensors.</param>
-                /// <returns></returns>
-                public unsafe Tensor forward(Tensor x, Tensor y, Tensor z, params Tensor[] tensors)
-                {
-                    var count = 3 + tensors.Length;
+                                var tensorRefs = new IntPtr[1];
+                                tensorRefs[0] = tensor.Handle;
 
-                    if (count < 32) {
-                        var tensorRefs = stackalloc IntPtr[count];
-                        tensorRefs[0] = x.Handle;
-                        tensorRefs[1] = y.Handle;
-                        tensorRefs[2] = z.Handle;
-                        for (var i = 0; i < tensors.Length; i++) tensorRefs[3 + i] = tensors[i].Handle;
+                                THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), 1, parray.CreateArray, out typeCode);
+                                torch.CheckForErrors();
+                                ptrArray = parray.Array;
 
-                        var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, count);
-                        if (res == IntPtr.Zero)
-                            CheckForErrors();
-                        return new Tensor(res);
-                    } else {
-                        // It the unlikely event that there's a great number of arguments, use heap allocation.
-                        var tensorRefs = new IntPtr[count];
-                        tensorRefs[0] = x.Handle;
-                        tensorRefs[1] = y.Handle;
-                        tensorRefs[2] = z.Handle;
-                        for (var i = 0; i < tensors.Length; i++) tensorRefs[3 + i] = tensors[i].Handle;
+                                break;
+                            }
+                        case ValueTuple<Tensor> tuple: {
 
-                        using (var parray = new PinnedArray<IntPtr>()) {
-                            var res = THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count);
-                            if (res == IntPtr.Zero)
-                                CheckForErrors();
-                            return new Tensor(res);
+                                var tensorRefs = new IntPtr[1];
+                                tensorRefs[0] = tuple.Item1.Handle;
+
+                                THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), 1, parray.CreateArray, out typeCode);
+                                torch.CheckForErrors();
+                                ptrArray = parray.Array;
+
+                                break;
+                            }
+                        case ValueTuple<Tensor,Tensor> tuple: {
+
+                                var tensorRefs = new IntPtr[2];
+                                tensorRefs[0] = tuple.Item1.Handle;
+                                tensorRefs[1] = tuple.Item2.Handle;
+
+                                THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), 2, parray.CreateArray, out typeCode);
+                                torch.CheckForErrors();
+                                ptrArray = parray.Array;
+
+                                break;
+                            }
+                        case ValueTuple<Tensor, Tensor, Tensor> tuple: {
+
+                                var tensorRefs = new IntPtr[3];
+                                tensorRefs[0] = tuple.Item1.Handle;
+                                tensorRefs[1] = tuple.Item2.Handle;
+                                tensorRefs[2] = tuple.Item3.Handle;
+
+                                THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), 3, parray.CreateArray, out typeCode);
+                                torch.CheckForErrors();
+                                ptrArray = parray.Array;
+
+                                break;
+                            }
+                        case IList<Tensor> tensors: {
+
+                                var count = tensors.Count;
+                                var tensorRefs = new IntPtr[count];
+                                for (var i = 0; i < tensors.Count; i++) tensorRefs[i] = tensors[i].Handle;
+
+                                THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
+                                torch.CheckForErrors();
+                                ptrArray = parray.Array;
+
+                                break;
+                            }
+                        }
+
+                    }
+
+                    switch(typeCode) {
+                    case 0:
+                        // Nothing.
+                        return base.forward(input);
+                    case 1:
+                        // Tensor
+                        return new Tensor(ptrArray[0]);
+                    case 2:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
+                    case 3:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]));
+                    case 4:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]));
+                    case 5:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]), new Tensor(ptrArray[4]));
+                    default: {
+                            // A list or too long a tuple.
+                            var result = new Tensor[ptrArray.Length];
+                            for (var i = 0; i < ptrArray.Length; i++) {
+                                result[i] = new Tensor(ptrArray[i]);
+                            }
+                            return result;
                         }
                     }
                 }
+
+                public new object forward(Tensor t) => forward((object)t);
+
+                public new object forward(Tensor x, Tensor y) => forward((x, y));
+
+                public new object forward(Tensor x, Tensor y, Tensor z) => forward((x,y,x));
             }
 
             [DllImport("LibTorchSharp")]
