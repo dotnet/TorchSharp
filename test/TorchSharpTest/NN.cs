@@ -2004,13 +2004,12 @@ namespace TorchSharp
         public void TestMaxPool1D_1()
         {
             Tensor ones = torch.ones(new long[] { 16, 3, 4 });
+            var expShape = new long[] { 16, 3, 2 };
             using (var pool = MaxPool1d(2)) {
                 var pooled = pool.forward(ones);
-                var expShape = new long[] { 16, 3, 2 };
                 Assert.Equal(expShape, pooled.shape);
                 Assert.Equal(1, pooled[0, 0, 0].ToSingle());
                 Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-
                 var (output, indices) = pool.forward_with_indices(ones);
                 Assert.Equal(expShape, output.shape);
                 Assert.Equal(expShape, indices.shape);

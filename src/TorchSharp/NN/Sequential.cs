@@ -9,6 +9,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
+    using System.Reflection;
     using Modules;
 
     namespace Modules
@@ -122,6 +123,51 @@ namespace TorchSharp
                 t0.Dispose();
 
                 return result;
+            }
+
+            public override object forward(object t)
+            {
+                // If there are no modules, just return a fresh handle to the input.
+                if (_modules.Count == 0) return (typeof(Tensor) == t.GetType()) ? ((Tensor)t).alias() : t;
+
+                // The loop-based logic below only works for n > 1, so here's another special case.
+                if (_modules.Count == 1) return _modules[0].forward(t);
+
+                // Note: we have not been able to detect any significant performance difference between
+                // implementing forward() in native or managed code.
+
+                // Using an for loop helps debugging, since we can know the ordinal of the submodule.
+
+                var t0 = _modules[0].forward(t);
+
+                for (var idx = 1; idx < _modules.Count - 1; idx++) {
+                    var t1 = _modules[idx].forward(t0);
+                    DisposeTensors(t0);
+                    t0 = t1;
+                }
+
+                var result = _modules[_modules.Count - 1].forward(t0);
+                DisposeTensors(t0);
+
+                return result;
+            }
+
+            private void DisposeTensors(object t)
+            {
+                if (t == null) return;
+
+                switch (t) {
+                case Tensor tensor:
+                    tensor.Dispose();
+                    break;
+                case IEnumerable<Tensor> tensors:
+                    foreach (var tensor in tensors) tensor.Dispose();
+                    break;
+                case object tuple:
+                    foreach (var field in tuple.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+                        DisposeTensors(field.GetValue(tuple));
+                    break;
+                }
             }
 
             public override nn.Module apply(Action<nn.Module> fn)

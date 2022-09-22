@@ -67,7 +67,7 @@ type Model(name,device:torch.Device) as this =
         if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
 
-    override _.forward(input) =
+    override _.forward(input:torch.Tensor) =
         input
         --> conv1 --> relu --> conv2 --> relu --> pool1 --> dropout1
         --> flatten

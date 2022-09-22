@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
@@ -8,6 +9,7 @@ using static TorchSharp.torch.nn;
 #nullable enable
 namespace TorchSharp
 {
+    using System.Collections;
     using Modules;
 
     namespace Modules

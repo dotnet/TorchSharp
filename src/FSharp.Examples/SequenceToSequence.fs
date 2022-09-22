@@ -72,9 +72,9 @@ type PositionalEncoding(dmodel, maxLen) as this =
 
         this.RegisterComponents()
 
-    override _.forward(t) =
+    override _.forward(input:torch.Tensor) =
         let NULL = System.Nullable<int64>()
-        use x = t + pe.[torch.TensorIndex.Slice(NULL, t.shape.[0]), torch.TensorIndex.Slice()]
+        use x = input + pe.[torch.TensorIndex.Slice(NULL, input.shape.[0]), torch.TensorIndex.Slice()]
         dropout.forward(x)
 
 type TransformerModel(ntokens, device:torch.Device) as this =
@@ -99,8 +99,6 @@ type TransformerModel(ntokens, device:torch.Device) as this =
 
         if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
-
-    override _.forward(input) = raise (NotImplementedException("single-argument forward()"))
 
     override _.forward(t, mask) =
         let src = pos_encoder.forward(encoder.forward(t) * sqrEmSz)

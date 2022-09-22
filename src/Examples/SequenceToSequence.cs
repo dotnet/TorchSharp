@@ -252,11 +252,6 @@ namespace TorchSharp.Examples
                 init.uniform_(decoder.weight, -initrange, initrange);
             }
 
-            public override Tensor forward(Tensor t)
-            {
-                throw new NotImplementedException("single-argument forward()");
-            }
-
             public override Tensor forward(Tensor t, Tensor mask)
             {
                 var src = pos_encoder.forward(encoder.forward(t) * MathF.Sqrt(ninputs));

@@ -59,6 +59,7 @@ namespace TorchSharp.Examples
             Module model = null;
 
             switch (modelName.ToLower()) {
+            case "mnist":
             case "alexnet":
                 model = new AlexNet(modelName, _numClasses, device);
                 break;

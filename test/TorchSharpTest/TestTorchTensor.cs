@@ -10,6 +10,8 @@ using Xunit.Sdk;
 using static TorchSharp.torch;
 using ICSharpCode.SharpZipLib;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using TorchSharp.Modules;
 
 #nullable enable
 
@@ -8357,6 +8359,38 @@ namespace TorchSharp
             Assert.Multiple(
             () => Assert.Equal(new long[] { 32, 8, 16 }, t.mT.shape)
             );
+        }
+
+        [Fact]
+        public void TestGeneralModuleForward1()
+        {
+            var seq = nn.Sequential(
+                nn.Bilinear(10, 10, 10),
+                nn.Linear(10, 10)
+                );
+
+            object input = torch.rand(8, 10);
+            var output = seq.forward((input, input)) as Tensor;
+
+            Assert.NotNull(output);
+            Assert.Equal(output.shape, ((Tensor)input).shape);
+        }
+
+        [Fact]
+        public void TestGeneralModuleForward2()
+        {
+            var seq = nn.Sequential(
+                nn.Bilinear(10, 10, 10),
+                nn.Linear(10, 10),
+                nn.MaxPool1d(2, return_indices: true)
+                );
+
+            object input = torch.rand(8, 10);
+            var output =  ((Tensor, Tensor))seq.forward((input, input));
+
+            //Assert.NotNull(output);
+            Assert.Equal(output.Item1.shape, new long[] { 8, 5 });
+            Assert.Equal(output.Item2.shape, new long[] { 8, 5 });
         }
     }
 }

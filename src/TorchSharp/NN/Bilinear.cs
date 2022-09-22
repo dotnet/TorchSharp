@@ -7,6 +7,7 @@ using static TorchSharp.torch.nn;
 #nullable enable
 namespace TorchSharp
 {
+    using System.Collections.Generic;
     using Modules;
 
     namespace Modules
@@ -30,6 +31,7 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSNN_Bilinear_bias(torch.nn.Module.HType module);
             [DllImport("LibTorchSharp")]

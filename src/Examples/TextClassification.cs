@@ -189,11 +189,6 @@ namespace TorchSharp.Examples
             init.zeros_(fc.bias);
         }
 
-        public override Tensor forward(Tensor t)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Tensor forward(Tensor input, Tensor offsets)
         {
             return fc.forward(embedding.forward(input, offsets));

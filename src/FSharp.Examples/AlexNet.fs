@@ -77,7 +77,7 @@ type Model(name,device:torch.Device) as this =
         if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
 
-    override _.forward(input) =
+    override _.forward(input:torch.Tensor) =
 
         let avg = features.forward(input)
         let x = avg.view([|avg.shape.[0]; 256L*2L*2L|])
