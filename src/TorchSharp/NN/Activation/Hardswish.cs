@@ -22,7 +22,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                return this.inplace ? tensor.hardswish_() : tensor.hardswish();
+                return torch.nn.functional.hardswish(tensor, this.inplace);
             }
 
             public override string GetName()
@@ -42,7 +42,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="inplace">Do the operation in-place</param>
             /// <returns></returns>
-            static public Hardswish Hardswish(bool inplace = false)
+            public static Hardswish Hardswish(bool inplace = false)
             {
                 return new Hardswish(inplace);
             }
@@ -56,11 +56,9 @@ namespace TorchSharp
                 /// <param name="input">The input tensor</param>
                 /// <param name="inplace">Do the operation in-place</param>
                 /// <returns></returns>
-                static public Tensor hardswish(Tensor input, bool inplace = false)
+                public static Tensor hardswish(Tensor input, bool inplace = false)
                 {
-                    using (var m = nn.Hardswish(inplace)) {
-                        return m.forward(input);
-                    }
+                    return inplace ? input.hardswish_() : input.hardswish();
                 }
             }
         }

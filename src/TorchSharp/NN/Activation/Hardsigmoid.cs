@@ -13,15 +13,16 @@ namespace TorchSharp
         /// </summary>
         public class Hardsigmoid : torch.nn.Module
         {
+            private readonly bool inplace;
+
             internal Hardsigmoid(bool inplace = false) : base(nameof(Hardsigmoid))
             {
                 this.inplace = inplace;
             }
-            private bool inplace;
 
             public override Tensor forward(Tensor tensor)
             {
-                return inplace ? tensor.hardsigmoid_() : tensor.hardsigmoid();
+                return torch.nn.functional.hardsigmoid(tensor, this.inplace);
             }
 
             public override string GetName()
@@ -50,14 +51,12 @@ namespace TorchSharp
                 /// <summary>
                 /// Hardsigmoid
                 /// </summary>
-                /// <param name="x">The input tensor</param>
+                /// <param name="input">The input tensor</param>
                 /// <param name="inplace">Do the operation in-place</param>
                 /// <returns></returns>
-                static public Tensor Hardsigmoid(Tensor x, bool inplace = false)
+                public static Tensor hardsigmoid(Tensor input, bool inplace = false)
                 {
-                    using (var m = nn.Hardsigmoid(inplace)) {
-                        return m.forward(x);
-                    }
+                    return inplace ? input.hardsigmoid_() : input.hardsigmoid();
                 }
             }
         }
