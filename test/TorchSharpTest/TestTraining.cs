@@ -213,6 +213,33 @@ namespace TorchSharp
             return finalLoss;
         }
 
+        private static float TrainLoop(torch.jit.ScriptModule seq, Tensor x, Tensor y, optim.Optimizer optimizer)
+        {
+            var loss = mse_loss(Reduction.Sum);
+
+            float initialLoss = loss((Tensor)seq.forward(x), y).ToSingle();
+            float finalLoss = float.MaxValue;
+
+            for (int i = 0; i < 10; i++) {
+                using var eval = (Tensor)seq.forward(x);
+                using var output = loss(eval, y);
+                var lossVal = output.ToSingle();
+
+                finalLoss = lossVal;
+
+                optimizer.zero_grad();
+
+                output.backward();
+
+                optimizer.step();
+            }
+
+            // After 10 iterations, the final loss should always be less than the initial loss.
+            Assert.True(finalLoss < initialLoss);
+
+            return finalLoss;
+        }
+
         private static float TrainLoop(Module seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true, int iters = 10)
         {
             var loss = mse_loss(Reduction.Sum);
