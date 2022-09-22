@@ -545,7 +545,7 @@ namespace TorchSharp
             /// <param name="value">A scalar value</param>
             public Tensor fill_(Scalar value)
             {
-                var res = THSTensor_fill_(Handle, value.Handle);
+                var res = THSTensor_fill_(handle, value is null ? IntPtr.Zero : value.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

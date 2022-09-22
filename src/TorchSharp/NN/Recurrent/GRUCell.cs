@@ -81,27 +81,27 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_GRUCell_set_weight_hh(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Parameter weight_ih {
+            public Parameter? weight_ih {
                 get {
                     var res = THSNN_GRUCell_weight_ih(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_GRUCell_set_weight_ih(handle, value.Handle);
+                    THSNN_GRUCell_set_weight_ih(handle, value is null ? IntPtr.Zero : value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight_ih", value);
                 }
             }
 
-            public Parameter weight_hh {
+            public Parameter? weight_hh {
                 get {
                     var res = THSNN_GRUCell_weight_hh(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_GRUCell_set_weight_hh(handle, value.Handle);
+                    THSNN_GRUCell_set_weight_hh(handle, value is null ? IntPtr.Zero : value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight_hh", value);
                 }
@@ -121,12 +121,14 @@ namespace TorchSharp
             /// </summary>
             /// <param name="inputSize">The number of expected features in the input x</param>
             /// <param name="hiddenSize">The number of features in the hidden state h</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <param name="bias">If False, then the layer does not use bias weights b_ih and b_hh. Default: True</param>
-            static public GRUCell GRUCell(long inputSize, long hiddenSize, bool bias = true)
+            static public GRUCell GRUCell(long inputSize, long hiddenSize, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_GRUCell_ctor(inputSize, hiddenSize, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new GRUCell(res, boxedHandle);
+                return new GRUCell(res, boxedHandle).MoveModule<GRUCell>(device, dtype);
             }
         }
     }

@@ -37,7 +37,7 @@ namespace TorchSharp
             /// <param name="value">The desired state.</param>
             public void set_state(Tensor value)
             {
-                THSGenerator_set_rng_state(Handle, value.Handle);
+                THSGenerator_set_rng_state(Handle, value is null ? IntPtr.Zero : value.Handle);
                 torch.CheckForErrors();
             }
 

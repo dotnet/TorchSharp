@@ -45,6 +45,53 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestDeviceAndTypeLinear()
+        {
+            {
+                var lin = Linear(1000, 100, true, dtype: torch.float64);
+                var ps = lin.parameters().ToArray();
+                var nps = ps.Count();
+
+                Assert.Multiple(
+                    () => Assert.Equal(2, nps),
+                    () => Assert.False(lin.bias is null),
+                    () => Assert.Equal(torch.float64, ps[0].dtype),
+                    () => Assert.Equal(torch.float64, ps[1].dtype)
+                );
+            }
+            if (torch.cuda.is_available()) {
+                {
+                    var lin = Linear(1000, 100, true, device: torch.CUDA, dtype: torch.float64);
+                    var ps = lin.parameters().ToArray();
+                    var nps = ps.Count();
+
+                    Assert.Multiple(
+                        () => Assert.Equal(2, nps),
+                        () => Assert.False(lin.bias is null),
+                        () => Assert.Equal(torch.float64, ps[0].dtype),
+                        () => Assert.Equal(torch.float64, ps[1].dtype),
+                        () => Assert.Equal(DeviceType.CUDA, ps[0].device_type),
+                        () => Assert.Equal(DeviceType.CUDA, ps[1].device_type)
+                    );
+                }
+                {
+                    var lin = Linear(1000, 100, true, device: torch.CUDA);
+                    var ps = lin.parameters().ToArray();
+                    var nps = ps.Count();
+
+                    Assert.Multiple(
+                        () => Assert.Equal(2, nps),
+                        () => Assert.False(lin.bias is null),
+                        () => Assert.Equal(torch.float32, ps[0].dtype),
+                        () => Assert.Equal(torch.float32, ps[1].dtype),
+                        () => Assert.Equal(DeviceType.CUDA, ps[0].device_type),
+                        () => Assert.Equal(DeviceType.CUDA, ps[1].device_type)
+                    );
+                }
+            }
+        }
+
+        [Fact]
         public void TestSetGetBiasInLinear()
         {
             var lin = Linear(1000, 100, true);
@@ -61,9 +108,9 @@ namespace TorchSharp
         {
             var lin = Linear(1000, 100, true);
 
-            Assert.Equal(2, lin.weight.shape.Length);
-            Assert.Equal(100, lin.weight.shape[0]);
-            Assert.Equal(1000, lin.weight.shape[1]);
+            Assert.Equal(2, lin.weight!.shape.Length);
+            Assert.Equal(100, lin.weight!.shape[0]);
+            Assert.Equal(1000, lin.weight!.shape[1]);
             Assert.True(1 == lin.bias?.shape.Length);
             Assert.Equal(100, lin.bias?.shape[0]);
         }
@@ -104,7 +151,7 @@ namespace TorchSharp
         {
             var lin = Linear(1000, 100, true);
             var bias = lin.bias!;
-            var weight = lin.weight.t();
+            var weight = lin.weight!.t();
             var input = torch.randn(new long[] { 1, 1000 });
             var forward = lin.forward(input);
             var matmul = input.matmul(weight).add(bias);
@@ -163,7 +210,7 @@ namespace TorchSharp
             var lin = Linear(1000, 100, false);
             Assert.False(!(lin.bias is null));
 
-            var weight = lin.weight.transpose(0, 1);
+            var weight = lin.weight!.transpose(0, 1);
             var input = torch.randn(new long[] { 1, 1000 });
             var forward = lin.forward(input);
             var matmul = input.matmul(weight);
@@ -1729,17 +1776,17 @@ namespace TorchSharp
             var lin2 = Linear(25, 25);
             var seq = Sequential(lin1, lin2);
 
-            Assert.Equal(torch.float32, lin1.weight.dtype);
-            Assert.Equal(torch.float32, lin2.weight.dtype);
-            if (lin1.bias is not null) Assert.Equal(torch.float32, lin1.bias.dtype);
-            if (lin2.bias is not null) Assert.Equal(torch.float32, lin2.bias.dtype);
+            Assert.Equal(torch.float32, lin1.weight!.dtype);
+            Assert.Equal(torch.float32, lin2.weight!.dtype);
+            if (lin1.bias is not null) Assert.Equal(torch.float32, lin1.bias!.dtype);
+            if (lin2.bias is not null) Assert.Equal(torch.float32, lin2.bias!.dtype);
 
             seq.to(torch.float64);
 
-            Assert.Equal(torch.float64, lin1.weight.dtype);
-            Assert.Equal(torch.float64, lin2.weight.dtype);
-            if (lin1.bias is not null) Assert.Equal(torch.float64, lin1.bias.dtype);
-            if (lin2.bias is not null) Assert.Equal(torch.float64, lin2.bias.dtype);
+            Assert.Equal(torch.float64, lin1.weight!.dtype);
+            Assert.Equal(torch.float64, lin2.weight!.dtype);
+            if (lin1.bias is not null) Assert.Equal(torch.float64, lin1.bias!.dtype);
+            if (lin2.bias is not null) Assert.Equal(torch.float64, lin2.bias!.dtype);
         }
 
         [Fact]
@@ -1756,17 +1803,17 @@ namespace TorchSharp
                 var lin2 = Linear(25, 25);
                 var seq = Sequential(lin1, lin2);
 
-                Assert.Equal(DeviceType.CPU, lin1.weight.device_type);
-                Assert.Equal(DeviceType.CPU, lin2.weight.device_type);
-                if (lin1.bias is not null) Assert.Equal(DeviceType.CPU, lin1.bias.device_type);
-                if (lin2.bias is not null) Assert.Equal(DeviceType.CPU, lin2.bias.device_type);
+                Assert.Equal(DeviceType.CPU, lin1.weight!.device_type);
+                Assert.Equal(DeviceType.CPU, lin2.weight!.device_type);
+                if (lin1.bias is not null) Assert.Equal(DeviceType.CPU, lin1.bias!.device_type);
+                if (lin2.bias is not null) Assert.Equal(DeviceType.CPU, lin2.bias!.device_type);
 
                 seq.cuda();
 
-                Assert.Equal(DeviceType.CUDA, lin1.weight.device_type);
-                Assert.Equal(DeviceType.CUDA, lin2.weight.device_type);
-                if (lin1.bias is not null) Assert.Equal(DeviceType.CUDA, lin1.bias.device_type);
-                if (lin2.bias is not null) Assert.Equal(DeviceType.CUDA, lin2.bias.device_type);
+                Assert.Equal(DeviceType.CUDA, lin1.weight!.device_type);
+                Assert.Equal(DeviceType.CUDA, lin2.weight!.device_type);
+                if (lin1.bias is not null) Assert.Equal(DeviceType.CUDA, lin1.bias!.device_type);
+                if (lin2.bias is not null) Assert.Equal(DeviceType.CUDA, lin2.bias!.device_type);
             }
         }
 
@@ -1781,8 +1828,8 @@ namespace TorchSharp
 
             public void ValidateDtype(ScalarType dtype)
             {
-                Assert.Equal(dtype, mod1.weight.dtype);
-                Assert.Equal(dtype, mod2.weight.dtype);
+                Assert.Equal(dtype, mod1.weight!.dtype);
+                Assert.Equal(dtype, mod2.weight!.dtype);
                 if (mod1.bias is not null) Assert.Equal(dtype, mod1.bias.dtype);
                 if (mod2.bias is not null) Assert.Equal(dtype, mod2.bias.dtype);
 
@@ -1796,8 +1843,8 @@ namespace TorchSharp
 
             public void ValidateDeviceType(DeviceType device)
             {
-                Assert.Equal(device, mod1.weight.device_type);
-                Assert.Equal(device, mod2.weight.device_type);
+                Assert.Equal(device, mod1.weight!.device_type);
+                Assert.Equal(device, mod2.weight!.device_type);
                 if (mod1.bias is not null) Assert.Equal(device, mod1.bias.device_type);
                 if (mod2.bias is not null) Assert.Equal(device, mod2.bias.device_type);
 
@@ -2851,11 +2898,53 @@ namespace TorchSharp
         public void TestInstanceNorm1D()
         {
             var ones = torch.ones(new long[] { 16, 3, 28 });
-            using (var pool = InstanceNorm1d(3)) {
-                var pooled = pool.forward(ones);
-                Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16 })));
-                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2 })));
+            {
+                using (var pool = InstanceNorm1d(3)) {
+                    var pooled = pool.forward(ones);
+                    Assert.Null(pool.weight);
+                    Assert.Null(pool.bias);
+                    Assert.Null(pool.running_mean);
+                    Assert.Null(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2 })));
+                }
+            }
+            {
+                using (var pool = InstanceNorm1d(3, affine: true)) {
+                    var pooled = pool.forward(ones);
+                    Assert.NotNull(pool.weight);
+                    Assert.NotNull(pool.bias);
+                    Assert.Null(pool.running_mean);
+                    Assert.Null(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2 })));
+                }
+            }
+            {
+                using (var pool = InstanceNorm1d(3, track_running_stats: true)) {
+                    var pooled = pool.forward(ones);
+                    Assert.Null(pool.weight);
+                    Assert.Null(pool.bias);
+                    Assert.NotNull(pool.running_mean);
+                    Assert.NotNull(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2 })));
+                }
+            }
+            {
+                using (var pool = InstanceNorm1d(3, affine: true, track_running_stats: true)) {
+                    var pooled = pool.forward(ones);
+                    Assert.NotNull(pool.weight);
+                    Assert.NotNull(pool.bias);
+                    Assert.NotNull(pool.running_mean);
+                    Assert.NotNull(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2 })));
+                }
             }
         }
 
@@ -2863,11 +2952,53 @@ namespace TorchSharp
         public void TestInstanceNorm2D()
         {
             var ones = torch.ones(new long[] { 16, 3, 28, 28 });
-            using (var pool = InstanceNorm2d(3)) {
-                var pooled = pool.forward(ones);
-                Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2 })));
-                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+            {
+                using (var pool = InstanceNorm2d(3)) {
+                    var pooled = pool.forward(ones);
+                    Assert.Null(pool.weight);
+                    Assert.Null(pool.bias);
+                    Assert.Null(pool.running_mean);
+                    Assert.Null(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+                }
+            }
+            {
+                using (var pool = InstanceNorm2d(3, affine: true)) {
+                    var pooled = pool.forward(ones);
+                    Assert.NotNull(pool.weight);
+                    Assert.NotNull(pool.bias);
+                    Assert.Null(pool.running_mean);
+                    Assert.Null(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+                }
+            }
+            {
+                using (var pool = InstanceNorm2d(3, track_running_stats: true)) {
+                    var pooled = pool.forward(ones);
+                    Assert.Null(pool.weight);
+                    Assert.Null(pool.bias);
+                    Assert.NotNull(pool.running_mean);
+                    Assert.NotNull(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+                }
+            }
+            {
+                using (var pool = InstanceNorm2d(3, affine: true, track_running_stats: true)) {
+                    var pooled = pool.forward(ones);
+                    Assert.NotNull(pool.weight);
+                    Assert.NotNull(pool.bias);
+                    Assert.NotNull(pool.running_mean);
+                    Assert.NotNull(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+                }
             }
         }
 
@@ -2875,11 +3006,53 @@ namespace TorchSharp
         public void TestInstanceNorm3D()
         {
             var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
-            using (var pool = InstanceNorm3d(3)) {
-                var pooled = pool.forward(ones);
-                Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2, 2 })));
-                Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+            {
+                using (var pool = InstanceNorm3d(3)) {
+                    var pooled = pool.forward(ones);
+                    Assert.Null(pool.weight);
+                    Assert.Null(pool.bias);
+                    Assert.Null(pool.running_mean);
+                    Assert.Null(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2, 2 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+                }
+            }
+            {
+                using (var pool = InstanceNorm3d(3, affine: true)) {
+                    var pooled = pool.forward(ones);
+                    Assert.NotNull(pool.weight);
+                    Assert.NotNull(pool.bias);
+                    Assert.Null(pool.running_mean);
+                    Assert.Null(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2, 2 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+                }
+            }
+            {
+                using (var pool = InstanceNorm3d(3, track_running_stats: true)) {
+                    var pooled = pool.forward(ones);
+                    Assert.Null(pool.weight);
+                    Assert.Null(pool.bias);
+                    Assert.NotNull(pool.running_mean);
+                    Assert.NotNull(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2, 2 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+                }
+            }
+            {
+                using (var pool = InstanceNorm3d(3, affine: true, track_running_stats: true)) {
+                    var pooled = pool.forward(ones);
+                    Assert.NotNull(pool.weight);
+                    Assert.NotNull(pool.bias);
+                    Assert.NotNull(pool.running_mean);
+                    Assert.NotNull(pool.running_var);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 16, 2, 2, 2 })));
+                    Assert.Throws<ArgumentException>(() => pool.forward(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+                }
             }
         }
 
@@ -3053,9 +3226,9 @@ namespace TorchSharp
             var weights = torch.randn(new long[] { 1000, 12 });
 
             using (var emb = Embedding_from_pretrained(weights)) {
-                Assert.Equal(emb.weight.shape.Length, weights.shape.Length);
-                Assert.Equal(emb.weight.shape[0], weights.shape[0]);
-                Assert.Equal(emb.weight.shape[1], weights.shape[1]);
+                Assert.Equal(emb.weight!.shape.Length, weights.shape.Length);
+                Assert.Equal(emb.weight!.shape[0], weights.shape[0]);
+                Assert.Equal(emb.weight!.shape[1], weights.shape[1]);
             }
         }
 
@@ -3111,9 +3284,9 @@ namespace TorchSharp
             var weights = torch.randn(new long[] { 1000, 12 });
 
             using (var emb = EmbeddingBag_from_pretrained(weights)) {
-                Assert.Equal(emb.weight.shape.Length, weights.shape.Length);
-                Assert.Equal(emb.weight.shape[0], weights.shape[0]);
-                Assert.Equal(emb.weight.shape[1], weights.shape[1]);
+                Assert.Equal(emb.weight!.shape.Length, weights.shape.Length);
+                Assert.Equal(emb.weight!.shape[0], weights.shape[0]);
+                Assert.Equal(emb.weight!.shape[1], weights.shape[1]);
             }
         }
 
@@ -3726,9 +3899,9 @@ namespace TorchSharp
 
             var w1 = lin.get_weight_ih(1);
 
-            Assert.Equal(2, w1.shape.Length);
-            Assert.Equal(20, w1.shape[0]);
-            Assert.Equal(20, w1.shape[1]);
+            Assert.Equal(2, w1!.shape.Length);
+            Assert.Equal(20, w1!.shape[0]);
+            Assert.Equal(20, w1!.shape[1]);
 
             var w2 = lin.parameters().ToArray()[0];
 

@@ -34,6 +34,14 @@ void THSJIT_Module_eval(JITModule module)
     (*module)->eval();
 }
 
+void THSJIT_Module_to_device_dtype(JITModule module, int8_t dtype, int64_t device, int64_t index)
+{
+    c10::DeviceType dev = c10::kCPU;
+    if (device == 1)
+        dev = c10::kCUDA;
+    (*module)->to(torch::Device(dev, index), (at::ScalarType)dtype);
+}
+
 void THSJIT_Module_to_device(JITModule module, int64_t device, int64_t index)
 {
     c10::DeviceType dev = c10::kCPU;

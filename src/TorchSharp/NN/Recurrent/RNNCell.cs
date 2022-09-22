@@ -86,27 +86,27 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             extern static void THSNN_RNNCell_set_weight_hh(torch.nn.Module.HType module, IntPtr tensor);
 
-            public Parameter weight_ih {
+            public Parameter? weight_ih {
                 get {
                     var res = THSNN_RNNCell_weight_ih(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_RNNCell_set_weight_ih(handle, value.Handle);
+                    THSNN_RNNCell_set_weight_ih(handle, value is null ? IntPtr.Zero : value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight_ih", value);
                 }
             }
 
-            public Parameter weight_hh {
+            public Parameter? weight_hh {
                 get {
                     var res = THSNN_RNNCell_weight_hh(handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Parameter(res);
+                    return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_RNNCell_set_weight_hh(handle, value.Handle);
+                    THSNN_RNNCell_set_weight_hh(handle, value is null ? IntPtr.Zero : value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight_hh", value);
                 }
@@ -128,12 +128,14 @@ namespace TorchSharp
             /// <param name="hiddenSize">The number of features in the hidden state h</param>
             /// <param name="nonLinearity">The non-linearity to use. Can be either 'tanh' or 'relu'. Default: 'tanh'</param>
             /// <param name="bias">If False, then the layer does not use bias weights b_ih and b_hh. Default: True</param>
+            /// <param name="device">The desired device of the parameters and buffers in this module</param>
+            /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public RNNCell RNNCell(long inputSize, long hiddenSize, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true)
+            static public RNNCell RNNCell(long inputSize, long hiddenSize, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_RNNCell_ctor(inputSize, hiddenSize, (long)nonLinearity, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new RNNCell(res, boxedHandle);
+                return new RNNCell(res, boxedHandle).MoveModule<RNNCell>(device, dtype);
             }
         }
     }
