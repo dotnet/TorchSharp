@@ -37,3 +37,22 @@ public override Tensor forward(Tensor x, Tensor y) => (Tensor)forward((x, y));
 
 public override Tensor forward(Tensor x, Tensor y, Tensor z) => (Tensor)forward((x,y,x));
 ```
+
+This knowledge is most useful when it comes to accessing TorchScript modules that do not simply take and return single Tensors. 
+
+For example, the following Python code takes two tensors and returns a tuple of tensors:
+
+```Python
+def a(x):
+    return (x + 10, x - 10)
+```
+
+This means that calling the module using the `Tensor->Tensor` version of `forward()` will fail, since the return value is not a tensor:
+
+```C#
+// Throws InvalidCastException
+var t = sm.forward(torch.rand(10));  
+
+// Throws no exception:
+var (a,b) = ((Tensor,Tensor))sm.forward((object)torch.rand(10));
+```

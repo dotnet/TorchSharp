@@ -113,7 +113,7 @@ public override Tensor forward(Tensor input)
     }
 ```
 
-## Using Sequential Inside A Custome Module
+## Using Sequential Inside A Custom Module
 
 Custom modules are often combined with Sequential, which is especially useful when building long chains of repetitive blocks inside a custom module. In the C# TorchSharp examples, VGG, MobileNet, and ResNet demonstrate this well. 
 

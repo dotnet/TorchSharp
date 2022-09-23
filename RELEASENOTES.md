@@ -9,6 +9,7 @@ __Breaking Changes:__
 Some parameter names were changed to align with PyTorch. This affects names like 'dimension,' 'probability,' and 'keepDims' and will break code that is passing these parameters by name.
 
 Module.to(), cpu(), and cuda() were moved to a static class for extension methods. This means that it is necessary to have a 'using TorchSharp;' (C#) or 'open TorchSharp' (F#) in each file using them.
+
 Doing so (rather than qualifying names with 'TorchSharp.') was already recommended as a best practice, since such a using/open directive will allows qualified names to align with the PyTorch module hierarchy.
 
 __Fixed Bugs:__
