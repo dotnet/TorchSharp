@@ -125,6 +125,60 @@ namespace TorchSharp
                 return result;
             }
 
+            public override Tensor forward(Tensor x, Tensor y)
+            {
+                // If there are no modules, just return a fresh handle to the input.
+                if (_modules.Count == 0) throw new InvalidOperationException("Calling forward(x,y) on empty Sequential");
+
+                // The loop-based logic below only works for n > 1, so here's another special case.
+                if (_modules.Count == 1) return _modules[0].forward(x, y);
+
+                // Note: we have not been able to detect any significant performance difference between
+                // implementing forward() in native or managed code.
+
+                // Using an for loop helps debugging, since we can know the ordinal of the submodule.
+
+                var t0 = _modules[0].forward(x, y);
+
+                for (var idx = 1; idx < _modules.Count - 1; idx++) {
+                    var t1 = _modules[idx].forward(t0);
+                    t0.Dispose();
+                    t0 = t1;
+                }
+
+                var result = _modules[_modules.Count - 1].forward(t0);
+                t0.Dispose();
+
+                return result;
+            }
+
+            public override Tensor forward(Tensor x, Tensor y, Tensor z)
+            {
+                // If there are no modules, just return a fresh handle to the input.
+                if (_modules.Count == 0) throw new InvalidOperationException("Calling forward(x, y, z) on empty Sequential");
+
+                // The loop-based logic below only works for n > 1, so here's another special case.
+                if (_modules.Count == 1) return _modules[0].forward(x, y, z);
+
+                // Note: we have not been able to detect any significant performance difference between
+                // implementing forward() in native or managed code.
+
+                // Using an for loop helps debugging, since we can know the ordinal of the submodule.
+
+                var t0 = _modules[0].forward(x, y);
+
+                for (var idx = 1; idx < _modules.Count - 1; idx++) {
+                    var t1 = _modules[idx].forward(t0);
+                    t0.Dispose();
+                    t0 = t1;
+                }
+
+                var result = _modules[_modules.Count - 1].forward(t0);
+                t0.Dispose();
+
+                return result;
+            }
+
             public override object forward(object t)
             {
                 // If there are no modules, just return a fresh handle to the input.

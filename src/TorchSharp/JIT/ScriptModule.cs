@@ -371,11 +371,11 @@ namespace TorchSharp
                     }
                 }
 
-                public new object forward(Tensor t) => forward((object)t);
+                public override Tensor forward(Tensor t) => (Tensor)forward((object)t);
 
-                public new object forward(Tensor x, Tensor y) => forward((x, y));
+                public override Tensor forward(Tensor x, Tensor y) => (Tensor)forward((x, y));
 
-                public new object forward(Tensor x, Tensor y, Tensor z) => forward((x,y,x));
+                public override Tensor forward(Tensor x, Tensor y, Tensor z) => (Tensor)forward((x,y,x));
             }
 
             [DllImport("LibTorchSharp")]

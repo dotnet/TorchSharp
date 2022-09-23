@@ -34,20 +34,7 @@ Note that the field names in the module class correspond to the names that were 
 
 Custom modules should always call `RegisterComponents()` once all submodules and buffers (see discussion later in this document) have been created. This will register the modules and its parameters with the native runtime, which is essential for it to function correctly. For this to work properly, each submodule should have its own private field (**not** property) in the class. The only exception are submodules that do not have trainable weights, such as activation functions like ReLU or tanh.
 
-The `forward()` method contains the computation of the module. It can contain a mix of TorchSharp primitives, layers, as well as any .NET code. Note, however, that only TorchSharp APIs are capable of operating on data residing in CUDA memory. Therefore, if performance is of the essence, expressing all computation in terms of TorchSharp APIs is essential. Non-TorchSharp APIs should be limited to things that aren't related to the tensor data, things like logging, for example.
 
-In PyTorch, the `forward()` method takes an arbitrary number of arguments, of any type, and supports using default arguments. Currently, TorchSharp only defines two versions of `forward()` -- taking one or two tensors, and returning a single tensor. The TorchSharp implementation of Sequential assumes that it is passing only a single tensor along between its layers. Therefore, any model that needs to pass multiple arguments between layers will have to be custom.
-
-Note that the local variable 'x' was declared in a using statement. This is important in order to deallocate the native memory associated with it as soon as it is no longer needed. For that reason, it is important to pull out temporaries like this into local variables, especially when the code is running on a GPU. (More on this at: [Dispose vs. GC in TorchSharp](memory.md)) 
-
-In other words, the following code is less memory efficient, because it delays reclaiming native memory until the next time GC is run:
-
-```C#
-        public override Tensor forward(Tensor input)
-        {
-            return lin2.forward(lin1.forward(input));
-        }
-```
 ## Sequential
 
 For the simplest network architecture, which actually covers a surprising breadth, there is a simplified way to create modules -- the 'Sequential' class. This class is created from a list of Modules (i.e. model components). When data is passed to the model, the Sequential instance will invoke each submodule in the order they were passed when the Sequential instance was created, passing the output from each layer to the next. The output of the final submodule will be the output of the Sequential instance.
@@ -60,6 +47,71 @@ seq.forward(some_data);
 
 There is no real performance reason to use Sequential instead of rolling your own custom module, but there is much less code to write. That said, if using a custom module (up next) is your preference, for whatever reason, that's what you should do. It can be useful to create a custom module first, debug it, and then convert to using Sequential.
 
+
+## forward()
+
+The `forward()` method contains the computation of the module and is therefore very important to pay attention to. It can contain a mix of TorchSharp primitives, layers, as well as any .NET code. Note, however, that only TorchSharp APIs are capable of operating on data residing in CUDA memory. Therefore, if performance is of the essence, expressing all computation in terms of TorchSharp APIs is essential. Non-TorchSharp APIs should be limited to things that aren't related to the tensor data, things like logging, for example.
+
+It is important to know about the variants of `forward()` in order to make efficient use of them.
+
+__object forward(object x)__
+
+In PyTorch, the `forward()` method takes an arbitrary number of arguments, of any type, and supports using default arguments. TorchSharp currently supports passing and returning tensors, lists and arrays of tensors, and tuples containing tensors (and nothing else). The most general version of `forward()` therefore takes a `System.Object` and returns a `System.Object` and it is up to the caller to figure out what to do with it.
+
+`Sequential.forward()` will support passing any of these objects returned from one module to the next.
+
+
+__Tensor forward(Tensor x)__
+
+The most common case, where a module accepts a single tensor and returns a single tensor, a more efficient version of `forward()` is available. The Sequential implementation of `Tensor forward(Tensor)` assumes that all layers are of the kind that take a single tensor and return a single tensor. Because it avoids the dynamic type testing that the more general form of `forward()` requires, it is more efficient at runtime.
+
+
+__Tensor forward(Tensor x, Tensor y)__
+
+This overload is used for modules, such as Bilinear, which take two tensors and return a single tensor. This is also a more efficient version of `forward()` than the general one. The Sequential implementation of `Tensor forward(Tensor,Tensor)` assumes that all layers are of the kind that take a single tensor and return a single tensor, except the first one which should take two tensors and return a single one.
+
+__Tensor forward(Tensor x, Tensor y, Tensor z)__
+
+This overload is used for modules that take three tensors and return a single tensor. This is also a more efficient version of `forward()` than the general one. The Sequential implementation of `Tensor forward(Tensor,Tensor,Tensor)` assumes that all layers are of the kind that take a single tensor and return a single tensor, except the first one which should take three tensors and return a single one. Because it avoids the dynamic type testing that the more general form of `forward()` requires, it is more efficient at runtime.
+
+
+__Memory Management in forward()__
+
+Typically, the implementation of `forward()` will result in a lot of temporaries being created and being useless at the end of the method. This means that it is important how to efficiently manage tensor memory, a topic that is discussed in [Dispose vs. GC in TorchSharp](memory.md).
+
+For example, compare the following two code segments:
+
+
+```C#
+        public override Tensor forward(Tensor input)
+        {
+            using (var x = lin1.forward(input))
+            return lin2.forward(x);
+        }
+```
+is more memory-efficient than:
+
+```C#
+        public override Tensor forward(Tensor input)
+        {
+            return lin2.forward(lin1.forward(input));
+        }
+```
+
+because the latter delays reclaiming native memory until the next time GC is run.
+
+For large `forward()` implementations, a simpler method than individual using statements is to use DisposeScopes:
+
+```C#
+public override Tensor forward(Tensor input)
+{
+    using (var d0 = torch.NewDisposeScope()) {
+
+        [... a long body placing the result in 'tensor']
+        
+        return tensor.MoveToOuterDisposeScope();
+    }
+```
 
 ## Using Sequential Inside A Custome Module
 

@@ -114,9 +114,10 @@ namespace TorchSharp
 
             var x = torch.rand(3, 4);
             var y = torch.rand(3, 4);
-            var output = ((torch.Tensor, torch.Tensor))m.forward(x, y);
+            var output = ((torch.Tensor, torch.Tensor))m.forward((x, y));
 
             Assert.Multiple(
+            () => Assert.Throws<InvalidCastException>(() => m.forward(x, y)),
             () => Assert.Equal(x.shape, output.Item1.shape),
             () => Assert.Equal(x.shape, output.Item2.shape),
             () => Assert.Equal(x + y, output.Item1),
@@ -134,9 +135,10 @@ namespace TorchSharp
 
             var x = torch.rand(3, 4);
             var y = torch.rand(3, 4);
-            var output = (torch.Tensor[])m.forward(x, y);
+            var output = (torch.Tensor[])m.forward((x, y));
 
             Assert.Multiple(
+            () => Assert.Throws<InvalidCastException>(() => m.forward(x, y)),
             () => Assert.Equal(x.shape, output[0].shape),
             () => Assert.Equal(x.shape, output[1].shape),
             () => Assert.Equal(x + y, output[0]),

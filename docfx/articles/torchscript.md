@@ -23,3 +23,17 @@ torch.jit.save(m, "file-name");
 ```
 
 While it is possible to save a modified ScriptModule from TorchSharp, it is not (yet) possible to create one _from scratch_ using either tracing or scripting. Another limitation is that the TorchSharp code assumes that the `forward()` function takes only tensors as its arguments and returns a single tensor, a limitation it shares with other TorchSharp modules.
+
+## ScriptModule
+
+`ScriptModule` is what `torch.jit.load()` returns. As stated earlier, it is and behaves like a Module. It encapsulates the logic of the original model. Script modules can be included in other models, used in Sequential, etc.
+
+To use ScriptModule properly, it is important to know that the type-safe `forward()` methods are all implemented in terms of the general `object -> object` forward(), so they are no more efficient than it.
+
+````C#
+public override Tensor forward(Tensor t) => (Tensor)forward((object)t);
+
+public override Tensor forward(Tensor x, Tensor y) => (Tensor)forward((x, y));
+
+public override Tensor forward(Tensor x, Tensor y, Tensor z) => (Tensor)forward((x,y,x));
+```
