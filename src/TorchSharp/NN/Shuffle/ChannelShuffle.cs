@@ -42,7 +42,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="groups">The number of groups to divide channels in.</param>
             /// <returns></returns>
-            static public ChannelShuffle ChannelShuffle(long groups)
+            public static ChannelShuffle ChannelShuffle(long groups)
             {
                 return new ChannelShuffle(groups);
             }

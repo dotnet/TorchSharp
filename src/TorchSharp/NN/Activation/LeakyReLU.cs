@@ -43,12 +43,12 @@ namespace TorchSharp
             /// <summary>
             /// Continuously Differentiable Exponential Linear Unit
             /// </summary>
-            /// <param name="negativeSlope">The α value for the LeakyReLU formulation. Default: 1.0</param>
-            /// <param name="inplace">Do the operation in-place. Default: False</param>
+            /// <param name="negative_slope">The α value for the LeakyReLU formulation.</param>
+            /// <param name="inplace">Do the operation in-place.</param>
             /// <returns></returns>
-            static public LeakyReLU LeakyReLU(double negativeSlope = 1.0, bool inplace = false)
+            static public LeakyReLU LeakyReLU(double negative_slope = 0.01, bool inplace = false)
             {
-                var handle = THSNN_LeakyReLU_ctor(negativeSlope, inplace, out var boxedHandle);
+                var handle = THSNN_LeakyReLU_ctor(negative_slope, inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new LeakyReLU(handle, boxedHandle);
             }
@@ -58,14 +58,14 @@ namespace TorchSharp
                 /// <summary>
                 /// Continuously Differentiable Exponential Linear Unit
                 /// </summary>
-                /// <param name="x">The input tensor</param>
-                /// <param name="negativeSlope">The α value for the LeakyReLU formulation. Default: 1.0</param>
+                /// <param name="input">The input tensor</param>
+                /// <param name="negative_slope">The α value for the LeakyReLU formulation. Default: 1.0</param>
                 /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                static public Tensor leaky_relu(Tensor x, double negativeSlope, bool inplace = false)
+                static public Tensor leaky_relu(Tensor input, double negative_slope = 0.01, bool inplace = false)
                 {
-                    using (var m = nn.LeakyReLU(negativeSlope, inplace)) {
-                        return m.forward(x);
+                    using (var m = nn.LeakyReLU(negative_slope, inplace)) {
+                        return m.forward(input);
                     }
                 }
             }
