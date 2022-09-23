@@ -163,6 +163,55 @@ namespace TorchSharp
                     bias,
                     rank: 3);
             }
+
+            internal class SqueezeExcitation : torch.nn.Module
+            {
+                private readonly nn.Module avgpool;
+                private readonly nn.Module fc1;
+                private readonly nn.Module fc2;
+                private readonly nn.Module activation;
+                private readonly nn.Module scale_activation;
+
+                /// <summary>
+                /// This block implements the Squeeze-and-Excitation block from https://arxiv.org/abs/1709.01507 (see Fig. 1).
+                /// Parameters ``activation``, and ``scale_activation`` correspond to ``delta`` and ``sigma`` in eq. 3.
+                /// </summary>
+                /// <param name="name"></param>
+                /// <param name="input_channels">Number of channels in the input image</param>
+                /// <param name="squeeze_channels">Number of squeeze channels</param>
+                /// <param name="activation">``delta`` activation</param>
+                /// <param name="scale_activation">``sigma`` activation.</param>
+                public SqueezeExcitation(
+                    string name,
+                    long input_channels,
+                    long squeeze_channels,
+                    Func<nn.Module> activation,
+                    Func<nn.Module> scale_activation) : base(name)
+                {
+                    this.avgpool = torch.nn.AdaptiveAvgPool2d(1);
+                    this.fc1 = torch.nn.Conv2d(input_channels, squeeze_channels, 1);
+                    this.fc2 = torch.nn.Conv2d(squeeze_channels, input_channels, 1);
+                    this.activation = activation();
+                    this.scale_activation = scale_activation();
+
+                    RegisterComponents();
+                }
+
+                private Tensor _scale(Tensor input)
+                {
+                    var scale = this.avgpool.forward(input);
+                    scale = this.fc1.forward(scale);
+                    scale = this.activation.forward(scale);
+                    scale = this.fc2.forward(scale);
+                    return this.scale_activation.forward(scale);
+                }
+
+                public override Tensor forward(Tensor input)
+                {
+                    var scale = this._scale(input);
+                    return scale * input;
+                }
+            }
         }
     }
 }
