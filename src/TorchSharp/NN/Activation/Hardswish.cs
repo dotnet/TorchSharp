@@ -9,25 +9,25 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// This class is used to represent a Hardsigmoid module.
+        /// This class is used to represent a Hardswish module.
         /// </summary>
-        public class Hardsigmoid : torch.nn.Module
+        public class Hardswish : torch.nn.Module
         {
             private readonly bool inplace;
 
-            internal Hardsigmoid(bool inplace = false) : base(nameof(Hardsigmoid))
+            internal Hardswish(bool inplace = false) : base(nameof(Hardswish))
             {
                 this.inplace = inplace;
             }
 
             public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.hardsigmoid(tensor, this.inplace);
+                return torch.nn.functional.hardswish(tensor, this.inplace);
             }
 
             public override string GetName()
             {
-                return typeof(Hardsigmoid).Name;
+                return typeof(Hardswish).Name;
             }
         }
     }
@@ -37,26 +37,28 @@ namespace TorchSharp
         public static partial class nn
         {
             /// <summary>
-            /// Hardsigmoid
+            /// Applies the Hardswish function, element-wise, as described in the paper:
+            /// `Searching for MobileNetV3 https://arxiv.org/abs/1905.02244`.
             /// </summary>
             /// <param name="inplace">Do the operation in-place</param>
             /// <returns></returns>
-            static public Hardsigmoid Hardsigmoid(bool inplace = false)
+            public static Hardswish Hardswish(bool inplace = false)
             {
-                return new Hardsigmoid(inplace);
+                return new Hardswish(inplace);
             }
 
             public static partial class functional
             {
                 /// <summary>
-                /// Hardsigmoid
+                /// Applies the Hardswish function, element-wise, as described in the paper:
+                /// `Searching for MobileNetV3 https://arxiv.org/abs/1905.02244`.
                 /// </summary>
                 /// <param name="input">The input tensor</param>
                 /// <param name="inplace">Do the operation in-place</param>
                 /// <returns></returns>
-                public static Tensor hardsigmoid(Tensor input, bool inplace = false)
+                public static Tensor hardswish(Tensor input, bool inplace = false)
                 {
-                    return inplace ? input.hardsigmoid_() : input.hardsigmoid();
+                    return inplace ? input.hardswish_() : input.hardswish();
                 }
             }
         }
