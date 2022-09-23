@@ -339,5 +339,31 @@ namespace TorchSharp
                 () => Assert.Equal("features", names[1])
             );
         }
+
+        [Fact]
+        public void TestMobileNetV3()
+        {
+            using (var model = mobilenet_v3_large()) {
+                var sd = model.state_dict();
+                Assert.Equal(312, sd.Count);
+                var names = model.named_children().Select(nm => nm.name).ToArray();
+                Assert.Multiple(
+                    () => Assert.Equal("avgpool", names[0]),
+                    () => Assert.Equal("classifier", names[1]),
+                    () => Assert.Equal("features", names[2])
+                );
+            }
+
+            using (var model = mobilenet_v3_small()) {
+                var sd = model.state_dict();
+                Assert.Equal(244, sd.Count);
+                var names = model.named_children().Select(nm => nm.name).ToArray();
+                Assert.Multiple(
+                    () => Assert.Equal("avgpool", names[0]),
+                    () => Assert.Equal("classifier", names[1]),
+                    () => Assert.Equal("features", names[2])
+                );
+            }
+        }
     }
 }
