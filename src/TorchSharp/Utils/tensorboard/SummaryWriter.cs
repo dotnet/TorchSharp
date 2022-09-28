@@ -102,8 +102,8 @@ namespace TorchSharp
             /// <param name="tag">Data identifier</param>
             /// <param name="scalar_value">Value to save</param>
             /// <param name="global_step">Global step value to record</param>
-            /// <param name="walltime">Optional override default walltime (DateTime.Now.Ticks)</param>
-            public void add_scalar(string tag, float scalar_value, int global_step, float? walltime = 0)
+            /// <param name="walltime">Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds())</param>
+            public void add_scalar(string tag, float scalar_value, int global_step, long? walltime = null)
             {
                 var fileName = _fileNames["__default__"];
 
@@ -111,7 +111,7 @@ namespace TorchSharp
                     InitFile(fileName);
                 }
 
-                var wt = walltime.HasValue ? walltime.Value : DateTime.Now.Ticks;
+                var wt = walltime.HasValue ? walltime.Value : DateTimeOffset.Now.ToUnixTimeSeconds();
 
                 var summary = new Summary();
                 summary.Value.Add(new Summary.Types.Value() { SimpleValue = scalar_value, Tag = tag });
@@ -126,10 +126,10 @@ namespace TorchSharp
             /// <param name="main_tag">Data identifier</param>
             /// <param name="tag_scalar_dict">Dictionary storing the tag and corresponding values</param>
             /// <param name="global_step">Global step value to record</param>
-            /// <param name="walltime">Optional override default walltime (DateTime.Now.Ticks)</param>
-            public void add_scalars(string main_tag, IDictionary<string, float> tag_scalar_dict, int global_step, float? walltime = 0)
+            /// <param name="walltime">Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds())</param>
+            public void add_scalars(string main_tag, IDictionary<string, float> tag_scalar_dict, int global_step, long? walltime = null)
             {
-                var wt = walltime.HasValue ? walltime.Value : DateTime.Now.Ticks;
+                var wt = walltime.HasValue ? walltime.Value : DateTimeOffset.Now.ToUnixTimeSeconds();
 
                 foreach (var kv in tag_scalar_dict) {
 
@@ -171,10 +171,10 @@ namespace TorchSharp
             /// <param name="main_tag">Data identifier</param>
             /// <param name="tag_scalar_dict">List of tuples storing the tag and corresponding values</param>
             /// <param name="global_step">Global step value to record</param>
-            /// <param name="walltime">Optional override default walltime (DateTime.Now.Ticks)</param>
-            public void add_scalars(string main_tag, IList<(string, float)> tag_scalar_dict, int global_step, float? walltime = 0)
+            /// <param name="walltime">Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds())</param>
+            public void add_scalars(string main_tag, IList<(string, float)> tag_scalar_dict, int global_step, long? walltime = null)
             {
-                var wt = walltime.HasValue ? walltime.Value : DateTime.Now.Ticks;
+                var wt = walltime.HasValue ? walltime.Value : DateTimeOffset.Now.ToUnixTimeSeconds();
 
                 foreach (var (key, scalar_value) in tag_scalar_dict) {
 
