@@ -189,7 +189,7 @@ namespace TorchSharp
 
                 Assert.Equal(new long[] { 6 }, t.shape);
                 Assert.Equal(torch.float32, t.dtype);
-                Assert.Equal(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }, t.data<float>().ToArray());
+                Assert.True(torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }).allclose(t));
             }
         }
 
