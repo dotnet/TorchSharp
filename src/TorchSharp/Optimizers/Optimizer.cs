@@ -476,18 +476,30 @@ namespace TorchSharp
             public double? LearningRate { get; set; }
             public double InitialLearningRate { get; set; }
 
+            /// <summary>
+            /// Save the optimizer options (param-group hyperparameters) to a stream.
+            /// </summary>
+            /// <param name="writer">A binary writer connected to a stream open for writing.</param>
             public virtual void SaveStateDict(BinaryWriter writer)
             {
                 writer.Write(InitialLearningRate);
                 writer.Write(LearningRate.Value);
             }
 
+            /// <summary>
+            /// Load the optimizer options (param-group hyperparameters) from a stream.
+            /// </summary>
+            /// <param name="reader">A binary reader connected to a stream open for reading.</param>
             public virtual void LoadStateDict(BinaryReader reader)
             {
                 InitialLearningRate = reader.ReadDouble();
                 LearningRate = reader.ReadDouble();
             }
 
+            /// <summary>
+            /// Load optimizer options (param-group hyperparameters) from another optimizer.
+            /// </summary>
+            /// <param name="source">An optimizer options record.</param>
             public virtual void LoadStateDict(OptimizerOptions source)
             {
                 InitialLearningRate = source.InitialLearningRate;
@@ -500,10 +512,22 @@ namespace TorchSharp
         /// </summary>
         public abstract class OptimizerState
         {
+            /// <summary>
+            /// Save the optimizer parameter state to a stream.
+            /// </summary>
+            /// <param name="writer">A binary writer connected to a stream open for writing.</param>
             public abstract void SaveStateDict(BinaryWriter writer);
 
+            /// <summary>
+            /// Load the optimizer parameter state from a stream.
+            /// </summary>
+            /// <param name="reader">A binary reader connected to a stream open for reading.</param>
             public abstract void LoadStateDict(BinaryReader reader);
 
+            /// <summary>
+            /// Load optimizer parameter state from another optimizer.
+            /// </summary>
+            /// <param name="source">An optimizer state record.</param>
             public abstract void LoadStateDict(OptimizerState source);
 
             /// <summary>

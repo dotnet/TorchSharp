@@ -217,6 +217,10 @@ namespace TorchSharp
                     exp_avg_sq.to(device);
                 }
 
+                /// <summary>
+                /// Load the optimizer parameter state from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
                 public override void LoadStateDict(BinaryReader reader)
                 {
                     step = reader.ReadInt64();
@@ -224,6 +228,10 @@ namespace TorchSharp
                     exp_avg_sq.Load(reader);
                 }
 
+                /// <summary>
+                /// Save the optimizer parameter state to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
                 public override void SaveStateDict(BinaryWriter writer)
                 {
                     writer.Write(this.step);
@@ -231,6 +239,10 @@ namespace TorchSharp
                     exp_avg_sq.Save(writer);
                 }
 
+                /// <summary>
+                /// Load optimizer parameter state from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer state record.</param>
                 public override void LoadStateDict(OptimizerState source)
                 {
                     var st_state = source as State;
@@ -242,6 +254,10 @@ namespace TorchSharp
                     exp_avg_sq = st_state.exp_avg_sq;
                 }
 
+                /// <summary>
+                /// Useful for tests, allows comparison of one state with another.
+                /// </summary>
+                /// <param name="other">The other optimizer state</param>
                 public override bool ApproximatelyEquals(OptimizerState other)
                 {
                     var rhs = other as State;
@@ -292,6 +308,10 @@ namespace TorchSharp
                 public double? eps;
                 public double? weight_decay;
 
+                /// <summary>
+                /// Load optimizer options (param-group hyperparameters) from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer options record.</param>
                 public override void LoadStateDict(OptimizerOptions source)
                 {
                     base.LoadStateDict(source);
@@ -302,6 +322,10 @@ namespace TorchSharp
                     weight_decay = opts.weight_decay;
                 }
 
+                /// <summary>
+                /// Load the optimizer options (param-group hyperparameters) from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
                 public override void LoadStateDict(BinaryReader reader)
                 {
                     base.LoadStateDict(reader);
@@ -311,6 +335,10 @@ namespace TorchSharp
                     weight_decay = reader.ReadDouble();
                 }
 
+                /// <summary>
+                /// Save the optimizer options (param-group hyperparameters) to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
                 public override void SaveStateDict(BinaryWriter writer)
                 {
                     base.SaveStateDict(writer);

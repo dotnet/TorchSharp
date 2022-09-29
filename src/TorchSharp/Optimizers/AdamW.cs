@@ -231,6 +231,10 @@ namespace TorchSharp
                     }
                 }
 
+                /// <summary>
+                /// Load the optimizer parameter state from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
                 public override void LoadStateDict(BinaryReader reader)
                 {
                     step = reader.ReadInt64();
@@ -249,6 +253,10 @@ namespace TorchSharp
                     }
                 }
 
+                /// <summary>
+                /// Save the optimizer parameter state to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
                 public override void SaveStateDict(BinaryWriter writer)
                 {
                     writer.Write(step);
@@ -262,6 +270,10 @@ namespace TorchSharp
                     }
                 }
 
+                /// <summary>
+                /// Load optimizer parameter state from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer state record.</param>
                 public override void LoadStateDict(OptimizerState source)
                 {
                     var st_state = source as State;
@@ -335,6 +347,10 @@ namespace TorchSharp
                 public bool? amsgrad;
                 public bool? maximize;
 
+                /// <summary>
+                /// Load optimizer options (param-group hyperparameters) from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer options record.</param>
                 public override void LoadStateDict(OptimizerOptions source)
                 {
                     base.LoadStateDict(source);
@@ -347,6 +363,10 @@ namespace TorchSharp
                     maximize = opts.maximize;
                 }
 
+                /// <summary>
+                /// Load the optimizer options (param-group hyperparameters) from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
                 public override void LoadStateDict(BinaryReader reader)
                 {
                     base.LoadStateDict(reader);
@@ -358,6 +378,10 @@ namespace TorchSharp
                     maximize = reader.ReadBoolean();
                 }
 
+                /// <summary>
+                /// Save the optimizer options (param-group hyperparameters) to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
                 public override void SaveStateDict(BinaryWriter writer)
                 {
                     base.SaveStateDict(writer);
