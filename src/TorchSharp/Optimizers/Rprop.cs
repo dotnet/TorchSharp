@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using static TorchSharp.torch;
@@ -147,7 +148,7 @@ namespace TorchSharp
 
                         if (grad.is_sparse) throw new ArgumentException("Rprop does not support sparse gradients");
 
-                        var state = _state[param.handle];
+                        var state = (State)_state[param.handle];
 
                         state.step += 1;
 
@@ -178,23 +179,9 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    kvp.Value.Dispose();
+                    ((State)kvp.Value).Dispose();
                 }
             }
-
-            private class State : IDisposable
-            {
-                public long step;
-                public Tensor prev;
-                public Tensor step_size;
-
-                public void Dispose()
-                {
-                    prev.Dispose();
-                    step_size.Dispose();
-                }
-            }
-
             /// <summary>
             /// Add a param group to the Optimizer s param_groups.
             /// </summary>
@@ -224,10 +211,81 @@ namespace TorchSharp
                     var state = new State();
                     _state[p.Handle] = state;
                     state.step = 0;
-                    state.prev = torch.zeros_like(p);
-                    state.step_size = p.new_empty(p.shape).fill_(opt.LearningRate);
+                    state.prev = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.step_size = p.new_empty(p.shape).fill_(opt.LearningRate).DetatchFromDisposeScope();
                 }
             }
+
+            public class State : OptimizerState, IDisposable
+            {
+                public long step;
+                public Tensor prev;
+                public Tensor step_size;
+
+                public void Dispose()
+                {
+                    prev.Dispose();
+                    step_size.Dispose();
+                }
+
+                /// <summary>
+                /// Move all the state to the indicated device.
+                /// </summary>
+                /// <param name="device">The device to move all state to.</param>
+                public override void to(Device device)
+                {
+                    prev.to(device);
+                    step_size.to(device);
+                }
+
+                /// <summary>
+                /// Load the optimizer parameter state from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    step = reader.ReadInt64();
+                    prev.Load(reader);
+                    step_size.Load(reader);
+                }
+
+                /// <summary>
+                /// Save the optimizer parameter state to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    writer.Write(this.step);
+                    prev.Save(writer);
+                    step_size.Save(writer);
+                }
+
+                /// <summary>
+                /// Load optimizer parameter state from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer state record.</param>
+                public override void LoadStateDict(OptimizerState source)
+                {
+                    var st_state = source as State;
+                    prev.Dispose();
+                    step_size.Dispose();
+                    step = st_state.step;
+                    prev = st_state.prev;
+                    step_size = st_state.step_size;
+                }
+
+                /// <summary>
+                /// Useful for tests, allows comparison of one state with another.
+                /// </summary>
+                /// <param name="other">The other optimizer state</param>
+                /// <returns></returns>
+                public override bool ApproximatelyEquals(OptimizerState other)
+                {
+                    var rhs = other as State;
+                    return (rhs is not null) && step == rhs.step && prev.allclose(rhs.prev) && step_size.allclose(rhs.step_size);
+                }
+            }
+
 
             public class Options : OptimizerOptions
             {
@@ -235,6 +293,46 @@ namespace TorchSharp
                 public double? etaplus;
                 public double? min_step;
                 public double? max_step;
+
+                /// <summary>
+                /// Save the optimizer options (param-group hyperparameters) to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    base.SaveStateDict(writer);
+                    writer.Write(etaminus.Value);
+                    writer.Write(etaplus.Value);
+                    writer.Write(min_step.Value);
+                    writer.Write(max_step.Value);
+                }
+
+                /// <summary>
+                /// Load the optimizer options (param-group hyperparameters) from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    base.LoadStateDict(reader);
+                    etaminus = reader.ReadDouble();
+                    etaplus = reader.ReadDouble();
+                    min_step = reader.ReadDouble();
+                    max_step = reader.ReadDouble();
+                }
+
+                /// <summary>
+                /// Load optimizer options (param-group hyperparameters) from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer options record.</param>
+                public override void LoadStateDict(OptimizerOptions source)
+                {
+                    base.LoadStateDict(source);
+                    var opts = source as Options;
+                    etaminus = opts.etaminus;
+                    etaplus = opts.etaplus;
+                    min_step = opts.min_step;
+                    max_step = opts.max_step;
+                }
             }
 
             public class ParamGroup : ParamGroup<Options>
@@ -248,8 +346,6 @@ namespace TorchSharp
                 {
                 }
             }
-
-            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
 
         }
     }

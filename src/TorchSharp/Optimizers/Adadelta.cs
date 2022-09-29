@@ -6,6 +6,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
+    using System.IO;
     using Modules;
 
     public static partial class torch
@@ -137,7 +138,7 @@ namespace TorchSharp
 
                         if (grad.is_sparse) throw new ArgumentException("Adadelta does not support sparse gradients");
 
-                        var state = _state[param.handle];
+                        var state = (State)_state[param.handle];
 
                         var square_avg = state.square_avg;
                         var acc_delta = state.acc_delta;
@@ -161,11 +162,11 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    kvp.Value.Dispose();
+                    ((State)kvp.Value).Dispose();
                 }
             }
 
-            private class State : IDisposable
+            public class State : OptimizerState, IDisposable
             {
                 public long step;
                 public Tensor square_avg;
@@ -175,6 +176,61 @@ namespace TorchSharp
                 {
                     square_avg.Dispose();
                     acc_delta.Dispose();
+                }
+
+                /// <summary>
+                /// Move all the state to the indicated device.
+                /// </summary>
+                /// <param name="device">The device to move all state to.</param>
+                public override void to(Device device)
+                {
+                    square_avg.to(device);
+                    acc_delta.to(device);
+                }
+
+                /// <summary>
+                /// Load the optimizer parameter state from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    step = reader.ReadInt64();
+                    square_avg.Load(reader);
+                    acc_delta.Load(reader);
+                }
+
+                /// <summary>
+                /// Save the optimizer parameter state to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    writer.Write(step);
+                    square_avg.Save(writer);
+                    acc_delta.Save(writer);
+                }
+
+                /// <summary>
+                /// Load optimizer parameter state from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer state record.</param>
+                public override void LoadStateDict(OptimizerState source)
+                {
+                    var st_state = source as State;
+                    square_avg.Dispose();
+                    acc_delta.Dispose();
+
+                    step = st_state.step;
+                    square_avg = st_state.square_avg;
+                    acc_delta = st_state.acc_delta;
+                }
+
+                public override bool ApproximatelyEquals(OptimizerState other)
+                {
+                    var rhs = other as State;
+                    return (rhs is not null) && step == rhs.step &&
+                        square_avg.allclose(rhs.square_avg) &&
+                        acc_delta.allclose(rhs.acc_delta);
                 }
             }
 
@@ -206,8 +262,8 @@ namespace TorchSharp
                     var state = new State();
                     _state[p.Handle] = state;
                     state.step = 0;
-                    state.square_avg = torch.zeros_like(p);
-                    state.acc_delta = torch.zeros_like(p);
+                    state.square_avg = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.acc_delta = torch.zeros_like(p).DetatchFromDisposeScope();
                 }
             }
 
@@ -216,6 +272,43 @@ namespace TorchSharp
                 public double? rho;
                 public double? eps;
                 public double? weight_decay;
+
+                /// <summary>
+                /// Load optimizer options (param-group hyperparameters) from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer options record.</param>
+                public override void LoadStateDict(OptimizerOptions source)
+                {
+                    base.LoadStateDict(source);
+                    var opts = source as Options;
+                    rho = opts.rho;
+                    eps = opts.eps;
+                    weight_decay = opts.weight_decay;
+                }
+
+                /// <summary>
+                /// Load the optimizer options (param-group hyperparameters) from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    base.LoadStateDict(reader);
+                    rho = reader.ReadDouble();
+                    eps = reader.ReadDouble();
+                    weight_decay = reader.ReadDouble();
+                }
+
+                /// <summary>
+                /// Save the optimizer options (param-group hyperparameters) to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    base.SaveStateDict(writer);
+                    writer.Write(rho.Value);
+                    writer.Write(eps.Value);
+                    writer.Write(weight_decay.Value);
+                }
             }
 
             public class ParamGroup : ParamGroup<Options>
@@ -229,8 +322,6 @@ namespace TorchSharp
                 {
                 }
             }
-
-            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
     }
 }

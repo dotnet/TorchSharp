@@ -98,7 +98,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="closure">A closure that reevaluates the model and returns the loss. Optional for most optimizers.</param>
             /// <returns></returns>
-            public override Tensor step(Func<Tensor> closure = null)
+            public override Tensor step(Func<Tensor> closure)
             {
                 if (closure == null)
                     throw new ArgumentNullException("'closure' must be non-null when using the LBFGS optimizer. See: https://pytorch.org/docs/1.9.0/optim.html");

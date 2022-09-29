@@ -1677,7 +1677,7 @@ namespace TorchSharp
             var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
 
             double learning_rate = 0.00004f;
-            var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
+            var optimizer = (torch.optim.Optimizer)torch.optim.LBFGS(seq.parameters(), learning_rate);
             Assert.Throws<ArgumentNullException>(() => optimizer.step());
         }
 
@@ -1696,6 +1696,8 @@ namespace TorchSharp
 
             float initialLoss = loss(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
+
+            Assert.Throws<ArgumentNullException>(() => optimizer.step(null));
 
             for (int i = 0; i < 10; i++) {
 

@@ -2,10 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using static TorchSharp.torch;
 
 namespace TorchSharp
 {
+    using System.IO;
     using Modules;
 
     public static partial class torch
@@ -73,6 +75,7 @@ namespace TorchSharp
     namespace Modules
     {
         using static torch.optim;
+        using static TorchSharp.torchvision;
 
         public class SGD : OptimizerHelper, IMomentum
         {
@@ -147,7 +150,7 @@ namespace TorchSharp
 
                     foreach (var param in group.Parameters) {
 
-                        var state = _state[param.handle];
+                        var state = (State)_state[param.handle];
 
                         var grad = param.grad();
 
@@ -187,16 +190,99 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    if (kvp.Value.momentum_buffer is not null) {
-                        kvp.Value.momentum_buffer.Dispose();
+                    var st = (State)kvp.Value;
+                    if (st.momentum_buffer is not null) {
+                        st.momentum_buffer.Dispose();
                     }
                 }
                 _state.Clear();
             }
 
-            private class State
+            public class State : OptimizerState, IDisposable
             {
                 public Tensor momentum_buffer;
+
+                public void Dispose()
+                {
+                    momentum_buffer.Dispose();
+                }
+
+                /// <summary>
+                /// Move all the state to the indicated device.
+                /// </summary>
+                /// <param name="device">The device to move all state to.</param>
+                public override void to(Device device)
+                {
+                    if (momentum_buffer is not null)
+                        momentum_buffer.to(device);
+                }
+
+                /// <summary>
+                /// Load the optimizer parameter state from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    var hasMomentumBuffer = reader.ReadBoolean();
+                    if (hasMomentumBuffer) {
+                        var ndim = reader.ReadInt32();
+                        var shape = new long[ndim];
+
+                        for (int i = 0; i < ndim; i++)
+                            shape[i] = reader.ReadInt64();
+
+                        if (momentum_buffer is null) {
+                            momentum_buffer = torch.empty(shape).DetatchFromDisposeScope();
+                        }
+                        momentum_buffer.Load(reader);
+                    }
+                    else {
+                        if (momentum_buffer is not null)
+                            momentum_buffer.Dispose();
+                        momentum_buffer = null;
+                    }
+                }
+
+                /// <summary>
+                /// Save the optimizer parameter state to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    if (momentum_buffer is not null) {
+                        writer.Write(true);
+                        writer.Write(momentum_buffer.shape.Length);
+                        for (int i = 0; i < momentum_buffer.shape.Length; i++)
+                            writer.Write(momentum_buffer.shape[i]);
+                        momentum_buffer.Save(writer);
+                    } else {
+                        writer.Write(false);
+                    }
+                }
+
+                /// <summary>
+                /// Load optimizer parameter state from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer state record.</param>
+                public override void LoadStateDict(OptimizerState source)
+                {
+                    var st_state = source as State;
+                    if (momentum_buffer is not null) {
+                        momentum_buffer.Dispose();
+                    }
+                    momentum_buffer = st_state.momentum_buffer;
+                }
+
+                /// <summary>
+                /// Useful for tests, allows comparison of one state with another.
+                /// </summary>
+                /// <param name="other">The other optimizer state</param>
+                /// <returns></returns>
+                public override bool ApproximatelyEquals(OptimizerState other)
+                {
+                    var rhs = other as State;
+                    return (rhs is not null) && (momentum_buffer is null || momentum_buffer.allclose(rhs.momentum_buffer));
+                }
             }
 
             /// <summary>
@@ -239,6 +325,49 @@ namespace TorchSharp
                 public double? weight_decay;
                 public bool? nesterov;
                 public bool? maximize;
+
+                /// <summary>
+                /// Load the optimizer options (param-group hyperparameters) from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    base.LoadStateDict(reader);
+                    momentum = reader.ReadDouble();
+                    dampening = reader.ReadDouble();
+                    weight_decay = reader.ReadDouble();
+                    nesterov = reader.ReadBoolean();
+                    maximize = reader.ReadBoolean();
+                }
+
+                /// <summary>
+                /// Load optimizer options (param-group hyperparameters) from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer options record.</param>
+                public override void LoadStateDict(OptimizerOptions source)
+                {
+                    base.LoadStateDict(source);
+                    var opts = source as Options;
+                    momentum = opts.momentum;
+                    dampening = opts.dampening;
+                    weight_decay = opts.weight_decay;
+                    nesterov = opts.nesterov;
+                    maximize = opts.maximize;
+                }
+
+                /// <summary>
+                /// Save the optimizer options (param-group hyperparameters) to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    base.SaveStateDict(writer);
+                    writer.Write(momentum.Value);
+                    writer.Write(dampening.Value);
+                    writer.Write(weight_decay.Value);
+                    writer.Write(nesterov.Value);
+                    writer.Write(maximize.Value);
+                }
             }
 
             public class ParamGroup : ParamGroup<Options>, IMomentum
@@ -254,8 +383,6 @@ namespace TorchSharp
 
                 public double Momentum { get => Options.momentum.Value; set => Options.momentum = value; }
             }
-
-            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
 
             public double Momentum { get => (_defaults as Options).momentum.Value; set => (_defaults as Options).momentum = value; }
         }
