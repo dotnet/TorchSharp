@@ -1,7 +1,13 @@
 [![Gitter](https://badges.gitter.im/dotnet/TorchSharp.svg)](https://gitter.im/dotnet/TorchSharp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 <br/>
 [![Build Status](https://dotnet.visualstudio.com/TorchSharp/_apis/build/status/dotnet.TorchSharp?branchName=main)](https://dotnet.visualstudio.com/TorchSharp/_build/latest?definitionId=174&branchName=main)
-
+<br/>
+[![TorchSharp](https://img.shields.io/nuget/vpre/TorchSharp.svg?cacheSeconds=3600&label=TorchSharp%20nuget)](https://www.nuget.org/packages/TorchSharp)
+[![TorchSharp-cpu](https://img.shields.io/nuget/vpre/TorchSharp-cpu.svg?cacheSeconds=3600&label=TorchSharp-cpu%20nuget)](https://www.nuget.org/packages/TorchSharp-cpu)
+[![TorchSharp-cuda-windows](https://img.shields.io/nuget/vpre/TorchSharp-cuda-windows.svg?cacheSeconds=3600&label=TorchSharp-cuda-windows%20nuget)](https://www.nuget.org/packages/TorchSharp-cuda-windows)
+[![TorchSharp-cuda-linux](https://img.shields.io/nuget/vpre/TorchSharp-cuda-linux.svg?cacheSeconds=3600&label=TorchSharp-cuda-linux%20nuget)](https://www.nuget.org/packages/TorchSharp-cuda-linux)
+<br/>
+<br/>
 Please check the [Release Notes](RELEASENOTES.md) file for news on what's been updated in each new release.
 
 __TorchSharp is now in the .NET Foundation!__

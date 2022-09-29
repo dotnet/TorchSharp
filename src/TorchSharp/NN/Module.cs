@@ -926,7 +926,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public Module save(string location, IList<string> skip = null)
                 {
-                    using var stream = System.IO.File.OpenWrite(location);
+                    using var stream = System.IO.File.Create(location);
                     using var writer = new System.IO.BinaryWriter(stream);
                     save(writer, skip);
 
