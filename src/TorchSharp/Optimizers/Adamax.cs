@@ -273,8 +273,8 @@ namespace TorchSharp
                     var state = new State();
                     _state[p.Handle] = state;
                     state.step = 0;
-                    state.exp_avg = torch.zeros_like(p);
-                    state.exp_inf = torch.zeros_like(p);
+                    state.exp_avg = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.exp_inf = torch.zeros_like(p).DetatchFromDisposeScope();
                 }
             }
 

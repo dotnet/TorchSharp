@@ -318,10 +318,10 @@ namespace TorchSharp
                     var state = new State();
                     _state[p.Handle] = state;
                     state.step = 0;
-                    state.exp_avg = torch.zeros_like(p);
-                    state.exp_avg_sq = torch.zeros_like(p);
+                    state.exp_avg = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.exp_avg_sq = torch.zeros_like(p).DetatchFromDisposeScope();
                     if (opt.amsgrad.Value) {
-                        state.max_exp_avg_sq = torch.zeros_like(p);
+                        state.max_exp_avg_sq = torch.zeros_like(p).DetatchFromDisposeScope();
                     }
                 }
             }

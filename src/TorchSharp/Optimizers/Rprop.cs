@@ -216,8 +216,8 @@ namespace TorchSharp
                     var state = new State();
                     _state[p.Handle] = state;
                     state.step = 0;
-                    state.prev = torch.zeros_like(p);
-                    state.step_size = p.new_empty(p.shape).fill_(opt.LearningRate);
+                    state.prev = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.step_size = p.new_empty(p.shape).fill_(opt.LearningRate).DetatchFromDisposeScope();
                 }
             }
 

@@ -295,9 +295,9 @@ namespace TorchSharp
                 foreach (var p in param_group.Parameters) {
                     var state = new State();
                     _state[p.Handle] = state;
-                    state.square_avg = torch.zeros_like(p);
-                    state.grad_avg = torch.zeros_like(p);
-                    state.momentum_buffer = torch.zeros_like(p);
+                    state.square_avg = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.grad_avg = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.momentum_buffer = torch.zeros_like(p).DetatchFromDisposeScope();
                 }
             }
             public class Options : Modules.OptimizerOptions

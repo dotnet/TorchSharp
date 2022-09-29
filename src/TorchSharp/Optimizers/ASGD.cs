@@ -271,7 +271,7 @@ namespace TorchSharp
                     state.step = 0;
                     state.eta = param_group.LearningRate;
                     state.mu = 1;
-                    state.ax = torch.zeros_like(p);
+                    state.ax = torch.zeros_like(p).DetatchFromDisposeScope();
                 }
             }
 

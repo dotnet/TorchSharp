@@ -228,7 +228,7 @@ namespace TorchSharp
                             shape[i] = reader.ReadInt64();
 
                         if (momentum_buffer is null) {
-                            momentum_buffer = torch.empty(shape);
+                            momentum_buffer = torch.empty(shape).DetatchFromDisposeScope();
                         }
                         momentum_buffer.Load(reader);
                     }
