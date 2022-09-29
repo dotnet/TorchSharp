@@ -10,6 +10,8 @@ using Tensorboard;
 using static TorchSharp.torch.utils.tensorboard;
 using ICSharpCode.SharpZipLib;
 using System.Collections.Generic;
+using Google.Protobuf.WellKnownTypes;
+using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 #nullable enable
 
@@ -23,61 +25,77 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadLinear1()
         {
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var linear = Linear(100, 10, true);
-            var params0 = linear.parameters();
-            linear.save(".model.ts");
+            var location = "TestSaveLoadLinear1.ts";
 
-            var loadedLinear = Linear(100, 10, true);
-            loadedLinear.load(".model.ts");
+            if (File.Exists(location)) File.Delete(location);
 
-            var params1 = loadedLinear.parameters();
-            Assert.Equal(params0, params1);
+            try {
+                var linear = Linear(100, 10, true);
+                var params0 = linear.parameters();
+                linear.save(location);
 
-            loadedLinear = Linear(100, 10, true);
-            loadedLinear.load(".model.ts", skip: new[] { "weight" });
-            var params2 = loadedLinear.parameters();
-            File.Delete(".model.ts");
+                var loadedLinear = Linear(100, 10, true);
+                loadedLinear.load(location);
 
-            Assert.NotEqual(params0.First(), params2.First());
-            Assert.Equal(params0.Skip(1).First(), params2.Skip(1).First());
+                var params1 = loadedLinear.parameters();
+                Assert.Equal(params0, params1);
+
+                loadedLinear = Linear(100, 10, true);
+                loadedLinear.load(location, skip: new[] { "weight" });
+                var params2 = loadedLinear.parameters();
+
+                Assert.NotEqual(params0.First(), params2.First());
+                Assert.Equal(params0.Skip(1).First(), params2.Skip(1).First());
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
         }
 
         [Fact]
         public void TestSaveLoadLinear2()
         {
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var linear = Linear(100, 10, true);
-            var params0 = linear.parameters();
-            linear.save(".model.ts", skip: new[] { "weight" });
+            var location = "TestSaveLoadLinear2.ts";
 
-            var loadedLinear = Linear(100, 10, true);
-            Assert.Throws<ArgumentException>(() => loadedLinear.load(".model.ts", strict: true));
-            loadedLinear.load(".model.ts", strict: false);
-            var params2 = loadedLinear.parameters();
-            File.Delete(".model.ts");
+            if (File.Exists(location)) File.Delete(location);
+            try {
+                var linear = Linear(100, 10, true);
+                var params0 = linear.parameters();
+                linear.save(location, skip: new[] { "weight" });
 
-            Assert.NotEqual(params0.First(), params2.First());
-            Assert.Equal(params0.Skip(1).First(), params2.Skip(1).First());
+                var loadedLinear = Linear(100, 10, true);
+                Assert.Throws<ArgumentException>(() => loadedLinear.load(location, strict: true));
+                loadedLinear.load(location, strict: false);
+                var params2 = loadedLinear.parameters();
+
+                Assert.NotEqual(params0.First(), params2.First());
+                Assert.Equal(params0.Skip(1).First(), params2.Skip(1).First());
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
         }
 
         [Fact]
         public void TestSaveLoadLinear3()
         {
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            using var linear = Linear(100, 10, true);
-            var params0 = linear.parameters();
-            linear.save(".model.ts");
+            var location = "TestSaveLoadLinear3.ts";
+            if (File.Exists(location)) File.Delete(location);
 
-            var loadedLinear = Linear(10, 10, true);    // Mismatched shape, shouldn't matter when skipped.
-            Assert.Throws<ArgumentException>(() => loadedLinear.load(".model.ts"));
+            try {
+                using var linear = Linear(100, 10, true);
+                var params0 = linear.parameters();
+                linear.save(location);
 
-            loadedLinear.load(".model.ts", skip: new[] { "weight" });
-            var params2 = loadedLinear.parameters();
-            File.Delete(".model.ts");
+                var loadedLinear = Linear(10, 10, true);    // Mismatched shape, shouldn't matter when skipped.
+                Assert.Throws<ArgumentException>(() => loadedLinear.load(location));
 
-            Assert.NotEqual(params0.First(), params2.First());
-            Assert.Equal(params0.Skip(1).First(), params2.Skip(1).First());
+                loadedLinear.load(location, skip: new[] { "weight" });
+                var params2 = loadedLinear.parameters();
+
+                Assert.NotEqual(params0.First(), params2.First());
+                Assert.Equal(params0.Skip(1).First(), params2.Skip(1).First());
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
         }
 
 
@@ -116,21 +134,26 @@ namespace TorchSharp
         [Fact]
         public void TestSaveJIT()
         {
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var location = "TestSaveJIT.ts";
+            if (File.Exists(location)) File.Delete(location);
 
-            // One linear layer followed by ReLU.
-            using var m1 = torch.jit.load(@"linrelu.script.dat");
+            try {
 
-            torch.jit.save(m1, ".model.ts");
-            using var m2 = torch.jit.load(@".model.ts");
+                // One linear layer followed by ReLU.
+                using var m1 = torch.jit.load(@"linrelu.script.dat");
 
-            var t = m2.forward(torch.ones(10));
+                torch.jit.save(m1, location);
+                using var m2 = torch.jit.load(location);
 
-            Assert.Equal(new long[] { 6 }, t.shape);
-            Assert.Equal(torch.float32, t.dtype);
-            Assert.True(torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }).allclose(t));
+                var t = m2.forward(torch.ones(10));
 
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+                Assert.Equal(new long[] { 6 }, t.shape);
+                Assert.Equal(torch.float32, t.dtype);
+                Assert.True(torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }).allclose(t));
+
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
         }
 
         [Fact]
@@ -196,16 +219,20 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadConv2D()
         {
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            using var conv = Conv2d(100, 10, 5);
-            var params0 = conv.parameters();
-            conv.save(".model.ts");
-            using var loaded = Conv2d(100, 10, 5);
-            loaded.load(".model.ts");
-            var params1 = loaded.parameters();
-            File.Delete(".model.ts");
+            var location = "TestSaveLoadConv2D.ts";
+            if (File.Exists(location)) File.Delete(location);
+            try {
+                using var conv = Conv2d(100, 10, 5);
+                var params0 = conv.parameters();
+                conv.save(location);
+                using var loaded = Conv2d(100, 10, 5);
+                loaded.load(location);
+                var params1 = loaded.parameters();
 
-            Assert.Equal(params0, params1);
+                Assert.Equal(params0, params1);
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
         }
 
         [Fact]
@@ -226,16 +253,20 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadSequential()
         {
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            using var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
-            var params0 = conv.parameters();
-            conv.save(".model.ts");
-            using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
-            loaded.load(".model.ts");
-            var params1 = loaded.parameters();
-            File.Delete(".model.ts");
+            var location = "TestSaveLoadSequential.ts";
+            if (File.Exists(location)) File.Delete(location);
+            try {
+                using var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+                var params0 = conv.parameters();
+                conv.save(location);
+                using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+                loaded.load(location);
+                var params1 = loaded.parameters();
 
-            Assert.Equal(params0, params1);
+                Assert.Equal(params0, params1);
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
         }
 
         [Fact]
@@ -310,29 +341,31 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadCustomWithParameters()
         {
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
+            var location = "TestSaveLoadCustomWithParameters.ts";
+            if (File.Exists(location)) File.Delete(location);
 
-            using var original = new TestModule1();
-            Assert.True(original.has_parameter("test"));
+            try {
+                using var original = new TestModule1();
+                Assert.True(original.has_parameter("test"));
 
-            var params0 = original.parameters();
-            Assert.True(params0.ToArray().ToArray()[0].requires_grad);
-            original.save(".model.ts");
+                var params0 = original.parameters();
+                Assert.True(params0.ToArray().ToArray()[0].requires_grad);
+                original.save(location);
 
-            using var loaded = new TestModule1();
-            Assert.True(loaded.has_parameter("test"));
+                using var loaded = new TestModule1();
+                Assert.True(loaded.has_parameter("test"));
 
-            var params1 = loaded.parameters();
-            Assert.True(params1.ToArray()[0].requires_grad);
-            Assert.NotEqual(params0.ToArray(), params1);
+                var params1 = loaded.parameters();
+                Assert.True(params1.ToArray()[0].requires_grad);
+                Assert.NotEqual(params0.ToArray(), params1);
 
-            loaded.load(".model.ts");
-            var params2 = loaded.parameters();
-            Assert.True(params2.ToArray()[0].requires_grad);
-
-            File.Delete(".model.ts");
-
-            Assert.Equal(params0, params2);
+                loaded.load(location);
+                var params2 = loaded.parameters();
+                Assert.True(params2.ToArray()[0].requires_grad);
+                Assert.Equal(params0, params2);
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
         }
 
         private class TestModule1 : Module
@@ -354,47 +387,63 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadError_1()
         {
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var linear = Linear(100, 10, true);
-            var params0 = linear.parameters();
-            linear.save(".model.ts");
-            var loaded = Conv2d(100, 10, 5);
-            Assert.Throws<ArgumentException>(() => loaded.load(".model.ts"));
-            File.Delete(".model.ts");
+            var location = "TestSaveLoadError_1.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            try {
+                var linear = Linear(100, 10, true);
+                var params0 = linear.parameters();
+                linear.save(location);
+                var loaded = Conv2d(100, 10, 5);
+                Assert.Throws<ArgumentException>(() => loaded.load(location));
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
         }
 
         [Fact]
         public void TestSaveLoadError_2()
         {
+            var location = "TestSaveLoadError_2.ts";
+
             // Submodule count mismatch
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var linear = Sequential(("linear1", Linear(100, 10, true)));
-            var params0 = linear.parameters();
-            linear.save(".model.ts");
-            var loaded = Sequential(("linear1", Linear(100, 10, true)), ("conv1", Conv2d(100, 10, 5)));
-            Assert.Throws<ArgumentException>(() => loaded.load(".model.ts"));
-            // Shouldn't get an error for this:
-            loaded.load(".model.ts", strict: false);
-            File.Delete(".model.ts");
+            if (File.Exists(location)) File.Delete(location);
+            try {
+                var linear = Sequential(("linear1", Linear(100, 10, true)));
+                var params0 = linear.parameters();
+                linear.save(location);
+                var loaded = Sequential(("linear1", Linear(100, 10, true)), ("conv1", Conv2d(100, 10, 5)));
+                Assert.Throws<ArgumentException>(() => loaded.load(location));
+                // Shouldn't get an error for this:
+                loaded.load(location, strict: false);
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
         }
 
         [Fact]
         public void TestSaveLoadError_3()
         {
+            var location = "TestSaveLoadError_3.ts";
             // Submodule name mismatch
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var linear = Sequential(("linear1", Linear(100, 10, true)));
-            var params0 = linear.parameters();
-            linear.save(".model.ts");
-            var loaded = Sequential(("linear2", Linear(100, 10, true)));
-            Assert.Throws<ArgumentException>(() => loaded.load(".model.ts"));
-            File.Delete(".model.ts");
+            if (File.Exists(location)) File.Delete(location);
+            try {
+                var linear = Sequential(("linear1", Linear(100, 10, true)));
+                var params0 = linear.parameters();
+                linear.save(location);
+                var loaded = Sequential(("linear2", Linear(100, 10, true)));
+                Assert.Throws<ArgumentException>(() => loaded.load(location));
+                File.Delete(location);
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
         }
 
         [Fact]
         public void TestSaveLoadSequence()
         {
             if (File.Exists(".model-list.txt")) File.Delete(".model-list.txt");
+
             var lin1 = Linear(100, 10, true);
             var lin2 = Linear(10, 5, true);
             var seq = Sequential(("lin1", lin1), ("lin2", lin2));
@@ -411,114 +460,61 @@ namespace TorchSharp
             Assert.Equal(params0, params1);
         }
 
-        [Fact(Skip = "The native saving/loading of models does not seem to work right now.")]
-        public void TestNativeSaveLoad()
-        {
-            if (File.Exists(".model.native.bin")) File.Delete(".model.native.bin");
-            var linear = Linear(100, 10, true);
-            var params0 = linear.parameters();
-            linear.Save(".model.native.bin");
-
-            var lin3 = Modules.Linear.Load(".model.native.bin");
-
-            File.Delete(".model.native.bin");
-
-            var params1 = lin3.parameters();
-            Assert.Equal(params0, params1);
-        }
-
-        [Fact(Skip = "CIFAR10 data too big to keep in repo")]
-        public void TestCIFAR10Loader()
-        {
-            using (var train = Data.Loader.CIFAR10("../../../../src/Examples/Data", 16)) {
-                Assert.NotNull(train);
-
-                var size = train.Size();
-                int i = 0;
-
-                foreach (var (data, target) in train) {
-                    i++;
-
-                    Assert.Equal(data.shape, new long[] { 16, 3, 32, 32 });
-                    Assert.Equal(target.shape, new long[] { 16 });
-                    Assert.True(target.data<int>().ToArray().Where(x => x >= 0 && x < 10).Count() == 16);
-
-                    data.Dispose();
-                    target.Dispose();
-                }
-
-                Assert.Equal(size, i * 16);
-            }
-        }
-
-        [Fact(Skip = "MNIST data too big to keep in repo")]
-        public void TestMNISTLoaderWithEpochs()
-        {
-            using (var train = Data.Loader.MNIST("../../../../test/data/MNIST", 32)) {
-                var size = train.Size();
-                var epochs = 10;
-
-                int i = 0;
-
-                for (int e = 0; e < epochs; e++) {
-                    foreach (var (data, target) in train) {
-                        i++;
-
-                        Assert.Equal(data.shape, new long[] { 32, 1, 28, 28 });
-                        Assert.Equal(target.shape, new long[] { 32 });
-
-                        data.Dispose();
-                        target.Dispose();
-                    }
-                }
-
-                Assert.Equal(size * epochs, i * 32);
-            }
-        }
-
         [Fact]
         public void TestSaveLoadGruOnCPU()
         {
+            var location = "TestSaveLoadGruOnCPU.ts";
             // Works on CPU
-            if (File.Exists(".model.ts")) File.Delete(".model.ts");
-            var gru = GRU(2, 2, 2);
-            var params0 = gru.parameters();
-            gru.save(".model.ts");
+            if (File.Exists(location)) File.Delete(location);
+            try {
+                var gru = GRU(2, 2, 2);
+                var params0 = gru.parameters();
+                gru.save(location);
 
-            var loadedGru = GRU(2, 2, 2);
-            loadedGru.load(".model.ts");
-            var params1 = loadedGru.parameters();
-            File.Delete(".model.ts");
-            Assert.Equal(params0, params1);
+                var loadedGru = GRU(2, 2, 2);
+                loadedGru.load(location);
+                var params1 = loadedGru.parameters();
+                File.Delete(location);
+                Assert.Equal(params0, params1);
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
         }
 
         [Fact]
         public void TestSaveLoadGruOnCUDA()
         {
+            var location = "TestSaveLoadGruOnCUDA.ts";
             if (torch.cuda.is_available()) {
+
                 // Fails on CUDA
-                if (File.Exists(".model.ts")) File.Delete(".model.ts");
-                var gru = GRU(2, 2, 2);
-                gru.to(DeviceType.CUDA);
-                var params0 = gru.parameters().ToArray();
-                Assert.Equal(DeviceType.CUDA, params0[0].device_type);
+                if (File.Exists(location)) File.Delete(location);
+                try {
+                    var gru = GRU(2, 2, 2);
+                    gru.to(DeviceType.CUDA);
+                    var params0 = gru.parameters().ToArray();
+                    Assert.Equal(DeviceType.CUDA, params0[0].device_type);
 
-                gru.save(".model.ts");
+                    gru.save(location);
 
-                // Make sure the model is still on the GPU when we come back.
+                    // Make sure the model is still on the GPU when we come back.
 
-                params0 = gru.parameters().ToArray();
-                Assert.Equal(DeviceType.CUDA, params0[0].device_type);
+                    params0 = gru.parameters().ToArray();
+                    Assert.Equal(DeviceType.CUDA, params0[0].device_type);
 
-                var loadedGru = GRU(2, 2, 2);
-                loadedGru.to(DeviceType.CUDA);
-                loadedGru.load(".model.ts");
-                var params1 = loadedGru.parameters().ToArray();
+                    var loadedGru = GRU(2, 2, 2);
+                    loadedGru.to(DeviceType.CUDA);
+                    loadedGru.load(location);
+                    var params1 = loadedGru.parameters().ToArray();
 
-                Assert.Equal(DeviceType.CUDA, params1[0].device_type);
+                    Assert.Equal(DeviceType.CUDA, params1[0].device_type);
 
-                File.Delete(".model.ts");
-                Assert.Equal(params0, params1);
+                    File.Delete(location);
+                    Assert.Equal(params0, params1);
+                } finally {
+                    if (File.Exists(location)) File.Delete(location);
+                }
+
             }
         }
 
@@ -541,7 +537,7 @@ namespace TorchSharp
 
         [Fact]
         public void TestTensorBoardScalar()
-        { 
+        {
             var writer = torch.utils.tensorboard.SummaryWriter();
             Assert.StartsWith("runs", writer.LogDir);
 
@@ -551,7 +547,7 @@ namespace TorchSharp
 
             // Comment this out to look at the output data in tensorboard
             if (Directory.Exists(writer.LogDir)) {
-                Directory.Delete(writer.LogDir, recursive:true);
+                Directory.Delete(writer.LogDir, recursive: true);
             }
         }
 
@@ -577,7 +573,7 @@ namespace TorchSharp
         [Fact]
         public void TestTensorBoardScalars2()
         {
-            var writer = torch.utils.tensorboard.SummaryWriter(); 
+            var writer = torch.utils.tensorboard.SummaryWriter();
             for (var i = 0; i < 100; i++) {
                 float f = i;
                 writer.add_scalars("run_14h", new[] {
@@ -590,6 +586,1469 @@ namespace TorchSharp
             // Comment this out to look at the output data in tensorboard
             if (Directory.Exists(writer.LogDir)) {
                 Directory.Delete(writer.LogDir, recursive: true);
+            }
+        }
+
+        [Fact]
+        public void TestSaveRprop()
+        {
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Rprop(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Rprop(seq.parameters(), 0.5, 0.01, 1.25, 1e-8, 35);
+            optim2.load_state_dict(sd);
+
+            var sd2 = optim2.state_dict();
+
+            Assert.Multiple(
+            () => Assert.Equal(4, sd2.State.Count),
+            () => Assert.Single(sd2.Options)
+            );
+
+            for (int i = 0; i < sd.Options.Count; i++) {
+                var opt = sd.Options[i] as Modules.Rprop.Options;
+                var opt2 = sd2.Options[i] as Modules.Rprop.Options;
+                Assert.Multiple(
+                () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                () => Assert.Equal(opt!.etaminus, opt2!.etaminus),
+                () => Assert.Equal(opt!.etaplus, opt2!.etaplus),
+                () => Assert.Equal(opt!.min_step, opt2!.min_step),
+                () => Assert.Equal(opt!.max_step, opt2!.max_step)
+                );
+            }
+            for (int i = 0; i < sd.State.Count; i++) {
+                var opt = sd.State[i] as Modules.Rprop.State;
+                var opt2 = sd2.State[i] as Modules.Rprop.State;
+                Assert.True(opt!.ApproximatelyEquals(opt2));
+            }
+        }
+
+        [Fact]
+        public void TestSaveRpropFile()
+        {
+            var location = ".TestSaveRpropFile1.ts";
+
+            if (File.Exists(location)) File.Delete(location);
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Rprop(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Rprop(seq.parameters(), 0.5, 0.01, 1.25, 1e-8, 35);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.Rprop.Options;
+                    var opt2 = sd2.Options[i] as Modules.Rprop.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.etaminus, opt2!.etaminus),
+                    () => Assert.Equal(opt!.etaplus, opt2!.etaplus),
+                    () => Assert.Equal(opt!.min_step, opt2!.min_step),
+                    () => Assert.Equal(opt!.max_step, opt2!.max_step)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.Rprop.State;
+                    var opt2 = sd2.State[i] as Modules.Rprop.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveSGD()
+        {
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.SGD(seq.parameters(), 0.01);
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.SGD(seq.parameters(), 0.5, 0.01, 1.25, 1e-8);
+            optim2.load_state_dict(sd);
+
+            var sd2 = optim2.state_dict();
+
+            Assert.Multiple(
+            () => Assert.Equal(4, sd2.State.Count),
+            () => Assert.Single(sd2.Options)
+            );
+
+            for (int i = 0; i < sd.Options.Count; i++) {
+                var opt = sd.Options[i] as Modules.SGD.Options;
+                var opt2 = sd2.Options[i] as Modules.SGD.Options;
+                Assert.Multiple(
+                () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                () => Assert.Equal(opt!.momentum, opt2!.momentum),
+                () => Assert.Equal(opt!.dampening, opt2!.dampening),
+                () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                );
+            }
+            for (int i = 0; i < sd.State.Count; i++) {
+                var opt = sd.State[i] as Modules.SGD.State;
+                var opt2 = sd2.State[i] as Modules.SGD.State;
+                Assert.True(opt!.ApproximatelyEquals(opt2));
+            }
+        }
+
+        [Fact]
+        public void TestSaveSGDFile()
+        {
+            var location = ".TestSaveSGDFile.ts";
+
+            if (File.Exists(location)) File.Delete(location);
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.SGD(seq.parameters(), 0.01);
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.SGD(seq.parameters(), 0.5, 0.01, 1.25, 1e-8);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.SGD.Options;
+                    var opt2 = sd2.Options[i] as Modules.SGD.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.momentum, opt2!.momentum),
+                    () => Assert.Equal(opt!.dampening, opt2!.dampening),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.SGD.State;
+                    var opt2 = sd2.State[i] as Modules.SGD.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveSGDFile2()
+        {
+            var location = ".TestSaveSGDFile2.ts";
+
+            if (File.Exists(location)) File.Delete(location);
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.SGD(seq.parameters(), 0.01);
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.SGD(seq.parameters(), 0.5, 0.01, 1.25, 1e-8);
+
+            // Force the SGD momentum_buffer to be created.
+
+            using var x = torch.randn(new long[] { 64, 10 });
+            using var y = torch.randn(new long[] { 64, 10 });
+
+            var loss = torch.nn.functional.mse_loss(Reduction.Sum);
+
+            using var eval = seq.forward(x);
+            var output = loss(eval, y);
+
+            var l = output.ToSingle();
+
+            optim2.zero_grad();
+
+            output.backward();
+
+            optim2.step();
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.SGD.Options;
+                    var opt2 = sd2.Options[i] as Modules.SGD.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.momentum, opt2!.momentum),
+                    () => Assert.Equal(opt!.dampening, opt2!.dampening),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.SGD.State;
+                    var opt2 = sd2.State[i] as Modules.SGD.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveSGDFile3()
+        {
+            var location = ".TestSaveSGDFile3.ts";
+
+            if (File.Exists(location)) File.Delete(location);
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.SGD(seq.parameters(), 0.01, 0.025);
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.SGD(seq.parameters(), 0.5, 0.01, 1.25, 1e-8);
+
+            // Force the SGD momentum_buffer to be created.
+
+            using var x = torch.randn(new long[] { 64, 10 });
+            using var y = torch.randn(new long[] { 64, 10 });
+
+            var loss = torch.nn.functional.mse_loss(Reduction.Sum);
+
+            using var eval = seq.forward(x);
+            var output = loss(eval, y);
+
+            var l = output.ToSingle();
+
+            optim.zero_grad();
+
+            output.backward();
+
+            optim.step();
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.SGD.Options;
+                    var opt2 = sd2.Options[i] as Modules.SGD.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.momentum, opt2!.momentum),
+                    () => Assert.Equal(opt!.dampening, opt2!.dampening),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.SGD.State;
+                    var opt2 = sd2.State[i] as Modules.SGD.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveASGD()
+        {
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.ASGD(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.ASGD(seq.parameters(), 0.5, 0.01, 1.25, 1e-8, 0.25);
+            optim2.load_state_dict(sd);
+
+            var sd2 = optim2.state_dict();
+
+            Assert.Multiple(
+            () => Assert.Equal(4, sd2.State.Count),
+            () => Assert.Single(sd2.Options)
+            );
+
+            for (int i = 0; i < sd.Options.Count; i++) {
+                var opt = sd.Options[i] as Modules.ASGD.Options;
+                var opt2 = sd2.Options[i] as Modules.ASGD.Options;
+                Assert.Multiple(
+                () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                () => Assert.Equal(opt!.lambd, opt2!.lambd),
+                () => Assert.Equal(opt!.alpha, opt2!.alpha),
+                () => Assert.Equal(opt!.t0, opt2!.t0),
+                () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                );
+            }
+            for (int i = 0; i < sd.State.Count; i++) {
+                var opt = sd.State[i] as Modules.ASGD.State;
+                var opt2 = sd2.State[i] as Modules.ASGD.State;
+                Assert.True(opt!.ApproximatelyEquals(opt2));
+            }
+        }
+
+        [Fact]
+        public void TestSaveASGDFile()
+        {
+            var location = ".TestSaveASGDFile.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.ASGD(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.ASGD(seq.parameters(), 0.5, 0.01, 1.25, 1e-8, 0.25);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.ASGD.Options;
+                    var opt2 = sd2.Options[i] as Modules.ASGD.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.lambd, opt2!.lambd),
+                    () => Assert.Equal(opt!.alpha, opt2!.alpha),
+                    () => Assert.Equal(opt!.t0, opt2!.t0),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.ASGD.State;
+                    var opt2 = sd2.State[i] as Modules.ASGD.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveRMSProp()
+        {
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.RMSProp(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.RMSProp(seq.parameters(), 0.5, 0.01, 1.25, 1e-8, 0.25);
+            optim2.load_state_dict(sd);
+
+            var sd2 = optim2.state_dict();
+
+            Assert.Multiple(
+            () => Assert.Equal(4, sd2.State.Count),
+            () => Assert.Single(sd2.Options)
+            );
+
+            for (int i = 0; i < sd.Options.Count; i++) {
+                var opt = sd.Options[i] as Modules.RMSProp.Options;
+                var opt2 = sd2.Options[i] as Modules.RMSProp.Options;
+                Assert.Multiple(
+                () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                () => Assert.Equal(opt!.momentum, opt2!.momentum),
+                () => Assert.Equal(opt!.alpha, opt2!.alpha),
+                () => Assert.Equal(opt!.eps, opt2!.eps),
+                () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                );
+            }
+            for (int i = 0; i < sd.State.Count; i++) {
+                var opt = sd.State[i] as Modules.RMSProp.State;
+                var opt2 = sd2.State[i] as Modules.RMSProp.State;
+                Assert.True(opt!.ApproximatelyEquals(opt2));
+            }
+        }
+
+        [Fact]
+        public void TestSaveRMSPropFile()
+        {
+            var location = ".TestSaveRMSPropFile.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.RMSProp(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.RMSProp(seq.parameters(), 0.5, 0.01, 1.25, 1e-8, 0.25);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.RMSProp.Options;
+                    var opt2 = sd2.Options[i] as Modules.RMSProp.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.momentum, opt2!.momentum),
+                    () => Assert.Equal(opt!.alpha, opt2!.alpha),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.RMSProp.State;
+                    var opt2 = sd2.State[i] as Modules.RMSProp.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveRAdam()
+        {
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.RAdam(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.RAdam(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+            optim2.load_state_dict(sd);
+
+            var sd2 = optim2.state_dict();
+
+            Assert.Multiple(
+            () => Assert.Equal(4, sd2.State.Count),
+            () => Assert.Single(sd2.Options)
+            );
+
+            for (int i = 0; i < sd.Options.Count; i++) {
+                var opt = sd.Options[i] as Modules.RAdam.Options;
+                var opt2 = sd2.Options[i] as Modules.RAdam.Options;
+                Assert.Multiple(
+                () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                () => Assert.Equal(opt!.eps, opt2!.eps),
+                () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                );
+            }
+            for (int i = 0; i < sd.State.Count; i++) {
+                var opt = sd.State[i] as Modules.RAdam.State;
+                var opt2 = sd2.State[i] as Modules.RAdam.State;
+                Assert.True(opt!.ApproximatelyEquals(opt2));
+            }
+        }
+
+        [Fact]
+        public void TestSaveRAdamFile()
+        {
+            var location = ".TestSaveRAdamFile.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.RAdam(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.RAdam(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.RAdam.Options;
+                    var opt2 = sd2.Options[i] as Modules.RAdam.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                    () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.RAdam.State;
+                    var opt2 = sd2.State[i] as Modules.RAdam.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveNAdam()
+        {
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.NAdam(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.NAdam(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+            optim2.load_state_dict(sd);
+
+            var sd2 = optim2.state_dict();
+
+            Assert.Multiple(
+            () => Assert.Equal(4, sd2.State.Count),
+            () => Assert.Single(sd2.Options)
+            );
+
+            for (int i = 0; i < sd.Options.Count; i++) {
+                var opt = sd.Options[i] as Modules.NAdam.Options;
+                var opt2 = sd2.Options[i] as Modules.NAdam.Options;
+                Assert.Multiple(
+                () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                () => Assert.Equal(opt!.eps, opt2!.eps),
+                () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay),
+                () => Assert.Equal(opt!.momentum_decay, opt2!.momentum_decay)
+                );
+            }
+            for (int i = 0; i < sd.State.Count; i++) {
+                var opt = sd.State[i] as Modules.NAdam.State;
+                var opt2 = sd2.State[i] as Modules.NAdam.State;
+                Assert.True(opt!.ApproximatelyEquals(opt2));
+            }
+        }
+
+        [Fact]
+        public void TestSaveNAdamFile()
+        {
+            var location = ".TestSaveNAdamFile.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.NAdam(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.NAdam(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.NAdam.Options;
+                    var opt2 = sd2.Options[i] as Modules.NAdam.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                    () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay),
+                    () => Assert.Equal(opt!.momentum_decay, opt2!.momentum_decay)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.NAdam.State;
+                    var opt2 = sd2.State[i] as Modules.NAdam.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdam()
+        {
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Adam(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Adam(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+            optim2.load_state_dict(sd);
+
+            var sd2 = optim2.state_dict();
+
+            Assert.Multiple(
+            () => Assert.Equal(4, sd2.State.Count),
+            () => Assert.Single(sd2.Options)
+            );
+
+            for (int i = 0; i < sd.Options.Count; i++) {
+                var opt = sd.Options[i] as Modules.Adam.Options;
+                var opt2 = sd2.Options[i] as Modules.Adam.Options;
+                Assert.Multiple(
+                () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                () => Assert.Equal(opt!.eps, opt2!.eps),
+                () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay),
+                () => Assert.Equal(opt!.amsgrad, opt2!.amsgrad),
+                () => Assert.Equal(opt!.maximize, opt2!.maximize)
+                );
+            }
+            for (int i = 0; i < sd.State.Count; i++) {
+                var opt = sd.State[i] as Modules.Adam.State;
+                var opt2 = sd2.State[i] as Modules.Adam.State;
+                Assert.True(opt!.ApproximatelyEquals(opt2));
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdamFile()
+        {
+            var location = ".TestSaveAdamFile.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Adam(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Adam(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.Adam.Options;
+                    var opt2 = sd2.Options[i] as Modules.Adam.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                    () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay),
+                    () => Assert.Equal(opt!.amsgrad, opt2!.amsgrad),
+                    () => Assert.Equal(opt!.maximize, opt2!.maximize)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.Adam.State;
+                    var opt2 = sd2.State[i] as Modules.Adam.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdamFile2()
+        {
+            var location = ".TestSaveAdamFile2.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Adam(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Adam(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25, true);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.Adam.Options;
+                    var opt2 = sd2.Options[i] as Modules.Adam.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                    () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay),
+                    () => Assert.Equal(opt!.amsgrad, opt2!.amsgrad),
+                    () => Assert.Equal(opt!.maximize, opt2!.maximize)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.Adam.State;
+                    var opt2 = sd2.State[i] as Modules.Adam.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdamFile3()
+        {
+            var location = ".TestSaveAdamFile3.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Adam(seq.parameters(), amsgrad: true);
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Adam(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.Adam.Options;
+                    var opt2 = sd2.Options[i] as Modules.Adam.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                    () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay),
+                    () => Assert.Equal(opt!.amsgrad, opt2!.amsgrad),
+                    () => Assert.Equal(opt!.maximize, opt2!.maximize)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.Adam.State;
+                    var opt2 = sd2.State[i] as Modules.Adam.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdamW()
+        {
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.AdamW(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.AdamW(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+            optim2.load_state_dict(sd);
+
+            var sd2 = optim2.state_dict();
+
+            Assert.Multiple(
+            () => Assert.Equal(4, sd2.State.Count),
+            () => Assert.Single(sd2.Options)
+            );
+
+            for (int i = 0; i < sd.Options.Count; i++) {
+                var opt = sd.Options[i] as Modules.AdamW.Options;
+                var opt2 = sd2.Options[i] as Modules.AdamW.Options;
+                Assert.Multiple(
+                () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                () => Assert.Equal(opt!.eps, opt2!.eps),
+                () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay),
+                () => Assert.Equal(opt!.amsgrad, opt2!.amsgrad),
+                () => Assert.Equal(opt!.maximize, opt2!.maximize)
+                );
+            }
+            for (int i = 0; i < sd.State.Count; i++) {
+                var opt = sd.State[i] as Modules.AdamW.State;
+                var opt2 = sd2.State[i] as Modules.AdamW.State;
+                Assert.True(opt!.ApproximatelyEquals(opt2));
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdamWFile()
+        {
+            var location = ".TestSaveAdamWFile.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.AdamW(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.AdamW(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.AdamW.Options;
+                    var opt2 = sd2.Options[i] as Modules.AdamW.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                    () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay),
+                    () => Assert.Equal(opt!.amsgrad, opt2!.amsgrad),
+                    () => Assert.Equal(opt!.maximize, opt2!.maximize)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.AdamW.State;
+                    var opt2 = sd2.State[i] as Modules.AdamW.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdamWFile2()
+        {
+            var location = ".TestSaveAdamWFile2.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.AdamW(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.AdamW(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25, true);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.AdamW.Options;
+                    var opt2 = sd2.Options[i] as Modules.AdamW.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                    () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay),
+                    () => Assert.Equal(opt!.amsgrad, opt2!.amsgrad),
+                    () => Assert.Equal(opt!.maximize, opt2!.maximize)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.AdamW.State;
+                    var opt2 = sd2.State[i] as Modules.AdamW.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdamWFile3()
+        {
+            var location = ".TestSaveAdamWFile3.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.AdamW(seq.parameters(), amsgrad: true);
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.AdamW(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.AdamW.Options;
+                    var opt2 = sd2.Options[i] as Modules.AdamW.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                    () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay),
+                    () => Assert.Equal(opt!.amsgrad, opt2!.amsgrad),
+                    () => Assert.Equal(opt!.maximize, opt2!.maximize)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.AdamW.State;
+                    var opt2 = sd2.State[i] as Modules.AdamW.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdamax()
+        {
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Adamax(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Adamax(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+            optim2.load_state_dict(sd);
+
+            var sd2 = optim2.state_dict();
+
+            Assert.Multiple(
+            () => Assert.Equal(4, sd2.State.Count),
+            () => Assert.Single(sd2.Options)
+            );
+
+            for (int i = 0; i < sd.Options.Count; i++) {
+                var opt = sd.Options[i] as Modules.Adamax.Options;
+                var opt2 = sd2.Options[i] as Modules.Adamax.Options;
+                Assert.Multiple(
+                () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                () => Assert.Equal(opt!.eps, opt2!.eps),
+                () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                );
+            }
+            for (int i = 0; i < sd.State.Count; i++) {
+                var opt = sd.State[i] as Modules.Adamax.State;
+                var opt2 = sd2.State[i] as Modules.Adamax.State;
+                Assert.True(opt!.ApproximatelyEquals(opt2));
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdamaxFile()
+        {
+            var location = ".TestSaveAdamaxFile.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Adamax(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Adamax(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.Adamax.Options;
+                    var opt2 = sd2.Options[i] as Modules.Adamax.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.beta1, opt2!.beta1),
+                    () => Assert.Equal(opt!.beta2, opt2!.beta2),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.Adamax.State;
+                    var opt2 = sd2.State[i] as Modules.Adamax.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdagrad()
+        {
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Adagrad(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Adagrad(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+            optim2.load_state_dict(sd);
+
+            var sd2 = optim2.state_dict();
+
+            Assert.Multiple(
+            () => Assert.Equal(4, sd2.State.Count),
+            () => Assert.Single(sd2.Options)
+            );
+
+            for (int i = 0; i < sd.Options.Count; i++) {
+                var opt = sd.Options[i] as Modules.Adagrad.Options;
+                var opt2 = sd2.Options[i] as Modules.Adagrad.Options;
+                Assert.Multiple(
+                () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                () => Assert.Equal(opt!.lr_decay, opt2!.lr_decay),
+                () => Assert.Equal(opt!.initial_accumulator_value, opt2!.initial_accumulator_value),
+                () => Assert.Equal(opt!.eps, opt2!.eps),
+                () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                );
+            }
+            for (int i = 0; i < sd.State.Count; i++) {
+                var opt = sd.State[i] as Modules.Adagrad.State;
+                var opt2 = sd2.State[i] as Modules.Adagrad.State;
+                Assert.True(opt!.ApproximatelyEquals(opt2));
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdagradFile()
+        {
+            var location = ".TestSaveAdagradFile.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Adagrad(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Adagrad(seq.parameters(), 0.5, 0.01, 0.75, 1e-8, 0.25);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.Adagrad.Options;
+                    var opt2 = sd2.Options[i] as Modules.Adagrad.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.lr_decay, opt2!.lr_decay),
+                    () => Assert.Equal(opt!.initial_accumulator_value, opt2!.initial_accumulator_value),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.Adagrad.State;
+                    var opt2 = sd2.State[i] as Modules.Adagrad.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdadelta()
+        {
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Adadelta(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Adadelta(seq.parameters(), 0.5, 0.01, 1e-8, 0.25);
+            optim2.load_state_dict(sd);
+
+            var sd2 = optim2.state_dict();
+
+            Assert.Multiple(
+            () => Assert.Equal(4, sd2.State.Count),
+            () => Assert.Single(sd2.Options)
+            );
+
+            for (int i = 0; i < sd.Options.Count; i++) {
+                var opt = sd.Options[i] as Modules.Adadelta.Options;
+                var opt2 = sd2.Options[i] as Modules.Adadelta.Options;
+                Assert.Multiple(
+                () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                () => Assert.Equal(opt!.rho, opt2!.rho),
+                () => Assert.Equal(opt!.eps, opt2!.eps),
+                () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                );
+            }
+            for (int i = 0; i < sd.State.Count; i++) {
+                var opt = sd.State[i] as Modules.Adadelta.State;
+                var opt2 = sd2.State[i] as Modules.Adadelta.State;
+                Assert.True(opt!.ApproximatelyEquals(opt2));
+            }
+        }
+
+        [Fact]
+        public void TestSaveAdadeltaFile()
+        {
+            var location = ".TestSaveAdadeltaFile.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim = torch.optim.Adadelta(seq.parameters());
+
+            var sd = optim.state_dict();
+            Assert.Multiple(
+            () => Assert.Equal(4, sd.State.Count),
+            () => Assert.Single(sd.Options)
+            );
+
+            var optim2 = torch.optim.Adadelta(seq.parameters(), 0.5, 0.01, 1e-8, 0.25);
+
+            try {
+                optim.save_state_dict(location);
+                optim2.load_state_dict(location);
+
+                var sd2 = optim2.state_dict();
+
+                Assert.Multiple(
+                () => Assert.Equal(4, sd2.State.Count),
+                () => Assert.Single(sd2.Options)
+                );
+
+                for (int i = 0; i < sd.Options.Count; i++) {
+                    var opt = sd.Options[i] as Modules.Adadelta.Options;
+                    var opt2 = sd2.Options[i] as Modules.Adadelta.Options;
+                    Assert.Multiple(
+                    () => Assert.Equal(opt!.InitialLearningRate, opt2!.InitialLearningRate),
+                    () => Assert.Equal(opt!.LearningRate, opt2!.LearningRate),
+                    () => Assert.Equal(opt!.rho, opt2!.rho),
+                    () => Assert.Equal(opt!.eps, opt2!.eps),
+                    () => Assert.Equal(opt!.weight_decay, opt2!.weight_decay)
+                    );
+                }
+                for (int i = 0; i < sd.State.Count; i++) {
+                    var opt = sd.State[i] as Modules.Adadelta.State;
+                    var opt2 = sd2.State[i] as Modules.Adadelta.State;
+                    Assert.True(opt!.ApproximatelyEquals(opt2));
+                }
+            } finally {
+                File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestMisMatchedFile()
+        {
+
+            var location = ".TestMisMatchedFile.ts";
+            if (File.Exists(location)) File.Delete(location);
+
+            var l1 = Linear(10, 10, true);
+            var l2 = Linear(10, 10, true);
+            var seq = Sequential(l1, l2);
+
+            var optim1 = torch.optim.SGD(seq.parameters(), 0.05);
+
+            try {
+                optim1.save_state_dict(location);
+                Assert.Throws<InvalidDataException>(() => torch.optim.ASGD(seq.parameters()).load_state_dict(location));
+                Assert.Throws<InvalidDataException>(() => torch.optim.Rprop(seq.parameters()).load_state_dict(location));
+                Assert.Throws<InvalidDataException>(() => torch.optim.RMSProp(seq.parameters()).load_state_dict(location));
+                Assert.Throws<InvalidDataException>(() => torch.optim.RAdam(seq.parameters()).load_state_dict(location));
+                Assert.Throws<InvalidDataException>(() => torch.optim.NAdam(seq.parameters()).load_state_dict(location));
+                Assert.Throws<InvalidDataException>(() => torch.optim.Adam(seq.parameters()).load_state_dict(location));
+                Assert.Throws<InvalidDataException>(() => torch.optim.AdamW(seq.parameters()).load_state_dict(location));
+                Assert.Throws<InvalidDataException>(() => torch.optim.Adamax(seq.parameters()).load_state_dict(location));
+                Assert.Throws<InvalidDataException>(() => torch.optim.Adagrad(seq.parameters()).load_state_dict(location));
+                Assert.Throws<InvalidDataException>(() => torch.optim.Adadelta(seq.parameters()).load_state_dict(location));
+            } finally {
+                File.Delete(location);
             }
         }
     }

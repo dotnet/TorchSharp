@@ -3392,6 +3392,7 @@ namespace TorchSharp
 
             public Tensor eq(Tensor target)
             {
+                if (target is null) return false;
                 var res = THSTensor_eq(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -3404,6 +3405,7 @@ namespace TorchSharp
 
             public Tensor eq_(Tensor target)
             {
+                if (target is null) return false;
                 var res = THSTensor_eq_(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -3414,6 +3416,7 @@ namespace TorchSharp
 
             public Tensor eq(Scalar target)
             {
+                if (target is null) return false;
                 var res = THSTensor_eq_scalar(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -3424,6 +3427,7 @@ namespace TorchSharp
 
             public Tensor eq_(Scalar target)
             {
+                if (target is null) return false;
                 var res = THSTensor_eq_scalar_(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -3434,6 +3438,7 @@ namespace TorchSharp
 
             public bool Equals(Tensor target)
             {
+                if (target is null) return false;
                 var res = THSTensor_equal(Handle, target.Handle);
                 torch.CheckForErrors();
                 return res;
@@ -3452,6 +3457,7 @@ namespace TorchSharp
 
             public bool allclose(Tensor target, double rtol = 1e-05, double atol = 1e-08, bool equal_nan = false)
             {
+                if (target is null) return false;
                 var res = THSTensor_allclose(Handle, target.Handle, rtol, atol, equal_nan);
                 torch.CheckForErrors();
                 return res;
@@ -3462,6 +3468,7 @@ namespace TorchSharp
 
             public Tensor ge(Tensor target)
             {
+                if (target is null) return false;
                 var res = THSTensor_ge(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -3474,6 +3481,7 @@ namespace TorchSharp
 
             public Tensor ge_(Tensor target)
             {
+                if (target is null) return false;
                 var res = THSTensor_ge_(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -3484,6 +3492,7 @@ namespace TorchSharp
 
             public Tensor ge(Scalar target)
             {
+                if (target is null) return false;
                 var res = THSTensor_ge_scalar(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -3494,6 +3503,7 @@ namespace TorchSharp
 
             public Tensor ge_(Scalar target)
             {
+                if (target is null) return false;
                 var res = THSTensor_ge_scalar_(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -3504,6 +3514,7 @@ namespace TorchSharp
 
             public Tensor gt(Tensor target)
             {
+                if (target is null) return false;
                 var res = THSTensor_gt(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -3516,6 +3527,7 @@ namespace TorchSharp
 
             public Tensor gt_(Tensor target)
             {
+                if (target is null) return false;
                 var res = THSTensor_gt_(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -3526,6 +3538,7 @@ namespace TorchSharp
 
             public Tensor gt(Scalar target)
             {
+                if (target is null) return false;
                 var res = THSTensor_gt_scalar(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
@@ -3536,6 +3549,7 @@ namespace TorchSharp
 
             public Tensor gt_(Scalar target)
             {
+                if (target is null) return false;
                 var res = THSTensor_gt_scalar_(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);

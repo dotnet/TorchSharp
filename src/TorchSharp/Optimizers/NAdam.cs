@@ -6,6 +6,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
+    using System.IO;
     using Modules;
 
     public static partial class torch
@@ -157,7 +158,7 @@ namespace TorchSharp
 
                         if (grad is null) continue;
 
-                        var state = _state[param.handle];
+                        var state = (State)_state[param.handle];
 
                         state.step += 1;
 
@@ -193,11 +194,11 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    kvp.Value.Dispose();
+                    ((State)kvp.Value).Dispose();
                 }
             }
 
-            private class State : IDisposable
+            public class State : OptimizerState, IDisposable
             {
                 public long step;
                 public double mu_product;
@@ -208,6 +209,70 @@ namespace TorchSharp
                 {
                     exp_avg.Dispose();
                     exp_avg_sq.Dispose();
+                }
+
+                /// <summary>
+                /// Move all the state to the indicated device.
+                /// </summary>
+                /// <param name="device">The device to move all state to.</param>
+                public override void to(Device device)
+                {
+                    exp_avg.to(device);
+                    exp_avg_sq.to(device);
+                }
+
+                /// <summary>
+                /// Load the optimizer parameter state from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    step = reader.ReadInt64();
+                    mu_product = reader.ReadDouble();
+                    exp_avg.Load(reader);
+                    exp_avg_sq.Load(reader);
+                }
+
+                /// <summary>
+                /// Save the optimizer parameter state to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    writer.Write(step);
+                    writer.Write(mu_product);
+                    exp_avg.Save(writer);
+                    exp_avg_sq.Save(writer);
+                }
+
+                /// <summary>
+                /// Load optimizer parameter state from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer state record.</param>
+                public override void LoadStateDict(OptimizerState source)
+                {
+                    var st_state = source as State;
+                    exp_avg.Dispose();
+                    exp_avg_sq.Dispose();
+
+                    step = st_state.step;
+                    mu_product = st_state.mu_product;
+                    exp_avg = st_state.exp_avg;
+                    exp_avg_sq = st_state.exp_avg_sq;
+                }
+
+                /// <summary>
+                /// Useful for tests, allows comparison of one state with another.
+                /// </summary>
+                /// <param name="other">The other optimizer state</param>
+                /// <returns></returns>
+                public override bool ApproximatelyEquals(OptimizerState other)
+                {
+                    var rhs = other as State;
+                    return (rhs is not null) && step == rhs.step &&
+                        mu_product == rhs.mu_product &&
+                        exp_avg.allclose(rhs.exp_avg) &&
+                        exp_avg_sq.allclose(rhs.exp_avg_sq);
                 }
             }
 
@@ -241,8 +306,8 @@ namespace TorchSharp
                     var state = new State();
                     _state[p.Handle] = state;
                     state.step = 0;
-                    state.exp_avg = torch.zeros_like(p);
-                    state.exp_avg_sq = torch.zeros_like(p);
+                    state.exp_avg = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.exp_avg_sq = torch.zeros_like(p).DetatchFromDisposeScope();
                 }
             }
 
@@ -253,6 +318,49 @@ namespace TorchSharp
                 public double? eps;
                 public double? weight_decay;
                 public double? momentum_decay;
+
+                /// <summary>
+                /// Load optimizer options (param-group hyperparameters) from another optimizer.
+                /// </summary>
+                /// <param name="source">An optimizer options record.</param>
+                public override void LoadStateDict(OptimizerOptions source)
+                {
+                    base.LoadStateDict(source);
+                    var opts = source as Options;
+                    beta1 = opts.beta1;
+                    beta2 = opts.beta2;
+                    eps = opts.eps;
+                    weight_decay = opts.weight_decay;
+                    momentum_decay = opts.momentum_decay;
+                }
+
+                /// <summary>
+                /// Load the optimizer options (param-group hyperparameters) from a stream.
+                /// </summary>
+                /// <param name="reader">A binary reader connected to a stream open for reading.</param>
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    base.LoadStateDict(reader);
+                    beta1 = reader.ReadDouble();
+                    beta2 = reader.ReadDouble();
+                    eps = reader.ReadDouble();
+                    weight_decay = reader.ReadDouble();
+                    momentum_decay = reader.ReadDouble();
+                }
+
+                /// <summary>
+                /// Save the optimizer options (param-group hyperparameters) to a stream.
+                /// </summary>
+                /// <param name="writer">A binary writer connected to a stream open for writing.</param>
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    base.SaveStateDict(writer);
+                    writer.Write(beta1.Value);
+                    writer.Write(beta2.Value);
+                    writer.Write(eps.Value);
+                    writer.Write(weight_decay.Value);
+                    writer.Write(momentum_decay.Value);
+                }
             }
 
             public class ParamGroup : ParamGroup<Options>, IBetas
@@ -276,8 +384,6 @@ namespace TorchSharp
                 get => ((_defaults as Options).beta1.Value, (_defaults as Options).beta2.Value);
                 set { (_defaults as Options).beta1 = value.Item1; (_defaults as Options).beta2 = value.Item2; }
             }
-
-            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
     }
 }
