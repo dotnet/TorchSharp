@@ -168,10 +168,6 @@ namespace TorchSharp
                     public List<OptimizerState> State { get; private set; }
                 }
 
-                public abstract StateDictionary state_dict();
-
-                public abstract void load_state_dict(StateDictionary dict);
-
                 public virtual IEnumerable<ILearningRateController> ParamGroups {
                     get => _parameter_groups;
                 }
@@ -334,7 +330,7 @@ namespace TorchSharp
             /// The format of the optimizer state dict is different from PyTorch's. Instead of a dictionary with two entries,
             /// the state is represented as record with two entries, both containing lists with state.
             /// </remarks>
-            public override void load_state_dict(StateDictionary state_dict)
+            public virtual void load_state_dict(StateDictionary state_dict)
             {
                 var sd = this.state_dict();
 
@@ -366,7 +362,7 @@ namespace TorchSharp
             /// The format of the optimizer state dict is different from PyTorch's. Instead of a dictionary with two entries,
             /// the state is represented as record with two entries, both containing lists with state.
             /// </remarks>
-            public override StateDictionary state_dict()
+            public virtual StateDictionary state_dict()
             {
                 var dict = new StateDictionary();
 
