@@ -6,6 +6,8 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
+    using System.IO;
+    using Microsoft.VisualBasic;
     using Modules;
 
     public static partial class torch
@@ -147,7 +149,7 @@ namespace TorchSharp
 
                         if (grad.is_sparse) throw new ArgumentException("ASGD does not support sparse gradients");
 
-                        var state = _state[param.handle];
+                        var state = (State)_state[param.handle];
 
                         state.step += 1;
 
@@ -174,12 +176,12 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    kvp.Value.Dispose();
+                    ((State)kvp.Value).Dispose();
                 }
                 _state.Clear();
             }
 
-            private class State : IDisposable
+            public class State : OptimizerState, IDisposable
             {
                 public long step;
                 public double eta;
@@ -189,6 +191,52 @@ namespace TorchSharp
                 public void Dispose()
                 {
                     ax.Dispose();
+                }
+
+                /// <summary>
+                /// Move all the state to the indicated device.
+                /// </summary>
+                /// <param name="device">The device to move all state to.</param>
+                public override void to(Device device)
+                {
+                    ax.to(device);
+                }
+
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    step = reader.ReadInt64();
+                    eta = reader.ReadDouble();
+                    mu = reader.ReadDouble();
+                    ax.Load(reader);
+                }
+
+                public override void LoadStateDict(OptimizerState source)
+                {
+                    var st_state = source as State;
+                    step = st_state.step;
+                    eta = st_state.eta;
+                    mu = st_state.mu;
+                    ax.Dispose();
+                    ax = st_state.ax;
+                }
+
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    writer.Write(step);
+                    writer.Write(eta);
+                    writer.Write(mu);
+                    ax.Save(writer);
+                }
+
+                /// <summary>
+                /// Useful for tests, allows comparison of one state with another.
+                /// </summary>
+                /// <param name="other">The other optimizer state</param>
+                /// <returns></returns>
+                public override bool ApproximatelyEquals(OptimizerState other)
+                {
+                    var rhs = other as State;
+                    return (rhs is not null) && step == rhs.step && eta == rhs.eta && mu == rhs.mu && ax.allclose(rhs.ax);
                 }
             }
 
@@ -233,6 +281,34 @@ namespace TorchSharp
                 public double? alpha;
                 public double? weight_decay;
                 public double? t0;
+
+                public override void LoadStateDict(OptimizerOptions source)
+                {
+                    base.LoadStateDict(source);
+                    var opts = source as Options;
+                    lambd = opts.lambd;
+                    alpha = opts.alpha;
+                    weight_decay = opts.weight_decay;
+                    t0 = opts.t0;
+                }
+
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    base.LoadStateDict(reader);
+                    lambd = reader.ReadDouble();
+                    alpha = reader.ReadDouble();
+                    weight_decay = reader.ReadDouble();
+                    t0 = reader.ReadDouble();
+                }
+
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    base.SaveStateDict(writer);
+                    writer.Write(lambd.Value);
+                    writer.Write(alpha.Value);
+                    writer.Write(weight_decay.Value);
+                    writer.Write(t0.Value);
+                }
             }
 
             public class ParamGroup : ParamGroup<Options>
@@ -246,8 +322,6 @@ namespace TorchSharp
                 {
                 }
             }
-
-            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
         }
     }
 }

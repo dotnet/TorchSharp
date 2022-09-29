@@ -3,9 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static TorchSharp.torch;
+using static TorchSharp.torchvision;
+using static TorchSharp.Utils.LEB128Codec;
 
 namespace TorchSharp
 {
+    using System.IO;
+    using System.Net;
+    using Google.Protobuf.WellKnownTypes;
+    using ICSharpCode.SharpZipLib.Core;
     using Modules;
 
     public static partial class torch
@@ -147,7 +153,7 @@ namespace TorchSharp
 
                         if (grad.is_sparse) throw new ArgumentException("Rprop does not support sparse gradients");
 
-                        var state = _state[param.handle];
+                        var state = (State)_state[param.handle];
 
                         state.step += 1;
 
@@ -178,23 +184,9 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    kvp.Value.Dispose();
+                    ((State)kvp.Value).Dispose();
                 }
             }
-
-            private class State : IDisposable
-            {
-                public long step;
-                public Tensor prev;
-                public Tensor step_size;
-
-                public void Dispose()
-                {
-                    prev.Dispose();
-                    step_size.Dispose();
-                }
-            }
-
             /// <summary>
             /// Add a param group to the Optimizer s param_groups.
             /// </summary>
@@ -229,12 +221,94 @@ namespace TorchSharp
                 }
             }
 
+            public class State : OptimizerState, IDisposable
+            {
+                public long step;
+                public Tensor prev;
+                public Tensor step_size;
+
+                public void Dispose()
+                {
+                    prev.Dispose();
+                    step_size.Dispose();
+                }
+
+                /// <summary>
+                /// Move all the state to the indicated device.
+                /// </summary>
+                /// <param name="device">The device to move all state to.</param>
+                public override void to(Device device)
+                {
+                    prev.to(device);
+                    step_size.to(device);
+                }
+
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    step = reader.ReadInt64();
+                    prev.Load(reader);
+                    step_size.Load(reader);
+                }
+
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    writer.Write(this.step);
+                    prev.Save(writer);
+                    step_size.Save(writer);
+                }
+
+                public override void LoadStateDict(OptimizerState source)
+                {
+                    var st_state = source as State;
+                    prev.Dispose();
+                    step_size.Dispose();
+                    step = st_state.step;
+                    prev = st_state.prev;
+                    step_size = st_state.step_size;
+                }
+
+                public override bool ApproximatelyEquals(OptimizerState other)
+                {
+                    var rhs = other as State;
+                    return (rhs is not null) && step == rhs.step && prev.allclose(rhs.prev) && step_size.allclose(rhs.step_size);
+                }
+            }
+
+
             public class Options : OptimizerOptions
             {
                 public double? etaminus;
                 public double? etaplus;
                 public double? min_step;
                 public double? max_step;
+
+                public override void SaveStateDict(BinaryWriter writer)
+                {
+                    base.SaveStateDict(writer);
+                    writer.Write(etaminus.Value);
+                    writer.Write(etaplus.Value);
+                    writer.Write(min_step.Value);
+                    writer.Write(max_step.Value);
+                }
+
+                public override void LoadStateDict(BinaryReader reader)
+                {
+                    base.LoadStateDict(reader);
+                    etaminus = reader.ReadDouble();
+                    etaplus = reader.ReadDouble();
+                    min_step = reader.ReadDouble();
+                    max_step = reader.ReadDouble();
+                }
+
+                public override void LoadStateDict(OptimizerOptions source)
+                {
+                    base.LoadStateDict(source);
+                    var opts = source as Options;
+                    etaminus = opts.etaminus;
+                    etaplus = opts.etaplus;
+                    min_step = opts.min_step;
+                    max_step = opts.max_step;
+                }
             }
 
             public class ParamGroup : ParamGroup<Options>
@@ -248,8 +322,6 @@ namespace TorchSharp
                 {
                 }
             }
-
-            private Dictionary<IntPtr, State> _state = new Dictionary<IntPtr, State>();
 
         }
     }

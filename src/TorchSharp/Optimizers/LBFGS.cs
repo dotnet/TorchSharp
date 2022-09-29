@@ -105,6 +105,16 @@ namespace TorchSharp
                 return base.step(closure);
             }
 
+            public override void load_state_dict(StateDictionary dict)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override StateDictionary state_dict()
+            {
+                throw new NotImplementedException();
+            }
+
             public double _rate;
             private ParamGroup[] _paramGroups;
         }

@@ -7,7 +7,10 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
+    using System.IO;
+    using Google.Protobuf.WellKnownTypes;
     using Modules;
+    using TorchSharp.Utils;
 
     public static partial class torch
     {
@@ -156,6 +159,19 @@ namespace TorchSharp
                     return ptrArray.Select(x => new Parameter(x));
                 }
 
+                public class StateDictionary
+                {
+                    internal StateDictionary() { Options = new List<OptimizerOptions>(); State = new List<OptimizerState>(); }
+
+                    public List<OptimizerOptions> Options { get; private set; }
+
+                    public List<OptimizerState> State { get; private set; }
+                }
+
+                public abstract StateDictionary state_dict();
+
+                public abstract void load_state_dict(StateDictionary dict);
+
                 public virtual IEnumerable<ILearningRateController> ParamGroups {
                     get => _parameter_groups;
                 }
@@ -201,14 +217,187 @@ namespace TorchSharp
     namespace Modules
     {
         using static torch.optim;
+        using static TorchSharp.torchvision;
 
         /// <summary>
         /// Base class to help with a couple of the things that managed-code implementations need.
         /// </summary>
-        public class OptimizerHelper : Optimizer
+        public abstract class OptimizerHelper : Optimizer
         {
             public OptimizerHelper() : base(IntPtr.Zero)
             {
+            }
+
+
+            protected enum TypeCode
+            {
+                Double = 0,
+                Long = 1,
+                Tensor = 2,
+                Options = 3,
+                State = 4,
+            }
+
+            /// <summary>
+            /// Saves the optimizer state.
+            /// </summary>
+            /// <param name="location">The name of a file where optimizer state data will be stored.</param>
+            public void save_state_dict(string location)
+            {
+                using var stream = System.IO.File.Create(location);
+                using (var writer = new System.IO.BinaryWriter(stream)) {
+
+                    save_state_dict(writer);
+                    writer.Flush();
+                    stream.Flush();
+                }
+            }
+
+            /// <summary>
+            /// Loads the optimizer state.
+            /// </summary>
+            /// <param name="location">The name of a file where optimizer state data is stored.</param>
+            /// <remarks>
+            /// Optimizer state saved from PyTorch cannot be restored -- the file format is unique to TorchSharp.
+            /// </remarks>
+            public void load_state_dict(string location)
+            {
+                using var stream = System.IO.File.OpenRead(location);
+                using (var reader = new System.IO.BinaryReader(stream)) {
+
+                    load_state_dict(reader);
+                }
+            }
+
+            /// <summary>
+            /// Saves the optimizer state.
+            /// </summary>
+            /// <param name="writer">A binary writer connected to a stream where .</param>
+            public void save_state_dict(System.IO.BinaryWriter writer)
+            {
+                // Save the name of the optimizer, so that we can avoid problems.
+                writer.Write(this.GetType().Name);
+
+                var sd = state_dict();
+
+                writer.Encode(sd.Options.Count); // 4 bytes
+                writer.Encode(sd.State.Count);   // 4 bytes
+
+                foreach (var opts in sd.Options) {
+
+                    opts.SaveStateDict(writer);
+                }
+
+                foreach (var state in sd.State) {
+                    state.SaveStateDict(writer);
+                }
+            }
+
+            /// <summary>
+            /// Loads the optimizer state.
+            /// </summary>
+            /// <param name="reader">A binary reader connected to a stream containing saved optimizer state.</param>
+            /// <remarks>
+            /// Optimizer state saved from PyTorch cannot be restored -- the file format is unique to TorchSharp.
+            /// </remarks>
+            public void load_state_dict(System.IO.BinaryReader reader)
+            {
+                var optName = reader.ReadString();
+                if (optName != this.GetType().Name) throw new InvalidDataException($"The saved optimizer state data is not for a {this.GetType().Name} optimizer.");
+
+                // First, figure out how many entries.
+                var options = reader.Decode();
+                var states = reader.Decode();
+
+                var sd = state_dict();
+
+                if (options != sd.Options.Count) throw new ArgumentException("Invalid optimizer state -- different number of parameter groups.");
+                if (states != sd.State.Count) throw new ArgumentException("Invalid optimizer state -- different number of states.");
+
+                for (var i = 0; i < options; i++) {
+                    var opts = sd.Options[i] as OptimizerOptions;
+                    opts.LoadStateDict(reader);
+                }
+
+                for (var i = 0; i < states; i++) {
+
+                    var state = sd.State[i] as OptimizerState;
+                    state.LoadStateDict(reader);
+                }
+            }
+
+            /// <summary>
+            /// Loads the optimizer state.
+            /// </summary>
+            /// <param name="state_dict">Optimizer state. Should be an object returned from a call to state_dict().</param>
+            /// <remarks>
+            /// The format of the optimizer state dict is different from PyTorch's. Instead of a dictionary with two entries,
+            /// the state is represented as record with two entries, both containing lists with state.
+            /// </remarks>
+            public override void load_state_dict(StateDictionary state_dict)
+            {
+                var sd = this.state_dict();
+
+                if (state_dict.Options.Count != sd.Options.Count) throw new ArgumentException("Invalid optimizer state -- different number of parameter groups.");
+                if (state_dict.State.Count != sd.State.Count) throw new ArgumentException("Invalid optimizer state -- different number of states.");
+
+                for (var i = 0; i < state_dict.Options.Count; i++) {
+
+                    var st_opts = sd.Options[i] as OptimizerOptions;
+                    if (st_opts != state_dict.Options[i]) {
+                        st_opts.LoadStateDict(state_dict.Options[i]);
+                    }
+                }
+
+                for (var i = 0; i < state_dict.State.Count; i++) {
+
+                    var st_state = sd.State[i] as OptimizerState;
+                    if (st_state != state_dict.State[i]) {
+                        st_state.LoadStateDict(state_dict.State[i]);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Returns the state of the optimizer as a dict.
+            /// </summary>
+            /// <returns></returns>
+            /// <remarks>
+            /// The format of the optimizer state dict is different from PyTorch's. Instead of a dictionary with two entries,
+            /// the state is represented as record with two entries, both containing lists with state.
+            /// </remarks>
+            public override StateDictionary state_dict()
+            {
+                var dict = new StateDictionary();
+
+                int pgidx = -1;
+                int pridx = 0;
+                foreach (var pg in _parameter_groups) {
+
+                    dict.Options.Add(pg.Options);
+
+                    foreach (var p in pg.Parameters) {
+
+                        dict.State.Add(_state[p.Handle]);
+                        pridx++;
+                    }
+                    pgidx--;
+                }
+                return dict;
+            }
+
+            /// <summary>
+            /// Move all the state to the indicated device.
+            /// </summary>
+            /// <param name="device">The device to move all state to.</param>
+            public void to(Device device)
+            {
+                foreach (var pg in _parameter_groups) {
+                    foreach (var p in pg.Parameters) {
+                        var state = _state[p.Handle];
+                        state.to(device);
+                    }
+                }
             }
 
             /// <summary>
@@ -236,7 +425,7 @@ namespace TorchSharp
             /// <param name="body">The body of the step update.</param>
             /// <param name="loss_closure">The closure, if any, for computing the loss.</param>
             /// <returns></returns>
-            protected Tensor _step<T>(Action<T> body, Func<Tensor> loss_closure = null) where T:ParamGroup
+            protected Tensor _step<T>(Action<T> body, Func<Tensor> loss_closure = null) where T : ParamGroup
             {
                 Tensor loss = null;
 
@@ -279,6 +468,8 @@ namespace TorchSharp
             }
 
             protected OptimizerOptions _defaults;
+
+            protected Dictionary<IntPtr, OptimizerState> _state = new Dictionary<IntPtr, OptimizerState>();
         }
 
         /// <summary>
@@ -288,6 +479,52 @@ namespace TorchSharp
         {
             public double? LearningRate { get; set; }
             public double InitialLearningRate { get; set; }
+
+            public virtual void SaveStateDict(BinaryWriter writer)
+            {
+                writer.Write(InitialLearningRate);
+                writer.Write(LearningRate.Value);
+            }
+
+            public virtual void LoadStateDict(BinaryReader reader)
+            {
+                InitialLearningRate = reader.ReadDouble();
+                LearningRate = reader.ReadDouble();
+            }
+
+            public virtual void LoadStateDict(OptimizerOptions source)
+            {
+                InitialLearningRate = source.InitialLearningRate;
+                LearningRate = source.LearningRate;
+            }
+        }
+
+        /// <summary>
+        /// Base class for optimizer options.
+        /// </summary>
+        public abstract class OptimizerState
+        {
+            public abstract void SaveStateDict(BinaryWriter writer);
+
+            public abstract void LoadStateDict(BinaryReader reader);
+
+            public abstract void LoadStateDict(OptimizerState source);
+
+            /// <summary>
+            /// Useful for tests, allows comparison of one state with another.
+            /// </summary>
+            /// <param name="other">The other optimizer state</param>
+            /// <returns></returns>
+            public virtual bool ApproximatelyEquals(OptimizerState other)
+            {
+                return false;
+            }
+
+            /// <summary>
+            /// Move all the state to the indicated device.
+            /// </summary>
+            /// <param name="device">The device to move all state to.</param>
+            public virtual void to(Device device) { }
         }
 
         /// <summary>
@@ -335,23 +572,23 @@ namespace TorchSharp
 
 
 
-        
 
-        
 
-        
 
-        
 
-        
 
-        
 
-        
 
-        
 
-       
+
+
+
+
+
+
+
+
+
     }
 }
 
