@@ -280,8 +280,6 @@ namespace TorchSharp
                 }
             }
 
-
-
             /// <summary>
             /// Add a param group to the Optimizer s param_groups.
             /// </summary>

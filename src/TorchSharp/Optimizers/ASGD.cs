@@ -1,13 +1,12 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using static TorchSharp.torch;
 
 namespace TorchSharp
 {
-    using System.IO;
-    using Microsoft.VisualBasic;
     using Modules;
 
     public static partial class torch
