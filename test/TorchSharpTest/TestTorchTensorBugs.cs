@@ -97,8 +97,8 @@ namespace TorchSharp
             using (Tensor positive = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
             using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
 
-                var output = nn.functional.triplet_margin_with_distance_loss(distance);
-                using (var result = output(anchor, positive, negative)) { }
+                var output = nn.TripletMarginWithDistanceLoss(distance);
+                using (var result = output.forward(anchor, positive, negative)) { }
             }
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -120,11 +120,11 @@ namespace TorchSharp
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
-            var loss = nn.functional.mse_loss(Reduction.Sum);
+            var loss = nn.MSELoss(Reduction.Sum);
 
             Func<Tensor> closure = () => {
                 using var eval = seq.forward(x);
-                var output = loss(eval, y);
+                var output = loss.forward(eval, y);
 
                 var l = output.ToSingle();
 
@@ -561,8 +561,8 @@ namespace TorchSharp
                 var y = torch.ones(5, 4).cuda();
 
                 var z = model.forward(x);
-                var lossFunc = torch.nn.functional.cross_entropy_loss();
-                var loss = lossFunc(y, z);
+                var lossFunc = torch.nn.CrossEntropyLoss();
+                var loss = lossFunc.forward(y, z);
                 loss.backward();
                 optimizer.step();
 

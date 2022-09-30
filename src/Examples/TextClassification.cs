@@ -65,7 +65,7 @@ namespace TorchSharp.Examples
 
                 var model = new TextClassificationModel(vocab.Count, emsize, 4).to((Device)device);
 
-                var loss = cross_entropy_loss();
+                var loss = CrossEntropyLoss();
                 var lr = 5.0;
                 var optimizer = torch.optim.SGD(model.parameters(), lr);
                 var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.2, last_epoch: 5);
@@ -127,7 +127,7 @@ namespace TorchSharp.Examples
 
                 using (var predicted_labels = model.forward(texts, offsets)) {
 
-                    var loss = criterion(predicted_labels, labels);
+                    var loss = criterion.forward(predicted_labels, labels);
                     loss.backward();
                     torch.nn.utils.clip_grad_norm_(model.parameters().ToArray(), 0.5);
                     optimizer.step();
@@ -155,7 +155,7 @@ namespace TorchSharp.Examples
             foreach (var (labels, texts, offsets) in test_data) {
 
                 using (var predicted_labels = model.forward(texts, offsets)) {
-                    var loss = criterion(predicted_labels, labels);
+                    var loss = criterion.forward(predicted_labels, labels);
 
                     total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).item<long>();
                     total_count += labels.size(0);
