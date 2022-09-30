@@ -805,7 +805,7 @@ namespace TorchSharp
 
                 public virtual object forward (object obj)
                 {
-                    if (obj.GetType() == typeof(Tensor)) return this.forward((Tensor)obj);
+                    if (typeof(Tensor).IsAssignableFrom(obj.GetType())) return this.forward((Tensor)obj);
                     throw new ArgumentException($"{this.GetType().Name}.forward() does not take 1 argument.");
                 }
 
