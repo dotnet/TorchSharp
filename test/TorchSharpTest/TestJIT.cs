@@ -32,7 +32,7 @@ namespace TorchSharp
             var kids = m.named_children().ToArray();
             Assert.Empty(kids);
 
-            var t = (torch.Tensor)m.forward((torch.ones(10), torch.ones(10)));
+            var t = m.forward(torch.ones(10), torch.ones(10));
 
             Assert.Equal(new long[] { 10 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
@@ -95,7 +95,7 @@ namespace TorchSharp
             var kids = m.named_children().ToArray();
             Assert.Equal(2, kids.Length);
 
-            var t = (torch.Tensor)m.forward(torch.ones(1000));
+            var t = m.forward(torch.ones(1000));
 
             Assert.Equal(new long[] { 10 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
@@ -114,7 +114,7 @@ namespace TorchSharp
 
             var x = torch.rand(3, 4);
             var y = torch.rand(3, 4);
-            var output = ((torch.Tensor, torch.Tensor))m.forward((x, y));
+            var output = ((torch.Tensor, torch.Tensor))m.forward((object)x, y);
 
             Assert.Multiple(
             () => Assert.Throws<InvalidCastException>(() => m.forward(x, y)),
@@ -135,7 +135,7 @@ namespace TorchSharp
 
             var x = torch.rand(3, 4);
             var y = torch.rand(3, 4);
-            var output = (torch.Tensor[])m.forward((x, y));
+            var output = (torch.Tensor[])m.forward((object)x, y);
 
             Assert.Multiple(
             () => Assert.Throws<InvalidCastException>(() => m.forward(x, y)),

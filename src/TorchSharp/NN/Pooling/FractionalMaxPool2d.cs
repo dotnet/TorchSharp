@@ -43,7 +43,7 @@ namespace TorchSharp
 
             public override object forward(object input)
             {
-                var tensor = ExtractOneTensor(input);
+                var tensor = (Tensor)input;
 
                 if (_return_indices) {
                     var res = THSNN_FractionalMaxPool2d_forward_with_indices(handle, tensor.Handle, out var indices);

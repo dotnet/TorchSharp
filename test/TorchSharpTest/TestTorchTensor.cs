@@ -8364,13 +8364,10 @@ namespace TorchSharp
         [Fact]
         public void TestGeneralModuleForward1()
         {
-            var seq = nn.Sequential(
-                nn.Bilinear(10, 10, 10),
-                nn.Linear(10, 10)
-                );
+            var bl = nn.Bilinear(10, 10, 10);
 
             object input = torch.rand(8, 10);
-            var output = seq.forward((input, input)) as Tensor;
+            var output = bl.forward(input, input) as Tensor;
 
             Assert.NotNull(output);
             Assert.Equal(output.shape, ((Tensor)input).shape);
@@ -8379,18 +8376,19 @@ namespace TorchSharp
         [Fact]
         public void TestGeneralModuleForward2()
         {
+            var bl = nn.Bilinear(10, 10, 10);
             var seq = nn.Sequential(
-                nn.Bilinear(10, 10, 10),
                 nn.Linear(10, 10),
                 nn.MaxPool1d(2, return_indices: true)
                 );
 
             object input = torch.rand(8, 10);
-            var output =  ((Tensor, Tensor))seq.forward((input, input));
+            var output1 = bl.forward(input, input);
+            var output2 =  ((Tensor, Tensor))seq.forward(output1);
 
             //Assert.NotNull(output);
-            Assert.Equal(output.Item1.shape, new long[] { 8, 5 });
-            Assert.Equal(output.Item2.shape, new long[] { 8, 5 });
+            Assert.Equal(output2.Item1.shape, new long[] { 8, 5 });
+            Assert.Equal(output2.Item2.shape, new long[] { 8, 5 });
         }
     }
 }

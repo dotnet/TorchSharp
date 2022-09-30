@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
+using Tensorboard;
 
 namespace TorchSharp
 {
@@ -13,6 +15,12 @@ namespace TorchSharp
     {
         public static partial class jit
         {
+            /// <summary>
+            /// A wrapper around C++ torch::jit::Module. ScriptModules contain methods, attributes, parameters, and constants.
+            /// </summary>
+            /// <remarks>
+            /// At the moment, only simple script modules with a single 'forward' method taking and returning tensors are supported.
+            /// </remarks>
             public class ScriptModule : torch.nn.Module
             {
                 internal ScriptModule(IntPtr handle) : base(new HType(handle, true, THSJIT_Module_dispose), null)
@@ -270,6 +278,35 @@ namespace TorchSharp
                 [DllImport("LibTorchSharp")]
                 private static extern void THSJIT_Module_forward(HType module, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
 
+                public override Tensor forward(params Tensor[] tensors)
+                {
+                    IntPtr[] ptrArray = null;
+                    sbyte typeCode = 0;
+
+                    using (var parray = new PinnedArray<IntPtr>()) {
+
+                        var count = tensors.Length;
+                        var tensorRefs = new IntPtr[count];
+                        for (var i = 0; i < tensors.Length; i++) tensorRefs[i] = tensors[i].Handle;
+
+                        THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
+                        torch.CheckForErrors();
+                        ptrArray = parray.Array;
+                    }
+
+
+                    switch (typeCode) {
+                    case 0:
+                        // Nothing.
+                        return null;
+                    case 1:
+                        // Tensor
+                        return new Tensor(ptrArray[0]);
+                    }
+
+                    throw new InvalidCastException("Called 'Tensor forward(Tensor,...)' for a script module that returns something else than a single tensor. Use 'object forward(object)' instead.");
+                }
+
                 public override object forward(object input)
                 {
                     IntPtr[] ptrArray = null;
@@ -289,59 +326,11 @@ namespace TorchSharp
 
                                 break;
                             }
-                        case ValueTuple<Tensor> tuple: {
-
-                                var tensorRefs = new IntPtr[1];
-                                tensorRefs[0] = tuple.Item1.Handle;
-
-                                THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), 1, parray.CreateArray, out typeCode);
-                                torch.CheckForErrors();
-                                ptrArray = parray.Array;
-
-                                break;
-                            }
-                        case ValueTuple<Tensor,Tensor> tuple: {
-
-                                var tensorRefs = new IntPtr[2];
-                                tensorRefs[0] = tuple.Item1.Handle;
-                                tensorRefs[1] = tuple.Item2.Handle;
-
-                                THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), 2, parray.CreateArray, out typeCode);
-                                torch.CheckForErrors();
-                                ptrArray = parray.Array;
-
-                                break;
-                            }
-                        case ValueTuple<Tensor, Tensor, Tensor> tuple: {
-
-                                var tensorRefs = new IntPtr[3];
-                                tensorRefs[0] = tuple.Item1.Handle;
-                                tensorRefs[1] = tuple.Item2.Handle;
-                                tensorRefs[2] = tuple.Item3.Handle;
-
-                                THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), 3, parray.CreateArray, out typeCode);
-                                torch.CheckForErrors();
-                                ptrArray = parray.Array;
-
-                                break;
-                            }
-                        case IList<Tensor> tensors: {
-
-                                var count = tensors.Count;
-                                var tensorRefs = new IntPtr[count];
-                                for (var i = 0; i < tensors.Count; i++) tensorRefs[i] = tensors[i].Handle;
-
-                                THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
-                                torch.CheckForErrors();
-                                ptrArray = parray.Array;
-
-                                break;
-                            }
+                        default: return base.forward(input);
                         }
-
                     }
 
-                    switch(typeCode) {
+                    switch (typeCode) {
                     case 0:
                         // Nothing.
                         return base.forward(input);
@@ -371,11 +360,146 @@ namespace TorchSharp
                     }
                 }
 
-                public override Tensor forward(Tensor t) => (Tensor)forward((object)t);
+                public override object forward(params object[] objs)
+                {
+                    IntPtr[] ptrArray = null;
+                    sbyte typeCode = 0;
 
-                public override Tensor forward(Tensor x, Tensor y) => (Tensor)forward((x, y));
+                    if (!objs.All(o => typeof(Tensor).IsAssignableFrom(o.GetType()))) {
+                        return base.forward(objs);
+                    }
 
-                public override Tensor forward(Tensor x, Tensor y, Tensor z) => (Tensor)forward((x,y,x));
+                    using (var parray = new PinnedArray<IntPtr>()) {
+
+                        var tensors = objs.Select(o => (Tensor)o).ToArray();
+                        var count = tensors.Length;
+                        var tensorRefs = new IntPtr[count];
+                        for (var i = 0; i < tensors.Length; i++) tensorRefs[i] = tensors[i].Handle;
+
+                        THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
+                        torch.CheckForErrors();
+                        ptrArray = parray.Array;
+                    }
+
+
+                    switch (typeCode) {
+                    case 0:
+                        // Nothing.
+                        return base.forward(objs);
+                    case 1:
+                        // Tensor
+                        return new Tensor(ptrArray[0]);
+                    case 2:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
+                    case 3:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]));
+                    case 4:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]));
+                    case 5:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]), new Tensor(ptrArray[4]));
+                    default: {
+                            // A list or too long a tuple.
+                            var result = new Tensor[ptrArray.Length];
+                            for (var i = 0; i < ptrArray.Length; i++) {
+                                result[i] = new Tensor(ptrArray[i]);
+                            }
+                            return result;
+                        }
+                    }
+
+                    throw new InvalidCastException("Called 'Tensor forward(Tensor,...)' for a script module that returns something else than a single tensor. Use 'object forward(object)' instead.");
+                }
+
+                public override Tensor forward(Tensor t)
+                {
+                    IntPtr[] ptrArray = null;
+                    sbyte typeCode = 0;
+
+                    using (var parray = new PinnedArray<IntPtr>()) {
+
+                        var tensorRefs = new IntPtr[1];
+                        tensorRefs[0] = t.Handle;
+
+                        THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), 1, parray.CreateArray, out typeCode);
+                        torch.CheckForErrors();
+                        ptrArray = parray.Array;
+                    }
+
+
+                    switch (typeCode) {
+                    case 0:
+                        // Nothing.
+                        return null;
+                    case 1:
+                        // Tensor
+                        return new Tensor(ptrArray[0]);
+                    }
+
+                    throw new InvalidCastException("Called 'Tensor forward(Tensor,...)' for a script module that returns something else than a single tensor. Use 'object forward(object)' instead.");
+                }
+
+                public override Tensor forward(Tensor x, Tensor y)
+                {
+                    IntPtr[] ptrArray = null;
+                    sbyte typeCode = 0;
+
+                    using (var parray = new PinnedArray<IntPtr>()) {
+
+                        var tensorRefs = new IntPtr[2];
+                        tensorRefs[0] = x.Handle;
+                        tensorRefs[1] = y.Handle;
+
+                        THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), 2, parray.CreateArray, out typeCode);
+                        torch.CheckForErrors();
+                        ptrArray = parray.Array;
+                    }
+
+
+                    switch (typeCode) {
+                    case 0:
+                        // Nothing.
+                        return null;
+                    case 1:
+                        // Tensor
+                        return new Tensor(ptrArray[0]);
+                    }
+
+                    throw new InvalidCastException("Called 'Tensor forward(Tensor,...)' for a script module that returns something else than a single tensor. Use 'object forward(object,object)' instead.");
+                }
+
+                public override Tensor forward(Tensor x, Tensor y, Tensor z)
+                {
+                    IntPtr[] ptrArray = null;
+                    sbyte typeCode = 0;
+
+                    using (var parray = new PinnedArray<IntPtr>()) {
+
+                        var tensorRefs = new IntPtr[3];
+                        tensorRefs[0] = x.Handle;
+                        tensorRefs[1] = y.Handle;
+                        tensorRefs[2] = z.Handle;
+
+                        THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), 3, parray.CreateArray, out typeCode);
+                        torch.CheckForErrors();
+                        ptrArray = parray.Array;
+                    }
+
+
+                    switch (typeCode) {
+                    case 0:
+                        // Nothing.
+                        return null;
+                    case 1:
+                        // Tensor
+                        return new Tensor(ptrArray[0]);
+                    }
+
+                    throw new InvalidCastException("Called 'Tensor forward(Tensor,...)' for a script module that returns something else than a single tensor. Use 'object forward(object)' instead.");
+                }
             }
 
             [DllImport("LibTorchSharp")]

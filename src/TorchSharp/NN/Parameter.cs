@@ -16,7 +16,7 @@ namespace TorchSharp
         /// one might want to cache some temporary state, like last hidden state of the RNN, in the model.
         /// If there was no such class as Parameter, these temporaries would get registered too.
         /// </summary>
-        public class Parameter : Tensor
+        public sealed class Parameter : Tensor
         {
             /// <summary>
             /// Constructor
