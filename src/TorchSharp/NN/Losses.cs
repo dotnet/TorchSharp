@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.torch.distributions.constraints;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 
@@ -106,7 +107,7 @@ namespace TorchSharp
             /// <param name="margin"> Should be a number from -1 to 1, 0 to 0.5 is suggested</param>
             /// <param name="reduction">Specifies the reduction to apply to the output</param>
             /// <returns></returns>
-            public static Modules.HingeEmbeddingLoss HingeEmbeddingLoss(double margin = 0.0, Reduction reduction = Reduction.Mean)
+            public static Modules.HingeEmbeddingLoss HingeEmbeddingLoss(double margin = 1.0, Reduction reduction = Reduction.Mean)
             {
                 return new Modules.HingeEmbeddingLoss(margin, reduction);
             }
@@ -124,16 +125,41 @@ namespace TorchSharp
                 return new Modules.HuberLoss(delta, reduction);
             }
 
+            /// <summary>
+            /// Creates a criterion that measures the loss given inputs x1, x2, two 1D mini-batch or 0D Tensors, and a label 1D mini-batch or 0D Tensor y (containing 1 or -1).
+            ///
+            /// See: https://pytorch.org/docs/stable/generated/torch.nn.MarginRankingLoss.html#torch.nn.MarginRankingLoss
+            /// </summary>
+            /// <param name="margin">Has a default value of 0.</param>
+            /// <param name="reduction">Specifies the reduction to apply to the output</param>
+            /// <returns></returns>
             public static Modules.MarginRankingLoss MarginRankingLoss(double margin = 0, Reduction reduction = Reduction.Mean)
             {
                 return new Modules.MarginRankingLoss(margin, reduction);
             }
 
+            /// <summary>
+            /// Creates a criterion that optimizes a multi-label one-versus-all loss based on max-entropy, between input x and target y of size NxC.
+            ///
+            /// See: https://pytorch.org/docs/stable/generated/torch.nn.MultiLabelSoftMarginLoss.html#torch.nn.MultiLabelSoftMarginLoss
+            /// </summary>
+            /// <param name="weight">A manual rescaling weight given to each class. If given, it has to be a Tensor of size C. Otherwise, it is treated as if having all ones.</param>
+            /// <param name="reduction">Specifies the reduction to apply to the output</param>
+            /// <returns></returns>
             public static MultiLabelSoftMarginLoss MultiLabelSoftMarginLoss(Tensor? weight = null, Reduction reduction = Reduction.Mean)
             {
                 return new MultiLabelSoftMarginLoss(weight, reduction);
             }
 
+            /// <summary>
+            /// Creates a criterion that optimizes a multi-class classification hinge loss.
+            ///
+            /// See: https://pytorch.org/docs/stable/generated/torch.nn.MultiMarginLoss.html#torch.nn.MultiMarginLoss
+            /// </summary>
+            /// <param name="p">Has a default value of 1. 1 and 2 are the only supported values.</param>
+            /// <param name="margin">Has a default value of 1</param>
+            /// <param name="weight">A manual rescaling weight given to each class. If given, it has to be a Tensor of size C. Otherwise, it is treated as if having all ones.</param>
+            /// <param name="reduction">Specifies the reduction to apply to the output</param>
             public static MultiMarginLoss MultiMarginLoss(int p = 1, double margin = 1.0, Tensor? weight = null, Reduction reduction = Reduction.Mean)
             {
                 return new MultiMarginLoss(p, margin, weight, reduction);
@@ -184,11 +210,11 @@ namespace TorchSharp
             }
 
             /// <summary>
-             /// The Kullback-Leibler divergence Loss
-             /// </summary>
-             /// <param name="log_target">A flag indicating whether target is passed in the log space.</param>
-             /// <param name="reduction">Specifies the reduction to apply to the output</param>
-             /// <returns></returns>
+            /// The Kullback-Leibler divergence Loss
+            /// </summary>
+            /// <param name="log_target">A flag indicating whether target is passed in the log space.</param>
+            /// <param name="reduction">Specifies the reduction to apply to the output</param>
+            /// <returns></returns>
             public static KLDivLoss KLDivLoss(bool log_target = true, Reduction reduction = Reduction.Mean)
             {
                 return new KLDivLoss(log_target, reduction);
@@ -204,11 +230,45 @@ namespace TorchSharp
                 return new SoftMarginLoss(reduction);
             }
 
+            /// <summary>
+            /// Creates a criterion that measures the triplet loss given an input tensors x1, x2, x3 and a margin with a value greater than 0.
+            /// This is used for measuring a relative similarity between samples.
+            ///
+            /// See: https://pytorch.org/docs/stable/generated/torch.nn.TripletMarginLoss.html#torch.nn.TripletMarginLoss
+            /// </summary>
+            /// <param name="margin">
+            /// A nonnegative margin representing the minimum difference between the positive and negative distances required for the loss to be 0.
+            /// Larger margins penalize cases where the negative examples are not distant enough from the anchors, relative to the positives.
+            /// </param>
+            /// <param name="p">The norm degree for pairwise distance. </param>
+            /// <param name="eps"></param>
+            /// <param name="swap">
+            /// If true, and if the positive example is closer to the negative example than the anchor is, swaps the positive example and the anchor in the loss computation.
+            /// The distance swap is described in detail in the paper Learning shallow convolutional feature descriptors with triplet losses by V. Balntas, E. Riba et al.
+            /// </param>
+            /// <param name="reduction">Specifies the reduction to apply to the output</param>
+            /// <returns></returns>
             public static TripletMarginLoss TripletMarginLoss(double margin = 1.0, long p = 2, double eps = 1e-06, bool swap = false, Reduction reduction = Reduction.Mean)
             {
                 return new TripletMarginLoss(margin, p, eps, swap, reduction);
             }
 
+            /// <summary>
+            /// Creates a criterion that measures the triplet loss given input tensors a, p, and n (representing anchor, positive, and negative examples, respectively),
+            /// and a nonnegative, real-valued function ("distance function") used to compute the relationship between the anchor and positive example ("positive distance")
+            /// and the anchor and negative example ("negative distance").
+            /// </summary>
+            /// <param name="distance"> A nonnegative, real-valued function that quantifies the closeness of two tensors. If not specified, nn.PairwiseDistance will be used.</param>
+            /// <param name="margin">
+            /// A nonnegative margin representing the minimum difference between the positive and negative distances required for the loss to be 0.
+            /// Larger margins penalize cases where the negative examples are not distant enough from the anchors, relative to the positives.
+            /// </param>
+            /// <param name="swap">
+            /// If true, and if the positive example is closer to the negative example than the anchor is, swaps the positive example and the anchor in the loss computation.
+            /// The distance swap is described in detail in the paper Learning shallow convolutional feature descriptors with triplet losses by V. Balntas, E. Riba et al.
+            /// </param>
+            /// <param name="reduction">Specifies the reduction to apply to the output</param>
+            /// <returns></returns>
             public static TripletMarginWithDistanceLoss TripletMarginWithDistanceLoss(Func<Tensor, Tensor, Tensor>? distance = null, double margin = 1.0, bool swap = false, Reduction reduction = Reduction.Mean)
             {
                 return new TripletMarginWithDistanceLoss(distance, margin, swap, reduction);
@@ -226,7 +286,12 @@ namespace TorchSharp
                 return new GaussianNLLLoss(full, eps, reduction);
             }
 
-
+            /// <summary>
+            /// Creates a criterion that optimizes a multi-class multi-classification hinge loss (margin-based loss) between input x (a 2D mini-batch Tensor)
+            /// and output y (which is a 2D Tensor of target class indices).
+            /// </summary>
+            /// <param name="reduction">Specifies the reduction to apply to the output</param>
+            /// <returns></returns>
             public static MultiLabelMarginLoss MultiLabelMarginLoss(Reduction reduction = Reduction.Mean)
             {
                 return new MultiLabelMarginLoss(reduction);
@@ -242,23 +307,376 @@ namespace TorchSharp
             {
                 return new SmoothL1Loss(reduction, beta);
             }
+
+
             /// <summary>
             /// Class maintaing the supported loss functions.
             /// </summary>
             public static partial class functional
             {
-                public static Tensor binary_cross_entropy_with_logits(Tensor input, Tensor target, Tensor? weight = null, Reduction reduction = Reduction.Mean, Tensor? posWeights = null)
+                /// <summary>
+                /// Function that measures Binary Cross Entropy between target and input logits.
+                /// </summary>
+                /// <param name="input">Tensor of arbitrary shape as unnormalized scores (often referred to as logits).</param>
+                /// <param name="target">Tensor of the same shape as input with values between 0 and 1</param>
+                /// <param name="weight">A manual rescaling weight if provided it’s repeated to match input tensor shape</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <param name="pos_weights">A weight of positive examples. Must be a vector with length equal to the number of classes.</param>
+                /// <returns></returns>
+                public static Tensor binary_cross_entropy_with_logits(Tensor input, Tensor target, Tensor? weight = null, Reduction reduction = Reduction.Mean, Tensor? pos_weights = null)
                 {
-                    var res = THSNN_binary_cross_entropy_with_logits(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction, posWeights?.Handle ?? IntPtr.Zero);
+                    var res = THSNN_binary_cross_entropy_with_logits(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction, pos_weights?.Handle ?? IntPtr.Zero);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
 
-                public static Tensor binary_cross_entropy(Tensor src, Tensor target, Tensor? weight = null, Reduction reduction = Reduction.Mean)
+                /// <summary>
+                /// Function that measures the Binary Cross Entropy between the target and input probabilities.
+                /// </summary>
+                /// <param name="input">Tensor of arbitrary shape as probabilities.</param>
+                /// <param name="target">Tensor of the same shape as input with values between 0 and 1</param>
+                /// <param name="weight">A manual rescaling weight if provided it’s repeated to match input tensor shape</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor binary_cross_entropy(Tensor input, Tensor target, Tensor? weight = null, Reduction reduction = Reduction.Mean)
                 {
-                    var res = THSNN_binary_cross_entropy(src.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction);
+                    var res = THSNN_binary_cross_entropy(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Computes the cross entropy loss between input and target.
+                /// </summary>
+                /// <param name="input">Tensor of arbitrary shape as unnormalized scores (often referred to as logits).</param>
+                /// <param name="target">Ground truth class indices or class probabilities; see Shape section below for supported shapes.</param>
+                /// <param name="weight">A manual rescaling weight if provided it’s repeated to match input tensor shape</param>
+                /// <param name="ignore_index">
+                /// Specifies a target value that is ignored and does not contribute to the input gradient.
+                /// Note that ignore_index is only applicable when the target contains class indices.
+                /// </param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor cross_entropy(Tensor input, Tensor target, Tensor? weight = null, long ignore_index = -100, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_cross_entropy(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ignore_index, true, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Poisson negative log likelihood loss.
+                /// </summary>
+                /// <param name="input">Expectation of underlying Poisson distribution.</param>
+                /// <param name="target">Random sample target.</param>
+                /// <param name="log_input"></param>
+                /// <param name="full">Whether to compute full loss, i.e. to add the Stirling approximation term.</param>
+                /// <param name="eps">Small value to avoid evaluation of log(0)</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor poisson_nll_loss(Tensor input, Tensor target, bool log_input = true, bool full = false, float eps = 1e-8f, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_poisson_loss(input.Handle, target.Handle, log_input, full, eps, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// 
+                /// </summary>
+                /// <param name="input1">(N,D) or (D), where N is the batch size and D is the embedding dimension.</param>
+                /// <param name="input2">Same shape as input1</param>
+                /// <param name="target">N or ()</param>
+                /// <param name="margin">Should be a number from -1−1 to 11, 00 to 0.50.5 is suggested</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor cosine_embedding_loss(Tensor input1, Tensor input2, Tensor target, double margin = 0.0, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_cosine_embedding_loss(input1.Handle, input2.Handle, target.Handle, margin, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Computes the Connectionist Temporal Classification loss.
+                /// </summary>
+                /// <param name="log_probs">The logarithmized probabilities of the outputs.</param>
+                /// <param name="targets"></param>
+                /// <param name="input_lengths">Lengths of the inputs.</param>
+                /// <param name="target_lengths">Lengths of the targets.</param>
+                /// <param name="blank">Blank label.</param>
+                /// <param name="zero_infinity">Whether to zero infinite losses and the associated gradients.</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor ctc_loss(Tensor log_probs, Tensor targets, Tensor input_lengths, Tensor target_lengths, long blank = 0, bool zero_infinity = false, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_ctc_loss(log_probs.Handle, targets.Handle, input_lengths.Handle, target_lengths.Handle, blank, zero_infinity, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Measures the loss given an input tensor x and a labels tensor y (containing 1 or -1).
+                /// </summary>
+                /// <param name="input"></param>
+                /// <param name="target"></param>
+                /// <param name="margin"> Should be a number from -1 to 1, 0 to 0.5 is suggested</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor hinge_embedding_loss(Tensor input, Tensor target, double margin = 0.0, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_hinge_embedding_loss(input.Handle, target.Handle, margin, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Function that uses a squared term if the absolute element-wise error falls below delta and a delta-scaled L1 term otherwise.
+                /// </summary>
+                /// <param name="input"></param>
+                /// <param name="target"></param>
+                /// <param name="delta">Specifies the threshold at which to change between delta-scaled L1 and L2 loss. The value must be positive. Default: 1.0</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor huber_loss(Tensor input, Tensor target, double delta = 1.0, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_huber_loss(input.Handle, target.Handle, delta, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Creates a criterion that measures the loss given inputs x1, x2, two 1D mini-batch or 0D Tensors, and a label 1D mini-batch or 0D Tensor y (containing 1 or -1).
+                /// </summary>
+                /// <param name="input1"></param>
+                /// <param name="input2"></param>
+                /// <param name="target"></param>
+                /// <param name="margin">Has a default value of 0.</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor margin_ranking_loss(Tensor input1, Tensor input2, Tensor target, double margin = 0.0, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_margin_ranking_loss(input1.Handle, input2.Handle, target.Handle, margin, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Creates a criterion that optimizes a multi-class multi-classification hinge loss (margin-based loss) between input x (a 2D mini-batch Tensor)
+                /// and output y (which is a 2D Tensor of target class indices).
+                /// </summary>
+                /// <param name="input"></param>
+                /// <param name="target"></param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor multi_label_margin_loss(Tensor input, Tensor target, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_multilabel_margin_loss(input.Handle, target.Handle, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Creates a criterion that optimizes a multi-label one-versus-all loss based on max-entropy, between input x and target y of size NxC.
+                /// </summary>
+                /// <param name="input"></param>
+                /// <param name="target"></param>
+                /// <param name="weight">A manual rescaling weight if provided it’s repeated to match input tensor shape</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor multilabel_soft_margin_loss(Tensor input, Tensor target, Tensor? weight = null,Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_multilabel_soft_margin_loss(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Creates a criterion that optimizes a multi-class classification hinge loss.
+                /// </summary>
+                /// <param name="input"></param>
+                /// <param name="target"></param>
+                /// <param name="p">Has a default value of 1. 1 and 2 are the only supported values.</param>
+                /// <param name="margin">Has a default value of 1</param>
+                /// <param name="weight">A manual rescaling weight if provided it’s repeated to match input tensor shape</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor multi_margin_loss(Tensor input, Tensor target, int p = 1, double margin = 1.0, Tensor? weight = null, Reduction reduction = Reduction.Mean)
+                {
+                    IntPtr h = (weight is null) ? IntPtr.Zero : weight.Handle;
+                    var res = THSNN_multi_margin_loss(input.Handle, target.Handle, p, margin, h, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                ///	Measures the element-wise mean squared error.
+                /// </summary>
+                /// <param name="input">Tensor of any shape.</param>
+                /// <param name="target">Tensor of the same shape as 'input'</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor mse_loss(Tensor input, Tensor target, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_mse_loss(input.Handle, target.Handle, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Function that takes the mean element-wise absolute value difference.
+                /// </summary>
+                /// <param name="input">Tensor of any shape.</param>
+                /// <param name="target">Tensor of the same shape as 'input'</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor l1_loss(Tensor input, Tensor target, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_l1_loss(input.Handle, target.Handle, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Computes the negative log likelihood loss.
+                /// </summary>
+                /// <param name="input"></param>
+                /// <param name="target"></param>
+                /// <param name="weight">A manual rescaling weight if provided it’s repeated to match input tensor shape</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor nll_loss(Tensor input, Tensor target, Tensor? weight = null, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_nll_loss(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Gaussian negative log likelihood loss.
+                /// </summary>
+                /// <param name="input"></param>
+                /// <param name="target"></param>
+                /// <param name="variance">Tensor of positive variance(s), one for each of the expectations in the input (heteroscedastic), or a single one (homoscedastic).</param>
+                /// <param name="full">Include the constant term in the loss calculation. </param>
+                /// <param name="eps">Value added to var, for stability</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor gaussian_nll_loss(Tensor input, Tensor target, Tensor variance, bool full = false, float eps = 1e-6f, Reduction reduction = Reduction.Mean)
+                {
+                    return new Modules.GaussianNLLLoss(full, eps, reduction).forward(input, target, variance);
+                }
+
+                /// <summary>
+                /// Computes the Kullback-Leibler divergence Loss
+                /// </summary>
+                /// <param name="input"></param>
+                /// <param name="target"></param>
+                /// <param name="log_target">A flag indicating whether target is passed in the log space.</param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor kl_div(Tensor input, Tensor target, bool log_target = true, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_kl_div_loss(input.Handle, target.Handle, (long)reduction, log_target);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Function that uses a squared term if the absolute element-wise error falls below beta and an L1 term otherwise.
+                /// </summary>
+                /// <param name="input"></param>
+                /// <param name="target"></param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <param name="beta">Specifies the threshold at which to change between L1 and L2 loss. The value must be non-negative.</param>
+                /// <returns></returns>
+                public static Tensor smooth_l1_loss(Tensor input, Tensor target, Reduction reduction = Reduction.Mean, double beta = 1.0)
+                {
+                    var res = THSNN_smooth_l1_loss(input.Handle, target.Handle, (long)reduction, beta);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                ///  Optimizes a two-class classification logistic loss between input tensor x and target tensor y (containing 1 or -1).
+                /// </summary>
+                /// <param name="input"></param>
+                /// <param name="target"></param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor soft_margin_loss(Tensor input, Tensor target, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_soft_margin_loss(input.Handle, target.Handle, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Creates a criterion that measures the triplet loss given an input tensors x1, x2, x3 and a margin with a value greater than 0.
+                /// This is used for measuring a relative similarity between samples.
+                /// </summary>
+                /// <param name="anchor"></param>
+                /// <param name="positive"></param>
+                /// <param name="negative"></param>
+                /// <param name="margin">
+                /// A nonnegative margin representing the minimum difference between the positive and negative distances required for the loss to be 0.
+                /// Larger margins penalize cases where the negative examples are not distant enough from the anchors, relative to the positives.
+                /// </param>
+                /// <param name="p">The norm degree for pairwise distance. </param>
+                /// <param name="eps"></param>
+                /// <param name="swap">
+                /// If true, and if the positive example is closer to the negative example than the anchor is, swaps the positive example and the anchor in the loss computation.
+                /// The distance swap is described in detail in the paper Learning shallow convolutional feature descriptors with triplet losses by V. Balntas, E. Riba et al.
+                /// </param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor triplet_margin_loss(Tensor anchor, Tensor positive, Tensor negative, double margin = 1.0, long p = 2, double eps = 1e-06, bool swap = false, Reduction reduction = Reduction.Mean)
+                {
+                    var res = THSNN_triplet_margin_loss(anchor.Handle, positive.Handle, negative.Handle, margin, p, eps, swap, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Creates a criterion that measures the triplet loss given input tensors a, p, and n (representing anchor, positive, and negative examples, respectively),
+                /// and a nonnegative, real-valued function ("distance function") used to compute the relationship between the anchor and positive example ("positive distance")
+                /// and the anchor and negative example ("negative distance").
+                /// </summary>
+                /// <param name="anchor"></param>
+                /// <param name="positive"></param>
+                /// <param name="negative"></param>
+                /// <param name="distance"> A nonnegative, real-valued function that quantifies the closeness of two tensors. If not specified, nn.PairwiseDistance will be used.</param>
+                /// <param name="margin">
+                /// A nonnegative margin representing the minimum difference between the positive and negative distances required for the loss to be 0.
+                /// Larger margins penalize cases where the negative examples are not distant enough from the anchors, relative to the positives.
+                /// </param>
+                /// <param name="swap">
+                /// If true, and if the positive example is closer to the negative example than the anchor is, swaps the positive example and the anchor in the loss computation.
+                /// The distance swap is described in detail in the paper Learning shallow convolutional feature descriptors with triplet losses by V. Balntas, E. Riba et al.
+                /// </param>
+                /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <returns></returns>
+                public static Tensor triplet_margin_with_distance_loss(Tensor anchor, Tensor positive, Tensor negative, Func<Tensor, Tensor, Tensor>? distance = null, double margin = 1.0, bool swap = false, Reduction reduction = Reduction.Mean)
+                {
+                    DistanceFunctionNative? func = null;
+
+                    if (distance != null) {
+                        func = (IntPtr x, IntPtr y) => {
+                            var x1 = new Tensor(x);
+                            var y1 = new Tensor(y);
+                            var res = distance(x1, y1);
+
+                            GC.SuppressFinalize(x1);
+                            GC.SuppressFinalize(y1);
+                            GC.SuppressFinalize(res);
+
+                            return res.Handle;
+                        };
+                    }
+                    var res = THSNN_triplet_margin_with_distance_loss(anchor.Handle, positive.Handle, negative.Handle, func, margin, swap, (long)reduction);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+
                 }
 
                 [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -273,7 +691,7 @@ namespace TorchSharp
 
                 [DllImport("LibTorchSharp")]
                 internal static extern IntPtr THSNN_binary_cross_entropy_with_logits(IntPtr srct, IntPtr trgt, IntPtr wgt, long reduction, IntPtr posWeights);
-                
+
                 [DllImport("LibTorchSharp")]
                 internal static extern IntPtr THSNN_cosine_embedding_loss(IntPtr input1, IntPtr input2, IntPtr trgt, double margin, long reduction);
 
@@ -651,8 +1069,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input, Tensor target)
             {
-                // Currently, the 'beta' parameter is being ignored by the native layer, so we just pass the default.
-                var res = THSNN_smooth_l1_loss(input.Handle, target.Handle, (long)reduction, 1.0);
+                var res = THSNN_smooth_l1_loss(input.Handle, target.Handle, (long)reduction, beta);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -725,7 +1142,7 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-            
+
             DistanceFunctionNative? distance { get; }
             public double margin { get; }
             bool swap { get; }
