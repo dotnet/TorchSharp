@@ -758,7 +758,7 @@ namespace TorchSharp
     {
         using static torch.nn.functional;
 
-        public class CrossEntropyLoss : WeightedLoss
+        public sealed class CrossEntropyLoss : WeightedLoss
         {
             public CrossEntropyLoss(Tensor? weight = null, long? ignore_index = null, Reduction reduction = Reduction.Mean) : base(weight, reduction)
             {
@@ -776,7 +776,7 @@ namespace TorchSharp
             public long? ignore_index { get; }
         }
 
-        public class BCELoss : WeightedLoss
+        public sealed class BCELoss : WeightedLoss
         {
             public BCELoss(Tensor? weight = null, Reduction reduction = Reduction.Mean) : base(weight, reduction)
             {
@@ -790,7 +790,7 @@ namespace TorchSharp
             }
         }
 
-        public class BCEWithLogitsLoss : WeightedLoss
+        public sealed class BCEWithLogitsLoss : WeightedLoss
         {
             public BCEWithLogitsLoss(Tensor? weight = null, Reduction reduction = Reduction.Mean, Tensor? pos_weights = null) : base(weight, reduction)
             {
@@ -807,7 +807,7 @@ namespace TorchSharp
             public Tensor? pos_weights { get; }
         }
 
-        public class CosineEmbeddingLoss : Loss
+        public sealed class CosineEmbeddingLoss : Loss
         {
             public CosineEmbeddingLoss(double margin = 0.0, Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -824,7 +824,7 @@ namespace TorchSharp
             public double margin { get; }
         }
 
-        public class CTCLoss : Loss
+        public sealed class CTCLoss : Loss
         {
             public CTCLoss(long blank = 0, bool zero_infinity = false, Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -843,7 +843,7 @@ namespace TorchSharp
             public bool zero_infinity { get; }
         }
 
-        public class HingeEmbeddingLoss : Loss
+        public sealed class HingeEmbeddingLoss : Loss
         {
             public HingeEmbeddingLoss(double margin = 0.0, Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -860,7 +860,7 @@ namespace TorchSharp
             public double margin { get; }
         }
 
-        public class HuberLoss : Loss
+        public sealed class HuberLoss : Loss
         {
             public HuberLoss(double delta = 1.0, Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -877,7 +877,7 @@ namespace TorchSharp
             public double delta { get; }
         }
 
-        public class MarginRankingLoss : Loss
+        public sealed class MarginRankingLoss : Loss
         {
             public MarginRankingLoss(double margin = 0.0, Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -894,7 +894,7 @@ namespace TorchSharp
             public double margin { get; }
         }
 
-        public class MultiLabelMarginLoss : Loss
+        public sealed class MultiLabelMarginLoss : Loss
         {
             public MultiLabelMarginLoss(Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -908,7 +908,7 @@ namespace TorchSharp
             }
         }
 
-        public class MultiLabelSoftMarginLoss : WeightedLoss
+        public sealed class MultiLabelSoftMarginLoss : WeightedLoss
         {
             public MultiLabelSoftMarginLoss(Tensor? weight = null, Reduction reduction = Reduction.Mean) : base(weight, reduction)
             {
@@ -922,7 +922,7 @@ namespace TorchSharp
             }
         }
 
-        public class MultiMarginLoss : WeightedLoss
+        public sealed class MultiMarginLoss : WeightedLoss
         {
             public MultiMarginLoss(int p = 1, double margin = 1.0, Tensor? weight = null, Reduction reduction = Reduction.Mean) : base(weight, reduction)
             {
@@ -943,7 +943,7 @@ namespace TorchSharp
             public int p { get; }
         }
 
-        public class MSELoss : Loss
+        public sealed class MSELoss : Loss
         {
             public MSELoss(Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -957,7 +957,7 @@ namespace TorchSharp
             }
         }
 
-        public class L1Loss : Loss
+        public sealed class L1Loss : Loss
         {
             public L1Loss(Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -971,7 +971,7 @@ namespace TorchSharp
             }
         }
 
-        public class NLLLoss : WeightedLoss
+        public sealed class NLLLoss : WeightedLoss
         {
             public NLLLoss(Tensor? weight = null, Reduction reduction = Reduction.Mean) : base(weight, reduction)
             {
@@ -985,7 +985,7 @@ namespace TorchSharp
             }
         }
 
-        public class PoissonNLLLoss : Loss
+        public sealed class PoissonNLLLoss : Loss
         {
             public PoissonNLLLoss(bool log_input = true, bool full = false, float eps = 1e-8f, Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -1007,7 +1007,7 @@ namespace TorchSharp
 
         }
 
-        public class GaussianNLLLoss : Loss
+        public sealed class GaussianNLLLoss : Loss
         {
             public GaussianNLLLoss(bool full = false, float eps = 1e-8f, Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -1043,7 +1043,7 @@ namespace TorchSharp
 
         }
 
-        public class KLDivLoss : Loss
+        public sealed class KLDivLoss : Loss
         {
             public KLDivLoss(bool log_target = true, Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -1060,7 +1060,7 @@ namespace TorchSharp
             public bool log_target { get; }
         }
 
-        public class SmoothL1Loss : Loss
+        public sealed class SmoothL1Loss : Loss
         {
             public SmoothL1Loss(Reduction reduction = Reduction.Mean, double beta = 1.0) : base(reduction)
             {
@@ -1077,7 +1077,7 @@ namespace TorchSharp
             public double beta { get; }
         }
 
-        public class SoftMarginLoss : Loss
+        public sealed class SoftMarginLoss : Loss
         {
             public SoftMarginLoss(Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -1091,7 +1091,7 @@ namespace TorchSharp
             }
         }
 
-        public class TripletMarginLoss : Loss
+        public sealed class TripletMarginLoss : Loss
         {
             public TripletMarginLoss(double margin = 1.0, long p = 2, double eps = 1e-06, bool swap = false, Reduction reduction = Reduction.Mean) : base(reduction)
             {
@@ -1114,7 +1114,7 @@ namespace TorchSharp
             bool swap { get; }
         }
 
-        public class TripletMarginWithDistanceLoss : Loss
+        public sealed class TripletMarginWithDistanceLoss : Loss
         {
             public TripletMarginWithDistanceLoss(Func<Tensor, Tensor, Tensor>? distance = null, double margin = 1.0, bool swap = false, Reduction reduction = Reduction.Mean) : base(reduction)
             {
