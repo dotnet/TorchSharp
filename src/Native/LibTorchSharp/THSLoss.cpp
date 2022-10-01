@@ -147,7 +147,7 @@ Tensor THSNN_smooth_l1_loss(const Tensor input, const Tensor target, const int64
         auto opts = torch::nn::functional::SmoothL1LossFuncOptions();
         ApplyReduction(opts, reduction);
 
-        res = ResultTensor(torch::nn::functional::smooth_l1_loss(*input, *target, opts));
+        res = ResultTensor(torch::nn::functional::smooth_l1_loss(*input, *target, opts, beta));
     )
 }
 
