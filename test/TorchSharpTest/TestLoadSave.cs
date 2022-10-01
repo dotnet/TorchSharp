@@ -806,10 +806,10 @@ namespace TorchSharp
             using var x = torch.randn(new long[] { 64, 10 });
             using var y = torch.randn(new long[] { 64, 10 });
 
-            var loss = torch.nn.functional.mse_loss(Reduction.Sum);
+            var loss = torch.nn.MSELoss(Reduction.Sum);
 
             using var eval = seq.forward(x);
-            var output = loss(eval, y);
+            var output = loss.forward(eval, y);
 
             var l = output.ToSingle();
 
@@ -876,10 +876,10 @@ namespace TorchSharp
             using var x = torch.randn(new long[] { 64, 10 });
             using var y = torch.randn(new long[] { 64, 10 });
 
-            var loss = torch.nn.functional.mse_loss(Reduction.Sum);
+            var loss = torch.nn.MSELoss(Reduction.Sum);
 
             using var eval = seq.forward(x);
-            var output = loss(eval, y);
+            var output = loss.forward(eval, y);
 
             var l = output.ToSingle();
 

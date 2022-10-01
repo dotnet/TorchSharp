@@ -49,7 +49,8 @@ let hasCUDA = TorchText.Datasets.cuda_is_available() //torch.cuda.is_available()
 
 let device = if hasCUDA then torch.CUDA else torch.CPU
 
-let criterion x y = functional.cross_entropy_loss(reduction=Reduction.Mean).Invoke(x,y)
+let loss = torch.nn.CrossEntropyLoss(reduction=Reduction.Mean)
+let criterion x y = loss.forward(x,y)
 
 type PositionalEncoding(dmodel, maxLen) as this =
     inherit Module("PositionalEncoding")

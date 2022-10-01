@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.IO;
+using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn.functional;
 using static TorchSharp.torch.utils.data;
@@ -97,7 +98,7 @@ namespace TorchSharp.Examples
 
             foreach (var ε in epsilons) {
                 using (var test = torchvision.datasets.MNIST(datasetPath, false, true, normImage)) {
-                    var attacked = Test(model, nll_loss(), ε, device, test, test.Count);
+                    var attacked = Test(model, torch.nn.NLLLoss(), ε, device, test, test.Count);
                     Console.WriteLine($"Epsilon: {ε:F2}, accuracy: {attacked:P2}");
                 }
             }
@@ -129,7 +130,7 @@ namespace TorchSharp.Examples
                     data.requires_grad = true;
 
                     using (var output = model.forward(data))
-                    using (var loss = criterion(output, label)) {
+                    using (var loss = criterion.forward(output, label)) {
 
                         model.zero_grad();
                         loss.backward();

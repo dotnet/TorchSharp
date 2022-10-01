@@ -74,7 +74,8 @@ type Model(name,device:torch.Device) as this =
         --> fc1 --> relu --> dropout2 --> fc2
         --> logsm
 
-let loss x y = functional.nll_loss(reduction=Reduction.Mean).Invoke(x,y)
+let _loss = torch.nn.NLLLoss(reduction=Reduction.Mean)
+let loss x y = _loss.forward(x,y)
 
 let train (model:Model) (optimizer:Optimizer) (data: Dataset) epoch =
     model.train()
