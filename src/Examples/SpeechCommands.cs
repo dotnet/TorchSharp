@@ -104,8 +104,8 @@ namespace TorchSharp.Examples
                 sw.Start();
 
                 for (var epoch = 1; epoch <= _epochs; epoch++) {
-                    Train(model, transform, optimizer, nll_loss(reduction: torch.nn.Reduction.Mean), train_loader, epoch, train_data.Count);
-                    Test(model, transform, nll_loss(reduction: torch.nn.Reduction.Sum), test_loader, test_data.Count);
+                    Train(model, transform, optimizer, torch.nn.NLLLoss(reduction: torch.nn.Reduction.Mean), train_loader, epoch, train_data.Count);
+                    Test(model, transform, torch.nn.NLLLoss(reduction: torch.nn.Reduction.Sum), test_loader, test_data.Count);
 
                     Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
                     scheduler.step();
@@ -140,7 +140,7 @@ namespace TorchSharp.Examples
                     var audio = transform.forward(batch.audio);
                     var target = batch.label;
                     var output = model.forward(batch.audio).squeeze();
-                    var loss = criteria(output, target);
+                    var loss = criteria.forward(output, target);
                     optimizer.zero_grad();
                     loss.backward();
                     optimizer.step();
@@ -175,7 +175,7 @@ namespace TorchSharp.Examples
                     var audio = transform.forward(batch.audio);
                     var target = batch.label;
                     var output = model.forward(batch.audio).squeeze();
-                    var loss = criteria(output, target);
+                    var loss = criteria.forward(output, target);
                     testLoss += loss.ToSingle();
 
                     var pred = output.argmax(1);

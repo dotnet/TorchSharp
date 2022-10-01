@@ -81,8 +81,8 @@ namespace TorchSharp.Examples
 
                 using (var d = torch.NewDisposeScope()) {
 
-                    Train(model, optimizer, nll_loss(reduction: Reduction.Mean), train, epoch, train_data.Count);
-                    Test(model, nll_loss(reduction: torch.nn.Reduction.Sum), test, test_data.Count);
+                    Train(model, optimizer, torch.nn.NLLLoss(reduction: Reduction.Mean), train, epoch, train_data.Count);
+                    Test(model, torch.nn.NLLLoss(reduction: torch.nn.Reduction.Sum), test, test_data.Count);
 
                     Console.WriteLine($"End-of-epoch memory use: {GC.GetTotalMemory(false)}");
                     scheduler.step();
@@ -170,7 +170,7 @@ namespace TorchSharp.Examples
 
                     var target = data["label"];
                     var prediction = model.forward(data["data"]);
-                    var output = loss(prediction, target);
+                    var output = loss.forward(prediction, target);
 
                     output.backward();
 
@@ -204,7 +204,7 @@ namespace TorchSharp.Examples
 
                 foreach (var data in dataLoader) {
                     var prediction = model.forward(data["data"]);
-                    var output = loss(prediction, data["label"]);
+                    var output = loss.forward(prediction, data["label"]);
                     testLoss += output.ToSingle();
 
                     var pred = prediction.argmax(1);

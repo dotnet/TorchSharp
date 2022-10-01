@@ -2,7 +2,7 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.97.7
+## NuGet Version 0.98.0
 
 __Breaking Changes:__
 
@@ -12,16 +12,22 @@ Module.to(), cpu(), and cuda() were moved to a static class for extension method
 
 Doing so (rather than qualifying names with 'TorchSharp.') was already recommended as a best practice, since such a using/open directive will allows qualified names to align with the PyTorch module hierarchy.
 
+__Loss functions are now aligned with the PyTorch APIs.__ This is a major change and the reason for incrementing the minor version number. The most direct consequence is that losses are modules rather than delegates, which means you need to call .forward() to actually compute the loss. Also, the factories are in torch.nn rather than torch.nn.functional and have the same Pascal-case names as the corresponding types. The members of the torch.nn.functional static class are now proper immediate loss functions, whereas the previous ones returned a loss delegate.
+
 __Fixed Bugs:__
 
+#558 Fix deviation from the Pytorch loss function/module APIs<br/>
 #742 Ease of use: Module.to method should be generic T -> T<br/>
 #743 Ease of use: module factories should have dtype and device<br/>
 #744 Some of functions with inconsistent argument names<br/>
 #749 functional.linear is wrong<br/>
+#761 Stateful optimizers should have support for save/load from disk.
 
 __API Changes__:
 
 Module.to(), cpu(), and cuda() were redone as extension methods. The virtual methods to override, if necessary, are now named '_to'. A need to do so should be extremely rare.<br/>
+Support for saving and restoring hyperparameters and state of optimizers<br/>
+
 
 ## NuGet Version 0.97.6
 

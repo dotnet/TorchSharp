@@ -84,7 +84,8 @@ type Model(name,device:torch.Device) as this =
 
         classifier.forward(x)
 
-let loss x y = functional.nll_loss().Invoke(x,y)
+let _loss = torch.nn.NLLLoss()
+let loss x y = _loss.forward(x,y)
 
 let train (model:Model) (optimizer:Optimizer) (dataLoader:DataLoader) epoch (size:int64) =
 

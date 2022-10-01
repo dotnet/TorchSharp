@@ -117,8 +117,8 @@ namespace TorchSharp.Examples
                         Stopwatch epchSW = new Stopwatch();
                         epchSW.Start();
 
-                        Train(model, optimizer, nll_loss(), train, epoch, _trainBatchSize, train_data.Count);
-                        Test(model, nll_loss(), test, test_data.Count);
+                        Train(model, optimizer, torch.nn.NLLLoss(), train, epoch, _trainBatchSize, train_data.Count);
+                        Test(model, torch.nn.NLLLoss(), test, test_data.Count);
 
                         epchSW.Stop();
                         Console.WriteLine($"Elapsed time for this epoch: {epchSW.Elapsed.TotalSeconds} s.");
@@ -160,7 +160,7 @@ namespace TorchSharp.Examples
                     var target = data["label"];
                     var prediction = model.forward(data["data"]);
                     var lsm = log_softmax(prediction, 1);
-                    var output = loss(lsm, target);
+                    var output = loss.forward(lsm, target);
 
                     output.backward();
 
@@ -201,7 +201,7 @@ namespace TorchSharp.Examples
                     var target = data["label"];
                     var prediction = model.forward(data["data"]);
                     var lsm = log_softmax(prediction, 1);
-                    var output = loss(lsm, target);
+                    var output = loss.forward(lsm, target);
 
                     testLoss += output.ToSingle();
                     batchCount += 1;

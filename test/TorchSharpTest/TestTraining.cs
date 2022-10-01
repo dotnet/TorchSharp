@@ -40,14 +40,14 @@ namespace TorchSharp
             var y = torch.randn(new long[] { 64, 10 });
 
             float learning_rate = 0.00004f;
-            var loss = mse_loss(Reduction.Sum);
+            var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
                 var eval = seq.forward(x);
-                var output = loss(eval, y);
+                var output = loss.forward(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -84,14 +84,14 @@ namespace TorchSharp
             var y = torch.randn(new long[] { 64, 10 });
 
             float learning_rate = 0.00004f;
-            var loss = mse_loss(Reduction.Sum);
+            var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
                 var eval = seq.forward(x);
-                var output = loss(eval, y);
+                var output = loss.forward(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -188,14 +188,14 @@ namespace TorchSharp
 
         private static float TrainLoop(Module seq, Tensor x, Tensor y, optim.Optimizer optimizer)
         {
-            var loss = mse_loss(Reduction.Sum);
+            var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
                 using var eval = seq.forward(x);
-                using var output = loss(eval, y);
+                using var output = loss.forward(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -242,9 +242,9 @@ namespace TorchSharp
 
         private static float TrainLoop(Module seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true, int iters = 10)
         {
-            var loss = mse_loss(Reduction.Sum);
+            var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             var pgFirst = optimizer.ParamGroups.First();
@@ -252,7 +252,7 @@ namespace TorchSharp
 
             for (int i = 0; i < iters; i++) {
                 using var eval = seq.forward(x);
-                using var output = loss(eval, y);
+                using var output = loss.forward(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -1541,16 +1541,16 @@ namespace TorchSharp
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
             var scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, new int[] { 3, 5, 7 }, 0.97);
 
-            var loss = mse_loss(Reduction.Sum);
+            var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             double lastLR = learning_rate;
 
             for (int i = 0; i < 10; i++) {
                 using var eval = seq.forward(x);
-                using var output = loss(eval, y);
+                using var output = loss.forward(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -1587,16 +1587,16 @@ namespace TorchSharp
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
             var scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, 10);
 
-            var loss = mse_loss(Reduction.Sum);
+            var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             double lastLR = learning_rate;
 
             for (int i = 0; i < 10; i++) {
                 using var eval = seq.forward(x);
-                using var output = loss(eval, y);
+                using var output = loss.forward(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -1667,16 +1667,16 @@ namespace TorchSharp
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
-            var loss = mse_loss(Reduction.Sum);
+            var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
 
                 Func<Tensor> closure = () => {
                     using var eval = seq.forward(x);
-                    var output = loss(eval, y);
+                    var output = loss.forward(eval, y);
 
                     finalLoss = output.ToSingle();
 
@@ -1719,9 +1719,9 @@ namespace TorchSharp
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate, max_iter: 15, max_eval: 15);
-            var loss = mse_loss(Reduction.Sum);
+            var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             Assert.Throws<ArgumentNullException>(() => optimizer.step(null));
@@ -1730,7 +1730,7 @@ namespace TorchSharp
 
                 Func<Tensor> closure = () => {
                     using var eval = seq.forward(x);
-                    var output = loss(eval, y);
+                    var output = loss.forward(eval, y);
 
                     finalLoss = output.ToSingle();
 
@@ -1813,17 +1813,17 @@ namespace TorchSharp
                     seq.to((Device)device);
 
                     var optimizer = torch.optim.Adam(seq.parameters());
-                    var loss = mse_loss(Reduction.Sum);
+                    var loss = MSELoss(Reduction.Sum);
 
                     using (Tensor x = torch.randn(new long[] { 64, 3, 28, 28 }, device: (Device)device),
                            y = torch.randn(new long[] { 64, 10 }, device: (Device)device)) {
 
-                        float initialLoss = loss(seq.forward(x), y).ToSingle();
+                        float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
                         float finalLoss = float.MaxValue;
 
                         for (int i = 0; i < 10; i++) {
                             var eval = seq.forward(x);
-                            var output = loss(eval, y);
+                            var output = loss.forward(eval, y);
                             var lossVal = output.ToSingle();
 
                             finalLoss = lossVal;

@@ -75,7 +75,7 @@ namespace TorchSharp.Examples
             var ntokens = vocab.Count;
 
             var model = new TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to((Device)device);
-            var loss = cross_entropy_loss();
+            var loss = CrossEntropyLoss();
             var lr = 2.50;
             var optimizer = torch.optim.SGD(model.parameters(), lr);
             var scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, 0.95, last_epoch: 15);
@@ -130,7 +130,7 @@ namespace TorchSharp.Examples
                     }
 
                     using (var output = model.forward(data, src_mask)) {
-                        var loss = criterion(output.view(-1, ntokens), targets);
+                        var loss = criterion.forward(output.view(-1, ntokens), targets);
                         loss.backward();
                         torch.nn.utils.clip_grad_norm_(model.parameters().ToArray(), 0.5);
                         optimizer.step();
@@ -168,7 +168,7 @@ namespace TorchSharp.Examples
                         src_mask = model.GenerateSquareSubsequentMask(data.shape[0]);
                     }
                     using (var output = model.forward(data, src_mask)) {
-                        var loss = criterion(output.view(-1, ntokens), targets);
+                        var loss = criterion.forward(output.view(-1, ntokens), targets);
                         total_loss += data.shape[0] * loss.to(torch.CPU).item<float>();
                     }
 
