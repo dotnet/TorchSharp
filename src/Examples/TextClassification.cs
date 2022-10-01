@@ -109,7 +109,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        static void train(int epoch, IEnumerable<(Tensor, Tensor, Tensor)> train_data, TextClassificationModel model, Loss criterion, torch.optim.Optimizer optimizer)
+        static void train(int epoch, IEnumerable<(Tensor, Tensor, Tensor)> train_data, TextClassificationModel model, Loss<torch.Tensor, torch.Tensor, torch.Tensor> criterion, torch.optim.Optimizer optimizer)
         {
             model.train();
 
@@ -145,7 +145,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        static double evaluate(IEnumerable<(Tensor, Tensor, Tensor)> test_data, TextClassificationModel model, Loss criterion)
+        static double evaluate(IEnumerable<(Tensor, Tensor, Tensor)> test_data, TextClassificationModel model, Loss<Tensor, Tensor, Tensor> criterion)
         {
             model.eval();
 

@@ -151,7 +151,7 @@ namespace TorchSharp.Examples
         private static void Train(
             Model model,
             torch.optim.Optimizer optimizer,
-            Loss loss,
+            Loss<torch.Tensor, torch.Tensor, torch.Tensor> loss,
             DataLoader dataLoader,
             int epoch,
             long size)
@@ -191,7 +191,7 @@ namespace TorchSharp.Examples
 
         private static void Test(
             Model model,
-            Loss loss,
+            Loss<torch.Tensor, torch.Tensor, torch.Tensor> loss,
             DataLoader dataLoader,
             long size)
         {

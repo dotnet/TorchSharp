@@ -1112,7 +1112,27 @@ namespace TorchSharp
                 }
             }
 
-            public abstract class Module<T1, TResult> : Module
+            public interface IModule<T1, TResult>
+            {
+                public abstract TResult forward(T1 input1);
+            }
+
+            public interface IModule<T1, T2, TResult>
+            {
+                public abstract TResult forward(T1 input1, T2 input2);
+            }
+
+            public interface IModule<T1, T2, T3, TResult>
+            {
+                public abstract TResult forward(T1 input1, T2 input2, T3 input3);
+            }
+
+            public interface IModule<T1, T2, T3, T4, TResult>
+            {
+                public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);
+            }
+
+            public abstract class Module<T1, TResult> : Module, IModule<T1, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
@@ -1120,12 +1140,28 @@ namespace TorchSharp
                 public abstract TResult forward(T1 input1);
             }
 
-            public abstract class Module<T1, T2, TResult> : Module
+            public abstract class Module<T1, T2, TResult> : Module, IModule<T1, T2, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
                 public abstract TResult forward(T1 input1, T2 input2);
+            }
+
+            public abstract class Module<T1, T2, T3, TResult> : Module, IModule<T1, T2, T3, TResult>
+            {
+                protected Module(string name) : base(name) { }
+                protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+                internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+                public abstract TResult forward(T1 input1, T2 input2, T3 input3);
+            }
+
+            public abstract class Module<T1, T2, T3, T4, TResult> : Module, IModule<T1, T2, T3, T4, TResult>
+            {
+                protected Module(string name) : base(name) { }
+                protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+                internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+                public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);
             }
         }
     }

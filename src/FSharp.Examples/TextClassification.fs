@@ -46,7 +46,7 @@ let loss = torch.nn.CrossEntropyLoss()
 let criterion x y = loss.forward(x,y)
 
 type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.Device) as this =
-    inherit Module("Transformer")
+    inherit Module<torch.Tensor, torch.Tensor, torch.Tensor>("Transformer")
 
     let embedding = EmbeddingBag(vocabSize, embedDim, sparse=false)
     let fc = Linear(embedDim, nClasses)
@@ -62,8 +62,6 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.Device)
 
         if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
-
-    override _.forward(input) = raise (NotImplementedException("single-argument forward()"))
 
     override _.forward(input, offsets) =
         embedding.forward(input, offsets) --> fc

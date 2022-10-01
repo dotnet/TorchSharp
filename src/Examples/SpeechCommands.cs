@@ -123,7 +123,7 @@ namespace TorchSharp.Examples
             M5 model,
             ITransform transform,
             torch.optim.Optimizer optimizer,
-            Loss criteria,
+            Loss<Tensor,Tensor,Tensor> criteria,
             DataLoader<SpeechCommandsDatasetItem, BatchItem> dataLoader,
             int epoch,
             long size)
@@ -160,7 +160,7 @@ namespace TorchSharp.Examples
         private static void Test(
             M5 model,
             ITransform transform,
-            Loss criteria,
+            Loss<Tensor, Tensor, Tensor> criteria,
             DataLoader<SpeechCommandsDatasetItem, BatchItem> dataLoader,
             long size)
         {
