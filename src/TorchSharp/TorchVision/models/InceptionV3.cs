@@ -62,32 +62,32 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class InceptionV3 : Module
+        public class InceptionV3 : Module<Tensor, Tensor>
         {
             // The code here is is loosely based on
             // https://github.com/pytorch/vision/blob/main/torchvision/models/inception.py
             // Licence and copypright notice at: https://github.com/pytorch/vision/blob/main/LICENSE
 
-            private readonly Module Conv2d_1a_3x3;
-            private readonly Module Conv2d_2a_3x3;
-            private readonly Module Conv2d_2b_3x3;
-            private readonly Module maxpool1;
-            private readonly Module Conv2d_3b_1x1;
-            private readonly Module Conv2d_4a_3x3;
-            private readonly Module maxpool2;
+            private readonly Module<Tensor, Tensor> Conv2d_1a_3x3;
+            private readonly Module<Tensor, Tensor> Conv2d_2a_3x3;
+            private readonly Module<Tensor, Tensor> Conv2d_2b_3x3;
+            private readonly Module<Tensor, Tensor> maxpool1;
+            private readonly Module<Tensor, Tensor> Conv2d_3b_1x1;
+            private readonly Module<Tensor, Tensor> Conv2d_4a_3x3;
+            private readonly Module<Tensor, Tensor> maxpool2;
 
-            private readonly Module Mixed_5b;
-            private readonly Module Mixed_5c;
-            private readonly Module Mixed_5d;
-            private readonly Module Mixed_6a;
-            private readonly Module Mixed_6b;
-            private readonly Module Mixed_6c;
-            private readonly Module Mixed_6d;
-            private readonly Module Mixed_6e;
-            private readonly Module AuxLogits;
-            private readonly Module Mixed_7a;
-            private readonly Module Mixed_7b;
-            private readonly Module Mixed_7c;
+            private readonly Module<Tensor, Tensor> Mixed_5b;
+            private readonly Module<Tensor, Tensor> Mixed_5c;
+            private readonly Module<Tensor, Tensor> Mixed_5d;
+            private readonly Module<Tensor, Tensor> Mixed_6a;
+            private readonly Module<Tensor, Tensor> Mixed_6b;
+            private readonly Module<Tensor, Tensor> Mixed_6c;
+            private readonly Module<Tensor, Tensor> Mixed_6d;
+            private readonly Module<Tensor, Tensor> Mixed_6e;
+            private readonly Module<Tensor, Tensor> AuxLogits;
+            private readonly Module<Tensor, Tensor> Mixed_7a;
+            private readonly Module<Tensor, Tensor> Mixed_7b;
+            private readonly Module<Tensor, Tensor> Mixed_7c;
             private readonly AdaptiveAvgPool2d avgpool;
             private Dropout dropout;
             private readonly Linear fc;
@@ -165,7 +165,7 @@ namespace TorchSharp
             }
 
 
-            private static Module conv_block(int in_channels, int out_channels, int kernel_size, int stride = 1, int padding = 0)
+            private static Module<Tensor, Tensor> conv_block(int in_channels, int out_channels, int kernel_size, int stride = 1, int padding = 0)
             {
                 return Sequential(
                     ("conv", Conv2d(in_channels, out_channels, bias: false, kernelSize: kernel_size, stride: stride, padding: padding)),
@@ -174,7 +174,7 @@ namespace TorchSharp
                     );
             }
 
-            private static Module conv_block(int in_channels, int out_channels, (long, long) kernel_size, (long, long)? stride = null, (long, long)? padding = null)
+            private static Module<Tensor, Tensor> conv_block(int in_channels, int out_channels, (long, long) kernel_size, (long, long)? stride = null, (long, long)? padding = null)
             {
                 return Sequential(
                     ("conv", Conv2d(in_channels, out_channels, bias: false, kernelSize: kernel_size, stride: stride, padding: padding)),
@@ -183,12 +183,12 @@ namespace TorchSharp
                     );
             }
 
-            private Module inception_a(int in_channels, int pool_features) => new InceptionA(in_channels, pool_features);
-            private Module inception_b(int in_channels) => new InceptionB(in_channels);
-            private Module inception_c(int in_channels, int channels_7x7) => new InceptionC(in_channels, channels_7x7);
-            private Module inception_d(int in_channels) => new InceptionD(in_channels);
-            private Module inception_e(int in_channels) => new InceptionE(in_channels);
-            private Module inception_aux(int in_channels, int num_classes) => new InceptionAux(in_channels, num_classes);
+            private Module<Tensor, Tensor> inception_a(int in_channels, int pool_features) => new InceptionA(in_channels, pool_features);
+            private Module<Tensor, Tensor> inception_b(int in_channels) => new InceptionB(in_channels);
+            private Module<Tensor, Tensor> inception_c(int in_channels, int channels_7x7) => new InceptionC(in_channels, channels_7x7);
+            private Module<Tensor, Tensor> inception_d(int in_channels) => new InceptionD(in_channels);
+            private Module<Tensor, Tensor> inception_e(int in_channels) => new InceptionE(in_channels);
+            private Module<Tensor, Tensor> inception_aux(int in_channels, int num_classes) => new InceptionAux(in_channels, num_classes);
 
             public override Tensor forward(Tensor x)
             {
@@ -253,7 +253,7 @@ namespace TorchSharp
                 }
             }
 
-            class InceptionA : Module
+            class InceptionA : Module<Tensor, Tensor>
             {
                 public InceptionA(int in_channels, int pool_features) : base("InceptionA")
                 {
@@ -286,16 +286,16 @@ namespace TorchSharp
                     return torch.cat(outputs, 1);
                 }
 
-                private readonly Module branch1x1;
-                private readonly Module branch5x5_1;
-                private readonly Module branch5x5_2;
-                private readonly Module branch3x3dbl_1;
-                private readonly Module branch3x3dbl_2;
-                private readonly Module branch3x3dbl_3;
-                private readonly Module branch_pool;
+                private readonly Module<Tensor, Tensor> branch1x1;
+                private readonly Module<Tensor, Tensor> branch5x5_1;
+                private readonly Module<Tensor, Tensor> branch5x5_2;
+                private readonly Module<Tensor, Tensor> branch3x3dbl_1;
+                private readonly Module<Tensor, Tensor> branch3x3dbl_2;
+                private readonly Module<Tensor, Tensor> branch3x3dbl_3;
+                private readonly Module<Tensor, Tensor> branch_pool;
             }
 
-            class InceptionB : Module
+            class InceptionB : Module<Tensor, Tensor>
             {
                 public InceptionB(int in_channels) : base("InceptionB")
                 {
@@ -324,24 +324,24 @@ namespace TorchSharp
                     return torch.cat(outputs, 1);
                 }
 
-                private readonly Module branch3x3;
-                private readonly Module branch3x3dbl_1;
-                private readonly Module branch3x3dbl_2;
-                private readonly Module branch3x3dbl_3;
+                private readonly Module<Tensor, Tensor> branch3x3;
+                private readonly Module<Tensor, Tensor> branch3x3dbl_1;
+                private readonly Module<Tensor, Tensor> branch3x3dbl_2;
+                private readonly Module<Tensor, Tensor> branch3x3dbl_3;
             }
 
-            class InceptionC : Module
+            class InceptionC : Module<Tensor, Tensor>
             {
-                private readonly Module branch1x1;
-                private readonly Module branch7x7_1;
-                private readonly Module branch7x7_2;
-                private readonly Module branch7x7_3;
-                private readonly Module branch7x7dbl_1;
-                private readonly Module branch7x7dbl_2;
-                private readonly Module branch7x7dbl_3;
-                private readonly Module branch7x7dbl_4;
-                private readonly Module branch7x7dbl_5;
-                private readonly Module branch_pool;
+                private readonly Module<Tensor, Tensor> branch1x1;
+                private readonly Module<Tensor, Tensor> branch7x7_1;
+                private readonly Module<Tensor, Tensor> branch7x7_2;
+                private readonly Module<Tensor, Tensor> branch7x7_3;
+                private readonly Module<Tensor, Tensor> branch7x7dbl_1;
+                private readonly Module<Tensor, Tensor> branch7x7dbl_2;
+                private readonly Module<Tensor, Tensor> branch7x7dbl_3;
+                private readonly Module<Tensor, Tensor> branch7x7dbl_4;
+                private readonly Module<Tensor, Tensor> branch7x7dbl_5;
+                private readonly Module<Tensor, Tensor> branch_pool;
 
                 public InceptionC(int in_channels, int channels_7x7) : base("InceptionC")
                 {
@@ -386,14 +386,14 @@ namespace TorchSharp
                 }
             }
 
-            class InceptionD : Module
+            class InceptionD : Module<Tensor, Tensor>
             {
-                private readonly Module branch3x3_1;
-                private readonly Module branch3x3_2;
-                private readonly Module branch7x7x3_1;
-                private readonly Module branch7x7x3_2;
-                private readonly Module branch7x7x3_3;
-                private readonly Module branch7x7x3_4;
+                private readonly Module<Tensor, Tensor> branch3x3_1;
+                private readonly Module<Tensor, Tensor> branch3x3_2;
+                private readonly Module<Tensor, Tensor> branch7x7x3_1;
+                private readonly Module<Tensor, Tensor> branch7x7x3_2;
+                private readonly Module<Tensor, Tensor> branch7x7x3_3;
+                private readonly Module<Tensor, Tensor> branch7x7x3_4;
 
                 public InceptionD(int in_channels) : base("InceptionD")
                 {
@@ -426,17 +426,17 @@ namespace TorchSharp
                 }
             }
 
-            class InceptionE : Module
+            class InceptionE : Module<Tensor, Tensor>
             {
-                private readonly Module branch1x1;
-                private readonly Module branch3x3_1;
-                private readonly Module branch3x3_2a;
-                private readonly Module branch3x3_2b;
-                private readonly Module branch3x3dbl_1;
-                private readonly Module branch3x3dbl_2;
-                private readonly Module branch3x3dbl_3a;
-                private readonly Module branch3x3dbl_3b;
-                private readonly Module branch_pool;
+                private readonly Module<Tensor, Tensor> branch1x1;
+                private readonly Module<Tensor, Tensor> branch3x3_1;
+                private readonly Module<Tensor, Tensor> branch3x3_2a;
+                private readonly Module<Tensor, Tensor> branch3x3_2b;
+                private readonly Module<Tensor, Tensor> branch3x3dbl_1;
+                private readonly Module<Tensor, Tensor> branch3x3dbl_2;
+                private readonly Module<Tensor, Tensor> branch3x3dbl_3a;
+                private readonly Module<Tensor, Tensor> branch3x3dbl_3b;
+                private readonly Module<Tensor, Tensor> branch_pool;
 
                 public InceptionE(int in_channels) : base("InceptionE")
                 {
@@ -478,11 +478,11 @@ namespace TorchSharp
                 }
             }
 
-            class InceptionAux : Module
+            class InceptionAux : Module<Tensor, Tensor>
             {
-                private readonly Module conv0;
-                private readonly Module conv1;
-                private readonly Module fc;
+                private readonly Module<Tensor, Tensor> conv0;
+                private readonly Module<Tensor, Tensor> conv1;
+                private readonly Module<Tensor, Tensor> fc;
 
                 public InceptionAux(int in_channels, int num_classes) : base("InceptionAux")
                 {

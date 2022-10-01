@@ -1179,12 +1179,12 @@ namespace TorchSharp
             Assert.False(x.requires_grad);
         }
 
-        private class CondModel : Module
+        private class CondModel : Module<Tensor, Tensor>
         {
-            private Module fb = Linear(1000, 100, false);
-            private Module fbT1 = Linear(100, 10, false);
-            private Module fbF1 = Linear(100, 50, false);
-            private Module fbF2 = Linear(50, 10, false);
+            private Module<Tensor, Tensor> fb = Linear(1000, 100, false);
+            private Module<Tensor, Tensor> fbT1 = Linear(100, 10, false);
+            private Module<Tensor, Tensor> fbF1 = Linear(100, 50, false);
+            private Module<Tensor, Tensor> fbF2 = Linear(50, 10, false);
             private bool _isTrue = false;
 
             public CondModel(string name, bool isTrue) : base(name)
@@ -1718,7 +1718,7 @@ namespace TorchSharp
             Assert.True(seq.has_parameter("0.dict.second"));
         }
 
-        private class TestModule1 : Module
+        private class TestModule1 : Module<Tensor, Tensor>
         {
             public TestModule1(Tensor tensor, bool withGrad)
                 : base("TestModule1")
@@ -1740,7 +1740,7 @@ namespace TorchSharp
             private ParameterDict dict = new ParameterDict();
         }
 
-        private class TestModule2 : Module
+        private class TestModule2 : Module<Tensor, Tensor>
         {
             public TestModule2(Tensor tensor, bool withGrad)
                 : base("TestModule1")
@@ -1755,11 +1755,11 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                for (int i = 0; i < list.Count; i++) { input = list[i].forward(input); }
+                for (int i = 0; i < list.Count; i++) { input = ((nn.Module<torch.Tensor, torch.Tensor>)list[i]).forward(input); }
                 throw new NotImplementedException();
             }
 
-            public Module submodule;
+            public Module<Tensor, Tensor> submodule;
             private ModuleList list = new ModuleList();
             private ModuleDict dict = new ModuleDict();
         }
@@ -1817,7 +1817,7 @@ namespace TorchSharp
             }
         }
 
-        private class TestModule3 : Module
+        private class TestModule3 : Module<Tensor, Tensor>
         {
             public TestModule3() : base(nameof(TestModule3)) { RegisterComponents(); }
 

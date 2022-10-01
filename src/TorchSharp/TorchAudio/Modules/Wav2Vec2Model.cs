@@ -24,7 +24,7 @@ namespace TorchSharp.Modules
     {
         internal readonly FeatureExtractor feature_extractor;
         internal readonly Encoder encoder;
-        private readonly nn.Module? aux;
+        private readonly nn.Module<Tensor, Tensor>? aux;
 
         /// <param name="name"></param>
         /// <param name="feature_extractor">Feature extractor that extracts feature vectors from raw audio Tensor.</param>
@@ -35,7 +35,7 @@ namespace TorchSharp.Modules
             string name,
             FeatureExtractor feature_extractor,
             Encoder encoder,
-            nn.Module? aux = null) : base(name)
+            nn.Module<Tensor, Tensor>? aux = null) : base(name)
         {
             this.feature_extractor = feature_extractor;
             this.encoder = encoder;
@@ -102,7 +102,7 @@ namespace TorchSharp.Modules
         /// is returned.
         /// It indicates the valid length in time axis of the output Tensor.
         /// </returns>
-        public new (Tensor, Tensor?) forward(
+        public (Tensor, Tensor?) forward(
             Tensor waveforms,
             Tensor? lengths = null)
         {

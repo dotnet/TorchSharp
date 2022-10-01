@@ -8,11 +8,11 @@ namespace TorchSharp.Examples
     /// <summary>
     /// Modified version of original AlexNet to fix CIFAR10 32x32 images.
     /// </summary>
-    class AlexNet : Module
+    class AlexNet : Module<Tensor, Tensor>
     {
-        private readonly Module features;
-        private readonly Module avgPool;
-        private readonly Module classifier;
+        private readonly Module<Tensor, Tensor> features;
+        private readonly Module<Tensor, Tensor> avgPool;
+        private readonly Module<Tensor, Tensor> classifier;
 
         public AlexNet(string name, int numClasses, torch.Device device = null) : base(name)
         {

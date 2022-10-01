@@ -12,14 +12,14 @@ namespace TorchSharp
         /// <summary>
         /// Computes the pairwise distance between vectors using the p-norm.
         /// </summary>
-        public class PairwiseDistance : torch.nn.Module
+        public class PairwiseDistance : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal PairwiseDistance(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
             }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_PairwiseDistance_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
+            private static extern IntPtr THSNN_PairwiseDistance_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr input1, IntPtr input2);
 
             public override Tensor forward(Tensor input1, Tensor input2)
             {

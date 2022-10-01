@@ -26,21 +26,21 @@ namespace TorchSharp.Modules
     /// <summary>
     /// This class is used to represent a WaveRNN module.
     /// </summary>
-    public class WaveRNN : nn.Module
+    public class WaveRNN : nn.Module<Tensor, Tensor, Tensor>
     {
         private readonly int _pad;
-        public readonly nn.Module fc;
-        public readonly nn.Module fc1;
-        public readonly nn.Module fc2;
-        public readonly nn.Module fc3;
+        public readonly nn.Module<Tensor, Tensor> fc;
+        public readonly nn.Module<Tensor, Tensor> fc1;
+        public readonly nn.Module<Tensor, Tensor> fc2;
+        public readonly nn.Module<Tensor, Tensor> fc3;
         public readonly int hop_length;
         public readonly int kernel_size;
         public readonly int n_aux;
         public readonly int n_bits;
         public readonly int n_classes;
         public readonly int n_rnn;
-        public readonly nn.Module relu1;
-        public readonly nn.Module relu2;
+        public readonly nn.Module<Tensor, Tensor> relu1;
+        public readonly nn.Module<Tensor, Tensor> relu2;
         public readonly GRU rnn1;
         public readonly GRU rnn2;
         internal readonly UpsampleNetwork upsample;
@@ -222,9 +222,9 @@ namespace TorchSharp.Modules
             return (torch.stack(output).permute(1, 2, 0), lengths);
         }
 
-        private class ResBlock : nn.Module
+        private class ResBlock : nn.Module<Tensor, Tensor>
         {
-            public nn.Module resblock_model;
+            public nn.Module<Tensor, Tensor> resblock_model;
 
             public ResBlock(string name, int n_freq = 128) : base(name)
             {
@@ -243,9 +243,9 @@ namespace TorchSharp.Modules
             }
         }
 
-        internal class MelResNet : nn.Module
+        internal class MelResNet : nn.Module<Tensor, Tensor>
         {
-            public readonly nn.Module melresnet_model;
+            public readonly nn.Module<Tensor, Tensor> melresnet_model;
 
             public MelResNet(
                 string name,
@@ -255,7 +255,7 @@ namespace TorchSharp.Modules
                 int n_output = 128,
                 int kernel_size = 5) : base(name)
             {
-                var modules = new List<nn.Module>();
+                var modules = new List<nn.Module<Tensor, Tensor>>();
                 modules.Add(nn.Conv1d(inputChannel: n_freq, outputChannel: n_hidden, kernelSize: kernel_size, bias: false));
                 modules.Add(nn.BatchNorm1d(n_hidden));
                 modules.Add(nn.ReLU(inplace: true));
@@ -273,7 +273,7 @@ namespace TorchSharp.Modules
             }
         }
 
-        public class Stretch2d : nn.Module
+        public class Stretch2d : nn.Module<Tensor, Tensor>
         {
             public long freq_scale;
             public long time_scale;
@@ -297,7 +297,7 @@ namespace TorchSharp.Modules
             public readonly MelResNet resnet;
             public readonly Stretch2d resnet_stretch;
             public readonly long total_scale;
-            public readonly nn.Module upsample_layers;
+            public readonly nn.Module<Tensor, Tensor> upsample_layers;
 
             public UpsampleNetwork(
                 string name,
@@ -318,7 +318,7 @@ namespace TorchSharp.Modules
                 this.resnet = new MelResNet("melresnet", n_res_block, n_freq, n_hidden, n_output, kernel_size);
                 this.resnet_stretch = new Stretch2d("stretch2d", total_scale, 1);
 
-                var up_layers = new List<nn.Module>();
+                var up_layers = new List<nn.Module<Tensor, Tensor>>();
                 foreach (var scale in upsample_scales) {
                     var stretch = new Stretch2d("stretch2d", scale, 1);
                     var conv = nn.Conv2d(inputChannel: 1, outputChannel: 1, kernelSize: (1, scale * 2 + 1), padding: (0, scale), bias: false);
@@ -330,7 +330,7 @@ namespace TorchSharp.Modules
                 this.RegisterComponents();
             }
 
-            public new (Tensor, Tensor) forward(Tensor specgram)
+            public (Tensor, Tensor) forward(Tensor specgram)
             {
                 var resnet_output = this.resnet.forward(specgram).unsqueeze(1);
                 resnet_output = this.resnet_stretch.forward(resnet_output);

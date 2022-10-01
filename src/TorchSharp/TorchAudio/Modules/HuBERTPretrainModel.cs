@@ -79,7 +79,7 @@ namespace TorchSharp.Modules
         /// The feature mean value for additional penalty loss.
         /// Shape: `(1,)`.
         /// </returns>
-        public new (Tensor?, Tensor?, Tensor) forward(
+        public (Tensor?, Tensor?, Tensor) forward(
             Tensor waveforms,
             Tensor labels,
             Tensor? audio_lengths = null)

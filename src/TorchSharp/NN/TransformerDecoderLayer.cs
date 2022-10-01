@@ -9,12 +9,12 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class TransformerDecoderLayer : torch.nn.Module
+        public class TransformerDecoderLayer : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal TransformerDecoderLayer(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_TransformerDecoderLayer_forward(torch.nn.Module.HType module, IntPtr tgt, IntPtr memory, IntPtr tgt_mask, IntPtr memory_mask, IntPtr tgt_key_padding_mask, IntPtr memory_key_padding_mask);
+            private static extern IntPtr THSNN_TransformerDecoderLayer_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tgt, IntPtr memory, IntPtr tgt_mask, IntPtr memory_mask, IntPtr tgt_key_padding_mask, IntPtr memory_key_padding_mask);
 
             /// <summary>
             /// Pass the inputs (and mask) through the decoder layer.

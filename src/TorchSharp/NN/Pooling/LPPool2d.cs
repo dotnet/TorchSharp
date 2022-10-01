@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a LPPool2D module.
         /// </summary>
-        public class LPPool2d : torch.nn.Module
+        public class LPPool2d : torch.nn.Module<Tensor, Tensor>
         {
             internal LPPool2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

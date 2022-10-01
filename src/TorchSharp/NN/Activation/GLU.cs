@@ -12,12 +12,12 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a GLU (gated linear unit) module.
         /// </summary>
-        public class GLU : torch.nn.Module
+        public class GLU : torch.nn.Module<Tensor, Tensor>
         {
             internal GLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_GLU_forward(torch.nn.Module.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_GLU_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {

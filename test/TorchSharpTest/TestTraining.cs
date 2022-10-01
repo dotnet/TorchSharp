@@ -29,7 +29,7 @@ namespace TorchSharp
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
 
-            var submodules = new List<(string name, torch.nn.Module submodule)>();
+            var submodules = new List<(string name, torch.nn.Module<Tensor, Tensor> submodule)>();
             submodules.Add(("lin1", lin1));
             submodules.Add(("relu1", ReLU()));
             submodules.Add(("lin2", lin2));
@@ -186,7 +186,7 @@ namespace TorchSharp
             }
         }
 
-        private static float TrainLoop(Module seq, Tensor x, Tensor y, optim.Optimizer optimizer)
+        private static float TrainLoop(Module<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer)
         {
             var loss = mse_loss(Reduction.Sum);
 
@@ -213,7 +213,7 @@ namespace TorchSharp
             return finalLoss;
         }
 
-        private static float TrainLoop(Module seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true, int iters = 10)
+        private static float TrainLoop(Module<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true, int iters = 10)
         {
             var loss = mse_loss(Reduction.Sum);
 
@@ -1770,7 +1770,7 @@ namespace TorchSharp
             if (torch.cuda.is_available()) {
                 var device = torch.CUDA;
 
-                using (Module conv1 = Conv2d(3, 4, 3, stride: 2),
+                using (Module<Tensor, Tensor> conv1 = Conv2d(3, 4, 3, stride: 2),
                       lin1 = Linear(4 * 13 * 13, 32),
                       lin2 = Linear(32, 10))
 

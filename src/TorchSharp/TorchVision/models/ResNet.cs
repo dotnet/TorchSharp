@@ -213,25 +213,25 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class ResNet : Module
+        public class ResNet : Module<Tensor, Tensor>
         {
             // The code here is based on
             // https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py
             // Licence and copypright notice at: https://github.com/pytorch/vision/blob/main/LICENSE
 
-            private readonly Module conv1;
-            private readonly Module bn1;
-            private readonly Module relu;
-            private readonly Module maxpool;
+            private readonly Module<Tensor, Tensor> conv1;
+            private readonly Module<Tensor, Tensor> bn1;
+            private readonly Module<Tensor, Tensor> relu;
+            private readonly Module<Tensor, Tensor> maxpool;
 
             private readonly Sequential layer1 = Sequential();
             private readonly Sequential layer2 = Sequential();
             private readonly Sequential layer3 = Sequential();
             private readonly Sequential layer4 = Sequential();
 
-            private readonly Module avgpool;
-            private readonly Module flatten;
-            private readonly Module fc;
+            private readonly Module<Tensor, Tensor> avgpool;
+            private readonly Module<Tensor, Tensor> flatten;
+            private readonly Module<Tensor, Tensor> fc;
 
             private int in_planes = 64;
 
@@ -311,14 +311,14 @@ namespace TorchSharp
             }
 
             public ResNet(string name,
-                Func<int, int, int, Module> block,
+                Func<int, int, int, Module<Tensor, Tensor>> block,
                 int expansion, IList<int> num_blocks,
                 int numClasses,
                 string weights_file = null,
                 bool skipfc = true,
                 Device device = null) : base(name)
             {
-                var modules = new List<(string, Module)>();
+                var modules = new List<(string, Module<Tensor, Tensor>)>();
 
                 conv1 = Conv2d(3, 64, kernelSize: 7, stride: 2, padding: 3, bias: false);
                 bn1 = BatchNorm2d(64);
@@ -358,7 +358,7 @@ namespace TorchSharp
                     this.to(device);
             }
 
-            private void MakeLayer(Sequential modules, Func<int, int, int, Module> block, int expansion, int planes, int num_blocks, int stride)
+            private void MakeLayer(Sequential modules, Func<int, int, int, Module<Tensor, Tensor>> block, int expansion, int planes, int num_blocks, int stride)
             {
                 var strides = new List<int>();
                 strides.Add(stride);
@@ -388,11 +388,11 @@ namespace TorchSharp
                 }
             }
 
-            class BasicBlock : Module
+            class BasicBlock : Module<Tensor, Tensor>
             {
                 public BasicBlock(int in_planes, int planes, int stride) : base("BasicBlock")
                 {
-                    var modules = new List<(string, Module)>();
+                    var modules = new List<(string, Module<Tensor, Tensor>)>();
 
                     conv1 = Conv2d(in_planes, planes, kernelSize: 3, stride: stride, padding: 1, bias: false);
                     bn1 = BatchNorm2d(planes);
@@ -416,25 +416,25 @@ namespace TorchSharp
                     x = bn2.forward(conv2.forward(x));
 
                     var y = input;
-                    foreach (var m in downsample) y = m.forward(y);
+                    foreach (var m in downsample) y = ((nn.Module<Tensor, Tensor>)m).forward(y);
                     return x.add_(y).relu_();
                 }
 
                 public static int expansion = 1;
 
-                private readonly Module conv1;
-                private readonly Module bn1;
-                private readonly Module conv2;
+                private readonly Module<Tensor, Tensor> conv1;
+                private readonly Module<Tensor, Tensor> bn1;
+                private readonly Module<Tensor, Tensor> conv2;
                 private readonly TorchSharp.Modules.BatchNorm2d bn2;
-                private readonly Module relu1;
+                private readonly Module<Tensor, Tensor> relu1;
                 private readonly TorchSharp.Modules.ModuleList downsample = new TorchSharp.Modules.ModuleList();
             }
 
-            class Bottleneck : Module
+            class Bottleneck : Module<Tensor, Tensor>
             {
                 public Bottleneck(int in_planes, int planes, int stride) : base("Bottleneck")
                 {
-                    var modules = new List<(string, Module)>();
+                    var modules = new List<(string, Module<Tensor, Tensor>)>();
 
                     conv1 = Conv2d(in_planes, planes, kernelSize: 1, bias: false);
                     bn1 = BatchNorm2d(planes);
@@ -462,21 +462,21 @@ namespace TorchSharp
                     x = bn3.forward(conv3.forward(x));
 
                     var y = input;
-                    foreach (var m in downsample) y = m.forward(y);
+                    foreach (var m in downsample) y = ((nn.Module<Tensor, Tensor>)m).forward(y);
 
                     return x.add_(y).relu_();
                 }
 
                 public static int expansion = 4;
 
-                private readonly Module conv1;
-                private readonly Module bn1;
-                private readonly Module conv2;
-                private readonly Module bn2;
-                private readonly Module conv3;
+                private readonly Module<Tensor, Tensor> conv1;
+                private readonly Module<Tensor, Tensor> bn1;
+                private readonly Module<Tensor, Tensor> conv2;
+                private readonly Module<Tensor, Tensor> bn2;
+                private readonly Module<Tensor, Tensor> conv3;
                 private readonly TorchSharp.Modules.BatchNorm2d bn3;
-                private readonly Module relu1;
-                private readonly Module relu2;
+                private readonly Module<Tensor, Tensor> relu1;
+                private readonly Module<Tensor, Tensor> relu2;
 
                 private readonly TorchSharp.Modules.ModuleList downsample = new TorchSharp.Modules.ModuleList();
             }

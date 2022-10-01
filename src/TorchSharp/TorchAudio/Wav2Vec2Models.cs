@@ -191,7 +191,7 @@ namespace TorchSharp
                     dropout: encoder_dropout,
                     layer_norm_first: encoder_layer_norm_first,
                     layer_drop: encoder_layer_drop);
-                Module? aux = null;
+                Module<Tensor, Tensor>? aux = null;
                 if (aux_num_out != null) {
                     aux = torch.nn.Linear(inputSize: encoder_embed_dim, outputSize: aux_num_out.Value);
                 }

@@ -60,11 +60,11 @@ namespace TorchSharp
         // https://github.com/pytorch/vision/blob/main/torchvision/models/alexnet.py
         // Licence and copypright notice at: https://github.com/pytorch/vision/blob/main/LICENSE
 
-        public class AlexNet : Module
+        public class AlexNet : Module<Tensor, Tensor>
         {
-            private readonly Module features;
-            private readonly Module avgpool;
-            private readonly Module classifier;
+            private readonly Module<Tensor, Tensor> features;
+            private readonly Module<Tensor, Tensor> avgpool;
+            private readonly Module<Tensor, Tensor> classifier;
 
             public AlexNet(int numClasses, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null) : base(nameof(AlexNet))
             {

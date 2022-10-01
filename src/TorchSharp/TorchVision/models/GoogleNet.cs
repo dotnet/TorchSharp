@@ -64,28 +64,28 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class GoogleNet : Module
+        public class GoogleNet : Module<Tensor, Tensor>
         {
             // The code here is based on
             // https://github.com/pytorch/vision/blob/main/torchvision/models/googlenet.py
             // Licence and copypright notice at: https://github.com/pytorch/vision/blob/main/LICENSE
 
-            private readonly Module conv1;
-            private readonly Module maxpool1;
-            private readonly Module conv2;
-            private readonly Module conv3;
-            private readonly Module maxpool2;
-            private readonly Module inception3a;
-            private readonly Module inception3b;
-            private readonly Module maxpool3;
-            private readonly Module inception4a;
-            private readonly Module inception4b;
-            private readonly Module inception4c;
-            private readonly Module inception4d;
-            private readonly Module inception4e;
-            private readonly Module maxpool4;
-            private readonly Module inception5a;
-            private readonly Module inception5b;
+            private readonly Module<Tensor, Tensor> conv1;
+            private readonly Module<Tensor, Tensor> maxpool1;
+            private readonly Module<Tensor, Tensor> conv2;
+            private readonly Module<Tensor, Tensor> conv3;
+            private readonly Module<Tensor, Tensor> maxpool2;
+            private readonly Module<Tensor, Tensor> inception3a;
+            private readonly Module<Tensor, Tensor> inception3b;
+            private readonly Module<Tensor, Tensor> maxpool3;
+            private readonly Module<Tensor, Tensor> inception4a;
+            private readonly Module<Tensor, Tensor> inception4b;
+            private readonly Module<Tensor, Tensor> inception4c;
+            private readonly Module<Tensor, Tensor> inception4d;
+            private readonly Module<Tensor, Tensor> inception4e;
+            private readonly Module<Tensor, Tensor> maxpool4;
+            private readonly Module<Tensor, Tensor> inception5a;
+            private readonly Module<Tensor, Tensor> inception5b;
             //private readonly Module aux1;
             //private readonly Module aux2;
 
@@ -165,7 +165,7 @@ namespace TorchSharp
             }
 
 
-            private static Module conv_block(int in_channels, int out_channels, int kernel_size, int stride = 1, int padding = 0)
+            private static Module<Tensor, Tensor> conv_block(int in_channels, int out_channels, int kernel_size, int stride = 1, int padding = 0)
             {
                 return Sequential(
                     ("conv", Conv2d(in_channels, out_channels, bias: false, kernelSize: kernel_size, stride: stride, padding: padding)),
@@ -174,7 +174,7 @@ namespace TorchSharp
                 );
             }
 
-            private static Module conv_block(int in_channels, int out_channels, (long, long) kernel_size, (long, long)? stride = null, (long, long)? padding = null)
+            private static Module<Tensor, Tensor> conv_block(int in_channels, int out_channels, (long, long) kernel_size, (long, long)? stride = null, (long, long)? padding = null)
             {
                 return Sequential(
                     ("conv", Conv2d(in_channels, out_channels, bias: false, kernelSize: kernel_size, stride: stride, padding: padding)),
@@ -183,8 +183,8 @@ namespace TorchSharp
                 );
             }
 
-            private Module inception_block(int in_channels, int ch1x1, int ch3x3red,  int ch3x3, int ch5x5red, int ch5x5, int pool_proj) => new Inception(in_channels, ch1x1, ch3x3red, ch3x3, ch5x5red, ch5x5, pool_proj);
-            private Module inception_aux_block(int in_channels, int num_classes, float dropout) => new InceptionAux(in_channels, num_classes, dropout);
+            private Module<Tensor, Tensor> inception_block(int in_channels, int ch1x1, int ch3x3red,  int ch3x3, int ch5x5red, int ch5x5, int pool_proj) => new Inception(in_channels, ch1x1, ch3x3red, ch3x3, ch5x5red, ch5x5, pool_proj);
+            private Module<Tensor, Tensor> inception_aux_block(int in_channels, int num_classes, float dropout) => new InceptionAux(in_channels, num_classes, dropout);
 
             public override Tensor forward(Tensor x)
             {
@@ -253,7 +253,7 @@ namespace TorchSharp
                 }
             }
 
-            class Inception : Module
+            class Inception : Module<Tensor, Tensor>
             {
                 public Inception(int in_channels, int ch1x1, int ch3x3red, int ch3x3, int ch5x5red, int ch5x5, int pool_proj) : base("Inception")
                 {
@@ -284,18 +284,18 @@ namespace TorchSharp
                     return torch.cat(outputs, 1);
                 }
 
-                private readonly Module branch1;
-                private readonly Module branch2;
-                private readonly Module branch3;
-                private readonly Module branch4;
+                private readonly Module<Tensor, Tensor> branch1;
+                private readonly Module<Tensor, Tensor> branch2;
+                private readonly Module<Tensor, Tensor> branch3;
+                private readonly Module<Tensor, Tensor> branch4;
             }
 
-            class InceptionAux : Module
+            class InceptionAux : Module<Tensor, Tensor>
             {
-                private readonly Module conv;
-                private readonly Module fc1;
-                private readonly Module fc2;
-                private readonly Module dropout;
+                private readonly Module<Tensor, Tensor> conv;
+                private readonly Module<Tensor, Tensor> fc1;
+                private readonly Module<Tensor, Tensor> fc2;
+                private readonly Module<Tensor, Tensor> dropout;
 
                 public InceptionAux(int in_channels, int num_classes, float dropout = 0.7f) : base("InceptionAux")
                 {

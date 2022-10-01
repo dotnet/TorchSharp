@@ -12,12 +12,12 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Sigmoid module.
         /// </summary>
-        public class Sigmoid : torch.nn.Module
+        public class Sigmoid : torch.nn.Module<Tensor, Tensor>
         {
             internal Sigmoid(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Sigmoid_forward(torch.nn.Module.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_Sigmoid_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {

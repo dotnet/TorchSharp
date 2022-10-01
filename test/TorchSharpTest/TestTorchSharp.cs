@@ -179,7 +179,7 @@ namespace TorchSharp
             var lin1 = nn.Linear(1000, 100);
             var lin2 = nn.Linear(100, 10);
 
-            var submodules = new List<(string name, torch.nn.Module submodule)>();
+            var submodules = new List<(string name, torch.nn.Module<Tensor, Tensor> submodule)>();
             submodules.Add(("lin1", lin1));
             submodules.Add(("lin2", lin2));
 
@@ -195,7 +195,7 @@ namespace TorchSharp
             var lin1 = nn.Linear(1000, 100);
             var lin2 = nn.Linear(100, 10);
 
-            var submodules = new List<(string name, torch.nn.Module submodule)>();
+            var submodules = new List<(string name, torch.nn.Module<Tensor, Tensor> submodule)>();
             submodules.Add(("lin1", lin1));
             submodules.Add(("relu1", nn.ReLU()));
             submodules.Add(("lin2", lin2));

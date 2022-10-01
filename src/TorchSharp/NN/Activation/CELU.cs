@@ -12,12 +12,12 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a CELU module.
         /// </summary>
-        public class CELU : torch.nn.Module
+        public class CELU : torch.nn.Module<Tensor, Tensor>
         {
             internal CELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_CELU_forward(torch.nn.Module.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_CELU_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {

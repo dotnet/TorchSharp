@@ -11,18 +11,18 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class Bilinear : torch.nn.Module
+        public class Bilinear : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal Bilinear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public new static Bilinear Load(String modelPath)
             {
-                var res = Module.Load(modelPath);
+                var res = Module<Tensor, Tensor>.Load(modelPath);
                 return new Bilinear(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Bilinear_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
+            extern static IntPtr THSNN_Bilinear_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr input1, IntPtr input2);
 
             public override Tensor forward(Tensor input1, Tensor input2)
             {
@@ -31,9 +31,9 @@ namespace TorchSharp
                 return new Tensor(res);
             }
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Bilinear_bias(torch.nn.Module.HType module);
+            extern static IntPtr THSNN_Bilinear_bias(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_Bilinear_set_bias(torch.nn.Module.HType module, IntPtr tensor);
+            extern static void THSNN_Bilinear_set_bias(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             public Parameter? bias {
                 get {
@@ -48,9 +48,9 @@ namespace TorchSharp
                 }
             }
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Bilinear_weight(torch.nn.Module.HType module);
+            extern static IntPtr THSNN_Bilinear_weight(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_Bilinear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
+            extern static void THSNN_Bilinear_set_weight(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             public Parameter? weight {
                 get {

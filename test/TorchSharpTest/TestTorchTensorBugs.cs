@@ -56,7 +56,7 @@ namespace TorchSharp
             }
         }
 
-        class DoubleIt : nn.Module
+        class DoubleIt : nn.Module<Tensor, Tensor>
         {
             public DoubleIt() : base("double") { }
 
@@ -178,7 +178,7 @@ namespace TorchSharp
             }
         }
 
-        class TestModule : Module
+        class TestModule : Module<Tensor, Tensor>
         {
             public TestModule() : base(nameof(TestModule)) { }
 
@@ -199,7 +199,7 @@ namespace TorchSharp
             }
 
             [MethodImpl(MethodImplOptions.NoInlining)]
-            static Module Make() => Sequential(("t", new TestModule()), ("d", Linear(10, 10)));
+            static Module<Tensor, Tensor> Make() => Sequential(("t", new TestModule()), ("d", Linear(10, 10)));
         }
 
         [Fact]
@@ -476,9 +476,9 @@ namespace TorchSharp
             }
         }
 
-        class Module500 : Module
+        class Module500 : Module<Tensor, Tensor>
         {
-            private Module bn1 = BatchNorm1d(28);
+            private Module<Tensor, Tensor> bn1 = BatchNorm1d(28);
 
             public Module500() : base(nameof(TestModule)) { RegisterComponents(); }
 
@@ -518,9 +518,9 @@ namespace TorchSharp
             Assert.Equal(0, nm_.item<long>());
         }
 
-        internal class Module510 : Module
+        internal class Module510 : Module<Tensor, Tensor>
         {
-            private readonly Module stack;
+            private readonly Module<Tensor, Tensor> stack;
 
             public Module510(int in_channels, int out_channels, int kernel_size = 3, int stride = 1, int padding = 0) : base(String.Empty)
             {
@@ -574,7 +574,7 @@ namespace TorchSharp
             }
         }
 
-        internal abstract class BaseModule : torch.nn.Module
+        internal abstract class BaseModule : torch.nn.Module<Tensor, Tensor>
         {
             public int? InstanceId = null;
 
@@ -583,7 +583,7 @@ namespace TorchSharp
             }
         }
 
-        public class TestGradWarningModel : torch.nn.Module
+        public class TestGradWarningModel : torch.nn.Module<Tensor, Tensor>
         {
             public readonly Modules.Parameter Weight;
 
@@ -612,11 +612,11 @@ namespace TorchSharp
             Assert.Equal(pB.Length + pC.Length, p.Length);
         }
 
-        internal class Module532 : Module
+        internal class Module532 : Module<Tensor, Tensor>
         {
-            public Module conv;
-            public Module batch;
-            private Module seq;
+            public Module<Tensor, Tensor> conv;
+            public Module<Tensor, Tensor> batch;
+            private Module<Tensor, Tensor> seq;
 
             public Module532(int in_channels, int out_channels) : base(String.Empty)
             {
@@ -656,9 +656,9 @@ namespace TorchSharp
             File.Delete("bug538.dat");
         }
 
-        internal class Module538 : Module
+        internal class Module538 : Module<Tensor, Tensor>
         {
-            private Module seq;
+            private Module<Tensor, Tensor> seq;
 
             public Module538(int in_channels, int out_channels) : base(String.Empty)
             {
@@ -779,7 +779,7 @@ namespace TorchSharp
         {
             var resnet = resnet18();
             var resnetlist = resnet.named_children();
-            var list = resnetlist.Take(6);
+            var list = resnetlist.Take(6).Select(x => (x.name, (nn.Module<Tensor, Tensor>)x.module));
             var bone = nn.Sequential(list);
 
             var x = torch.zeros(1, 3, 64, 160);

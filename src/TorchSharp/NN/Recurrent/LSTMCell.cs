@@ -18,12 +18,12 @@ namespace TorchSharp
 
             public new static LSTMCell Load(String modelPath)
             {
-                var res = Module.Load(modelPath);
+                var res = Module<Tensor, Tensor>.Load(modelPath);
                 return new LSTMCell(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTMCell_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0, IntPtr c_0, out IntPtr c_n);
+            extern static IntPtr THSNN_LSTMCell_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr input, IntPtr h_0, IntPtr c_0, out IntPtr c_n);
 
             /// <summary>
             /// Apply the RNN cell to an input tensor.
@@ -39,13 +39,13 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTMCell_bias_ih(torch.nn.Module.HType module);
+            extern static IntPtr THSNN_LSTMCell_bias_ih(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_LSTMCell_set_bias_ih(torch.nn.Module.HType module, IntPtr tensor);
+            extern static void THSNN_LSTMCell_set_bias_ih(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTMCell_bias_hh(torch.nn.Module.HType module);
+            extern static IntPtr THSNN_LSTMCell_bias_hh(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_LSTMCell_set_bias_hh(torch.nn.Module.HType module, IntPtr tensor);
+            extern static void THSNN_LSTMCell_set_bias_hh(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             public Parameter? bias_ih {
                 get {
@@ -74,13 +74,13 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTMCell_weight_ih(torch.nn.Module.HType module);
+            extern static IntPtr THSNN_LSTMCell_weight_ih(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_LSTMCell_set_weight_ih(torch.nn.Module.HType module, IntPtr tensor);
+            extern static void THSNN_LSTMCell_set_weight_ih(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTMCell_weight_hh(torch.nn.Module.HType module);
+            extern static IntPtr THSNN_LSTMCell_weight_hh(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_LSTMCell_set_weight_hh(torch.nn.Module.HType module, IntPtr tensor);
+            extern static void THSNN_LSTMCell_set_weight_hh(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             public Parameter? weight_ih {
                 get {

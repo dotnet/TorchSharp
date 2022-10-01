@@ -26,7 +26,7 @@ namespace TorchSharp
             private bool _batch_first;
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTM_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0, IntPtr c_0, out IntPtr h_n, out IntPtr c_n);
+            extern static IntPtr THSNN_LSTM_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr input, IntPtr h_0, IntPtr c_0, out IntPtr h_n, out IntPtr c_n);
 
             /// <summary>
             /// Applies a multi-layer long short-term memory (LSTM) RNN to an input sequence.
@@ -55,7 +55,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static torch.nn.utils.rnn.PackedSequence.HType THSNN_LSTM_forward_with_packed_input(torch.nn.Module.HType module, torch.nn.utils.rnn.PackedSequence.HType input, IntPtr h_0, IntPtr c_0, out IntPtr h_n, out IntPtr c_n);
+            extern static torch.nn.utils.rnn.PackedSequence.HType THSNN_LSTM_forward_with_packed_input(torch.nn.Module<Tensor, Tensor>.HType module, torch.nn.utils.rnn.PackedSequence.HType input, IntPtr h_0, IntPtr c_0, out IntPtr h_n, out IntPtr c_n);
 
             /// <summary>
             /// Applies a multi-layer long short-term memory (LSTM) RNN to an input sequence.
@@ -86,7 +86,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_LSTM_flatten_parameters(torch.nn.Module.HType module);
+            extern static void THSNN_LSTM_flatten_parameters(torch.nn.Module<Tensor, Tensor>.HType module);
 
             public void flatten_parameters()
             {

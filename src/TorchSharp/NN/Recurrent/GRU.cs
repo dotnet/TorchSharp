@@ -25,7 +25,7 @@ namespace TorchSharp
             private bool _batch_first;
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_GRU_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
+            extern static IntPtr THSNN_GRU_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
 
             /// <summary>
             /// Applies a multi-layer gated recurrent unit (GRU) RNN to an input sequence.
@@ -35,7 +35,7 @@ namespace TorchSharp
             /// Defaults to 0 if not provided. If the GRU is bidirectional, num_directions should be 2, else it should be 1.</param>
             /// <returns></returns>
             /// <returns></returns>
-            public new (Tensor, Tensor) forward(Tensor input, Tensor h0 = null)
+            public (Tensor, Tensor) forward(Tensor input, Tensor h0 = null)
             {
                 if (h0 is null) {
                     var N = _batch_first ? input.shape[0] : input.shape[1];
@@ -50,7 +50,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static torch.nn.utils.rnn.PackedSequence.HType THSNN_GRU_forward_with_packed_input(torch.nn.Module.HType module, torch.nn.utils.rnn.PackedSequence.HType input, IntPtr h_0, out IntPtr h_n);
+            extern static torch.nn.utils.rnn.PackedSequence.HType THSNN_GRU_forward_with_packed_input(torch.nn.Module<Tensor, Tensor>.HType module, torch.nn.utils.rnn.PackedSequence.HType input, IntPtr h_0, out IntPtr h_n);
 
             /// <summary>
             /// Applies a multi-layer gated recurrent unit (GRU) RNN to an input sequence.
@@ -77,7 +77,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_GRU_flatten_parameters(torch.nn.Module.HType module);
+            extern static void THSNN_GRU_flatten_parameters(torch.nn.Module<Tensor, Tensor>.HType module);
 
             public void flatten_parameters()
             {

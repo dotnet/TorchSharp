@@ -70,12 +70,12 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent an Upsample module.
         /// </summary>
-        public class Upsample : torch.nn.Module
+        public class Upsample : torch.nn.Module<Tensor, Tensor>
         {
             internal Upsample(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Upsample_forward(torch.nn.Module.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_Upsample_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             /// <summary>
             /// Forward pass.

@@ -12,12 +12,12 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReflectionPad2d module.
         /// </summary>
-        public class ReflectionPad2d : torch.nn.Module
+        public class ReflectionPad2d : torch.nn.Module<Tensor, Tensor>
         {
             internal ReflectionPad2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_ReflectionPad2d_forward(torch.nn.Module.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_ReflectionPad2d_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             /// <summary>
             /// Forward pass.
