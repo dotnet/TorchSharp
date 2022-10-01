@@ -25,7 +25,7 @@ EXPORT_API(void) THSJIT_Module_dispose(const JITModule module);
 EXPORT_API(int) THSJIT_Module_num_inputs(const JITModule method);
 EXPORT_API(int) THSJIT_Module_num_outputs(const JITModule method);
 
-EXPORT_API(Tensor) THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, const int length);
+EXPORT_API(void) THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode);
 
 EXPORT_API(int) THSJIT_Module_is_training(JITModule module);
 EXPORT_API(void) THSJIT_Module_train(JITModule module, bool on);

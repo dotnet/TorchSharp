@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using System.Net;
 
 namespace TorchSharp
 {
@@ -13,7 +14,7 @@ namespace TorchSharp
     {
         public static partial class jit
         {
-            public class ScriptModule : torch.nn.Module<Tensor, Tensor>
+            public class ScriptModule : torch.nn.Module
             {
                 internal ScriptModule(IntPtr handle) : base(new HType(handle, true, THSJIT_Module_dispose), null)
                 {
@@ -268,91 +269,102 @@ namespace TorchSharp
 #endif
 
                 [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSJIT_Module_forward(HType module, IntPtr tensors, int length);
+                private static extern void THSJIT_Module_forward(HType module, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
+
+                public object forward(params object[] objs)
+                {
+                    if (!objs.All(o => typeof(Tensor).IsAssignableFrom(o.GetType()))) {
+                        throw new NotImplementedException("ScriptModule.forward() taking non-tensors as input arguments");
+                    }
+
+                    IntPtr[] ptrArray = null;
+                    sbyte typeCode = 0;
+
+                    using (var parray = new PinnedArray<IntPtr>()) {
+
+                        var tensors = objs.Select(o => (Tensor)o).ToArray();
+                        var count = tensors.Length;
+                        var tensorRefs = new IntPtr[count];
+                        for (var i = 0; i < tensors.Length; i++) tensorRefs[i] = tensors[i].Handle;
+
+                        THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
+                        torch.CheckForErrors();
+                        ptrArray = parray.Array;
+                    }
+
+
+                    switch (typeCode) {
+                    case 0:
+                        // Nothing.
+                        throw new NotImplementedException("ScriptModule.forward() returning something else than a tensor, a tuple of tensors, or list of tensors.");
+                    case 1:
+                        // Tensor
+                        return new Tensor(ptrArray[0]);
+                    case 2:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
+                    case 3:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]));
+                    case 4:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]));
+                    case 5:
+                        // Tuple
+                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]), new Tensor(ptrArray[4]));
+                    default: {
+                            // A list or too long a tuple.
+                            var result = new Tensor[ptrArray.Length];
+                            for (var i = 0; i < ptrArray.Length; i++) {
+                                result[i] = new Tensor(ptrArray[i]);
+                            }
+                            return result;
+                        }
+                    }
+
+                    throw new InvalidCastException("Called 'Tensor forward(Tensor,...)' for a script module that returns something else than a single tensor. Use 'object forward(object)' instead.");
+                }
+            }
+
+            public class ScriptModule<TResult> : ScriptModule, torch.nn.IModule<Tensor[], TResult>
+            {
+                internal ScriptModule(IntPtr handle) : base(handle) { }
 
                 /// <summary>
                 /// Invoke the 'forward' function of the script with one tensor as its argument
                 /// </summary>
-                /// <param name="tensor">The input tensor</param>
                 /// <returns></returns>
-                public unsafe override Tensor forward(Tensor tensor)
+                public TResult forward(params Tensor[] tensor)
                 {
-                    var tensorRefs = stackalloc[] { tensor.Handle };
-                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 1);
-                    if (res == IntPtr.Zero)
-                        CheckForErrors();
-                    return new Tensor(res);
+                    return (TResult)base.forward(tensor);
                 }
+            }
+
+            public class ScriptModule<T1, TResult> : ScriptModule, torch.nn.IModule<T1, TResult>
+            {
+                internal ScriptModule(IntPtr handle) : base(handle) { }
 
                 /// <summary>
-                /// Invoke the 'forward' function of the script with two tensors as its argument
+                /// Invoke the 'forward' function of the script with one tensor as its argument
                 /// </summary>
-                /// <param name="x">The first input tensor</param>
-                /// <param name="y">The second input tensor</param>
                 /// <returns></returns>
-                public unsafe Tensor forward(Tensor x, Tensor y)
+                public TResult forward(T1 tensor)
                 {
-                    var tensorRefs = stackalloc[] { x.Handle, y.Handle };
-                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 2);
-                    if (res == IntPtr.Zero)
-                        CheckForErrors();
-                    return new Tensor(res);
+                    return (TResult)base.forward(tensor);
                 }
+            }
+
+            public class ScriptModule<T1, T2, TResult> : ScriptModule, torch.nn.IModule<T1, T2, TResult>
+            {
+                internal ScriptModule(IntPtr handle) : base(handle) { }
 
                 /// <summary>
-                /// Invoke the 'forward' function of the script with three tensors as its argument
+                /// Invoke the 'forward' function of the script with one tensor as its argument
                 /// </summary>
-                /// <param name="x">The first input tensor</param>
-                /// <param name="y">The second input tensor</param>
-                /// <param name="z">The third input tensor</param>
                 /// <returns></returns>
-                public unsafe Tensor forward(Tensor x, Tensor y, Tensor z)
+                public TResult forward(T1 input1, T2 input2)
                 {
-                    var tensorRefs = stackalloc[] { x.Handle, y.Handle, z.Handle };
-                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 3);
-                    if (res == IntPtr.Zero)
-                        CheckForErrors();
-                    return new Tensor(res);
-                }
-
-                /// <summary>
-                /// Invoke the 'forward' function of the script with four or more tensors as its argument
-                /// </summary>
-                /// <param name="x">The first input tensor</param>
-                /// <param name="y">The second input tensor</param>
-                /// <param name="z">The third input tensor</param>
-                /// <param name="tensors">The remaining tensors.</param>
-                /// <returns></returns>
-                public unsafe Tensor forward(Tensor x, Tensor y, Tensor z, params Tensor[] tensors)
-                {
-                    var count = 3 + tensors.Length;
-
-                    if (count < 32) {
-                        var tensorRefs = stackalloc IntPtr[count];
-                        tensorRefs[0] = x.Handle;
-                        tensorRefs[1] = y.Handle;
-                        tensorRefs[2] = z.Handle;
-                        for (var i = 0; i < tensors.Length; i++) tensorRefs[3 + i] = tensors[i].Handle;
-
-                        var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, count);
-                        if (res == IntPtr.Zero)
-                            CheckForErrors();
-                        return new Tensor(res);
-                    } else {
-                        // It the unlikely event that there's a great number of arguments, use heap allocation.
-                        var tensorRefs = new IntPtr[count];
-                        tensorRefs[0] = x.Handle;
-                        tensorRefs[1] = y.Handle;
-                        tensorRefs[2] = z.Handle;
-                        for (var i = 0; i < tensors.Length; i++) tensorRefs[3 + i] = tensors[i].Handle;
-
-                        using (var parray = new PinnedArray<IntPtr>()) {
-                            var res = THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count);
-                            if (res == IntPtr.Zero)
-                                CheckForErrors();
-                            return new Tensor(res);
-                        }
-                    }
+                    return (TResult)base.forward(input1, input2);
                 }
             }
 
@@ -370,13 +382,33 @@ namespace TorchSharp
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule load(string filename)
             {
+                return new ScriptModule(_load(filename));
+            }
+
+            public static ScriptModule<TResult> load<TResult>(string filename)
+            {
+                return new ScriptModule<TResult>(_load(filename));
+            }
+
+            public static ScriptModule<T1, TResult> load<T1, TResult>(string filename)
+            {
+                return new ScriptModule<T1, TResult>(_load(filename));
+            }
+
+            public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(string filename)
+            {
+                return new ScriptModule<T1, T2, TResult>(_load(filename));
+            }
+
+            private static IntPtr _load(string filename)
+            {
                 if (!System.IO.File.Exists(filename))
                     throw new System.IO.FileNotFoundException(filename);
 
                 var result = THSJIT_load(filename);
                 if (result == IntPtr.Zero)
                     CheckForErrors();
-                return new ScriptModule(result);
+                return result;
             }
 
             [DllImport("LibTorchSharp")]

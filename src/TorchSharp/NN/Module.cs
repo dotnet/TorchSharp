@@ -31,7 +31,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Class wrapping PyTorch's module object reference.
                 /// </summary>
-                internal sealed class HType : SafeHandle
+                internal protected sealed class HType : SafeHandle
                 {
                     public HType(IntPtr preexistingHandle, bool ownsHandle, Action<HType> dispose = null)
                         : base(IntPtr.Zero, ownsHandle)
@@ -1127,6 +1127,7 @@ namespace TorchSharp
                 public abstract TResult forward(T1 input1, T2 input2, T3 input3);
             }
 
+            // This corresponds to the longest builtin modules, a couple of loss functions.
             public interface IModule<T1, T2, T3, T4, TResult>
             {
                 public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);

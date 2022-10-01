@@ -186,7 +186,7 @@ namespace TorchSharp
             }
         }
 
-        private static float TrainLoop(Module<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer)
+        private static float TrainLoop(IModule<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer)
         {
             var loss = MSELoss(Reduction.Sum);
 
@@ -213,7 +213,7 @@ namespace TorchSharp
             return finalLoss;
         }
 
-        private static float TrainLoop(Module<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true, int iters = 10)
+        private static float TrainLoop(IModule<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true, int iters = 10)
         {
             var loss = MSELoss(Reduction.Sum);
 
@@ -1727,7 +1727,7 @@ namespace TorchSharp
             var gen = new Generator(4711);
             CreateDataAndLabels(gen, out var x, out var y);
 
-            var seq = torch.jit.load(@"l1000_100_10.script.dat");
+            var seq = torch.jit.load<torch.Tensor, torch.Tensor>(@"l1000_100_10.script.dat");
 
             double learning_rate = 0.00004f;
             var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
