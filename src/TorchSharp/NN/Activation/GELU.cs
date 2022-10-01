@@ -12,12 +12,12 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a GELU module.
         /// </summary>
-        public class GELU : torch.nn.Module
+        public class GELU : torch.nn.Module<Tensor, Tensor>
         {
             internal GELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_GELU_forward(torch.nn.Module.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_GELU_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {

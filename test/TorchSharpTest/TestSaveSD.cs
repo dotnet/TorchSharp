@@ -12,17 +12,17 @@ namespace TorchSharp
 #endif // NET472_OR_GREATER
     public class TestSaveSD
     {
-        private class LSTMModel : Module
+        private class LSTMModel : nn.Module<Tensor, Tensor>
         {
             public static int NUM_WORDS = 100;
             public static int EMBEDDING_VEC_LEN = 100;
             public static int HIDDEN_SIZE = 128;
 
-            private Module embedding;
+            private Module<Tensor, Tensor> embedding;
             private LSTM lstm;
-            private Module dropout;
-            private Module dense;
-            private Module sigmoid;
+            private Module<Tensor, Tensor> dropout;
+            private Module<Tensor, Tensor> dense;
+            private Module<Tensor, Tensor> sigmoid;
             private Device _device;
 
             public LSTMModel(string name, Device device = null) : base(name)
@@ -59,11 +59,11 @@ namespace TorchSharp
             lstm.save("./lstm.dat");
         }
         
-        class LeNet1Model : Module
+        class LeNet1Model : Module<Tensor, Tensor>
         {
             // The names of properties should be the same in C# and Python
             // in this case, we both name the Sequential as layers
-            private readonly Module layers;
+            private readonly Module<Tensor, Tensor> layers;
             private Device _device;
 
             public LeNet1Model(string name, Device device = null) : base(name)
@@ -71,7 +71,7 @@ namespace TorchSharp
                 _device = device;
 
                 // the names of each layer should also be the same in C# and Python
-                var modules = new List<(string, Module)>();
+                var modules = new List<(string, Module<Tensor, Tensor>)>();
                 modules.Add(("conv-1", Conv2d(1, 4, 5, padding: 2)));
                 modules.Add(("bnrm2d-1", BatchNorm2d(4)));
                 modules.Add(("relu-1", ReLU()));

@@ -5,6 +5,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
+    using System.Dynamic;
     using Modules;
 
     namespace Modules
@@ -14,7 +15,7 @@ namespace TorchSharp
             internal TransformerEncoderLayer(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_TransformerEncoderLayer_forward(torch.nn.Module.HType module, IntPtr src, IntPtr src_mask, IntPtr src_key_padding_mask);
+            private static extern IntPtr THSNN_TransformerEncoderLayer_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr src, IntPtr src_mask, IntPtr src_key_padding_mask);
 
             /// <summary>
             /// Pass the input through the encoder layer.
@@ -23,7 +24,7 @@ namespace TorchSharp
             /// <param name="src_mask">The additive mask for the src sequence (optional).</param>
             /// <param name="src_key_padding_mask">The ByteTensor mask for src keys per batch (optional).</param>
             /// <returns></returns>
-            public override Tensor forward(Tensor src, Tensor src_mask, Tensor src_key_padding_mask)
+            public Tensor forward(Tensor src, Tensor src_mask, Tensor src_key_padding_mask)
             {
                 var res = THSNN_TransformerEncoderLayer_forward(handle,
                     src.Handle,
@@ -38,7 +39,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="src">The sequence to the encoder (required).</param>
             /// <param name="src_mask">The additive mask for the src sequence (optional).</param>
-            public override Tensor forward(Tensor src, Tensor src_mask)
+            public Tensor forward(Tensor src, Tensor src_mask)
             {
                 var res = THSNN_TransformerEncoderLayer_forward(handle,
                     src.Handle,
@@ -52,7 +53,7 @@ namespace TorchSharp
             /// Pass the input through the encoder layer.
             /// </summary>
             /// <param name="src">The sequence to the encoder (required).</param>
-            public override Tensor forward(Tensor src)
+            public Tensor forward(Tensor src)
             {
                 var res = THSNN_TransformerEncoderLayer_forward(handle,
                     src.Handle,

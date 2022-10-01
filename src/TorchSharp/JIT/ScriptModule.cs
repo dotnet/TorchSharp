@@ -13,7 +13,7 @@ namespace TorchSharp
     {
         public static partial class jit
         {
-            public class ScriptModule : torch.nn.Module
+            public class ScriptModule : torch.nn.Module<Tensor, Tensor>
             {
                 internal ScriptModule(IntPtr handle) : base(new HType(handle, true, THSJIT_Module_dispose), null)
                 {
@@ -290,7 +290,7 @@ namespace TorchSharp
                 /// <param name="x">The first input tensor</param>
                 /// <param name="y">The second input tensor</param>
                 /// <returns></returns>
-                public unsafe override Tensor forward(Tensor x, Tensor y)
+                public unsafe Tensor forward(Tensor x, Tensor y)
                 {
                     var tensorRefs = stackalloc[] { x.Handle, y.Handle };
                     var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 2);
@@ -306,7 +306,7 @@ namespace TorchSharp
                 /// <param name="y">The second input tensor</param>
                 /// <param name="z">The third input tensor</param>
                 /// <returns></returns>
-                public unsafe override Tensor forward(Tensor x, Tensor y, Tensor z)
+                public unsafe Tensor forward(Tensor x, Tensor y, Tensor z)
                 {
                     var tensorRefs = stackalloc[] { x.Handle, y.Handle, z.Handle };
                     var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 3);
@@ -380,7 +380,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            private static extern void THSJIT_save(nn.Module.HType handle, string filename);
+            private static extern void THSJIT_save(nn.Module<Tensor, Tensor>.HType handle, string filename);
 
             /// <summary>
             /// Save an offline version of a previously loaded script module.

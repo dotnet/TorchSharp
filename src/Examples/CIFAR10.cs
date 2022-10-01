@@ -56,7 +56,7 @@ namespace TorchSharp.Examples
 
             Console.WriteLine($"\tCreating the model...");
 
-            Module model = null;
+            Module<torch.Tensor, torch.Tensor> model = null;
 
             switch (modelName.ToLower()) {
             case "alexnet":
@@ -134,7 +134,7 @@ namespace TorchSharp.Examples
         }
 
         private static void Train(
-            Module model,
+            Module<torch.Tensor, torch.Tensor> model,
             torch.optim.Optimizer optimizer,
             Loss loss,
             DataLoader dataLoader,
@@ -182,7 +182,7 @@ namespace TorchSharp.Examples
         }
 
         private static void Test(
-            Module model,
+            Module<torch.Tensor, torch.Tensor> model,
             Loss loss,
             DataLoader dataLoader,
             long size)

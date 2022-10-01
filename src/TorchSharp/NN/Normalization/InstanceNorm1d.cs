@@ -14,7 +14,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a InstanceNorm1D module.
         /// </summary>
-        public class InstanceNorm1d : torch.nn.Module
+        public class InstanceNorm1d : torch.nn.Module<Tensor, Tensor>
         {
             internal InstanceNorm1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
@@ -32,25 +32,25 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_InstanceNorm1d_bias(torch.nn.Module.HType module);
+            private static extern IntPtr THSNN_InstanceNorm1d_bias(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            private static extern void THSNN_InstanceNorm1d_set_bias(torch.nn.Module.HType module, IntPtr bias);
+            private static extern void THSNN_InstanceNorm1d_set_bias(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr bias);
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_InstanceNorm1d_weight(torch.nn.Module.HType module);
+            private static extern IntPtr THSNN_InstanceNorm1d_weight(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            private static extern void THSNN_InstanceNorm1d_set_weight(torch.nn.Module.HType module, IntPtr weight);
+            private static extern void THSNN_InstanceNorm1d_set_weight(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr weight);
             [DllImport("LibTorchSharp")]
-            private static extern void THSNN_InstanceNorm1d_reset_stats(torch.nn.Module.HType module);
+            private static extern void THSNN_InstanceNorm1d_reset_stats(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_InstanceNorm1d_get_mean(torch.nn.Module.HType module);
+            private static extern IntPtr THSNN_InstanceNorm1d_get_mean(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_InstanceNorm1d_get_var(torch.nn.Module.HType module);
+            private static extern IntPtr THSNN_InstanceNorm1d_get_var(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_InstanceNorm1d_get_batches(torch.nn.Module.HType module);
+            private static extern IntPtr THSNN_InstanceNorm1d_get_batches(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            private static extern void THSNN_InstanceNorm1d_set_mean(torch.nn.Module.HType module, IntPtr weight);
+            private static extern void THSNN_InstanceNorm1d_set_mean(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr weight);
             [DllImport("LibTorchSharp")]
-            private static extern void THSNN_InstanceNorm1d_set_var(torch.nn.Module.HType module, IntPtr weight);
+            private static extern void THSNN_InstanceNorm1d_set_var(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr weight);
 
             public Parameter? bias {
                 get {

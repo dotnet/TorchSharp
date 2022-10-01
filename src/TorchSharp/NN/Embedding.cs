@@ -10,12 +10,12 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class Embedding : torch.nn.Module
+        public class Embedding : torch.nn.Module<Tensor, Tensor>
         {
             internal Embedding(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Embedding_forward(torch.nn.Module.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_Embedding_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor input)
             {
@@ -25,10 +25,10 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Embedding_weight(torch.nn.Module.HType module);
+            extern static IntPtr THSNN_Embedding_weight(torch.nn.Module<Tensor, Tensor>.HType module);
 
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_Embedding_set_weight(torch.nn.Module.HType module, IntPtr tensor);
+            extern static void THSNN_Embedding_set_weight(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             public Parameter? weight {
                 get {

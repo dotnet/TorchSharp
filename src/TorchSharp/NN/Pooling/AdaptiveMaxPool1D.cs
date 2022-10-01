@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a AdaptiveMaxPool1D module.
         /// </summary>
-        public class AdaptiveMaxPool1d : torch.nn.Module
+        public class AdaptiveMaxPool1d : torch.nn.Module<Tensor, Tensor>
         {
             internal AdaptiveMaxPool1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

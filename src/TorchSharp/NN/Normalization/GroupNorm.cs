@@ -14,7 +14,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a GroupNorm module.
         /// </summary>
-        public class GroupNorm : torch.nn.Module
+        public class GroupNorm : torch.nn.Module<Tensor, Tensor>
         {
             internal GroupNorm(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
@@ -32,13 +32,13 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_GroupNorm_bias(torch.nn.Module.HType module);
+            private static extern IntPtr THSNN_GroupNorm_bias(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            private static extern void THSNN_GroupNorm_set_bias(torch.nn.Module.HType module, IntPtr bias);
+            private static extern void THSNN_GroupNorm_set_bias(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr bias);
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_GroupNorm_weight(torch.nn.Module.HType module);
+            private static extern IntPtr THSNN_GroupNorm_weight(torch.nn.Module<Tensor, Tensor>.HType module);
             [DllImport("LibTorchSharp")]
-            private static extern void THSNN_GroupNorm_set_weight(torch.nn.Module.HType module, IntPtr weight);
+            private static extern void THSNN_GroupNorm_set_weight(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr weight);
 
             public Parameter? bias {
                 get {

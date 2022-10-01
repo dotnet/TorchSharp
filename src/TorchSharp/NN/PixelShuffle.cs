@@ -12,12 +12,12 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a dropout module.
         /// </summary>
-        public class PixelShuffle : torch.nn.Module
+        public class PixelShuffle : torch.nn.Module<Tensor, Tensor>
         {
             internal PixelShuffle(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_PixelShuffle_forward(torch.nn.Module.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_PixelShuffle_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             /// <summary>
             /// Forward pass.

@@ -19,7 +19,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_MaxUnpool1d_forward(torch.nn.Module.HType module, IntPtr tensor, IntPtr indices, IntPtr outSize);
+            private static extern IntPtr THSNN_MaxUnpool1d_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor, IntPtr indices, IntPtr outSize);
 
             public Tensor forward(Tensor tensor, Tensor indices, long[] output_size = null)
             {

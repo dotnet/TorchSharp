@@ -166,7 +166,7 @@ namespace TorchSharp.Examples
         }
     }
 
-    class TextClassificationModel : Module
+    class TextClassificationModel : Module<Tensor, Tensor>
     {
         private Modules.EmbeddingBag embedding;
         private Modules.Linear fc;
@@ -194,7 +194,7 @@ namespace TorchSharp.Examples
             throw new NotImplementedException();
         }
 
-        public override Tensor forward(Tensor input, Tensor offsets)
+        public Tensor forward(Tensor input, Tensor offsets)
         {
             return fc.forward(embedding.forward(input, offsets));
         }

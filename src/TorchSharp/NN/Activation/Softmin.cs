@@ -12,12 +12,12 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softmin module.
         /// </summary>
-        public class Softmin : torch.nn.Module
+        public class Softmin : torch.nn.Module<Tensor, Tensor>
         {
             internal Softmin(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Softmin_forward(torch.nn.Module.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_Softmin_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {

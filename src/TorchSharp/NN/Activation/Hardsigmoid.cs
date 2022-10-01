@@ -11,7 +11,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Hardsigmoid module.
         /// </summary>
-        public class Hardsigmoid : torch.nn.Module
+        public class Hardsigmoid : torch.nn.Module<Tensor, Tensor>
         {
             private readonly bool inplace;
 

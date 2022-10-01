@@ -368,7 +368,7 @@ namespace TorchSharp
             }
         }
 
-        private class TestModule1 : Module
+        private class TestModule1 : Module<torch.Tensor, torch.Tensor>
         {
             public TestModule1() : base("TestModule1")
             {

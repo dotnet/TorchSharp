@@ -6664,7 +6664,7 @@ namespace TorchSharp
             }
 
             // Specifically added to make F# look good.
-            public static Tensor op_MinusMinusGreater(Tensor t, torch.nn.Module m) => m.forward(t);
+            public static Tensor op_MinusMinusGreater(Tensor t, torch.nn.Module<Tensor, Tensor> m) => m.forward(t);
 
             public override string ToString() => ToMetadataString();
 

@@ -803,15 +803,6 @@ namespace TorchSharp
                     return res;
                 }
 
-                public virtual Tensor forward(Tensor t)
-                    => throw new NotImplementedException("forward(t)");
-
-                public virtual Tensor forward(Tensor x, Tensor y)
-                    => throw new NotImplementedException("forward(x,y)");
-
-                public virtual Tensor forward(Tensor x, Tensor y, Tensor z)
-                    => throw new NotImplementedException("forward(x,y,z)");
-
                 /// <summary>
                 /// Save the parameters and buffers of the module to a disk location.
                 /// </summary>
@@ -979,7 +970,7 @@ namespace TorchSharp
                     IntPtr ForwardNative(IntPtr t)
                     {
                         var input = new Tensor(t);
-                        var output = forward(input);
+                        var output = ((nn.Module<Tensor, Tensor>)this).forward(input);
 
                         // handles must live on - we don't own them, but
                         // the managed objects should go away.
@@ -1119,6 +1110,22 @@ namespace TorchSharp
                         handle.SetHandleAsInvalid();
                     }
                 }
+            }
+
+            public abstract class Module<T1, TResult> : Module
+            {
+                protected Module(string name) : base(name) { }
+                protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+                internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+                public abstract TResult forward(T1 input1);
+            }
+
+            public abstract class Module<T1, T2, TResult> : Module
+            {
+                protected Module(string name) : base(name) { }
+                protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+                internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+                public abstract TResult forward(T1 input1, T2 input2);
             }
         }
     }

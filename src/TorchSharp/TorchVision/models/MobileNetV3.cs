@@ -25,7 +25,7 @@ namespace TorchSharp
 {
     namespace Modules
     {
-        public class MobileNetV3 : nn.Module
+        public class MobileNetV3 : nn.Module<Tensor, Tensor>
         {
             /// <summary>
             /// Stores information listed at Tables 1 and 2 of the MobileNetV3 paper
@@ -71,18 +71,18 @@ namespace TorchSharp
             /// <summary>
             /// Implemented as described at section 5 of MobileNetV3 paper
             /// </summary>
-            private class InvertedResidual : nn.Module
+            private class InvertedResidual : nn.Module<Tensor, Tensor>
             {
                 private readonly bool _is_cn;
-                private readonly nn.Module block;
+                private readonly nn.Module<Tensor, Tensor> block;
                 private readonly long out_channels;
                 private readonly bool use_res_connect;
 
                 public InvertedResidual(
                     string name,
                     InvertedResidualConfig cnf,
-                    Func<long, nn.Module> norm_layer,
-                    Func<long, long, nn.Module>? se_layer = null) : base(name)
+                    Func<long, nn.Module<Tensor, Tensor>> norm_layer,
+                    Func<long, long, nn.Module<Tensor, Tensor>>? se_layer = null) : base(name)
                 {
                     if (!(1 <= cnf.stride && cnf.stride <= 2)) {
                         throw new ArgumentException("illegal stride value");
@@ -90,8 +90,8 @@ namespace TorchSharp
 
                     this.use_res_connect = cnf.stride == 1 && cnf.input_channels == cnf.out_channels;
 
-                    var layers = new List<nn.Module>();
-                    Func<bool, nn.Module> activation_layer = (
+                    var layers = new List<nn.Module<Tensor, Tensor>>();
+                    Func<bool, nn.Module<Tensor, Tensor>> activation_layer = (
                         cnf.use_hs ? (inplace) => nn.Hardswish(inplace) : (inplace) => nn.ReLU(inplace));
 
                     // expand
@@ -152,9 +152,9 @@ namespace TorchSharp
                 }
             }
 
-            private readonly nn.Module avgpool;
-            private readonly nn.Module classifier;
-            private readonly nn.Module features;
+            private readonly nn.Module<Tensor, Tensor> avgpool;
+            private readonly nn.Module<Tensor, Tensor> classifier;
+            private readonly nn.Module<Tensor, Tensor> features;
 
             /// <summary>
             /// MobileNet V3 main class
@@ -172,8 +172,8 @@ namespace TorchSharp
                 InvertedResidualConfig[] inverted_residual_setting,
                 long last_channel,
                 long num_classes = 1000,
-                Func<InvertedResidualConfig, Func<long, nn.Module>, nn.Module>? block = null,
-                Func<long, nn.Module>? norm_layer = null,
+                Func<InvertedResidualConfig, Func<long, nn.Module<Tensor, Tensor>>, nn.Module<Tensor, Tensor>>? block = null,
+                Func<long, nn.Module<Tensor, Tensor>>? norm_layer = null,
                 double dropout = 0.2) : base(name)
             {
                 if (inverted_residual_setting == null || inverted_residual_setting.Length == 0) {
@@ -188,7 +188,7 @@ namespace TorchSharp
                     norm_layer = (features) => nn.BatchNorm2d(features, eps: 0.001, momentum: 0.01);
                 }
 
-                var layers = new List<nn.Module>();
+                var layers = new List<nn.Module<Tensor, Tensor>>();
 
                 // building first layer
                 var firstconv_output_channels = inverted_residual_setting[0].input_channels;

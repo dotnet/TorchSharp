@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a dropout module for 2d/3d convolutational layers.
         /// </summary>
-        public class CosineSimilarity : torch.nn.Module
+        public class CosineSimilarity : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal CosineSimilarity(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
