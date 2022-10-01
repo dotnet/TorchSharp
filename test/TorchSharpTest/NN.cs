@@ -753,6 +753,17 @@ namespace TorchSharp
                 Assert.True(componentWiseLoss.mean().Equals(torch.nn.PoissonNLLLoss(reduction: Reduction.Mean).forward(input, target)));
             }
         }
+        [Fact]
+        public void TestPoissonNLLLossF()
+        {
+            using (Tensor input = torch.tensor(new float[] { 0.5f, 1.5f, 2.5f }))
+            using (Tensor target = torch.tensor(new float[] { 1f, 2f, 3f })) {
+                var componentWiseLoss = ((Tensor)input.exp()) - target * input;
+                Assert.True(componentWiseLoss.Equals(torch.nn.functional.poisson_nll_loss(input, target, reduction: Reduction.None)));
+                Assert.True(componentWiseLoss.sum().Equals(torch.nn.functional.poisson_nll_loss(input, target, reduction: Reduction.Sum)));
+                Assert.True(componentWiseLoss.mean().Equals(torch.nn.functional.poisson_nll_loss(input, target, reduction: Reduction.Mean)));
+            }
+        }
 
         [Fact]
         public void TestPoissonNLLLoss2()
@@ -760,6 +771,18 @@ namespace TorchSharp
             using (Tensor input = torch.rand(new long[] { 5, 2 }))
             using (Tensor target = torch.rand(new long[] { 5, 2 })) {
                 var outTensor = torch.nn.PoissonNLLLoss(true, true).forward(input, target);
+                var values = outTensor.data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
+        public void TestPoissonNLLLossF2()
+        {
+            using (Tensor input = torch.rand(new long[] { 5, 2 }))
+            using (Tensor target = torch.rand(new long[] { 5, 2 })) {
+                var outTensor = torch.nn.functional.poisson_nll_loss(input, target, true, true);
                 var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
@@ -779,11 +802,35 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestCrossEntropyLossF()
+        {
+            using (Tensor input = torch.rand(new long[] { 5, 12 }))
+            using (Tensor target = torch.randint(12, new long[] { 5 }, torch.int64)) {
+                var outTensor = cross_entropy(input, target);
+                var values = outTensor.data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
         public void TestL1Loss()
         {
             using (Tensor input = torch.rand(new long[] { 5, 2 }))
             using (Tensor target = torch.rand(new long[] { 5, 2 })) {
                 var outTensor = L1Loss().forward(input, target);
+                var values = outTensor.data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
+        public void TestL1LossF()
+        {
+            using (Tensor input = torch.rand(new long[] { 5, 2 }))
+            using (Tensor target = torch.rand(new long[] { 5, 2 })) {
+                var outTensor = l1_loss(input, target);
                 var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
@@ -804,11 +851,36 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestBinaryCrossEntropyLossF()
+        {
+            var m = Sigmoid();
+            using (Tensor input = torch.randn(new long[] { 3 }))
+            using (Tensor target = torch.randn(new long[] { 3 })) {
+                var outTensor = binary_cross_entropy(m.forward(input), target);
+                var values = outTensor.data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
         public void TestBinaryCrossEntropyLossWithLogits()
         {
             using (Tensor input = torch.randn(new long[] { 3 }))
             using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = BCEWithLogitsLoss().forward(input, target);
+                var values = outTensor.data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
+        public void TestBinaryCrossEntropyLossWithLogitsF()
+        {
+            using (Tensor input = torch.randn(new long[] { 3 }))
+            using (Tensor target = torch.randn(new long[] { 3 })) {
+                var outTensor = binary_cross_entropy_with_logits(input, target);
                 var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
@@ -828,6 +900,18 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestKLDivLossF()
+        {
+            using (Tensor input = torch.randn(new long[] { 3 }))
+            using (Tensor target = torch.randn(new long[] { 3 })) {
+                var outTensor = kl_div(input, target);
+                var values = outTensor.data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
         public void TestSmoothL1Loss()
         {
             using (Tensor input = torch.randn(new long[] { 3 }))
@@ -840,11 +924,35 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSmoothL1LossF()
+        {
+            using (Tensor input = torch.randn(new long[] { 3 }))
+            using (Tensor target = torch.randn(new long[] { 3 })) {
+                var outTensor = smooth_l1_loss(input, target);
+                var values = outTensor.data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
         public void TestSoftMarginLoss()
         {
             using (Tensor input = torch.randn(new long[] { 3 }))
             using (Tensor target = torch.randn(new long[] { 3 })) {
                 var outTensor = SoftMarginLoss().forward(input, target);
+                var values = outTensor.data<float>().ToArray();
+                Assert.Empty(outTensor.shape);
+                Assert.Single(values);
+            }
+        }
+
+        [Fact]
+        public void TestSoftMarginLossF()
+        {
+            using (Tensor input = torch.randn(new long[] { 3 }))
+            using (Tensor target = torch.randn(new long[] { 3 })) {
+                var outTensor = soft_margin_loss(input, target);
                 var values = outTensor.data<float>().ToArray();
                 Assert.Empty(outTensor.shape);
                 Assert.Single(values);
@@ -945,12 +1053,15 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestCTCLoss()
+        public void TestCosineEmbeddingLossF()
         {
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
-            using (Tensor target = torch.randn(new long[] { 15, 5 }).sign()) {
-                var outTensor = HingeEmbeddingLoss().forward(input, target);
+            using (Tensor input1 = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (Tensor input2 = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15 }).sign()) {
+
+                var outTensor = cosine_embedding_loss(input1, input2, target);
                 outTensor.backward();
+
             }
         }
 
@@ -960,6 +1071,16 @@ namespace TorchSharp
             using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
             using (Tensor target = torch.randn(new long[] { 15, 5 }).sign()) {
                 var outTensor = HingeEmbeddingLoss().forward(input, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
+        public void TestHingeEmbeddingLossF()
+        {
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15, 5 }).sign()) {
+                var outTensor = hinge_embedding_loss(input, target);
                 outTensor.backward();
             }
         }
@@ -977,12 +1098,35 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestHuberLossF()
+        {
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15, 5 }).sign()) {
+                var outTensor = huber_loss(input, target);
+                outTensor.backward();
+                outTensor = huber_loss(input, target, 1.5);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
         public void TestMarginRankingLoss()
         {
             using (Tensor input1 = torch.randn(new long[] { 15 }, requiresGrad: true))
             using (Tensor input2 = torch.randn(new long[] { 15 }, requiresGrad: true))
             using (Tensor target = torch.randn(new long[] { 15 }).sign()) {
                 var outTensor = MarginRankingLoss().forward(input1, input2, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
+        public void TestMarginRankingLossF()
+        {
+            using (Tensor input1 = torch.randn(new long[] { 15 }, requiresGrad: true))
+            using (Tensor input2 = torch.randn(new long[] { 15 }, requiresGrad: true))
+            using (Tensor target = torch.randn(new long[] { 15 }).sign()) {
+                var outTensor = margin_ranking_loss(input1, input2, target);
                 outTensor.backward();
             }
         }
@@ -998,11 +1142,31 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestMultilabelMarginLossF()
+        {
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.ones(new long[] { 15, 5 }, torch.int64)) {
+                var outTensor = multi_label_margin_loss(input, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
         public void TestMultilabelSoftMarginLoss()
         {
             using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
             using (Tensor target = torch.ones(new long[] { 15, 5 })) {
                 var outTensor = MultiLabelSoftMarginLoss().forward(input, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
+        public void TestMultilabelSoftMarginLossF()
+        {
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.ones(new long[] { 15, 5 })) {
+                var outTensor = multilabel_soft_margin_loss(input, target);
                 outTensor.backward();
             }
         }
@@ -1018,6 +1182,16 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestMultiMarginLossF()
+        {
+            using (Tensor input = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor target = torch.ones(new long[] { 15 }, torch.int64)) {
+                var outTensor = multi_margin_loss(input, target);
+                outTensor.backward();
+            }
+        }
+
+        [Fact]
         public void TestTripleMarginLoss()
         {
             using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
@@ -1026,6 +1200,18 @@ namespace TorchSharp
 
                 var output = TripletMarginLoss();
                 var result = output.forward(anchor, positive, negative);
+                Assert.True(true);
+            }
+        }
+
+        [Fact]
+        public void TestTripleMarginLossF()
+        {
+            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
+
+                var result = triplet_margin_loss(anchor, positive, negative);
                 Assert.True(true);
             }
         }
@@ -1049,6 +1235,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestTripleMarginWithDistanceLossF()
+        {
+            Func<Tensor, Tensor, Tensor> distance =
+                (x, y) => {
+                    return (x - y).abs();
+                };
+
+            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
+
+                var result = triplet_margin_with_distance_loss(anchor, positive, negative, distance);
+                Assert.True(true);
+            }
+        }
+
+        [Fact]
         public void TestTripleMarginWithDistanceLossNoDistance()
         {
             using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
@@ -1057,6 +1260,18 @@ namespace TorchSharp
 
                 var output = TripletMarginWithDistanceLoss();
                 var result = output.forward(anchor, positive, negative);
+                Assert.True(true);
+            }
+        }
+
+        [Fact]
+        public void TestTripleMarginWithDistanceLossNoDistanceF()
+        {
+            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
+            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
+
+                var result = triplet_margin_with_distance_loss(anchor, positive, negative);
                 Assert.True(true);
             }
         }
