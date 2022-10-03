@@ -83,10 +83,9 @@ namespace TorchSharp
 
                     using (var parray = new PinnedArray<IntPtr>()) {
 
-                        var tensors = objs.Select(o => (Tensor)o).ToArray();
-                        var count = tensors.Length;
+                        var count = objs.Length;
                         var tensorRefs = new IntPtr[count];
-                        for (var i = 0; i < tensors.Length; i++) tensorRefs[i] = tensors[i].Handle;
+                        for (var i = 0; i < objs.Length; i++) tensorRefs[i] = ((Tensor)objs[i]).Handle;
 
                         THSJIT_CompilationUnit_Invoke(handle, name, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
                         torch.CheckForErrors();
