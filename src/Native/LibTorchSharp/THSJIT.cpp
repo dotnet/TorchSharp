@@ -152,6 +152,13 @@ void THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, con
     CATCH(
         auto result = (*module)->forward(toTensors<c10::IValue>((torch::Tensor**)tensorPtrs, length));
 
+    // TypeCode:
+    //
+    // 0 -- Not supported
+    // 1 -- Single tensor
+    // 2 -- Tuple of tensors
+    // 3 -- List of tensors
+
     if (result.isTensor()) {
         Tensor* output = allocator(1);
         output[0] = ResultTensor(result.toTensor());
@@ -160,7 +167,7 @@ void THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, con
     }
     if (result.isTensorList()) {
         auto list = result.toTensorList();
-        *typeCode = -1;
+        *typeCode = 3;
         Tensor* output = allocator(list.size());
         for (size_t i = 0; i < list.size(); i++)
             output[i] = ResultTensor(list[i]);
@@ -170,7 +177,7 @@ void THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, con
         auto tuple = result.toTuple();
         auto list = tuple->elements();
         auto sz = list.size();
-        *typeCode = (sz < 6) ? (int8_t)sz : -1;
+        *typeCode = 2;
         Tensor* output = allocator(list.size());
         for (size_t i = 0; i < list.size(); i++)
             // Assuming that all elements are tensors.

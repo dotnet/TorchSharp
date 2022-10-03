@@ -294,7 +294,7 @@ namespace TorchSharp
 
 
                     switch (typeCode) {
-                    case 0:
+                    default:
                         // Nothing.
                         throw new NotImplementedException("ScriptModule.forward() returning something else than a tensor, a tuple of tensors, or list of tensors.");
                     case 1:
@@ -302,18 +302,28 @@ namespace TorchSharp
                         return new Tensor(ptrArray[0]);
                     case 2:
                         // Tuple
-                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
-                    case 3:
-                        // Tuple
-                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]));
-                    case 4:
-                        // Tuple
-                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]));
-                    case 5:
-                        // Tuple
-                        return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]), new Tensor(ptrArray[4]));
-                    default: {
-                            // A list or too long a tuple.
+                        switch (ptrArray.Length) {
+                        case 1:
+                            return new Tensor(ptrArray[0]);
+                        case 2:
+                            return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
+                        case 3:
+                            return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]));
+                        case 4:
+                            return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]));
+                        case 5:
+                            return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]), new Tensor(ptrArray[4]));
+                        default: {
+                                // Too long a tuple, return as a list, instead.
+                                var result = new Tensor[ptrArray.Length];
+                                for (var i = 0; i < ptrArray.Length; i++) {
+                                    result[i] = new Tensor(ptrArray[i]);
+                                }
+                                return result;
+                            }
+                        }
+                    case 3: {
+                            // List of tensors
                             var result = new Tensor[ptrArray.Length];
                             for (var i = 0; i < ptrArray.Length; i++) {
                                 result[i] = new Tensor(ptrArray[i]);
@@ -321,11 +331,13 @@ namespace TorchSharp
                             return result;
                         }
                     }
-
-                    throw new InvalidCastException("Called 'Tensor forward(Tensor,...)' for a script module that returns something else than a single tensor. Use 'object forward(object)' instead.");
                 }
             }
 
+            /// <summary>
+            /// A script module taking any number of tensors as input
+            /// </summary>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
             public class ScriptModule<TResult> : ScriptModule, torch.nn.IModule<Tensor[], TResult>
             {
                 internal ScriptModule(IntPtr handle) : base(handle) { }
@@ -340,7 +352,12 @@ namespace TorchSharp
                 }
             }
 
-            public class ScriptModule<T1, TResult> : ScriptModule, torch.nn.IModule<T1, TResult>
+            /// <summary>
+            /// A script module taking a single argument.
+            /// </summary>
+            /// <typeparam name="T">The argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            public class ScriptModule<T, TResult> : ScriptModule, torch.nn.IModule<T, TResult>
             {
                 internal ScriptModule(IntPtr handle) : base(handle) { }
 
@@ -348,12 +365,18 @@ namespace TorchSharp
                 /// Invoke the 'forward' function of the script with one tensor as its argument
                 /// </summary>
                 /// <returns></returns>
-                public TResult forward(T1 tensor)
+                public TResult forward(T tensor)
                 {
                     return (TResult)base.forward(tensor);
                 }
             }
 
+            /// <summary>
+            /// A script module taking two arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type.</typeparam>
+            /// <typeparam name="T2">The second argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
             public class ScriptModule<T1, T2, TResult> : ScriptModule, torch.nn.IModule<T1, T2, TResult>
             {
                 internal ScriptModule(IntPtr handle) : base(handle) { }
@@ -374,7 +397,7 @@ namespace TorchSharp
             /// <summary>
             /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
             /// </summary>
-            /// <param name="filename"></param>
+            /// <param name="filename">The file name of the module.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
             /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
@@ -385,16 +408,49 @@ namespace TorchSharp
                 return new ScriptModule(_load(filename));
             }
 
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="filename">The file name of the module.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<TResult> load<TResult>(string filename)
             {
                 return new ScriptModule<TResult>(_load(filename));
             }
 
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="filename">The file name of the module.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<T1, TResult> load<T1, TResult>(string filename)
             {
                 return new ScriptModule<T1, TResult>(_load(filename));
             }
 
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The first argument type.</typeparam>
+            /// <typeparam name="T2">The second argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="filename">The file name of the module.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(string filename)
             {
                 return new ScriptModule<T1, T2, TResult>(_load(filename));
@@ -420,8 +476,8 @@ namespace TorchSharp
             /// The saved module serializes all of the methods, submodules, parameters, and attributes of this module.
             /// It can be loaded into the C++ API using torch::jit::load(filename) or into the .NET API with torch.jit.load().
             /// </summary>
-            /// <param name="module"></param>
-            /// <param name="filename"></param>
+            /// <param name="module">The script module to save.</param>
+            /// <param name="filename">The file name of the module.</param>
             public static void save(ScriptModule module, string filename)
             {
                 THSJIT_save(module.handle, filename);

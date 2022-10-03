@@ -1112,35 +1112,72 @@ namespace TorchSharp
                 }
             }
 
-            public interface IModule<T1, TResult>
+            /// <summary>
+            /// Interface for concrete modules with a forward() that takes a single argument.
+            /// </summary>
+            /// <typeparam name="T">The argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
+            public interface IModule<T, TResult>
             {
-                public abstract TResult forward(T1 input1);
+                public abstract TResult forward(T input1);
             }
 
+            /// <summary>
+            /// Interface for concrete modules with a forward() that takes two arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public interface IModule<T1, T2, TResult>
             {
                 public abstract TResult forward(T1 input1, T2 input2);
             }
 
+            /// <summary>
+            /// Interface for concrete modules with a forward() that takes three arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public interface IModule<T1, T2, T3, TResult>
             {
                 public abstract TResult forward(T1 input1, T2 input2, T3 input3);
             }
 
-            // This corresponds to the longest builtin modules, a couple of loss functions.
+            /// <summary>
+            /// Interface for concrete modules with a forward() that takes four arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public interface IModule<T1, T2, T3, T4, TResult>
             {
                 public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);
             }
 
-            public abstract class Module<T1, TResult> : Module, IModule<T1, TResult>
+
+            /// <summary>
+            /// Base class for concrete modules with a forward() that takes a single argument.
+            /// </summary>
+            /// <typeparam name="T">The argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
+            public abstract class Module<T, TResult> : Module, IModule<T, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                public abstract TResult forward(T1 input1);
+                public abstract TResult forward(T input1);
             }
 
+            /// <summary>
+            /// Base class for concrete modules with a forward() that takes two arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public abstract class Module<T1, T2, TResult> : Module, IModule<T1, T2, TResult>
             {
                 protected Module(string name) : base(name) { }
@@ -1149,6 +1186,13 @@ namespace TorchSharp
                 public abstract TResult forward(T1 input1, T2 input2);
             }
 
+            /// <summary>
+            /// Base class for concrete modules with a forward() that takes three arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public abstract class Module<T1, T2, T3, TResult> : Module, IModule<T1, T2, T3, TResult>
             {
                 protected Module(string name) : base(name) { }
@@ -1157,6 +1201,14 @@ namespace TorchSharp
                 public abstract TResult forward(T1 input1, T2 input2, T3 input3);
             }
 
+            /// <summary>
+            /// Base class for concrete modules with a forward() that takes four arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public abstract class Module<T1, T2, T3, T4, TResult> : Module, IModule<T1, T2, T3, T4, TResult>
             {
                 protected Module(string name) : base(name) { }
@@ -1169,6 +1221,11 @@ namespace TorchSharp
 
     public static class ModuleExtensionMethods
     {
+        /// <summary>
+        /// Converts the parameters and buffers.
+        /// </summary>
+        /// <param name="module">The module to move</param>
+        /// <param name="type">The target element type.</param>
         public static T to<T>(this T module, torch.ScalarType type) where T : torch.nn.Module
         {
             return (T)module._to(type);
