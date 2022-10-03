@@ -5,9 +5,19 @@ JITModule THSJIT_load(const char* filename)
 {
     CATCH(
         auto res = torch::jit::load(filename);
-        auto copy = new torch::jit::Module(res);        
-        return new std::shared_ptr<torch::jit::Module>(copy);
+    auto copy = new torch::jit::Module(res);
+    return new std::shared_ptr<torch::jit::Module>(copy);
     );
+
+    return nullptr;
+}
+
+JITCompilationUnit THSJIT_compile(const char* script)
+{
+    //CATCH(
+    auto res = torch::jit::compile(script);
+    return new std::shared_ptr<torch::jit::CompilationUnit>(res);
+    //);
 
     return nullptr;
 }
@@ -145,19 +155,14 @@ JITMethod THSJIT_Module_get_method(const JITModule module, const char* name)
     return new std::shared_ptr<torch::jit::Method>(copy);
 }
 
-void THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode)
+void ReturnHelper(c10::IValue result, Tensor* (*allocator)(size_t length), int8_t* typeCode)
 {
-    *typeCode = 0;
-
-    CATCH(
-        auto result = (*module)->forward(toTensors<c10::IValue>((torch::Tensor**)tensorPtrs, length));
-
     // TypeCode:
-    //
-    // 0 -- Not supported
-    // 1 -- Single tensor
-    // 2 -- Tuple of tensors
-    // 3 -- List of tensors
+//
+// 0 -- Not supported
+// 1 -- Single tensor
+// 2 -- Tuple of tensors
+// 3 -- List of tensors
 
     if (result.isTensor()) {
         Tensor* output = allocator(1);
@@ -184,6 +189,38 @@ void THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, con
             output[i] = ResultTensor(list[i].toTensor());
         return;
     }
+}
+
+void THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode)
+{
+    *typeCode = 0;
+
+    CATCH(
+        auto result = (*module)->forward(toTensors<c10::IValue>((torch::Tensor**)tensorPtrs, length));
+        ReturnHelper(result, allocator, typeCode);
+    )
+}
+
+void THSJIT_Module_invoke(const JITModule module, const char* name, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode)
+{
+    *typeCode = 0;
+
+    CATCH(
+    auto method = (*module)->get_method(name);
+    auto result = method(toTensors<c10::IValue>((torch::Tensor**)tensorPtrs, length));
+    ReturnHelper(result, allocator, typeCode);
+    )
+}
+
+void THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode)
+{
+    *typeCode = 0;
+
+    CATCH(
+    auto args = toTensors<c10::IValue>((torch::Tensor**)tensorPtrs, length);
+    auto func = (*module)->find_function(method);
+    auto result = (*func)(args);
+    ReturnHelper(result, allocator, typeCode);
     )
 }
 

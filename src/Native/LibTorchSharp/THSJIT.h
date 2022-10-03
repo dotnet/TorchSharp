@@ -19,13 +19,18 @@ enum TypeKind : int8_t {
 
 EXPORT_API(JITModule) THSJIT_load(const char* filename);
 EXPORT_API(void) THSJIT_save(JITModule module, const char* filename);
+EXPORT_API(JITCompilationUnit) THSJIT_compile(const char* script);
 
 EXPORT_API(void) THSJIT_Module_dispose(const JITModule module);
+EXPORT_API(void) THSJIT_CompilationUnit_dispose(const JITCompilationUnit module);
 
 EXPORT_API(int) THSJIT_Module_num_inputs(const JITModule method);
 EXPORT_API(int) THSJIT_Module_num_outputs(const JITModule method);
 
 EXPORT_API(void) THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode);
+EXPORT_API(void) THSJIT_Module_invoke(const JITModule module, const char* name, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode);
+
+EXPORT_API(void) THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode);
 
 EXPORT_API(int) THSJIT_Module_is_training(JITModule module);
 EXPORT_API(void) THSJIT_Module_train(JITModule module, bool on);

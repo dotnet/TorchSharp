@@ -58,6 +58,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\TorchSharpTest\exported.method.dat" Link="exported.method.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\TorchSharpTest\func.script.dat" Link="func.script.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
