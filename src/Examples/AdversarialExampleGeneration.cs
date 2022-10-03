@@ -114,7 +114,7 @@ namespace TorchSharp.Examples
 
         private static double Test(
             MNIST.Model model,
-            Loss criterion,
+            Loss<Tensor, Tensor, Tensor> criterion,
             double ε,
             Device device,
             Dataset dataset,

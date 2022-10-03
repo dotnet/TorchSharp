@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a GLU (gated linear unit) module.
         /// </summary>
-        public class GLU : torch.nn.Module
+        public class GLU : torch.nn.Module<Tensor, Tensor>
         {
             internal GLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

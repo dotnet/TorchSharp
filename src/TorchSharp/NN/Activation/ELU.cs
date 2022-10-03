@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ELU module.
         /// </summary>
-        public class ELU : torch.nn.Module
+        public class ELU : torch.nn.Module<Tensor, Tensor>
         {
             internal ELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

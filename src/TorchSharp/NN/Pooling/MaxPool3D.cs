@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a MaxPool3D module.
         /// </summary>
-        public class MaxPool3d : torch.nn.Module
+        public class MaxPool3d : torch.nn.Module<Tensor, Tensor>
         {
             internal MaxPool3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

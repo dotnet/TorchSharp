@@ -53,7 +53,7 @@ let loss = torch.nn.CrossEntropyLoss(reduction=Reduction.Mean)
 let criterion x y = loss.forward(x,y)
 
 type PositionalEncoding(dmodel, maxLen) as this =
-    inherit Module("PositionalEncoding")
+    inherit Module<torch.Tensor,torch.Tensor>("PositionalEncoding")
 
     let dropout = Dropout(dropout)
     let mutable pe = torch.zeros([| maxLen; dmodel|])
@@ -79,7 +79,7 @@ type PositionalEncoding(dmodel, maxLen) as this =
         dropout.forward(x)
 
 type TransformerModel(ntokens, device:torch.Device) as this =
-    inherit Module("Transformer")
+    inherit Module<torch.Tensor,torch.Tensor,torch.Tensor>("Transformer")
 
     let pos_encoder = new PositionalEncoding(emsize, 5000L)
     let encoder_layers = TransformerEncoderLayer(emsize, nheads, nhidden, dropout)
@@ -100,8 +100,6 @@ type TransformerModel(ntokens, device:torch.Device) as this =
 
         if device.``type`` = DeviceType.CUDA then
             this.``to``(device) |> ignore
-
-    override _.forward(input) = raise (NotImplementedException("single-argument forward()"))
 
     override _.forward(t, mask) =
         let src = pos_encoder.forward(encoder.forward(t) * sqrEmSz)

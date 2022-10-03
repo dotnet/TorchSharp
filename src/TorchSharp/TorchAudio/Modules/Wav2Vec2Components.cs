@@ -21,12 +21,12 @@ using static TorchSharp.torchaudio.models;
 #nullable enable
 namespace TorchSharp.Modules
 {
-    public partial class Wav2Vec2Model : Module
+    public partial class Wav2Vec2Model : nn.Module
     {
         /// <summary>
         /// Layer norm with transpose
         /// </summary>
-        private class LayerNorm : Module
+        private class LayerNorm : Module<Tensor, Tensor>
         {
             public readonly long[] normalized_shape;
             public readonly Parameter weight;
@@ -60,9 +60,9 @@ namespace TorchSharp.Modules
         /// </summary>
         private class ConvLayerBlock : Module
         {
-            public readonly Module conv;
+            public readonly Module<Tensor, Tensor> conv;
             public readonly long kernel_size;
-            public readonly Module? layer_norm;
+            public readonly Module<Tensor, Tensor>? layer_norm;
             public readonly long stride;
 
             public ConvLayerBlock(
@@ -72,7 +72,7 @@ namespace TorchSharp.Modules
                 long kernel_size,
                 long stride,
                 bool bias,
-                Module? layer_norm) : base(name)
+                Module<Tensor, Tensor>? layer_norm) : base(name)
             {
                 this.kernel_size = kernel_size;
                 this.stride = stride;
@@ -92,7 +92,7 @@ namespace TorchSharp.Modules
             /// Shape ``[batch, out_channels, out_frames]``.
             /// Shape ``[batch, ]``.
             /// </returns>
-            public new (Tensor, Tensor?) forward(
+            public (Tensor, Tensor?) forward(
                 Tensor x,
                 Tensor? length)
             {
@@ -135,7 +135,7 @@ namespace TorchSharp.Modules
             /// Valid length of each output sample. shape: ``[batch, ]``.
             /// </returns>
             /// <exception cref="ArgumentException"></exception>
-            public new (Tensor, Tensor?) forward(Tensor x, Tensor? length)
+            public (Tensor, Tensor?) forward(Tensor x, Tensor? length)
             {
                 if (x.ndim != 2) {
                     throw new ArgumentException("Expected the input Tensor to be 2D (batch, time), but received {list(x.shape)}");
@@ -154,11 +154,11 @@ namespace TorchSharp.Modules
         /// <summary>
         /// Layer that connects FeatureExtractor and Encoder
         /// </summary>
-        private class FeatureProjection : Module
+        private class FeatureProjection : Module<Tensor, Tensor>
         {
-            public readonly Module dropout;
-            public readonly Module layer_norm;
-            public readonly Module projection;
+            public readonly Module<Tensor, Tensor> dropout;
+            public readonly Module<Tensor, Tensor> layer_norm;
+            public readonly Module<Tensor, Tensor> projection;
 
             /// <summary>
             /// Projects features to encoder dimension.
@@ -195,9 +195,9 @@ namespace TorchSharp.Modules
         /// <summary>
         /// Positional embedding which is placed at the beginning of Transformer.
         /// </summary>
-        internal class ConvolutionalPositionalEmbedding : Module
+        internal class ConvolutionalPositionalEmbedding : Module<Tensor, Tensor>
         {
-            public readonly Module conv;
+            public readonly Module<Tensor, Tensor> conv;
             public readonly long embed_dim;
             public readonly long num_remove;
 
@@ -241,7 +241,7 @@ namespace TorchSharp.Modules
                 return x;
             }
 
-            private class WeightNormConv1d : Module
+            private class WeightNormConv1d : Module<Tensor, Tensor>
             {
                 private readonly Parameter weight_g;
                 private readonly Parameter weight_v;
@@ -293,15 +293,15 @@ namespace TorchSharp.Modules
         /// </summary>
         private class SelfAttention : Module
         {
-            public readonly Module dropout;
+            public readonly Module<Tensor, Tensor> dropout;
             public readonly long embed_dim;
             public readonly long head_dim;
-            public readonly Module k_proj;
+            public readonly Module<Tensor, Tensor> k_proj;
             public readonly long num_heads;
-            public readonly Module out_proj;
-            public readonly Module q_proj;
+            public readonly Module<Tensor, Tensor> out_proj;
+            public readonly Module<Tensor, Tensor> q_proj;
             public readonly double scaling;
-            public readonly Module v_proj;
+            public readonly Module<Tensor, Tensor> v_proj;
 
             /// <param name="name"></param>
             /// <param name="embed_dim">Total dimension of the model.</param>
@@ -336,7 +336,7 @@ namespace TorchSharp.Modules
             /// <param name="attention_mask">shape: ``[batch_size, 1, sequence_length, sequence_length]``</param>
             /// <returns>The resulting tensor. shape: ``[batch, sequence_length, embed_dim]``</returns>
             /// <exception cref="ArgumentException"></exception>
-            public new Tensor forward(Tensor x, Tensor? attention_mask = null)
+            public Tensor forward(Tensor x, Tensor? attention_mask = null)
             {
                 if (x.ndim != 3 || x.shape[2] != this.embed_dim) {
                     throw new ArgumentException("The expected input shape is (batch, sequence, embed_dim=={self.embed_dim}). Found {x.shape}.");
@@ -379,12 +379,12 @@ namespace TorchSharp.Modules
         /// <summary>
         /// Layer that follows attention layer in encoder layer.
         /// </summary>
-        private class FeedForward : Module
+        private class FeedForward : Module<Tensor, Tensor>
         {
-            public readonly Module intermediate_dense;
-            public readonly Module intermediate_dropout;
-            public readonly Module output_dense;
-            public readonly Module output_dropout;
+            public readonly Module<Tensor, Tensor> intermediate_dense;
+            public readonly Module<Tensor, Tensor> intermediate_dropout;
+            public readonly Module<Tensor, Tensor> output_dense;
+            public readonly Module<Tensor, Tensor> output_dropout;
 
             public FeedForward(
                 string name,
@@ -417,13 +417,13 @@ namespace TorchSharp.Modules
         /// <summary>
         /// A layer unit in encoder. Combines multihead self attention and feed forward.
         /// </summary>
-        private class EncoderLayer : Module
+        private class EncoderLayer : Module<Tensor, Tensor, Tensor>
         {
             public readonly SelfAttention attention;
-            public readonly Module dropout;
-            public readonly Module feed_forward;
-            public readonly Module final_layer_norm;
-            public readonly Module layer_norm;
+            public readonly Module<Tensor, Tensor> dropout;
+            public readonly Module<Tensor, Tensor> feed_forward;
+            public readonly Module<Tensor, Tensor> final_layer_norm;
+            public readonly Module<Tensor, Tensor> layer_norm;
             public bool layer_norm_first;
 
             public EncoderLayer(
@@ -431,7 +431,7 @@ namespace TorchSharp.Modules
                 SelfAttention attention,
                 double dropout,
                 bool layer_norm_first,
-                Module feed_forward) : base(name)
+                Module<Tensor, Tensor> feed_forward) : base(name)
             {
                 this.attention = attention;
                 this.dropout = nn.Dropout(dropout);
@@ -469,11 +469,11 @@ namespace TorchSharp.Modules
             }
         }
 
-        internal class Transformer : Module
+        internal class Transformer : Module<Tensor, Tensor?, Tensor>
         {
-            public readonly Module dropout;
+            public readonly Module<Tensor, Tensor> dropout;
             public readonly double layer_drop;
-            public readonly Module layer_norm;
+            public readonly Module<Tensor, Tensor> layer_norm;
             public readonly bool layer_norm_first;
             public readonly ModuleList layers;
 
@@ -515,7 +515,7 @@ namespace TorchSharp.Modules
                 x = this._preprocess(x);
                 foreach (var layer in this.layers) {
                     if (!(this.training && torch.rand(1).item<float>() <= this.layer_drop)) {
-                        x = layer.forward(x, attention_mask);
+                        x = ((nn.Module<Tensor, Tensor?, Tensor>)layer).forward(x, attention_mask);
                     }
                 }
 
@@ -539,7 +539,7 @@ namespace TorchSharp.Modules
                 var ret = new List<Tensor>();
                 x = this._preprocess(x);
                 foreach (var layer in this.layers) {
-                    x = layer.forward(x, attention_mask);
+                    x = ((nn.Module<Tensor, Tensor?, Tensor>)layer).forward(x, attention_mask);
                     ret.Add(x);
                     if (num_layers != null && ret.Count >= num_layers) {
                         return ret.ToArray();
@@ -549,14 +549,14 @@ namespace TorchSharp.Modules
             }
         }
 
-        internal class Encoder : Module
+        internal class Encoder : Module<Tensor, Tensor?, Tensor>
         {
-            public readonly Module feature_projection;
+            public readonly Module<Tensor, Tensor> feature_projection;
             public readonly Transformer transformer;
 
             public Encoder(
                 string name,
-                Module feature_projection,
+                Module<Tensor, Tensor> feature_projection,
                 Transformer transformer) : base(name)
             {
                 this.feature_projection = feature_projection;
@@ -649,7 +649,7 @@ namespace TorchSharp.Modules
                 var out_channels = shape[0];
                 var kernel_size = shape[1];
                 var stride = shape[2];
-                Module? normalization = null;
+                Module<Tensor, Tensor>? normalization = null;
                 if (norm_mode == FeatureExtractorNormMode.group_norm && i == 0) {
                     normalization = nn.GroupNorm(
                         num_groups: out_channels,
@@ -1080,7 +1080,7 @@ namespace TorchSharp.Modules
             /// The feature representations after masking.
             /// The generated mask indices.
             /// </returns>
-            public new (Tensor, Tensor?) forward(Tensor x, Tensor? padding_mask)
+            public (Tensor, Tensor?) forward(Tensor x, Tensor? padding_mask)
             {
                 Tensor? mask_indices;
                 var B = x.size(0);
@@ -1154,7 +1154,7 @@ namespace TorchSharp.Modules
         /// </summary>
         internal class LogitGenerator : Module
         {
-            public readonly Module final_proj;
+            public readonly Module<Tensor, Tensor> final_proj;
             public readonly Tensor label_embeddings;
             public readonly bool skip_masked;
             public readonly bool skip_nomask;

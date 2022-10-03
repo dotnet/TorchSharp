@@ -11,13 +11,13 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class GRUCell : torch.nn.Module
+        public class GRUCell : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal GRUCell(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public new static GRUCell Load(String modelPath)
             {
-                var res = Module.Load(modelPath);
+                var res = Module<Tensor, Tensor>.Load(modelPath);
                 return new GRUCell(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
 

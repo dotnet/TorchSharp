@@ -218,7 +218,7 @@ namespace TorchSharp.Modules
             return mask;
         }
 
-        private class LocationLayer : nn.Module
+        private class LocationLayer : nn.Module<Tensor, Tensor>
         {
             private readonly Modules.Conv1d location_conv;
             private readonly Modules.Linear location_dense;
@@ -315,7 +315,7 @@ namespace TorchSharp.Modules
             }
         }
 
-        public class Prenet : nn.Module
+        public class Prenet : nn.Module<Tensor, Tensor>
         {
             private readonly Modules.ModuleList layers;
 
@@ -336,13 +336,13 @@ namespace TorchSharp.Modules
             public override Tensor forward(Tensor x)
             {
                 foreach (var linear in this.layers) {
-                    x = F.dropout(F.relu(linear.forward(x)), p: 0.5, training: true);
+                    x = F.dropout(F.relu(((nn.Module<Tensor, Tensor>)linear).forward(x)), p: 0.5, training: true);
                 }
                 return x;
             }
         }
 
-        private class Postnet : nn.Module
+        private class Postnet : nn.Module<Tensor, Tensor>
         {
             private readonly Modules.ModuleList convolutions;
             public readonly int n_convs;
@@ -383,16 +383,16 @@ namespace TorchSharp.Modules
                 for (int i = 0; i < this.convolutions.Count; i++) {
                     var conv = this.convolutions[i];
                     if (i < this.n_convs - 1) {
-                        x = F.dropout(torch.tanh(conv.forward(x)), 0.5, training: this.training);
+                        x = F.dropout(torch.tanh(((nn.Module<Tensor, Tensor>)conv).forward(x)), 0.5, training: this.training);
                     } else {
-                        x = F.dropout(conv.forward(x), 0.5, training: this.training);
+                        x = F.dropout(((nn.Module<Tensor, Tensor>)conv).forward(x), 0.5, training: this.training);
                     }
                 }
                 return x;
             }
         }
 
-        private class Encoder : nn.Module
+        private class Encoder : nn.Module<Tensor, Tensor, Tensor>
         {
             private readonly Modules.ModuleList convolutions;
             private readonly Modules.LSTM lstm;
@@ -434,7 +434,7 @@ namespace TorchSharp.Modules
             public override Tensor forward(Tensor x, Tensor input_lengths)
             {
                 foreach (var conv in this.convolutions) {
-                    x = F.dropout(F.relu(conv.forward(x)), 0.5, training: this.training);
+                    x = F.dropout(F.relu(((nn.Module<Tensor, Tensor>)conv).forward(x)), 0.5, training: this.training);
                 }
 
                 x = x.transpose(1, 2);
@@ -638,7 +638,7 @@ namespace TorchSharp.Modules
             }
 
             // Decoder forward pass for training.
-            public new (Tensor, Tensor, Tensor) forward(Tensor memory, Tensor mel_specgram_truth, Tensor memory_lengths)
+            public (Tensor, Tensor, Tensor) forward(Tensor memory, Tensor mel_specgram_truth, Tensor memory_lengths)
             {
                 var decoder_input = this._get_initial_frame(memory).unsqueeze(0);
                 var decoder_inputs = this._parse_decoder_inputs(mel_specgram_truth);

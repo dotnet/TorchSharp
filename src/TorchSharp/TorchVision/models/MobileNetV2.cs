@@ -25,12 +25,12 @@ namespace TorchSharp
         /// <summary>
         /// MobileNet V2 main class
         /// </summary>
-        public class MobileNetV2 : nn.Module
+        public class MobileNetV2 : nn.Module<Tensor, Tensor>
         {
-            private class InvertedResidual : nn.Module
+            private class InvertedResidual : nn.Module<Tensor, Tensor>
             {
                 private readonly bool _is_cn;
-                private readonly nn.Module conv;
+                private readonly nn.Module<Tensor, Tensor> conv;
                 private readonly long out_channels;
                 private readonly long stride;
                 private readonly bool use_res_connect;
@@ -41,7 +41,7 @@ namespace TorchSharp
                     long oup,
                     long stride,
                     double expand_ratio,
-                    Func<long, nn.Module>? norm_layer = null) : base(name)
+                    Func<long, nn.Module<Tensor, Tensor>>? norm_layer = null) : base(name)
                 {
                     this.stride = stride;
                     if (stride != 1 && stride != 2) {
@@ -55,7 +55,7 @@ namespace TorchSharp
                     var hidden_dim = (long)Math.Round(inp * expand_ratio);
                     this.use_res_connect = this.stride == 1 && inp == oup;
 
-                    var layers = new List<nn.Module>();
+                    var layers = new List<nn.Module<Tensor, Tensor>>();
                     if (expand_ratio != 1) {
                         // pw
                         layers.Add(
@@ -66,7 +66,7 @@ namespace TorchSharp
                                 norm_layer: norm_layer,
                                 activation_layer: (inplace) => nn.ReLU6(inplace)));
                     }
-                    layers.AddRange(new List<nn.Module> {
+                    layers.AddRange(new List<nn.Module<Tensor, Tensor>> {
                         // dw
                         ops.Conv2dNormActivation(
                             hidden_dim,
@@ -95,8 +95,8 @@ namespace TorchSharp
                 }
             }
 
-            private readonly nn.Module classifier;
-            private readonly nn.Module features;
+            private readonly nn.Module<Tensor, Tensor> classifier;
+            private readonly nn.Module<Tensor, Tensor> features;
             private readonly long last_channel;
 
             internal MobileNetV2(
@@ -105,8 +105,8 @@ namespace TorchSharp
                 double width_mult = 1.0,
                 long[][]? inverted_residual_setting = null,
                 long round_nearest = 8,
-                Func<long, long, long, long, Func<long, nn.Module>, nn.Module>? block = null,
-                Func<long, nn.Module>? norm_layer = null,
+                Func<long, long, long, long, Func<long, nn.Module<Tensor, Tensor>>, nn.Module<Tensor, Tensor>>? block = null,
+                Func<long, nn.Module<Tensor, Tensor>>? norm_layer = null,
                 double dropout = 0.2) : base(name)
             {
                 if (block == null) {
@@ -141,7 +141,7 @@ namespace TorchSharp
                 // building first layer
                 input_channel = _make_divisible(input_channel * width_mult, round_nearest);
                 this.last_channel = _make_divisible(last_channel * Math.Max(1.0, width_mult), round_nearest);
-                var features = new List<nn.Module> {
+                var features = new List<nn.Module<Tensor, Tensor>> {
                     ops.Conv2dNormActivation(3, input_channel, stride: 2, norm_layer: norm_layer, activation_layer: (inplace) => nn.ReLU6(inplace))
                 };
                 // building inverted residual blocks
@@ -233,8 +233,8 @@ namespace TorchSharp
                 double width_mult = 1.0,
                 long[][]? inverted_residual_setting = null,
                 long round_nearest = 8,
-                Func<long, long, long, long, Func<long, nn.Module>, nn.Module>? block = null,
-                Func<long, nn.Module>? norm_layer = null,
+                Func<long, long, long, long, Func<long, nn.Module<Tensor, Tensor>>, nn.Module<Tensor, Tensor>>? block = null,
+                Func<long, nn.Module<Tensor, Tensor>>? norm_layer = null,
                 double dropout = 0.2)
             {
                 return new Modules.MobileNetV2(

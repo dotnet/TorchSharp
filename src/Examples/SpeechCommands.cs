@@ -123,7 +123,7 @@ namespace TorchSharp.Examples
             M5 model,
             ITransform transform,
             torch.optim.Optimizer optimizer,
-            Loss criteria,
+            Loss<Tensor,Tensor,Tensor> criteria,
             DataLoader<SpeechCommandsDatasetItem, BatchItem> dataLoader,
             int epoch,
             long size)
@@ -160,7 +160,7 @@ namespace TorchSharp.Examples
         private static void Test(
             M5 model,
             ITransform transform,
-            Loss criteria,
+            Loss<Tensor, Tensor, Tensor> criteria,
             DataLoader<SpeechCommandsDatasetItem, BatchItem> dataLoader,
             long size)
         {
@@ -217,21 +217,21 @@ namespace TorchSharp.Examples
             public torch.Tensor label;
         }
 
-        internal class M5 : Module
+        internal class M5 : Module<Tensor, Tensor>
         {
-            private readonly Module conv1;
-            private readonly Module bn1;
-            private readonly Module pool1;
-            private readonly Module conv2;
-            private readonly Module bn2;
-            private readonly Module pool2;
-            private readonly Module conv3;
-            private readonly Module bn3;
-            private readonly Module pool3;
-            private readonly Module conv4;
-            private readonly Module bn4;
-            private readonly Module pool4;
-            private readonly Module fc1;
+            private readonly Module<Tensor, Tensor> conv1;
+            private readonly Module<Tensor, Tensor> bn1;
+            private readonly Module<Tensor, Tensor> pool1;
+            private readonly Module<Tensor, Tensor> conv2;
+            private readonly Module<Tensor, Tensor> bn2;
+            private readonly Module<Tensor, Tensor> pool2;
+            private readonly Module<Tensor, Tensor> conv3;
+            private readonly Module<Tensor, Tensor> bn3;
+            private readonly Module<Tensor, Tensor> pool3;
+            private readonly Module<Tensor, Tensor> conv4;
+            private readonly Module<Tensor, Tensor> bn4;
+            private readonly Module<Tensor, Tensor> pool4;
+            private readonly Module<Tensor, Tensor> fc1;
 
             public M5(string name, int n_input = 1, int n_output = 35, int stride = 16, int n_channel = 32) : base(name)
             {

@@ -16,30 +16,32 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Sequential module.
         /// </summary>
-        public class Sequential : torch.nn.Module
+        public class Sequential : torch.nn.Module<Tensor, Tensor>
         {
-            public void append(string name, torch.nn.Module module)
+            public void append(string name, torch.nn.IModule<Tensor, Tensor> module)
             {
                 Add(name, module);
             }
 
-            internal void Add(string name, torch.nn.Module submodule)
+            internal void Add(string name, torch.nn.IModule<Tensor, Tensor> sm)
             {
+                var submodule = (torch.nn.Module)sm;
+
                 Debug.Assert(!handle.IsInvalid);
                 Debug.Assert(!submodule.handle.IsInvalid);
 
                 // Keep the sub-module alive for at least as long as the Sequential object is alive.
-                _modules.Add(submodule);
+                _modules.Add(sm);
                 _names.Add(name);
             }
 
-            public void append(torch.nn.Module module)
+            public void append(torch.nn.IModule<Tensor, Tensor> module)
             {
                 var name = _modules.Count.ToString();
                 Add(name, module);
             }
 
-            internal void Add(torch.nn.Module module)
+            internal void Add(torch.nn.IModule<Tensor, Tensor> module)
             {
                 var name = _modules.Count.ToString();
                 Add(name, module);
@@ -52,7 +54,7 @@ namespace TorchSharp
                 var seen = new HashSet<IntPtr>();
 
                 for (var i = 0; i < _names.Count; i++) {
-                    foreach (var (n, p) in _modules[i].named_parameters(true)) {
+                    foreach (var (n, p) in ((torch.nn.Module)_modules[i]).named_parameters(true)) {
                         if (seen.Contains(p.Handle)) continue;
                         seen.Add(p.Handle);
                         yield return ($"{_names[i]}.{n}", p);
@@ -65,7 +67,7 @@ namespace TorchSharp
                 if (!recurse) yield break;
 
                 for (var i = 0; i < _names.Count; i++) {
-                    foreach (var (n, p) in _modules[i].named_buffers(true)) {
+                    foreach (var (n, p) in ((torch.nn.Module)_modules[i]).named_buffers(true)) {
                         yield return ($"{_names[i]}.{n}", p);
                     }
                 }
@@ -74,18 +76,18 @@ namespace TorchSharp
             public override IEnumerable<(string name, torch.nn.Module module)> named_children()
             {
                 for (var i = 0; i < _names.Count; i++) {
-                    yield return ($"{_names[i]}", _modules[i]);
+                    yield return ($"{_names[i]}", ((torch.nn.Module)_modules[i]));
                 }
             }
 
             public override IEnumerable<(string name, torch.nn.Module module)> named_modules()
             {
                 for (var i = 0; i < _names.Count; i++) {
-                    yield return ($"{_names[i]}", _modules[i]);
+                    yield return ($"{_names[i]}", ((torch.nn.Module)_modules[i]));
                 }
 
                 for (var i = 0; i < _names.Count; i++) {
-                    var sm = _modules[i];
+                    var sm = (torch.nn.Module)_modules[i];
                     var name = _names[i];
                     foreach (var (n, p) in sm.named_modules()) {
                         yield return ($"{name}.{n}", p);
@@ -127,7 +129,7 @@ namespace TorchSharp
             public override nn.Module apply(Action<nn.Module> fn)
             {
                 // More efficient than asking C++ for the children. We already have the list, after all.
-                foreach (var m in _modules) m.apply(fn);
+                foreach (var m in _modules) ((torch.nn.Module)m).apply(fn);
                 fn(this);
                 return this;
 
@@ -136,7 +138,7 @@ namespace TorchSharp
             protected override void Dispose(bool disposing)
             {
                 if (disposing) {
-                    foreach (var m in _modules) { m.Dispose(); }
+                    foreach (var m in _modules) { ((torch.nn.Module)m).Dispose(); }
                 }
                 base.Dispose(disposing);
             }
@@ -149,7 +151,7 @@ namespace TorchSharp
             /// </remarks>
             public override void train(bool on = true)
             {
-                foreach (var m in _modules) { m.train(on); }
+                foreach (var m in _modules) { ((torch.nn.Module)m).train(on); }
             }
 
             /// <summary>
@@ -160,24 +162,24 @@ namespace TorchSharp
             /// </remarks>
             public override void eval()
             {
-                foreach (var m in _modules) { m.eval(); }
+                foreach (var m in _modules) { ((torch.nn.Module)m).eval(); }
             }
 
             internal protected override nn.Module _to(ScalarType dtype)
             {
-                foreach (var m in _modules) { m._to(dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype); }
                 return this;
             }
 
             internal protected override nn.Module _to(Device device, ScalarType dtype)
             {
-                foreach (var m in _modules) { m._to(device, dtype); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype); }
                 return this;
             }
 
             internal protected override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
             {
-                foreach (var m in _modules) { m._to(deviceType, deviceIndex); }
+                foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex); }
                 return this;
             }
 
@@ -186,7 +188,7 @@ namespace TorchSharp
             // The module handles are held in the native runtime, which calls back into managed code,
             // the .NET module instances need to stay alive, and keeping a list of them will do that.
 
-            private List<torch.nn.Module> _modules = new List<nn.Module>();
+            private List<torch.nn.IModule<Tensor, Tensor>> _modules = new List<nn.IModule<Tensor, Tensor>>();
             private List<string> _names = new List<string>();
         }
     }
@@ -221,7 +223,7 @@ namespace TorchSharp
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <returns></returns>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(params (string name, torch.nn.Module submodule)[] modules)
+            static public Sequential Sequential(params (string name, torch.nn.Module<Tensor, Tensor> submodule)[] modules)
             {
                 var res = Sequential();
                 foreach (var module in modules)
@@ -238,7 +240,7 @@ namespace TorchSharp
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <returns></returns>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(params torch.nn.Module[] modules)
+            static public Sequential Sequential(params torch.nn.Module<Tensor, Tensor>[] modules)
             {
                 var res = Sequential();
                 foreach (var m in modules)
@@ -255,7 +257,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(params System.Tuple<string, torch.nn.Module>[] modules)
+            static public Sequential Sequential(params System.Tuple<string, torch.nn.Module<Tensor, Tensor>>[] modules)
             {
                 var res = Sequential();
                 foreach (var module in modules)
@@ -272,7 +274,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(IEnumerable<(string name, torch.nn.Module submodule)> modules)
+            static public Sequential Sequential(IEnumerable<(string name, torch.nn.Module<Tensor, Tensor> submodule)> modules)
             {
                 var res = Sequential();
                 foreach (var module in modules)
@@ -289,7 +291,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(IEnumerable<System.Tuple<string, torch.nn.Module>> modules)
+            static public Sequential Sequential(IEnumerable<System.Tuple<string, torch.nn.Module<Tensor, Tensor>>> modules)
             {
                 var res = Sequential();
                 foreach (var module in modules)
@@ -306,7 +308,7 @@ namespace TorchSharp
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <returns></returns>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(IEnumerable<torch.nn.Module> modules)
+            static public Sequential Sequential(IEnumerable<torch.nn.Module<Tensor, Tensor>> modules)
             {
                 var res = Sequential();
                 foreach (var module in modules)

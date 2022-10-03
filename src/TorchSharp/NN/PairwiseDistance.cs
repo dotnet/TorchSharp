@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// Computes the pairwise distance between vectors using the p-norm.
         /// </summary>
-        public class PairwiseDistance : torch.nn.Module
+        public class PairwiseDistance : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal PairwiseDistance(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

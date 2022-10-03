@@ -12,7 +12,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class RNNCell : torch.nn.Module
+        public class RNNCell : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal RNNCell(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
@@ -20,7 +20,7 @@ namespace TorchSharp
 
             public new static RNNCell Load(String modelPath)
             {
-                var res = Module.Load(modelPath);
+                var res = Module<Tensor, Tensor>.Load(modelPath);
                 return new RNNCell(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
 

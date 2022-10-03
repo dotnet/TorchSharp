@@ -12,7 +12,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class Linear : torch.nn.Module
+        public class Linear : torch.nn.Module<Tensor, Tensor>
         {
             internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
@@ -20,7 +20,7 @@ namespace TorchSharp
 
             public new static Linear Load(String modelPath)
             {
-                var res = Module.Load(modelPath);
+                var res = Module<Tensor, Tensor>.Load(modelPath);
                 return new Linear(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
 

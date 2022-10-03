@@ -145,9 +145,46 @@ JITMethod THSJIT_Module_get_method(const JITModule module, const char* name)
     return new std::shared_ptr<torch::jit::Method>(copy);
 }
 
-Tensor THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, const int length)
+void THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode)
 {
-    CATCH_TENSOR((*module)->forward(toTensors<c10::IValue>((torch::Tensor**)tensorPtrs, length)).toTensor());
+    *typeCode = 0;
+
+    CATCH(
+        auto result = (*module)->forward(toTensors<c10::IValue>((torch::Tensor**)tensorPtrs, length));
+
+    // TypeCode:
+    //
+    // 0 -- Not supported
+    // 1 -- Single tensor
+    // 2 -- Tuple of tensors
+    // 3 -- List of tensors
+
+    if (result.isTensor()) {
+        Tensor* output = allocator(1);
+        output[0] = ResultTensor(result.toTensor());
+        *typeCode = 1;
+        return;
+    }
+    if (result.isTensorList()) {
+        auto list = result.toTensorList();
+        *typeCode = 3;
+        Tensor* output = allocator(list.size());
+        for (size_t i = 0; i < list.size(); i++)
+            output[i] = ResultTensor(list[i]);
+        return;
+    }
+    if (result.isTuple()) {
+        auto tuple = result.toTuple();
+        auto list = tuple->elements();
+        auto sz = list.size();
+        *typeCode = 2;
+        Tensor* output = allocator(list.size());
+        for (size_t i = 0; i < list.size(); i++)
+            // Assuming that all elements are tensors.
+            output[i] = ResultTensor(list[i].toTensor());
+        return;
+    }
+    )
 }
 
 void THSJIT_Module_dispose(const JITModule module)

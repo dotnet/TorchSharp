@@ -96,26 +96,26 @@ namespace TorchSharp.Examples
             model.save(dataset + ".model.bin");
         }
 
-        internal class Model : Module
+        internal class Model : Module<Tensor, Tensor>
         {
-            private Module conv1 = Conv2d(1, 32, 3);
-            private Module conv2 = Conv2d(32, 64, 3);
-            private Module fc1 = Linear(9216, 128);
-            private Module fc2 = Linear(128, 10);
+            private Module<Tensor, Tensor> conv1 = Conv2d(1, 32, 3);
+            private Module<Tensor, Tensor> conv2 = Conv2d(32, 64, 3);
+            private Module<Tensor, Tensor> fc1 = Linear(9216, 128);
+            private Module<Tensor, Tensor> fc2 = Linear(128, 10);
 
             // These don't have any parameters, so the only reason to instantiate
             // them is performance, since they will be used over and over.
-            private Module pool1 = MaxPool2d(kernelSize: new long[] { 2, 2 });
+            private Module<Tensor, Tensor> pool1 = MaxPool2d(kernelSize: new long[] { 2, 2 });
 
-            private Module relu1 = ReLU();
-            private Module relu2 = ReLU();
-            private Module relu3 = ReLU();
+            private Module<Tensor, Tensor> relu1 = ReLU();
+            private Module<Tensor, Tensor> relu2 = ReLU();
+            private Module<Tensor, Tensor> relu3 = ReLU();
 
-            private Module dropout1 = Dropout(0.25);
-            private Module dropout2 = Dropout(0.5);
+            private Module<Tensor, Tensor> dropout1 = Dropout(0.25);
+            private Module<Tensor, Tensor> dropout2 = Dropout(0.5);
 
-            private Module flatten = Flatten();
-            private Module logsm = LogSoftmax(1);
+            private Module<Tensor, Tensor> flatten = Flatten();
+            private Module<Tensor, Tensor> logsm = LogSoftmax(1);
 
             public Model(string name, torch.Device device = null) : base(name)
             {
@@ -151,7 +151,7 @@ namespace TorchSharp.Examples
         private static void Train(
             Model model,
             torch.optim.Optimizer optimizer,
-            Loss loss,
+            Loss<torch.Tensor, torch.Tensor, torch.Tensor> loss,
             DataLoader dataLoader,
             int epoch,
             long size)
@@ -191,7 +191,7 @@ namespace TorchSharp.Examples
 
         private static void Test(
             Model model,
-            Loss loss,
+            Loss<torch.Tensor, torch.Tensor, torch.Tensor> loss,
             DataLoader dataLoader,
             long size)
         {

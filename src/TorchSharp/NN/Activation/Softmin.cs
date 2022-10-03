@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softmin module.
         /// </summary>
-        public class Softmin : torch.nn.Module
+        public class Softmin : torch.nn.Module<Tensor, Tensor>
         {
             internal Softmin(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

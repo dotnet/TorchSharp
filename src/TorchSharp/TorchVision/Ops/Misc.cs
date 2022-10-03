@@ -21,15 +21,15 @@ namespace TorchSharp
     {
         public static partial class ops
         {
-            private static nn.Module ConvNormActivation(
+            private static nn.Module<Tensor, Tensor> ConvNormActivation(
                 long in_channels,
                 long out_channels,
                 long kernel_size = 3,
                 long stride = 1,
                 long? padding = null,
                 long groups = 1,
-                Func<long, nn.Module>? norm_layer = null,
-                Func<bool, nn.Module>? activation_layer = null,
+                Func<long, nn.Module<Tensor, Tensor>>? norm_layer = null,
+                Func<bool, nn.Module<Tensor, Tensor>>? activation_layer = null,
                 long dilation = 1,
                 bool inplace = true,
                 bool? bias = null,
@@ -43,7 +43,7 @@ namespace TorchSharp
                     bias = norm_layer == null;
                 }
 
-                var layers = new List<nn.Module>();
+                var layers = new List<nn.Module<Tensor, Tensor>>();
                 if (rank == 2) {
                     layers.Add(
                         nn.Conv2d(
@@ -94,15 +94,15 @@ namespace TorchSharp
             /// <param name="dilation">Spacing between kernel elements.</param>
             /// <param name="inplace">Parameter for the activation layer, which can optionally do the operation in-place.</param>
             /// <param name="bias">Whether to use bias in the convolution layer. By default, biases are included if ``norm_layer is null``.</param>
-            public static nn.Module Conv2dNormActivation(
+            public static nn.Module<Tensor, Tensor> Conv2dNormActivation(
                 long in_channels,
                 long out_channels,
                 long kernel_size = 3,
                 long stride = 1,
                 long? padding = null,
                 long groups = 1,
-                Func<long, nn.Module>? norm_layer = null,
-                Func<bool, nn.Module>? activation_layer = null,
+                Func<long, nn.Module<Tensor, Tensor>>? norm_layer = null,
+                Func<bool, nn.Module<Tensor, Tensor>>? activation_layer = null,
                 long dilation = 1,
                 bool inplace = true,
                 bool? bias = null)
@@ -136,15 +136,15 @@ namespace TorchSharp
             /// <param name="dilation">Spacing between kernel elements.</param>
             /// <param name="inplace">Parameter for the activation layer, which can optionally do the operation in-place.</param>
             /// <param name="bias">Whether to use bias in the convolution layer. By default, biases are included if ``norm_layer is null``.</param>
-            public static nn.Module Conv3dNormActivation(
+            public static nn.Module<Tensor, Tensor> Conv3dNormActivation(
                 long in_channels,
                 long out_channels,
                 long kernel_size = 3,
                 long stride = 1,
                 long? padding = null,
                 long groups = 1,
-                Func<long, nn.Module>? norm_layer = null,
-                Func<bool, nn.Module>? activation_layer = null,
+                Func<long, nn.Module<Tensor, Tensor>>? norm_layer = null,
+                Func<bool, nn.Module<Tensor, Tensor>>? activation_layer = null,
                 long dilation = 1,
                 bool inplace = true,
                 bool? bias = null)
@@ -164,13 +164,13 @@ namespace TorchSharp
                     rank: 3);
             }
 
-            internal class SqueezeExcitation : torch.nn.Module
+            internal class SqueezeExcitation : torch.nn.Module<Tensor, Tensor>
             {
-                private readonly nn.Module avgpool;
-                private readonly nn.Module fc1;
-                private readonly nn.Module fc2;
-                private readonly nn.Module activation;
-                private readonly nn.Module scale_activation;
+                private readonly nn.Module<Tensor, Tensor> avgpool;
+                private readonly nn.Module<Tensor, Tensor> fc1;
+                private readonly nn.Module<Tensor, Tensor> fc2;
+                private readonly nn.Module<Tensor, Tensor> activation;
+                private readonly nn.Module<Tensor, Tensor> scale_activation;
 
                 /// <summary>
                 /// This block implements the Squeeze-and-Excitation block from https://arxiv.org/abs/1709.01507 (see Fig. 1).
@@ -185,8 +185,8 @@ namespace TorchSharp
                     string name,
                     long input_channels,
                     long squeeze_channels,
-                    Func<nn.Module> activation,
-                    Func<nn.Module> scale_activation) : base(name)
+                    Func<nn.Module<Tensor, Tensor>> activation,
+                    Func<nn.Module<Tensor, Tensor>> scale_activation) : base(name)
                 {
                     this.avgpool = torch.nn.AdaptiveAvgPool2d(1);
                     this.fc1 = torch.nn.Conv2d(input_channels, squeeze_channels, 1);

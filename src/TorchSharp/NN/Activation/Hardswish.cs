@@ -11,7 +11,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Hardswish module.
         /// </summary>
-        public class Hardswish : torch.nn.Module
+        public class Hardswish : torch.nn.Module<Tensor, Tensor>
         {
             private readonly bool inplace;
 

@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a CELU module.
         /// </summary>
-        public class CELU : torch.nn.Module
+        public class CELU : torch.nn.Module<Tensor, Tensor>
         {
             internal CELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

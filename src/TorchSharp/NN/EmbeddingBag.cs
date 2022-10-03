@@ -17,7 +17,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class EmbeddingBag : torch.nn.Module
+        public class EmbeddingBag : torch.nn.Module<Tensor, Tensor>
         {
             internal EmbeddingBag(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
@@ -33,7 +33,7 @@ namespace TorchSharp
             /// If specified, per_sample_weights must have exactly the same shape as input and is treated as having the same offsets, if those are not None.
             /// Only supported for mode='sum'.</param>
             /// <returns></returns>
-            public override Tensor forward(Tensor input, Tensor offsets, Tensor perSampleWeights)
+            public Tensor forward(Tensor input, Tensor offsets, Tensor perSampleWeights)
             {
                 if (!input.IsIntegral()) throw new ArgumentException("Embedding input must be an integral tensor.");
                 if (!(offsets is null) && input.dtype != offsets.dtype) throw new ArgumentException("input and offsets must have the same element type.");
@@ -53,7 +53,7 @@ namespace TorchSharp
             /// <param name="input">Tensor containing bags of indices into the embedding matrix.</param>
             /// <param name="offsets">Only used when input is 1D. offsets determines the starting index position of each bag (sequence) in input.</param>
             /// <returns></returns>
-            public override Tensor forward(Tensor input, Tensor offsets)
+            public Tensor forward(Tensor input, Tensor offsets)
             {
                 if (!input.IsIntegral()) throw new ArgumentException("Embedding input must be an integral tensor.");
                 if (!(offsets is null) && input.dtype != offsets.dtype) throw new ArgumentException("input and offsets must have the same element type.");

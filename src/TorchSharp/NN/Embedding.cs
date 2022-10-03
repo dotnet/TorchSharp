@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class Embedding : torch.nn.Module
+        public class Embedding : torch.nn.Module<Tensor, Tensor>
         {
             internal Embedding(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
