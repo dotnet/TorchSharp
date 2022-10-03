@@ -26,7 +26,7 @@ namespace TorchSharp
             private bool _batch_first;
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNN_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
+            extern static IntPtr THSNN_RNN_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
 
             /// <summary>
             /// Applies a multi-layer Elman RNN with \tanhtanh or \text{ReLU}ReLU non-linearity to an input sequence.
@@ -50,7 +50,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static torch.nn.utils.rnn.PackedSequence.HType THSNN_RNN_forward_with_packed_input(torch.nn.Module<Tensor, Tensor>.HType module, torch.nn.utils.rnn.PackedSequence.HType input, IntPtr h_0, out IntPtr h_n);
+            extern static torch.nn.utils.rnn.PackedSequence.HType THSNN_RNN_forward_with_packed_input(torch.nn.Module.HType module, torch.nn.utils.rnn.PackedSequence.HType input, IntPtr h_0, out IntPtr h_n);
 
             /// <summary>
             /// Applies a multi-layer Elman RNN with \tanhtanh or \text{ReLU}ReLU non-linearity to an input sequence.
@@ -76,7 +76,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_RNN_flatten_parameters(torch.nn.Module<Tensor, Tensor>.HType module);
+            extern static void THSNN_RNN_flatten_parameters(torch.nn.Module.HType module);
 
             public void flatten_parameters()
             {
@@ -85,9 +85,9 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNN_bias_ih(torch.nn.Module<Tensor, Tensor>.HType module, long idx);
+            extern static IntPtr THSNN_RNN_bias_ih(torch.nn.Module.HType module, long idx);
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNN_bias_hh(torch.nn.Module<Tensor, Tensor>.HType module, long idx);
+            extern static IntPtr THSNN_RNN_bias_hh(torch.nn.Module.HType module, long idx);
 
             public Parameter? get_bias_ih(long idx)
             {
@@ -126,9 +126,9 @@ namespace TorchSharp
 #endif
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNN_weight_ih(torch.nn.Module<Tensor, Tensor>.HType module, long idx);
+            extern static IntPtr THSNN_RNN_weight_ih(torch.nn.Module.HType module, long idx);
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNN_weight_hh(torch.nn.Module<Tensor, Tensor>.HType module, long idx);
+            extern static IntPtr THSNN_RNN_weight_hh(torch.nn.Module.HType module, long idx);
 
             public Parameter? get_weight_ih(long idx)
             {

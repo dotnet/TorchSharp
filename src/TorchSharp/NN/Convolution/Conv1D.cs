@@ -30,7 +30,7 @@ namespace TorchSharp
             internal Conv1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Conv1d_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_Conv1d_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
@@ -40,9 +40,9 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Conv1d_bias(torch.nn.Module<Tensor, Tensor>.HType module);
+            extern static IntPtr THSNN_Conv1d_bias(torch.nn.Module.HType module);
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_Conv1d_set_bias(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            extern static void THSNN_Conv1d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? bias {
                 get {
@@ -57,9 +57,9 @@ namespace TorchSharp
                 }
             }
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Conv1d_weight(torch.nn.Module<Tensor, Tensor>.HType module);
+            extern static IntPtr THSNN_Conv1d_weight(torch.nn.Module.HType module);
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_Conv1d_set_weight(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            extern static void THSNN_Conv1d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? weight {
                 get {

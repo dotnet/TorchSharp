@@ -15,7 +15,7 @@ namespace TorchSharp
             internal Identity(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Identity_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            extern static IntPtr THSNN_Identity_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {

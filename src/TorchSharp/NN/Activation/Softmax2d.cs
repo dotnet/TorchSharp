@@ -17,7 +17,7 @@ namespace TorchSharp
             internal Softmax2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Softmax2d_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_Softmax2d_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {

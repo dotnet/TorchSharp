@@ -19,7 +19,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_LogSoftmax_forward(torch.nn.Module<Tensor, Tensor>.HType handle, IntPtr tensor);
+            private static extern IntPtr THSNN_LogSoftmax_forward(torch.nn.Module.HType handle, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {

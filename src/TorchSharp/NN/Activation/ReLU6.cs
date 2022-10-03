@@ -17,7 +17,7 @@ namespace TorchSharp
             internal ReLU6(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_ReLU6_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_ReLU6_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {

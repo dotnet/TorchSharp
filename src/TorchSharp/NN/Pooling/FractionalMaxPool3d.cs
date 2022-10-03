@@ -20,7 +20,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_FractionalMaxPool3d_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_FractionalMaxPool3d_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
@@ -34,7 +34,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_FractionalMaxPool3d_forward_with_indices(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor, out IntPtr indices);
+            private static extern IntPtr THSNN_FractionalMaxPool3d_forward_with_indices(torch.nn.Module.HType module, IntPtr tensor, out IntPtr indices);
 
             public (Tensor Values, Tensor Indices) forward_with_indices(Tensor tensor)
             {

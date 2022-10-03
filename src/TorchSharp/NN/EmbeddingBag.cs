@@ -22,7 +22,7 @@ namespace TorchSharp
             internal EmbeddingBag(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_EmbeddingBag_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor, IntPtr offsets, IntPtr per_sample_weights);
+            private static extern IntPtr THSNN_EmbeddingBag_forward(torch.nn.Module.HType module, IntPtr tensor, IntPtr offsets, IntPtr per_sample_weights);
 
             /// <summary>
             /// Forward pass of EmbeddingBag.
@@ -85,10 +85,10 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_EmbeddingBag_weight(torch.nn.Module<Tensor, Tensor>.HType module);
+            extern static IntPtr THSNN_EmbeddingBag_weight(torch.nn.Module.HType module);
 
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_EmbeddingBag_set_weight(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            extern static void THSNN_EmbeddingBag_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? weight {
                 get {

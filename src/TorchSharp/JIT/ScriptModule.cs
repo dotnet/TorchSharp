@@ -412,7 +412,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            private static extern void THSJIT_save(nn.Module<Tensor, Tensor>.HType handle, string filename);
+            private static extern void THSJIT_save(nn.Module.HType handle, string filename);
 
             /// <summary>
             /// Save an offline version of a previously loaded script module.

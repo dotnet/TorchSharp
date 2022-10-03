@@ -15,7 +15,7 @@ namespace TorchSharp
             internal MultiheadAttention(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern void THSNN_MultiheadAttention_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr query, IntPtr key, IntPtr value, IntPtr key_padding_mask, bool need_weights, IntPtr attn_mask, out IntPtr res1, out IntPtr res2);
+            private static extern void THSNN_MultiheadAttention_forward(torch.nn.Module.HType module, IntPtr query, IntPtr key, IntPtr value, IntPtr key_padding_mask, bool need_weights, IntPtr attn_mask, out IntPtr res1, out IntPtr res2);
             /// <summary>
             /// Applies the MultiheadAttention function element-wise.
             /// </summary>

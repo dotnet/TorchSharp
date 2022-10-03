@@ -17,7 +17,7 @@ namespace TorchSharp
             internal ConstantPad2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_ConstantPad2d_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            private static extern IntPtr THSNN_ConstantPad2d_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             /// <summary>
             /// Forward pass.

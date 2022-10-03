@@ -25,7 +25,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Linear_forward(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            extern static IntPtr THSNN_Linear_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
@@ -35,9 +35,9 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Linear_bias(torch.nn.Module<Tensor, Tensor>.HType module);
+            extern static IntPtr THSNN_Linear_bias(torch.nn.Module.HType module);
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_Linear_set_bias(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            extern static void THSNN_Linear_set_bias(torch.nn.Module.HType module, IntPtr tensor);
             public Parameter? bias {
                 get {
                     var res = THSNN_Linear_bias(handle);
@@ -52,9 +52,9 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Linear_weight(torch.nn.Module<Tensor, Tensor>.HType module);
+            extern static IntPtr THSNN_Linear_weight(torch.nn.Module.HType module);
             [DllImport("LibTorchSharp")]
-            extern static void THSNN_Linear_set_weight(torch.nn.Module<Tensor, Tensor>.HType module, IntPtr tensor);
+            extern static void THSNN_Linear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? weight {
                 get {
