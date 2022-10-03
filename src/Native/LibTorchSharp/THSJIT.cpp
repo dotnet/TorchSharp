@@ -14,10 +14,10 @@ JITModule THSJIT_load(const char* filename)
 
 JITCompilationUnit THSJIT_compile(const char* script)
 {
-    //CATCH(
+    CATCH(
     auto res = torch::jit::compile(script);
     return new std::shared_ptr<torch::jit::CompilationUnit>(res);
-    //);
+    );
 
     return nullptr;
 }
