@@ -75,7 +75,7 @@ namespace TorchSharp
                     if (String.IsNullOrEmpty(name)) throw new ArgumentNullException("method name");
 
                     if (!objs.All(o => typeof(Tensor).IsAssignableFrom(o.GetType()))) {
-                        throw new NotImplementedException("ScriptModule.forward() taking non-tensors as input arguments");
+                        throw new NotImplementedException($"CompilationUnit.{name}() is not yet taking non-tensors as input arguments");
                     }
 
                     IntPtr[] ptrArray = null;
@@ -93,46 +93,7 @@ namespace TorchSharp
                         ptrArray = parray.Array;
                     }
 
-
-                    switch (typeCode) {
-                    default:
-                        // Nothing.
-                        throw new NotImplementedException("ScriptModule.forward() returning something else than a tensor, a tuple of tensors, or list of tensors.");
-                    case 1:
-                        // Tensor
-                        return new Tensor(ptrArray[0]);
-                    case 2:
-                        // Tuple
-                        switch (ptrArray.Length) {
-                        case 1:
-                            return new Tensor(ptrArray[0]);
-                        case 2:
-                            return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
-                        case 3:
-                            return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]));
-                        case 4:
-                            return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]));
-                        case 5:
-                            return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]), new Tensor(ptrArray[2]), new Tensor(ptrArray[3]), new Tensor(ptrArray[4]));
-                        default: {
-                                // Too long a tuple, return as a list, instead.
-                                var result = new Tensor[ptrArray.Length];
-                                for (var i = 0; i < ptrArray.Length; i++) {
-                                    result[i] = new Tensor(ptrArray[i]);
-                                }
-                                return result;
-                            }
-                        }
-                    case 3: {
-                            // List of tensors
-                            var result = new Tensor[ptrArray.Length];
-                            for (var i = 0; i < ptrArray.Length; i++) {
-                                result[i] = new Tensor(ptrArray[i]);
-                            }
-                            return result;
-                        }
-                    }
-
+                    return torch.jit.ScriptModule.ProcessReturnValue(name, ptrArray, typeCode);
                 }
 
                 /// <summary>
