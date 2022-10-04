@@ -307,11 +307,11 @@ void THSJIT_Module_invoke(const JITModule module, const char* name, const Tensor
 {
     *typeCode = 0;
 
-    //CATCH(
+    CATCH(
         auto method = (*module)->get_method(name);
         auto result = method(toIValue(tensorPtrs, length));
         ReturnHelper(result, allocator, typeCode);
-    //)
+    )
 }
 
 void THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
@@ -387,14 +387,17 @@ void THSJIT_TensorType_dispose(const JITTensorType type)
     delete type;
 }
 
+void THSJIT_CompilationUnit_dispose(const JITCompilationUnit module)
+{
+    delete module;
+}
+
 void* THSJIT_Type_cast(const JITType type)
 {
     switch ((*type)->kind())
     {
     case c10::TypeKind::TensorType:
         return new std::shared_ptr<torch::jit::TensorType>((*type)->cast<c10::TensorType>());
-        //case c10::TypeKind::DimensionedTensorType:
-        //	return new std::shared_ptr<torch::jit::DimensionedTensorType>((*type)->cast<c10::DimensionedTensorType>());
     default:
         return NULL;
     }
@@ -433,8 +436,6 @@ int8_t THSJIT_Type_kind(const JITType type)
     {
     case c10::TypeKind::TensorType:
         return (int8_t)TypeKind::TensorType;
-        //case c10::TypeKind::DimensionedTensorType:
-        //	return (int8_t)TypeKind::DimensionedTensorType;
     default:
         return -1;
     }
@@ -447,29 +448,6 @@ JITType THSJIT_Module_getInputType(JITModule module, int8_t index)
     auto& schema = typ->getMethod("forward").getSchema();
     return new std::shared_ptr<c10::Type>(schema.arguments()[1 + index].type()->cast<c10::TensorType>());
 }
-
-//int8_t THSJIT_getScalarFromDimensionedTensorType(const JITDimensionedTensorType type)
-//{
-//	return (int8_t)(*type)->scalarType();
-//}
-//
-//int THSJIT_getDimensionedTensorTypeDimensions(const JITDimensionedTensorType type)
-//{
-//	return (*type)->dim();
-//}
-//
-//const char* THSJIT_getDimensionedTensorDevice(const JITDimensionedTensorType type)
-//{
-//	auto device = (*type)->device();
-//
-//	auto device_type = DeviceTypeName(device.type());
-//
-//	std::transform(device_type.begin(), device_type.end(), device_type.begin(), ::tolower);
-//
-//	return make_sharable_string(device_type);
-//}
-
-
 
 void THSJIT_typeDispose(const JITType type)
 {

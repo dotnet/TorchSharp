@@ -75,10 +75,6 @@ namespace TorchSharp
                 {
                     if (String.IsNullOrEmpty(name)) throw new ArgumentNullException("method name");
 
-                    //if (!objs.All(o => typeof(Tensor).IsAssignableFrom(o.GetType()))) {
-                    //    throw new NotImplementedException($"CompilationUnit.{name}() is not yet taking non-tensors as input arguments");
-                    //}
-
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
 

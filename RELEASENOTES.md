@@ -28,6 +28,7 @@ __Fixed Bugs:__
 #744 Some of functions with inconsistent argument names<br/>
 #749 functional.linear is wrong<br/>
 #761 Stateful optimizers should have support for save/load from disk.<br/>
+#771 Support more types for ScriptModule<br/>
 
 __API Changes__:
 

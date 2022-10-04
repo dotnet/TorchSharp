@@ -285,7 +285,7 @@ namespace TorchSharp
     return (x + i,x-i)
 ";
 
-            var cu = torch.jit.compile(script);
+            using var cu = torch.jit.compile(script);
 
             Assert.NotNull(cu);
 
