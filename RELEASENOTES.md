@@ -36,6 +36,8 @@ Module.to(), cpu(), and cuda() were redone as extension methods. The virtual met
 Support for saving and restoring hyperparameters and state of optimizers<br/>
 Loss functions are now Modules rather than delegates.<br/>
 Custom modules should now use generic versions as base classes.<br/>
+ScriptModule supports calling methods other than forward()<br/>
+Added torch.jit.compile().<br/>
 
 ## NuGet Version 0.97.6
 
