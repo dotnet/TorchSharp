@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class TransformerEncoderLayer : torch.nn.Module
+        public class TransformerEncoderLayer : torch.nn.Module<Tensor, Tensor>, torch.nn.IModule<Tensor, Tensor, Tensor>, torch.nn.IModule<Tensor, Tensor, Tensor, Tensor>
         {
             internal TransformerEncoderLayer(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
@@ -53,7 +53,7 @@ namespace TorchSharp
             /// Pass the input through the encoder layer.
             /// </summary>
             /// <param name="src">The sequence to the encoder (required).</param>
-            public Tensor forward(Tensor src)
+            public override Tensor forward(Tensor src)
             {
                 var res = THSNN_TransformerEncoderLayer_forward(handle,
                     src.Handle,
