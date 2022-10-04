@@ -197,7 +197,7 @@ void ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(size_t length
         int foundTensor = 0;
         int foundScalar = 0;
 
-        auto& list = result.toList();
+        auto list = result.toList();
         TensorOrScalar* output = allocator(list.size());
 
         for (int i = 0; i < list.size(); ++i)
