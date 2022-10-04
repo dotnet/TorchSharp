@@ -285,7 +285,7 @@ std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int le
                 tensors.push_back((int)tensorPtrs[i].Handle);
                 break;
             case 4:
-                tensors.push_back((long)tensorPtrs[i].Handle);
+                tensors.push_back(c10::IValue(tensorPtrs[i].Handle));
                 break;
             }
         }
