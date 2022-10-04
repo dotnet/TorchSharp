@@ -399,8 +399,11 @@ namespace TorchSharp
                             tensorRefs[idx].TypeCode = 3;
                             break;
                         case long l:
-                            tensorRefs[idx].Handle = (IntPtr)l;
-                            tensorRefs[idx].TypeCode = 4;
+                            tensorRefs[idx].Handle = ((Scalar)l).Handle;
+                            tensorRefs[idx].TypeCode = 1;
+                            // The MacOS version of Clang doesn't like the use of int64_t, so pass as a Scalar instance, instead.
+                            //tensorRefs[idx].Handle = (IntPtr)l;
+                            //tensorRefs[idx].TypeCode = 4;
                             break;
                         default:
                             throw new NotImplementedException($"Passing arguments of type {objs[idx].GetType().Name} to TorchScript.");

@@ -284,9 +284,9 @@ std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int le
             case 3:
                 tensors.push_back((int)tensorPtrs[i].Handle);
                 break;
-            case 4:
-                tensors.push_back(c10::IValue(tensorPtrs[i].Handle));
-                break;
+            //case 4:
+            //    tensors.push_back(c10::IValue(tensorPtrs[i].Handle)); // Clang on MacOS doesn't like. Pass as Scalar from .NET.
+            //    break;
             }
         }
     }
