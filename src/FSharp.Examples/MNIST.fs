@@ -44,7 +44,7 @@ let hasCUDA = TorchText.Datasets.cuda_is_available() //torch.cuda.is_available()
 let device = if hasCUDA then torch.CUDA else torch.CPU
 
 type Model(name,device:torch.Device) as this =
-    inherit Module(name)
+    inherit Module<torch.Tensor,torch.Tensor>(name)
 
     let conv1 = Conv2d(1L, 32L, 3L)
     let conv2 = Conv2d(32L, 64L, 3L)

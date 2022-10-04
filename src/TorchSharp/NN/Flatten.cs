@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a dropout module for 2d/3d convolutational layers.
         /// </summary>
-        public class Flatten : torch.nn.Module
+        public class Flatten : torch.nn.Module<Tensor, Tensor>
         {
             internal Flatten(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

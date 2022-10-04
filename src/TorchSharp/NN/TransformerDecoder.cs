@@ -9,7 +9,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class TransformerDecoder : torch.nn.Module
+        public class TransformerDecoder : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal TransformerDecoder(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

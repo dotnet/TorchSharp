@@ -4,12 +4,26 @@ Unfortunatly, the word 'Module' is one of the most overloaded terms in software.
 
 In the context of TorchSharp, it means the same as in PyTorch: the fundamental building block of all models is the 'Module' class. All neural network layers are derived from Module and the way to create a model for training and inference in your code is to create a new Module. Without it, back-propagation will not work.
 
-## Custom Modules
+## Sequential
 
-A custom module is created by deriving a subclass from torch.nn.Module. One that is equivalent to the previous example looks like this:
+For the most basic network architecture, which actually covers a surprising breadth, there is a simple way to create modules -- the 'Sequential' class. This class is created from a list of Modules (i.e. model components). When data is passed to the model in the form of a tensor, the Sequential instance will invoke each submodule in the order they were passed when the Sequential instance was created, passing the output from each layer to the next. The output of the final submodule will be the output of the Sequential instance.
 
 ```C#
-        private class TestModule1 : Module
+var seq = Sequential(("lin1", Linear(100, 10)), ("lin2", Linear(10, 5)));
+...
+seq.forward(some_data);
+```
+
+There is no real performance reason to use Sequential instead of rolling your own custom module, but there is much less code to write. That said, if using a custom module (up next) is your preference, for whatever reason, that's what you should do. It can be useful to create a custom module first, debug it, and then convert to using Sequential.
+
+Sequential can only string together modules that take a single tensor and return a single tensor -- anything else needs to be a custom module.
+
+## Custom Modules
+
+A custom module is created by deriving a subclass from torch.nn.Module<T...,TResult>. The first generic parameters denote the input types of the module's forward() method:
+
+```C#
+        private class TestModule1 : Module<Tensor,Tensor>
         {
             public TestModule1()
                 : base("TestModule1")
@@ -36,9 +50,11 @@ Custom modules should always call `RegisterComponents()` once all submodules and
 
 The `forward()` method contains the computation of the module. It can contain a mix of TorchSharp primitives, layers, as well as any .NET code. Note, however, that only TorchSharp APIs are capable of operating on data residing in CUDA memory. Therefore, if performance is of the essence, expressing all computation in terms of TorchSharp APIs is essential. Non-TorchSharp APIs should be limited to things that aren't related to the tensor data, things like logging, for example.
 
-In PyTorch, the `forward()` method takes an arbitrary number of arguments, of any type, and supports using default arguments. Currently, TorchSharp only defines two versions of `forward()` -- taking one or two tensors, and returning a single tensor. The TorchSharp implementation of Sequential assumes that it is passing only a single tensor along between its layers. Therefore, any model that needs to pass multiple arguments between layers will have to be custom.
+In PyTorch, the `forward()` method takes an arbitrary number of arguments, of any type, and supports using default arguments. 
 
-Note that the local variable 'x' was declared in a using statement. This is important in order to deallocate the native memory associated with it as soon as it is no longer needed. For that reason, it is important to pull out temporaries like this into local variables, especially when the code is running on a GPU. (More on this at: [Dispose vs. GC in TorchSharp](memory.md)) 
+In TorchSharp, the signature of `forward()` is determined by the type parameter signature of the Module<> base class. In most cases, the input and output are both `torch.Tensor`. As noted above, the Sequential module collection class assumes that it is passing only a single tensor along between its layers. Therefore, any model that needs to pass multiple arguments between layers will have to be custom.
+
+Going back to the code inside the `forward()` method -- please note that the local variable 'x' was declared in a using statement. This is important in order to deallocate the native memory associated with it as soon as it is no longer needed. For that reason, it is important to pull out temporaries like this into local variables, especially when the code is running on a GPU. (More on this at: [Dispose vs. GC in TorchSharp](memory.md)) 
 
 In other words, the following code is less memory efficient, because it delays reclaiming native memory until the next time GC is run:
 
@@ -48,18 +64,6 @@ In other words, the following code is less memory efficient, because it delays r
             return lin2.forward(lin1.forward(input));
         }
 ```
-## Sequential
-
-For the simplest network architecture, which actually covers a surprising breadth, there is a simplified way to create modules -- the 'Sequential' class. This class is created from a list of Modules (i.e. model components). When data is passed to the model, the Sequential instance will invoke each submodule in the order they were passed when the Sequential instance was created, passing the output from each layer to the next. The output of the final submodule will be the output of the Sequential instance.
-
-```C#
-var seq = Sequential(("lin1", Linear(100, 10)), ("lin2", Linear(10, 5)));
-...
-seq.forward(some_data);
-```
-
-There is no real performance reason to use Sequential instead of rolling your own custom module, but there is much less code to write. That said, if using a custom module (up next) is your preference, for whatever reason, that's what you should do. It can be useful to create a custom module first, debug it, and then convert to using Sequential.
-
 
 ## Using Sequential Inside A Custome Module
 
@@ -131,12 +135,12 @@ To illustrate, this is the code for MobileNet from the TorchSharp examples:
 
 ## ModuleList
 
-In some circumstances, it's useful to define a dynamic number of modules in a custom module. It could be because you want to parameterize the network architecture, or dynamically choose which layers to run, or just that its tedious to define so many fields. This may be addressed by using a ModuleList to contain the submodules. Unlike Sequential, ModuleList itself does not suffice -- its `forward()` method will throw an exception if invoked.
+In some circumstances, it's useful to define a dynamic number of modules in a custom module. It could be because you want to parameterize the network architecture, or dynamically choose which layers to run, or just that its tedious to define so many fields. This may be addressed by using a ModuleList to contain the submodules. Unlike Sequential, ModuleList itself does not suffice -- its `forward()` method will throw an exception if invoked, and you must iterate through the modules of the list directly in your `forward()` implementation.
 
 The purpose is simply to provide a list implementation that automatically registers the submodules when components are registered. You have to iterate through the list in the `forward()` method:
 
 ```C#
-        private class TestModule1 : Module
+        private class TestModule1 : Module<Tensor,Tensor>
         {
             public TestModule1()
                 : base("TestModule1")
@@ -157,12 +161,12 @@ The purpose is simply to provide a list implementation that automatically regist
 
 ## ModuleDict
 
-In some circumstances, it's useful to define a dynamic number of modules in a custom module. It could be because you want to parameterize the network architecture, or dynamically choose which layers to run, or just that its tedious to define so many fields. This may be addressed by using a ModuleList to contain the submodules. Unlike Sequential, ModuleList itself does not suffice -- its `forward()` method will throw an exception if invoked.
+In some circumstances, it's useful to define a dynamic number of modules in a custom module and use a dictionary to hold them. Like with `ModuleList`, it could be because you want to parameterize the network architecture, or dynamically choose which layers to run, or just that its tedious to define so many fields. This may be addressed by using a ModuleDict to contain the submodules.
 
 The purpose is simply to provide a list implementation that automatically registers the submodules when components are registered. You have to iterate through the list in the `forward()` method:
 
 ```C#
-        private class TestModule1 : Module
+        private class TestModule1 : Module<Tensor,Tensor>
         {
             public TestModule1()
                 : base("TestModule1")
@@ -191,7 +195,7 @@ Many modules are just compositions of existing modules, but sometimes it will im
 For example, a re-implementation of 'Linear' would look something like:
 
 ```C#
-        private class MyLinear : Module
+        private class MyLinear : Module<Tensor,Tensor>
         {
             public MyLinear(long input_size, long output_size)
                 : base("MyLinear")
@@ -212,9 +216,9 @@ For example, a re-implementation of 'Linear' would look something like:
         }
 ```
 
-In this case, we're not relying on 'using' in the `forward()` method, because the temporary is reused as the target by the `add_()` function.
+In this case, we're not relying on 'using' in the `forward()` method, because the "temporary" is reused as the target by the `add_()` function.
 
-Parameter's dirty little secret is that it will clean out the tensor that is given to its constructor. So, `Parameter()` is preferrably used with another tensor factory (such as in the example above), or a cloned tensor.
+Parameter's dirty little secret is that it will clean out the tensor that is given to its constructor. So, `Parameter()` is preferrably used with another tensor factory (such as in the example above), or a cloned tensor. Once you have passes a tensor to the Parameter constructor, the original tensor is invalidated.
 
 ## ParameterList
 
@@ -226,7 +230,7 @@ Much like ModuleDict, ParameterDict is a dictionary of Parameter instances, whic
 
 ## Buffers
 
-Sometimes, a module needs to allocate tensor that are not trainable, i.e. their values are not modified during back-propagation. An example is a random dropout mask. These are referred to as 'buffers' as opposed to 'parameters' and are treated differently by `RegisterComponents()` -- even though they are not trainable, the native runtime still wants to know about them for other purposes, so it is important to declare them in the module.
+Sometimes, a module needs to allocate tensor that are not trainable, i.e. their values are not modified during back-propagation. An example is a random dropout mask. These are referred to as 'buffers' as opposed to 'parameters' and are treated differently by `RegisterComponents()` -- even though they are not trainable, the native runtime still wants to know about them for other purposes, such as storing them to disk, so it is important to declare them in the module.
 
 Each buffer should be declared as a field of type 'Tensor' (not 'Parameter'). This will ensure that the buffer is registered properly when `RegisterComponents()` is called.
 
@@ -238,7 +242,7 @@ It is sometimes necessary to create a new model from an existing one and discard
 So, for example:
 
 ```C#
-        private class TestModule1 : Module
+        private class TestModule1 : Module<Tensor,Tensor>
         {
             public TestModule1()
                 : base("TestModule1")
@@ -259,7 +263,7 @@ So, for example:
             private Module lin2;
         }
 
-        private class TestModule2 : Module
+        private class TestModule2 : Module<Tensor,Tensor>
         {
             public TestModule2()
                 : base("TestModule2")

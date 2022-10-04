@@ -14,7 +14,7 @@ namespace TorchSharp.Examples
     /// With an unaugmented CIFAR-10 data set, the author of this saw training converge
     /// at roughly 75% accuracy on the test set, over the course of 1500 epochs.
     /// </remarks>
-    class MobileNet : Module
+    class MobileNet : Module<Tensor, Tensor>
     {
         // The code here is is loosely based on https://github.com/kuangliu/pytorch-cifar/blob/master/models/mobilenet.py
         // Licence and copypright notice at: https://github.com/kuangliu/pytorch-cifar/blob/master/LICENSE
@@ -22,13 +22,13 @@ namespace TorchSharp.Examples
         private readonly long[] planes = new long[] { 64, 128, 128, 256, 256, 512, 512, 512, 512, 512, 512, 1024, 1024 };
         private readonly long[] strides = new long[] { 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1 };
 
-        private readonly Module layers;
+        private readonly Module<Tensor, Tensor> layers;
 
         public MobileNet(string name, int numClasses, Device device = null) : base(name)
         {
             if (planes.Length != strides.Length) throw new ArgumentException("'planes' and 'strides' must have the same length.");
 
-            var modules = new List<(string, Module)>();
+            var modules = new List<(string, Module<Tensor, Tensor>)>();
 
             modules.Add(($"conv2d-first", Conv2d(3, 32, kernelSize: 3, stride: 1, padding: 1, bias: false)));
             modules.Add(($"bnrm2d-first", BatchNorm2d(32)));
@@ -46,7 +46,7 @@ namespace TorchSharp.Examples
                 this.to(device);
         }
 
-        private void MakeLayers(List<(string, Module)> modules, long in_planes)
+        private void MakeLayers(List<(string, Module<Tensor, Tensor>)> modules, long in_planes)
         {
 
             for (var i = 0; i < strides.Length; i++) {

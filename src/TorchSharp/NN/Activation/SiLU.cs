@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a SiLU module.
         /// </summary>
-        public class SiLU : torch.nn.Module
+        public class SiLU : torch.nn.Module<Tensor, Tensor>
         {
             internal SiLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

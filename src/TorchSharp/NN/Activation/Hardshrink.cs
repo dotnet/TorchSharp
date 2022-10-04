@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Hardshrink module.
         /// </summary>
-        public class Hardshrink : torch.nn.Module
+        public class Hardshrink : torch.nn.Module<Tensor, Tensor>
         {
             internal Hardshrink(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

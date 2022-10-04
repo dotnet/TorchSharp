@@ -70,7 +70,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent an Upsample module.
         /// </summary>
-        public class Upsample : torch.nn.Module
+        public class Upsample : torch.nn.Module<Tensor, Tensor>
         {
             internal Upsample(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

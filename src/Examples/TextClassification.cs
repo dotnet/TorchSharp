@@ -109,7 +109,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        static void train(int epoch, IEnumerable<(Tensor, Tensor, Tensor)> train_data, TextClassificationModel model, Loss criterion, torch.optim.Optimizer optimizer)
+        static void train(int epoch, IEnumerable<(Tensor, Tensor, Tensor)> train_data, TextClassificationModel model, Loss<torch.Tensor, torch.Tensor, torch.Tensor> criterion, torch.optim.Optimizer optimizer)
         {
             model.train();
 
@@ -145,7 +145,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        static double evaluate(IEnumerable<(Tensor, Tensor, Tensor)> test_data, TextClassificationModel model, Loss criterion)
+        static double evaluate(IEnumerable<(Tensor, Tensor, Tensor)> test_data, TextClassificationModel model, Loss<Tensor, Tensor, Tensor> criterion)
         {
             model.eval();
 
@@ -166,7 +166,7 @@ namespace TorchSharp.Examples
         }
     }
 
-    class TextClassificationModel : Module
+    class TextClassificationModel : Module<Tensor, Tensor>
     {
         private Modules.EmbeddingBag embedding;
         private Modules.Linear fc;
@@ -194,7 +194,7 @@ namespace TorchSharp.Examples
             throw new NotImplementedException();
         }
 
-        public override Tensor forward(Tensor input, Tensor offsets)
+        public Tensor forward(Tensor input, Tensor offsets)
         {
             return fc.forward(embedding.forward(input, offsets));
         }

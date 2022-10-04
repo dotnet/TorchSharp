@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent an unflattening operation.
         /// </summary>
-        public class Unflatten : torch.nn.Module
+        public class Unflatten : torch.nn.Module<Tensor, Tensor>
         {
             internal Unflatten(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Mish module.
         /// </summary>
-        public class Mish : torch.nn.Module
+        public class Mish : torch.nn.Module<Tensor, Tensor>
         {
             internal Mish(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

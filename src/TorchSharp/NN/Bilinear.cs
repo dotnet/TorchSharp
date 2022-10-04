@@ -11,13 +11,13 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class Bilinear : torch.nn.Module
+        public class Bilinear : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal Bilinear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             public new static Bilinear Load(String modelPath)
             {
-                var res = Module.Load(modelPath);
+                var res = Module<Tensor, Tensor>.Load(modelPath);
                 return new Bilinear(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
 

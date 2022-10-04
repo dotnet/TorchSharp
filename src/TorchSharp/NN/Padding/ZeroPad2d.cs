@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ZeroPad2d module.
         /// </summary>
-        public class ZeroPad2d : torch.nn.Module
+        public class ZeroPad2d : torch.nn.Module<Tensor, Tensor>
         {
             internal ZeroPad2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

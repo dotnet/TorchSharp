@@ -35,7 +35,7 @@ namespace TorchSharp
             /// Defaults to 0 if not provided. If the GRU is bidirectional, num_directions should be 2, else it should be 1.</param>
             /// <returns></returns>
             /// <returns></returns>
-            public new (Tensor, Tensor) forward(Tensor input, Tensor h0 = null)
+            public (Tensor, Tensor) forward(Tensor input, Tensor h0 = null)
             {
                 if (h0 is null) {
                     var N = _batch_first ? input.shape[0] : input.shape[1];

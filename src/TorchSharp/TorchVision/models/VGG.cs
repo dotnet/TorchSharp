@@ -322,7 +322,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class VGG : Module
+        public class VGG : Module<Tensor, Tensor>
         {
             // The code here is based on
             // https://github.com/pytorch/vision/blob/main/torchvision/models/vgg.py
@@ -335,9 +335,9 @@ namespace TorchSharp
                 { "VGG19", new long[] { 64, 64, 0, 128, 128, 0, 256, 256, 256, 256, 0, 512, 512, 512, 512, 0, 512, 512, 512, 512, 0 } }
             };
 
-            private readonly Module features;
-            private readonly Module avgpool;
-            private readonly Module classifier;
+            private readonly Module<Tensor, Tensor> features;
+            private readonly Module<Tensor, Tensor> avgpool;
+            private readonly Module<Tensor, Tensor> classifier;
 
             public VGG(string name,
                 int numClasses,
@@ -347,7 +347,7 @@ namespace TorchSharp
                 bool skipfc = true,
                 Device device = null) : base(name)
             {
-                var layers = new List<Module>();
+                var layers = new List<Module<Tensor, Tensor>>();
 
                 var channels = _channels[name];
 

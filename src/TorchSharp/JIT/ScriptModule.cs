@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using System.Net;
+using static TorchSharp.torch.nn;
 
 namespace TorchSharp
 {
@@ -13,6 +15,9 @@ namespace TorchSharp
     {
         public static partial class jit
         {
+            /// <summary>
+            /// This class represents a TorchScript module.
+            /// </summary>
             public class ScriptModule : torch.nn.Module
             {
                 internal ScriptModule(IntPtr handle) : base(new HType(handle, true, THSJIT_Module_dispose), null)
@@ -268,91 +273,372 @@ namespace TorchSharp
 #endif
 
                 [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSJIT_Module_forward(HType module, IntPtr tensors, int length);
+                private static extern void THSJIT_Module_forward(HType module, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
+
+                /// <summary>
+                /// Invoke the 'forward' function of the script with any number of arguments.
+                /// </summary>
+                /// <param name="objs"></param>
+                /// <returns></returns>
+                /// <remarks>
+                /// Only certain types can currently be passed:
+                /// 1. Tensor
+                /// 2. Scalar
+                /// 3. int/long
+                /// 4. double/float
+                /// 5. bool
+                ///
+                /// Only certain types can currently be returned:
+                /// 1. Tensor / Scalar
+                /// 2. Tuple of Tensor / Scalar
+                /// 3. Array (Python list) of Tensor / Scalar
+                ///
+                /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
+                /// If a tuple contains both tensors and scalars, it is returned as an object[].
+                /// </remarks>
+                /// <exception cref="NotImplementedException"></exception>
+                public object forward(params object[] objs)
+                {
+                    TensorOrScalar[] ptrArray = null;
+                    sbyte typeCode = 0;
+
+                    using (var parray = new PinnedArray<TensorOrScalar>()) {
+
+                        DetermineArgumentTypeRefs(objs, out int count, out TensorOrScalar[] tensorRefs);
+
+                        THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
+                        torch.CheckForErrors();
+                        ptrArray = parray.Array;
+                    }
+
+                    return ProcessReturnValue(name, ptrArray, typeCode);
+                }
+
+                [DllImport("LibTorchSharp")]
+                private static extern void THSJIT_Module_invoke(HType module, string name, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
+
+                [StructLayout(LayoutKind.Sequential)]
+                internal struct TensorOrScalar
+                {
+                    public long TypeCode;
+                    public IntPtr Handle;
+                }
+
+                /// <summary>
+                /// Invoke a function from the script module.
+                /// </summary>
+                /// <param name="name">The name of the function.</param>
+                /// <param name="objs">Function arguments.</param>
+                /// <remarks>
+                /// Only certain types can currently be passed:
+                /// 1. Tensor
+                /// 2. Scalar
+                /// 3. int/long
+                /// 4. double/float
+                /// 5. bool
+                ///
+                /// Only certain types can currently be returned:
+                /// 1. Tensor / Scalar
+                /// 2. Tuple of Tensor / Scalar
+                /// 3. Array (Python list) of Tensor / Scalar
+                ///
+                /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
+                /// If a tuple contains both tensors and scalars, it is returned as an object[].
+                /// </remarks>
+                public object invoke(string name, params object[] objs)
+                {
+                    if (String.IsNullOrEmpty(name)) throw new ArgumentNullException("method name");
+
+                    TensorOrScalar[] ptrArray = null;
+                    sbyte typeCode = 0;
+
+                    using (var parray = new PinnedArray<TensorOrScalar>()) {
+
+                        DetermineArgumentTypeRefs(objs, out int count, out TensorOrScalar[] tensorRefs);
+
+                        THSJIT_Module_invoke(handle, name, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
+                        torch.CheckForErrors();
+                        ptrArray = parray.Array;
+                    }
+
+                    return ProcessReturnValue(name, ptrArray, typeCode);
+                }
+
+                internal static void DetermineArgumentTypeRefs(object[] objs, out int count, out TensorOrScalar[] tensorRefs)
+                {
+                    count = objs.Length;
+                    tensorRefs = new TensorOrScalar[count];
+                    for (var idx = 0; idx < objs.Length; idx++) {
+                        switch (objs[idx]) {
+                        case Tensor t:
+                            tensorRefs[idx].Handle = t.Handle;
+                            tensorRefs[idx].TypeCode = 0;
+                            break;
+                        case Scalar s:
+                            tensorRefs[idx].Handle = s.Handle;
+                            tensorRefs[idx].TypeCode = 1;
+                            break;
+                        case float f:
+                            tensorRefs[idx].Handle = ((Scalar)f).Handle;
+                            tensorRefs[idx].TypeCode = 1;
+                            break;
+                        case double d:
+                            tensorRefs[idx].Handle = ((Scalar)d).Handle;
+                            tensorRefs[idx].TypeCode = 1;
+                            break;
+                        case bool i:
+                            tensorRefs[idx].Handle = (IntPtr)(i ? 1L : 0L);
+                            tensorRefs[idx].TypeCode = 2;
+                            break;
+                        case int i:
+                            tensorRefs[idx].Handle = (IntPtr)i;
+                            tensorRefs[idx].TypeCode = 3;
+                            break;
+                        case long l:
+                            tensorRefs[idx].Handle = ((Scalar)l).Handle;
+                            tensorRefs[idx].TypeCode = 1;
+                            // The MacOS version of Clang doesn't like the use of int64_t, so pass as a Scalar instance, instead.
+                            //tensorRefs[idx].Handle = (IntPtr)l;
+                            //tensorRefs[idx].TypeCode = 4;
+                            break;
+                        default:
+                            throw new NotImplementedException($"Passing arguments of type {objs[idx].GetType().Name} to TorchScript.");
+                        }
+                    }
+                }
+
+                internal static object ProcessReturnValue(string name, TensorOrScalar[] ptrArray, sbyte typeCode)
+                {
+                    switch (typeCode) {
+                    default:
+                        // Nothing.
+                        throw new NotImplementedException($"ScriptModule.{name}() returning something else than a tensor, a tuple of tensors, or list of tensors.");
+                    case 1:
+                        // Tensor
+                        return new Tensor(ptrArray[0].Handle);
+                    case 2:
+                        // Tuple
+                        switch (ptrArray.Length) {
+                        case 1:
+                            return new Tensor(ptrArray[0].Handle);
+                        case 2:
+                            return (new Tensor(ptrArray[0].Handle), new Tensor(ptrArray[1].Handle));
+                        case 3:
+                            return (new Tensor(ptrArray[0].Handle), new Tensor(ptrArray[1].Handle), new Tensor(ptrArray[2].Handle));
+                        case 4:
+                            return (new Tensor(ptrArray[0].Handle), new Tensor(ptrArray[1].Handle), new Tensor(ptrArray[2].Handle), new Tensor(ptrArray[3].Handle));
+                        case 5:
+                            return (new Tensor(ptrArray[0].Handle), new Tensor(ptrArray[1].Handle), new Tensor(ptrArray[2].Handle), new Tensor(ptrArray[3].Handle), new Tensor(ptrArray[4].Handle));
+                        default: {
+                                // Too long a tuple, return as a list, instead.
+                                var result = new Tensor[ptrArray.Length];
+                                for (var i = 0; i < ptrArray.Length; i++) {
+                                    result[i] = new Tensor(ptrArray[i].Handle);
+                                }
+                                return result;
+                            }
+                        }
+                    case 3: {
+                            // List of tensors
+                            var result = new Tensor[ptrArray.Length];
+                            for (var i = 0; i < ptrArray.Length; i++) {
+                                result[i] = new Tensor(ptrArray[i].Handle);
+                            }
+                            return result;
+                        }
+                    case 4:
+                        // Scalar
+                        return new Scalar(ptrArray[0].Handle);
+                    case 5:
+                        // Scalar tuple
+                        switch (ptrArray.Length) {
+                        case 1:
+                            return new Scalar(ptrArray[0].Handle);
+                        case 2:
+                            return (new Scalar(ptrArray[0].Handle), new Scalar(ptrArray[1].Handle));
+                        case 3:
+                            return (new Scalar(ptrArray[0].Handle), new Scalar(ptrArray[1].Handle), new Scalar(ptrArray[2].Handle));
+                        case 4:
+                            return (new Scalar(ptrArray[0].Handle), new Scalar(ptrArray[1].Handle), new Scalar(ptrArray[2].Handle), new Scalar(ptrArray[3].Handle));
+                        case 5:
+                            return (new Scalar(ptrArray[0].Handle), new Scalar(ptrArray[1].Handle), new Scalar(ptrArray[2].Handle), new Scalar(ptrArray[3].Handle), new Scalar(ptrArray[4].Handle));
+                        default: {
+                                // Too long a tuple, return as a list, instead.
+                                var result = new Scalar[ptrArray.Length];
+                                for (var i = 0; i < ptrArray.Length; i++) {
+                                    result[i] = new Scalar(ptrArray[i].Handle);
+                                }
+                                return result;
+                            }
+                        }
+                    case 6: {
+                            // List of scalars
+                            var result = new Scalar[ptrArray.Length];
+                            for (var i = 0; i < ptrArray.Length; i++) {
+                                result[i] = new Scalar(ptrArray[i].Handle);
+                            }
+                            return result;
+                        }
+                    case 7: {
+                            // List of scalars and tensors
+                            var result = new object[ptrArray.Length];
+                            for (var i = 0; i < ptrArray.Length; i++) {
+                                result[i] = ptrArray[i].TypeCode == 0 ? new Tensor(ptrArray[i].Handle) : new Scalar(ptrArray[i].Handle);
+                            }
+                            return result;
+                        }
+                    }
+                }
+
+                /// <summary>
+                /// Invoke a function from the script module.
+                /// </summary>
+                /// <typeparam name="TResult">The return type of the TorchScript function.</typeparam>
+                /// <param name="name">The name of the function.</param>
+                /// <param name="inputs">Function arguments.</param>
+                /// <remarks>
+                /// Only certain types can currently be passed:
+                /// 1. Tensor
+                /// 2. Scalar
+                /// 3. int/long
+                /// 4. double/float
+                /// 5. bool
+                ///
+                /// Only certain types can currently be returned:
+                /// 1. Tensor / Scalar
+                /// 2. Tuple of Tensor / Scalar
+                /// 3. Array (Python list) of Tensor / Scalar
+                ///
+                /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
+                /// If a tuple contains both tensors and scalars, it is returned as an object[].
+                /// </remarks>
+                public TResult invoke<TResult>(string name, params object[] inputs) => (TResult)invoke(name, inputs);
+
+                /// <summary>
+                /// Invoke a function from the script module.
+                /// </summary>
+                /// <typeparam name="T">The type of all function arguments.</typeparam>
+                /// <typeparam name="TResult">The return type of the TorchScript function.</typeparam>
+                /// <param name="name">The name of the function.</param>
+                /// <param name="inputs">Function arguments.</param>
+                /// <remarks>
+                /// Only certain types can currently be passed:
+                /// 1. Tensor
+                /// 2. Scalar
+                /// 3. int/long
+                /// 4. double/float
+                /// 5. bool
+                ///
+                /// Only certain types can currently be returned:
+                /// 1. Tensor / Scalar
+                /// 2. Tuple of Tensor / Scalar
+                /// 3. Array (Python list) of Tensor / Scalar
+                ///
+                /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
+                /// If a tuple contains both tensors and scalars, it is returned as an object[].
+                /// </remarks>
+                public TResult invoke<T, TResult>(string name, params T[] inputs) => (TResult)invoke(name, inputs);
+            }
+
+            /// <summary>
+            /// A script module taking any number of tensors as input
+            /// </summary>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            public class ScriptModule<TResult> : ScriptModule, torch.nn.IModule<Tensor[], TResult>
+            {
+                internal ScriptModule(IntPtr handle) : base(handle) { }
 
                 /// <summary>
                 /// Invoke the 'forward' function of the script with one tensor as its argument
                 /// </summary>
-                /// <param name="tensor">The input tensor</param>
-                /// <returns></returns>
-                public unsafe override Tensor forward(Tensor tensor)
+                /// <remarks>
+                /// Only certain types can currently be passed:
+                /// 1. Tensor
+                /// 2. Scalar
+                /// 3. int/long
+                /// 4. double/float
+                /// 5. bool
+                ///
+                /// Only certain types can currently be returned:
+                /// 1. Tensor / Scalar
+                /// 2. Tuple of Tensor / Scalar
+                /// 3. Array (Python list) of Tensor / Scalar
+                ///
+                /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
+                /// If a tuple contains both tensors and scalars, it is returned as an object[].
+                /// </remarks>
+                public TResult forward(params Tensor[] tensor)
                 {
-                    var tensorRefs = stackalloc[] { tensor.Handle };
-                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 1);
-                    if (res == IntPtr.Zero)
-                        CheckForErrors();
-                    return new Tensor(res);
+                    return (TResult)base.forward(tensor);
                 }
+            }
+
+            /// <summary>
+            /// A script module taking a single argument.
+            /// </summary>
+            /// <typeparam name="T">The argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            public class ScriptModule<T, TResult> : ScriptModule, torch.nn.IModule<T, TResult>
+            {
+                internal ScriptModule(IntPtr handle) : base(handle) { }
 
                 /// <summary>
-                /// Invoke the 'forward' function of the script with two tensors as its argument
+                /// Invoke the 'forward' function of the script with one tensor as its argument
                 /// </summary>
-                /// <param name="x">The first input tensor</param>
-                /// <param name="y">The second input tensor</param>
-                /// <returns></returns>
-                public unsafe override Tensor forward(Tensor x, Tensor y)
+                /// <remarks>
+                /// Only certain types can currently be passed:
+                /// 1. Tensor
+                /// 2. Scalar
+                /// 3. int/long
+                /// 4. double/float
+                /// 5. bool
+                ///
+                /// Only certain types can currently be returned:
+                /// 1. Tensor / Scalar
+                /// 2. Tuple of Tensor / Scalar
+                /// 3. Array (Python list) of Tensor / Scalar
+                ///
+                /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
+                /// If a tuple contains both tensors and scalars, it is returned as an object[].
+                /// </remarks>
+                public TResult forward(T tensor)
                 {
-                    var tensorRefs = stackalloc[] { x.Handle, y.Handle };
-                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 2);
-                    if (res == IntPtr.Zero)
-                        CheckForErrors();
-                    return new Tensor(res);
+                    return (TResult)base.forward(tensor);
                 }
+            }
+
+            /// <summary>
+            /// A script module taking two arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type.</typeparam>
+            /// <typeparam name="T2">The second argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            public class ScriptModule<T1, T2, TResult> : ScriptModule, torch.nn.IModule<T1, T2, TResult>
+            {
+                internal ScriptModule(IntPtr handle) : base(handle) { }
 
                 /// <summary>
-                /// Invoke the 'forward' function of the script with three tensors as its argument
+                /// Invoke the 'forward' function of the script with one tensor as its argument
                 /// </summary>
-                /// <param name="x">The first input tensor</param>
-                /// <param name="y">The second input tensor</param>
-                /// <param name="z">The third input tensor</param>
-                /// <returns></returns>
-                public unsafe override Tensor forward(Tensor x, Tensor y, Tensor z)
+                /// <remarks>
+                /// Only certain types can currently be passed:
+                /// 1. Tensor
+                /// 2. Scalar
+                /// 3. int/long
+                /// 4. double/float
+                /// 5. bool
+                ///
+                /// Only certain types can currently be returned:
+                /// 1. Tensor / Scalar
+                /// 2. Tuple of Tensor / Scalar
+                /// 3. Array (Python list) of Tensor / Scalar
+                ///
+                /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
+                /// If a tuple contains both tensors and scalars, it is returned as an object[].
+                /// </remarks>
+                public TResult forward(T1 input1, T2 input2)
                 {
-                    var tensorRefs = stackalloc[] { x.Handle, y.Handle, z.Handle };
-                    var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, 3);
-                    if (res == IntPtr.Zero)
-                        CheckForErrors();
-                    return new Tensor(res);
-                }
-
-                /// <summary>
-                /// Invoke the 'forward' function of the script with four or more tensors as its argument
-                /// </summary>
-                /// <param name="x">The first input tensor</param>
-                /// <param name="y">The second input tensor</param>
-                /// <param name="z">The third input tensor</param>
-                /// <param name="tensors">The remaining tensors.</param>
-                /// <returns></returns>
-                public unsafe Tensor forward(Tensor x, Tensor y, Tensor z, params Tensor[] tensors)
-                {
-                    var count = 3 + tensors.Length;
-
-                    if (count < 32) {
-                        var tensorRefs = stackalloc IntPtr[count];
-                        tensorRefs[0] = x.Handle;
-                        tensorRefs[1] = y.Handle;
-                        tensorRefs[2] = z.Handle;
-                        for (var i = 0; i < tensors.Length; i++) tensorRefs[3 + i] = tensors[i].Handle;
-
-                        var res = THSJIT_Module_forward(handle, (IntPtr)tensorRefs, count);
-                        if (res == IntPtr.Zero)
-                            CheckForErrors();
-                        return new Tensor(res);
-                    } else {
-                        // It the unlikely event that there's a great number of arguments, use heap allocation.
-                        var tensorRefs = new IntPtr[count];
-                        tensorRefs[0] = x.Handle;
-                        tensorRefs[1] = y.Handle;
-                        tensorRefs[2] = z.Handle;
-                        for (var i = 0; i < tensors.Length; i++) tensorRefs[3 + i] = tensors[i].Handle;
-
-                        using (var parray = new PinnedArray<IntPtr>()) {
-                            var res = THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count);
-                            if (res == IntPtr.Zero)
-                                CheckForErrors();
-                            return new Tensor(res);
-                        }
-                    }
+                    return (TResult)base.forward(input1, input2);
                 }
             }
 
@@ -362,7 +648,7 @@ namespace TorchSharp
             /// <summary>
             /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
             /// </summary>
-            /// <param name="filename"></param>
+            /// <param name="filename">The file name of the module.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
             /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
@@ -370,13 +656,66 @@ namespace TorchSharp
             /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule load(string filename)
             {
+                return new ScriptModule(_load(filename));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="filename">The file name of the module.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
+            public static ScriptModule<TResult> load<TResult>(string filename)
+            {
+                return new ScriptModule<TResult>(_load(filename));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="filename">The file name of the module.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
+            public static ScriptModule<T1, TResult> load<T1, TResult>(string filename)
+            {
+                return new ScriptModule<T1, TResult>(_load(filename));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The first argument type.</typeparam>
+            /// <typeparam name="T2">The second argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="filename">The file name of the module.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
+            public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(string filename)
+            {
+                return new ScriptModule<T1, T2, TResult>(_load(filename));
+            }
+
+            private static IntPtr _load(string filename)
+            {
                 if (!System.IO.File.Exists(filename))
                     throw new System.IO.FileNotFoundException(filename);
 
                 var result = THSJIT_load(filename);
                 if (result == IntPtr.Zero)
                     CheckForErrors();
-                return new ScriptModule(result);
+                return result;
             }
 
             [DllImport("LibTorchSharp")]
@@ -388,8 +727,8 @@ namespace TorchSharp
             /// The saved module serializes all of the methods, submodules, parameters, and attributes of this module.
             /// It can be loaded into the C++ API using torch::jit::load(filename) or into the .NET API with torch.jit.load().
             /// </summary>
-            /// <param name="module"></param>
-            /// <param name="filename"></param>
+            /// <param name="module">The script module to save.</param>
+            /// <param name="filename">The file name of the module.</param>
             public static void save(ScriptModule module, string filename)
             {
                 THSJIT_save(module.handle, filename);

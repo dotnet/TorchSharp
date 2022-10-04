@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReplicationPad3d module.
         /// </summary>
-        public class ReplicationPad3d : torch.nn.Module
+        public class ReplicationPad3d : torch.nn.Module<Tensor, Tensor>
         {
             internal ReplicationPad3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

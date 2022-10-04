@@ -9,7 +9,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class TransformerEncoder : torch.nn.Module
+        public class TransformerEncoder : torch.nn.Module<Tensor, Tensor>
         {
             public enum Activations
             {
@@ -29,7 +29,7 @@ namespace TorchSharp
             /// <param name="src_mask">The additive mask for the src sequence (optional).</param>
             /// <param name="src_key_padding_mask">The ByteTensor mask for src keys per batch (optional).</param>
             /// <returns></returns>
-            public override Tensor forward(Tensor src, Tensor src_mask, Tensor src_key_padding_mask)
+            public Tensor forward(Tensor src, Tensor src_mask, Tensor src_key_padding_mask)
             {
                 var res = THSNN_TransformerEncoder_forward(handle,
                     src.Handle,
@@ -45,7 +45,7 @@ namespace TorchSharp
             /// <param name="src">The sequence to the encoder (required).</param>
             /// <param name="src_mask">The additive mask for the src sequence (optional).</param>
             /// <returns></returns>
-            public override Tensor forward(Tensor src, Tensor src_mask)
+            public Tensor forward(Tensor src, Tensor src_mask)
             {
                 var res = THSNN_TransformerEncoder_forward(handle,
                     src.Handle,

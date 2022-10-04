@@ -22,6 +22,7 @@
     <Compile Include="..\TorchSharpTest\NN.cs" Link="NN.cs" />
     <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs" />
     <Compile Include="..\TorchSharpTest\TestDistributions.cs" Link="TestDistributions.cs" />
+    <Compile Include="..\TorchSharpTest\TestJIT.cs" Link="TestJIT.cs" />
     <Compile Include="..\TorchSharpTest\TestLoadSave.cs" Link="TestLoadSave.cs" />
     <Compile Include="..\TorchSharpTest\TestNNUtils.cs" Link="TestNNUtils.cs" />
     <Compile Include="..\TorchSharpTest\TestSaveSD.cs" Link="TestSaveSD.cs" />
@@ -57,10 +58,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\TorchSharpTest\exported.method.dat" Link="exported.method.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\TorchSharpTest\func.script.dat" Link="func.script.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\TorchSharpTest\l1000_100_10.script.dat" Link="l1000_100_10.script.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TorchSharpTest\list_out.dat" Link="list_out.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TorchSharpTest\tuple_out.dat" Link="tuple_out.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

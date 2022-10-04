@@ -18,7 +18,7 @@ namespace TorchSharp
 
             public new static LSTMCell Load(String modelPath)
             {
-                var res = Module.Load(modelPath);
+                var res = Module<Tensor, Tensor>.Load(modelPath);
                 return new LSTMCell(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
 
