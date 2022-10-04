@@ -15,7 +15,7 @@ JITModule THSJIT_load(const char* filename)
 JITCompilationUnit THSJIT_compile(const char* script)
 {
     CATCH(
-    auto res = torch::jit::compile(script);
+        auto res = torch::jit::compile(script);
     return new std::shared_ptr<torch::jit::CompilationUnit>(res);
     );
 
@@ -155,7 +155,7 @@ JITMethod THSJIT_Module_get_method(const JITModule module, const char* name)
     return new std::shared_ptr<torch::jit::Method>(copy);
 }
 
-void ReturnHelper(c10::IValue result, Tensor* (*allocator)(size_t length), int8_t* typeCode)
+void ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
 {
     // TypeCode:
 //
@@ -163,64 +163,166 @@ void ReturnHelper(c10::IValue result, Tensor* (*allocator)(size_t length), int8_
 // 1 -- Single tensor
 // 2 -- Tuple of tensors
 // 3 -- List of tensors
+// 4 -- Single scalar
+// 5 -- Scalar tuple
+// 6 -- List of scalars
+// 7 -- List of scalars and tensors
+
+    if (result.isScalar())
+    {
+        TensorOrScalar* output = allocator(1);
+        output[0] = { 0, (ptrdiff_t)new torch::Scalar(result.toScalar()) };
+        *typeCode = 4;
+        return;
+    }
 
     if (result.isTensor()) {
-        Tensor* output = allocator(1);
-        output[0] = ResultTensor(result.toTensor());
+        TensorOrScalar* output = allocator(1);
+        output[0] = { 0, (ptrdiff_t)ResultTensor(result.toTensor()) };
         *typeCode = 1;
         return;
     }
+
     if (result.isTensorList()) {
         auto list = result.toTensorList();
         *typeCode = 3;
-        Tensor* output = allocator(list.size());
+        TensorOrScalar* output = allocator(list.size());
         for (size_t i = 0; i < list.size(); i++)
-            output[i] = ResultTensor(list[i]);
+            output[i] = { 0, (ptrdiff_t)ResultTensor(list[i]) };
         return;
     }
+
+    if (result.isList())
+    {
+        int foundTensor = 0;
+        int foundScalar = 0;
+
+        auto& list = result.toList();
+        TensorOrScalar* output = allocator(list.size());
+
+        for (int i = 0; i < list.size(); ++i)
+        {
+            output[i].Handle = -1;
+            c10::IValue value = list[i];
+
+            if (value.isTensor())
+            {
+                output[i] = { 0, (ptrdiff_t)ResultTensor(value.toTensor()) };
+                foundTensor += 1;
+                continue;
+            }
+            if (value.isScalar())
+            {
+                output[i] = { 4, (ptrdiff_t)new torch::Scalar(value.toScalar()) };
+                foundScalar += 1;
+                continue;
+            }
+            *typeCode = 0;
+            return;
+        }
+
+        *typeCode = 7;
+        if (foundScalar == 0)
+            *typeCode = 3;
+        if (foundTensor == 0)
+            *typeCode = 6;
+    }
+
     if (result.isTuple()) {
-        auto tuple = result.toTuple();
-        auto list = tuple->elements();
-        auto sz = list.size();
-        *typeCode = 2;
-        Tensor* output = allocator(list.size());
-        for (size_t i = 0; i < list.size(); i++)
-            // Assuming that all elements are tensors.
-            output[i] = ResultTensor(list[i].toTensor());
-        return;
+        int foundTensor = 0;
+        int foundScalar = 0;
+
+        auto& list = result.toTuple()->elements();
+        TensorOrScalar* output = allocator(list.size());
+
+        for (int i = 0; i < list.size(); ++i)
+        {
+            output[i].Handle = -1;
+            c10::IValue value = list[i];
+
+            if (value.isTensor())
+            {
+                output[i] = { 0, (ptrdiff_t)ResultTensor(value.toTensor()) };
+                foundTensor += 1;
+                continue;
+            }
+            if (value.isScalar())
+            {
+                output[i] = { 4, (ptrdiff_t)new torch::Scalar(value.toScalar()) };
+                foundScalar += 1;
+                continue;
+            }
+            *typeCode = 0;
+            return;
+        }
+
+        *typeCode = 7;
+        if (foundScalar == 0)
+            *typeCode = 2;
+        if (foundTensor == 0)
+            *typeCode = 5;
     }
 }
 
-void THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode)
+std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int length)
+{
+    std::vector<c10::IValue> tensors;
+
+    if (tensorPtrs != nullptr) {
+        for (int i = 0; i < length; i++)
+        {
+            switch (tensorPtrs[i].TypeCode) {
+            case 0:
+                tensors.push_back(*(torch::Tensor*)(tensorPtrs[i].Handle));
+                break;
+            case 1:
+                tensors.push_back(*(torch::Scalar*)(tensorPtrs[i].Handle));
+                break;
+            case 2:
+                tensors.push_back(tensorPtrs[i].Handle != 0);
+                break;
+            case 3:
+                tensors.push_back((int)tensorPtrs[i].Handle);
+                break;
+            case 4:
+                tensors.push_back((long)tensorPtrs[i].Handle);
+                break;
+            }
+        }
+    }
+    return tensors;
+}
+
+void THSJIT_Module_forward(const JITModule module, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
 {
     *typeCode = 0;
 
     CATCH(
-        auto result = (*module)->forward(toTensors<c10::IValue>((torch::Tensor**)tensorPtrs, length));
+        auto result = (*module)->forward(toIValue(tensorPtrs, length));
         ReturnHelper(result, allocator, typeCode);
     )
 }
 
-void THSJIT_Module_invoke(const JITModule module, const char* name, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode)
+void THSJIT_Module_invoke(const JITModule module, const char* name, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
 {
     *typeCode = 0;
 
-    CATCH(
-    auto method = (*module)->get_method(name);
-    auto result = method(toTensors<c10::IValue>((torch::Tensor**)tensorPtrs, length));
-    ReturnHelper(result, allocator, typeCode);
-    )
+    //CATCH(
+        auto method = (*module)->get_method(name);
+        auto result = method(toIValue(tensorPtrs, length));
+        ReturnHelper(result, allocator, typeCode);
+    //)
 }
 
-void THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode)
+void THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
 {
     *typeCode = 0;
 
     CATCH(
-    auto args = toTensors<c10::IValue>((torch::Tensor**)tensorPtrs, length);
-    auto func = (*module)->find_function(method);
-    auto result = (*func)(args);
-    ReturnHelper(result, allocator, typeCode);
+        auto args = toIValue(tensorPtrs, length);
+        auto func = (*module)->find_function(method);
+        auto result = (*func)(args);
+        ReturnHelper(result, allocator, typeCode);
     )
 }
 

@@ -5,6 +5,7 @@ using System.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using Xunit;
+using System.Security.Cryptography;
 
 #nullable enable
 
@@ -205,15 +206,18 @@ namespace TorchSharp
         public void TestLoadJIT_Methods()
         {
             // class MyModule(nn.Module):
-	        //   def __init__(self):
+            //   def __init__(self):
             //     super().__init__()
             //     self.p = nn.Parameter(torch.rand(10))
             //   def forward(self, x: Tensor, y: Tensor) -> Tuple[Tensor, Tensor]:
-	        //     return x + y, x - y
+            //     return x + y, x - y
             //
             //   @torch.jit.export
             //   def predict(self, x: Tensor) -> Tensor:
-	        //     return x + self.p
+            //     return x + self.p
+            //  @torch.jit.export
+            //  def add_scalar(self, x: Tensor, i: int) -> Tensor:
+            //     return x + i
 
             using var m = new TestScriptModule(@"exported.method.dat");
 
@@ -228,10 +232,15 @@ namespace TorchSharp
             () => Assert.Equal(x - y, output.Item2)
             );
 
-            var predict = m.predict(x);
+            var ones = m.add_scalar(torch.zeros(10), 1);
+
+            Assert.Equal(torch.ones(10), ones);
+
+            var a = torch.rand(10);
+            var predict = m.predict(a);
 
             Assert.Multiple(
-                () => Assert.NotEqual(x, predict)
+                () => Assert.NotEqual(a, predict)
             );
         }
 
@@ -252,6 +261,11 @@ namespace TorchSharp
                 return m.invoke<Tensor>("predict", input);
             }
 
+            public Tensor add_scalar(Tensor input, int i)
+            {
+                return m.invoke<Tensor>("add_scalar", input, i);
+            }
+
             private torch.jit.ScriptModule<(Tensor, Tensor)> m;
         }
 
@@ -263,6 +277,12 @@ namespace TorchSharp
     return torch.relu(a + b)
   def relu6_script(a, b):
     return torch.relu6(a + b)
+  def add_i(x: Tensor, i: int) -> Tensor:
+    return x + i
+  def add_d(x: Tensor, i: float) -> Tensor:
+    return x + i
+  def add_ii(x: int, i: int) -> Tuple[int,int]:
+    return (x + i,x-i)
 ";
 
             var cu = torch.jit.compile(script);
@@ -271,10 +291,24 @@ namespace TorchSharp
 
             var x = torch.randn(3, 4);
             var y = torch.randn(3, 4);
+
+            var zeros = torch.zeros(3, 4);
+            var ones = torch.ones(3, 4);
+
             var z = (Tensor)cu.invoke("relu_script", x, y);
             Assert.Equal(torch.nn.functional.relu(x + y), z);
             z = cu.invoke<Tensor>("relu6_script", x, y);
             Assert.Equal(torch.nn.functional.relu6(x + y), z);
+            z = cu.invoke<Tensor>("add_i", zeros, 1);
+            Assert.Equal(ones, z);
+            z = cu.invoke<Tensor>("add_d", zeros, 1.0);
+            Assert.Equal(ones, z);
+
+            var ss = cu.invoke<(Scalar,Scalar)>("add_ii", 3, 1);
+            Assert.Multiple(
+                () => Assert.Equal(4, ss.Item1.ToInt32()),
+                () => Assert.Equal(2, ss.Item2.ToInt32())
+            );
         }
     }
 }

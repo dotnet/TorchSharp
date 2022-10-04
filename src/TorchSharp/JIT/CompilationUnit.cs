@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 using System.Net;
 using static TorchSharp.torch.nn;
+using static TorchSharp.torch.jit.ScriptModule;
 
 namespace TorchSharp
 {
@@ -74,25 +75,23 @@ namespace TorchSharp
                 {
                     if (String.IsNullOrEmpty(name)) throw new ArgumentNullException("method name");
 
-                    if (!objs.All(o => typeof(Tensor).IsAssignableFrom(o.GetType()))) {
-                        throw new NotImplementedException($"CompilationUnit.{name}() is not yet taking non-tensors as input arguments");
-                    }
+                    //if (!objs.All(o => typeof(Tensor).IsAssignableFrom(o.GetType()))) {
+                    //    throw new NotImplementedException($"CompilationUnit.{name}() is not yet taking non-tensors as input arguments");
+                    //}
 
-                    IntPtr[] ptrArray = null;
+                    TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
 
-                    using (var parray = new PinnedArray<IntPtr>()) {
+                    using (var parray = new PinnedArray<TensorOrScalar>()) {
 
-                        var count = objs.Length;
-                        var tensorRefs = new IntPtr[count];
-                        for (var i = 0; i < objs.Length; i++) tensorRefs[i] = ((Tensor)objs[i]).Handle;
+                        ScriptModule.DetermineArgumentTypeRefs(objs, out int count, out TensorOrScalar[] tensorRefs);
 
                         THSJIT_CompilationUnit_Invoke(handle, name, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
                         torch.CheckForErrors();
                         ptrArray = parray.Array;
                     }
 
-                    return torch.jit.ScriptModule.ProcessReturnValue(name, ptrArray, typeCode);
+                    return ScriptModule.ProcessReturnValue(name, ptrArray, typeCode);
                 }
 
                 /// <summary>
