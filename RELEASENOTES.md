@@ -14,20 +14,30 @@ Doing so (rather than qualifying names with 'TorchSharp.') was already recommend
 
 __Loss functions are now aligned with the PyTorch APIs.__ This is a major change and the reason for incrementing the minor version number. The most direct consequence is that losses are modules rather than delegates, which means you need to call .forward() to actually compute the loss. Also, the factories are in torch.nn rather than torch.nn.functional and have the same Pascal-case names as the corresponding types. The members of the torch.nn.functional static class are now proper immediate loss functions, whereas the previous ones returned a loss delegate.
 
+__Generic Module base class.__ The second major change is that Module is made type-safe with respect to the `forward()` function. Module is now an abstract base class, and interfaces `IModule<T,TResult>`, `IModule<T1,T2,TResult>`,... are introduced to define the signature of the `forward()` function. For most custom modules, this  means that the base class has to be changed to `Module<Tensor,Tensor>`, but some modules may require more significant changes.
+
+ScriptModule follows this pattern, but this version introduces `ScriptModule<T...,TResult>` base classes, with corresponding `torch.jit.load<T...,TResult>()` static factory methods.
+
 __Fixed Bugs:__
 
+#323 forward() should take a variable-length list of arguments<br/>
 #558 Fix deviation from the Pytorch loss function/module APIs<br/>
 #742 Ease of use: Module.to method should be generic T -> T<br/>
 #743 Ease of use: module factories should have dtype and device<br/>
+#745 Executing a TorchScript that returns multiple values, throws an exception<br/>
 #744 Some of functions with inconsistent argument names<br/>
 #749 functional.linear is wrong<br/>
-#761 Stateful optimizers should have support for save/load from disk.
+#761 Stateful optimizers should have support for save/load from disk.<br/>
+#771 Support more types for ScriptModule<br/>
 
 __API Changes__:
 
 Module.to(), cpu(), and cuda() were redone as extension methods. The virtual methods to override, if necessary, are now named '_to'. A need to do so should be extremely rare.<br/>
 Support for saving and restoring hyperparameters and state of optimizers<br/>
-
+Loss functions are now Modules rather than delegates.<br/>
+Custom modules should now use generic versions as base classes.<br/>
+ScriptModule supports calling methods other than forward()<br/>
+Added torch.jit.compile().<br/>
 
 ## NuGet Version 0.97.6
 

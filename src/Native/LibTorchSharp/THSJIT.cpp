@@ -5,8 +5,18 @@ JITModule THSJIT_load(const char* filename)
 {
     CATCH(
         auto res = torch::jit::load(filename);
-        auto copy = new torch::jit::Module(res);        
-        return new std::shared_ptr<torch::jit::Module>(copy);
+    auto copy = new torch::jit::Module(res);
+    return new std::shared_ptr<torch::jit::Module>(copy);
+    );
+
+    return nullptr;
+}
+
+JITCompilationUnit THSJIT_compile(const char* script)
+{
+    CATCH(
+        auto res = torch::jit::compile(script);
+    return new std::shared_ptr<torch::jit::CompilationUnit>(res);
     );
 
     return nullptr;
@@ -145,45 +155,174 @@ JITMethod THSJIT_Module_get_method(const JITModule module, const char* name)
     return new std::shared_ptr<torch::jit::Method>(copy);
 }
 
-void THSJIT_Module_forward(const JITModule module, const Tensor* tensorPtrs, const int length, Tensor* (*allocator)(size_t length), int8_t* typeCode)
+void ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
+{
+    // TypeCode:
+//
+// 0 -- Not supported
+// 1 -- Single tensor
+// 2 -- Tuple of tensors
+// 3 -- List of tensors
+// 4 -- Single scalar
+// 5 -- Scalar tuple
+// 6 -- List of scalars
+// 7 -- List of scalars and tensors
+
+    if (result.isScalar())
+    {
+        TensorOrScalar* output = allocator(1);
+        output[0] = { 0, (ptrdiff_t)new torch::Scalar(result.toScalar()) };
+        *typeCode = 4;
+        return;
+    }
+
+    if (result.isTensor()) {
+        TensorOrScalar* output = allocator(1);
+        output[0] = { 0, (ptrdiff_t)ResultTensor(result.toTensor()) };
+        *typeCode = 1;
+        return;
+    }
+
+    if (result.isTensorList()) {
+        auto list = result.toTensorList();
+        *typeCode = 3;
+        TensorOrScalar* output = allocator(list.size());
+        for (size_t i = 0; i < list.size(); i++)
+            output[i] = { 0, (ptrdiff_t)ResultTensor(list[i]) };
+        return;
+    }
+
+    if (result.isList())
+    {
+        int foundTensor = 0;
+        int foundScalar = 0;
+
+        auto list = result.toList();
+        TensorOrScalar* output = allocator(list.size());
+
+        for (int i = 0; i < list.size(); ++i)
+        {
+            output[i].Handle = -1;
+            c10::IValue value = list[i];
+
+            if (value.isTensor())
+            {
+                output[i] = { 0, (ptrdiff_t)ResultTensor(value.toTensor()) };
+                foundTensor += 1;
+                continue;
+            }
+            if (value.isScalar())
+            {
+                output[i] = { 4, (ptrdiff_t)new torch::Scalar(value.toScalar()) };
+                foundScalar += 1;
+                continue;
+            }
+            *typeCode = 0;
+            return;
+        }
+
+        *typeCode = 7;
+        if (foundScalar == 0)
+            *typeCode = 3;
+        if (foundTensor == 0)
+            *typeCode = 6;
+    }
+
+    if (result.isTuple()) {
+        int foundTensor = 0;
+        int foundScalar = 0;
+
+        auto& list = result.toTuple()->elements();
+        TensorOrScalar* output = allocator(list.size());
+
+        for (int i = 0; i < list.size(); ++i)
+        {
+            output[i].Handle = -1;
+            c10::IValue value = list[i];
+
+            if (value.isTensor())
+            {
+                output[i] = { 0, (ptrdiff_t)ResultTensor(value.toTensor()) };
+                foundTensor += 1;
+                continue;
+            }
+            if (value.isScalar())
+            {
+                output[i] = { 4, (ptrdiff_t)new torch::Scalar(value.toScalar()) };
+                foundScalar += 1;
+                continue;
+            }
+            *typeCode = 0;
+            return;
+        }
+
+        *typeCode = 7;
+        if (foundScalar == 0)
+            *typeCode = 2;
+        if (foundTensor == 0)
+            *typeCode = 5;
+    }
+}
+
+std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int length)
+{
+    std::vector<c10::IValue> tensors;
+
+    if (tensorPtrs != nullptr) {
+        for (int i = 0; i < length; i++)
+        {
+            switch (tensorPtrs[i].TypeCode) {
+            case 0:
+                tensors.push_back(*(torch::Tensor*)(tensorPtrs[i].Handle));
+                break;
+            case 1:
+                tensors.push_back(*(torch::Scalar*)(tensorPtrs[i].Handle));
+                break;
+            case 2:
+                tensors.push_back(tensorPtrs[i].Handle != 0);
+                break;
+            case 3:
+                tensors.push_back((int)tensorPtrs[i].Handle);
+                break;
+            //case 4:
+            //    tensors.push_back(c10::IValue(tensorPtrs[i].Handle)); // Clang on MacOS doesn't like. Pass as Scalar from .NET.
+            //    break;
+            }
+        }
+    }
+    return tensors;
+}
+
+void THSJIT_Module_forward(const JITModule module, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
 {
     *typeCode = 0;
 
     CATCH(
-        auto result = (*module)->forward(toTensors<c10::IValue>((torch::Tensor**)tensorPtrs, length));
+        auto result = (*module)->forward(toIValue(tensorPtrs, length));
+        ReturnHelper(result, allocator, typeCode);
+    )
+}
 
-    // TypeCode:
-    //
-    // 0 -- Not supported
-    // 1 -- Single tensor
-    // 2 -- Tuple of tensors
-    // 3 -- List of tensors
+void THSJIT_Module_invoke(const JITModule module, const char* name, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
+{
+    *typeCode = 0;
 
-    if (result.isTensor()) {
-        Tensor* output = allocator(1);
-        output[0] = ResultTensor(result.toTensor());
-        *typeCode = 1;
-        return;
-    }
-    if (result.isTensorList()) {
-        auto list = result.toTensorList();
-        *typeCode = 3;
-        Tensor* output = allocator(list.size());
-        for (size_t i = 0; i < list.size(); i++)
-            output[i] = ResultTensor(list[i]);
-        return;
-    }
-    if (result.isTuple()) {
-        auto tuple = result.toTuple();
-        auto list = tuple->elements();
-        auto sz = list.size();
-        *typeCode = 2;
-        Tensor* output = allocator(list.size());
-        for (size_t i = 0; i < list.size(); i++)
-            // Assuming that all elements are tensors.
-            output[i] = ResultTensor(list[i].toTensor());
-        return;
-    }
+    CATCH(
+        auto method = (*module)->get_method(name);
+        auto result = method(toIValue(tensorPtrs, length));
+        ReturnHelper(result, allocator, typeCode);
+    )
+}
+
+void THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
+{
+    *typeCode = 0;
+
+    CATCH(
+        auto args = toIValue(tensorPtrs, length);
+        auto func = (*module)->find_function(method);
+        auto result = (*func)(args);
+        ReturnHelper(result, allocator, typeCode);
     )
 }
 
@@ -248,14 +387,17 @@ void THSJIT_TensorType_dispose(const JITTensorType type)
     delete type;
 }
 
+void THSJIT_CompilationUnit_dispose(const JITCompilationUnit module)
+{
+    delete module;
+}
+
 void* THSJIT_Type_cast(const JITType type)
 {
     switch ((*type)->kind())
     {
     case c10::TypeKind::TensorType:
         return new std::shared_ptr<torch::jit::TensorType>((*type)->cast<c10::TensorType>());
-        //case c10::TypeKind::DimensionedTensorType:
-        //	return new std::shared_ptr<torch::jit::DimensionedTensorType>((*type)->cast<c10::DimensionedTensorType>());
     default:
         return NULL;
     }
@@ -294,8 +436,6 @@ int8_t THSJIT_Type_kind(const JITType type)
     {
     case c10::TypeKind::TensorType:
         return (int8_t)TypeKind::TensorType;
-        //case c10::TypeKind::DimensionedTensorType:
-        //	return (int8_t)TypeKind::DimensionedTensorType;
     default:
         return -1;
     }
@@ -308,29 +448,6 @@ JITType THSJIT_Module_getInputType(JITModule module, int8_t index)
     auto& schema = typ->getMethod("forward").getSchema();
     return new std::shared_ptr<c10::Type>(schema.arguments()[1 + index].type()->cast<c10::TensorType>());
 }
-
-//int8_t THSJIT_getScalarFromDimensionedTensorType(const JITDimensionedTensorType type)
-//{
-//	return (int8_t)(*type)->scalarType();
-//}
-//
-//int THSJIT_getDimensionedTensorTypeDimensions(const JITDimensionedTensorType type)
-//{
-//	return (*type)->dim();
-//}
-//
-//const char* THSJIT_getDimensionedTensorDevice(const JITDimensionedTensorType type)
-//{
-//	auto device = (*type)->device();
-//
-//	auto device_type = DeviceTypeName(device.type());
-//
-//	std::transform(device_type.begin(), device_type.end(), device_type.begin(), ::tolower);
-//
-//	return make_sharable_string(device_type);
-//}
-
-
 
 void THSJIT_typeDispose(const JITType type)
 {
