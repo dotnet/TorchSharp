@@ -476,6 +476,11 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        /// Workaround for F# issue.
+        /// </summary>
+        public static bool cuda_is_available() => torch.cuda.is_available();
+
         [DllImport("LibTorchSharp")]
         private static extern IntPtr THSTorch_get_and_reset_last_err();
 

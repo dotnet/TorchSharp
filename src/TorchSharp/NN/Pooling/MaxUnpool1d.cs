@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a MaxUnpool1D module.
         /// </summary>
-        public class MaxUnpool1d : torch.nn.Module
+        public class MaxUnpool1d : torch.nn.Module<Tensor, Tensor, long[], Tensor>
         {
             internal MaxUnpool1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
@@ -21,7 +21,7 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             private static extern IntPtr THSNN_MaxUnpool1d_forward(torch.nn.Module.HType module, IntPtr tensor, IntPtr indices, IntPtr outSize);
 
-            public Tensor forward(Tensor tensor, Tensor indices, long[] output_size = null)
+            public override Tensor forward(Tensor tensor, Tensor indices, long[] output_size = null)
             {
                 unsafe {
                     fixed (long* pOutSize = output_size) {
