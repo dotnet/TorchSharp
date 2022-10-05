@@ -9,7 +9,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class TransformerEncoder : torch.nn.Module<Tensor, Tensor>
+        public class TransformerEncoder : torch.nn.Module<Tensor, Tensor>, torch.nn.IModule<Tensor,Tensor,Tensor>
         {
             public enum Activations
             {
