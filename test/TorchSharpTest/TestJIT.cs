@@ -119,18 +119,33 @@ namespace TorchSharp
         {
             if (torch.cuda.is_available()) {
 
-                using var m = torch.jit.load<Tensor, Tensor>(@"linrelu.script.dat");
+                {
+                    using var m = torch.jit.load<Tensor, Tensor>(@"linrelu.script.dat");
 
-                m.to(DeviceType.CUDA);
-                var params0 = m.parameters().ToArray();
-                foreach (var p in params0)
-                    Assert.Equal(DeviceType.CUDA, p.device_type);
+                    m.to(DeviceType.CUDA);
+                    var params0 = m.parameters().ToArray();
+                    foreach (var p in params0)
+                        Assert.Equal(DeviceType.CUDA, p.device_type);
 
-                var t = m.forward(torch.ones(10).cuda()).cpu();
+                    var t = m.forward(torch.ones(10).cuda()).cpu();
 
-                Assert.Equal(new long[] { 6 }, t.shape);
-                Assert.Equal(torch.float32, t.dtype);
-                Assert.True(torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }).allclose(t));
+                    Assert.Equal(new long[] { 6 }, t.shape);
+                    Assert.Equal(torch.float32, t.dtype);
+                    Assert.True(torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }).allclose(t));
+                }
+                {
+                    using var m = torch.jit.load<Tensor, Tensor>(@"linrelu.script.dat", DeviceType.CUDA);
+
+                    var params0 = m.parameters().ToArray();
+                    foreach (var p in params0)
+                        Assert.Equal(DeviceType.CUDA, p.device_type);
+
+                    var t = m.forward(torch.ones(10).cuda()).cpu();
+
+                    Assert.Equal(new long[] { 6 }, t.shape);
+                    Assert.Equal(torch.float32, t.dtype);
+                    Assert.True(torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }).allclose(t));
+                }
             }
         }
 
