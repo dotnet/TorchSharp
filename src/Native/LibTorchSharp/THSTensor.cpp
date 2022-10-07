@@ -1884,7 +1884,10 @@ Tensor THSTensor_where(const Tensor condition, const Tensor x, const Tensor y)
 
 bool THSTensor_has_names(Tensor tensor)
 {
-    return tensor->has_names();
+    CATCH(
+        return tensor->has_names();
+    );
+    return false;
 }
 
 void THSTensor_names(Tensor tensor, const char** (*allocator)(size_t length))

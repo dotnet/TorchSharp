@@ -887,7 +887,12 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern bool THSTensor_has_names(IntPtr handle);
 
-            public bool has_names() => THSTensor_has_names(Handle);
+            public bool has_names()
+            {
+                var res = THSTensor_has_names(Handle);
+                CheckForErrors();
+                return res;
+            }
 
             [DllImport("LibTorchSharp")]
             static extern void THSTensor_names(IntPtr handle, AllocatePinnedArray allocator);
@@ -924,6 +929,12 @@ namespace TorchSharp
                     CheckForErrors();
                     var strArray = sa.Array;
 
+                    if (strArray == null) {
+                        if (_names == null) {
+                            _names = new string[ndim];
+                        }
+                        return _names;
+                    }
                     return strArray.Select(str => { var s = Marshal.PtrToStringAnsi(str)!; return s == "*" ? null : s; });
                 }
             }

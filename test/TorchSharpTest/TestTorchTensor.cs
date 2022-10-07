@@ -1565,10 +1565,10 @@ namespace TorchSharp
             names = s.names.ToArray();
             Assert.Equal(new[] { "N", "C" }, names);
 
-            t.rename_(null);
+            t = t.rename_(null);
             Assert.False(t.has_names());
 
-            t.rename_(new[] { "Batch", "Channels" });
+            t = t.rename_(new[] { "Batch", "Channels" });
             Assert.True(t.has_names());
             Assert.Equal(new[] { "Batch", "Channels" }, t.names.ToArray());
 
