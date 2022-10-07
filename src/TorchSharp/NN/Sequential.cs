@@ -16,7 +16,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Sequential module.
         /// </summary>
-        public class Sequential : torch.nn.Module<Tensor, Tensor>
+        public sealed class Sequential : torch.nn.Module<Tensor, Tensor>
         {
             public void append(string name, torch.nn.IModule<Tensor, Tensor> module)
             {

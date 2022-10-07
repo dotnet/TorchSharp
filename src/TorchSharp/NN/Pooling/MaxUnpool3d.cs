@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a MaxUnpool3d module.
         /// </summary>
-        public class MaxUnpool3d : torch.nn.Module<Tensor, Tensor, long[], Tensor>
+        public sealed class MaxUnpool3d : torch.nn.Module<Tensor, Tensor, long[], Tensor>
         {
             internal MaxUnpool3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

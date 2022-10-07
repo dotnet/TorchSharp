@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class Identity : torch.nn.Module<Tensor, Tensor>
+        public sealed class Identity : torch.nn.Module<Tensor, Tensor>
         {
             internal Identity(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

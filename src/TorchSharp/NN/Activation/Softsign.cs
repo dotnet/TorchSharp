@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softsign module.
         /// </summary>
-        public class Softsign : torch.nn.Module<Tensor, Tensor>
+        public sealed class Softsign : torch.nn.Module<Tensor, Tensor>
         {
             internal Softsign(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

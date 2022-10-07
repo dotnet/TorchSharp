@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a AdaptiveAvgPool3D module.
         /// </summary>
-        public class AdaptiveAvgPool3d : torch.nn.Module<Tensor, Tensor>
+        public sealed class AdaptiveAvgPool3d : torch.nn.Module<Tensor, Tensor>
         {
             internal AdaptiveAvgPool3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

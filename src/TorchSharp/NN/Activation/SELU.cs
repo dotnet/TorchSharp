@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a SELU module.
         /// </summary>
-        public class SELU : torch.nn.Module<Tensor, Tensor>
+        public sealed class SELU : torch.nn.Module<Tensor, Tensor>
         {
             internal SELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
