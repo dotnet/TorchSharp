@@ -914,13 +914,14 @@ namespace TorchSharp
             /// Tensors may not have two named dimensions with the same name.
             /// </summary>
             /// <remarks>The named tensor API is experimental and subject to change.</remarks>
-            public IEnumerable<string?> names {            
+            public IEnumerable<string?> names {
 
                 get {
+                    // It should be safe to cache the names, since only rename_() can change them in place.
+                    if (_names != null) return _names;
+
                     if (!THSTensor_has_names(Handle)) {
-                        if (_names == null) {
-                            _names = new string[ndim];
-                        }
+                        _names = new string[ndim];
                         return _names;
                     }
 
@@ -930,16 +931,17 @@ namespace TorchSharp
                     var strArray = sa.Array;
 
                     if (strArray == null) {
-                        if (_names == null) {
-                            _names = new string[ndim];
-                        }
+                        _names = new string[ndim];
                         return _names;
                     }
-                    return strArray.Select(str => { var s = Marshal.PtrToStringAnsi(str)!; return s == "*" ? null : s; });
+
+                    _names = strArray.Select(str => { var s = Marshal.PtrToStringAnsi(str)!; return s == "*" ? null : s; }).ToArray();
+
+                    return _names;
                 }
             }
 
-            private string[]? _names;
+            private string?[]? _names;
 
             private static IntPtr MarshalDimensionString(string? s)
             {
@@ -1005,6 +1007,8 @@ namespace TorchSharp
                 }
 
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                // This is the only situation in which the names change in place.
+                _names = null;
                 return new Tensor(res);
             }
 
