@@ -914,15 +914,15 @@ namespace TorchSharp
             /// Tensors may not have two named dimensions with the same name.
             /// </summary>
             /// <remarks>The named tensor API is experimental and subject to change.</remarks>
-            public IEnumerable<string?> names {
+            public string[] names {
 
                 get {
                     // It should be safe to cache the names, since only rename_() can change them in place.
-                    if (_names != null) return _names;
+                    if (_names != null) return _names!;
 
                     if (!THSTensor_has_names(Handle)) {
                         _names = new string[ndim];
-                        return _names;
+                        return _names!;
                     }
 
                     using var sa = new PinnedArray<IntPtr>();
@@ -932,12 +932,12 @@ namespace TorchSharp
 
                     if (strArray == null) {
                         _names = new string[ndim];
-                        return _names;
+                        return _names!;
                     }
 
                     _names = strArray.Select(str => { var s = Marshal.PtrToStringAnsi(str)!; return s == "*" ? null : s; }).ToArray();
 
-                    return _names;
+                    return _names!;
                 }
             }
 
@@ -967,7 +967,7 @@ namespace TorchSharp
                     IntPtr namesRef = IntPtr.Zero;
 
                     using PinnedArray<IntPtr> pinnedArray = new PinnedArray<IntPtr>();
-                    namesRef = (names is null || names.Count() == 0) ? IntPtr.Zero : pinnedArray.CreateArray(dimNamesArray);
+                    namesRef = pinnedArray.CreateArray(dimNamesArray);
 
                     res = THSTensor_rename(Handle, namesRef, names is null ? 0 : dimNamesArray.Length);
                 } else {
@@ -998,7 +998,7 @@ namespace TorchSharp
                     IntPtr namesRef = IntPtr.Zero;
 
                     using PinnedArray<IntPtr> pinnedArray = new PinnedArray<IntPtr>();
-                    namesRef = (names is null || names.Count() == 0) ? IntPtr.Zero : pinnedArray.CreateArray(dimNamesArray);
+                    namesRef = pinnedArray.CreateArray(dimNamesArray);
 
                     res = THSTensor_rename_(Handle, namesRef, names is null ? 0 : dimNamesArray.Length);
                 } else {
@@ -1036,23 +1036,29 @@ namespace TorchSharp
 
             private IntPtr[] ExpandEllipsis(IEnumerable<string?> names)
             {
-                var namesArray = names.ToArray();
+                var namesArrayLength = names.Count();
+
                 IntPtr[] dimNamesArray = new IntPtr[ndim];
 
-                if (namesArray.Contains("...")) {
+                if (names.Contains("...")) {
                     int idx = -1;
-                    for (int i = 0; i < namesArray.Length; i++)
-                        if (namesArray[i] == "...") { idx = i; break; }
+                    foreach (var name in names) {
+                        idx += 1;
+                        if (name == "...") break;
+                    }
 
-                    if (idx == namesArray.Length - 1) { // '...' appears last.
+                    if (idx == namesArrayLength - 1) { // '...' appears last.
 
                         int i = 0;
-                        for (; i < idx; i++)
-                            dimNamesArray[i] = MarshalDimensionString(namesArray[i]);
+                        foreach (var name in names) {
+                            if (i == idx) break;
+                            dimNamesArray[i] = MarshalDimensionString(name);
+                            i++;
+                        }
 
                         if (has_names()) {
 
-                            var n = this.names.ToArray();
+                            var n = this.names;
 
                             for (; i < dimNamesArray.Length; i++)
                                 dimNamesArray[i] = MarshalDimensionString(n[i]);
@@ -1065,14 +1071,17 @@ namespace TorchSharp
                     } else { // Names before and after.
 
                         int dIdx = 0;
-                        for (int i = 0; i < idx; i++, dIdx++)
-                            dimNamesArray[dIdx] = MarshalDimensionString(namesArray[i]);
+                        foreach (var name in names) {
+                            if (dIdx == idx) break;
+                            dimNamesArray[dIdx] = MarshalDimensionString(name);
+                            dIdx++;
+                        }
 
-                        int missing_dims = (int)(ndim - namesArray.Length + 1);
+                        int missing_dims = (int)(ndim - namesArrayLength + 1);
 
                         if (has_names()) {
 
-                            var n = this.names.ToArray();
+                            var n = this.names;
 
                             for (int i = 0; i < missing_dims; i++, dIdx++)
                                 dimNamesArray[dIdx] = MarshalDimensionString(n[dIdx]);
@@ -1082,13 +1091,18 @@ namespace TorchSharp
                                 dimNamesArray[dIdx] = IntPtr.Zero;
                         }
 
-                        for (int i = idx + 1; i < namesArray.Length; i++, dIdx++)
-                            dimNamesArray[dIdx] = MarshalDimensionString(namesArray[i]);
+                        foreach (var name in names.Skip(idx+1)) {
+                            dimNamesArray[dIdx] = MarshalDimensionString(name);
+                            dIdx++;
+                        }
                     }
 
                 } else {
-                    for (int i = 0; i < namesArray.Length; i++)
-                        dimNamesArray[i] = MarshalDimensionString(namesArray[i]);
+                    int i = 0;
+                    foreach (var name in names) {
+                        dimNamesArray[i] = MarshalDimensionString(name);
+                        i++;
+                    }
                 }
 
                 return dimNamesArray;
