@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class LSTM : torch.nn.Module
+        public sealed class LSTM : torch.nn.Module
         {
             internal LSTM(IntPtr handle, IntPtr boxedHandle, long hiddenSize, long numLayers, bool batchFirst, bool bidirectional) : base(handle, boxedHandle)
             {

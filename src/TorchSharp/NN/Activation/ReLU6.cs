@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReLU6 module.
         /// </summary>
-        public class ReLU6 : torch.nn.Module<Tensor, Tensor>
+        public sealed class ReLU6 : torch.nn.Module<Tensor, Tensor>
         {
             internal ReLU6(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

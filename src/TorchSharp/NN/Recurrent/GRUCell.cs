@@ -11,7 +11,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class GRUCell : torch.nn.Module<Tensor, Tensor, Tensor>
+        public sealed class GRUCell : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal GRUCell(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

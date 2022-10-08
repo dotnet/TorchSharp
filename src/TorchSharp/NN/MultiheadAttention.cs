@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class MultiheadAttention : torch.nn.Module
+        public sealed class MultiheadAttention : torch.nn.Module
         {
             internal MultiheadAttention(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

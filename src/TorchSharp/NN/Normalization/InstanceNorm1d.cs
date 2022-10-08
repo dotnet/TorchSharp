@@ -14,7 +14,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a InstanceNorm1D module.
         /// </summary>
-        public class InstanceNorm1d : torch.nn.Module<Tensor, Tensor>
+        public sealed class InstanceNorm1d : torch.nn.Module<Tensor, Tensor>
         {
             internal InstanceNorm1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

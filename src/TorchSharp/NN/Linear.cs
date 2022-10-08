@@ -12,7 +12,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class Linear : torch.nn.Module<Tensor, Tensor>
+        public sealed class Linear : torch.nn.Module<Tensor, Tensor>
         {
             internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

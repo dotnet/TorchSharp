@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a FractionalMaxPool3d module.
         /// </summary>
-        public class FractionalMaxPool3d : torch.nn.Module<Tensor, Tensor>
+        public sealed class FractionalMaxPool3d : torch.nn.Module<Tensor, Tensor>
         {
             internal FractionalMaxPool3d(IntPtr handle, IntPtr boxedHandle, bool ratio) : base(handle, boxedHandle)
             {

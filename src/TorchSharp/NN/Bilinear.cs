@@ -11,7 +11,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class Bilinear : torch.nn.Module<Tensor, Tensor, Tensor>
+        public sealed class Bilinear : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal Bilinear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

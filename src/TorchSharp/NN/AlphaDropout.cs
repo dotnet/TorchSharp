@@ -17,7 +17,7 @@ namespace TorchSharp
         /// The elements to masked are randomized on every forward call, and scaled and shifted to maintain zero mean and unit standard deviation.
         /// During evaluation the module simply computes an identity function.
         /// </summary>
-        public class AlphaDropout : torch.nn.Module<Tensor, Tensor>
+        public sealed class AlphaDropout : torch.nn.Module<Tensor, Tensor>
         {
             internal AlphaDropout(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

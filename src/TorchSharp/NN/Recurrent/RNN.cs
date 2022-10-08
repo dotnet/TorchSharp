@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class RNN : torch.nn.Module
+        public sealed class RNN : torch.nn.Module
         {
             internal RNN(IntPtr handle, IntPtr boxedHandle, long hiddenSize, long numLayers, bool batchFirst, bool bidirectional) : base(handle, boxedHandle)
             {

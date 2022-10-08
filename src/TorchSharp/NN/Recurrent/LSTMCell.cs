@@ -12,7 +12,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class LSTMCell : torch.nn.Module
+        public sealed class LSTMCell : torch.nn.Module
         {
             internal LSTMCell(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
