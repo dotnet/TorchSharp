@@ -87,7 +87,7 @@ namespace TorchSharp.Examples
             };
         }
 
-        internal static void TrainingLoop(string dataset, Device device, M5 model, ITransform transform, Dataset<SpeechCommandsDatasetItem> train_data, Dataset<SpeechCommandsDatasetItem> test_data)
+        internal static void TrainingLoop(string dataset, Device device, M5 model, nn.IModule<Tensor, Tensor> transform, Dataset<SpeechCommandsDatasetItem> train_data, Dataset<SpeechCommandsDatasetItem> test_data)
         {
             using (var train_loader = new DataLoader<SpeechCommandsDatasetItem, BatchItem>(
                 train_data, _trainBatchSize, Collate, shuffle: true, device: device))
@@ -121,7 +121,7 @@ namespace TorchSharp.Examples
 
         private static void Train(
             M5 model,
-            ITransform transform,
+            nn.IModule<Tensor, Tensor> transform,
             torch.optim.Optimizer optimizer,
             Loss<Tensor,Tensor,Tensor> criteria,
             DataLoader<SpeechCommandsDatasetItem, BatchItem> dataLoader,
@@ -159,7 +159,7 @@ namespace TorchSharp.Examples
 
         private static void Test(
             M5 model,
-            ITransform transform,
+            nn.IModule<Tensor, Tensor> transform,
             Loss<Tensor, Tensor, Tensor> criteria,
             DataLoader<SpeechCommandsDatasetItem, BatchItem> dataLoader,
             long size)
