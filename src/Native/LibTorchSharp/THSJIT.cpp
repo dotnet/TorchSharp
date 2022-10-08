@@ -1,12 +1,16 @@
 //// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #include "THSJIT.h"
 
-JITModule THSJIT_load(const char* filename)
+JITModule THSJIT_load(const char* filename, int64_t device, int64_t index)
 {
+    c10::DeviceType dev = c10::kCPU;
+    if (device == 1)
+        dev = c10::kCUDA;
+ 
     CATCH(
-        auto res = torch::jit::load(filename);
-    auto copy = new torch::jit::Module(res);
-    return new std::shared_ptr<torch::jit::Module>(copy);
+        auto res = torch::jit::load(filename, torch::Device(dev, index));
+        auto copy = new torch::jit::Module(res);
+        return new std::shared_ptr<torch::jit::Module>(copy);
     );
 
     return nullptr;
