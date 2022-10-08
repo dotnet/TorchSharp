@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a LeakyReLU module.
         /// </summary>
-        public class LeakyReLU : torch.nn.Module<Tensor, Tensor>
+        public sealed class LeakyReLU : torch.nn.Module<Tensor, Tensor>
         {
             internal LeakyReLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

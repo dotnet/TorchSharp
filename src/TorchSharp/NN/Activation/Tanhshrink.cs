@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Tanhshrink module.
         /// </summary>
-        public class Tanhshrink : torch.nn.Module<Tensor, Tensor>
+        public sealed class Tanhshrink : torch.nn.Module<Tensor, Tensor>
         {
             internal Tanhshrink(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

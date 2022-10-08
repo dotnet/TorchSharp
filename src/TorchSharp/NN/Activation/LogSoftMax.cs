@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a log softmax module.
         /// </summary>
-        public class LogSoftmax : torch.nn.Module<Tensor, Tensor>
+        public sealed class LogSoftmax : torch.nn.Module<Tensor, Tensor>
         {
             internal LogSoftmax(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

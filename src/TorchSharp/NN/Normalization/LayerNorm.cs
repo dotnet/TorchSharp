@@ -14,7 +14,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a LayerNorm module.
         /// </summary>
-        public class LayerNorm : torch.nn.Module<Tensor, Tensor>
+        public sealed class LayerNorm : torch.nn.Module<Tensor, Tensor>
         {
             internal LayerNorm(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class ConvTranspose1d : torch.nn.Module<Tensor, Tensor>
+        public sealed class ConvTranspose1d : torch.nn.Module<Tensor, Tensor>
         {
             internal ConvTranspose1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

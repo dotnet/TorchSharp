@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a dropout module.
         /// </summary>
-        public class PixelShuffle : torch.nn.Module<Tensor, Tensor>
+        public sealed class PixelShuffle : torch.nn.Module<Tensor, Tensor>
         {
             internal PixelShuffle(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

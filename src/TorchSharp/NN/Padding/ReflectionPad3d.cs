@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReflectionPad3d module.
         /// </summary>
-        public class ReflectionPad3d : torch.nn.Module<Tensor, Tensor>
+        public sealed class ReflectionPad3d : torch.nn.Module<Tensor, Tensor>
         {
             internal ReflectionPad3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

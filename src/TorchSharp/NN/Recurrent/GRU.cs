@@ -9,7 +9,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class GRU : torch.nn.Module
+        public sealed class GRU : torch.nn.Module
         {
             internal GRU(IntPtr handle, IntPtr boxedHandle, long hiddenSize, long numLayers, bool batchFirst, bool bidirectional) : base(handle, boxedHandle)
             {

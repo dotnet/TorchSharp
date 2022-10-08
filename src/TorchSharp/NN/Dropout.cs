@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a dropout module.
         /// </summary>
-        public class Dropout : torch.nn.Module<Tensor, Tensor>
+        public sealed class Dropout : torch.nn.Module<Tensor, Tensor>
         {
             internal Dropout(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
