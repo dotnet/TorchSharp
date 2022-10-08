@@ -1045,16 +1045,12 @@ namespace TorchSharp
                     foreach (var name in names) {
                         idx += 1;
                         if (name == "...") break;
+                        dimNamesArray[idx] = MarshalDimensionString(name);
                     }
 
                     if (idx == namesArrayLength - 1) { // '...' appears last.
 
-                        int i = 0;
-                        foreach (var name in names) {
-                            if (i == idx) break;
-                            dimNamesArray[i] = MarshalDimensionString(name);
-                            i++;
-                        }
+                        int i = idx;
 
                         if (has_names()) {
 
@@ -1070,13 +1066,7 @@ namespace TorchSharp
 
                     } else { // Names before and after.
 
-                        int dIdx = 0;
-                        foreach (var name in names) {
-                            if (dIdx == idx) break;
-                            dimNamesArray[dIdx] = MarshalDimensionString(name);
-                            dIdx++;
-                        }
-
+                        int dIdx = idx;
                         int missing_dims = (int)(ndim - namesArrayLength + 1);
 
                         if (has_names()) {
