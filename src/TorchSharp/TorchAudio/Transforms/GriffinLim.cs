@@ -17,7 +17,7 @@ using static TorchSharp.torchaudio;
 
 namespace TorchSharp.Transforms
 {
-    public class GriffinLim : nn.Module<Tensor, Tensor>
+    public sealed class GriffinLim : nn.Module<Tensor, Tensor>, ITransform
     {
         public readonly long n_fft;
         public readonly int n_iter;

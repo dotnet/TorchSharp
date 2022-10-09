@@ -18,7 +18,7 @@ using static TorchSharp.torchaudio;
 
 namespace TorchSharp.Transforms
 {
-    public sealed class InverseSpectrogram : nn.Module<Tensor, Tensor>, nn.IModule<Tensor, long?, Tensor>
+    public sealed class InverseSpectrogram : nn.Module<Tensor, Tensor>, nn.IModule<Tensor, long?, Tensor>, ITransform
     {
         private readonly long n_fft;
         private readonly long win_length;

@@ -17,7 +17,7 @@ using static TorchSharp.torchaudio;
 
 namespace TorchSharp.Transforms
 {
-    public sealed class Resample : nn.Module<Tensor, Tensor>
+    public sealed class Resample : nn.Module<Tensor, Tensor>, ITransform
     {
         private readonly int orig_freq;
         private readonly int new_freq;
