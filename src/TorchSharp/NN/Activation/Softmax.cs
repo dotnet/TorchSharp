@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softmax module.
         /// </summary>
-        public class Softmax : torch.nn.Module<Tensor, Tensor>
+        public sealed class Softmax : torch.nn.Module<Tensor, Tensor>
         {
             internal Softmax(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

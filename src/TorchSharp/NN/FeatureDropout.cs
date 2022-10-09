@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a dropout module for 2d/3d convolutational layers.
         /// </summary>
-        public class FeatureAlphaDropout : torch.nn.Module<Tensor, Tensor>
+        public sealed class FeatureAlphaDropout : torch.nn.Module<Tensor, Tensor>
         {
             internal FeatureAlphaDropout(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
