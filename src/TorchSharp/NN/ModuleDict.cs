@@ -21,7 +21,7 @@ namespace TorchSharp
         /// ModuleDict is an ordered dictionary that respects the order of insertion, and
         /// in update(), the order of the merged OrderedDict or another ModuleDict (the argument to update()).
         /// </summary>
-        public class ModuleDict : Module, IDictionary<string, Module>, IList<(string, Module)>
+        public class ModuleDict<T> : Module, IDictionary<string, T>, IList<(string, T)> where T : Module
         {
             public ModuleDict() : base(nameof(ModuleDict))
             {
@@ -40,7 +40,7 @@ namespace TorchSharp
             /// Return an enumeration of the ParameterDict key/value pairs.
             /// </summary>
             /// <returns></returns>
-            public IEnumerator<(string, Module)> items() => _list.GetEnumerator();
+            public IEnumerator<(string, T)> items() => _list.GetEnumerator();
 
             /// <summary>
             /// Return the ParameterDict keys.
@@ -64,9 +64,9 @@ namespace TorchSharp
             /// Return the ParameterDict values.
             /// </summary>
             /// <returns></returns>
-            public IEnumerable<Module> values() => _dict.Values;
+            public IEnumerable<T> values() => _dict.Values;
 
-            public (string, Module) this[int index] {
+            public (string, T) this[int index] {
                 get => _list[index];
                 set {
                     var name = value.Item1;
@@ -79,11 +79,11 @@ namespace TorchSharp
 
             public ICollection<string> Keys => _list.Select(kv => kv.Item1).ToList();
 
-            public ICollection<Module> Values => _list.Select(kv => kv.Item2).ToList();
+            public ICollection<T> Values => _list.Select(kv => kv.Item2).ToList();
 
             public int Count => _dict.Count;
 
-            public Module this[string key] {
+            public T this[string key] {
                 get => _dict[key];
                 set {
                     _dict[key] = value;
@@ -92,46 +92,46 @@ namespace TorchSharp
                 }
             }
 
-            public void Add((string, Module) item)
+            public void Add((string, T) item)
             {
                 _dict.Add(item.Item1, item.Item2);
                 _list.Add(item);
             }
 
-            public void Add(string key, Module value)
+            public void Add(string key, T value)
             {
                 _dict.Add(key, value);
                 _list.Add((key, value));
             }
 
-            public void Add(KeyValuePair<string, Module> item)
+            public void Add(KeyValuePair<string, T> item)
             {
                 _dict.Add(item.Key, item.Value);
                 _list.Add((item.Key, item.Value));
             }
 
-            public bool Contains((string, Module) item)
+            public bool Contains((string, T) item)
             {
                 return _list.Contains(item);
             }
 
-            public void CopyTo((string, Module)[] array, int arrayIndex)
+            public void CopyTo((string, T)[] array, int arrayIndex)
             {
                 _list.CopyTo(array, arrayIndex);
             }
 
-            public int IndexOf((string, Module) item)
+            public int IndexOf((string, T) item)
             {
                 return _list.IndexOf(item);
             }
 
-            public void Insert(int index, (string, Module) item)
+            public void Insert(int index, (string, T) item)
             {
                 _dict.Add(item.Item1, item.Item2);
                 _list.Insert(index, item);
             }
 
-            public bool Remove((string, Module) item)
+            public bool Remove((string, T) item)
             {
                 _dict.Remove(item.Item1);
                 return _list.Remove(item);
@@ -156,7 +156,7 @@ namespace TorchSharp
                 return _dict.Remove(key) && _list.Remove((key, value));
             }
 
-            public bool TryGetValue(string key, [MaybeNullWhen(false)] out Module value)
+            public bool TryGetValue(string key, [MaybeNullWhen(false)] out T value)
             {
                 return _dict.TryGetValue(key, out value);
             }
@@ -167,227 +167,38 @@ namespace TorchSharp
                 _list.Clear();
             }
 
-            public bool Contains(KeyValuePair<string, Module> item)
+            public bool Contains(KeyValuePair<string, T> item)
             {
                 return _dict.ContainsKey(item.Key);
             }
 
-            public void CopyTo(KeyValuePair<string, Module>[] array, int arrayIndex)
+            public void CopyTo(KeyValuePair<string, T>[] array, int arrayIndex)
             {
                 throw new NotImplementedException();
             }
 
-            public bool Remove(KeyValuePair<string, Module> item)
+            public bool Remove(KeyValuePair<string, T> item)
             {
                 return _dict.Remove(item.Key);
             }
 
-            public IEnumerator<(string, Module)> GetEnumerator()
+            public IEnumerator<(string, T)> GetEnumerator()
             {
                 return _list.GetEnumerator();
             }
 
-            IEnumerator<KeyValuePair<string, Module>> IEnumerable<KeyValuePair<string, Module>>.GetEnumerator()
+            IEnumerator<KeyValuePair<string, T>> IEnumerable<KeyValuePair<string, T>>.GetEnumerator()
             {
                 throw new NotImplementedException();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return ((IEnumerable<KeyValuePair<string, Module>>)this).GetEnumerator();
+                return ((IEnumerable<KeyValuePair<string, T>>)this).GetEnumerator();
             }
 
-            private List<(string, Module)> _list = new List<(string, Module)>();
-            private Dictionary<string, Module> _dict = new Dictionary<string, Module>();
-        };
-
-        /// <summary>
-        /// Holds parameters in a dictionary. Generic version.
-        /// 
-        /// ModuleDict can be indexed like a regular dictionary, but the modules it
-        /// contains are properly registered, and will be visible by all Module methods.
-        ///
-        /// ModuleDict is an ordered dictionary that respects the order of insertion, and
-        /// in update(), the order of the merged OrderedDict or another ModuleDict (the argument to update()).
-        /// </summary>
-        public class ModuleDict<T, TResult> : Module, IDictionary<string, Module<T, TResult>>, IList<(string, Module<T, TResult>)>
-        {
-            public ModuleDict() : base(nameof(ModuleDict))
-            {
-            }
-
-            /// <summary>
-            /// Remove all items from the ParameterDict.
-            /// </summary>
-            public void clear()
-            {
-                _list.Clear();
-                _dict.Clear();
-            }
-
-            /// <summary>
-            /// Return an enumeration of the ParameterDict key/value pairs.
-            /// </summary>
-            /// <returns></returns>
-            public IEnumerator<(string, Module<T, TResult>)> items() => _list.GetEnumerator();
-
-            /// <summary>
-            /// Return the ParameterDict keys.
-            /// </summary>
-            /// <returns></returns>
-            public IEnumerable<string> keys() => _dict.Keys;
-
-            protected override void RegisterComponents()
-            {
-                if (_registered) return;
-
-                for (int i = 0; i < _list.Count; i++) {
-                    register_module($"{_list[i].Item1}", _list[i].Item2);
-                }
-                _registered = true;
-            }
-
-            private bool _registered = false;
-
-            /// <summary>
-            /// Return the ParameterDict values.
-            /// </summary>
-            /// <returns></returns>
-            public IEnumerable<Module> values() => _dict.Values;
-
-            public (string, Module<T, TResult>) this[int index] {
-                get => _list[index];
-                set {
-                    var name = value.Item1;
-                    _list[index] = value;
-                    _dict[name] = value.Item2;
-                }
-            }
-
-            public bool IsReadOnly => false;
-
-            public ICollection<string> Keys => _list.Select(kv => kv.Item1).ToList();
-
-            public ICollection<Module<T, TResult>> Values => _list.Select(kv => kv.Item2).ToList();
-
-            public int Count => _dict.Count;
-
-            public Module<T, TResult> this[string key] {
-                get => _dict[key];
-                set {
-                    _dict[key] = value;
-                    var idx = _list.FindIndex(kv => kv.Item1.Equals(key));
-                    _list[idx] = (key, value);
-                }
-            }
-
-            public void Add((string, Module<T, TResult>) item)
-            {
-                _dict.Add(item.Item1, item.Item2);
-                _list.Add(item);
-            }
-
-            public void Add(string key, Module<T, TResult> value)
-            {
-                _dict.Add(key, value);
-                _list.Add((key, value));
-            }
-
-            public void Add(KeyValuePair<string, Module<T, TResult>> item)
-            {
-                _dict.Add(item.Key, item.Value);
-                _list.Add((item.Key, item.Value));
-            }
-
-            public bool Contains((string, Module<T, TResult>) item)
-            {
-                return _list.Contains(item);
-            }
-
-            public void CopyTo((string, Module<T, TResult>)[] array, int arrayIndex)
-            {
-                _list.CopyTo(array, arrayIndex);
-            }
-
-            public int IndexOf((string, Module<T, TResult>) item)
-            {
-                return _list.IndexOf(item);
-            }
-
-            public void Insert(int index, (string, Module<T, TResult>) item)
-            {
-                _dict.Add(item.Item1, item.Item2);
-                _list.Insert(index, item);
-            }
-
-            public bool Remove((string, Module<T, TResult>) item)
-            {
-                _dict.Remove(item.Item1);
-                return _list.Remove(item);
-            }
-
-            public void RemoveAt(int index)
-            {
-                if (index >= _list.Count) throw new IndexOutOfRangeException();
-                var (n, p) = _list[index];
-                _list.RemoveAt(index);
-                _dict.Remove(n);
-            }
-
-            public bool ContainsKey(string key)
-            {
-                return _dict.ContainsKey(key);
-            }
-
-            public bool Remove(string key)
-            {
-                var value = _dict[key];
-                return _dict.Remove(key) && _list.Remove((key, value));
-            }
-
-            public bool TryGetValue(string key, [MaybeNullWhen(false)] out Module<T, TResult> value)
-            {
-                return _dict.TryGetValue(key, out value);
-            }
-
-            public void Clear()
-            {
-                _dict.Clear();
-                _list.Clear();
-            }
-
-            public bool Contains(KeyValuePair<string, Module<T, TResult>> item)
-            {
-                return _dict.ContainsKey(item.Key);
-            }
-
-            public void CopyTo(KeyValuePair<string, Module<T, TResult>>[] array, int arrayIndex)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool Remove(KeyValuePair<string, Module<T, TResult>> item)
-            {
-                return _dict.Remove(item.Key);
-            }
-
-            public IEnumerator<(string, Module<T, TResult>)> GetEnumerator()
-            {
-                return _list.GetEnumerator();
-            }
-
-            IEnumerator<KeyValuePair<string, Module<T, TResult>>> IEnumerable<KeyValuePair<string, Module<T, TResult>>>.GetEnumerator()
-            {
-                throw new NotImplementedException();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return ((IEnumerable<KeyValuePair<string, Module<T, TResult>>>)this).GetEnumerator();
-            }
-
-            private List<(string, Module<T, TResult>)> _list = new List<(string, Module<T, TResult>)>();
-            private Dictionary<string, Module<T, TResult>> _dict = new Dictionary<string, Module<T, TResult>>();
+            private List<(string, T)> _list = new List<(string, T)>();
+            private Dictionary<string, T> _dict = new Dictionary<string, T>();
         };
     }
 
@@ -407,9 +218,9 @@ namespace TorchSharp
             /// ModuleDict is an ordered dictionary that respects the order of insertion, and
             /// in update(), the order of the merged OrderedDict or another ModuleDict (the argument to update()).
             /// </remarks>
-            public static ModuleDict ModuleDict(params (string, Module)[] modules)
+            public static ModuleDict<Module> ModuleDict(params (string, Module)[] modules)
             {
-                var result = new ModuleDict();
+                var result = new ModuleDict<Module>();
                 foreach (var (n, m) in modules) {
                     result.Add((n, m));
                 }
@@ -428,9 +239,9 @@ namespace TorchSharp
             /// ModuleDict is an ordered dictionary that respects the order of insertion, and
             /// in update(), the order of the merged OrderedDict or another ModuleDict (the argument to update()).
             /// </remarks>
-            public static ModuleDict<T, TResult> ModuleDict<T,TResult>(params (string, Module<T, TResult>)[] modules)
+            public static ModuleDict<T> ModuleDict<T>(params (string, T)[] modules) where T: Module
             {
-                var result = new ModuleDict<T, TResult>();
+                var result = new ModuleDict<T>();
                 foreach (var (n, m) in modules) {
                     result.Add((n, m));
                 }
