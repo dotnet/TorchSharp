@@ -3831,17 +3831,17 @@ namespace TorchSharp
         /// <summary>
         /// Returns a tensor with the same size as input that is filled with random numbers from a uniform distribution on the interval [0,1) .
         /// </summary>
-        public static Tensor rand_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.rand_like(dtype, device, requiresGrad);
+        public static Tensor rand_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requires_grad = false) => input.rand_like(dtype, device, requires_grad);
 
         /// <summary>
         /// Returns a tensor with the same size as input that is filled with random numbers from a normal distribution with mean 0 and variance 1. 
         /// </summary>
-        public static Tensor randn_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.randn_like(dtype, device, requiresGrad);
+        public static Tensor randn_like(Tensor input, ScalarType? dtype = null, torch.Device device = null, bool requires_grad = false) => input.randn_like(dtype, device, requires_grad);
 
         /// <summary>
         /// Returns a tensor with the same shape as Tensor input filled with random integers generated uniformly in the range [low,high).
         /// </summary>
-        public static Tensor randint_like(Tensor input, long low, long high, ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false) => input.randint_like(low, high, dtype, device, requiresGrad);
+        public static Tensor randint_like(Tensor input, long low, long high, ScalarType? dtype = null, torch.Device device = null, bool requires_grad = false) => input.randint_like(low, high, dtype, device, requires_grad);
 
         /// <summary>
         ///  Mutates the tensor to be a 1-D tensor of size [n] with a random permutation of [0, n).

@@ -1545,6 +1545,97 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.zeros))]
+        public void CreateFloat32TensorZerosWithNames()
+        {
+            var shape = new long[] { 2, 2 };
+            Tensor t = torch.zeros(shape, names: new[] { "N", "C" });
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(0.0f, t[0, 0].ToSingle());
+            Assert.Equal(0.0f, t[1, 1].ToSingle());
+
+            Assert.True(t.has_names());
+
+            var names = t.names.ToArray();
+            Assert.Equal(new[] { "N", "C" }, names);
+
+            var s = t + 1;
+            Assert.True(s.has_names());
+
+            names = s.names.ToArray();
+            Assert.Equal(new[] { "N", "C" }, names);
+
+            t = t.rename_(null);
+            Assert.False(t.has_names());
+
+            t = t.rename_(new[] { "Batch", "Channels" });
+            Assert.True(t.has_names());
+            Assert.Equal(new[] { "Batch", "Channels" }, t.names.ToArray());
+
+            Assert.Throws<ArgumentException>(() => t.rename_(new[] { "N" }));
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.zeros))]
+        public void CreateFloat32TensorOnesWithNames()
+        {
+            var shape = new long[] { 2, 2 };
+            Tensor t = torch.ones(shape, names: new[] { "N", "C" });
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(1.0f, t[0, 0].ToSingle());
+            Assert.Equal(1.0f, t[1, 1].ToSingle());
+
+            Assert.True(t.has_names());
+
+            var names = t.names.ToArray();
+            Assert.Equal(new[] { "N", "C" }, names);
+
+            var s = t + 1;
+            Assert.True(s.has_names());
+
+            names = s.names.ToArray();
+            Assert.Equal(new[] { "N", "C" }, names);
+
+            t.rename_(null);
+            Assert.False(t.has_names());
+
+            t.rename_(new[] { "Batch", "Channels" });
+            Assert.True(t.has_names());
+            Assert.Equal(new[] { "Batch", "Channels" }, t.names.ToArray());
+
+            Assert.Throws<ArgumentException>(() => t.rename_(new[] { "N" }));
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.zeros))]
+        public void CreateFloat32TensorFullWithNames()
+        {
+            var shape = new long[] { 2, 2 };
+            Tensor t = torch.full(shape, 2.0f, names: new[] { "N", "C" });
+            Assert.Equal(shape, t.shape);
+            Assert.Equal(2.0f, t[0, 0].ToSingle());
+            Assert.Equal(2.0f, t[1, 1].ToSingle());
+
+            Assert.True(t.has_names());
+
+            var names = t.names.ToArray();
+            Assert.Equal(new[] { "N", "C" }, names);
+
+            var s = t + 1;
+            Assert.True(s.has_names());
+
+            names = s.names.ToArray();
+            Assert.Equal(new[] { "N", "C" }, names);
+
+            t.rename_(null);
+            Assert.False(t.has_names());
+
+            t.rename_(new[] { "Batch", "Channels" });
+            Assert.True(t.has_names());
+            Assert.Equal(new[] { "Batch", "Channels" }, t.names.ToArray());
+        }
+
+        [Fact]
         [TestOf(nameof(torch.full))]
         public void CreateFloat32TensorFull()
         {
@@ -2557,6 +2648,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.rand))]
+        [TestOf(nameof(torch.randn))]
+        public void CreateRandomTensorWithNames()
+        {
+            var names = new[] { "A", "B" };
+            var t = torch.rand(3, 4, names: names);
+            Assert.True(t.has_names());
+            Assert.NotNull(t.names);
+            Assert.Equal(names, t.names);
+
+            t = torch.randn(3, 4, names: names);
+            Assert.True(t.has_names());
+            Assert.NotNull(t.names);
+            Assert.Equal(names, t.names);
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.mean))]
         public void Float32Mean()
         {
@@ -2850,7 +2958,7 @@ namespace TorchSharp
         [TestOf(nameof(TensorExtensionMethods.ToTensor))]
         public void TestScalarToTensor()
         {
-            Assert.Throws<ArgumentException>(() => 1.ToTensor(requiresGrad: true));
+            Assert.Throws<ArgumentException>(() => 1.ToTensor(requires_grad: true));
         }
 
         [Fact]
@@ -4001,7 +4109,7 @@ namespace TorchSharp
         {
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                var x = torch.randn(new long[] { 2, 3 }, requiresGrad: true);
+                var x = torch.randn(new long[] { 2, 3 }, requires_grad: true);
                 using (torch.no_grad()) {
                     Assert.False(torch.is_grad_enabled());
                     var sum = x.sum();
@@ -4020,7 +4128,7 @@ namespace TorchSharp
                         Assert.Equal(1.0, data[i]);
                     }
                 }
-                x = torch.randn(new long[] { 2, 3 }, requiresGrad: true);
+                x = torch.randn(new long[] { 2, 3 }, requires_grad: true);
                 using (torch.set_grad_enabled(false)) {
                     Assert.False(torch.is_grad_enabled());
                     var sum = x.sum();
@@ -8084,6 +8192,7 @@ namespace TorchSharp
 
         [Fact]
         [TestOf(nameof(Tensor.reshape))]
+        [TestOf(nameof(Tensor.flatten))]
         public void TestReshape()
         {
             var input = torch.ones(4, 4, 4, 4);
@@ -8100,6 +8209,122 @@ namespace TorchSharp
             using (var t = input.unflatten(0, 4, 4)) {
                 Assert.Equal(new long[] { 4, 4, 4, 4 }, t.shape);
             }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.flatten))]
+        [TestOf(nameof(Tensor.unflatten))]
+        public void TestFlattenNamed()
+        {
+            var input = torch.ones(4, 4, 4, 4, names: new[] { "N", "C", "H", "W"} );
+            using (var t = input.flatten(new[] { "C", "H", "W" }, "CHW")) {
+                Assert.Equal(new long[] { 4, 64 }, t.shape);
+                Assert.Equal(new[] { "N", "CHW" }, t.names);
+            }
+            input = torch.ones(16, 4, 4, names: new[] { "C", "H", "W" });
+            using (var t = input.unflatten("C", ("C1", 4), ("C2", 4))) {
+                Assert.Equal(new long[] { 4, 4, 4, 4 }, t.shape);
+                Assert.Equal(new[] { "C1", "C2", "H", "W" }, t.names);
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.refine_names))]
+        public void TestRefineNames()
+        {
+            var imgs = torch.randn(32, 3, 128, 128);
+            using (var named_imgs = imgs.refine_names("N", "C", "H", "W")) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { "N", "C", "H", "W" }, named_imgs.names);
+            }
+            using (var named_imgs = imgs.refine_names("N", "...", "W")) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { "N", null, null, "W" }, named_imgs.names);
+            }
+            using (var named_imgs = imgs.refine_names("...", "H", "W")) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { null, null, "H", "W" }, named_imgs.names);
+            }
+            using (var named_imgs = imgs.refine_names("N", "C", "...")) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { "N", "C", null, null }, named_imgs.names);
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.rename))]
+        public void TestRenameTensor()
+        {
+            var imgs = torch.randn(32, 3, 128, 128);
+            using (var named_imgs = imgs.rename(new string?[] { "N", null, null, "W" })) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { "N", null, null, "W" }, named_imgs.names);
+            }
+            using (var named_imgs = imgs.rename(new string?[] { "N", "...", "W" })) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { "N", null, null, "W" }, named_imgs.names);
+            }
+            using (var named_imgs = imgs.rename(new string?[] { "N", "C", "..."})) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { "N", "C", null, null }, named_imgs.names);
+            }
+            using (var named_imgs = imgs.rename(new string?[] { "...", "H", "W" })) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { null, null, "H", "W" }, named_imgs.names);
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.rename))]
+        public void TestRenameNamedTensor()
+        {
+            var imgs = torch.randn(32, 3, 128, 128, names: new[] { "A", "B", "C", "D" });
+            using (var named_imgs = imgs.rename(new string?[] { "N", null, null, "W" })) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { "N", null, null, "W" }, named_imgs.names);
+            }
+            using (var named_imgs = imgs.rename(new string?[] { "N", "...", "W" })) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { "N", "B", "C", "W" }, named_imgs.names);
+            }
+            using (var named_imgs = imgs.rename(new string?[] { "N", "H", "..." })) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { "N", "H", "C", "D" }, named_imgs.names);
+            }
+            using (var named_imgs = imgs.rename(new string?[] { "...", "H", "W" })) {
+                Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
+                Assert.Equal(new[] { "A", "B", "H", "W" }, named_imgs.names);
+            }
+        }
+
+
+        [Fact]
+        [TestOf(nameof(Tensor.align_to))]
+        public void TestAlignTo()
+        {
+            var input = torch.ones(8, 16, 32, names: new[] { "A", "B", "C" });
+            using (var t = input.align_to(new[] { "D", "C", "A", "B" })) {
+                Assert.Equal(new long[] { 1, 32, 8, 16 }, t.shape);
+                Assert.Equal(new[] { "D", "C", "A", "B" }, t.names);
+            }
+            using (var t = input.align_to(new[] { "D", "C", "..." })) {
+                Assert.Equal(new long[] { 1, 32, 8, 16 }, t.shape);
+                Assert.Equal(new[] { "D", "C", "A", "B" }, t.names);
+            }
+            using (var t = input.align_to(new[] { "D", "...", "B" })) {
+                Assert.Equal(new long[] { 1, 8, 32, 16 }, t.shape);
+                Assert.Equal(new[] { "D", "A", "C", "B" }, t.names);
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.align_as))]
+        public void TestAlignAs()
+        {
+            using var input = torch.ones(8, 16, 32, names: new[] { "A", "B", "C" });
+            using var t = input.align_as(torch.rand(16, 32, 8, 16, names: new[] { "D", "C", "A", "B" }));
+            Assert.Equal(new long[] { 1, 32, 8, 16 }, t.shape);
+            Assert.Equal(new[] { "D", "C", "A", "B" }, t.names);
         }
 
         [Fact]

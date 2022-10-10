@@ -27,15 +27,15 @@ namespace TorchSharp
             /// common difference step, starting from start.
             /// </summary>
             /// <remarks>In the case of complex element types, 'arange' will create a complex tensor with img=0 in all elements.</remarks>
-            static public Tensor arange(Scalar start, Scalar stop, Scalar step, torch.Device device = null, bool requiresGrad = false)
+            static public Tensor arange(Scalar start, Scalar stop, Scalar step, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
 
-                var handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
+                var handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float32, (int)device.type, device.index, requires_grad);
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
+                    handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float32, (int)device.type, device.index, requires_grad);
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
@@ -47,15 +47,15 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_newComplexFloat32Scalar(float real, float imaginary, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_newComplexFloat32Scalar(float real, float imaginary, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Create a scalar tensor from a single value
             /// </summary>
-            public static Tensor from((float Real, float Imaginary) scalar, torch.Device device = null, bool requiresGrad = false)
+            public static Tensor from((float Real, float Imaginary) scalar, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
-                var handle = THSTensor_newComplexFloat32Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requiresGrad);
+                var handle = THSTensor_newComplexFloat32Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);
             }
@@ -63,16 +63,16 @@ namespace TorchSharp
             /// <summary>
             /// Create a scalar tensor from a single value
             /// </summary>
-            public static Tensor from(float real, float imaginary = 0.0f, torch.Device device = null, bool requiresGrad = false)
+            public static Tensor from(float real, float imaginary = 0.0f, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
-                var handle = THSTensor_newComplexFloat32Scalar(real, imaginary, (int)device.type, device.index, requiresGrad);
+                var handle = THSTensor_newComplexFloat32Scalar(real, imaginary, (int)device.type, device.index, requires_grad);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_view_as_complex(IntPtr tensor);
@@ -87,7 +87,7 @@ namespace TorchSharp
             ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
             ///  The real and imaginary parts will be filled independently of each other.
             /// </summary>
-            static public Tensor randint(long max, long[] size, torch.Device device = null, bool requiresGrad = false)
+            static public Tensor randint(long max, long[] size, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
 
@@ -103,11 +103,11 @@ namespace TorchSharp
                         // but we can get around that by adding another dimension, creating a float tensor, and then
                         // converting it to a complex tensor in the end.
                         //
-                        var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
+                        var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requires_grad);
                         if (handle == IntPtr.Zero) {
                             GC.Collect();
                             GC.WaitForPendingFinalizers();
-                            handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requiresGrad);
+                            handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requires_grad);
                         }
                         if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
@@ -118,7 +118,7 @@ namespace TorchSharp
                         //
                         // view_as_complex() creates a view, but we want an independent tensor, so we have to create one and then copy the view's data into it.
                         //
-                        var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int)device.type, device.index, requiresGrad);
+                        var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int)device.type, device.index, requires_grad);
                         if (res == IntPtr.Zero)
                             torch.CheckForErrors();
 
@@ -148,15 +148,15 @@ namespace TorchSharp
             /// common difference step, starting from start.
             /// </summary>
             /// <remarks>In the case of complex element types, 'arange' will create a complex tensor with img=0 in all elements.</remarks>
-            static public Tensor arange(Scalar start, Scalar stop, Scalar step, torch.Device device = null, bool requiresGrad = false)
+            static public Tensor arange(Scalar start, Scalar stop, Scalar step, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
 
-                var handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
+                var handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
+                    handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
@@ -168,15 +168,15 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_newComplexFloat64Scalar(double real, double imaginary, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_newComplexFloat64Scalar(double real, double imaginary, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Create a scalar tensor from a single value
             /// </summary>
-            public static Tensor from(System.Numerics.Complex scalar, torch.Device device = null, bool requiresGrad = false)
+            public static Tensor from(System.Numerics.Complex scalar, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
-                var handle = THSTensor_newComplexFloat64Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requiresGrad);
+                var handle = THSTensor_newComplexFloat64Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);
             }
@@ -184,16 +184,16 @@ namespace TorchSharp
             /// <summary>
             /// Create a scalar tensor from a single value
             /// </summary>
-            public static Tensor from(double real, double imaginary = 0.0f, torch.Device device = null, bool requiresGrad = false)
+            public static Tensor from(double real, double imaginary = 0.0f, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
-                var handle = THSTensor_newComplexFloat64Scalar(real, imaginary, (int)device.type, device.index, requiresGrad);
+                var handle = THSTensor_newComplexFloat64Scalar(real, imaginary, (int)device.type, device.index, requires_grad);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             [DllImport("LibTorchSharp")]
             extern static IntPtr THSTensor_view_as_complex(IntPtr tensor);
@@ -208,7 +208,7 @@ namespace TorchSharp
             ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
             ///  The real and imaginary parts will be filled independently of each other.
             /// </summary>
-            static public Tensor randint(long max, long[] size, torch.Device device = null, bool requiresGrad = false)
+            static public Tensor randint(long max, long[] size, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
 
@@ -224,11 +224,11 @@ namespace TorchSharp
                         // but we can get around that by adding another dimension, creating a float tensor, and then
                         // converting it to a complex tensor in the end.
                         //
-                        var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
+                        var handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
                         if (handle == IntPtr.Zero) {
                             GC.Collect();
                             GC.WaitForPendingFinalizers();
-                            handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requiresGrad);
+                            handle = THSTensor_randint(max, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
                         }
                         if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
 
@@ -239,7 +239,7 @@ namespace TorchSharp
                         //
                         // view_as_complex() creates a view, but we want an independent tensor, so we have to create one and then copy the view's data into it.
                         //
-                        var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int)device.type, device.index, requiresGrad);
+                        var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int)device.type, device.index, requires_grad);
                         if (res == IntPtr.Zero)
                             torch.CheckForErrors();
 

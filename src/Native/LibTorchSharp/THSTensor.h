@@ -1295,6 +1295,18 @@ EXPORT_API(Tensor) THSTensor_upsample_nearest3d_backward(
 
 EXPORT_API(Tensor) THSTensor_values(Tensor tensor);
 
+EXPORT_API(bool) THSTensor_has_names(Tensor tensor);
+EXPORT_API(void) THSTensor_names(Tensor tensor, const char** (*allocator)(size_t length));
+EXPORT_API(Tensor) THSTensor_rename(Tensor tensor, const char** names, int64_t nLength);
+EXPORT_API(Tensor) THSTensor_rename_(Tensor tensor, const char** names, int64_t nLength);
+
+EXPORT_API(Tensor) THSTensor_refine_names(Tensor tensor, const char** names, int64_t nLength);
+
+EXPORT_API(Tensor) THSTensor_flatten_names(Tensor tensor, const char** names, int64_t nLength);
+EXPORT_API(Tensor) THSTensor_unflatten_names(Tensor tensor, const char** names, const int64_t* sizes, int64_t nLength);
+
+EXPORT_API(Tensor) THSTensor_align_to(Tensor tensor, const char** names, int64_t nLength);
+
 EXPORT_API(Tensor) THSTensor_vander(const Tensor tensor, const int64_t N, const bool increasing);
 
 EXPORT_API(Tensor) THSTensor_vdot(const Tensor left, const Tensor right);
