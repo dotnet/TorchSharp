@@ -8,6 +8,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Diagnostics.Contracts;
+using Google.Protobuf;
+using static Tensorboard.TensorShapeProto.Types;
 
 #nullable enable
 namespace TorchSharp
@@ -881,6 +883,233 @@ namespace TorchSharp
                 }
             }
 
+
+            [DllImport("LibTorchSharp")]
+            static extern bool THSTensor_has_names(IntPtr handle);
+
+            public bool has_names()
+            {
+                var res = THSTensor_has_names(Handle);
+                CheckForErrors();
+                return res;
+            }
+
+            [DllImport("LibTorchSharp")]
+            static extern void THSTensor_names(IntPtr handle, AllocatePinnedArray allocator);
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_rename(IntPtr tensor, IntPtr names, long nLength);
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_rename_(IntPtr tensor, IntPtr names, long nLength);
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_refine_names(IntPtr tensor, IntPtr names, long nLength);
+
+            /// <summary>
+            /// Stores names for each of this tensor’s dimensions.
+            ///
+            /// names[idx] corresponds to the name of tensor dimension idx.Names are either a string if the dimension is named or None if the dimension is unnamed.
+            /// Dimension names may contain characters or underscore.Furthermore, a dimension name must be a valid Python variable name(i.e., does not start with underscore).
+            /// Tensors may not have two named dimensions with the same name.
+            /// </summary>
+            /// <remarks>The named tensor API is experimental and subject to change.</remarks>
+            public string[] names {
+
+                get {
+                    // It should be safe to cache the names, since only rename_() can change them in place.
+                    if (_names != null) return _names!;
+
+                    if (!THSTensor_has_names(Handle)) {
+                        _names = new string[ndim];
+                        return _names!;
+                    }
+
+                    using var sa = new PinnedArray<IntPtr>();
+                    THSTensor_names(Handle, sa.CreateArray);
+                    CheckForErrors();
+                    var strArray = sa.Array;
+
+                    if (strArray == null) {
+                        _names = new string[ndim];
+                        return _names!;
+                    }
+
+                    _names = strArray.Select(str => { var s = Marshal.PtrToStringAnsi(str)!; return s == "*" ? null : s; }).ToArray();
+
+                    return _names!;
+                }
+            }
+
+            private string?[]? _names;
+
+            private static IntPtr MarshalDimensionString(string? s)
+            {
+                return s == null ? Marshal.StringToHGlobalAnsi("*") : Marshal.StringToHGlobalAnsi(s);
+            }
+
+            /// <summary>
+            /// Renames dimension names of the input tensor.
+            /// </summary>
+            /// <param name="names">A list of names, one for each dimension in the tensor. Passing 'null' clears out all the names.</param>
+            /// <remarks>The named tensor API is experimental and subject to change.</remarks>
+            public Tensor rename(IEnumerable<string?>? names)
+            {
+                if (names != null && names.Count() != ndim && !names.Contains("..."))
+                    throw new ArgumentException($"The number of dimension names ({names.Count()}) is different from the number of dimensions ({ndim}).");
+
+                IntPtr res = IntPtr.Zero;
+
+                if (names != null && names.Count() > 0) {
+
+                    var dimNamesArray = ExpandEllipsis(names);
+
+                    IntPtr namesRef = IntPtr.Zero;
+
+                    using PinnedArray<IntPtr> pinnedArray = new PinnedArray<IntPtr>();
+                    namesRef = pinnedArray.CreateArray(dimNamesArray);
+
+                    res = THSTensor_rename(Handle, namesRef, names is null ? 0 : dimNamesArray.Length);
+                } else {
+
+                    res = THSTensor_rename(Handle, IntPtr.Zero, 0);
+                }
+
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Renames dimension names of the input tensor, in place.
+            /// </summary>
+            /// <param name="names">A list of names, one for each dimension in the tensor. Passing 'null' clears out all the names.</param>
+            /// <remarks>The named tensor API is experimental and subject to change.</remarks>
+            public Tensor rename_(IEnumerable<string?>? names)
+            {
+                if (names != null && names.Count() != ndim && !names.Contains("..."))
+                    throw new ArgumentException($"The number of dimension names ({names.Count()}) is different from the number of dimensions ({ndim}).");
+
+                IntPtr res = IntPtr.Zero;
+
+                if (names != null && names.Count() > 0) {
+
+                    var dimNamesArray = ExpandEllipsis(names);
+
+                    IntPtr namesRef = IntPtr.Zero;
+
+                    using PinnedArray<IntPtr> pinnedArray = new PinnedArray<IntPtr>();
+                    namesRef = pinnedArray.CreateArray(dimNamesArray);
+
+                    res = THSTensor_rename_(Handle, namesRef, names is null ? 0 : dimNamesArray.Length);
+                } else {
+
+                    res = THSTensor_rename_(Handle, IntPtr.Zero, 0);
+                }
+
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                // This is the only situation in which the names change in place.
+                _names = null;
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Refines the dimension names of the input tensor according to names.
+            /// 
+            /// Refining is a special case of renaming that “lifts” unnamed dimensions.A None dim can be refined to have any name; a named dim can only be refined to have the same name.
+            /// Because named tensors can coexist with unnamed tensors, refining names gives a nice way to write named-tensor-aware code that works with both named and unnamed tensors.
+            /// names may contain up to one ellipsis argument, passed as "...". The ellipsis is expanded greedily; it is expanded in-place to fill names to the same length as
+            /// this.shape using names from the corresponding indices of this.names.
+            /// </summary>
+            /// <param name="names">A list of names, one for each dimension in the tensor.</param>
+            /// <remarks>The named tensor API is experimental and subject to change.</remarks>
+            public Tensor refine_names(IEnumerable<string> names)
+            {
+                var dimNamesArray = ExpandEllipsis(names);
+
+                using PinnedArray<IntPtr> pinnedArray = new PinnedArray<IntPtr>();
+                IntPtr namesRef = pinnedArray.CreateArray(dimNamesArray);
+
+                IntPtr res = THSTensor_refine_names(Handle, namesRef, dimNamesArray.Length);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            private IntPtr[] ExpandEllipsis(IEnumerable<string?> names)
+            {
+                var namesArrayLength = names.Count();
+
+                IntPtr[] dimNamesArray = new IntPtr[ndim];
+
+                if (names.Contains("...")) {
+                    int idx = -1;
+                    foreach (var name in names) {
+                        idx += 1;
+                        if (name == "...") break;
+                        dimNamesArray[idx] = MarshalDimensionString(name);
+                    }
+
+                    if (idx == namesArrayLength - 1) { // '...' appears last.
+
+                        int i = idx;
+
+                        if (has_names()) {
+
+                            var n = this.names;
+
+                            for (; i < dimNamesArray.Length; i++)
+                                dimNamesArray[i] = MarshalDimensionString(n[i]);
+
+                        } else {
+                            for (; i < dimNamesArray.Length; i++)
+                                dimNamesArray[i] = IntPtr.Zero;
+                        }
+
+                    } else { // Names before and after.
+
+                        int dIdx = idx;
+                        int missing_dims = (int)(ndim - namesArrayLength + 1);
+
+                        if (has_names()) {
+
+                            var n = this.names;
+
+                            for (int i = 0; i < missing_dims; i++, dIdx++)
+                                dimNamesArray[dIdx] = MarshalDimensionString(n[dIdx]);
+
+                        } else {
+                            for (int i = 0; i < missing_dims; i++, dIdx++)
+                                dimNamesArray[dIdx] = IntPtr.Zero;
+                        }
+
+                        foreach (var name in names.Skip(idx+1)) {
+                            dimNamesArray[dIdx] = MarshalDimensionString(name);
+                            dIdx++;
+                        }
+                    }
+
+                } else {
+                    int i = 0;
+                    foreach (var name in names) {
+                        dimNamesArray[i] = MarshalDimensionString(name);
+                        i++;
+                    }
+                }
+
+                return dimNamesArray;
+            }
+
+            /// <summary>
+            /// Refines the dimension names of the input tensor according to names.
+            /// 
+            /// Refining is a special case of renaming that “lifts” unnamed dimensions.A None dim can be refined to have any name; a named dim can only be refined to have the same name.
+            /// Because named tensors can coexist with unnamed tensors, refining names gives a nice way to write named-tensor-aware code that works with both named and unnamed tensors.
+            /// names may contain up to one ellipsis argument, passed as "...". The ellipsis is expanded greedily; it is expanded in-place to fill names to the same length as
+            /// this.shape using names from the corresponding indices of this.names.
+            /// </summary>
+            /// <param name="names">A list of names, one for each dimension in the tensor.</param>
+            /// <remarks>The named tensor API is experimental and subject to change.</remarks>
+            public Tensor refine_names(params string[] names) => refine_names((IEnumerable<string>)names);
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_indices(IntPtr handle);
 
@@ -994,7 +1223,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_to_dense(IntPtr handle);
 
             /// <summary>
-            /// Creates a strided copy of self.
+            /// Creates a strided copy of the input tensor.
             /// </summary>
 
             public Tensor to_dense()
@@ -1454,7 +1683,7 @@ namespace TorchSharp
             static extern IntPtr THSTensor_select(IntPtr tensor, long dim, long index);
 
             /// <summary>
-            /// Slices the self tensor along the selected dimension at the given index.
+            /// Slices the input tensor along the selected dimension at the given index.
             /// This function returns a view of the original tensor with the given dimension removed.
             /// </summary>
             /// <param name="dim">The dimension to slice</param>
@@ -1544,7 +1773,7 @@ namespace TorchSharp
             /// Accumulate the elements of alpha times source into the input tensor by adding to the indices in the order given in index.
             /// 
             /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
-            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match the input tensor, or an error will be raised.
             /// </summary>
             /// <param name="dim">Dimension along which to index</param>
             /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
@@ -1568,7 +1797,7 @@ namespace TorchSharp
             /// Accumulate, in place, the elements of alpha times source into the input tensor by adding to the indices in the order given in index.
             /// 
             /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
-            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match the input tensor, or an error will be raised.
             /// </summary>
             /// <param name="dim">Dimension along which to index</param>
             /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
@@ -1594,7 +1823,7 @@ namespace TorchSharp
             /// Copies the elements of the source tensor into the input tensor by selecting the indices in the order given in index.
             ///
             /// For example, if dim == 0 and index[i] == j, then the ith row of tensor is copied to the jth row of the input tensor.
-            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match the input tensor, or an error will be raised.
             /// </summary>
             /// <param name="dim">Dimension along which to index</param>
             /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
@@ -1614,7 +1843,7 @@ namespace TorchSharp
             /// Copies, in place, the elements of the source tensor into the input tensor by selecting the indices in the order given in index.
             ///
             /// For example, if dim == 0 and index[i] == j, then the ith row of tensor is copied to the jth row of the input tensor.
-            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match the input tensor, or an error will be raised.
             /// </summary>
             /// <param name="dim">Dimension along which to index</param>
             /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
@@ -1639,7 +1868,7 @@ namespace TorchSharp
             /// Fills the elements of the input tensor with value value by selecting the indices in the order given in index.
             /// 
             /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
-            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match the input tensor, or an error will be raised.
             /// </summary>
             /// <param name="dim">Dimension along which to index</param>
             /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
@@ -1659,7 +1888,7 @@ namespace TorchSharp
             /// Fills, in place, the elements of the input tensor with value value by selecting the indices in the order given in index.
             /// 
             /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
-            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match self, or an error will be raised.
+            /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match the input tensor, or an error will be raised.
             /// </summary>
             /// <param name="dim">Dimension along which to index</param>
             /// <param name="index">Indices of source to select from, should have dtype either torch.int64 or torch.int32</param>
@@ -1697,6 +1926,9 @@ namespace TorchSharp
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_flatten(IntPtr tensor, long start, long end);
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_flatten_names(IntPtr tensor, IntPtr names, long nLength);
+
             /// <summary>
             /// Flattens input by reshaping it into a one-dimensional tensor.
             /// </summary>
@@ -1711,16 +1943,48 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Flattens dims into a single dimension with name out_dim.
+            /// </summary>
+            /// <param name="dims">The named dimensions to flatten.</param>
+            /// <param name="out_dim">The name of the output dimension.</param>
+            /// <remarks>The named tensor API is experimental and subject to change.</remarks>
+            public Tensor flatten(IList<string?> dims, string out_dim)
+            {
+                if (dims.Count == 0)
+                    throw new ArgumentException($"The number of input dimension names ({dims.Count}) is zero.");
+                if (dims.Count > ndim)
+                    throw new ArgumentException($"The number of input dimension names ({dims.Count}) is larger than the number of dimensions ({ndim}).");
+
+                using PinnedArray<IntPtr> pinnedArray = new PinnedArray<IntPtr>();
+                var iPtrArray = dims.Select(s => Marshal.StringToHGlobalAnsi(s)).ToList();
+                iPtrArray.Add(Marshal.StringToHGlobalAnsi(out_dim));
+
+                IntPtr namesRef = pinnedArray.CreateArray(iPtrArray.ToArray());
+
+                IntPtr res = THSTensor_flatten_names(Handle, namesRef, iPtrArray.Count);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_unflatten(IntPtr tensor, long dim, IntPtr shape, int length);
 
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_unflatten_names(IntPtr tensor, IntPtr names, IntPtr dims, int length);
+
             /// <summary>
-            /// Expands the dimension dim of the self tensor over multiple dimensions of sizes given by sizes.
+            /// Expands the dimension dim of the input tensor over multiple dimensions of sizes given by sizes.
             /// </summary>
             /// <param name="dim">Dimension to unflatten.</param>
             /// <param name="sizes">New shape of the unflattened dimension.</param>
             public Tensor unflatten(long dim, params long[] sizes)
             {
+                if (dim < 0 || dim >= ndim)
+                    throw new ArgumentException($"Invalid 'dim' argument: {dim}.");
+                if (sizes.Length == 0)
+                    throw new ArgumentException($"The number of output sizes is zero.");
+
                 unsafe {
                     fixed (long* pshape = sizes) {
                         var res = THSTensor_unflatten(Handle, dim, (IntPtr)pshape, sizes.Length);
@@ -1730,6 +1994,84 @@ namespace TorchSharp
                     }
                 }
             }
+
+            /// <summary>
+            /// Expands the dimension dim of the input tensor over multiple dimensions of sizes given by sizes.
+            /// </summary>
+            /// <param name="dim">Dimension to unflatten.</param>
+            /// <param name="sizes">New names and sizes of the unflattened dimension.</param>
+            /// <remarks>The named tensor API is experimental and subject to change.</remarks>
+            public Tensor unflatten(string dim, params (string, long)[] sizes)
+            {
+                if (sizes.Length == 0)
+                    throw new ArgumentException($"The number of output sizes is zero.");
+
+                var names = sizes.Select(s => s.Item1).ToList();
+                var szs = sizes.Select(s => s.Item2).ToArray();
+
+                names.Insert(0, dim);
+
+                using PinnedArray<IntPtr> pinnedArray = new PinnedArray<IntPtr>();
+
+                IntPtr namesRef = pinnedArray.CreateArray(names.Select(s => Marshal.StringToHGlobalAnsi(s)).ToArray());
+
+                unsafe {
+                    fixed (long* pshape = szs) {
+                        var res = THSTensor_unflatten_names(Handle, namesRef, (IntPtr)pshape, names.Count);
+                        if (res == IntPtr.Zero)
+                            torch.CheckForErrors();
+                        return new Tensor(res);
+                    }
+                }
+            }
+
+
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_align_to(IntPtr tensor, IntPtr names, long nLength);
+
+            /// <summary>
+            /// Permutes the dimensions of the input tensor to match the order specified in names, adding size-one dims for any new names.
+            /// 
+            /// All of the dims of the input tensor must be named in order to use this method.The resulting tensor is a view on the original tensor.
+            /// All dimension names of the input tensor must be present in names.names may contain additional names that are not in this.names; the output tensor has a size-one dimension for each of those new names.
+            /// names may contain up to one ellipsis "...". The ellipsis is expanded to be equal to all dimension names of the input tensor that are not mentioned in names, in the order that they appear in the input tensor.
+            /// </summary>
+            /// <param name="names">The desired dimension ordering of the output tensor. May contain up to one ellipsis that is expanded to all unmentioned dim names of the input tensor.</param>
+            /// <remarks>The named tensor API is experimental and subject to change.</remarks>
+            public Tensor align_to(IEnumerable<string> names)
+            {
+                using PinnedArray<IntPtr> pinnedArray = new PinnedArray<IntPtr>();
+                IntPtr namesRef = pinnedArray.CreateArray(names.Select(s => Marshal.StringToHGlobalAnsi(s)).ToArray());
+
+                IntPtr res = THSTensor_align_to(Handle, namesRef, names.Count());
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Permutes the dimensions of the input tensor to match the order specified in names, adding size-one dims for any new names.
+            /// 
+            /// All of the dims of the input tensor must be named in order to use this method.The resulting tensor is a view on the original tensor.
+            /// All dimension names of the input tensor must be present in names.names may contain additional names that are not in this.names; the output tensor has a size-one dimension for each of those new names.
+            /// names may contain up to one ellipsis "...". The ellipsis is expanded to be equal to all dimension names of the input tensor that are not mentioned in names, in the order that they appear in the input tensor.
+            /// </summary>
+            /// <param name="names">The desired dimension ordering of the output tensor. May contain up to one ellipsis that is expanded to all unmentioned dim names of the input tensor.</param>
+            /// <remarks>The named tensor API is experimental and subject to change.</remarks>
+            public Tensor align_to(params string[] names) => align_to((IEnumerable<string>)names);
+
+
+            /// <summary>
+            /// Permutes the dimensions of the input tensor to match the dimension order in the other tensor, adding size-one dims for any new names.
+            /// 
+            /// This operation is useful for explicit broadcasting by names.
+            /// All of the dims of the input tensor must be named in order to use this method.The resulting tensor is a view on the original tensor.
+            /// All dimension names of the input tensor must be present in other.names.other may contain named dimensions that are not in this.names; the output tensor has a size-one dimension for each of those new names.
+            /// To align a tensor to a specific order, use align_to().
+            /// </summary>
+            /// <param name="other"></param>
+            /// <returns></returns>
+            public Tensor align_as(Tensor other) => align_to(other.names!);
+
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_unique(IntPtr tensor, bool sorted, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
@@ -1787,7 +2129,7 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Expands the dimension dim of the self tensor over multiple dimensions of sizes given by sizes.
+            /// Expands the dimension dim of the input tensor over multiple dimensions of sizes given by sizes.
             /// </summary>
             /// <param name="dim">Dimension to unflatten.</param>
             /// <param name="sizes">New shape of the unflattened dimension.</param>
@@ -1990,7 +2332,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="other">The result tensor has the same size as other.</param>
             /// <remarks>
-            /// self.view_as(other) is equivalent to self.view(other.size()).
+            /// this.view_as(other) is equivalent to this.view(other.size()).
             /// Please see view() for more information about view.
             /// </remarks>
             public Tensor view_as(Tensor other)
@@ -5284,63 +5626,63 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_rand_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_rand_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Returns a tensor with the same size as input that is filled with random numbers from a uniform distribution on the interval [0,1) .
             /// </summary>
-            public Tensor rand_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor rand_like(ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_rand_like(Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                var result = THSTensor_rand_like(Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_rand_like(Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                    result = THSTensor_rand_like(Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randn_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_randn_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Returns a tensor with the same size as input that is filled with random numbers from a normal distribution with mean 0 and variance 1.
             /// </summary>
-            public Tensor randn_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor randn_like(ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_randn_like(Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                var result = THSTensor_randn_like(Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_randn_like(Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                    result = THSTensor_randn_like(Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randint_like(IntPtr input, long low, long high, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_randint_like(IntPtr input, long low, long high, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Returns a tensor with the same shape as Tensor input filled with random integers generated uniformly in the range [low,high).
             /// </summary>
-            public Tensor randint_like(long low, long high, ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor randint_like(long low, long high, ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_randint_like(Handle, low, high, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                var result = THSTensor_randint_like(Handle, low, high, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_randint_like(Handle, low, high, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                    result = THSTensor_randint_like(Handle, low, high, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
@@ -5411,7 +5753,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_bernoulli_0(IntPtr tensor, double p, IntPtr gen);
 
             /// <summary>
-            /// Fills each location of self with an independent sample from Bernoulli(p)
+            /// Fills each location of the input tensor with an independent sample from Bernoulli(p)
             /// </summary>
             /// <param name="p">Probability</param>
             /// <param name="generator">Optional random-number generator.</param>
@@ -5427,7 +5769,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_bernoulli_1(IntPtr tensor, IntPtr p_tensor, IntPtr gen);
 
             /// <summary>
-            /// Fills each location of self with an independent sample from Bernoulli(p)
+            /// Fills each location of the input tensor with an independent sample from Bernoulli(p)
             /// </summary>
             /// <param name="p">Probability tensor</param>
             /// <param name="generator">Optional random-number generator.</param>
@@ -5467,7 +5809,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_exponential_(IntPtr tensor, double lambda, IntPtr gen);
 
             /// <summary>
-            /// Fills self tensor with elements drawn from the exponential distribution
+            /// Fills the input tensor with elements drawn from the exponential distribution
             /// </summary>
             /// <param name="lambda"></param>
             /// <param name="generator">Optional random-number generator.</param>
@@ -5483,7 +5825,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_geometric_(IntPtr tensor, double p, IntPtr gen);
 
             /// <summary>
-            /// Fills self tensor with elements drawn from a geometric distribution.
+            /// Fills the input tensor with elements drawn from a geometric distribution.
             /// </summary>
             /// <param name="p"></param>
             /// <param name="generator">Optional random-number generator.</param>
@@ -5499,7 +5841,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_normal_(IntPtr tensor, double mean, double std, IntPtr gen);
 
             /// <summary>
-            /// Fills self tensor with elements samples from the normal distribution parameterized by mean and std.
+            /// Fills the input tensor with elements samples from the normal distribution parameterized by mean and std.
             /// </summary>
             /// <param name="mean">The mean of the underlying normal distribution.</param>
             /// <param name="std">The standard deviation of the underlying normal distribution.</param>
@@ -5516,7 +5858,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_log_normal_(IntPtr tensor, double mean, double std, IntPtr gen);
 
             /// <summary>
-            /// Fills self tensor with numbers samples from the log-normal distribution parameterized by the given mean and standard deviation.
+            /// Fills the input tensor with numbers samples from the log-normal distribution parameterized by the given mean and standard deviation.
             /// </summary>
             /// <param name="mean">The mean of the underlying normal distribution.</param>
             /// <param name="std">The standard deviation of the underlying normal distribution.</param>
@@ -5534,8 +5876,8 @@ namespace TorchSharp
             extern static IntPtr THSTensor_random_(IntPtr tensor, double low, double high, IntPtr gen);
 
             /// <summary>
-            /// Fills self tensor with numbers sampled from the discrete uniform distribution over [from, to - 1].
-            /// If not specified, the values are usually only bounded by self tensor’s data type.
+            /// Fills the input tensor with numbers sampled from the discrete uniform distribution over [from, to - 1].
+            /// If not specified, the values are usually only bounded by the input tensor’s data type.
             /// </summary>
             /// <param name="from">The lower bound.</param>
             /// <param name="to">The uppoer bound.</param>
@@ -5554,7 +5896,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_uniform_(IntPtr tensor, double low, double high, IntPtr gen);
 
             /// <summary>
-            /// Fills self tensor with numbers sampled from the continuous uniform distribution:
+            /// Fills the input tensor with numbers sampled from the continuous uniform distribution:
             /// </summary>
             /// <param name="from">Lower bound.</param>
             /// <param name="to">Upper bound</param>
@@ -5619,53 +5961,53 @@ namespace TorchSharp
             /// <summary>
             ///  Create a new tensor filled with ones
             /// </summary>
-            private Tensor new_ones(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            private Tensor new_ones(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
-                return torch.ones(size, dtype, device, requiresGrad);
+                return torch.ones(size, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new tensor filled with ones
             /// </summary>
-            private Tensor new_ones(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            private Tensor new_ones(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
-                return torch.ones(size, dtype, device, requiresGrad);
+                return torch.ones(size, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 1-D tensor filled with ones
             /// </summary>
-            public Tensor new_ones(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_ones(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_ones(new long[] { size }, dtype, device, requiresGrad);
+                return new_ones(new long[] { size }, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 2-D tensor filled with ones
             /// </summary>
-            public Tensor new_ones(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_ones(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_ones(new long[] { rows, columns }, dtype, device, requiresGrad);
+                return new_ones(new long[] { rows, columns }, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 3-D tensor filled with ones
             /// </summary>
-            public Tensor new_ones(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_ones(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_ones(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+                return new_ones(new long[] { dim0, dim1, dim2 }, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 4-D tensor filled with ones
             /// </summary>
-            public Tensor new_ones(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_ones(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_ones(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+                return new_ones(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad);
             }
 
             [DllImport("LibTorchSharp")]
@@ -5697,93 +6039,93 @@ namespace TorchSharp
             /// <summary>
             ///  Create a new tensor filled with zeros
             /// </summary>
-            public Tensor new_zeros(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_zeros(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
-                return torch.zeros(size, dtype, device, requiresGrad);
+                return torch.zeros(size, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new tensor filled with zeros
             /// </summary>
-            public Tensor new_zeros(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_zeros(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
-                return torch.zeros(size, dtype, device, requiresGrad);
+                return torch.zeros(size, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 1-D tensor filled with zeros
             /// </summary>
-            public Tensor new_zeros(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_zeros(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_zeros(new long[] { size }, dtype, device, requiresGrad);
+                return new_zeros(new long[] { size }, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 2-D tensor filled with zeros
             /// </summary>
-            public Tensor new_zeros(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_zeros(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_zeros(new long[] { rows, columns }, dtype, device, requiresGrad);
+                return new_zeros(new long[] { rows, columns }, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 3-D tensor filled with zeros
             /// </summary>
-            public Tensor new_zeros(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_zeros(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_zeros(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+                return new_zeros(new long[] { dim0, dim1, dim2 }, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 4-D tensor filled with zeros
             /// </summary>
-            public Tensor new_zeros(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_zeros(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_zeros(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+                return new_zeros(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad);
             }
 
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_zeros_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_zeros_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Returns a tensor filled with the scalar value 0, with the same size as input.
             /// </summary>
-            public Tensor zeros_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor zeros_like(ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_zeros_like(Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                var result = THSTensor_zeros_like(Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_zeros_like(Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                    result = THSTensor_zeros_like(Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_ones_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_ones_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Returns a tensor filled with the scalar value 1, with the same size as input.
             /// </summary>
-            public Tensor ones_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor ones_like(ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_ones_like(Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                var result = THSTensor_ones_like(Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_ones_like(Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                    result = THSTensor_ones_like(Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
@@ -5792,53 +6134,53 @@ namespace TorchSharp
             /// <summary>
             ///  Create a new tensor filled with empty
             /// </summary>
-            public Tensor new_empty(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_empty(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
-                return torch.empty(size, dtype, device, requiresGrad);
+                return torch.empty(size, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new tensor filled with empty
             /// </summary>
-            public Tensor new_empty(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_empty(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
-                return torch.empty(size, dtype, device, requiresGrad);
+                return torch.empty(size, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 1-D tensor filled with empty
             /// </summary>
-            public Tensor new_empty(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_empty(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_empty(new long[] { size }, dtype, device, requiresGrad);
+                return new_empty(new long[] { size }, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 2-D tensor filled with empty
             /// </summary>
-            public Tensor new_empty(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_empty(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_empty(new long[] { rows, columns }, dtype, device, requiresGrad);
+                return new_empty(new long[] { rows, columns }, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 3-D tensor filled with empty
             /// </summary>
-            public Tensor new_empty(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_empty(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_empty(new long[] { dim0, dim1, dim2 }, dtype, device, requiresGrad);
+                return new_empty(new long[] { dim0, dim1, dim2 }, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 4-D tensor filled with empty
             /// </summary>
-            public Tensor new_empty(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_empty(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_empty(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requiresGrad);
+                return new_empty(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad);
             }
 
             [DllImport("LibTorchSharp")]
@@ -5859,21 +6201,21 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_empty_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_empty_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             ///  Returns an uninitialized tensor with the same size as input.
             /// </summary>
-            public Tensor empty_like(ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor empty_like(ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_empty_like(Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                var result = THSTensor_empty_like(Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_empty_like(Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                    result = THSTensor_empty_like(Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
@@ -5913,72 +6255,72 @@ namespace TorchSharp
             /// <summary>
             ///  Create a new tensor filled with a given value
             /// </summary>
-            public Tensor new_full(long[] size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_full(long[] size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
-                return torch.full(size, value, dtype, device, requiresGrad);
+                return torch.full(size, value, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new tensor filled with a given value
             /// </summary>
-            public Tensor new_full(ReadOnlySpan<long> size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_full(ReadOnlySpan<long> size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 if (device == null) device = this.device;
                 if (dtype == null) dtype = this.dtype;
-                return torch.full(size, value, dtype, device, requiresGrad);
+                return torch.full(size, value, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 1-D tensor filled with a given value
             /// </summary>
-            public Tensor new_full(long size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_full(long size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_full(new long[] { size }, value, dtype, device, requiresGrad);
+                return new_full(new long[] { size }, value, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 2-D tensor filled with a given value
             /// </summary>
-            public Tensor new_full(long rows, long columns, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_full(long rows, long columns, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_full(new long[] { rows, columns }, value, dtype, device, requiresGrad);
+                return new_full(new long[] { rows, columns }, value, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 3-D tensor filled with a given value
             /// </summary>
-            public Tensor new_full(long dim0, long dim1, long dim2, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_full(long dim0, long dim1, long dim2, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_full(new long[] { dim0, dim1, dim2 }, value, dtype, device, requiresGrad);
+                return new_full(new long[] { dim0, dim1, dim2 }, value, dtype, device, requires_grad);
             }
 
             /// <summary>
             ///  Create a new 4-D tensor filled with a given value
             /// </summary>
-            public Tensor new_full(long dim0, long dim1, long dim2, long dim3, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor new_full(long dim0, long dim1, long dim2, long dim3, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
-                return new_full(new long[] { dim0, dim1, dim2, dim3 }, value, dtype, device, requiresGrad);
+                return new_full(new long[] { dim0, dim1, dim2, dim3 }, value, dtype, device, requires_grad);
             }
 
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_full_like(IntPtr input, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_full_like(IntPtr input, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Returns a tensor with the same size as input filled with 'value.'
             /// </summary>
-            public Tensor full_like(Scalar value, ScalarType? dtype = null, torch.Device? device = null, bool requiresGrad = false)
+            public Tensor full_like(Scalar value, ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
             {
                 dtype = (dtype is null) ? this.dtype : dtype;
                 device = (device is null) ? this.device : device;
 
-                var result = THSTensor_full_like(Handle, value.Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                var result = THSTensor_full_like(Handle, value.Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 if (result == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    result = THSTensor_full_like(Handle, value.Handle, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                    result = THSTensor_full_like(Handle, value.Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 }
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
@@ -6030,7 +6372,7 @@ namespace TorchSharp
             extern static IntPtr THSTensor_scatter_add_(IntPtr tensor, long dim, IntPtr index, IntPtr source);
 
             /// <summary>
-            ///  Writes all values from the tensor src into self at the indices specified in the index tensor. For each
+            ///  Writes all values from the tensor src into the input tensor at the indices specified in the index tensor. For each
             ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
             ///  corresponding value in index for dimension = dim.
             /// </summary>
@@ -6042,8 +6384,8 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Adds all values from the tensor other into self at the indices specified in the index tensor in a similar fashion as scatter_().
-            /// For each value in src, it is added to an index in self which is specified by its index in src for dimension != dim and by the
+            /// Adds all values from the tensor other into the input tensor at the indices specified in the index tensor in a similar fashion as scatter_().
+            /// For each value in src, it is added to an index in the input tensor which is specified by its index in src for dimension != dim and by the
             /// corresponding value in index for dimension = dim.
             /// </summary>
             public Tensor scatter_(long dim, Tensor index, Tensor src)
@@ -6054,8 +6396,8 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Adds all values from the tensor other into self at the indices specified in the index tensor in a similar fashion as scatter_().
-            /// For each value in src, it is added to an index in self which is specified by its index in src for dimension != dim and by the
+            /// Adds all values from the tensor other into the input tensor at the indices specified in the index tensor in a similar fashion as scatter_().
+            /// For each value in src, it is added to an index in the input tensor which is specified by its index in src for dimension != dim and by the
             /// corresponding value in index for dimension = dim.
             /// </summary>
             public Tensor scatter_add(long dim, Tensor index, Tensor src)
@@ -6066,7 +6408,7 @@ namespace TorchSharp
             }
 
             /// <summary>
-            ///  Writes all values from the tensor src into self at the indices specified in the index tensor. For each
+            ///  Writes all values from the tensor src into the input tensor at the indices specified in the index tensor. For each
             ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
             ///  corresponding value in index for dimension = dim.
             /// </summary>

@@ -93,8 +93,8 @@ namespace TorchSharp
                     return (x - y).abs();
                 };
 
-            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requiresGrad: true).neg())
-            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requiresGrad: true))
+            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true).neg())
+            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true))
             using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
 
                 var output = nn.TripletMarginWithDistanceLoss(distance);

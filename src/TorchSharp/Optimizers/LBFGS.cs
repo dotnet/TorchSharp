@@ -50,7 +50,7 @@ namespace TorchSharp
             {
                 if (!max_eval.HasValue) max_eval = 5 * max_iter / 4;
 
-                var parray = new PinnedArray<IntPtr>();
+                using var parray = new PinnedArray<IntPtr>();
                 IntPtr paramsRef = parray.CreateArray(parameters.Select(p => p.Handle).ToArray());
 
                 var res = THSNN_LBFGS_ctor(paramsRef, parray.Array.Length, lr, max_iter, max_eval.Value, tolerange_grad, tolerance_change, history_size);

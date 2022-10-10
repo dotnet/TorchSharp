@@ -391,7 +391,7 @@ namespace TorchSharp
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_fftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_fftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Computes the discrete Fourier Transform sample frequencies for a signal of size n.
@@ -400,8 +400,8 @@ namespace TorchSharp
             /// <param name="d">The sampling length scale. </param>
             /// <param name="dtype">The desired data type of the returned tensor</param>
             /// <param name="device">the desired device of the returned tensor</param>
-            /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
-            static public Tensor fftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+            /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
+            static public Tensor fftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
                 if (!dtype.HasValue) {
@@ -409,18 +409,18 @@ namespace TorchSharp
                     dtype = get_default_dtype();
                 }
 
-                var handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                var handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                    handle = THSTensor_fftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);
             }
 
             [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_rfftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requiresGrad);
+            extern static IntPtr THSTensor_rfftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Computes the sample frequencies for rfft() with a signal of size n.
@@ -429,8 +429,8 @@ namespace TorchSharp
             /// <param name="d">The sampling length scale. </param>
             /// <param name="dtype">The desired data type of the returned tensor</param>
             /// <param name="device">the desired device of the returned tensor</param>
-            /// <param name="requiresGrad">If autograd should record operations on the returned tensor.</param>
-            static public Tensor rfftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requiresGrad = false)
+            /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
+            static public Tensor rfftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
                 if (!dtype.HasValue) {
@@ -438,11 +438,11 @@ namespace TorchSharp
                     dtype = get_default_dtype();
                 }
 
-                var handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                var handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requiresGrad);
+                    handle = THSTensor_rfftfreq(n, d, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 }
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);
