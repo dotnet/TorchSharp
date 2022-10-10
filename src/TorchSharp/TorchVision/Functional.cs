@@ -748,9 +748,16 @@ namespace TorchSharp
                         // Already grayscale...
                         return input.alias();
 
+                    bool converted = false;
+                    if (!torch.is_floating_point(input.dtype)) {
+                        input = convert_image_dtype(input, torch.float32);
+                        converted = true;
+                    }
+
                     var rgb = input.unbind(cDim);
                     using var img = (rgb[0] * 0.2989 + rgb[1] * 0.587 + rgb[2] * 0.114).unsqueeze(cDim);
                     foreach (var c in rgb) { c.Dispose(); }
+                    if (converted) input.Dispose();
                     return num_output_channels == 3 ? img.expand(input.shape) : img.alias();
                 }
 

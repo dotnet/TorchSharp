@@ -370,22 +370,34 @@ namespace TorchSharp
         public void TestReadingAndWritingImages()
         {
             var fileName = "vslogo.jpg";
-            var outName = $"TestReadingAndWritingImages_{fileName}";
+            var outName1 = $"TestReadingAndWritingImages_1_{fileName}";
+            var outName2 = $"TestReadingAndWritingImages_2_{fileName}";
 
-            torchvision.io.DefaultImager = new torchvision.io.SkiaImager();
+            if (System.IO.File.Exists(outName1)) System.IO.File.Delete(outName1);
+            if (System.IO.File.Exists(outName2)) System.IO.File.Delete(outName2);
+
+            torchvision.io.DefaultImager = new torchvision.io.SkiaImager(100);
 
             var img = torchvision.io.read_image(fileName);
             Assert.NotNull(img);
-            Assert.Equal(new long[] { 3, 508, 728 }, img.shape);
+            Assert.Equal(torch.uint8, img.dtype);
+            //Assert.Equal(new long[] { 3, 508, 728 }, img.shape);
 
-            torchvision.io.write_image(img, outName, torchvision.ImageFormat.Jpeg);
-            Assert.True(System.IO.File.Exists(outName));
+            torchvision.io.write_image(img, outName1, torchvision.ImageFormat.Jpeg);
+            Assert.True(System.IO.File.Exists(outName1));
 
-            var img2 = torchvision.io.read_image(outName);
+            var img2 = torchvision.io.read_image(outName1);
             Assert.NotNull(img2);
+            Assert.Equal(torch.uint8, img2.dtype);
             Assert.Equal(img.shape, img2.shape);
 
-            System.IO.File.Delete(outName);
+            var grey = torchvision.transforms.functional.rgb_to_grayscale(img);
+            Assert.Equal(torch.float32, grey.dtype);
+            torchvision.io.write_image(torchvision.transforms.functional.convert_image_dtype(grey, torch.ScalarType.Byte), outName2, torchvision.ImageFormat.Jpeg);
+            Assert.True(System.IO.File.Exists(outName2));
+
+            System.IO.File.Delete(outName1);
+            System.IO.File.Delete(outName2);
         }
     }
 }

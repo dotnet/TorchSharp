@@ -18,9 +18,9 @@ namespace TorchSharp
             public sealed class SkiaImager : Imager
             {
 
-                public SkiaImager(int quality = 100)
+                public SkiaImager(int quality = 75)
                 {
-                    this.quality = 100;
+                    this.quality = quality;
                 }
                 private int quality;
 
@@ -83,7 +83,7 @@ namespace TorchSharp
 
                 public override byte[] EncodeImage(Tensor image, ImageFormat format)
                 {
-                    var memStream = new MemoryStream();
+                    using var memStream = new MemoryStream();
                     EncodeImage(image, format, memStream);
                     return memStream.ToArray();
                 }
@@ -93,10 +93,11 @@ namespace TorchSharp
                     if (mode == ImageReadMode.UNCHANGED) {
                         mode = bitmap.ColorType == SKColorType.Gray8 ? ImageReadMode.GRAY : ImageReadMode.RGB;
                     }
+
                     if (bitmap.ColorType == SKColorType.Gray8 && mode == ImageReadMode.GRAY)
                         return torch.tensor(bitmap.Bytes, 1, bitmap.Height, bitmap.Width);
 
-                    var scope = NewDisposeScope();
+                    using var scope = NewDisposeScope();
 
                     if (bitmap.ColorType == SKColorType.Gray8 && mode == ImageReadMode.RGB) {
                         Tensor t = torch.tensor(bitmap.Bytes, 1, bitmap.Height, bitmap.Width);
@@ -172,18 +173,6 @@ namespace TorchSharp
 
                 [DllImport("LibTorchSharp")]
                 static extern void THSVision_RGB_BRGA(IntPtr inputBytes, IntPtr outBytes, long inputChannelCount, long imageSize);
-
-                public override Task<Tensor> DecodeImageAsync(Stream stream, ImageReadMode mode = ImageReadMode.UNCHANGED, CancellationToken cancellationToken = default)
-                {
-                    var t = DecodeImage(stream, mode);
-                    return Task<Tensor>.FromResult(t);
-                }
-
-                public override Task EncodeImageAsync(Tensor image, ImageFormat format, Stream stream, CancellationToken cancellationToken = default)
-                {
-                    EncodeImage(image, format, stream);
-                    return Task.CompletedTask;
-                }
             }
         }
     }
