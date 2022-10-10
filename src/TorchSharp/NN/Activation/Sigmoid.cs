@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Sigmoid module.
         /// </summary>
-        public class Sigmoid : torch.nn.Module<Tensor, Tensor>
+        public sealed class Sigmoid : torch.nn.Module<Tensor, Tensor>
         {
             internal Sigmoid(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

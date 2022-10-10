@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Hardtanh module.
         /// </summary>
-        public class Hardtanh : torch.nn.Module<Tensor, Tensor>
+        public sealed class Hardtanh : torch.nn.Module<Tensor, Tensor>
         {
             internal Hardtanh(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

@@ -405,7 +405,6 @@ Tensor THSTensor_zeros(
     CATCH_TENSOR(torch::zeros(at::ArrayRef<int64_t>(sizes, length), options));
 }
 
-
 Tensor THSTensor_zeros_like(
     const Tensor input,
     const int8_t scalar_type,

@@ -23,7 +23,7 @@ struct TensorOrScalar
 };
 
 
-EXPORT_API(JITModule) THSJIT_load(const char* filename);
+EXPORT_API(JITModule) THSJIT_load(const char* filename, int64_t device, int64_t index);
 EXPORT_API(void) THSJIT_save(JITModule module, const char* filename);
 EXPORT_API(JITCompilationUnit) THSJIT_compile(const char* script);
 

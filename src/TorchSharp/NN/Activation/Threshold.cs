@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Threshold module.
         /// </summary>
-        public class Threshold : torch.nn.Module<Tensor, Tensor>
+        public sealed class Threshold : torch.nn.Module<Tensor, Tensor>
         {
             internal Threshold(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

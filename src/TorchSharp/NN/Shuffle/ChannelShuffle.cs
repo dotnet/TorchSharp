@@ -11,7 +11,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ChannelShuffle module.
         /// </summary>
-        public class ChannelShuffle : torch.nn.Module<Tensor, Tensor>
+        public sealed class ChannelShuffle : torch.nn.Module<Tensor, Tensor>
         {
             internal ChannelShuffle(long groups) : base(nameof(ChannelShuffle))
             {

@@ -56,8 +56,8 @@ namespace TorchSharp
         public void TestAutoGradGrad()
         {
             using var _ = torch.NewDisposeScope();
-            var x1 = torch.rand(1, requiresGrad: true);
-            var x2 = torch.rand(1, requiresGrad: true);
+            var x1 = torch.rand(1, requires_grad: true);
+            var x2 = torch.rand(1, requires_grad: true);
 
             var y = x1.pow(2) + 5 * x2;
 
@@ -72,8 +72,8 @@ namespace TorchSharp
         public void TestAutoGradBackward1()
         {
             using var _ = torch.NewDisposeScope();
-            var x1 = torch.rand(1, requiresGrad: true);
-            var x2 = torch.rand(1, requiresGrad: true);
+            var x1 = torch.rand(1, requires_grad: true);
+            var x2 = torch.rand(1, requires_grad: true);
 
             var y = x1.pow(2) + 5 * x2;
 
@@ -88,8 +88,8 @@ namespace TorchSharp
         public void TestAutoGradBackward2()
         {
             using var _ = torch.NewDisposeScope();
-            var x1 = torch.rand(1, requiresGrad: true);
-            var x2 = torch.rand(1, requiresGrad: true);
+            var x1 = torch.rand(1, requires_grad: true);
+            var x2 = torch.rand(1, requires_grad: true);
 
             var y = x1.pow(2) + 5 * x2;
 

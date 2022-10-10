@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softshrink module.
         /// </summary>
-        public class Softshrink : torch.nn.Module<Tensor, Tensor>
+        public sealed class Softshrink : torch.nn.Module<Tensor, Tensor>
         {
             internal Softshrink(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

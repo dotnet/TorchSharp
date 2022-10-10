@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Softplus module.
         /// </summary>
-        public class Softplus : torch.nn.Module<Tensor, Tensor>
+        public sealed class Softplus : torch.nn.Module<Tensor, Tensor>
         {
             internal Softplus(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 

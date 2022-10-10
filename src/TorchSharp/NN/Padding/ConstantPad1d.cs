@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ConstantPad1d module.
         /// </summary>
-        public class ConstantPad1d : torch.nn.Module<Tensor, Tensor>
+        public sealed class ConstantPad1d : torch.nn.Module<Tensor, Tensor>
         {
             internal ConstantPad1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
