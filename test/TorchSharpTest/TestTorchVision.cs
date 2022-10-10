@@ -381,7 +381,7 @@ namespace TorchSharp
             torchvision.io.write_image(img, outName, torchvision.ImageFormat.Jpeg);
             Assert.True(System.IO.File.Exists(outName));
 
-            var img2 = torchvision.io.read_image($"test_{fileName}");
+            var img2 = torchvision.io.read_image(outName);
             Assert.NotNull(img2);
             Assert.Equal(img.shape, img2.shape);
 

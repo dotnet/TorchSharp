@@ -312,7 +312,7 @@ Tensor THSVision_PerspectiveGrid(const float* c, const int64_t c_length, const i
 }
 
 
-void THSVision_BRGA_RGB(const int8_t* inputBytes, int8_t* redBytes, int8_t* greenBytes, int8_t* blueBytes, int64_t inputChannelCount, int64_t imageSize)
+void THSVision_BRGA_RGB(const uint8_t* inputBytes, uint8_t* redBytes, uint8_t* greenBytes, uint8_t* blueBytes, int64_t inputChannelCount, int64_t imageSize)
 {
     const int inputBlue = 0, inputGreen = 1, inputRed = 2;
 
@@ -323,7 +323,7 @@ void THSVision_BRGA_RGB(const int8_t* inputBytes, int8_t* redBytes, int8_t* gree
     }
 }
 
-void THSVision_BRGA_RGBA(const int8_t* inputBytes, int8_t* redBytes, int8_t* greenBytes, int8_t* blueBytes, int8_t* alphaBytes, int64_t inputChannelCount, int64_t imageSize)
+void THSVision_BRGA_RGBA(const uint8_t* inputBytes, uint8_t* redBytes, uint8_t* greenBytes, uint8_t* blueBytes, uint8_t* alphaBytes, int64_t inputChannelCount, int64_t imageSize)
 {
     const int inputBlue = 0, inputGreen = 1, inputRed = 2, inputAlpha = 3;
 
@@ -337,7 +337,7 @@ void THSVision_BRGA_RGBA(const int8_t* inputBytes, int8_t* redBytes, int8_t* gre
     }
 }
 
-void THSVision_RGB_BRGA(const int8_t* inputBytes, int8_t* outBytes, int64_t inputChannelCount, int64_t imageSize)
+void THSVision_RGB_BRGA(const uint8_t* inputBytes, uint8_t* outBytes, int64_t inputChannelCount, int64_t imageSize)
 {
     bool isgrey = inputChannelCount == 1;
     bool inputHasAlpha = inputChannelCount == 4;
