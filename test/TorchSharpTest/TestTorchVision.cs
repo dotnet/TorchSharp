@@ -365,5 +365,27 @@ namespace TorchSharp
                 );
             }
         }
+
+        [Fact]
+        public void TestReadingAndWritingImages()
+        {
+            var fileName = "vslogo.jpg";
+            var outName = $"TestReadingAndWritingImages_{fileName}";
+
+            torchvision.io.DefaultImager = new torchvision.io.SkiaImager();
+
+            var img = torchvision.io.read_image(fileName);
+            Assert.NotNull(img);
+            Assert.Equal(new long[] { 3, 508, 728 }, img.shape);
+
+            torchvision.io.write_image(img, outName, torchvision.ImageFormat.Jpeg);
+            Assert.True(System.IO.File.Exists(outName));
+
+            var img2 = torchvision.io.read_image($"test_{fileName}");
+            Assert.NotNull(img2);
+            Assert.Equal(img.shape, img2.shape);
+
+            System.IO.File.Delete(outName);
+        }
     }
 }

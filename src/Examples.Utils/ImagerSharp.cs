@@ -147,5 +147,15 @@ namespace TorchSharp.Examples.Utils
                     throw new ArgumentException("image tensor must have a colour channel of 1,2,3 or 4");
                 }
             }
+
+        public override Tensor DecodeImage(byte[] data, io.ImageReadMode mode = io.ImageReadMode.UNCHANGED)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override byte[] EncodeImage(Tensor image, ImageFormat format)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
