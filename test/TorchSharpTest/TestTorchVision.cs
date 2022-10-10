@@ -393,7 +393,8 @@ namespace TorchSharp
 
             var grey = torchvision.transforms.functional.rgb_to_grayscale(img);
             Assert.Equal(torch.float32, grey.dtype);
-            torchvision.io.write_image(torchvision.transforms.functional.convert_image_dtype(grey, torch.ScalarType.Byte), outName2, torchvision.ImageFormat.Jpeg);
+
+            torchvision.io.write_jpeg(torchvision.transforms.functional.convert_image_dtype(grey, torch.ScalarType.Byte), outName2);
             Assert.True(System.IO.File.Exists(outName2));
 
             System.IO.File.Delete(outName1);

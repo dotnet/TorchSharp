@@ -201,6 +201,28 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Write a PNG image <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> into a file.
+            /// </summary>
+            /// <param name="image"><cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.</param>
+            /// <param name="filename">Path to the file.</param>
+            /// <param name="imager"><cref>Imager</cref> to be use. Will use <cref>DefaultImager</cref> if null.</param>
+            public static void write_png(Tensor image, string filename, Imager imager = null)
+            {
+                write_image(image, filename, ImageFormat.Png, imager);
+            }
+
+            /// <summary>
+            /// Write a JPEG image <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> into a file.
+            /// </summary>
+            /// <param name="image"><cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.</param>
+            /// <param name="filename">Path to the file.</param>
+            /// <param name="imager"><cref>Imager</cref> to be use. Will use <cref>DefaultImager</cref> if null.</param>
+            public static void write_jpeg(Tensor image, string filename, Imager imager = null)
+            {
+                write_image(image, filename, ImageFormat.Jpeg, imager);
+            }
+
+            /// <summary>
             /// Write a image <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> into a file.
             /// </summary>
             /// <param name="image"><cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.</param>
@@ -211,6 +233,28 @@ namespace TorchSharp
             {
                 if (image.dtype != ScalarType.Byte) throw new System.ArgumentException("Image tensors must be 'byte' tensors when passed to 'write_image()'.");
                 (imager ?? DefaultImager).EncodeImage(image, format, stream);
+            }
+
+            /// <summary>
+            /// Write a PNG image <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> into a file.
+            /// </summary>
+            /// <param name="image"><cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.</param>
+            /// <param name="stream">Stream to write to.</param>
+            /// <param name="imager"><cref>Imager</cref> to be use. Will use <cref>DefaultImager</cref> if null.</param>
+            public static void write_png(Tensor image, Stream stream, Imager imager = null)
+            {
+                write_image(image, stream, ImageFormat.Png, imager);
+            }
+
+            /// <summary>
+            /// Write a JPEG image <cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c> into a file.
+            /// </summary>
+            /// <param name="image"><cref>Tensor</cref> with <c>shape = [color_channels, image_height, image_width]</c>.</param>
+            /// <param name="stream">Stream to write to.</param>
+            /// <param name="imager"><cref>Imager</cref> to be use. Will use <cref>DefaultImager</cref> if null.</param>
+            public static void write_jpeg(Tensor image, Stream stream, Imager imager = null)
+            {
+                write_image(image, stream, ImageFormat.Jpeg, imager);
             }
 
             /// <summary>
