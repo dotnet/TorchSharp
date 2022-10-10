@@ -162,6 +162,34 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestTransformsGriffinLim()
+        {
+            var transform = torchaudio.transforms.Spectrogram(
+                pad: 200,
+                n_fft: 512,
+                hop_length: 160,
+                win_length: 400,
+                window_fn: win_length => torch.hann_window(400),
+                power: 2.0,
+                normalized: false);
+            var inverse_transform = torchaudio.transforms.GriffinLim(
+                n_fft: 512,
+                hop_length: 160,
+                win_length: 400,
+                window_fn: win_length => torch.hann_window(400),
+                power: 2.0,
+                n_iter: 32,
+                momentum: 0.99,
+                length: null,
+                rand_init: true);
+            var waveform = make_waveform();
+            var specgram = transform.forward(waveform);
+            var recovered_waveform = inverse_transform.forward(specgram);
+
+            Assert.Equal(new long[] { 1, 80320 }, recovered_waveform.shape);
+        }
+
+        [Fact]
         public void TestMelscaleFbanks()
         {
             int n_freqs = 257;
