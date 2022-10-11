@@ -78,7 +78,7 @@ jobs:
 ################################################################################
 - job: Linux_Native_Build_For_Packages
 ################################################################################
-#  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -116,7 +116,7 @@ jobs:
 ################################################################################
 - job: Windows_Native_Build_For_Packages
 ################################################################################
-#  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -141,7 +141,7 @@ jobs:
 # ################################################################################
 - job: MacOS_Native_Build_For_Packages
 # ################################################################################
-#  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -167,7 +167,7 @@ jobs:
 ################################################################################
 - job: Build_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
@@ -422,7 +422,7 @@ jobs:
 ################################################################################
 - job: CodeSign_Core
 ################################################################################
-  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   variables:
@@ -544,7 +544,7 @@ jobs:
 ################################################################################
 - job: Push_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   - CodeSign_Core
