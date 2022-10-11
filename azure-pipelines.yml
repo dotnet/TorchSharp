@@ -229,11 +229,13 @@ jobs:
       sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
 
+  - task: CopyFiles@2
     displayName: Copy mac native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchAudio
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
 
+  - task: CopyFiles@2
     displayName: Copy mac native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchVision
