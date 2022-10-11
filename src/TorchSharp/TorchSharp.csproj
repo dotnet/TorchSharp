@@ -40,6 +40,10 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TorchVision\" />
+  </ItemGroup>
+
 
   <PropertyGroup>
       <PackDependsOn>
