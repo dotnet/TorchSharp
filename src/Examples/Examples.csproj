@@ -30,7 +30,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Examples.Utils\Examples.Utils.csproj" />
+    <ProjectReference Include="..\TorchAudio\TorchAudio.csproj" />
     <ProjectReference Include="..\TorchSharp\TorchSharp.csproj" />
+    <ProjectReference Include="..\TorchVision\TorchVision.csproj" />
   </ItemGroup>
 
 

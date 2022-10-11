@@ -56,6 +56,7 @@
     <None Update="xunit.runner.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <ProjectReference Include="..\..\src\TorchAudio\TorchAudio.csproj" />
     <ProjectReference Include="..\..\src\TorchSharp\TorchSharp.csproj" />
     <ProjectReference Include="..\..\src\TorchVision\TorchVision.csproj" />
   </ItemGroup>
