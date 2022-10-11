@@ -78,7 +78,7 @@ jobs:
 ################################################################################
 - job: Linux_Native_Build_For_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+#  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -104,13 +104,19 @@ jobs:
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
     displayName: Build linux
 
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj
+    displayName: Build TorchVision
+
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj
+    displayName: Build TorchAudio
+
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: LinuxAssets
 
 ################################################################################
 - job: Windows_Native_Build_For_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+#  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -123,13 +129,19 @@ jobs:
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
     displayName: Build Windows
 
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj
+    displayName: Build TorchVision
+
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj
+    displayName: Build TorchAudio
+
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: WindowsAssets
 
 # ################################################################################
 - job: MacOS_Native_Build_For_Packages
 # ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+#  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -141,6 +153,12 @@ jobs:
   steps:
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=false
     displayName: Build mac
+
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj
+    displayName: Build TorchVision
+
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj
+    displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: MacAssets
