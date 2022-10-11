@@ -22,6 +22,10 @@
     <MSBuild Projects="..\..\pkg\pack.proj" Targets="Pack" />
   </Target>
 
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+    <Compile Include="..\TorchSharp\netstandard.cs" Link="netstandard.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\TorchSharp\TorchSharp.csproj" />
   </ItemGroup>

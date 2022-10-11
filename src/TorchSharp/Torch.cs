@@ -485,7 +485,7 @@ namespace TorchSharp
         private static extern IntPtr THSTorch_get_and_reset_last_err();
 
         //[Conditional("DEBUG")]
-        internal static void CheckForErrors()
+        public static void CheckForErrors()
         {
             var error = THSTorch_get_and_reset_last_err();
 

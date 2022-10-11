@@ -130,7 +130,7 @@ namespace TorchSharp
 
                     var res = THSVision_AdjustHue(img.Handle, hue_factor);
                     if (res == IntPtr.Zero) { CheckForErrors(); }
-                    return new Tensor(res);
+                    return Tensor.UnsafeCreateTensor(res);
                 }
 
                 /* Tensor THSVision_AdjustHue(const Tensor i, const double hue_factor) */
@@ -240,8 +240,8 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor autocontrast(Tensor input)
                 {
-                    var bound = input.IsIntegral() ? 255.0f : 1.0f;
-                    var dtype = input.IsIntegral() ? ScalarType.Float32 : input.dtype;
+                    var bound = input.is_integral() ? 255.0f : 1.0f;
+                    var dtype = input.is_integral() ? ScalarType.Float32 : input.dtype;
 
                     using var t0 = input.amin(new long[] { -2, -1 }, keepdim: true);
                     using var t1 = input.amax(new long[] { -2, -1 }, keepdim: true);
@@ -425,7 +425,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor gaussian_blur(Tensor input, IList<long> kernelSize, IList<float> sigma)
                 {
-                    var dtype = TensorExtensionMethods.IsIntegral(input.dtype) ? ScalarType.Float32 : input.dtype;
+                    var dtype = torch.is_integral(input.dtype) ? ScalarType.Float32 : input.dtype;
 
                     if (kernelSize.Count == 1) {
                         kernelSize = new long[] { kernelSize[0], kernelSize[0] };
@@ -497,7 +497,7 @@ namespace TorchSharp
                 public static Tensor invert(Tensor input)
                 {
                     using var t0 = -input;
-                    if (input.IsIntegral()) {
+                    if (input.is_integral()) {
                         return t0 + 255;
                     } else {
                         return t0 + 1.0;
@@ -812,7 +812,7 @@ namespace TorchSharp
 
                 private static Tensor Blend(Tensor img1, Tensor img2, double ratio)
                 {
-                    var bound = img1.IsIntegral() ? 255.0 : 1.0;
+                    var bound = img1.is_integral() ? 255.0 : 1.0;
                     using var t0 = img1 * ratio;
                     using var t2 = img2 * (1.0 - ratio);
                     using var t3 = (t0 + t2);
@@ -823,7 +823,7 @@ namespace TorchSharp
                 private static Tensor BlurredDegenerateImage(Tensor input)
                 {
                     var device = input.device;
-                    var dtype = input.IsIntegral() ? ScalarType.Float32 : input.dtype;
+                    var dtype = input.is_integral() ? ScalarType.Float32 : input.dtype;
                     using var kernel = torch.ones(3, 3, device: device);
                     using var t0 = torch.tensor(5.0f);
                     kernel[1, 1] = t0;
@@ -882,7 +882,7 @@ namespace TorchSharp
                         fixed (float* pfill = fillArray) {
                             var res = THSVision_ApplyGridTransform(img.Handle, grid.Handle, (sbyte)mode, (IntPtr)pfill, fillLength);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            img = new Tensor(res);
+                            img = Tensor.UnsafeCreateTensor(res);
                         }
                     }
 
@@ -899,7 +899,7 @@ namespace TorchSharp
                 {
                     var img = THSVision_GenerateAffineGrid(theta.Handle, w, h, ow, oh);
                     if (img == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(img);
+                    return Tensor.UnsafeCreateTensor(img);
                 }
 
                 /* Tensor THSVision_ComputeOutputSize(const float* matrix, const int64_t matrix_length, const int64_t w, const int64_t h); */
@@ -971,7 +971,7 @@ namespace TorchSharp
                         fixed (float* pfill = fillArray) {
                             var res = THSVision_PerspectiveGrid((IntPtr)pfill, fillLength, ow, oh, (sbyte)dtype, (int)device.type, device.index);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
+                            return Tensor.UnsafeCreateTensor(res);
                         }
                     }
                 }
@@ -1024,7 +1024,7 @@ namespace TorchSharp
                 {
                     var res = THSVision_ScaleChannel(img_chan.Handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    return Tensor.UnsafeCreateTensor(res);
                 }
 
                 internal static Tensor SqueezeIn(Tensor img, IList<ScalarType> req_dtypes, out bool needCast, out bool needSqueeze, out ScalarType dtype)
@@ -1062,7 +1062,7 @@ namespace TorchSharp
                     }
 
                     if (needCast) {
-                        if (TensorExtensionMethods.IsIntegral(dtype)) {
+                        if (torch.is_integral(dtype)) {
                             var t0 = img.round();
                             img.Dispose();
                             img = t0;
@@ -1095,6 +1095,44 @@ namespace TorchSharp
                 }
 
             }
+        }
+
+    }
+    public static class VisionExtensionMethods
+    {
+        // Vision-related operations
+
+        /// <summary>
+        /// Crop the given image tensor at specified location and output size.
+        /// If the image is torch Tensor, it is expected to have […, H, W] shape, where … means an
+        /// arbitrary number of leading dimensions.
+        /// If image size is smaller than output size along any edge, image is padded with 0 and then cropped.
+        /// </summary>
+        /// <param name="image">The input tensor.</param>
+        /// <param name="top">Vertical component of the top left corner of the crop box.</param>
+        /// <param name="left">Horizontal component of the top left corner of the crop box.</param>
+        /// <param name="height">Height of the crop box.</param>
+        /// <param name="width">Width of the crop box.</param>
+        /// <returns></returns>
+        public static Tensor crop(this Tensor image, int top, int left, int height, int width)
+        {
+            var dims = image.Dimensions;
+            var hoffset = dims - 2;
+            long h = image.shape[hoffset], w = image.shape[hoffset + 1];
+
+            var right = left + width;
+            var bottom = top + height;
+
+            if (left < 0 || top < 0 || right > w || bottom > h) {
+
+                var slice = image.index(TensorIndex.Ellipsis, TensorIndex.Slice(Math.Max(top, 0), bottom), TensorIndex.Slice(Math.Max(left, 0), right));
+
+                var padding_ltrb = new long[] { Math.Max(-left, 0), Math.Max(-top, 0), Math.Max(right - w, 0), Math.Max(bottom - h, 0) };
+
+                return TorchSharp.torchvision.transforms.functional.pad(slice, padding_ltrb);
+            }
+
+            return image.index(TensorIndex.Ellipsis, TensorIndex.Slice(top, bottom), TensorIndex.Slice(left, right));
         }
     }
 }

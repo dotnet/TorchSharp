@@ -13,6 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TorchVision\**" />
+    <EmbeddedResource Remove="TorchVision\**" />
+    <None Remove="TorchVision\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Tensor\TensorTyped.tt" />
   </ItemGroup>
 
@@ -38,10 +44,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>TensorTyped.tt</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="TorchVision\" />
   </ItemGroup>
 
 

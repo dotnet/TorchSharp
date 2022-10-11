@@ -43,6 +43,13 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Allows external packages to create tensors from the same native pointers that TorchSharp uses.
+            /// </summary>
+            /// <param name="handle">A pointer to a native at::Tensor.</param>
+            /// <returns>A Tensor reference</returns>
+            public static Tensor UnsafeCreateTensor(IntPtr handle) => new Tensor(handle);
+
+            /// <summary>
             ///  TBD
             /// </summary>
             /// <param name="obj"></param>

@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TorchSharp\TorchSharp.csproj" />
+    <ProjectReference Include="..\TorchVision\TorchVision.csproj" />
   </ItemGroup>
 
 </Project>
