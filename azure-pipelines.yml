@@ -101,8 +101,14 @@ jobs:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     displayName: Install dependencies
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build linux
+
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
+    displayName: Build TorchVision
+
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
+    displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: LinuxAssets
@@ -120,8 +126,14 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   steps:
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build Windows
+
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
+    displayName: Build TorchVision
+
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
+    displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: WindowsAssets
@@ -139,8 +151,14 @@ jobs:
   pool:
     vmImage: 'macos-latest'
   steps:
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=false
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build mac
+
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
+    displayName: Build TorchVision
+
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
+    displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: MacAssets
@@ -181,6 +199,18 @@ jobs:
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
 
   - task: CopyFiles@2
+    displayName: Copy linux native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets/TorchAudio
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
+
+  - task: CopyFiles@2
+    displayName: Copy linux native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets/TorchVision
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
+
+  - task: CopyFiles@2
     displayName: Copy linux native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets/libtorch-cpu-linux-x64
@@ -200,6 +230,18 @@ jobs:
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
 
   - task: CopyFiles@2
+    displayName: Copy mac native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchAudio
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
+
+  - task: CopyFiles@2
+    displayName: Copy mac native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchVision
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
+
+  - task: CopyFiles@2
     displayName: Copy mac native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/MacAssets/libtorch-cpu-osx-x64
@@ -216,6 +258,18 @@ jobs:
     inputs:
       sourceFolder: $(Pipeline.Workspace)/WindowsAssets/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
+
+  - task: CopyFiles@2
+    displayName: Copy windows native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets/TorchAudio
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
+
+  - task: CopyFiles@2
+    displayName: Copy windows native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets/TorchVision
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
 
   - task: CopyFiles@2
     displayName: Copy windows native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
@@ -521,6 +575,24 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp.*.nupkg'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (TorchAudio)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Pipeline.Workspace)/**/TorchAudio.*.nupkg'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (TorchVision)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Pipeline.Workspace)/**/TorchVision.*.nupkg'
       publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true

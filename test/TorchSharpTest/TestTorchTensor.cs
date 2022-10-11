@@ -7764,7 +7764,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(TensorExtensionMethods.crop))]
+        [TestOf(nameof(VisionExtensionMethods.crop))]
         public void CropTensor()
         {
             {
@@ -7803,7 +7803,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(TensorExtensionMethods.crop))]
+        [TestOf(nameof(VisionExtensionMethods.crop))]
         public void CroppedTensorWithPadding()
         {
             {
