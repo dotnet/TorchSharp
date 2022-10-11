@@ -13,9 +13,9 @@ namespace TorchSharp
         /// Holds modules in a list.
         /// ModuleList can be indexed like a regular list, but modules it contains are properly registered, and will be visible by all Module methods.
         /// </summary>
-        public class ModuleList : Module, IList<Module>
+        public class ModuleList<T> : Module, IList<T> where T: Module
         {
-            public ModuleList(params Module[] modules) : base(nameof(ModuleList))
+            public ModuleList(params T[] modules) : base(nameof(ModuleList))
             {
                 if (modules != null && modules.Length > 0) {
                     _list.AddRange(modules);
@@ -34,7 +34,7 @@ namespace TorchSharp
 
             private bool _registered = false;
 
-            public Module this[int index] {
+            public T this[int index] {
                 get => _list[index];
                 set => _list[index] = value;
             }
@@ -43,7 +43,7 @@ namespace TorchSharp
 
             public bool IsReadOnly => false;
 
-            public void Add(Module item)
+            public void Add(T item)
             {
                 _list.Add(item);
             }
@@ -51,7 +51,7 @@ namespace TorchSharp
             /// <summary>
             /// Appends zero or more parameters to the end of the list.
             /// </summary>
-            public void append(params Module[] parameters)
+            public void append(params T[] parameters)
             {
                 if (parameters != null && parameters.Length > 0) {
                     _list.AddRange(parameters);
@@ -63,12 +63,12 @@ namespace TorchSharp
                 _list.Clear();
             }
 
-            public bool Contains(Module item)
+            public bool Contains(T item)
             {
                 return _list.Contains(item);
             }
 
-            public void CopyTo(Module[] array, int arrayIndex)
+            public void CopyTo(T[] array, int arrayIndex)
             {
                 _list.CopyTo(array, arrayIndex);
             }
@@ -76,28 +76,28 @@ namespace TorchSharp
             /// <summary>
             /// Appends parameters from an enumeration to the end of the list.
             /// </summary>
-            /// <param name="parameters"></param>
-            public void extend(IEnumerable<Module> parameters)
+            /// <param name="modules"></param>
+            public void extend(IEnumerable<T> modules)
             {
-                _list.AddRange(parameters);
+                _list.AddRange(modules);
             }
 
-            public IEnumerator<Module> GetEnumerator()
+            public IEnumerator<T> GetEnumerator()
             {
                 return _list.GetEnumerator();
             }
 
-            public int IndexOf(Module item)
+            public int IndexOf(T item)
             {
                 return _list.IndexOf(item);
             }
 
-            public void Insert(int index, Module item)
+            public void Insert(int index, T item)
             {
                 _list.Insert(index, item);
             }
 
-            public bool Remove(Module item)
+            public bool Remove(T item)
             {
                 return _list.Remove(item);
             }
@@ -112,7 +112,7 @@ namespace TorchSharp
                 return GetEnumerator();
             }
 
-            private List<Module> _list = new List<Module>();
+            private List<T> _list = new List<T>();
         }
     }
 
@@ -127,7 +127,16 @@ namespace TorchSharp
             /// <remarks>
             /// ModuleList can be indexed like a regular list, but modules it contains are properly registered, and will be visible by all Module methods.
             /// </remarks>
-            public static ModuleList ModuleList(params Module[] modules) => new ModuleList(modules);
+            public static ModuleList<Module> ModuleList(params Module[] modules) => new ModuleList<Module>(modules);
+
+            /// <summary>
+            /// Create a ModuleList instance from an array of modules.
+            /// </summary>
+            /// <param name="modules">A list of modules.</param>
+            /// <remarks>
+            /// ModuleList can be indexed like a regular list, but modules it contains are properly registered, and will be visible by all Module methods.
+            /// </remarks>
+            public static ModuleList<T> ModuleList<T>(params T[] modules) where T : Module => new ModuleList<T>();
         }
     }
 }
