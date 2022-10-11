@@ -54,6 +54,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <ProjectReference Include="..\..\src\TorchSharp\TorchSharp.csproj" />
+    <ProjectReference Include="..\..\src\TorchVision\TorchVision.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
