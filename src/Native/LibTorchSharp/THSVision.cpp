@@ -316,7 +316,7 @@ void THSVision_BRGA_RGB(const uint8_t* inputBytes, uint8_t* redBytes, uint8_t* g
 {
     const int inputBlue = 0, inputGreen = 1, inputRed = 2;
 
-    for (int i = 0, j = 0; i < imageSize; i += 1, j += inputChannelCount) {
+    for (int64_t i = 0, j = 0; i < imageSize; i += 1, j += inputChannelCount) {
         redBytes[i] = inputBytes[inputRed + j];
         greenBytes[i] = inputBytes[inputGreen + j];
         blueBytes[i] = inputBytes[inputBlue + j];
@@ -329,7 +329,7 @@ void THSVision_BRGA_RGBA(const uint8_t* inputBytes, uint8_t* redBytes, uint8_t* 
 
     bool inputHasAlpha = inputChannelCount == 4;
 
-    for (int i = 0, j = 0; i < imageSize; i += 1, j += inputChannelCount) {
+    for (int64_t i = 0, j = 0; i < imageSize; i += 1, j += inputChannelCount) {
         redBytes[i] = inputBytes[inputRed + j];
         greenBytes[i] = inputBytes[inputGreen + j];
         blueBytes[i] = inputBytes[inputBlue + j];
@@ -345,7 +345,7 @@ void THSVision_RGB_BRGA(const uint8_t* inputBytes, uint8_t* outBytes, int64_t in
     const int inputRed = 0, inputGreen = imageSize, inputBlue = imageSize * 2, inputAlpha = imageSize * 3;
     const int outputBlue = 0, outputGreen = 1, outputRed = 2, outputAlpha = 3;
 
-    for (int i = 0, j = 0; i < imageSize; i += 1, j += 4) {
+    for (int64_t i = 0, j = 0; i < imageSize; i += 1, j += 4) {
         auto redPixel = inputBytes[inputRed + i];
         outBytes[outputRed + j] = redPixel;
         if (!isgrey) {
