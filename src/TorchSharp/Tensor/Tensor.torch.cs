@@ -99,7 +99,7 @@ namespace TorchSharp
         /// <param name="dim"></param>
         /// <returns></returns>
         /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
-        public static Tensor cat(IList<Tensor> tensors, long dim)
+        public static Tensor cat(IList<Tensor> tensors, long dim = 0)
         {
             if (tensors.Count == 0) {
                 throw new ArgumentException(nameof(tensors));
