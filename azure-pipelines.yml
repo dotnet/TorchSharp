@@ -22,6 +22,8 @@ resources:
      image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mlnet-20210924170306-87445d2
 
 jobs:
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+
 - template: /build/ci/job-template.yml
   parameters:
     name: Ubuntu_x64
@@ -422,7 +424,7 @@ jobs:
 ################################################################################
 - job: CodeSign_Core
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   variables:
@@ -544,7 +546,7 @@ jobs:
 ################################################################################
 - job: Push_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   - CodeSign_Core
