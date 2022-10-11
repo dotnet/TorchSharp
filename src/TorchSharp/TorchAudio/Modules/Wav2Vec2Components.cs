@@ -58,7 +58,7 @@ namespace TorchSharp.Modules
         /// <summary>
         /// Convolution unit of FeatureExtractor
         /// </summary>
-        private class ConvLayerBlock : Module
+        private class ConvLayerBlock : Module<Tensor, Tensor?, (Tensor, Tensor?)>
         {
             public readonly Module<Tensor, Tensor> conv;
             public readonly long kernel_size;
@@ -92,7 +92,7 @@ namespace TorchSharp.Modules
             /// Shape ``[batch, out_channels, out_frames]``.
             /// Shape ``[batch, ]``.
             /// </returns>
-            public (Tensor, Tensor?) forward(
+            public override (Tensor, Tensor?) forward(
                 Tensor x,
                 Tensor? length)
             {
@@ -116,13 +116,13 @@ namespace TorchSharp.Modules
         /// </summary>
         internal class FeatureExtractor : Module
         {
-            public readonly ModuleList conv_layers;
+            public readonly ModuleList<Module<Tensor, Tensor?, (Tensor, Tensor?)>> conv_layers;
 
             /// <param name="name"></param>
             /// <param name="conv_layers">convolution layers</param>
             public FeatureExtractor(
                 string name,
-                ModuleList conv_layers) : base(name)
+                ModuleList<Module<Tensor, Tensor?, (Tensor, Tensor?)>> conv_layers) : base(name)
             {
                 this.conv_layers = conv_layers;
                 RegisterComponents();
@@ -417,7 +417,7 @@ namespace TorchSharp.Modules
         /// <summary>
         /// A layer unit in encoder. Combines multihead self attention and feed forward.
         /// </summary>
-        private class EncoderLayer : Module<Tensor, Tensor, Tensor>
+        private class EncoderLayer : Module<Tensor, Tensor?, Tensor>
         {
             public readonly SelfAttention attention;
             public readonly Module<Tensor, Tensor> dropout;
@@ -475,7 +475,7 @@ namespace TorchSharp.Modules
             public readonly double layer_drop;
             public readonly Module<Tensor, Tensor> layer_norm;
             public readonly bool layer_norm_first;
-            public readonly ModuleList layers;
+            public readonly ModuleList<Module<Tensor, Tensor?, Tensor>> layers;
 
             public ConvolutionalPositionalEmbedding pos_conv_embed;
 
@@ -483,7 +483,7 @@ namespace TorchSharp.Modules
                 string name,
                 ConvolutionalPositionalEmbedding pos_conv_embed,
                 double dropout,
-                ModuleList layers,
+                ModuleList<Module<Tensor, Tensor?, Tensor>> layers,
                 bool layer_norm_first,
                 double layer_drop) : base(name)
             {
@@ -642,7 +642,7 @@ namespace TorchSharp.Modules
         /// <exception cref="ArgumentException"></exception>
         internal static FeatureExtractor _get_feature_extractor(FeatureExtractorNormMode norm_mode, long[][] shapes, bool bias)
         {
-            var blocks = ModuleList();
+            var blocks = ModuleList<Module<Tensor, Tensor?, (Tensor, Tensor?)>> ();
             long in_channels = 1;
             for (int i = 0; i < shapes.Length; i++) {
                 var shape = shapes[i];
@@ -804,7 +804,7 @@ namespace TorchSharp.Modules
 
             // Original impl
             // https://github.com/pytorch/fairseq/blob/425c36eafff535fe7337f8bdd5ace22ebacc78cb/fairseq/models/wav2vec/wav2vec2.py#L768-L782
-            var encoder_layers = ModuleList();
+            var encoder_layers = ModuleList<Module<Tensor, Tensor?, Tensor>>();
             for (long i = 0; i < num_layers; i++) {
                 var attention = new SelfAttention(
                     "SelfAttention",
