@@ -101,13 +101,13 @@ jobs:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     displayName: Install dependencies
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build linux
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -126,13 +126,13 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   steps:
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build Windows
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -151,13 +151,13 @@ jobs:
   pool:
     vmImage: 'macos-latest'
   steps:
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=false
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build mac
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -167,7 +167,7 @@ jobs:
 ################################################################################
 - job: Build_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  #condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
@@ -199,6 +199,18 @@ jobs:
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
 
   - task: CopyFiles@2
+    displayName: Copy linux native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets/TorchAudio
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
+
+  - task: CopyFiles@2
+    displayName: Copy linux native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets/TorchVision
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
+
+  - task: CopyFiles@2
     displayName: Copy linux native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets/libtorch-cpu-linux-x64
@@ -217,6 +229,16 @@ jobs:
       sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
 
+    displayName: Copy mac native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchAudio
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
+
+    displayName: Copy mac native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchVision
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
+
   - task: CopyFiles@2
     displayName: Copy mac native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
@@ -234,6 +256,18 @@ jobs:
     inputs:
       sourceFolder: $(Pipeline.Workspace)/WindowsAssets/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
+
+  - task: CopyFiles@2
+    displayName: Copy windows native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets/TorchAudio
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
+
+  - task: CopyFiles@2
+    displayName: Copy windows native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets/TorchVision
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
 
   - task: CopyFiles@2
     displayName: Copy windows native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
