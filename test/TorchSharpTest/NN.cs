@@ -2110,13 +2110,13 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                for (int i = 0; i < list.Count; i++) { input = ((nn.Module<torch.Tensor, torch.Tensor>)list[i]).forward(input); }
+                for (int i = 0; i < list.Count; i++) { input = list[i].forward(input); }
                 throw new NotImplementedException();
             }
 
             public Module<Tensor, Tensor> submodule;
-            private ModuleList list = new ModuleList();
-            private ModuleDict dict = new ModuleDict();
+            private ModuleList<Module<torch.Tensor, torch.Tensor>> list = new ModuleList<Module<torch.Tensor, torch.Tensor>>();
+            private ModuleDict<Module<torch.Tensor, torch.Tensor>> dict = new ModuleDict<Module<torch.Tensor, torch.Tensor>>();
         }
 
         [Fact]

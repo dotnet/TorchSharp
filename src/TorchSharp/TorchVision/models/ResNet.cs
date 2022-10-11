@@ -427,7 +427,7 @@ namespace TorchSharp
                 private readonly Module<Tensor, Tensor> conv2;
                 private readonly TorchSharp.Modules.BatchNorm2d bn2;
                 private readonly Module<Tensor, Tensor> relu1;
-                private readonly TorchSharp.Modules.ModuleList downsample = new TorchSharp.Modules.ModuleList();
+                private readonly TorchSharp.Modules.ModuleList<Module<Tensor, Tensor>> downsample = new TorchSharp.Modules.ModuleList<Module<Tensor, Tensor>>();
             }
 
             class Bottleneck : Module<Tensor, Tensor>
@@ -478,7 +478,7 @@ namespace TorchSharp
                 private readonly Module<Tensor, Tensor> relu1;
                 private readonly Module<Tensor, Tensor> relu2;
 
-                private readonly TorchSharp.Modules.ModuleList downsample = new TorchSharp.Modules.ModuleList();
+                private readonly TorchSharp.Modules.ModuleList<Module<Tensor, Tensor>> downsample = new TorchSharp.Modules.ModuleList<Module<Tensor, Tensor>>();
             }
         }
     }
