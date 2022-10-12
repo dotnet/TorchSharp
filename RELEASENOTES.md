@@ -2,6 +2,22 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.98.1
+
+__Fixed Bugs:__
+
+#568 Overloads for Named Tensors<br/>
+#765 Support invoking ScriptModule methods<br/>
+#775 torch.jit.load: support specifying a target device<br/>
+#792 Add SkiaSharp-based default imager for torchvision.io<br/>
+
+__API Changes__:
+
+Generic ModuleDict and ModuleList<br/>
+Added torchaudio.transforms.GriffinLim
+Added support for named tensors
+
+
 ## NuGet Version 0.98.0
 
 __Breaking Changes:__
