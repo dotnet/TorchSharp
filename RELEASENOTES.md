@@ -4,6 +4,12 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.98.1
 
+__Breaking Changes:__
+
+TorchVision and TorchAudio have beeen moved into their own NuGet packages, which need to be added to any project using their APIs.
+
+ModuleList and ModuleDict are now generic types, taking the module type as the type parameter. torch.nn.ModuleDict() will return a ModuleDict<Module>, which torch.nn.ModuleDict<T>() will return a ModuleDict<T>, where T must be a Module type.
+
 __Fixed Bugs:__
 
 #568 Overloads for Named Tensors<br/>
@@ -16,7 +22,7 @@ __API Changes__:
 Generic ModuleDict and ModuleList<br/>
 Added torchaudio.transforms.GriffinLim
 Added support for named tensors
-
+Added default dim argument value for 'cat'
 
 ## NuGet Version 0.98.0
 
