@@ -55,6 +55,9 @@ namespace TorchSharp
 
         public void Dispose()
         {
+            if (!_hidden) {
+                Console.Error.WriteLine();
+            }
         }
 
         private void Display()
