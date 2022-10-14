@@ -10,6 +10,7 @@ variables:
   # Set this to 'true' to build the libtorch-* packages as part of main branch CI and
   # push them to the artifacts feed of the Azure CI project
   BuildLibTorchPackages: false
+  PushPackagesToFeed: false
 
 resources:
   containers:
@@ -544,7 +545,8 @@ jobs:
 ################################################################################
 - job: Push_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['PushPackagesToFeed'], true))
+
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   - CodeSign_Core
@@ -645,7 +647,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Push_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'), eq(variables['PushPackagesToFeed'], true))
   dependsOn:
   - Build_libtorch_cuda_win_Packages
   - CodeSign_Extras
@@ -730,7 +732,7 @@ jobs:
 ################################################################################
 - job: Push_libtorch_cuda_linux_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'), eq(variables['PushPackagesToFeed'], true))
   dependsOn:
   - Build_libtorch_cuda_linux_Packages
   - CodeSign_Extras
