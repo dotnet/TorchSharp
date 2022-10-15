@@ -1882,6 +1882,19 @@ Tensor THSTensor_where(const Tensor condition, const Tensor x, const Tensor y)
     CATCH_TENSOR(x->where(*condition, *y))
 }
 
+void THSTensor_where_(
+    const Tensor condition,
+    Tensor* (*allocator)(size_t length))
+{
+    CATCH(
+        auto res = at::_ops::where::call(*condition);
+    const size_t sz = res.size();
+    Tensor * result = allocator(sz);
+    for (size_t i = 0; i < sz; i++)
+        result[i] = new torch::Tensor(res[i]);
+    )
+}
+
 bool THSTensor_has_names(Tensor tensor)
 {
     CATCH(

@@ -5099,6 +5099,26 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.where))]
+        public void WhereTest1()
+        {
+            var input = new bool[] { true, true, true, false, true };
+            var expected = new Tensor[] { torch.tensor(new long[] { 0, 1, 2, 4 }) };
+
+            var res = torch.where(torch.tensor(input));
+            Assert.Equal(expected, res);
+
+            var input1 = new bool[,] { { true, true, false, false },
+                                       { false, true, false, false },
+                                       { false, false, false, true },
+                                       { false, false, true, false }};
+            var expected1 = new Tensor[] { torch.tensor(new long[] { 0, 0, 1, 2, 3 }),
+                                           torch.tensor(new long[] { 0, 1, 1, 3, 2 })};
+            var res1 = torch.where(torch.tensor(input1));
+            Assert.Equal(expected1, res1);
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.heaviside))]
         public void HeavisideTest()
         {
@@ -8216,7 +8236,7 @@ namespace TorchSharp
         [TestOf(nameof(Tensor.unflatten))]
         public void TestFlattenNamed()
         {
-            var input = torch.ones(4, 4, 4, 4, names: new[] { "N", "C", "H", "W"} );
+            var input = torch.ones(4, 4, 4, 4, names: new[] { "N", "C", "H", "W" });
             using (var t = input.flatten(new[] { "C", "H", "W" }, "CHW")) {
                 Assert.Equal(new long[] { 4, 64 }, t.shape);
                 Assert.Equal(new[] { "N", "CHW" }, t.names);
@@ -8264,7 +8284,7 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
                 Assert.Equal(new[] { "N", null, null, "W" }, named_imgs.names);
             }
-            using (var named_imgs = imgs.rename(new string?[] { "N", "C", "..."})) {
+            using (var named_imgs = imgs.rename(new string?[] { "N", "C", "..." })) {
                 Assert.Equal(new long[] { 32, 3, 128, 128 }, named_imgs.shape);
                 Assert.Equal(new[] { "N", "C", null, null }, named_imgs.names);
             }
