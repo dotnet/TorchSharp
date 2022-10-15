@@ -2,10 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -156,19 +154,12 @@ namespace TorchSharp
             /// The number of bytes allocated to the storage.
             /// </summary>
             /// <returns></returns>
-            public UInt64 nbytes()
+            public ulong nbytes()
             {
                 var res = THSStorage_nbytes(_tensor.Handle);
                 CheckForErrors();
                 return res;
             }
-
-            [DllImport("LibTorchSharp")]
-            protected static extern UInt64 THSStorage_nbytes(IntPtr tensor);
-            [DllImport("LibTorchSharp")]
-            protected static extern void THSStorage_set_nbytes(IntPtr tensor, UInt64 nbytes);
-            [DllImport("LibTorchSharp")]
-            protected static extern IntPtr THSStorage_data_ptr(IntPtr tensor);
         }
 
         /// <summary>

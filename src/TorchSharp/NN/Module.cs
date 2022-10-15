@@ -1,6 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -31,7 +31,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Class wrapping PyTorch's module object reference.
                 /// </summary>
-                internal protected sealed class HType : SafeHandle
+                protected internal sealed class HType : SafeHandle
                 {
                     public HType(IntPtr preexistingHandle, bool ownsHandle, Action<HType> dispose = null)
                         : base(IntPtr.Zero, ownsHandle)
@@ -46,9 +46,6 @@ namespace TorchSharp
                     internal HType() : base(IntPtr.Zero, true)
                     {
                     }
-
-                    [DllImport("LibTorchSharp")]
-                    private static extern void THSNN_Module_dispose(HType handle);
 
                     protected override bool ReleaseHandle()
                     {
@@ -144,21 +141,12 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern void THSNN_Module_to_device_dtype(HType module, sbyte dtype, long deviceType, long deviceIndex);
-
-                [DllImport("LibTorchSharp")]
-                static extern void THSNN_Module_to_device(HType module, long deviceType, long deviceIndex);
-
-                [DllImport("LibTorchSharp")]
-                static extern void THSNN_Module_to_dtype(HType module, sbyte dtype);
-
                 /// <summary>
                 /// Moves and converts the parameters and buffers.
                 /// </summary>
                 /// <param name="device">The target device.</param>
                 /// <param name="dtype">The target element type.</param>
-                internal protected virtual Module _to(Device device, ScalarType dtype)
+                protected internal virtual Module _to(Device device, ScalarType dtype)
                 {
                     if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
 
@@ -218,7 +206,7 @@ namespace TorchSharp
                 /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
                 /// <param name="deviceIndex">The optional device index.</param>
                 /// <returns></returns>
-                internal protected virtual Module _to(DeviceType deviceType, int deviceIndex = -1)
+                protected internal virtual Module _to(DeviceType deviceType, int deviceIndex = -1)
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
@@ -281,7 +269,7 @@ namespace TorchSharp
                 /// Convert the parameters and buffers.
                 /// </summary>
                 /// <returns></returns>
-                internal protected virtual Module _to(ScalarType dtype)
+                protected internal virtual Module _to(ScalarType dtype)
                 {
                     THSNN_Module_to_dtype(handle, (sbyte)dtype);
                     CheckForErrors();
@@ -351,9 +339,6 @@ namespace TorchSharp
                     return this;
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSNN_Module_load([MarshalAs(UnmanagedType.LPStr)] string location);
-
                 public static Module Load(string filename)
                 {
                     if (!System.IO.File.Exists(filename))
@@ -364,16 +349,8 @@ namespace TorchSharp
                     return new Module(handle, IntPtr.Zero);
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern void THSNN_Module_save(
-                    HType handle,
-                    [MarshalAs(UnmanagedType.LPStr)] string location);
-
                 public virtual void Save(string modelPath)
                     => THSNN_Module_save(handle, modelPath);
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_train(HType module, bool on);
 
                 /// <summary>
                 /// Sets the module in training mode.
@@ -388,9 +365,6 @@ namespace TorchSharp
                     foreach (var (_, m) in named_children()) { m.train(train); }
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_eval(HType module);
-
                 /// <summary>
                 /// Sets the module in evaluation mode.
                 /// </summary>
@@ -402,9 +376,6 @@ namespace TorchSharp
                     train(false);
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern bool THSNN_Module_is_training(HType module);
-
                 /// <summary>
                 /// Check whether the module is set to training or evaluation mode.
                 /// </summary>
@@ -415,9 +386,6 @@ namespace TorchSharp
                         return res;
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_zero_grad(HType module);
 
                 public virtual void zero_grad()
                 {
@@ -543,9 +511,6 @@ namespace TorchSharp
                     return (missing, unexpected);
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_get_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
-
                 protected virtual (string name, Parameter parameter)[] _named_parameters()
                 {
                     using var pa = new PinnedArray<IntPtr>();
@@ -557,9 +522,6 @@ namespace TorchSharp
 
                     return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Parameter(x))).ToArray();
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_get_named_buffers(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
                 protected virtual (string name, Tensor buffer)[] _named_buffers()
                 {
@@ -597,9 +559,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_get_parameters(HType module, AllocatePinnedArray allocator, bool recurse);
 
                 protected virtual Parameter[] _parameters(bool recurse = true)
                 {
@@ -792,10 +751,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                private static extern string THSNN_Module_name(HType module);
-
                 public virtual string GetName()
                 {
                     var res = THSNN_Module_name(handle);
@@ -835,7 +790,7 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// 
+                ///
                 /// </summary>
                 /// <param name="writer">A binary writer instance.</param>
                 /// <param name="skip">A list of keys not to consider when saving the weights.</param>
@@ -868,7 +823,7 @@ namespace TorchSharp
                 /// If false, will load the parameters and buffers that it finds in the saved file,
                 /// leaving everything else alone.
                 /// </param>
-                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>              
+                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
                 /// Using a skip list only prevents tensors in the target module from being modified, it
@@ -950,14 +905,6 @@ namespace TorchSharp
                     var model = new T();
                     return model.load(path);
                 }
-
-                private delegate IntPtr ForwardFunctionC(IntPtr tensor);
-
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSNN_custom_module(
-                    [MarshalAs(UnmanagedType.LPStr)] string name,
-                    ForwardFunctionC forward,
-                    out IntPtr pBoxedModule);
 
                 /// <summary>
                 /// Constructor for custom modules, i.e. those defined outside of TorchSharp.
@@ -1063,9 +1010,6 @@ namespace TorchSharp
                     internal HType() : base(IntPtr.Zero, true)
                     {
                     }
-
-                    [DllImport("LibTorchSharp")]
-                    private static extern void THSNN_AnyModule_dispose(HType handle);
 
                     protected override bool ReleaseHandle()
                     {
@@ -1299,4 +1243,6 @@ namespace TorchSharp
         /// <param name="deviceIndex">If specified, all parameters will be copied to that device</param>
         public static T cuda<T>(this T module, int deviceIndex = -1) where T : torch.nn.Module => (T)module._to(DeviceType.CUDA, deviceIndex);
     }
+
+    internal delegate IntPtr ForwardFunctionC(IntPtr tensor);
 }

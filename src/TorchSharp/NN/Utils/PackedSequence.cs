@@ -1,8 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -36,9 +35,6 @@ namespace TorchSharp
                             internal HType() : base(IntPtr.Zero, true)
                             {
                             }
-
-                            [DllImport("LibTorchSharp")]
-                            private static extern void THSNN_PackedSequence_dispose(IntPtr handle);
 
                             protected override bool ReleaseHandle()
                             {
@@ -94,19 +90,7 @@ namespace TorchSharp
                                 handle.SetHandleAsInvalid();
                             }
                         }
-
-                        [DllImport("LibTorchSharp")]
-                        private static extern IntPtr THSNN_PackedSequence_data(HType handle);
-
-                        [DllImport("LibTorchSharp")]
-                        private static extern IntPtr THSNN_PackedSequence_batch_sizes(HType handle);
-
-                        [DllImport("LibTorchSharp")]
-                        private static extern IntPtr THSNN_PackedSequence_sorted_indices(HType handle);
-
-                        [DllImport("LibTorchSharp")]
-                        private static extern IntPtr THSNN_PackedSequence_unsorted_indices(HType handle);
-                    }
+}
                 }
             }
         }

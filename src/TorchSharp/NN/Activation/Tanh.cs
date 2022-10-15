@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -15,9 +15,6 @@ namespace TorchSharp
         public sealed class Tanh : torch.nn.Module<Tensor, Tensor>
         {
             internal Tanh(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Tanh_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
@@ -37,14 +34,11 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Tanh_ctor(out IntPtr pBoxedModule);
-
             /// <summary>
             /// Tanh activation
             /// </summary>
             /// <returns></returns>
-            static public Tanh Tanh()
+            public static Tanh Tanh()
             {
                 var handle = THSNN_Tanh_ctor(out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -58,7 +52,7 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="x">The input tensor</param>
                 /// <returns></returns>
-                static public Tensor tanh(Tensor x)
+                public static Tensor tanh(Tensor x)
                 {
                     using (var m = nn.Tanh()) {
                         return m.forward(x);

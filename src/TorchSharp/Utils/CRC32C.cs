@@ -23,19 +23,13 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-
 using System;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp.Utils
 {
     public static class CRC32C
     {
-        // uint32_t crc32c_append(uint32_t crc, buffer input, size_t length)
-
-        [DllImport("LibTorchSharp")]
-        extern static uint crc32c_append(uint crc, IntPtr value, ulong length);
-
         /// <summary>
         /// Compule the CRC32C value for a byte array.
         /// </summary>

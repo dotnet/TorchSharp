@@ -1,19 +1,13 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
-using System.Transactions;
-using ICSharpCode.SharpZipLib.BZip2;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
     public static partial class torch
     {
-
         public partial class Tensor
         {
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cholesky(IntPtr input, bool upper);
-
             /// <summary>
             /// Computes the Cholesky decomposition of a symmetric positive-definite matrix AA or for batches of symmetric positive-definite matrices.
             /// </summary>
@@ -25,9 +19,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cholesky_inverse(IntPtr input, bool upper);
 
             /// <summary>
             /// Computes the inverse of a symmetric positive-definite matrix AA using its Cholesky factor uu : returns matrix inv
@@ -41,9 +32,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cholesky_solve(IntPtr input, IntPtr input2, bool upper);
-
             /// <summary>
             /// Solves a linear system of equations with a positive semidefinite matrix to be inverted given its Cholesky factor matrix u.
             /// </summary>
@@ -56,9 +44,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cross(IntPtr input, IntPtr other, long dim);
 
             /// <summary>
             /// Computes the cross product of two 3-dimensional vectors.
@@ -83,12 +68,6 @@ namespace TorchSharp
                 return torch.linalg.det(this);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_eig(IntPtr tensor, bool eigenvectors, out IntPtr pEigenvectors);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_matmul(IntPtr tensor, IntPtr target);
-
             /// <summary>
             /// Matrix product of two tensors.
             /// </summary>
@@ -109,9 +88,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_mm(IntPtr tensor, IntPtr target);
-
             /// <summary>
             /// Performs a matrix multiplication of the matrices input and mat2.
             /// </summary>
@@ -123,9 +99,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_mv(IntPtr tensor, IntPtr target);
 
             /// <summary>
             /// Performs a matrix-vector product of the matrix input and the vector vec.
@@ -139,9 +112,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_matrix_exp(IntPtr input);
-
             /// <summary>
             /// Computes the matrix exponential of a square matrix or of each square matrix in a batch.
             /// </summary>
@@ -151,9 +121,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSLinalg_matrix_power(IntPtr tensor, long n);
 
             /// <summary>
             /// Computes the n-th power of a square matrix for an integer n.
@@ -168,11 +135,8 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_vdot(IntPtr tensor, IntPtr target);
-
             /// <summary>
-            /// Computes the dot product of two 1D tensors. 
+            /// Computes the dot product of two 1D tensors.
             /// </summary>
             /// <param name="target"></param>
             /// <returns></returns>
@@ -187,9 +151,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_pinverse(IntPtr tensor, double rcond, bool hermitian);
 
             /// <summary>
             /// Computes the pseudoinverse (Moore-Penrose inverse) of a matrix.
@@ -207,7 +168,6 @@ namespace TorchSharp
             }
         }
 
-
         /// <summary>
         /// Computes the pseudoinverse (Moore-Penrose inverse) of a matrix.
         /// </summary>
@@ -216,7 +176,6 @@ namespace TorchSharp
         /// <param name="hermitian">Indicates whether A is Hermitian if complex or symmetric if real. </param>
         /// <remarks>Input should be tensor of shape (*, m, n) where * is zero or more batch dimensions.</remarks>
         public static Tensor pinverse(Tensor input, double rcond = 1e-15, bool hermitian = false) => input.pinverse(rcond, hermitian);
-
 
         /// <summary>
         /// Computes the Cholesky decomposition of a symmetric positive-definite matrix 'input' or for batches of symmetric positive-definite matrices.
@@ -322,7 +281,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor</param>
         /// <returns></returns>
-        public static Tensor trace(Tensor input) => input.trace(); 
+        public static Tensor trace(Tensor input) => input.trace();
 
         /// <summary>
         /// Returns a partial view of input with the its diagonal elements with respect to dim1 and dim2 appended as a dimension at the end of the shape.
@@ -341,16 +300,6 @@ namespace TorchSharp
         /// However, torch.diag_embed() has different default dimensions, so those need to be explicitly specified.
         /// </remarks>
         public static Tensor diagonal(Tensor input, long offset = 0, long dim1 = 0, long dim2 = 0) => input.diagonal(offset, dim1, dim2);
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_lu(IntPtr tensor, bool pivot, bool get_infos, out IntPtr infos, out IntPtr pivots);
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_lu_solve(IntPtr tensor, IntPtr LU_data, IntPtr LU_pivots);
-
-        [DllImport("LibTorchSharp")]
-        static extern IntPtr THSTensor_lu_unpack(IntPtr LU_data, IntPtr LU_pivots, bool unpack_data, bool unpack_pivots, out IntPtr L, out IntPtr U);
-
 
         /// <summary>
         /// Computes the LU factorization of a matrix or batches of matrices A. Returns a tuple containing the LU factorization and pivots of A. Pivoting is done if pivot is set to true.
@@ -399,7 +348,6 @@ namespace TorchSharp
                 torch.CheckForErrors();
             return (new Tensor(solution), L == IntPtr.Zero ? null : new Tensor(L), U == IntPtr.Zero ? null : new Tensor(U));
         }
-
 
         /// <summary>
         /// Matrix product of two tensors.
@@ -455,7 +403,7 @@ namespace TorchSharp
         public static Tensor norm(Tensor input) => input.norm();
 
         /// <summary>
-        /// Computes the dot product of two 1D tensors. 
+        /// Computes the dot product of two 1D tensors.
         /// </summary>
         /// <param name="input"></param>
         /// <param name="target"></param>

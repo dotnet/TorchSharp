@@ -7,7 +7,6 @@ using System.Diagnostics;
 
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
-using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp.Examples
 {

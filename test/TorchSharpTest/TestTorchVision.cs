@@ -1,5 +1,4 @@
 using System.Linq;
-using TorchSharp.Modules;
 using static TorchSharp.torchvision.models;
 using Xunit;
 

@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_AvgPool1d_forward(IntPtr module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_AvgPool1d_forward(handle.DangerousGetHandle(), tensor.Handle);
@@ -34,16 +31,13 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_AvgPool1d_ctor(IntPtr pkernelSize, IntPtr pstrides, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 1D average pooling over an input signal composed of several input planes.
             /// </summary>
             /// <param name="kernelSize">The size of the window</param>
             /// <param name="stride">The stride of the window. Default value is kernel_size</param>
             /// <returns></returns>
-            static public AvgPool1d AvgPool1d(long kernelSize, long? stride = null)
+            public static AvgPool1d AvgPool1d(long kernelSize, long? stride = null)
             {
                 return stride.HasValue ?
                     AvgPool1d(new long[] { kernelSize }, new long[] { stride.Value }) :
@@ -56,7 +50,7 @@ namespace TorchSharp
             /// <param name="kernelSize">The size of the window</param>
             /// <param name="strides">The stride of the window. Default value is kernel_size</param>
             /// <returns></returns>
-            static private AvgPool1d AvgPool1d(long[] kernelSize, long[] strides = null)
+            private static AvgPool1d AvgPool1d(long[] kernelSize, long[] strides = null)
             {
                 unsafe {
                     fixed (long* pkernelSize = kernelSize, pstrides = strides) {

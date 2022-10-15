@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -17,9 +17,6 @@ namespace TorchSharp
             internal MaxUnpool3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_MaxUnpool3d_forward(torch.nn.Module.HType module, IntPtr tensor, IntPtr indices, IntPtr outSize, int outputSizeLength);
 
             public override Tensor forward(Tensor tensor, Tensor indices, long[] output_size = null)
             {
@@ -38,9 +35,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_MaxUnpool3d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr pPadding, int paddingLength, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 2D max pooling over an input signal composed of several input planes.
             /// </summary>
@@ -48,7 +42,7 @@ namespace TorchSharp
             /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <returns></returns>
-            static public MaxUnpool3d MaxUnpool3d(long kernelSize, long? stride = null, long? padding = null)
+            public static MaxUnpool3d MaxUnpool3d(long kernelSize, long? stride = null, long? padding = null)
             {
                 var pStride = stride.HasValue ? new long[] { stride.Value, stride.Value, stride.Value } : null;
                 var pPadding = padding.HasValue ? new long[] { padding.Value, padding.Value, padding.Value } : null;
@@ -62,7 +56,7 @@ namespace TorchSharp
             /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <returns></returns>
-            static public MaxUnpool3d MaxUnpool3d((long, long, long) kernelSize, (long, long, long)? stride = null, (long, long, long)? padding = null)
+            public static MaxUnpool3d MaxUnpool3d((long, long, long) kernelSize, (long, long, long)? stride = null, (long, long, long)? padding = null)
             {
                 var pStride = stride.HasValue ? new long[] { stride.Value.Item1, stride.Value.Item2, stride.Value.Item3 } : null;
                 var pPadding = padding.HasValue ? new long[] { padding.Value.Item1, padding.Value.Item2, padding.Value.Item3 } : null;
@@ -76,7 +70,7 @@ namespace TorchSharp
             /// <param name="strides">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <returns></returns>
-            static public MaxUnpool3d MaxUnpool3d(long[] kernelSize, long[] strides = null, long[] padding = null)
+            public static MaxUnpool3d MaxUnpool3d(long[] kernelSize, long[] strides = null, long[] padding = null)
             {
                 unsafe {
                     fixed (long* pkernelSize = kernelSize, pstrides = strides, pPadding = padding) {

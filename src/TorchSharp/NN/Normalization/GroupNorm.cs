@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -20,9 +20,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_GroupNorm_forward(IntPtr module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for GroupNorm argument: {tensor.Dimensions}");
@@ -30,15 +27,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_GroupNorm_bias(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_GroupNorm_set_bias(torch.nn.Module.HType module, IntPtr bias);
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_GroupNorm_weight(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_GroupNorm_set_weight(torch.nn.Module.HType module, IntPtr weight);
 
             public Parameter? bias {
                 get {
@@ -65,7 +53,6 @@ namespace TorchSharp
                     ConditionallyRegisterParameter("weight", value);
                 }
             }
-
         }
     }
 
@@ -73,9 +60,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_GroupNorm_ctor(long num_groups, long num_channels, double eps, [MarshalAs(UnmanagedType.U1)] bool affine, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies Group Normalization over a mini-batch of inputs as described in the paper Group Normalization
             /// </summary>
@@ -86,7 +70,7 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public GroupNorm GroupNorm(long num_groups, long num_channels, double eps = 1e-05, bool affine = true, Device? device = null, ScalarType? dtype = null)
+            public static GroupNorm GroupNorm(long num_groups, long num_channels, double eps = 1e-05, bool affine = true, Device? device = null, ScalarType? dtype = null)
             {
                 unsafe {
                     var handle = THSNN_GroupNorm_ctor(num_groups, num_channels, eps, affine, out var boxedHandle);

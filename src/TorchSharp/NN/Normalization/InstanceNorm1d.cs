@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -20,9 +20,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_InstanceNorm1d_forward(IntPtr module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 if (tensor.Dimensions < 2 || tensor.Dimensions > 3) throw new ArgumentException($"Invalid number of dimensions for InstanceNorm argument: {tensor.Dimensions}");
@@ -30,27 +27,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_InstanceNorm1d_bias(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_InstanceNorm1d_set_bias(torch.nn.Module.HType module, IntPtr bias);
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_InstanceNorm1d_weight(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_InstanceNorm1d_set_weight(torch.nn.Module.HType module, IntPtr weight);
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_InstanceNorm1d_reset_stats(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_InstanceNorm1d_get_mean(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_InstanceNorm1d_get_var(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_InstanceNorm1d_get_batches(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_InstanceNorm1d_set_mean(torch.nn.Module.HType module, IntPtr weight);
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_InstanceNorm1d_set_var(torch.nn.Module.HType module, IntPtr weight);
 
             public Parameter? bias {
                 get {
@@ -124,9 +100,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_InstanceNorm1d_ctor(long features, double eps, double momentum, [MarshalAs(UnmanagedType.U1)] bool affine, [MarshalAs(UnmanagedType.U1)] bool track_running_stats, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies Instance Normalization over a 3D input (a mini-batch of 1D inputs with optional additional channel dimension) as described in the paper Instance Normalization: The Missing Ingredient for Fast Stylization.
             /// </summary>
@@ -140,7 +113,7 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public InstanceNorm1d InstanceNorm1d(long features, double eps = 1e-05, double momentum = 0.1, bool affine = false, bool track_running_stats = false, Device? device = null, ScalarType? dtype = null)
+            public static InstanceNorm1d InstanceNorm1d(long features, double eps = 1e-05, double momentum = 0.1, bool affine = false, bool track_running_stats = false, Device? device = null, ScalarType? dtype = null)
             {
                 unsafe {
                     var handle = THSNN_InstanceNorm1d_ctor(features, eps, momentum, affine, track_running_stats, out var boxedHandle);

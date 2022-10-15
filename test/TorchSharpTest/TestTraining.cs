@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static TorchSharp.torch.nn;
-using static TorchSharp.torch.nn.functional;
 using Xunit;
 
 using static TorchSharp.torch;

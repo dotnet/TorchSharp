@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Unflatten_forward(torch.nn.Module.HType module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Unflatten_forward(handle, tensor.Handle);
@@ -34,16 +31,13 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Unflatten_ctor(long dim, IntPtr shape, long shape_len, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Unflattens a tensor dim expanding it to a desired shape. For use with Sequential.
             /// </summary>
             /// <param name="dim">Dimension to be unflattened</param>
             /// <param name="unflattenedSize">New shape of the unflattened dimension</param>
             /// <returns></returns>
-            static public Unflatten Unflatten(long dim, long[] unflattenedSize)
+            public static Unflatten Unflatten(long dim, long[] unflattenedSize)
             {
                 unsafe {
                     fixed (long* pUnflattenedSize = unflattenedSize) {

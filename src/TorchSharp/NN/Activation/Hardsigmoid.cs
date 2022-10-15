@@ -41,7 +41,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="inplace">Do the operation in-place</param>
             /// <returns></returns>
-            static public Hardsigmoid Hardsigmoid(bool inplace = false)
+            public static Hardsigmoid Hardsigmoid(bool inplace = false)
             {
                 return new Hardsigmoid(inplace);
             }

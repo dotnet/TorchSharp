@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_LogSoftmax_forward(torch.nn.Module.HType handle, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_LogSoftmax_forward(handle, tensor.Handle);
@@ -34,10 +31,7 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LogSoftmax_ctor(long dim, out IntPtr pBoxedModule);
-
-            static public LogSoftmax LogSoftmax(long dim)
+            public static LogSoftmax LogSoftmax(long dim)
             {
                 var handle = THSNN_LogSoftmax_ctor(dim, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -46,7 +40,7 @@ namespace TorchSharp
 
             public static partial class functional
             {
-                static public Tensor log_softmax(Tensor x, long dim)
+                public static Tensor log_softmax(Tensor x, long dim)
                 {
                     return torch.special.log_softmax(x, dim);
                 }

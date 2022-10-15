@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -15,9 +15,6 @@ namespace TorchSharp
         public sealed class Hardtanh : torch.nn.Module<Tensor, Tensor>
         {
             internal Hardtanh(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Hardtanh_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
@@ -37,9 +34,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Hardtanh_ctor(double min_val, double max_val, [MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Hardtanh
             /// </summary>
@@ -47,7 +41,7 @@ namespace TorchSharp
             /// <param name="max_val">Maximum value of the linear region range.</param>
             /// <param name="inplace">Do the operation in-place</param>
             /// <returns></returns>
-            static public Hardtanh Hardtanh(double min_val = -1.0, double max_val = 1.0, bool inplace = false)
+            public static Hardtanh Hardtanh(double min_val = -1.0, double max_val = 1.0, bool inplace = false)
             {
                 var handle = THSNN_Hardtanh_ctor(min_val, max_val, inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -64,7 +58,7 @@ namespace TorchSharp
                 /// <param name="max_val">Maximum value of the linear region range.</param>
                 /// <param name="inplace">Do the operation in-place</param>
                 /// <returns></returns>
-                static public Tensor Hardtanh(Tensor x, double min_val = -1.0, double max_val = 1.0, bool inplace = false)
+                public static Tensor Hardtanh(Tensor x, double min_val = -1.0, double max_val = 1.0, bool inplace = false)
                 {
                     using (var m = nn.Hardtanh(min_val, max_val, inplace)) {
                         return m.forward(x);

@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -14,20 +14,12 @@ namespace TorchSharp
         {
             internal Conv3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Conv3d_forward(torch.nn.Module.HType module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Conv3d_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Conv3d_bias(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_Conv3d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? bias {
                 get {
@@ -41,11 +33,6 @@ namespace TorchSharp
                     ConditionallyRegisterParameter("bias", value);
                 }
             }
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Conv3d_weight(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_Conv3d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
             public Parameter? weight {
                 get {
                     var res = THSNN_Conv3d_weight(handle);
@@ -65,12 +52,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Conv3d_ctor(long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long dilation, long paddingMode, long groups, bool bias, out IntPtr pBoxedModule);
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Conv3d_ctor_1(long inputChannel, long outputChannel, long kernelSizeX, long kernelSizeY, long kernelSizeZ, long strideX, long strideY, long strideZ, long paddingX, long paddingY, long paddingZ, long dilationX, long dilationY, long dilationZ, long paddingMode, long groups, bool bias, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 3D convolution over an input signal composed of several input planes
             /// </summary>
@@ -85,7 +66,7 @@ namespace TorchSharp
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            static public Conv3d Conv3d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv3d Conv3d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Conv3d_ctor(inputChannel, outputChannel, kernelSize, stride, padding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -106,7 +87,7 @@ namespace TorchSharp
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            static public Conv3d Conv3d(long inputChannel, long outputChannel, (long, long, long) kernelSize, (long, long, long)? stride = null, (long, long, long)? padding = null, (long, long, long)? dilation = null, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv3d Conv3d(long inputChannel, long outputChannel, (long, long, long) kernelSize, (long, long, long)? stride = null, (long, long, long)? padding = null, (long, long, long)? dilation = null, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 if (stride == null) stride = (1, 1, 1);
                 if (padding == null) padding = (0, 0, 0);
@@ -131,7 +112,7 @@ namespace TorchSharp
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            static public Conv3d Conv3d(long inputChannel, long outputChannel, long kernelSize, Padding padding, long stride = 1, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv3d Conv3d(long inputChannel, long outputChannel, long kernelSize, Padding padding, long stride = 1, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Conv3d_ctor(inputChannel, outputChannel, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -152,7 +133,7 @@ namespace TorchSharp
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            static public Conv3d Conv3d(long inputChannel, long outputChannel, (long, long, long) kernelSize, Padding padding, (long, long, long)? stride = null, (long, long, long)? dilation = null, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv3d Conv3d(long inputChannel, long outputChannel, (long, long, long) kernelSize, Padding padding, (long, long, long)? stride = null, (long, long, long)? dilation = null, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 if (stride == null) stride = (1, 1, 1);
                 if (dilation == null) dilation = (1, 1, 1);

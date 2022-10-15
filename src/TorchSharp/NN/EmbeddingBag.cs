@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -20,9 +20,6 @@ namespace TorchSharp
         public sealed class EmbeddingBag : torch.nn.Module<Tensor, Tensor>, torch.nn.IModule<Tensor, Tensor, Tensor>, torch.nn.IModule<Tensor, Tensor, Tensor, Tensor>
         {
             internal EmbeddingBag(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_EmbeddingBag_forward(torch.nn.Module.HType module, IntPtr tensor, IntPtr offsets, IntPtr per_sample_weights);
 
             /// <summary>
             /// Forward pass of EmbeddingBag.
@@ -84,12 +81,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_EmbeddingBag_weight(torch.nn.Module.HType module);
-
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_EmbeddingBag_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
             public Parameter? weight {
                 get {
                     var res = THSNN_EmbeddingBag_weight(handle);
@@ -107,12 +98,8 @@ namespace TorchSharp
 
     public static partial class torch
     {
-
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_EmbeddingBag_ctor(long num_embeddings, long embedding_dims, double max_norm, bool hasMN, double norm_type, bool scale_grad_by_freq, long mode, bool sparse, bool include_last_offset, long padding_idx, out IntPtr pBoxedModule);
-
             /// <summary>
             /// A simple lookup table that stores embeddings of a fixed dictionary and size.
             /// This module is often used to store word embeddings and retrieve them using indices. The input to the module is a list of indices, and the output is the corresponding word embeddings.
@@ -132,7 +119,7 @@ namespace TorchSharp
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-            static public EmbeddingBag EmbeddingBag(long num_embeddings, long embedding_dims, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1, Device? device = null, ScalarType? dtype = null)
+            public static EmbeddingBag EmbeddingBag(long num_embeddings, long embedding_dims, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, EmbeddingBagMode mode = EmbeddingBagMode.Mean, bool sparse = false, bool include_last_offset = false, long padding_index = -1, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_EmbeddingBag_ctor(num_embeddings, embedding_dims,
                     max_norm.HasValue ? max_norm.Value : 0.0, max_norm.HasValue,
@@ -140,9 +127,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new EmbeddingBag(res, boxedHandle).MoveModule<EmbeddingBag>(device, dtype);
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_EmbeddingBag_from_pretrained(IntPtr embeddings, bool freeze, double max_norm, bool hasMN, double norm_type, bool scale_grad_by_freq, long mode, bool sparse, bool include_last_offset, long padding_idx, out IntPtr pBoxedModule);
 
             /// <summary>
             /// A simple lookup table that stores embeddings of a fixed dictionary and size.
