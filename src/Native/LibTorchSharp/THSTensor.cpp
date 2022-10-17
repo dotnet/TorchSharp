@@ -1882,7 +1882,7 @@ Tensor THSTensor_where(const Tensor condition, const Tensor x, const Tensor y)
     CATCH_TENSOR(x->where(*condition, *y))
 }
 
-void THSTensor_where_(
+void THSTensor_where_list(
     const Tensor condition,
     Tensor* (*allocator)(size_t length))
 {

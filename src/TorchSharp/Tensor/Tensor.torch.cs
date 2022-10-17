@@ -198,7 +198,7 @@ namespace TorchSharp
         public static Tensor where(Tensor condition, Tensor x, Tensor y) => x.where(condition, y);
 
         [DllImport("LibTorchSharp")]
-        static extern void THSTensor_where_(IntPtr condition, AllocatePinnedArray allocator);
+        static extern void THSTensor_where_list(IntPtr condition, AllocatePinnedArray allocator);
 
         /// <summary>
         /// Returns a tuple of 1-D tensors, one for each dimension in input, each containing the indices (in that dimension) of all non-zero elements of input .
@@ -215,7 +215,7 @@ namespace TorchSharp
             IntPtr[] ptrArray;
 
             using (var pa = new PinnedArray<IntPtr>()) {
-                THSTensor_where_(condition.Handle, pa.CreateArray);
+                THSTensor_where_list(condition.Handle, pa.CreateArray);
                 torch.CheckForErrors();
                 ptrArray = pa.Array;
             }
