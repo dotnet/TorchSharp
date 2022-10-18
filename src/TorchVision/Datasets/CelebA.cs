@@ -77,14 +77,13 @@ namespace TorchSharp
 
             public static CelebA<TInput, TTarget> CelebA<TInput, TTarget>(
                 string root,
+                Func<Tensor, string[], (TInput, TTarget)> transforms,
                 string split = "train",
                 string target_type = "attr",
-                Func<Tensor, string[], (TInput, TTarget)>? transforms = null,
                 bool download = false)
             {
                 if (transforms == null) {
-                    var f = no_transform<Tensor, string[]>;
-                    transforms = f as Func<Tensor, string[], (TInput, TTarget)> ?? throw new InvalidCastException();
+                    throw new ArgumentNullException();
                 }
                 var dataset = new CelebA<TInput, TTarget>(
                     root,
@@ -105,9 +104,9 @@ namespace TorchSharp
             {
                 return CelebA<Tensor, string[]>(
                     root,
+                    no_transform,
                     split,
                     target_type,
-                    null,
                     download);
             }
         }
