@@ -198,6 +198,32 @@ namespace TorchSharp
         public static Tensor where(Tensor condition, Tensor x, Tensor y) => x.where(condition, y);
 
         [DllImport("LibTorchSharp")]
+        static extern void THSTensor_where_list(IntPtr condition, AllocatePinnedArray allocator);
+
+        /// <summary>
+        /// Returns a tuple of 1-D tensors, one for each dimension in input, each containing the indices (in that dimension) of all non-zero elements of input .
+        /// If input has nn dimensions, then the resulting tuple contains nn tensors of size zz, where zz is the total number of non-zero elements in the input tensor.
+        /// As a special case, when input has zero dimensions and a nonzero scalar value, it is treated as a one-dimensional tensor with one element.
+        /// </summary>
+        /// <param name="condition">The input tensor</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static Tensor[] where(Tensor condition)
+        {
+            if (condition.dtype != ScalarType.Bool) throw new ArgumentException("The condition to 'where' must be a boolean tensor.");
+
+            IntPtr[] ptrArray;
+
+            using (var pa = new PinnedArray<IntPtr>()) {
+                THSTensor_where_list(condition.Handle, pa.CreateArray);
+                torch.CheckForErrors();
+                ptrArray = pa.Array;
+            }
+
+            return ptrArray.Select(x => new Tensor(x)).ToArray();
+        }
+
+        [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_stack(IntPtr tensor, int len, long dim);
 
         /// <summary>
