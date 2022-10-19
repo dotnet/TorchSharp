@@ -48,11 +48,12 @@ Tensor THSNN_cosine_embedding_loss(const Tensor input1, const Tensor input2, con
     )
 }
 
-Tensor THSNN_cross_entropy(const Tensor input, const Tensor target, const Tensor weight, const int64_t ignore_index, const bool has_ii, const int64_t reduction)
+Tensor THSNN_cross_entropy(const Tensor input, const Tensor target, const Tensor weight, const int64_t ignore_index, const bool has_ii, const int64_t reduction, const double smoothing)
 {
     CATCH_RETURN_Tensor(
         auto opts = torch::nn::functional::CrossEntropyFuncOptions();
         ApplyReduction(opts, reduction);
+        opts.label_smoothing(smoothing);
         if (has_ii)
             opts = opts.ignore_index(ignore_index);
         if (weight != NULL)
