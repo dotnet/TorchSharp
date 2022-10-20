@@ -6,6 +6,7 @@
     <TestCuda>true</TestCuda>
     <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets. We have to clear that out to set only the targets we support. -->
     <TargetFrameworks></TargetFrameworks>
+    <LangVersion>9.0</LangVersion>
     <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net5.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">net472;$(TargetFrameworks)</TargetFrameworks>
     <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net5.0</TargetFrameworks>
