@@ -180,7 +180,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -317,7 +317,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -429,7 +429,7 @@ jobs:
   variables:
   - group: SignClient Credentials
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   - task: DotNetCoreCLI@2
@@ -478,7 +478,7 @@ jobs:
   variables:
   - group: SignClient Credentials
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   - task: DotNetCoreCLI@2
@@ -557,7 +557,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   # Push packages to feed
@@ -658,7 +658,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   # Push packages to feed
@@ -743,7 +743,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   # container: UbuntuContainer
   # Exact copy of the dependency install above - TODO share this somewhere
   steps:
