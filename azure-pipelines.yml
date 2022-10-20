@@ -51,7 +51,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetFxBuild=true -c
     testScript: dotnet test /p:SkipCuda=true /p:SkipNetFxBuild=true --blame -c
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -60,7 +60,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetCoreBuild=true -c
     testScript: dotnet test /p:SkipCuda=true /p:SkipNetCoreBuild=true --blame -c
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -69,7 +69,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test --blame /p:SkipCuda=true --blame -c
     pool:
-      vmImage: 'macos-latest'
+      vmImage: 'macos-11'
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
