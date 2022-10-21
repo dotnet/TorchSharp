@@ -2,6 +2,40 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.98.2
+
+__Breaking Changes__:
+
+The .NET 5.0 is no longer supported. Instead, .NET 6.0 is the minimum version. .NET FX 4.7.2 and higher are still supported.
+
+__Fixed Bugs__:
+
+#783 Download progress bar missing<br/>
+#787 torch.where(condition) → tuple of LongTensor function missing<br/>
+#799 TorchSharp.csproj refers Skia<br/>
+
+## NuGet Version 0.98.1
+
+__Breaking Changes:__
+
+TorchVision and TorchAudio have beeen moved into their own NuGet packages, which need to be added to any project using their APIs.
+
+ModuleList and ModuleDict are now generic types, taking the module type as the type parameter. torch.nn.ModuleDict() will return a ModuleDict<Module>, which torch.nn.ModuleDict<T>() will return a ModuleDict<T>, where T must be a Module type.
+
+__Fixed Bugs:__
+
+#568 Overloads for Named Tensors<br/>
+#765 Support invoking ScriptModule methods<br/>
+#775 torch.jit.load: support specifying a target device<br/>
+#792 Add SkiaSharp-based default imager for torchvision.io<br/>
+
+__API Changes__:
+
+Generic ModuleDict and ModuleList<br/>
+Added torchaudio.transforms.GriffinLim
+Added support for named tensors
+Added default dim argument value for 'cat'
+
 ## NuGet Version 0.98.0
 
 __Breaking Changes:__

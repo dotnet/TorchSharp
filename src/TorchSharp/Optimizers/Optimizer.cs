@@ -213,7 +213,6 @@ namespace TorchSharp
     namespace Modules
     {
         using static torch.optim;
-        using static TorchSharp.torchvision;
 
         /// <summary>
         /// Base class to help with a couple of the things that managed-code implementations need.

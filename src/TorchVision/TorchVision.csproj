@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <TargetFrameworks>netcoreapp3.1;netstandard2.0</TargetFrameworks>
+      <LangVersion>9.0</LangVersion>
+      <IncludeInPackage>TorchVision</IncludeInPackage>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+      <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
+      <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
+      <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+      <PackDependsOn>
+          $(PackDependsOn);
+          RealPack
+      </PackDependsOn>
+      <SignAssembly>True</SignAssembly>
+      <AssemblyOriginatorKeyFile>..\..\build\TorchVision.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <Target Name="RealPack">
+    <MSBuild Projects="..\..\pkg\pack.proj" Targets="Pack" />
+  </Target>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+    <Compile Include="..\TorchSharp\netstandard.cs" Link="netstandard.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.88.3" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TorchSharp\TorchSharp.csproj" />
+  </ItemGroup>
+
+</Project>

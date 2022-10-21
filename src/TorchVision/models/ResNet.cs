@@ -366,7 +366,7 @@ namespace TorchSharp
 
                 for (var i = 0; i < strides.Count; i++) {
                     var s = strides[i];
-                    modules.Add(block(in_planes, planes, s));
+                    modules.append(block(in_planes, planes, s));
                     in_planes = planes * expansion;
                 }
             }

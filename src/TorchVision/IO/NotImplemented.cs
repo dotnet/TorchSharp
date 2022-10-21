@@ -1,3 +1,4 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,12 @@ namespace TorchSharp
                 {
                     throw exp;
                 }
+
+                public override Tensor DecodeImage(byte[] data, ImageReadMode mode = ImageReadMode.UNCHANGED)
+                {
+                    throw new System.NotImplementedException();
+                }
+
                 public override Task<Tensor> DecodeImageAsync(Stream stream, ImageReadMode mode = ImageReadMode.UNCHANGED, CancellationToken cancellationToken = default)
                 {
                     throw exp;
@@ -23,6 +30,11 @@ namespace TorchSharp
                 public override void EncodeImage(Tensor image, ImageFormat format, Stream stream)
                 {
                     throw exp;
+                }
+
+                public override byte[] EncodeImage(Tensor image, ImageFormat format)
+                {
+                    throw new System.NotImplementedException();
                 }
 
                 public override Task EncodeImageAsync(Tensor image, ImageFormat format, Stream stream, CancellationToken cancellationToken = default)

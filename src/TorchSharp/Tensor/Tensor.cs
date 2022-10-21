@@ -43,6 +43,13 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Allows external packages to create tensors from the same native pointers that TorchSharp uses.
+            /// </summary>
+            /// <param name="handle">A pointer to a native at::Tensor.</param>
+            /// <returns>A Tensor reference</returns>
+            public static Tensor UnsafeCreateTensor(IntPtr handle) => new Tensor(handle);
+
+            /// <summary>
             ///  TBD
             /// </summary>
             /// <param name="obj"></param>
@@ -7325,7 +7332,7 @@ namespace TorchSharp
                     builder.Append(value.ToInt64());
                     break;
                 case ScalarType.Bool:
-                    builder.Append(value.ToBoolean());
+                    builder.Append(value.ToBoolean().ToString(cultureInfo));
                     break;
                 case ScalarType.Float16:
                     builder.Append(value.ToSingle().ToString(fltFormat, cultureInfo));

@@ -140,7 +140,7 @@ namespace TorchSharp
                     // So we shadow copy the DLLs into the TorchSharp package, make a copy of the native DLL and continue
                     // with the dynamic load
                     //
-                    // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\net5.0\TorchSharp.dll
+                    // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\net6.0\TorchSharp.dll
                     //
                     // TODO: on linux make these copies link not shadow-copy
                     var torchsharpLoc = Path.GetDirectoryName(typeof(torch).Assembly.Location);
@@ -485,7 +485,7 @@ namespace TorchSharp
         private static extern IntPtr THSTorch_get_and_reset_last_err();
 
         //[Conditional("DEBUG")]
-        internal static void CheckForErrors()
+        public static void CheckForErrors()
         {
             var error = THSTorch_get_and_reset_last_err();
 

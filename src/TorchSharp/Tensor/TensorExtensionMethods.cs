@@ -470,40 +470,5 @@ namespace TorchSharp
             }
             return result;
         }
-
-        // Vision-related operations
-
-        /// <summary>
-        /// Crop the given image tensor at specified location and output size.
-        /// If the image is torch Tensor, it is expected to have […, H, W] shape, where … means an
-        /// arbitrary number of leading dimensions.
-        /// If image size is smaller than output size along any edge, image is padded with 0 and then cropped.
-        /// </summary>
-        /// <param name="image">The input tensor.</param>
-        /// <param name="top">Vertical component of the top left corner of the crop box.</param>
-        /// <param name="left">Horizontal component of the top left corner of the crop box.</param>
-        /// <param name="height">Height of the crop box.</param>
-        /// <param name="width">Width of the crop box.</param>
-        /// <returns></returns>
-        public static Tensor crop(this Tensor image, int top, int left, int height, int width)
-        {
-            var dims = image.Dimensions;
-            var hoffset = dims - 2;
-            long h = image.shape[hoffset], w = image.shape[hoffset + 1];
-
-            var right = left + width;
-            var bottom = top + height;
-
-            if (left < 0 || top < 0 || right > w || bottom > h) {
-
-                var slice = image.index(TensorIndex.Ellipsis, TensorIndex.Slice(Math.Max(top, 0), bottom), TensorIndex.Slice(Math.Max(left, 0), right));
-
-                var padding_ltrb = new long[] { Math.Max(-left, 0), Math.Max(-top, 0), Math.Max(right - w, 0), Math.Max(bottom - h, 0) };
-
-                return TorchSharp.torchvision.transforms.functional.pad(slice, padding_ltrb);
-            }
-
-            return image.index(TensorIndex.Ellipsis, TensorIndex.Slice(top, bottom), TensorIndex.Slice(left, right));
-        }
     }
 }

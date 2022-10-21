@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Pack">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;netstandard2.0</TargetFrameworks>
+    <PackageDescription>.NET Bindings for TorchAudio. Requires reference to TorchSharp and one of libtorch-cpu, libtorch-cuda-$(CudaVersionDot), libtorch-cuda-$(CudaVersionDot)-win-x64 or libtorch-cuda-$(CudaVersionDot)-linux-x64 version $(LibTorchPackageVersion) to execute.</PackageDescription>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TorchSharp\TorchSharp.nupkgproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netcoreapp3.1\$(MSBuildProjectName).props" />
+    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netcoreapp3.1\$(MSBuildProjectName).targets" />
+    <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netcoreapp3.1\_._" />
+    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
+    <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netstandard2.0\_._" />
+    <Content Include="$(RepoRoot)\LICENSE.txt" Pack="true" PackagePath="" />
+  </ItemGroup>
+</Project>

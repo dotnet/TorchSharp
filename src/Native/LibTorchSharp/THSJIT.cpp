@@ -171,6 +171,15 @@ void ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(size_t length
 // 5 -- Scalar tuple
 // 6 -- List of scalars
 // 7 -- List of scalars and tensors
+// 8 -- None / null
+
+    if (result.isNone())
+    {
+        TensorOrScalar* output = allocator(1);
+        output[0] = { 8, (ptrdiff_t)0 };
+        *typeCode = 8;
+        return;
+    }
 
     if (result.isScalar())
     {
@@ -200,6 +209,7 @@ void ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(size_t length
     {
         int foundTensor = 0;
         int foundScalar = 0;
+        int foundNull = 0;
 
         auto list = result.toList();
         TensorOrScalar* output = allocator(list.size());
@@ -221,20 +231,27 @@ void ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(size_t length
                 foundScalar += 1;
                 continue;
             }
+            if (value.isNone())
+            {
+                output[i] = { 8, (ptrdiff_t)0 };
+                foundNull += 1;
+                continue;
+            }
             *typeCode = 0;
             return;
         }
 
         *typeCode = 7;
-        if (foundScalar == 0)
+        if (foundScalar == 0 && foundNull == 0)
             *typeCode = 3;
-        if (foundTensor == 0)
+        if (foundTensor == 0 && foundNull == 0)
             *typeCode = 6;
     }
 
     if (result.isTuple()) {
         int foundTensor = 0;
         int foundScalar = 0;
+        int foundNull = 0;
 
         auto& list = result.toTuple()->elements();
         TensorOrScalar* output = allocator(list.size());
@@ -256,14 +273,20 @@ void ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(size_t length
                 foundScalar += 1;
                 continue;
             }
+            if (value.isNone())
+            {
+                output[i] = { 8, (ptrdiff_t)0 };
+                foundNull += 1;
+                continue;
+            }
             *typeCode = 0;
             return;
         }
 
         *typeCode = 7;
-        if (foundScalar == 0)
+        if (foundScalar == 0 && foundNull == 0)
             *typeCode = 2;
-        if (foundTensor == 0)
+        if (foundTensor == 0 && foundNull == 0)
             *typeCode = 5;
     }
 }
@@ -291,6 +314,9 @@ std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int le
             //case 4:
             //    tensors.push_back(c10::IValue(tensorPtrs[i].Handle)); // Clang on MacOS doesn't like. Pass as Scalar from .NET.
             //    break;
+            case 8:
+                tensors.push_back(c10::nullopt);
+                break;
             }
         }
     }

@@ -4,6 +4,7 @@
 
   <PropertyGroup>
       <TargetFrameworks>netcoreapp3.1;netstandard2.0</TargetFrameworks>
+      <LangVersion>9.0</LangVersion>
       <IncludeInPackage>TorchSharp</IncludeInPackage>
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
       <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
@@ -11,6 +12,12 @@
       <IsPackable>false</IsPackable>
       <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="TorchVision\**" />
+    <EmbeddedResource Remove="TorchVision\**" />
+    <None Remove="TorchVision\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Tensor\TensorTyped.tt" />

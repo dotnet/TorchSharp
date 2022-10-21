@@ -10,6 +10,7 @@ variables:
   # Set this to 'true' to build the libtorch-* packages as part of main branch CI and
   # push them to the artifacts feed of the Azure CI project
   BuildLibTorchPackages: false
+  PushPackagesToFeed: false
 
 resources:
   containers:
@@ -27,7 +28,7 @@ jobs:
     name: Ubuntu_x64
     # This reports the GLIB_ and GLIBCXX_ dependencies on the system which ends up getting baked into
     # the generated libTorchSharp.so (and partly determines which Linux systems that binary will
-    # be usable on), then installs clang-6.0 (LibTorch likes this for building C++ 14), then installs .NET 5.0
+    # be usable on), then installs clang-6.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
     prepScript:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
@@ -35,7 +36,7 @@ jobs:
         sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
         wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-5.0 &&
+        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-6.0 &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test /p:SkipCuda=true --blame -c
@@ -50,7 +51,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetFxBuild=true -c
     testScript: dotnet test /p:SkipCuda=true /p:SkipNetFxBuild=true --blame -c
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -59,7 +60,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetCoreBuild=true -c
     testScript: dotnet test /p:SkipCuda=true /p:SkipNetCoreBuild=true --blame -c
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-2022'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -68,7 +69,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test --blame /p:SkipCuda=true --blame -c
     pool:
-      vmImage: 'macos-latest'
+      vmImage: 'macos-11'
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
@@ -97,12 +98,18 @@ jobs:
         sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
         wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-5.0 &&
+        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-6.0 &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     displayName: Install dependencies
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build linux
+
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
+    displayName: Build TorchVision
+
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
+    displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: LinuxAssets
@@ -118,10 +125,16 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=$(BuildLibTorchPackages)
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build Windows
+
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
+    displayName: Build TorchVision
+
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
+    displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: WindowsAssets
@@ -137,10 +150,16 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'macos-latest'
+    vmImage: 'macos-11'
   steps:
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=$(BuildLibTorchPackages) /p:IncludeLibTorchCudaPackages=false
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build mac
+
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
+    displayName: Build TorchVision
+
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
+    displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
     artifact: MacAssets
@@ -161,7 +180,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -179,6 +198,18 @@ jobs:
     inputs:
       sourceFolder: $(Pipeline.Workspace)/LinuxAssets/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
+
+  - task: CopyFiles@2
+    displayName: Copy linux native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets/TorchAudio
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
+
+  - task: CopyFiles@2
+    displayName: Copy linux native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/LinuxAssets/TorchVision
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
 
   - task: CopyFiles@2
     displayName: Copy linux native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
@@ -200,6 +231,18 @@ jobs:
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
 
   - task: CopyFiles@2
+    displayName: Copy mac native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchAudio
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
+
+  - task: CopyFiles@2
+    displayName: Copy mac native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchVision
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
+
+  - task: CopyFiles@2
     displayName: Copy mac native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
       sourceFolder: $(Pipeline.Workspace)/MacAssets/libtorch-cpu-osx-x64
@@ -216,6 +259,18 @@ jobs:
     inputs:
       sourceFolder: $(Pipeline.Workspace)/WindowsAssets/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
+
+  - task: CopyFiles@2
+    displayName: Copy windows native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets/TorchAudio
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
+
+  - task: CopyFiles@2
+    displayName: Copy windows native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/WindowsAssets/TorchVision
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
 
   - task: CopyFiles@2
     displayName: Copy windows native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
@@ -262,7 +317,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -325,7 +380,7 @@ jobs:
         sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
         wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-5.0 &&
+        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-6.0 &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     displayName: Install dependencies
 
@@ -374,7 +429,7 @@ jobs:
   variables:
   - group: SignClient Credentials
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   - task: DotNetCoreCLI@2
@@ -423,7 +478,7 @@ jobs:
   variables:
   - group: SignClient Credentials
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   - task: DotNetCoreCLI@2
@@ -490,7 +545,8 @@ jobs:
 ################################################################################
 - job: Push_TorchSharp_And_libtorch_cpu_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['PushPackagesToFeed'], true))
+
   dependsOn:
   - Build_TorchSharp_And_libtorch_cpu_Packages
   - CodeSign_Core
@@ -501,7 +557,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   # Push packages to feed
@@ -522,6 +578,24 @@ jobs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp.*.nupkg'
       publishVstsFeed: 'TorchSharp/TestPackages'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (TorchAudio)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Pipeline.Workspace)/**/TorchAudio.*.nupkg'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
+      allowPackageConflicts: true
+    continueOnError: true
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet push (TorchVision)'
+    inputs:
+      command: push
+      packagesToPush:  '$(Pipeline.Workspace)/**/TorchVision.*.nupkg'
+      publishVstsFeed: 'TorchSharp/SignedPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -573,7 +647,7 @@ jobs:
 # Only run if BuildLibTorchPackages is true
 - job: Push_libtorch_cuda_win_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'), eq(variables['PushPackagesToFeed'], true))
   dependsOn:
   - Build_libtorch_cuda_win_Packages
   - CodeSign_Extras
@@ -584,7 +658,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   steps:
 
   # Push packages to feed
@@ -658,7 +732,7 @@ jobs:
 ################################################################################
 - job: Push_libtorch_cuda_linux_Packages
 ################################################################################
-  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'))
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'), eq(variables['BuildLibTorchPackages'], 'true'), eq(variables['PushPackagesToFeed'], true))
   dependsOn:
   - Build_libtorch_cuda_linux_Packages
   - CodeSign_Extras
@@ -669,7 +743,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   # container: UbuntuContainer
   # Exact copy of the dependency install above - TODO share this somewhere
   steps:

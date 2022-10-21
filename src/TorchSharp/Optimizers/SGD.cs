@@ -75,7 +75,6 @@ namespace TorchSharp
     namespace Modules
     {
         using static torch.optim;
-        using static TorchSharp.torchvision;
 
         public class SGD : OptimizerHelper, IMomentum
         {
