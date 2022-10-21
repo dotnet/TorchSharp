@@ -336,11 +336,13 @@ namespace TorchSharp
                 /// 3. int/long
                 /// 4. double/float
                 /// 5. bool
-                ///
+                /// 6. 'null' object
+                /// 
                 /// Only certain types can currently be returned:
                 /// 1. Tensor / Scalar
                 /// 2. Tuple of Tensor / Scalar
                 /// 3. Array (Python list) of Tensor / Scalar
+                /// 4. null object
                 ///
                 /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
                 /// If a tuple contains both tensors and scalars, it is returned as an object[].
@@ -402,7 +404,13 @@ namespace TorchSharp
                             //tensorRefs[idx].TypeCode = 4;
                             break;
                         default:
-                            throw new NotImplementedException($"Passing arguments of type {objs[idx].GetType().Name} to TorchScript.");
+                            if (objs[idx] is null) {
+                                tensorRefs[idx].Handle = IntPtr.Zero;
+                                tensorRefs[idx].TypeCode = 8;
+                            } else {
+                                throw new NotImplementedException($"Passing arguments of type {objs[idx].GetType().Name} to TorchScript.");
+                            }
+                            break;
                         }
                     }
                 }
@@ -483,10 +491,25 @@ namespace TorchSharp
                             // List of scalars and tensors
                             var result = new object[ptrArray.Length];
                             for (var i = 0; i < ptrArray.Length; i++) {
-                                result[i] = ptrArray[i].TypeCode == 0 ? new Tensor(ptrArray[i].Handle) : new Scalar(ptrArray[i].Handle);
+                                switch(ptrArray[i].TypeCode) {
+                                case 0:
+                                    result[i] = new Tensor(ptrArray[i].Handle);
+                                    break;
+                                case 8:
+                                    result[i] = null;
+                                    break;
+                                case 4:
+                                    result[i] = null;
+                                    break;
+                                default:
+                                    throw new NotImplementedException($"ScriptModule.{name}() returning something else than a tensor/scalar, a tuple of tensors/scalars, or list of tensors/scalars.");
+                                }
                             }
                             return result;
                         }
+                    case 8:
+                        // The value 'null' of any reference type
+                        return null;
                     }
                 }
 
