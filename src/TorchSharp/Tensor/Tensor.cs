@@ -7332,7 +7332,7 @@ namespace TorchSharp
                     builder.Append(value.ToInt64());
                     break;
                 case ScalarType.Bool:
-                    builder.Append(value.ToBoolean());
+                    builder.Append(value.ToBoolean().ToString(cultureInfo));
                     break;
                 case ScalarType.Float16:
                     builder.Append(value.ToSingle().ToString(fltFormat, cultureInfo));

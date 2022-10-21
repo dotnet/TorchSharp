@@ -775,7 +775,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -790,7 +790,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -805,7 +805,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -820,7 +820,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -835,7 +835,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -850,7 +850,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -866,7 +866,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -882,7 +882,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -897,7 +897,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -912,7 +912,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -927,7 +927,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -942,7 +942,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -957,7 +957,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -972,7 +972,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -987,7 +987,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -1002,7 +1002,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -1028,7 +1028,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
             {
@@ -1048,7 +1048,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                () => Assert.False(float.IsNaN(values[0]))
                 );
             }
         }
@@ -1059,6 +1059,7 @@ namespace TorchSharp
             using (Tensor variance = torch.rand(new long[] { 15, 1 }, torch.float64, requires_grad: true))
             using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, torch.float64, requires_grad: true))
             using (Tensor target = torch.randn(new long[] { 15, 5, 5 }, torch.float64)) {
+
                 var outTensor = GaussianNLLLoss().forward(input, target, variance);
                 outTensor.backward();
 
@@ -1066,12 +1067,13 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(double.IsNaN(outTensor.item<double>()))
+                () => Assert.False(double.IsNaN(values[0]))
                 );
             }
             using (Tensor variance = torch.rand(new long[] { 15, 5, 5 }, torch.float64, requires_grad: true))
             using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, torch.float64, requires_grad: true))
             using (Tensor target = torch.randn(new long[] { 15, 5, 5 }, torch.float64)) {
+
                 var outTensor = GaussianNLLLoss().forward(input, target, variance);
                 outTensor.backward();
 
@@ -1079,7 +1081,7 @@ namespace TorchSharp
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
                 () => Assert.Single(values),
-                () => Assert.False(double.IsNaN(outTensor.item<double>()))
+                () => Assert.False(double.IsNaN(values[0]))
                 );
             }
         }

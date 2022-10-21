@@ -2,6 +2,18 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.98.2
+
+__Breaking Changes__:
+
+The .NET 5.0 is no longer supported. Instead, .NET 6.0 is the minimum version. .NET FX 4.7.2 and higher are still supported.
+
+__Fixed Bugs__:
+
+#783 Download progress bar missing<br/>
+#787 torch.where(condition) → tuple of LongTensor function missing<br/>
+#799 TorchSharp.csproj refers Skia<br/>
+
 ## NuGet Version 0.98.1
 
 __Breaking Changes:__

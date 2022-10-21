@@ -285,7 +285,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestJITCompile()
+        public void TestJITCompile_1()
         {
             string script = @"
   def relu_script(a, b):
@@ -324,6 +324,43 @@ namespace TorchSharp
                 () => Assert.Equal(4, ss.Item1.ToInt32()),
                 () => Assert.Equal(2, ss.Item2.ToInt32())
             );
+        }
+
+
+
+        [Fact]
+        public void TestJITCompile_2()
+        {
+            string script = @"
+  def none_script(a: Any, b: Any):
+    return a
+  def none_tuple(a: Any, b: Any):
+    return (a, None)
+";
+
+            using var cu = torch.jit.compile(script);
+
+            Assert.NotNull(cu);
+
+            var x = torch.randn(3, 4);
+            var y = torch.randn(3, 4);
+
+            var z = cu.invoke("none_script", null, null);
+            Assert.Null(z);
+            z = cu.invoke("none_script", null, y);
+            Assert.Null(z);
+            z = cu.invoke("none_script", x, null);
+            Assert.NotNull(z);
+
+            var zArr = cu.invoke<object[]>("none_tuple", null, null);
+            Assert.NotNull(zArr);
+            Assert.Null(zArr[0]);
+            Assert.Null(zArr[1]);
+
+            zArr = cu.invoke<object[]>("none_tuple", x, null);
+            Assert.NotNull(z);
+            Assert.NotNull(zArr[0]);
+            Assert.Null(zArr[1]);
         }
     }
 }
