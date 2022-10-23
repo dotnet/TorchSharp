@@ -113,6 +113,22 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TransformsMelSpectrogram()
+        {
+            var mel_spectrogram = torchaudio.transforms.MelSpectrogram(
+                n_fft: 1024, n_mels: 80, hop_length: 400);
+            var inverse_mel_scale = torchaudio.transforms.InverseMelScale(
+                mel_spectrogram.n_fft / 2 + 1,
+                n_mels: mel_spectrogram.n_mels, max_iter: 10);
+            var waveform = make_waveform();
+            var mel_spec = mel_spectrogram.forward(waveform);
+            long expected_length = waveform.shape[1] / mel_spectrogram.hop_length + 1;
+            Assert.Equal(new long[] { 1, mel_spectrogram.n_mels, expected_length }, mel_spec.shape);
+            var spec = inverse_mel_scale.forward(mel_spec);
+            Assert.Equal(new long[] { 1, mel_spectrogram.n_fft / 2 + 1, expected_length }, spec.shape);
+        }
+
+        [Fact]
         public void TestAmplitudeToDB()
         {
             var x = torch.linspace(0, 3.0, 101)[torch.TensorIndex.None, torch.TensorIndex.Colon];
