@@ -48,9 +48,7 @@ namespace TorchSharp
             {
                 static public Tensor log_softmax(Tensor x, long dim)
                 {
-                    using (var l = nn.LogSoftmax(dim)) {
-                        return l.forward(x);
-                    }
+                    return torch.special.log_softmax(x, dim);
                 }
             }
         }

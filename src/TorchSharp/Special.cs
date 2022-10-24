@@ -332,7 +332,7 @@ namespace TorchSharp
             /// <param name="dim">A dimension along which log_softmax will be computed.</param>
             /// <param name="dtype">The desired data type of returned tensor.</param>
             /// <returns></returns>
-            public static Tensor log_softmax(Tensor input, int dim, ScalarType? dtype = null)
+            public static Tensor log_softmax(Tensor input, long dim, ScalarType? dtype = null)
             {
                 var dt = dtype.HasValue ? dtype.Value : input.dtype;
                 var res = THSSpecial_log_softmax(input.Handle, dim, (sbyte)dt);
