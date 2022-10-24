@@ -1249,6 +1249,13 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Returns a new tensor with the logit of the elements of input.
+            /// </summary>
+            /// <param name="dim">A dimension along which log_softmax will be computed.</param>
+            /// <param name="dtype">The desired data type of returned tensor.</param>
+            public Tensor log_softmax(long dim, ScalarType? dtype = null) => torch.special.log_softmax(this, dim, dtype);
+
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_log10(IntPtr tensor);
 
