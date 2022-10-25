@@ -167,6 +167,14 @@ namespace TorchSharp
         public static Tensor squeeze(Tensor input, long? dim = null) => input.squeeze(dim);
 
         /// <summary>
+        /// Modifies (in-place) a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">If given, the input will be squeezed only in this dimension</param>
+        /// <returns></returns>
+        public static Tensor squeeze_(Tensor input, long? dim = null) => input.squeeze_(dim);
+
+        /// <summary>
         /// Sorts the elements of the input tensor along a given dimension in ascending order by value.
         /// </summary>
         /// <param name="input">The input tensor</param>
