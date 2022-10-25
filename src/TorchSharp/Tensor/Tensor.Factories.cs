@@ -713,7 +713,6 @@ namespace TorchSharp
         /// </summary>
         public static Tensor full_like(Tensor input, Scalar value, ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null) => input.full_like(value, dtype, device, requires_grad);
 
-
         [DllImport("LibTorchSharp")]
         extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
@@ -2561,6 +2560,56 @@ namespace TorchSharp
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requires_grad, names: names);
         }
+
+
+        /// <summary>
+        /// Cast a tensor to a Boolean tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a Boolean tensor; otherwise, a new tensor.</returns>
+        public static Tensor BoolTensor(Tensor t) => t.to(ScalarType.Bool);
+
+        /// <summary>
+        /// Cast a tensor to a byte tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a byte tensor; otherwise, a new tensor.</returns>
+        public static Tensor ByteTensor(Tensor t) => t.to(ScalarType.Byte);
+
+        /// <summary>
+        /// Cast a tensor to a 16-bit integer tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a 16-bit integer tensor; otherwise, a new tensor.</returns>
+        public static Tensor ShortTensor(Tensor t) => t.to(ScalarType.Int16);
+
+        /// <summary>
+        /// Cast a tensor to a 32-bit integer tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a 32-bit integer tensor; otherwise, a new tensor.</returns>
+        public static Tensor IntTensor(Tensor t) => t.to(ScalarType.Int32);
+
+        /// <summary>
+        /// Cast a tensor to a 64-bit integer tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a 64-bit integer tensor; otherwise, a new tensor.</returns>
+        public static Tensor LongTensor(Tensor t) => t.to(ScalarType.Int64);
+
+        /// <summary>
+        /// Cast a tensor to a 32-bit floating point tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a 32-bit floating point; otherwise, a new tensor.</returns>
+        public static Tensor FloatTensor(Tensor t) => t.to(ScalarType.Float32);
+
+        /// <summary>
+        /// Cast a tensor to a 64-bit floating point tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a 64-bit floating point tensor; otherwise, a new tensor.</returns>
+        public static Tensor DoubleTensor(Tensor t) => t.to(ScalarType.Float64);
 
         /// <summary>
         /// Creates a <see cref="torch.Tensor">torch tensor</see> from an arbitrary <see cref="Array">array</see>.

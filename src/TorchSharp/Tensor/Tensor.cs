@@ -841,6 +841,12 @@ namespace TorchSharp
 
             public Tensor to(Tensor other) => to(other.dtype, other.device);
 
+            public Tensor type(Func<Tensor, Tensor> typeFunc) => typeFunc(this);
+
+            public Tensor type(ScalarType dtype) => this.to(dtype);
+
+
+
             [DllImport("LibTorchSharp")]
             static extern long THSTensor_size(IntPtr handle, long dim);
 
