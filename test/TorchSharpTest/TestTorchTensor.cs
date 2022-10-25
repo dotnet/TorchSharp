@@ -6453,6 +6453,56 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.squeeze_))]
+        public void SqueezeTest1()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
+
+            using (var res = torch.tensor(data).expand(new long[] { 1, 1, 3 }).squeeze_(0).squeeze_(0)) {
+                Assert.Equal(new long[] { 3 }, res.shape);
+                Assert.Equal(1.1f, res[0].ToSingle());
+                Assert.Equal(2.0f, res[1].ToSingle());
+                Assert.Equal(3.1f, res[2].ToSingle());
+            }
+            // Test negative dims, too.
+            using (var res = torch.tensor(data).expand(new long[] { 1, 1, 3 }).squeeze_(-3).squeeze_(0)) {
+                Assert.Equal(new long[] { 3 }, res.shape);
+                Assert.Equal(1.1f, res[0].ToSingle());
+                Assert.Equal(2.0f, res[1].ToSingle());
+                Assert.Equal(3.1f, res[2].ToSingle());
+            }
+            // And all dims.
+            using (var res = torch.tensor(data).expand(new long[] { 1, 1, 3 }).squeeze_()) {
+                Assert.Equal(new long[] { 3 }, res.shape);
+                Assert.Equal(1.1f, res[0].ToSingle());
+                Assert.Equal(2.0f, res[1].ToSingle());
+                Assert.Equal(3.1f, res[2].ToSingle());
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.unsqueeze))]
+        public void UnsqueezeTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f, 4.1f };
+
+            using (var res = torch.tensor(data).unsqueeze(0)) {
+                Assert.Equal(new long[] { 1, 4 }, res.shape);
+                Assert.Equal(1.1f, res[0, 0].ToSingle());
+                Assert.Equal(2.0f, res[0, 1].ToSingle());
+                Assert.Equal(3.1f, res[0, 2].ToSingle());
+                Assert.Equal(4.1f, res[0, 3].ToSingle());
+            }
+            using (var res = torch.tensor(data).unsqueeze(1)) {
+                Assert.Equal(new long[] { 4, 1 }, res.shape);
+                Assert.Equal(1.1f, res[0, 0].ToSingle());
+                Assert.Equal(2.0f, res[1, 0].ToSingle());
+                Assert.Equal(3.1f, res[2, 0].ToSingle());
+                Assert.Equal(4.1f, res[3, 0].ToSingle());
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.narrow))]
         public void NarrowTest()
         {

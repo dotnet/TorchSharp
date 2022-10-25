@@ -2147,9 +2147,12 @@ namespace TorchSharp
 
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_squeeze(IntPtr tensor, long dim);
-
             [DllImport("LibTorchSharp")]
             static extern IntPtr THSTensor_squeeze_no_dim(IntPtr tensor);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_squeeze_(IntPtr tensor, long dim);
+            [DllImport("LibTorchSharp")]
+            static extern IntPtr THSTensor_squeeze_no_dim_(IntPtr tensor);
 
             /// <summary>
             /// Returns a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.
@@ -2159,6 +2162,18 @@ namespace TorchSharp
             public Tensor squeeze(long? dim = null)
             {
                 var res = dim.HasValue ? THSTensor_squeeze(Handle, dim.Value) : THSTensor_squeeze_no_dim(Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Modify (in-palce) a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.
+            /// </summary>
+            /// <param name="dim">If given, the input will be squeezed only in this dimension</param>
+            public Tensor squeeze_(long? dim = null)
+            {
+                var res = dim.HasValue ? THSTensor_squeeze_(Handle, dim.Value) : THSTensor_squeeze_no_dim_(Handle);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);

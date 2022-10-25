@@ -1506,6 +1506,16 @@ Tensor THSTensor_squeeze(Tensor tensor, int64_t dim)
     CATCH_TENSOR(tensor->squeeze(dim));
 }
 
+Tensor THSTensor_squeeze_no_dim_(Tensor tensor)
+{
+    CATCH_TENSOR(tensor->squeeze_());
+}
+
+Tensor THSTensor_squeeze_(Tensor tensor, int64_t dim)
+{
+    CATCH_TENSOR(tensor->squeeze_(dim));
+}
+
 int64_t THSTensor_stride(const Tensor tensor, const int64_t dim)
 {
     CATCH_RETURN(int64_t, 0, tensor->stride(dim));
