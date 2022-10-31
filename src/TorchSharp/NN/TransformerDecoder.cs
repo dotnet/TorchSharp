@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -12,9 +12,6 @@ namespace TorchSharp
         public sealed class TransformerDecoder : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal TransformerDecoder(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_TransformerDecoder_forward(torch.nn.Module.HType module, IntPtr tgt, IntPtr memory, IntPtr tgt_mask, IntPtr memory_mask, IntPtr tgt_key_padding_mask, IntPtr memory_key_padding_mask);
 
             /// <summary>
             /// Pass the inputs (and mask) through the decoder layers in turn.
@@ -63,16 +60,13 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_TransformerDecoder_ctor(torch.nn.Module.HType decoder_layer, long num_layers, out IntPtr pBoxedModule);
-
             /// <summary>
             /// TransformerDecoder is a stack of N decoder layers
             /// </summary>
             /// <param name="decoder_layer">An instance of the TransformerDecoderLayer class (required).</param>
             /// <param name="num_layers">The number of sub-decoder-layers in the decoder (required).</param>
             /// <returns></returns>
-            static public TransformerDecoder TransformerDecoder(TransformerDecoderLayer decoder_layer, long num_layers)
+            public static TransformerDecoder TransformerDecoder(TransformerDecoderLayer decoder_layer, long num_layers)
             {
                 var res = THSNN_TransformerDecoder_ctor(decoder_layer.handle, num_layers, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

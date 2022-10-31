@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
-
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -18,14 +17,11 @@ namespace TorchSharp
             {
             }
 
-            public new static Linear Load(String modelPath)
+            public new static Linear Load(string modelPath)
             {
                 var res = Module<Tensor, Tensor>.Load(modelPath);
                 return new Linear(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Linear_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
@@ -34,10 +30,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Linear_bias(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_Linear_set_bias(torch.nn.Module.HType module, IntPtr tensor);
             public Parameter? bias {
                 get {
                     var res = THSNN_Linear_bias(handle);
@@ -45,16 +37,11 @@ namespace TorchSharp
                     return ((res == IntPtr.Zero) ? null : new Parameter(res));
                 }
                 set {
-                    THSNN_Linear_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
+                    THSNN_Linear_set_bias(handle, value?.Handle ?? IntPtr.Zero);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("bias", value);
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Linear_weight(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_Linear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? weight {
                 get {
@@ -75,12 +62,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Linear_ctor(long input_size, long output_size, bool bias, out IntPtr pBoxedModule);
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_functional_linear(IntPtr input, IntPtr weights, IntPtr bias);
-
             /// <summary>
             /// Applies a linear transformation to the incoming data.
             /// </summary>
@@ -89,7 +70,7 @@ namespace TorchSharp
             /// <param name="hasBias">If set to false, the layer will not learn an additive bias.</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            static public Linear Linear(long inputSize, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null)
+            public static Linear Linear(long inputSize, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Linear_ctor(inputSize, outputSize, hasBias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -106,9 +87,9 @@ namespace TorchSharp
                 /// <param name="weights">Weights of shape (Hout,Hin) or (Hin)</param>
                 /// <param name="bias">Bias of shape (Hout) or ()</param>
                 /// <returns>A tensor of shape (*,Hout) where '*' is the same as the subshape of the input.</returns>
-                static public Tensor linear(Tensor input, Tensor weights, Tensor? bias = null)
+                public static Tensor linear(Tensor input, Tensor weights, Tensor? bias = null)
                 {
-                    IntPtr bPtr = bias is null ? IntPtr.Zero : bias.Handle;
+                    IntPtr bPtr = bias?.Handle ?? IntPtr.Zero;
                     var res = THSNN_functional_linear(input.Handle, weights.Handle, bPtr);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);

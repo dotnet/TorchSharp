@@ -8,15 +8,13 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Diagnostics.Contracts;
-using Google.Protobuf;
-using static Tensorboard.TensorShapeProto.Types;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
 {
     public static partial class torch
     {
-
         /// <summary>
         /// Represents a TorchSharp tensor.
         /// </summary>
@@ -57,8 +55,8 @@ namespace TorchSharp
             public override bool Equals(object? obj)
             {
                 return (obj is Tensor) && this.Equals((obj as Tensor)!);
-
             }
+
             /// <summary>
             ///  TBD
             /// </summary>
@@ -83,9 +81,6 @@ namespace TorchSharp
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static void THSTensor_dispose(IntPtr handle);
 
             /// <summary>
             ///   Implements the .NET Dispose pattern.
@@ -124,9 +119,6 @@ namespace TorchSharp
                 OwningDisposeScope?.Detach(this);
                 return this;
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static void THSTensor_free(IntPtr handle);
 
             /// <summary>
             /// Decouple the managed tensor from its underlying native tensor.
@@ -201,9 +193,6 @@ namespace TorchSharp
                 return h;
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern long THSTensor_ndimension(IntPtr handle);
-
             /// <summary>
             ///  Returns the number of dimensions for this tensor
             /// </summary>
@@ -218,12 +207,6 @@ namespace TorchSharp
             ///  Returns the number of dimensions for this tensor
             /// </summary>
             public long ndim => Dimensions;
-
-            [DllImport("LibTorchSharp")]
-            static extern long THSTensor_element_size(IntPtr handle);
-
-            [DllImport("LibTorchSharp")]
-            static extern long THSTensor_numel(IntPtr handle);
 
             /// <summary>
             ///  Get the number of elements in the tensor.
@@ -250,20 +233,12 @@ namespace TorchSharp
 
             public bool is_meta => device.type == DeviceType.META;
 
-
-            [DllImport("LibTorchSharp")]
-            internal static extern long THSTensor_is_leaf(IntPtr handle);
-
             /// <summary>
             /// All Tensors that have requires_grad which is true will be leaf Tensors by convention.
             /// For Tensors that have requires_grad which is true, they will be leaf Tensors if they were created by the user.This means that they are not the result of an operation and so grad_fn is None.
             /// Only leaf Tensors will have their grad populated during a call to backward(). To get grad populated for non-leaf Tensors, you can use retain_grad().
             /// </summary>
             public bool is_leaf { get => THSTensor_is_leaf(Handle) != 0; }
-
-
-            [DllImport("LibTorchSharp")]
-            internal static extern IntPtr THSTensor_alias(IntPtr handle);
 
             /// <summary>
             /// Create a new reference to the same underlying native tensor.
@@ -291,9 +266,6 @@ namespace TorchSharp
                 return Storage.Create<T>(this);
             }
 
-            [DllImport("LibTorchSharp")]
-            internal static extern long THSTensor_storage_offset(IntPtr tensor);
-
             /// <summary>
             /// Returns the tensor’s offset in the underlying storage in terms of number of storage elements (not bytes).
             /// </summary>
@@ -304,9 +276,6 @@ namespace TorchSharp
                 torch.CheckForErrors();
                 return res;
             }
-
-            [DllImport("LibTorchSharp")]
-            internal static extern IntPtr THSTensor_data(IntPtr handle);
 
             /// <summary>
             ///  Returns a pointer to the unmanaged data managed by this tensor.
@@ -424,9 +393,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_real(IntPtr handle);
-
             public Tensor real {
                 get {
                     var res = THSTensor_real(Handle);
@@ -435,9 +401,6 @@ namespace TorchSharp
 
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_imag(IntPtr handle);
 
             public Tensor imag {
                 get {
@@ -502,9 +465,6 @@ namespace TorchSharp
             /// <param name="i">The index.</param>
             public T ReadCpuValue<T>(long i) where T : unmanaged => Utils.TensorAccessor<T>.ReadItemAt(this, i);
 
-            [DllImport("LibTorchSharp")]
-            static extern float THSTensor_data_idx_float16(IntPtr handle, long i);
-
             /// <summary>
             /// Read the Float16 value at the given index.
             /// </summary>
@@ -516,9 +476,6 @@ namespace TorchSharp
                 }
                 return THSTensor_data_idx_float16(handle, i);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern float THSTensor_data_idx_bfloat16(IntPtr handle, long i);
 
             /// <summary>
             /// Read the BFloat16 value at the given index.
@@ -532,9 +489,6 @@ namespace TorchSharp
                 return THSTensor_data_idx_bfloat16(handle, i);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_item(IntPtr handle);
-
             /// <summary>
             /// Convert to a scalar.
             /// </summary>
@@ -544,9 +498,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Scalar(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_fill_(IntPtr handle, IntPtr value);
 
             /// <summary>
             /// Fill the tensor with the provided scalar value.
@@ -559,17 +510,10 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern sbyte THSTensor_type(IntPtr handle);
-
             /// <summary>
             /// Gets the type of the tensor elements.
             /// </summary>
             public ScalarType dtype => (ScalarType)THSTensor_type(Handle);
-
-            [DllImport("LibTorchSharp")]
-            [return: MarshalAs(UnmanagedType.LPStr)]
-            static extern string THSTensor_device_str(IntPtr handle);
 
             /// <summary>
             /// Gets a string representing the device where the tensor is stored.
@@ -585,10 +529,6 @@ namespace TorchSharp
                 }
             }
 
-
-            [DllImport("LibTorchSharp")]
-            static extern int THSTensor_device_index(IntPtr handle);
-
             /// <summary>
             /// Gets a index of the device where the tensor is stored.
             /// </summary>
@@ -600,10 +540,6 @@ namespace TorchSharp
                 }
             }
 
-
-            [DllImport("LibTorchSharp")]
-            static extern int THSTensor_device_type(IntPtr handle);
-
             /// <summary>
             /// Gets the type ('CPU', 'CUDA', etc.) of the device where the tensor is stored.
             /// </summary>
@@ -614,9 +550,6 @@ namespace TorchSharp
                     return (DeviceType)res;
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern bool THSTensor_is_sparse(IntPtr handle);
 
             /// <summary>
             /// Is the tensor a sparse tensor?
@@ -632,9 +565,6 @@ namespace TorchSharp
             public void backward(IList<Tensor>? grad_tensors = null, bool create_graph = false, bool retain_graph = false, IList<Tensor>? inputs = null) =>
                 torch.autograd.backward(new[] { this }, grad_tensors, create_graph, retain_graph, inputs);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_load([MarshalAs(UnmanagedType.LPStr)] string location);
-
             /// <summary>
             /// Creates a tensor by loading it from a file.
             /// </summary>
@@ -647,9 +577,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_save(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string location);
-
             /// <summary>
             /// Save the contents of a tensor to a file.
             /// </summary>
@@ -659,12 +586,6 @@ namespace TorchSharp
                 THSTensor_save(Handle, location);
                 torch.CheckForErrors();
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern bool THSTensor_requires_grad(IntPtr handle);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_set_requires_grad(IntPtr handle, bool requires_grad);
 
             /// <summary>
             /// Is the tensor tracking gradients?
@@ -685,9 +606,6 @@ namespace TorchSharp
                 return this;
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_retain_grad(IntPtr handle);
-
             /// <summary>
             /// Enables this Tensor to have their grad populated during backward(). This is a no-op for leaf tensors.
             /// </summary>
@@ -706,9 +624,6 @@ namespace TorchSharp
                 return this;
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cpu(IntPtr handle);
-
             /// <summary>
             /// Moves the tensor data to the CPU device
             /// </summary>
@@ -719,9 +634,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cuda(IntPtr handle);
 
             /// <summary>
             /// Returns a copy of this object in CUDA memory.
@@ -743,15 +655,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_to_device(IntPtr handle, int device_type, int device_index, bool copy);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type, bool copy);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_to_type_and_device(IntPtr handle, sbyte scalar_type, int device_type, int device_index, bool copy);
-
             /// <summary>
             /// Cast the tensor to the given element type.
             /// </summary>
@@ -769,9 +672,6 @@ namespace TorchSharp
             /// Returns this tensor cast to the type of the given tensor.
             /// </summary>
             public Tensor type_as(Tensor tensor) => to_type(tensor.dtype);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_set_(IntPtr tensor, IntPtr source);
 
             /// <summary>
             /// Overwrite an existing tensor with the contents of another tensor.
@@ -841,9 +741,6 @@ namespace TorchSharp
 
             public Tensor to(Tensor other) => to(other.dtype, other.device);
 
-            [DllImport("LibTorchSharp")]
-            static extern long THSTensor_size(IntPtr handle, long dim);
-
             /// <summary>
             ///  Retrieves the size of the specified dimension in the tensor.
             /// </summary>
@@ -854,9 +751,6 @@ namespace TorchSharp
                 torch.CheckForErrors();
                 return res;
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern long THSTensor_sizes(IntPtr handle, AllocatePinnedArray allocator);
 
             /// <summary>
             ///  Retrieves the sizes of all dimensions of the tensor.
@@ -874,7 +768,6 @@ namespace TorchSharp
                 return ptrArray;
             }
 
-
             /// <summary>
             /// Returns the tensor shape, this is an array whose size determines the number of dimensions on the tensor,
             /// and each element is the size of the dimension
@@ -890,28 +783,12 @@ namespace TorchSharp
                 }
             }
 
-
-            [DllImport("LibTorchSharp")]
-            static extern bool THSTensor_has_names(IntPtr handle);
-
             public bool has_names()
             {
                 var res = THSTensor_has_names(Handle);
                 CheckForErrors();
                 return res;
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_names(IntPtr handle, AllocatePinnedArray allocator);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_rename(IntPtr tensor, IntPtr names, long nLength);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_rename_(IntPtr tensor, IntPtr names, long nLength);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_refine_names(IntPtr tensor, IntPtr names, long nLength);
 
             /// <summary>
             /// Stores names for each of this tensor’s dimensions.
@@ -1021,7 +898,7 @@ namespace TorchSharp
 
             /// <summary>
             /// Refines the dimension names of the input tensor according to names.
-            /// 
+            ///
             /// Refining is a special case of renaming that “lifts” unnamed dimensions.A None dim can be refined to have any name; a named dim can only be refined to have the same name.
             /// Because named tensors can coexist with unnamed tensors, refining names gives a nice way to write named-tensor-aware code that works with both named and unnamed tensors.
             /// names may contain up to one ellipsis argument, passed as "...". The ellipsis is expanded greedily; it is expanded in-place to fill names to the same length as
@@ -1107,7 +984,7 @@ namespace TorchSharp
 
             /// <summary>
             /// Refines the dimension names of the input tensor according to names.
-            /// 
+            ///
             /// Refining is a special case of renaming that “lifts” unnamed dimensions.A None dim can be refined to have any name; a named dim can only be refined to have the same name.
             /// Because named tensors can coexist with unnamed tensors, refining names gives a nice way to write named-tensor-aware code that works with both named and unnamed tensors.
             /// names may contain up to one ellipsis argument, passed as "...". The ellipsis is expanded greedily; it is expanded in-place to fill names to the same length as
@@ -1116,9 +993,6 @@ namespace TorchSharp
             /// <param name="names">A list of names, one for each dimension in the tensor.</param>
             /// <remarks>The named tensor API is experimental and subject to change.</remarks>
             public Tensor refine_names(params string[] names) => refine_names((IEnumerable<string>)names);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_indices(IntPtr handle);
 
             /// <summary>
             /// Return the indices tensor of a sparse COO tensor.
@@ -1132,9 +1006,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_values(IntPtr handle);
-
             /// <summary>
             /// Return the values tensor of a sparse COO tensor.
             /// </summary>
@@ -1146,9 +1017,6 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_vander(IntPtr handle, long N, bool increasing);
 
             /// <summary>
             ///
@@ -1162,12 +1030,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern long THSTensor_stride(IntPtr handle, long dim);
-
-            [DllImport("LibTorchSharp")]
-            static extern long THSTensor_strides(IntPtr handle, AllocatePinnedArray allocator);
 
             /// <summary>
             ///  Retrieves the stride of all dimensions of the tensor.
@@ -1195,11 +1057,6 @@ namespace TorchSharp
                 return res;
             }
 
-
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_as_strided(IntPtr input, IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, long storageOffset);
-
             /// <summary>
             ///  Create a view of an existing torch.Tensor input with specified size, stride and storage offset.
             /// </summary>
@@ -1214,9 +1071,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_backward(IntPtr handle);
-
             /// <summary>
             /// Computes the gradient of current tensor w.r.t. graph leaves.
             /// </summary>
@@ -1225,9 +1079,6 @@ namespace TorchSharp
                 THSTensor_backward(Handle);
                 torch.CheckForErrors();
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_to_dense(IntPtr handle);
 
             /// <summary>
             /// Creates a strided copy of the input tensor.
@@ -1241,9 +1092,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_clone(IntPtr handle);
-
             /// <summary>
             /// Returns a copy of the tensor input.
             /// </summary>
@@ -1255,9 +1103,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_copy_(IntPtr handle, IntPtr source, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
             /// <summary>
             /// Copies the elements from source into the tensor and returns it.
@@ -1272,9 +1117,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static int THSTensor_is_contiguous(IntPtr handle);
-
             /// <summary>
             /// Returns true if the tensor is contiguous.
             /// </summary>
@@ -1284,9 +1126,6 @@ namespace TorchSharp
                 torch.CheckForErrors();
                 return res != 0;
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_contiguous(IntPtr handle);
 
             /// <summary>
             /// Returns a contiguous in memory tensor containing the same data as the input tensor.
@@ -1300,9 +1139,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static long THSTensor_is_pinned(IntPtr handle);
-
             /// <summary>
             /// Returns true if the tensor is contiguous.
             /// </summary>
@@ -1312,9 +1148,6 @@ namespace TorchSharp
                 torch.CheckForErrors();
                 return res != 0;
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_pin_memory(IntPtr handle);
 
             /// <summary>
             /// Returns a contiguous in memory tensor containing the same data as the input tensor.
@@ -1327,9 +1160,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_grad(IntPtr handle);
 
             /// <summary>
             /// This attribute is null by default and becomes a Tensor the first time a call to backward() computes gradients for the tensor.
@@ -1346,14 +1176,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_index(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_index_put_scalar_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_index_put_(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength, IntPtr value);
             internal void EncodeIndices(TensorIndex[] indices,
                 out long[] arrKindAndStarts,
                 out long[]? arrStops,
@@ -1414,12 +1236,6 @@ namespace TorchSharp
                 set { index_put_(value, indices); }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_get1(IntPtr handle, long i1);
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_set1(IntPtr handle, long i1, IntPtr value);
-
             /// <summary>
             /// Tensor indexer.
             /// </summary>
@@ -1437,12 +1253,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_get2(IntPtr handle, long i1, long i2);
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_set2(IntPtr handle, long i1, long i2, IntPtr value);
 
             /// <summary>
             /// Tensor indexer.
@@ -1462,12 +1272,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_get3(IntPtr handle, long i1, long i2, long i3);
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_set3(IntPtr handle, long i1, long i2, long i3, IntPtr value);
 
             /// <summary>
             /// Tensor indexer.
@@ -1490,12 +1294,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_get4(IntPtr handle, long i1, long i2, long i3, long i4);
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_set4(IntPtr handle, long i1, long i2, long i3, long i4, IntPtr value);
-
             /// <summary>
             /// Tensor indexer.
             /// </summary>
@@ -1517,12 +1315,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_get5(IntPtr handle, long i1, long i2, long i3, long i4, long i5);
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_set5(IntPtr handle, long i1, long i2, long i3, long i4, long i5, IntPtr value);
 
             /// <summary>
             /// Tensor indexer.
@@ -1547,13 +1339,6 @@ namespace TorchSharp
                 }
             }
 
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_get6(IntPtr handle, long i1, long i2, long i3, long i4, long i5, long i6);
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_set6(IntPtr handle, long i1, long i2, long i3, long i4, long i5, long i6, IntPtr value);
-
             /// <summary>
             /// Tensor indexer.
             /// </summary>
@@ -1563,7 +1348,6 @@ namespace TorchSharp
             /// <param name="i4">The fourth-dimension index</param>
             /// <param name="i5">The fifth-dimension index</param>
             /// <param name="i6">The sixth-dimension index</param>
-
             [IndexerName("TensorItems")]
             public Tensor this[long i1, long i2, long i3, long i4, long i5, long i6] {
                 get {
@@ -1581,7 +1365,6 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions.
             /// </summary>
-
             public Tensor index(params TensorIndex[] indices)
             {
                 EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
@@ -1602,7 +1385,6 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions.
             /// </summary>
-
             public Tensor index(params Tensor[] indices)
             {
                 return index(indices.Select(t => TensorIndex.Tensor(t)).ToArray());
@@ -1611,7 +1393,6 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
             /// </summary>
-
             public Tensor index_put_(Tensor value, params TensorIndex[] indices)
             {
                 EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
@@ -1632,17 +1413,14 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a tensor at the index.
             /// </summary>
-
             public Tensor index_put_(Tensor value, params Tensor[] indices)
             {
                 return index_put_(value, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
             }
 
-
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
             /// </summary>
-
             public Tensor index_put_(Scalar value, params TensorIndex[] indices)
             {
                 EncodeIndices(indices, out var arrKindAndStarts, out var arrStops, out var arrSteps, out var arrTensors);
@@ -1663,21 +1441,16 @@ namespace TorchSharp
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions and place a scalar tensor at the index.
             /// </summary>
-
             public Tensor index_put_(Scalar value, params Tensor[] indices)
             {
                 return index_put_(value, indices.Select(t => TensorIndex.Tensor(t)).ToArray());
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_index_select(IntPtr tensor, long dim, IntPtr index);
 
             /// <summary>
             /// Returns a new tensor which indexes the input tensor along dimension dim using the entries in index which is a LongTensor.
             /// </summary>
             /// <param name="dim">The dimension in which we index</param>
             /// <param name="index">The 1-D tensor containing the indices to index</param>
-
             public Tensor index_select(long dim, Tensor index)
             {
                 var res = THSTensor_index_select(Handle, dim, index.Handle);
@@ -1686,16 +1459,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_select(IntPtr tensor, long dim, long index);
-
             /// <summary>
             /// Slices the input tensor along the selected dimension at the given index.
             /// This function returns a view of the original tensor with the given dimension removed.
             /// </summary>
             /// <param name="dim">The dimension to slice</param>
             /// <param name="index">The index to select with</param>
-
             public Tensor select(long dim, long index)
             {
                 var res = THSTensor_select(Handle, dim, index);
@@ -1703,9 +1472,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_take(IntPtr tensor, IntPtr index);
 
             /// <summary>
             /// Returns a new tensor with the elements of input at the given indices. The input tensor is treated as if it were viewed as a 1-D tensor.
@@ -1720,12 +1486,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_take_along_dim_dflt(IntPtr tensor, IntPtr indices);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_take_along_dim(IntPtr tensor, IntPtr indices, long dim);
 
             /// <summary>
             /// Selects values from input at the 1-dimensional indices from indices along the given dim.
@@ -1773,12 +1533,9 @@ namespace TorchSharp
             /// <remarks>Functions that return indices along a dimension, like torch.argmax() and torch.argsort(), are designed to work with this function.</remarks>
             public Tensor take_along_dim(IEnumerable<long> indices, long dim) => take_along_dim(torch.tensor(indices.ToArray()), dim);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_index_add(IntPtr tensor, long dim, IntPtr index, IntPtr source, IntPtr alpha);
-
             /// <summary>
             /// Accumulate the elements of alpha times source into the input tensor by adding to the indices in the order given in index.
-            /// 
+            ///
             /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
             /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match the input tensor, or an error will be raised.
             /// </summary>
@@ -1797,12 +1554,9 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_index_add_(IntPtr tensor, long dim, IntPtr index, IntPtr source, IntPtr alpha);
-
             /// <summary>
             /// Accumulate, in place, the elements of alpha times source into the input tensor by adding to the indices in the order given in index.
-            /// 
+            ///
             /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
             /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match the input tensor, or an error will be raised.
             /// </summary>
@@ -1820,11 +1574,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_index_copy(IntPtr tensor, long dim, IntPtr index, IntPtr source);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_index_copy_(IntPtr tensor, long dim, IntPtr index, IntPtr source);
 
             /// <summary>
             /// Copies the elements of the source tensor into the input tensor by selecting the indices in the order given in index.
@@ -1866,14 +1615,9 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_index_fill(IntPtr tensor, long dim, IntPtr index, IntPtr value);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_index_fill_(IntPtr tensor, long dim, IntPtr index, IntPtr value);
-
             /// <summary>
             /// Fills the elements of the input tensor with value value by selecting the indices in the order given in index.
-            /// 
+            ///
             /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
             /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match the input tensor, or an error will be raised.
             /// </summary>
@@ -1893,7 +1637,7 @@ namespace TorchSharp
 
             /// <summary>
             /// Fills, in place, the elements of the input tensor with value value by selecting the indices in the order given in index.
-            /// 
+            ///
             /// For example, if dim == 0, index[i] == j, and alpha=-1, then the ith row of source is subtracted from the jth row of the input tensor.
             /// The dimth dimension of source must have the same size as the length of index(which must be a vector), and all other dimensions must match the input tensor, or an error will be raised.
             /// </summary>
@@ -1911,9 +1655,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_reshape(IntPtr tensor, IntPtr shape, int length);
-
             /// <summary>
             /// Returns a tensor with the same data and number of elements as the input tensor but with the specified shape.
             /// </summary>
@@ -1929,12 +1670,6 @@ namespace TorchSharp
                     }
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_flatten(IntPtr tensor, long start, long end);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_flatten_names(IntPtr tensor, IntPtr names, long nLength);
 
             /// <summary>
             /// Flattens input by reshaping it into a one-dimensional tensor.
@@ -1973,12 +1708,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_unflatten(IntPtr tensor, long dim, IntPtr shape, int length);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_unflatten_names(IntPtr tensor, IntPtr names, IntPtr dims, int length);
 
             /// <summary>
             /// Expands the dimension dim of the input tensor over multiple dimensions of sizes given by sizes.
@@ -2032,13 +1761,9 @@ namespace TorchSharp
                 }
             }
 
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_align_to(IntPtr tensor, IntPtr names, long nLength);
-
             /// <summary>
             /// Permutes the dimensions of the input tensor to match the order specified in names, adding size-one dims for any new names.
-            /// 
+            ///
             /// All of the dims of the input tensor must be named in order to use this method.The resulting tensor is a view on the original tensor.
             /// All dimension names of the input tensor must be present in names.names may contain additional names that are not in this.names; the output tensor has a size-one dimension for each of those new names.
             /// names may contain up to one ellipsis "...". The ellipsis is expanded to be equal to all dimension names of the input tensor that are not mentioned in names, in the order that they appear in the input tensor.
@@ -2057,7 +1782,7 @@ namespace TorchSharp
 
             /// <summary>
             /// Permutes the dimensions of the input tensor to match the order specified in names, adding size-one dims for any new names.
-            /// 
+            ///
             /// All of the dims of the input tensor must be named in order to use this method.The resulting tensor is a view on the original tensor.
             /// All dimension names of the input tensor must be present in names.names may contain additional names that are not in this.names; the output tensor has a size-one dimension for each of those new names.
             /// names may contain up to one ellipsis "...". The ellipsis is expanded to be equal to all dimension names of the input tensor that are not mentioned in names, in the order that they appear in the input tensor.
@@ -2066,10 +1791,9 @@ namespace TorchSharp
             /// <remarks>The named tensor API is experimental and subject to change.</remarks>
             public Tensor align_to(params string[] names) => align_to((IEnumerable<string>)names);
 
-
             /// <summary>
             /// Permutes the dimensions of the input tensor to match the dimension order in the other tensor, adding size-one dims for any new names.
-            /// 
+            ///
             /// This operation is useful for explicit broadcasting by names.
             /// All of the dims of the input tensor must be named in order to use this method.The resulting tensor is a view on the original tensor.
             /// All dimension names of the input tensor must be present in other.names.other may contain named dimensions that are not in this.names; the output tensor has a size-one dimension for each of those new names.
@@ -2079,15 +1803,6 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor align_as(Tensor other) => align_to(other.names!);
 
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_unique(IntPtr tensor, bool sorted, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_unique_dim(IntPtr tensor, long dim, bool sorted, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_unique_consecutive(IntPtr tensor, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_unique_dim_consecutive(IntPtr tensor, long dim, bool return_inverse, bool return_counts, out IntPtr inverse_indices, out IntPtr counts);
 
             /// <summary>
             /// Returns the unique elements of the input tensor.
@@ -2145,15 +1860,6 @@ namespace TorchSharp
                 return unflatten(dim, sizes.Shape);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_squeeze(IntPtr tensor, long dim);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_squeeze_no_dim(IntPtr tensor);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_squeeze_(IntPtr tensor, long dim);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_squeeze_no_dim_(IntPtr tensor);
-
             /// <summary>
             /// Returns a tensor with all the dimensions of input of size 1 removed. When dim is given, a squeeze operation is done only in the given dimension.
             /// </summary>
@@ -2178,9 +1884,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_t(IntPtr tensor);
 
             /// <summary>
             /// Expects input to be 1- or 2-D tensor and transposes dimensions 0 and 1.
@@ -2207,9 +1910,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_H(IntPtr tensor);
-
             /// <summary>
             /// Is this Tensor with its dimensions reversed.
             /// </summary>
@@ -2218,9 +1918,6 @@ namespace TorchSharp
                     return is_complex() ? transpose(0, 1).conj() : transpose(0, 1);
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_mT(IntPtr tensor);
 
             /// <summary>
             /// Returns a view of this tensor with the last two dimensions transposed.
@@ -2234,9 +1931,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_mH(IntPtr tensor);
-
             /// <summary>
             /// Accessing this property is equivalent to calling adjoint().
             /// </summary>
@@ -2248,9 +1942,6 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_transpose(IntPtr tensor, long dim1, long dim2);
 
             /// <summary>
             /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
@@ -2266,9 +1957,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_tril(IntPtr tensor, long diagonal);
-
             /// <summary>
             /// Returns the lower triangular part of the matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
             /// The lower triangular part of the matrix is defined as the elements on and below the diagonal.
@@ -2282,9 +1970,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_triu(IntPtr tensor, long diagonal);
 
             /// <summary>
             /// Returns the upper triangular part of a matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
@@ -2300,7 +1985,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-
             /// <summary>
             /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
             /// </summary>
@@ -2310,9 +1994,6 @@ namespace TorchSharp
             /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
             /// </summary>
             public Tensor swapaxes(long dim0, long dim1) => transpose(dim0, dim1);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_transpose_(IntPtr tensor, long dim1, long dim2);
 
             /// <summary>
             /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
@@ -2328,9 +2009,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_view(IntPtr tensor, IntPtr shape, int length);
 
             /// <summary>
             /// Returns a new tensor with the same data as the input tensor but of a different shape.
@@ -2362,9 +2040,6 @@ namespace TorchSharp
                 return view(other.shape);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_view_as_complex(IntPtr tensor);
-
             /// <summary>
             /// Returns a view of input as a complex tensor.
             /// </summary>
@@ -2375,9 +2050,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(result);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_view_as_real(IntPtr tensor);
 
             /// <summary>
             /// Returns a view of input as a real tensor.
@@ -2390,9 +2062,6 @@ namespace TorchSharp
                 return new Tensor(result);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_all(IntPtr tensor);
-
             /// <summary>
             /// Tests if all elements in input evaluate to true.
             /// </summary>
@@ -2404,9 +2073,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_all_along_dimension(IntPtr tensor, long dim, bool keep_dim);
 
             /// <summary>
             /// Tests if all elements in input evaluate to true.
@@ -2421,12 +2087,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_amax(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_amax_out(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim, IntPtr _out);
 
             /// <summary>
             /// Returns the maximum value of each slice of the input tensor in the given dimension(s) dim.
@@ -2468,11 +2128,6 @@ namespace TorchSharp
                 return amax((ReadOnlySpan<long>)dims, false, null);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_amin(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_amin_out(IntPtr tensor, IntPtr dim, int dim_len, bool keep_dim, IntPtr _out);
-
             /// <summary>
             /// Returns the minimum value of each slice of the input tensor in the given dimension(s) dim.
             /// </summary>
@@ -2513,10 +2168,6 @@ namespace TorchSharp
                 return amin((ReadOnlySpan<long>)dims, false, null);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_aminmax(IntPtr tensor, long dim, bool keep_dim, out IntPtr max);
-
-
             /// <summary>
             /// Computes the minimum and maximum values of the input tensor.
             /// </summary>
@@ -2530,9 +2181,6 @@ namespace TorchSharp
                 return (new Tensor(res), new Tensor(maxHandle));
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_any(IntPtr tensor);
-
             /// <summary>
             /// Tests if any element in input evaluate to true.
             /// </summary>
@@ -2544,9 +2192,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_any_along_dimension(IntPtr tensor, long dim, bool keep_dim);
 
             /// <summary>
             /// Tests if any element in input evaluate to true.
@@ -2562,9 +2207,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_argmax(IntPtr tensor);
-
             /// <summary>
             /// Returns the indices of the maximum value of all elements in the input tensor.
             /// </summary>
@@ -2576,9 +2218,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_argmax_along_dimension(IntPtr tensor, long dim, bool keep_dim);
 
             /// <summary>
             /// Returns the indices of the maximum value of all elements in the input tensor.
@@ -2594,9 +2233,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_argmin(IntPtr tensor);
-
             /// <summary>
             /// Returns the indices of the minimum value of all elements in the input tensor.
             /// </summary>
@@ -2608,9 +2244,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_argmin_along_dimension(IntPtr tensor, long dim, bool keep_dim);
 
             /// <summary>
             /// Returns the indices of the minimum value of all elements in the input tensor.
@@ -2626,9 +2259,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_argsort(IntPtr tensor, long dim, bool descending);
-
             /// <summary>
             /// Returns the indices that sort a tensor along a given dimension in ascending order by value.
             /// </summary>
@@ -2643,9 +2273,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_deg2rad(IntPtr tensor);
-
             /// <summary>
             /// Convert each element from degrees to radians.
             /// </summary>
@@ -2657,9 +2284,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_rad2deg(IntPtr tensor);
 
             /// <summary>
             /// Convert each element from radians to degrees.
@@ -2673,9 +2297,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_copysign(IntPtr tensor, IntPtr other);
-
             /// <summary>
             ///
             /// </summary>
@@ -2688,9 +2309,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_count_nonzero(IntPtr tensor, IntPtr dim, int dim_len);
-
             public Tensor count_nonzero(long[]? dims = null)
             {
                 unsafe {
@@ -2701,9 +2319,6 @@ namespace TorchSharp
                     }
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cov(IntPtr tensor, long correction, IntPtr fweights, IntPtr aweights);
 
             /// <summary>
             /// Estimates the covariance matrix of the variables given by the input matrix, where rows are the variables and columns are the observations.
@@ -2732,9 +2347,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_corrcoef(IntPtr tensor);
-
             /// <summary>
             /// Estimates the Pearson product-moment correlation coefficient matrix of the variables given by the input matrix, where rows are the variables and columns are the observations.
             /// </summary>
@@ -2748,9 +2360,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_tile(IntPtr tensor, IntPtr reps, int reps_len);
 
             /// <summary>
             /// Constructs a tensor by repeating the elements of input. The reps argument specifies the number of repetitions in each dimension.
@@ -2768,9 +2377,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_digamma(IntPtr tensor);
-
             /// <summary>
             /// Computes the logarithmic derivative of the gamma function on input.
             /// </summary>
@@ -2782,9 +2388,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_digamma_(IntPtr tensor);
 
             /// <summary>
             /// Computes the logarithmic derivative of the gamma function on input, in place.
@@ -2798,9 +2401,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_lgamma(IntPtr tensor);
-
             /// <summary>
             /// Computes the logarithm of the gamma function on input.
             /// </summary>
@@ -2813,9 +2413,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_lgamma_(IntPtr tensor);
-
             /// <summary>
             /// Computes the logarithm of the gamma function on input, in place.
             /// </summary>
@@ -2827,9 +2424,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_mvlgamma(IntPtr tensor, long p);
 
             /// <summary>
             /// Computes the multivariate log-gamma function) with dimension pp element-wise
@@ -2844,9 +2438,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_mvlgamma_(IntPtr tensor, long p);
-
             /// <summary>
             /// Computes the multivariate log-gamma function) with dimension pp element-wise, in place.
             /// </summary>
@@ -2860,9 +2451,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_polygamma(IntPtr tensor, long p);
-
             public Tensor polygamma(long p)
             {
                 var res = THSTensor_polygamma(Handle, p);
@@ -2871,9 +2459,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_polygamma_(IntPtr tensor, long p);
-
             public Tensor polygamma_(long p)
             {
                 var res = THSTensor_polygamma_(Handle, p);
@@ -2881,9 +2466,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_positive(IntPtr tensor);
 
             /// <summary>
             /// Returns input. Throws a runtime error if input is a bool tensor.
@@ -2898,9 +2480,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_softplus(IntPtr tensor);
-
             public Tensor softplus()
             {
                 var res = THSTensor_softplus(Handle);
@@ -2908,9 +2487,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ravel(IntPtr tensor);
 
             public Tensor ravel()
             {
@@ -2920,9 +2496,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_relu(IntPtr tensor);
-
             public Tensor relu()
             {
                 var res = THSTensor_relu(Handle);
@@ -2930,9 +2503,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_relu_(IntPtr tensor);
 
             public Tensor relu_()
             {
@@ -2942,9 +2512,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_relu6(IntPtr tensor);
-
             public Tensor relu6()
             {
                 var res = THSTensor_relu6(Handle);
@@ -2952,9 +2519,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_relu6_(IntPtr tensor);
 
             public Tensor relu6_()
             {
@@ -2964,9 +2528,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_celu(IntPtr tensor);
-
             public Tensor celu()
             {
                 var res = THSTensor_celu(Handle);
@@ -2974,9 +2535,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_celu_(IntPtr tensor);
 
             public Tensor celu_()
             {
@@ -2986,9 +2544,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_elu(IntPtr tensor, IntPtr alpha, IntPtr scale, IntPtr input_scale);
-
             public Tensor elu(Scalar alpha, Scalar scale, Scalar input_scale)
             {
                 var res = THSTensor_elu(Handle, alpha.Handle, scale.Handle, input_scale.Handle);
@@ -2996,9 +2551,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_elu_(IntPtr tensor, IntPtr alpha, IntPtr scale, IntPtr input_scale);
 
             public Tensor elu_(Scalar alpha, Scalar scale, Scalar input_scale)
             {
@@ -3008,9 +2560,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_gelu(IntPtr tensor);
-
             public Tensor gelu()
             {
                 var res = THSTensor_gelu(Handle);
@@ -3018,9 +2567,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_hardsigmoid(IntPtr tensor);
 
             public Tensor hardsigmoid()
             {
@@ -3030,9 +2576,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_hardsigmoid_(IntPtr tensor);
-
             public Tensor hardsigmoid_()
             {
                 var res = THSTensor_hardsigmoid_(Handle);
@@ -3040,9 +2583,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_hardswish(IntPtr tensor);
 
             public Tensor hardswish()
             {
@@ -3052,9 +2592,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_hardswish_(IntPtr tensor);
-
             public Tensor hardswish_()
             {
                 var res = THSTensor_hardswish_(Handle);
@@ -3062,9 +2599,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_hardtanh(IntPtr tensor, IntPtr min, IntPtr max);
 
             public Tensor hardtanh(Scalar min, Scalar max)
             {
@@ -3074,9 +2608,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_hardtanh_(IntPtr tensor, IntPtr min, IntPtr max);
-
             public Tensor hardtanh_(Scalar min, Scalar max)
             {
                 var res = THSTensor_hardtanh_(Handle, min.Handle, max.Handle);
@@ -3085,9 +2616,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_heaviside(IntPtr tensor, IntPtr other);
-
             public Tensor heaviside(Tensor other)
             {
                 var res = THSTensor_heaviside(Handle, other.Handle);
@@ -3095,9 +2623,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_igamma(IntPtr tensor, IntPtr other);
 
             /// <summary>
             /// Computes the regularized lower incomplete gamma function
@@ -3112,9 +2637,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_igammac(IntPtr tensor, IntPtr other);
-
             /// <summary>
             /// Computes the regularized upper incomplete gamma function.
             /// </summary>
@@ -3128,9 +2650,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_i0(IntPtr tensor);
-
             /// <summary>
             /// Computes the zeroth order modified Bessel function of the first kind for each element of input.
             /// </summary>
@@ -3142,9 +2661,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_isclose(IntPtr tensor, IntPtr other, double rtol, double atol, bool nanEqual);
 
             /// <summary>
             /// Returns a new tensor with boolean elements representing if each element of input is “close” to the corresponding element of other.
@@ -3161,9 +2677,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_isin(IntPtr elements, IntPtr test_elements, bool assume_unique, bool invert);
-
             /// <summary>
             /// Tests if each element of elements is in test_elements.
             /// Returns a boolean tensor of the same shape as elements that is true for elements in test_elements and false otherwise.
@@ -3179,9 +2692,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_isinf(IntPtr tensor);
-
             public Tensor isinf()
             {
                 var res = THSTensor_isinf(Handle);
@@ -3189,9 +2699,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_isfinite(IntPtr tensor);
 
             public Tensor isfinite()
             {
@@ -3201,9 +2708,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_isposinf(IntPtr tensor);
-
             public Tensor isposinf()
             {
                 var res = THSTensor_isposinf(Handle);
@@ -3211,9 +2715,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_isneginf(IntPtr tensor);
 
             public Tensor isneginf()
             {
@@ -3223,11 +2724,8 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_isnan(IntPtr tensor);
-
             /// <summary>
-            /// Returns a new tensor with boolean elements representing if each element of input is <value>NaN</value> or not. 
+            /// Returns a new tensor with boolean elements representing if each element of input is <value>NaN</value> or not.
             /// Complex values are considered <value>NaN</value> when either their real and/or imaginary part is <value>NaN</value>.
             /// </summary>
             /// <returns>A boolean tensor that is <value>True</value> where tensor is <value>NaN</value> and <value>False</value> elsewhere</returns>
@@ -3240,9 +2738,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_isreal(IntPtr tensor);
-
             public Tensor isreal()
             {
                 var res = THSTensor_isreal(Handle);
@@ -3250,9 +2745,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_leaky_relu(IntPtr tensor, IntPtr negative_slope);
 
             public Tensor leaky_relu(Scalar negative_slope)
             {
@@ -3262,9 +2754,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_leaky_relu_(IntPtr tensor, IntPtr negative_slope);
-
             public Tensor leaky_relu_(Scalar negative_slope)
             {
                 var res = THSTensor_leaky_relu_(Handle, negative_slope.Handle);
@@ -3272,9 +2761,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_selu(IntPtr tensor);
 
             public Tensor selu()
             {
@@ -3284,9 +2770,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_selu_(IntPtr tensor);
-
             public Tensor selu_()
             {
                 var res = THSTensor_selu_(Handle);
@@ -3294,10 +2777,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_silu(IntPtr tensor);
 
             public Tensor silu()
             {
@@ -3307,9 +2786,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_silu_(IntPtr tensor);
-
             public Tensor silu_()
             {
                 var res = THSTensor_silu_(Handle);
@@ -3317,9 +2793,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_log_sigmoid(IntPtr tensor);
 
             public Tensor log_sigmoid()
             {
@@ -3329,9 +2802,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_lerp(IntPtr tensor, IntPtr end, IntPtr weight);
-
             public Tensor lerp(Tensor end, Tensor weight)
             {
                 var res = THSTensor_lerp(Handle, end.Handle, weight.Handle);
@@ -3340,9 +2810,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_lerp_(IntPtr tensor, IntPtr end, IntPtr weight);
-
             public Tensor lerp_(Tensor end, Tensor weight)
             {
                 var res = THSTensor_lerp_(Handle, end.Handle, weight.Handle);
@@ -3350,11 +2817,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_baddbmm(IntPtr batch1, IntPtr batch2, IntPtr mat, float beta,
-                float alpha);
 
             /// <summary>
             /// Performs a batch matrix-matrix product of matrices in batch1 and batch2. input is added to the final result.
@@ -3371,9 +2833,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_bmm(IntPtr batch1, IntPtr batch2);
-
             /// <summary>
             /// Performs a batch matrix-matrix product of matrices stored in input and mat2.
             /// </summary>
@@ -3385,9 +2844,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_bucketize(IntPtr input, IntPtr boundaries, bool out_int32, bool right);
 
             /// <summary>
             /// Returns the indices of the buckets to which each value in the input belongs, where the boundaries of the buckets are set by boundaries.
@@ -3408,9 +2864,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_bincount(IntPtr tensor, IntPtr weights, long minlength);
-
             /// <summary>
             /// Count the frequency of each value in an array of non-negative ints.
             /// </summary>
@@ -3421,7 +2874,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
 
             public Tensor @bool() => this.to_type(ScalarType.Bool);
 
@@ -3437,10 +2889,6 @@ namespace TorchSharp
 
             public Tensor @double() => this.to_type(ScalarType.Float64);
 
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_channel_shuffle(IntPtr input, long groups);
-
             /// <summary>
             /// Divide the channels in a tensor into g groups and rearrange them.
             ///
@@ -3453,12 +2901,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_clamp(IntPtr input, IntPtr min, IntPtr max);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_clamp_tensor(IntPtr input, IntPtr min, IntPtr max);
 
             /// <summary>
             /// Clamps all elements in input into the range [ min, max ].
@@ -3492,12 +2934,6 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor clip(Scalar? min = null, Scalar? max = null) => clamp(min, max);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_clamp_(IntPtr input, IntPtr min, IntPtr max);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_clamp_tensor_(IntPtr input, IntPtr min, IntPtr max);
-
             /// <summary>
             /// Clamps all elements in input into the range [ min, max ] in place.
             /// </summary>
@@ -3522,18 +2958,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_clamp_max(IntPtr input, IntPtr max);
-
             public Tensor clamp_max(Scalar max)
             {
                 var res = THSTensor_clamp_max(Handle, max.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_clamp_max_(IntPtr input, IntPtr max);
 
             public Tensor clamp_max_(Scalar max)
             {
@@ -3542,9 +2972,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_clamp_min(IntPtr input, IntPtr min);
-
             public Tensor clamp_min(Scalar min)
             {
                 var res = THSTensor_clamp_min(Handle, min.Handle);
@@ -3552,18 +2979,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_clamp_min_(IntPtr input, IntPtr min);
-
             public Tensor clamp_min_(Scalar min)
             {
                 var res = THSTensor_clamp_min_(Handle, min.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_diff(IntPtr tensor, long n, long dim, IntPtr prepend, IntPtr append);
 
             /// <summary>
             /// Computes the n-th forward difference along the given dimension.
@@ -3586,9 +3007,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_diag(IntPtr tensor, long dim);
-
             /// <summary>
             /// If input is a vector (1-D tensor), then returns a 2-D square tensor with the elements of input as the diagonal.
             /// If input is a matrix (2-D tensor), then returns a 1-D tensor with the diagonal elements of input.
@@ -3606,9 +3024,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_trace(IntPtr tensor);
-
             /// <summary>
             /// Returns the sum of the elements of the diagonal of the input 2-D matrix.
             /// </summary>
@@ -3621,9 +3036,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_diagflat(IntPtr tensor, long offset);
 
             /// <summary>
             /// If input is a vector (1-D tensor), then returns a 2-D square tensor with the elements of input as the diagonal.
@@ -3641,9 +3053,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_diagonal(IntPtr tensor, long offset, long dim1, long dim2);
 
             /// <summary>
             /// Returns a partial view of input with the its diagonal elements with respect to dim1 and dim2 appended as a dimension at the end of the shape.
@@ -3667,10 +3076,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_erf(IntPtr tensor);
-
             /// <summary>
             /// Computes the error function of the input.
             /// </summary>
@@ -3682,9 +3087,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_erf_(IntPtr tensor);
-
             /// <summary>
             /// Computes the error function of the input in place.
             /// </summary>
@@ -3694,9 +3096,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_erfc(IntPtr tensor);
 
             /// <summary>
             /// Computes the complementary error function of input.
@@ -3709,9 +3108,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_erfc_(IntPtr tensor);
-
             /// <summary>
             /// Computes the complementary error function of input in place
             /// </summary>
@@ -3723,11 +3119,8 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_erfinv(IntPtr tensor);
-
             /// <summary>
-            /// Computes the inverse error function of input. 
+            /// Computes the inverse error function of input.
             /// </summary>
             /// <returns></returns>
             public Tensor erfinv()
@@ -3737,11 +3130,8 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_erfinv_(IntPtr tensor);
-
             /// <summary>
-            /// Computes the inverse error function of input in place. 
+            /// Computes the inverse error function of input in place.
             /// </summary>
             /// <returns></returns>
             public Tensor erfinv_()
@@ -3750,9 +3140,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_eq(IntPtr tensor, IntPtr trg);
 
             public Tensor eq(Tensor target)
             {
@@ -3764,9 +3151,6 @@ namespace TorchSharp
 
             public Tensor equal(Tensor target) => eq(target);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_eq_(IntPtr tensor, IntPtr trg);
-
             public Tensor eq_(Tensor target)
             {
                 if (target is null) return false;
@@ -3774,9 +3158,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_eq_scalar(IntPtr tensor, IntPtr trg);
 
             public Tensor eq(Scalar target)
             {
@@ -3786,9 +3167,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_eq_scalar_(IntPtr tensor, IntPtr trg);
-
             public Tensor eq_(Scalar target)
             {
                 if (target is null) return false;
@@ -3797,9 +3175,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern bool THSTensor_equal(IntPtr tensor, IntPtr trg);
-
             public bool Equals(Tensor target)
             {
                 if (target is null) return false;
@@ -3807,9 +3182,6 @@ namespace TorchSharp
                 torch.CheckForErrors();
                 return res;
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern bool THSTensor_allclose(IntPtr tensor, IntPtr trg, double rtol, double atol, bool equal_nan);
 
             /// <summary>
             /// This function checks if all input and other lie within a certain distance from each other
@@ -3827,9 +3199,6 @@ namespace TorchSharp
                 return res;
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ge(IntPtr tensor, IntPtr trg);
-
             public Tensor ge(Tensor target)
             {
                 if (target is null) return false;
@@ -3840,9 +3209,6 @@ namespace TorchSharp
 
             public Tensor greater_equal(Tensor target) => ge(target);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ge_(IntPtr tensor, IntPtr trg);
-
             public Tensor ge_(Tensor target)
             {
                 if (target is null) return false;
@@ -3850,9 +3216,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ge_scalar(IntPtr tensor, IntPtr trg);
 
             public Tensor ge(Scalar target)
             {
@@ -3862,9 +3225,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ge_scalar_(IntPtr tensor, IntPtr trg);
-
             public Tensor ge_(Scalar target)
             {
                 if (target is null) return false;
@@ -3872,9 +3232,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_gt(IntPtr tensor, IntPtr trg);
 
             public Tensor gt(Tensor target)
             {
@@ -3886,9 +3243,6 @@ namespace TorchSharp
 
             public Tensor greater(Tensor target) => gt(target);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_gt_(IntPtr tensor, IntPtr trg);
-
             public Tensor gt_(Tensor target)
             {
                 if (target is null) return false;
@@ -3896,9 +3250,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_gt_scalar(IntPtr tensor, IntPtr trg);
 
             public Tensor gt(Scalar target)
             {
@@ -3908,9 +3259,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_gt_scalar_(IntPtr tensor, IntPtr trg);
-
             public Tensor gt_(Scalar target)
             {
                 if (target is null) return false;
@@ -3918,9 +3266,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_kron(IntPtr tensor, IntPtr other);
 
             /// <summary>
             /// Computes the Kronecker product of input and other.
@@ -3933,9 +3278,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_lcm(IntPtr tensor, IntPtr other);
 
             /// <summary>
             /// Computes the element-wise least common multiple (LCM) of input and other.
@@ -3951,9 +3293,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_lcm_(IntPtr tensor, IntPtr other);
-
             /// <summary>
             /// Computes the element-wise least common multiple (LCM) of input and other, in place.
             /// </summary>
@@ -3968,9 +3307,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ldexp(IntPtr right, IntPtr left);
-
             /// <summary>
             /// Multiplies input by pow(2,other).
             /// </summary>
@@ -3983,9 +3319,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ldexp_(IntPtr right, IntPtr left);
 
             /// <summary>
             /// Multiplies input by pow(2,other) in place.
@@ -4000,9 +3333,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_le(IntPtr tensor, IntPtr trg);
-
             public Tensor le(Tensor target)
             {
                 var res = THSTensor_le(Handle, target.Handle);
@@ -4011,9 +3341,6 @@ namespace TorchSharp
             }
 
             public Tensor less_equal(Tensor target) => le(target);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_le_(IntPtr tensor, IntPtr trg);
 
             public Tensor le_(Tensor target)
             {
@@ -4024,9 +3351,6 @@ namespace TorchSharp
 
             public Tensor less_equal_(Tensor target) => le_(target);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_le_scalar(IntPtr tensor, IntPtr trg);
-
             public Tensor le(Scalar target)
             {
                 var res = THSTensor_le_scalar(Handle, target.Handle);
@@ -4034,18 +3358,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_le_scalar_(IntPtr tensor, IntPtr trg);
-
             public Tensor le_(Scalar target)
             {
                 var res = THSTensor_le_scalar_(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_lt(IntPtr tensor, IntPtr trg);
 
             public Tensor lt(Tensor target)
             {
@@ -4056,18 +3374,12 @@ namespace TorchSharp
 
             public Tensor less(Tensor target) => lt(target);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_lt_(IntPtr tensor, IntPtr trg);
-
             public Tensor lt_(Tensor target)
             {
                 var res = THSTensor_lt_(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_lt_scalar(IntPtr tensor, IntPtr trg);
 
             public Tensor lt(Scalar target)
             {
@@ -4076,18 +3388,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_lt_scalar_(IntPtr tensor, IntPtr trg);
-
             public Tensor lt_(Scalar target)
             {
                 var res = THSTensor_lt_scalar_(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_masked_fill(IntPtr tensor, IntPtr mask, IntPtr value);
 
             public Tensor masked_fill(Tensor mask, Scalar value)
             {
@@ -4096,9 +3402,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_masked_scatter(IntPtr tensor, IntPtr mask, IntPtr value);
-
             public Tensor masked_scatter(Tensor mask, Tensor value)
             {
                 var res = THSTensor_masked_scatter(Handle, mask.Handle, value.Handle);
@@ -4106,18 +3409,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_masked_scatter_(IntPtr tensor, IntPtr mask, IntPtr value);
-
             public Tensor masked_scatter_(Tensor mask, Tensor value)
             {
                 var res = THSTensor_masked_scatter_(Handle, mask.Handle, value.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_masked_select(IntPtr tensor, IntPtr mask);
 
             public Tensor masked_select(Tensor mask)
             {
@@ -4127,25 +3424,18 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_topk(IntPtr tensor, AllocatePinnedArray allocator, int k, long dim, bool largest, bool sorted);
-
-            public (Tensor values, Tensor indexes) topk(int k, int dim = -1, bool largest = true, bool sorted = true)
+            public (Tensor values, Tensor indexes) topk(int k, long dimension = -1, bool largest = true, bool sorted = true)
             {
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    THSTensor_topk(Handle, pa.CreateArray, k, dim, largest, sorted);
+                    THSTensor_topk(Handle, pa.CreateArray, k, dimension, largest, sorted);
                     torch.CheckForErrors();
                     ptrArray = pa.Array;
                 }
 
                 return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
             }
-
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_unbind(IntPtr tensor, AllocatePinnedArray allocator, long dim);
 
             /// <summary>
             /// Removes a tensor dimension.
@@ -4165,9 +3455,6 @@ namespace TorchSharp
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_unfold(IntPtr tensor, long dim, long size, long step);
-
             /// <summary>
             /// Returns a view of the original tensor which contains all slices of size 'size' from the tensor in the given dimension.
             /// </summary>
@@ -4181,21 +3468,18 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_split_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size, long dim);
-
             /// <summary>
             /// Splits the tensor into chunks. Each chunk is a view of the original tensor.
             /// </summary>
             /// <param name="size">The size of a single chunk</param>
-            /// <param name="dim">The dimension along which to split the tensor.</param>
+            /// <param name="dimension">The dimension along which to split the tensor.</param>
 
-            public Tensor[] split(long size, int dim = 0)
+            public Tensor[] split(long size, long dimension = 0L)
             {
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    THSTensor_split_with_size(Handle, pa.CreateArray, size, dim);
+                    THSTensor_split_with_size(Handle, pa.CreateArray, size, dimension);
                     torch.CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -4203,23 +3487,20 @@ namespace TorchSharp
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_split_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length, long dim);
-
             /// <summary>
             /// Splits the tensor into chunks. Each chunk is a view of the original tensor.
             /// </summary>
             /// <param name="sizes">A list of sizes for each chunk</param>
-            /// <param name="dim">The dimension along which to split the tensor.</param>
+            /// <param name="dimension">The dimension along which to split the tensor.</param>
 
-            public Tensor[] split(ReadOnlySpan<long> sizes, int dim = 0)
+            public Tensor[] split(ReadOnlySpan<long> sizes, long dimension = 0L)
             {
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
                     unsafe {
                         fixed (long* psizes = sizes) {
-                            THSTensor_split_with_sizes(Handle, pa.CreateArray, (IntPtr)psizes, sizes.Length, dim);
+                            THSTensor_split_with_sizes(Handle, pa.CreateArray, (IntPtr)psizes, sizes.Length, dimension);
                             torch.CheckForErrors();
                         }
                     }
@@ -4233,11 +3514,11 @@ namespace TorchSharp
             /// Splits the tensor into chunks. Each chunk is a view of the original tensor.
             /// </summary>
             /// <param name="sizes">A list of sizes for each chunk</param>
-            /// <param name="dim">The dimension along which to split the tensor.</param>
+            /// <param name="dimension">The dimension along which to split the tensor.</param>
 
-            public Tensor[] split(long[] sizes, int dim = 0)
+            public Tensor[] split(long[] sizes, long dimension = 0L)
             {
-                return split((ReadOnlySpan<long>)sizes, dim);
+                return split((ReadOnlySpan<long>)sizes, dimension);
             }
 
             /// <summary>
@@ -4249,9 +3530,6 @@ namespace TorchSharp
             {
                 return split((ReadOnlySpan<long>)sizes, 0);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_tensor_split_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size, long dim);
 
             /// <summary>
             /// Splits a tensor into multiple sub-tensors, all of which are views of input, along dimension dim according to the indices or number of sections specified by indices_or_sections.
@@ -4271,9 +3549,6 @@ namespace TorchSharp
 
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_tensor_split_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length, long dim);
 
             /// <summary>
             /// Splits a tensor into multiple sub-tensors, all of which are views of input, along dimension dim according to the indices or number of sections specified by indices_or_sections.
@@ -4298,25 +3573,19 @@ namespace TorchSharp
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_tensor_split_with_tensor_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr indices, long dim);
-
-            public Tensor[] tensor_split(Tensor indices, int dim = 0)
+            public Tensor[] tensor_split(Tensor indices, long dimension = 0L)
             {
                 if (indices.dtype != ScalarType.Int64) throw new ArgumentException("Tensor indices should be Int64 in 'tensor_split");
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    THSTensor_tensor_split_with_tensor_sizes(Handle, pa.CreateArray, indices.Handle, dim);
+                    THSTensor_tensor_split_with_tensor_sizes(Handle, pa.CreateArray, indices.Handle, dimension);
                     torch.CheckForErrors();
                     ptrArray = pa.Array;
                 }
 
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_vsplit_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size);
 
             /// <summary>
             /// Splits input, a tensor with one or more dimensions, into multiple tensors vertically according to sizes.
@@ -4336,9 +3605,6 @@ namespace TorchSharp
 
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_vsplit_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length);
 
             /// <summary>
             /// Splits input, a tensor with one or more dimensions, into multiple tensors vertically according to sizes.
@@ -4369,10 +3635,6 @@ namespace TorchSharp
 
             public Tensor[] vsplit(Tensor indices) => tensor_split(indices, 0);
 
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_hsplit_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size);
-
             /// <summary>
             /// Splits input, a tensor with one or more dimensions, into multiple tensors horizontally according to sizes.
             /// </summary>
@@ -4391,9 +3653,6 @@ namespace TorchSharp
 
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_hsplit_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length);
 
             /// <summary>
             /// Splits input, a tensor with one or more dimensions, into multiple tensors horizontally according to sizes.
@@ -4424,9 +3683,6 @@ namespace TorchSharp
 
             public Tensor[] hsplit(Tensor indices) => tensor_split(indices, 1);
 
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_dsplit_with_size(IntPtr tensor, AllocatePinnedArray allocator, long size);
-
             /// <summary>
             /// Splits input, a tensor with three or more dimensions, into multiple tensors depthwise according to indices_or_sections. Each split is a view of input.
             /// </summary>
@@ -4445,9 +3701,6 @@ namespace TorchSharp
 
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_dsplit_with_sizes(IntPtr tensor, AllocatePinnedArray allocator, IntPtr psizes, int length);
 
             /// <summary>
             /// Splits input, a tensor with three or more dimensions, into multiple tensors depthwise according to indices_or_sections. Each split is a view of input.
@@ -4476,10 +3729,6 @@ namespace TorchSharp
             /// <param name="indices">A list of split points</param>
             public Tensor[] dsplit(Tensor indices) => tensor_split(indices, 2);
 
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_chunk(IntPtr tensor, AllocatePinnedArray allocator, long chunks, long dim);
-
             /// <summary>
             /// Splits a tensor into a specific number of chunks. Each chunk is a view of the input tensor.
             /// </summary>
@@ -4500,10 +3749,6 @@ namespace TorchSharp
                 return ptrArray.Select(x => new Tensor(x)).ToArray();
             }
 
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_kthvalue(IntPtr tensor, long k, long dim, bool keepdim, out IntPtr _out);
-
             /// <summary>
             /// Returns a named tuple (values, indices) where values is the k th smallest element of each row of the input tensor in the given dimension dim. And indices is the index location of each element found.
             /// If dim is not given, the last dimension of the input is chosen.
@@ -4521,9 +3766,6 @@ namespace TorchSharp
                 return (new Tensor(values), new Tensor(indices));
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_max(IntPtr tensor);
-
             /// <summary>
             /// Returns the maximum value of all elements in the input tensor.
             /// </summary>
@@ -4533,10 +3775,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_max_elementwise(IntPtr tensor, IntPtr other);
 
             /// <summary>
             /// Computes the element-wise maximum of input and other.
@@ -4549,9 +3787,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_max_along_dimension(IntPtr tensor, AllocatePinnedArray allocator, long dim, bool keep_dim);
 
             /// <summary>
             /// Returns a named tuple (values, indexes) where values is the maximum value of each row of the input tensor in the given dimension dim.
@@ -4574,9 +3809,6 @@ namespace TorchSharp
                 return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_mean(IntPtr tensor);
-
             /// <summary>
             /// Returns the mean value of all elements in the input tensor.
             /// </summary>
@@ -4587,9 +3819,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_quantile(IntPtr tensor, IntPtr q, long dim, bool keepdim);
 
             /// <summary>
             /// Returns the q-th quantiles of all elements in the input tensor, doing a linear interpolation when the q-th quantile lies between two data points.
@@ -4603,9 +3832,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_nanquantile(IntPtr tensor, IntPtr q, long dim, bool keepdim);
 
             /// <summary>
             /// This is a variant of torch.quantile() that “ignores” NaN values, computing the quantiles q as if NaN values in input did not exist.
@@ -4623,16 +3849,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_mode(IntPtr tensor, AllocatePinnedArray allocator, long dim, bool keepdim);
-
             /// <summary>
             /// Returns a named tuple (values, indices) where values is the mode value of each row of the input tensor in the given dimension dim,
             /// i.e. a value which appears most often in that row, and indices is the index location of each mode value found.
             /// </summary>
             /// <param name="dim">The dimension to reduce, the last dimension by default.</param>
             /// <param name="keepdim">Whether the output tensor has dim retained or not</param>
-
 
             public (Tensor values, Tensor indices) mode(long dim = -1L, bool keepdim = false)
             {
@@ -4646,12 +3868,6 @@ namespace TorchSharp
 
                 return (values: new Tensor(ptrArray[0]), indices: new Tensor(ptrArray[1]));
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_mean_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool keepdim, bool has_type, sbyte scalar_type);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_var_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool keepdim, bool has_type, sbyte scalar_type);
 
             /// <summary>
             /// Returns the mean value of each row of the input tensor in the given dimension dim. If dim is a list of dimensions, reduce over all of them.
@@ -4685,9 +3901,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_median(IntPtr tensor);
-
             /// <summary>
             /// Returns the median of the values in input.
             /// </summary>
@@ -4702,9 +3915,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_min(IntPtr tensor);
-
             /// <summary>
             /// Returns the minimum value of all elements in the input tensor.
             /// </summary>
@@ -4715,18 +3925,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_min_elementwise(IntPtr tensor, IntPtr other);
-
             public Tensor minimum(Tensor other)
             {
                 var res = THSTensor_min_elementwise(Handle, other.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern void THSTensor_min_along_dimension(IntPtr tensor, AllocatePinnedArray allocator, long dim, bool keep_dim);
 
             /// <summary>
             /// Returns a named tuple (values, indexes) where values is the minimum value of each row of the input tensor in the given dimension dim.
@@ -4751,9 +3955,6 @@ namespace TorchSharp
                 return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_msort(IntPtr tensor);
-
             /// <summary>
             /// Sorts the elements of the input tensor along its first dimension in ascending order by value.
             /// </summary>
@@ -4763,9 +3964,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_sort(IntPtr tensor, long dim, bool descending, bool stable, out IntPtr indices);
 
             /// <summary>
             /// Sorts the elements of the input tensor along a given dimension in ascending order by value.
@@ -4781,9 +3979,6 @@ namespace TorchSharp
                 return (new Tensor(res), new Tensor(indices));
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ne(IntPtr tensor, IntPtr trg);
-
             public Tensor ne(Tensor target)
             {
                 var res = THSTensor_ne(Handle, target.Handle);
@@ -4792,9 +3987,6 @@ namespace TorchSharp
             }
 
             public Tensor not_equal(Tensor target) => ne(target);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ne_(IntPtr tensor, IntPtr trg);
 
             public Tensor ne_(Tensor target)
             {
@@ -4805,9 +3997,6 @@ namespace TorchSharp
 
             public Tensor not_equal_(Tensor target) => ne_(target);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ne_scalar(IntPtr tensor, IntPtr trg);
-
             public Tensor ne(Scalar target)
             {
                 var res = THSTensor_ne_scalar(Handle, target.Handle);
@@ -4815,18 +4004,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ne_scalar_(IntPtr tensor, IntPtr trg);
-
             public Tensor ne_(Scalar target)
             {
                 var res = THSTensor_ne_scalar_(Handle, target.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_dist(IntPtr tensor, IntPtr other, float p);
 
             /// <summary>
             /// Returns the p-norm of (input - other).
@@ -4842,9 +4025,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_norm(IntPtr tensor, float p);
-
             /// <summary>
             /// Returns the matrix norm or vector norm of a given tensor.
             /// </summary>
@@ -4856,24 +4036,18 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_norm_along_dimension(IntPtr tensor, int dim, bool keepdim, float p);
-
             /// <summary>
             /// Returns the matrix norm or vector norm of a given tensor.
             /// </summary>
-            public Tensor norm(int dim, bool keepdim = false, float p = 2.0f)
+            public Tensor norm(long dimension, bool keepdim = false, float p = 2.0f)
             {
-                var res = THSTensor_norm_along_dimension(Handle, dim, keepdim, p);
+                var res = THSTensor_norm_along_dimension(Handle, dimension, keepdim, p);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_outer(IntPtr input, IntPtr vec2);
-
             /// <summary>
-            /// Outer product of input and vec2. 
+            /// Outer product of input and vec2.
             /// </summary>
             /// <param name="vec2">1-D input vector.</param>
             /// <remarks>If input is a vector of size n and vec2 is a vector of size m, then out must be a matrix of size n×m.</remarks>
@@ -4883,9 +4057,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_inner(IntPtr input, IntPtr vec2);
 
             /// <summary>
             /// Computes the dot product for 1D tensors.
@@ -4900,16 +4071,10 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_inverse(IntPtr tensor);
-
             /// <summary>
             /// Alias for torch.linalg.inv()
             /// </summary>
             public Tensor inverse() => torch.linalg.inv(this);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_prelu(IntPtr tensor, IntPtr trg);
 
             public Tensor prelu(Tensor target)
             {
@@ -4918,12 +4083,9 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_fmax(IntPtr tensor, IntPtr trg);
-
             /// <summary>
             /// Computes the element-wise maximum of input and other.
-            /// 
+            ///
             /// This is like torch.maximum() except it handles NaNs differently: if exactly one of the two elements being compared is a NaN
             /// then the non-NaN element is taken as the maximum.
             /// Only if both elements are NaN is NaN propagated.
@@ -4937,12 +4099,9 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_fmin(IntPtr tensor, IntPtr trg);
-
             /// <summary>
             /// Computes the element-wise minimum of input and other.
-            /// 
+            ///
             /// This is like torch.minimum() except it handles NaNs differently: if exactly one of the two elements being compared is a NaN
             /// then the non-NaN element is taken as the minimum.
             /// Only if both elements are NaN is NaN propagated.
@@ -4954,9 +4113,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_renorm(IntPtr tensor, float p, long dim, float maxnorm);
 
             /// <summary>
             /// Returns a tensor where each sub-tensor of input along dimension dim is normalized such that the p-norm of the sub-tensor is lower than the value maxnorm
@@ -4972,9 +4128,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_sigmoid(IntPtr tensor);
-
             /// <summary>
             /// Alias for torch.special.expit()
             /// </summary>
@@ -4986,9 +4139,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_sigmoid_(IntPtr tensor);
-
             /// <summary>
             /// Alias for torch.special.expit(), works in place.
             /// </summary>
@@ -4999,11 +4149,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_std(IntPtr tensor, bool unbiased);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_var(IntPtr tensor, bool unbiased);
 
             /// <summary>
             /// Calculates the standard deviation of all elements in the tensor.
@@ -5031,11 +4176,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_std_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_var_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim);
 
             /// <summary>Calculates the standard deviation of all elements in the tensor.</summary>
             /// <remarks>
@@ -5205,11 +4345,6 @@ namespace TorchSharp
             public Tensor var((long, long, long) dim, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
                 => var(stackalloc[] { dim.Item1, dim.Item2, dim.Item3 }, unbiased, keepdim, type);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_std_mean(IntPtr tensor, bool unbiased, out IntPtr mean);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_var_mean(IntPtr tensor, bool unbiased, out IntPtr mean);
 
             /// <summary>
             /// Calculates the standard deviation and mean of all elements in the tensor.
@@ -5239,11 +4374,6 @@ namespace TorchSharp
                 return (new Tensor(res), new Tensor(mean));
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_std_mean_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim, out IntPtr mean);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_var_mean_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool unbiased, bool keepdim, out IntPtr mean);
 
             /// <summary>Calculates the standard deviation and mean of all elements in the tensor.</summary>
             /// <remarks>
@@ -5414,9 +4544,6 @@ namespace TorchSharp
             public (Tensor @var, Tensor mean) var_mean((long, long, long) dim, bool unbiased = true, bool keepdim = false, ScalarType? type = null)
                 => var_mean(stackalloc[] { dim.Item1, dim.Item2, dim.Item3 }, unbiased, keepdim, type);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_sum(IntPtr tensor, bool has_type, sbyte scalar_type);
-
             /// <summary>
             /// Returns the sum of all elements in the :attr:`input` tensor.
             /// </summary>
@@ -5426,9 +4553,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_sum_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, bool keepdim, bool has_type, sbyte scalar_type);
 
             private unsafe Tensor _sum(ReadOnlySpan<long> dimensions, bool keepdim = false, ScalarType? type = null)
             {
@@ -5478,9 +4602,6 @@ namespace TorchSharp
                 return _sum(stackalloc long[] { dim0, dim1, dim2 }, keepdim, type);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_expand(IntPtr tensor, IntPtr psizes, int length, [MarshalAs(UnmanagedType.U1)] bool isImplicit);
-
             /// <summary>
             ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
             /// </summary>
@@ -5514,7 +4635,6 @@ namespace TorchSharp
 
             public Tensor expand_as(Tensor other) => expand(other.shape);
 
-
             /// <summary>
             ///  Returns a new view of the tensor with singleton dimensions expanded to a larger size.
             /// </summary>
@@ -5522,9 +4642,6 @@ namespace TorchSharp
             {
                 return expand((ReadOnlySpan<long>)sizes, false);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_repeat(IntPtr tensor, IntPtr psizes, int length);
 
             /// <summary>
             /// Repeats this tensor along the specified dimensions.
@@ -5540,9 +4657,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_repeat_interleave(IntPtr tensor, IntPtr repeats, long dim, long output_size);
-
             public Tensor repeat_interleave(Tensor repeats, long? dim = null, long? output_size = null)
             {
                 long _dim = dim ?? long.MinValue;
@@ -5552,9 +4666,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_repeat_interleave_int64(IntPtr tensor, long repeats, long dim, long output_size);
-
             public Tensor repeat_interleave(long repeats, long? dim = null, long? output_size = null)
             {
                 long _dim = dim ?? long.MinValue;
@@ -5563,9 +4674,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_broadcast_to(IntPtr tensor, IntPtr psizes, int length);
 
             /// <summary>
             /// Broadcasts input to the shape shape. Equivalent to calling input.expand(shape).
@@ -5581,9 +4689,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_movedim(IntPtr tensor, IntPtr src, int src_len, IntPtr dst, int dst_len);
-
             public Tensor movedim(long[] source, long[] destination)
             {
                 unsafe {
@@ -5596,9 +4701,6 @@ namespace TorchSharp
             }
 
             public Tensor moveaxis(long[] source, long[] destination) => movedim(source, destination);
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randn_out(IntPtr psizes, int length, IntPtr tensorOut);
 
             /// <summary>
             ///  Mutates the tensor to be filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -5614,9 +4716,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_rand_out(IntPtr psizes, int length, IntPtr tensorOut);
-
             /// <summary>
             ///  Mutates the tensor to be filled with random values taken from a uniform distribution in [0, 1).
             /// </summary>
@@ -5630,8 +4729,6 @@ namespace TorchSharp
                     }
                 }
             }
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randint_out(long high, IntPtr psizes, int length, IntPtr tensorOut);
 
             /// <summary>
             ///  Mutates the tensor to be filled with random values taken from a normal distribution with mean 0 and variance 1.
@@ -5646,9 +4743,6 @@ namespace TorchSharp
                     }
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_rand_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Returns a tensor with the same size as input that is filled with random numbers from a uniform distribution on the interval [0,1) .
@@ -5668,9 +4762,6 @@ namespace TorchSharp
                 return new Tensor(result);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randn_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
             /// <summary>
             /// Returns a tensor with the same size as input that is filled with random numbers from a normal distribution with mean 0 and variance 1.
             /// </summary>
@@ -5688,9 +4779,6 @@ namespace TorchSharp
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randint_like(IntPtr input, long low, long high, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Returns a tensor with the same shape as Tensor input filled with random integers generated uniformly in the range [low,high).
@@ -5710,9 +4798,6 @@ namespace TorchSharp
                 return new Tensor(result);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randperm_out(long n, IntPtr tensorOut);
-
             /// <summary>
             ///  Mutates the tensor to be a 1-D tensor of size [n] with a random permutation of [0, n).
             /// </summary>
@@ -5722,9 +4807,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_bernoulli(IntPtr tensor, IntPtr gen);
 
             /// <summary>
             /// Draws binary random numbers (0 or 1) from a Bernoulli distribution.
@@ -5738,9 +4820,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_multinomial(IntPtr tensor, long num_samples, bool replacement, IntPtr gen);
 
             /// <summary>
             /// Returns a tensor where each row contains num_samples indices sampled from the multinomial probability distribution located in the corresponding row of tensor input.
@@ -5756,9 +4835,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_poisson(IntPtr tensor, IntPtr gen);
-
             /// <summary>
             /// Returns a tensor of the same size as input with each element sampled from a Poisson distribution with rate parameter given by the corresponding element in input
             /// </summary>
@@ -5770,9 +4846,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_bernoulli_0(IntPtr tensor, double p, IntPtr gen);
 
             /// <summary>
             /// Fills each location of the input tensor with an independent sample from Bernoulli(p)
@@ -5787,9 +4860,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_bernoulli_1(IntPtr tensor, IntPtr p_tensor, IntPtr gen);
-
             /// <summary>
             /// Fills each location of the input tensor with an independent sample from Bernoulli(p)
             /// </summary>
@@ -5803,18 +4873,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_binomial(IntPtr count, IntPtr prob, IntPtr gen);
-
             public Tensor binomial(Tensor prob, torch.Generator? generator = null)
             {
                 var res = THSTensor_binomial(Handle, prob.Handle, (generator is null) ? IntPtr.Zero : generator.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_cauchy_(IntPtr tensor, double median, double sigma, IntPtr gen);
 
             /// <summary>
             /// Fills the tensor with numbers drawn from the Cauchy distribution.
@@ -5826,9 +4890,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_exponential_(IntPtr tensor, double lambda, IntPtr gen);
 
             /// <summary>
             /// Fills the input tensor with elements drawn from the exponential distribution
@@ -5843,9 +4904,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_geometric_(IntPtr tensor, double p, IntPtr gen);
-
             /// <summary>
             /// Fills the input tensor with elements drawn from a geometric distribution.
             /// </summary>
@@ -5858,9 +4916,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_normal_(IntPtr tensor, double mean, double std, IntPtr gen);
 
             /// <summary>
             /// Fills the input tensor with elements samples from the normal distribution parameterized by mean and std.
@@ -5876,9 +4931,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_log_normal_(IntPtr tensor, double mean, double std, IntPtr gen);
-
             /// <summary>
             /// Fills the input tensor with numbers samples from the log-normal distribution parameterized by the given mean and standard deviation.
             /// </summary>
@@ -5893,9 +4945,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_random_(IntPtr tensor, double low, double high, IntPtr gen);
 
             /// <summary>
             /// Fills the input tensor with numbers sampled from the discrete uniform distribution over [from, to - 1].
@@ -5914,9 +4963,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_uniform_(IntPtr tensor, double low, double high, IntPtr gen);
-
             /// <summary>
             /// Fills the input tensor with numbers sampled from the continuous uniform distribution:
             /// </summary>
@@ -5931,9 +4977,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_arange_out(IntPtr start, IntPtr strp, IntPtr step, IntPtr tensorOut);
-
             /// <summary>
             ///  Mutates the tensor to be filled with with values from interval [start, end) and
             /// common difference step, starting from start.
@@ -5944,9 +4987,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_permute(IntPtr tensor, IntPtr psizes, int length);
 
             /// <summary>
             ///  Returns a view of the original tensor with its dimensions permuted.
@@ -5962,9 +5002,6 @@ namespace TorchSharp
                     }
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_ones_out(IntPtr psizes, int length, IntPtr tensorOut);
 
             /// <summary>
             ///  Mutates the tensor to have the given size with all values set to 1
@@ -6031,9 +5068,6 @@ namespace TorchSharp
             {
                 return new_ones(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_zeros_out(IntPtr psizes, int length, IntPtr tensorOut);
 
             /// <summary>
             ///  Mutates the tensor to have the given size with all values set to 0
@@ -6111,9 +5145,6 @@ namespace TorchSharp
             }
 
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_zeros_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
             /// <summary>
             /// Returns a tensor filled with the scalar value 0, with the same size as input.
             /// </summary>
@@ -6131,9 +5162,6 @@ namespace TorchSharp
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_ones_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Returns a tensor filled with the scalar value 1, with the same size as input.
@@ -6205,9 +5233,6 @@ namespace TorchSharp
                 return new_empty(new long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_empty_out(IntPtr psizes, int length, IntPtr tensorOut);
-
             /// <summary>
             ///  Mutates the tensor to have the given size with all values uninitialized
             /// </summary>
@@ -6221,9 +5246,6 @@ namespace TorchSharp
                     }
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_empty_like(IntPtr input, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             ///  Returns an uninitialized tensor with the same size as input.
@@ -6242,9 +5264,6 @@ namespace TorchSharp
                 if (result == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(result);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_full_out(IntPtr psizes, int length, IntPtr value, IntPtr tensorOut);
 
             /// <summary>
             ///  Mutates the tensor to have the given size with all values uninitialized
@@ -6327,9 +5346,6 @@ namespace TorchSharp
             }
 
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_full_like(IntPtr input, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
             /// <summary>
             /// Returns a tensor with the same size as input filled with 'value.'
             /// </summary>
@@ -6348,9 +5364,6 @@ namespace TorchSharp
                 return new Tensor(result);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_detach(IntPtr tensor);
-
             public Tensor detach()
             {
                 var res = THSTensor_detach(Handle);
@@ -6358,18 +5371,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_detach_(IntPtr tensor);
-
             public Tensor detach_()
             {
                 var res = THSTensor_detach_(Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_eye_out(long rows, long columns, IntPtr tensorOut);
 
             /// <summary>
             ///  Mutates the tensor into a 2-D tensor with ones on the diagonal and zeros elsewhere.
@@ -6381,17 +5388,7 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_scatter(IntPtr tensor, long dim, IntPtr index, IntPtr source);
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_scatter_(IntPtr tensor, long dim, IntPtr index, IntPtr source);
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_scatter_add(IntPtr tensor, long dim, IntPtr index, IntPtr source);
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_scatter_add_(IntPtr tensor, long dim, IntPtr index, IntPtr source);
 
             /// <summary>
             ///  Writes all values from the tensor src into the input tensor at the indices specified in the index tensor. For each
@@ -6441,9 +5438,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_gather(IntPtr tensor, long dim, IntPtr index);
-
             /// <summary>
             /// Gathers values along an axis specified by dim.
             /// </summary>
@@ -6453,9 +5447,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_flip(IntPtr tensor, IntPtr psizes, int length);
 
             /// <summary>
             ///  Reverse the order of a n-D tensor along given axis in dims.
@@ -6471,9 +5462,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_fliplr(IntPtr tensor);
-
             /// <summary>
             /// Flip tensor in the left/right direction, returning a new tensor.
             /// </summary>
@@ -6484,9 +5472,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_flipud(IntPtr tensor);
-
             /// <summary>
             /// Flip tensor in the up/down direction, returning a new tensor.
             /// </summary>
@@ -6496,9 +5481,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_nanmean(IntPtr tensor, long dim, bool keepdim, sbyte scalar_type);
 
             /// <summary>
             /// Returns the mean of the values in input, ignoring NaN values.
@@ -6512,9 +5494,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_nanmedian(IntPtr tensor);
-
             /// <summary>
             /// Returns the median of the values in input, ignoring NaN values.
             /// </summary>
@@ -6525,9 +5504,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_nansum(IntPtr tensor);
-
             /// <summary>
             /// Returns the sum of all elements in the input tensor, treating NaN as zero.
             /// </summary>
@@ -6537,9 +5513,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_nan_to_num(IntPtr tensor, IntPtr nan, IntPtr posinf, IntPtr neginf);
 
             /// <summary>
             /// Replaces NaN, positive infinity, and negative infinity values in input with the values specified by nan, posinf, and neginf, respectively.
@@ -6561,9 +5534,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_nextafter(IntPtr tensor, IntPtr other);
-
             /// <summary>
             /// Return the next floating-point value after input towards other, elementwise.
             /// </summary>
@@ -6573,9 +5543,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_narrow(IntPtr tensor, long dim, long start, long length);
 
             /// <summary>
             ///  Returns a new tensor that is a narrowed version of the input along one dimension. The
@@ -6588,9 +5555,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_nonzero(IntPtr tensor);
 
             /// <summary>
             /// Returns a tensor containing the indices of all non-zero elements of input.
@@ -6612,9 +5576,6 @@ namespace TorchSharp
                 var t = new Tensor(res);
                 return t.chunk(t.shape[1], dim: 1);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_roll(IntPtr tensor, IntPtr shifts, int shLength, IntPtr dims, long dimLength);
 
             /// <summary>
             /// Roll the tensor along the given dimension(s).
@@ -6682,9 +5643,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_slice(IntPtr tensor, long dim, long start, long length, long step);
-
             /// <summary>
             /// Returns a new tensor that is a sliced version of the input along one dimension. The
             /// dimension is input from start to finish-1. The
@@ -6698,9 +5656,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_unsqueeze(IntPtr tensor, long dim);
-
             /// <summary>
             ///  Returns a new tensor with a dimension of size one inserted at the specified position.
             ///  The returned tensor shares the same underlying data with this tensor.
@@ -6712,9 +5667,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_unsqueeze_(IntPtr tensor, long dim);
-
             /// <summary>
             ///  Returns a new tensor with a dimension of size one inserted at the specified position.
             ///  The returned tensor shares the same underlying data with this tensor.
@@ -6725,9 +5677,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_where(IntPtr condition, IntPtr x, IntPtr y);
 
             /// <summary>
             /// Return a tensor of elements selected from either x or y, depending on condition.
@@ -6744,7 +5693,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
 
             // Operators overloading
 
@@ -7059,7 +6007,7 @@ namespace TorchSharp
                                    CultureInfo? cultureInfo = null,
                                    string newLine = "")
             {
-                if (String.IsNullOrEmpty(newLine))
+                if (string.IsNullOrEmpty(newLine))
                     newLine = Environment.NewLine;
 
                 if (device_type == DeviceType.META)
@@ -7259,7 +6207,6 @@ namespace TorchSharp
                 var hasMinus = new bool[colCount];
 
 
-
                 for (int i = 0; i < rowCount; i++) {
                     var row = new List<string>();
                     BuildRow(row, t[i], width, fltFormat, cultureInfo);
@@ -7410,16 +6357,12 @@ namespace TorchSharp
             public static explicit operator long(Tensor value) => value.ToInt64();
             public static explicit operator bool(Tensor value) => value.ToBoolean();
 
-
             /// <summary>
             /// Create a block diagonal matrix from provided tensors.
             /// </summary>
             /// <param name="tensors">One or more tensors with 0, 1, or 2 dimensions.</param>
             /// <returns></returns>
             public static Tensor block_diag(params Tensor[] tensors) => torch.block_diag(tensors);
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_atleast_1d(IntPtr tensor);
 
             /// <summary>
             /// Returns a 1-dimensional view of an input tensor with zero dimensions. Input tensors with one or more dimensions are returned as-is.
@@ -7432,9 +6375,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_atleast_2d(IntPtr tensor);
-
             /// <summary>
             /// Returns a 2-dimensional view of an input tensor with zero dimensions. Input tensors with two or more dimensions are returned as-is.
             /// </summary>
@@ -7446,9 +6386,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_atleast_3d(IntPtr tensor);
-
             /// <summary>
             /// Returns a 3-dimensional view of an input tensor with zero dimensions. Input tensors with three or more dimensions are returned as-is.
             /// </summary>
@@ -7459,9 +6396,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_stft(IntPtr x, long n_fft, long hop_length, long win_length, IntPtr window, [MarshalAs(UnmanagedType.U1)] bool normalized, long onesided, [MarshalAs(UnmanagedType.U1)] bool return_complex);
 
             /// <summary>
             /// Short-time Fourier transform (STFT).
@@ -7508,9 +6442,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_istft(IntPtr x, long n_fft, long hop_length, long win_length, IntPtr window, [MarshalAs(UnmanagedType.U1)] bool center, [MarshalAs(UnmanagedType.U1)] bool normalized, long onesided, long length, [MarshalAs(UnmanagedType.U1)] bool return_complex);
 
             /// <summary>
             /// Inverse short time Fourier Transform. This is expected to be the inverse of stft().
@@ -7565,34 +6496,34 @@ namespace TorchSharp
             internal Kind kind;
             internal Tensor? tensor;
 
-            static public TensorIndex Slice(long? start = null, long? stop = null, long? step = null)
+            public static TensorIndex Slice(long? start = null, long? stop = null, long? step = null)
             {
                 return new TensorIndex() { startIndexOrBoolOrSingle = start, step = step, stopIndex = stop, kind = Kind.Slice };
             }
 
-            static public TensorIndex Slice((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
+            public static TensorIndex Slice((int? start, int? end) range) => TensorIndex.Slice((long?)range.start, (long?)range.end);
 
 #if !NETSTANDARD2_0_OR_GREATER
-            static public TensorIndex Slice(System.Range range)
+            public static TensorIndex Slice(System.Range range)
             {
                 long? start = !range.Start.IsFromEnd ? range.Start.Value : -1 * range.Start.Value;
                 long? end = !range.End.IsFromEnd ? range.End.Value : (range.End.Value == 0) ? null : -1 * range.End.Value;
                 return TensorIndex.Slice(start, end);
             }
 #endif // NETSTANDARD2_0_OR_GREATER
-            static public TensorIndex Bool(bool value) => new TensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
+            public static TensorIndex Bool(bool value) => new TensorIndex() { startIndexOrBoolOrSingle = (value ? 1 : 0), kind = Kind.Bool };
 
-            static public TensorIndex Single(long? index) => new TensorIndex() { startIndexOrBoolOrSingle = index, kind = Kind.Single };
+            public static TensorIndex Single(long? index) => new TensorIndex() { startIndexOrBoolOrSingle = index, kind = Kind.Single };
 
-            static public TensorIndex Tensor(Tensor tensor) => new TensorIndex() { tensor = tensor, kind = Kind.Tensor };
+            public static TensorIndex Tensor(Tensor tensor) => new TensorIndex() { tensor = tensor, kind = Kind.Tensor };
 
-            static public TensorIndex Ellipsis = new TensorIndex() { kind = Kind.Ellipsis };
+            public static TensorIndex Ellipsis = new TensorIndex() { kind = Kind.Ellipsis };
 
-            static public TensorIndex None = new TensorIndex() { kind = Kind.None };
+            public static TensorIndex None = new TensorIndex() { kind = Kind.None };
 
-            static public TensorIndex Null = new TensorIndex() { kind = Kind.Null };
+            public static TensorIndex Null = new TensorIndex() { kind = Kind.Null };
 
-            static public TensorIndex Colon = Slice();
+            public static TensorIndex Colon = Slice();
 
             public static implicit operator TensorIndex(long value)
             {

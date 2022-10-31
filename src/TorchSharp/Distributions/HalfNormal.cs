@@ -1,11 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Collections.Generic;
 using static TorchSharp.torch;
 
 namespace TorchSharp
 {
-    using System.Linq;
     using Modules;
     using static torch.distributions;
 
@@ -34,7 +32,7 @@ namespace TorchSharp
             {
                 using var _ = torch.NewDisposeScope();
                 var lp = base_distribution.log_prob(value) + Math.Log(2);
-                lp[value.expand(lp.shape) < 0] = Double.NegativeInfinity;
+                lp[value.expand(lp.shape) < 0] = double.NegativeInfinity;
                 return lp.MoveToOuterDisposeScope();
             }
 

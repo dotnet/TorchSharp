@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -15,9 +15,6 @@ namespace TorchSharp
         public sealed class PixelUnshuffle : torch.nn.Module<Tensor, Tensor>
         {
             internal PixelUnshuffle(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_PixelUnshuffle_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             /// <summary>
             /// Forward pass.
@@ -37,15 +34,13 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_PixelUnshuffle_ctor(long downscaleFactor, out IntPtr pBoxedModule);
 
             /// <summary>
             /// Reverses the PixelShuffle operation by rearranging elements in a tensor of shape (*, C, H * r, W * r) to a tensor of shape (*, C * r^2, H, W), where r is an downscale factor.
             /// </summary>
             /// <param name="downscaleFactor">Factor to increase spatial resolution by</param>
             /// <returns></returns>
-            static public PixelUnshuffle PixelUnshuffle(long downscaleFactor)
+            public static PixelUnshuffle PixelUnshuffle(long downscaleFactor)
             {
                 var handle = THSNN_PixelUnshuffle_ctor(downscaleFactor, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -62,7 +57,7 @@ namespace TorchSharp
                 /// <param name="downscaleFactor">Factor to increase spatial resolution by</param>
                 /// <returns></returns>
                 /// <returns></returns>
-                static public Tensor pixel_unshuffle(Tensor x, long downscaleFactor)
+                public static Tensor pixel_unshuffle(Tensor x, long downscaleFactor)
                 {
                     using (var d = nn.PixelUnshuffle(downscaleFactor)) {
                         return d.forward(x);

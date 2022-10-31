@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -12,10 +12,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            // align_corners -- 0=None, 1=true, 2=false
-            extern static IntPtr THSNN_Upsample_ctor(IntPtr size, int size_length, IntPtr scale_factor, int scale_factor_length, byte mode, byte align_corners, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Upsamples a given multi-channel 1D (temporal), 2D (spatial) or 3D (volumetric) data.
             /// The input data is assumed to be of the form minibatch x channels x[optional depth] x[optional height] x width.
@@ -27,7 +23,7 @@ namespace TorchSharp
             /// <param name="alignCorners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
             /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
             /// <returns></returns>
-            static public Upsample Upsample(long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool? alignCorners = null)
+            public static Upsample Upsample(long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool? alignCorners = null)
             {
                 unsafe {
                     fixed (long* psize = size) {
@@ -55,7 +51,7 @@ namespace TorchSharp
                 /// <param name="alignCorners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
                 /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
                 /// <returns></returns>
-                static public Tensor upsample(Tensor x, long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool alignCorners = false)
+                public static Tensor upsample(Tensor x, long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool alignCorners = false)
                 {
                     using (var d = nn.Upsample(size, scale_factor, mode, alignCorners)) {
                         return d.forward(x);
@@ -73,9 +69,6 @@ namespace TorchSharp
         public sealed class Upsample : torch.nn.Module<Tensor, Tensor>
         {
             internal Upsample(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Upsample_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             /// <summary>
             /// Forward pass.

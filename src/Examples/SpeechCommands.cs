@@ -10,7 +10,6 @@ using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 using static TorchSharp.torch.utils.data;
-using static TorchSharp.torchaudio;
 using static TorchSharp.torchaudio.datasets;
 
 namespace TorchSharp.Examples

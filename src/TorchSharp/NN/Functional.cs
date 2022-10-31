@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -11,14 +11,6 @@ namespace TorchSharp
         {
             public static partial class functional
             {
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_conv1d(IntPtr input, IntPtr weight, IntPtr bias,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr dilation, int dilationLength,
-                        long groups);
-
                 /// <summary>
                 /// Applies a 1D convolution over an input signal composed of several input planes.
                 /// </summary>
@@ -53,14 +45,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_conv2d(IntPtr input, IntPtr weight, IntPtr bias,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr dilation, int dilationLength,
-                        long groups);
 
                 /// <summary>
                 /// Applies a 2D convolution over an input image composed of several input planes.
@@ -97,13 +81,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_conv3d(IntPtr input, IntPtr weight, IntPtr bias,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr dilation, int dilationLength,
-                        long groups);
-
                 /// <summary>
                 /// Applies a 3D convolution over an input image composed of several input planes.
                 /// </summary>
@@ -138,14 +115,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_conv_transpose1d(IntPtr input, IntPtr weight, IntPtr bias,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr outputPadding, int outputPaddingLength,
-                        IntPtr dilation, int dilationLength,
-                        long groups);
 
                 /// <summary>
                 /// Applies a 1D transposed convolution operator over an input signal composed of several input planes, sometimes also called “deconvolution”.
@@ -186,14 +155,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_conv_transpose2d(IntPtr input, IntPtr weight, IntPtr bias,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr outputPadding, int outputPaddingLength,
-                        IntPtr dilation, int dilationLength,
-                        long groups);
-
                 /// <summary>
                 /// Applies a 2D transposed convolution operator over an input image composed of several input planes, sometimes also called “deconvolution”.
                 /// </summary>
@@ -232,14 +193,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_conv_transpose3d(IntPtr input, IntPtr weight, IntPtr bias,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr outputPadding, int outputPaddingLength,
-                        IntPtr dilation, int dilationLength,
-                        long groups);
 
                 /// <summary>
                 /// Applies a 3D transposed convolution operator over an input image composed of several input planes, sometimes also called “deconvolution”.
@@ -280,14 +233,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_max_pool1d(IntPtr input,
-                        IntPtr kernelSize, int kernelSizeLength,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr dilation, int dilationLength,
-                        bool ceil_mode);
-
                 /// <summary>
                 /// Applies a 1D max pooling over an input signal composed of several input planes.
                 /// </summary>
@@ -319,14 +264,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern void THSTensor_max_pool1d_with_indices(IntPtr input, AllocatePinnedArray allocator,
-                        IntPtr kernelSize, int kernelSizeLength,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr dilation, int dilationLength,
-                        bool ceil_mode);
 
                 /// <summary>
                 /// Applies a 1D max pooling over an input signal composed of several input planes.
@@ -364,14 +301,6 @@ namespace TorchSharp
                     }
                     return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_max_pool2d(IntPtr input,
-                        IntPtr kernelSize, int kernelSizeLength,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr dilation, int dilationLength,
-                        bool ceil_mode);
 
                 /// <summary>
                 /// Applies a 2D max pooling over an input signal composed of several input planes.
@@ -473,14 +402,6 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern void THSTensor_max_pool2d_with_indices(IntPtr input, AllocatePinnedArray allocator,
-                        IntPtr kernelSize, int kernelSizeLength,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr dilation, int dilationLength,
-                        bool ceil_mode);
-
                 /// <summary>
                 /// Applies a 2D max pooling over an input signal composed of several input planes.
                 /// </summary>
@@ -517,14 +438,6 @@ namespace TorchSharp
                     return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_max_pool3d(IntPtr input,
-                        IntPtr kernelSize, int kernelSizeLength,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr dilation, int dilationLength,
-                        bool ceil_mode);
-
                 /// <summary>
                 /// Applies a 3D max pooling over an input signal composed of several input planes.
                 /// </summary>
@@ -555,14 +468,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern void THSTensor_max_pool3d_with_indices(IntPtr input, AllocatePinnedArray allocator,
-                        IntPtr kernelSize, int kernelSizeLength,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        IntPtr dilation, int dilationLength,
-                        bool ceil_mode);
 
                 /// <summary>
                 /// Applies a 3D max pooling over an input signal composed of several input planes.
@@ -600,9 +505,6 @@ namespace TorchSharp
                     return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_maxunpool2d(IntPtr input, IntPtr indices, IntPtr outputSize, int outputSizeLength);
-
                 /// <summary>
                 /// Computes a partial inverse of MaxPool2d.
                 /// </summary>
@@ -621,10 +523,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_maxunpool3d(IntPtr input, IntPtr indices, IntPtr outputSize, int outputSizeLength, IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength);
 
                 /// <summary>
                 /// Computes a partial inverse of MaxPool3d.
@@ -648,14 +546,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_avg_pool1d(IntPtr input,
-                        IntPtr kernelSize, int kernelSizeLength,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        bool ceil_mode,
-                        bool count_include_pad);
 
                 /// <summary>
                 /// Applies a 1D average pooling over an input signal composed of several input planes.
@@ -687,14 +577,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_avg_pool2d(IntPtr input,
-                        IntPtr kernelSize, int kernelSizeLength,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        bool ceil_mode,
-                        bool count_include_pad);
 
                 /// <summary>
                 /// Applies 2D average-pooling operation in kH × kW regions by step size sH * sW steps. The number of output features is equal to the number of input planes.
@@ -799,14 +681,6 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_avg_pool3d(IntPtr input,
-                        IntPtr kernelSize, int kernelSizeLength,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        bool ceil_mode,
-                        bool count_include_pad);
-
                 /// <summary>
                 /// Applies 3D average-pooling operation in kT x kH x kW regions by step size sT x sH x sW steps.
                 /// </summary>
@@ -840,15 +714,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_avg_pool2d_backward(IntPtr gradOutput, IntPtr originalInput,
-                        IntPtr kernelSize, int kernelSizeLength,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        bool ceil_mode,
-                        bool count_include_pad,
-                        long divisorOverride);
-
                 public static Tensor avg_pool2d_backward(Tensor input, Tensor originalInput,
                     long[] kernelSizes,
                     long[] strides = null,
@@ -874,15 +739,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_avg_pool3d_backward(IntPtr gradOutput, IntPtr originalInput,
-                        IntPtr kernelSize, int kernelSizeLength,
-                        IntPtr strides, int stridesLength,
-                        IntPtr padding, int paddingLength,
-                        bool ceil_mode,
-                        bool count_include_pad,
-                        long divisorOverride);
 
                 public static Tensor avg_pool3d_backward(Tensor input, Tensor originalInput,
                     long[] kernelSizes,
@@ -910,10 +766,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_adaptive_avg_pool1d(IntPtr input,
-                        IntPtr outputSize, int outputSizeLength);
-
                 /// <summary>
                 /// Applies a 1D adaptive average pooling over an input signal composed of several input planes.
                 /// </summary>
@@ -932,10 +784,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_adaptive_avg_pool2d(IntPtr input,
-                        IntPtr outputSize, int outputSizeLength);
 
                 /// <summary>
                 /// Applies a 2D adaptive average pooling over an input signal composed of several input planes.
@@ -984,9 +832,6 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_adaptive_avg_pool3d(IntPtr input, IntPtr outputSize, int outputSizeLength);
-
                 /// <summary>
                 /// Applies a 3D adaptive average pooling over an input signal composed of several input planes.
                 /// </summary>
@@ -1032,20 +877,12 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_adaptive_avg_pool3d_backward_out(IntPtr gradInput, IntPtr gradOutput, IntPtr originalInput);
-
                 public static Tensor adaptive_avg_pool3d_backward(Tensor gradInput, Tensor gradOutput, Tensor originalInput)
                 {
                     var res = THSTensor_adaptive_avg_pool3d_backward_out(gradInput.Handle, gradOutput.Handle, originalInput.Handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_upsample_nearest1d(IntPtr input,
-                        IntPtr outputSize, int outputSizeLength,
-                        IntPtr scaleFactors, int scaleFactorsLength);
 
                 /// <summary>
                 /// Upsamples the input, using nearest neighbours’ pixel values.
@@ -1074,12 +911,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_upsample_nearest1d_backward(IntPtr grad_output,
-                        IntPtr outputSize, int outputSizeLength,
-                        IntPtr inputSize, int inputSizeLength,
-                        IntPtr scaleFactors, int scaleFactorsLength);
-
                 public static Tensor upsample_nearest1d_backward(Tensor grad_output, long? outputSize, long inputSize, double? scaleFactor)
                 {
                     var outputSizes = outputSize.HasValue ? new long[] { outputSize.Value } : null;
@@ -1101,11 +932,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_upsample_nearest2d(IntPtr input,
-                        IntPtr outputSize, int outputSizeLength,
-                        IntPtr scaleFactors, int scaleFactorsLength);
 
                 /// <summary>
                 /// Upsamples the input, using nearest neighbours’ pixel values.
@@ -1132,12 +958,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_upsample_nearest2d_backward(IntPtr grad_output,
-                        IntPtr outputSize, int outputSizeLength,
-                        IntPtr inputSize, int inputSizeLength,
-                        IntPtr scaleFactors, int scaleFactorsLength);
-
                 public static Tensor upsample_nearest2d_backward(Tensor grad_output, long[] inputSizes, long[] outputSizes = null, double[] scaleFactors = null)
                 {
                     var outputSizesLength = outputSizes == null ? 0 : outputSizes.Length;
@@ -1157,12 +977,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_upsample_nearest3d_backward(IntPtr grad_output,
-                        IntPtr outputSize, int outputSizeLength,
-                        IntPtr inputSize, int inputSizeLength,
-                        IntPtr scaleFactors, int scaleFactorsLength);
-
                 public static Tensor upsample_nearest3d_backward(Tensor grad_output, long[] inputSizes, long[] outputSizes = null, double[] scaleFactors = null)
                 {
                     var outputSizesLength = outputSizes == null ? 0 : outputSizes.Length;
@@ -1181,11 +995,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSTensor_upsample_nearest3d(IntPtr input,
-                        IntPtr outputSize, int outputSizeLength,
-                        IntPtr scaleFactors, int scaleFactorsLength);
 
                 /// <summary>
                 /// Upsamples the input, using nearest neighbours’ pixel values.

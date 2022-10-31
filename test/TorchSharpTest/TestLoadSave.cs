@@ -5,13 +5,7 @@ using System.Linq;
 using TorchSharp.Modules;
 using static TorchSharp.torch.nn;
 using Xunit;
-using Google.Protobuf;
-using Tensorboard;
-using static TorchSharp.torch.utils.tensorboard;
-using ICSharpCode.SharpZipLib;
 using System.Collections.Generic;
-using Google.Protobuf.WellKnownTypes;
-using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 #nullable enable
 

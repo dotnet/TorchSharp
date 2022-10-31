@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -13,10 +13,6 @@ namespace TorchSharp
     {
         public static partial class optim
         {
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_LBFGS_ctor(IntPtr parameters, int len, double learningRate, long max_iter, long max_eval, double tolerange_grad, double tolerance_change, long history_size);
-
             /// <summary>
             /// Implements the L-BFGS algorithm, heavily inspired by `minFunc`
             ///
@@ -69,7 +65,7 @@ namespace TorchSharp
         {
             /// <summary>
             /// Implements L-BFGS algorithm, heavily inspired by `minFunc`
-            /// 
+            ///
             /// </summary>
             /// <param name="handle"></param>
             /// <param name="lr"></param>
@@ -79,9 +75,6 @@ namespace TorchSharp
                 InitialLearningRate = lr;
                 _paramGroups = new ParamGroup[] { new ParamGroup { Parameters = this.parameters(), Options = new() { LearningRate = lr, InitialLearningRate = lr } } };
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_LBFGS_set_lr(HType optimizer, double lr);
 
             public double LearningRate {
                 get { return _rate; }

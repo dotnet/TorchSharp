@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -12,12 +12,6 @@ namespace TorchSharp
     internal class AutoGradMode : IDisposable
     {
         private bool _isPrevGrad;
-
-        [DllImport("LibTorchSharp")]
-        private static extern bool THSAutograd_isGradEnabled();
-
-        [DllImport("LibTorchSharp")]
-        private static extern void THSAutograd_setGrad(bool enabled);
 
         public AutoGradMode(bool enabled)
         {
@@ -99,17 +93,6 @@ namespace TorchSharp
             /// <returns></returns>
             public static bool is_grad_enabled() => AutoGradMode.IsAutogradEnabled();
 
-
-            [DllImport("LibTorchSharp")]
-            private static extern void THSAutograd_grad(
-             IntPtr outputs, long oLength,
-             IntPtr inputs, long iLength,
-             IntPtr grad_outs, long gLength,
-             [MarshalAs(UnmanagedType.U1)] bool retain_graph,
-             [MarshalAs(UnmanagedType.U1)] bool create_graph,
-             [MarshalAs(UnmanagedType.U1)] bool allow_unused,
-             AllocatePinnedArray allocator);
-
             /// <summary>
             /// Computes and returns the sum of gradients of outputs with respect to the inputs.
             /// </summary>
@@ -153,14 +136,6 @@ namespace TorchSharp
                 return result.Select(x => new Tensor(x)).ToList();
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern void THSAutograd_backward(
-                 IntPtr tensors, long tLength,
-                 IntPtr grad_tensors, long gtLength,
-                 [MarshalAs(UnmanagedType.U1)] bool retain_graph,
-                 [MarshalAs(UnmanagedType.U1)] bool create_graph,
-                 IntPtr inputs, long iLength);
-
             /// <summary>
             /// Computes the sum of gradients of given tensors with respect to graph leaves.
             /// </summary>
@@ -181,10 +156,10 @@ namespace TorchSharp
             /// <remarks>
             /// The graph is differentiated using the chain rule. If any of tensors are non-scalar (i.e. their data has more than one element) and require gradient,
             /// then the Jacobian-vector product would be computed, in this case the function additionally requires specifying grad_tensors.
-            /// 
+            ///
             /// It should be a sequence of matching length, that contains the “vector” in the Jacobian-vector product, usually the gradient of the differentiated
             /// function w.r.t. corresponding tensors (null is an acceptable value for all tensors that don’t need gradient tensors).
-            /// 
+            ///
             /// This function accumulates gradients in the leaves - you might need to zero the .grad properties or set them to null before calling it.
             /// </remarks>
             public static void backward(IList<Tensor> tensors, IList<Tensor> grad_tensors = null, bool? retain_graph = null, bool create_graph = false, IList<Tensor> inputs = null)
@@ -226,10 +201,10 @@ namespace TorchSharp
             /// <remarks>
             /// The graph is differentiated using the chain rule. If any of tensors are non-scalar (i.e. their data has more than one element) and require gradient,
             /// then the Jacobian-vector product would be computed, in this case the function additionally requires specifying grad_tensors.
-            /// 
+            ///
             /// It should be a sequence of matching length, that contains the “vector” in the Jacobian-vector product, usually the gradient of the differentiated
             /// function w.r.t. corresponding tensors (null is an acceptable value for all tensors that don’t need gradient tensors).
-            /// 
+            ///
             /// This function accumulates gradients in the leaves - you might need to zero the .grad properties or set them to null before calling it.
             /// </remarks>
             public static void backward(Tensor tensor, IList<Tensor> grad_tensors = null, bool? retain_graph = null, bool create_graph = false, IList<Tensor> inputs = null)
@@ -257,17 +232,16 @@ namespace TorchSharp
             /// <remarks>
             /// The graph is differentiated using the chain rule. If any of tensors are non-scalar (i.e. their data has more than one element) and require gradient,
             /// then the Jacobian-vector product would be computed, in this case the function additionally requires specifying grad_tensors.
-            /// 
+            ///
             /// It should be a sequence of matching length, that contains the “vector” in the Jacobian-vector product, usually the gradient of the differentiated
             /// function w.r.t. corresponding tensors (null is an acceptable value for all tensors that don’t need gradient tensors).
-            /// 
+            ///
             /// This function accumulates gradients in the leaves - you might need to zero the .grad properties or set them to null before calling it.
             /// </remarks>
             public static void backward(Tensor tensor, Tensor grad_tensor, bool? retain_graph = null, bool create_graph = false, IList<Tensor> inputs = null)
             {
                 backward(new[] { tensor }, new[] { grad_tensor }, retain_graph, create_graph, inputs);
             }
-
         }
     }
 }

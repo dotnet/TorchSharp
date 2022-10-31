@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Collections;
 using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -9,7 +9,6 @@ namespace TorchSharp
     {
         public static partial class jit
         {
-
             public class Type : IDisposable
             {
                 /// <summary>
@@ -29,12 +28,6 @@ namespace TorchSharp
                     internal HType() : base(IntPtr.Zero, true)
                     {
                     }
-
-                    [DllImport("LibTorchSharp")]
-                    private static extern void THSJIT_Type_dispose(HType handle);
-
-                    [DllImport("LibTorchSharp")]
-                    private static extern void THSJIT_TensorType_dispose(HType handle);
 
                     protected override bool ReleaseHandle()
                     {
@@ -88,15 +81,9 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern sbyte THSJIT_Type_kind(HType handle);
-
                 internal TypeKind Kind {
                     get { return (TypeKind)THSJIT_Type_kind(handle); }
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSJIT_Type_cast(HType module);
 
                 internal TensorType AsTensorType()
                 {
