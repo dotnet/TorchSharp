@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 using static TorchSharp.torch;
 
@@ -165,19 +164,19 @@ namespace TorchSharp
                 foreach (var m in _modules) { ((torch.nn.Module)m).eval(); }
             }
 
-            internal protected override nn.Module _to(ScalarType dtype)
+            protected internal override nn.Module _to(ScalarType dtype)
             {
                 foreach (var m in _modules) { ((torch.nn.Module)m)._to(dtype); }
                 return this;
             }
 
-            internal protected override nn.Module _to(Device device, ScalarType dtype)
+            protected internal override nn.Module _to(Device device, ScalarType dtype)
             {
                 foreach (var m in _modules) { ((torch.nn.Module)m)._to(device, dtype); }
                 return this;
             }
 
-            internal protected override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
             {
                 foreach (var m in _modules) { ((torch.nn.Module)m)._to(deviceType, deviceIndex); }
                 return this;
@@ -195,17 +194,13 @@ namespace TorchSharp
 
     public static partial class torch
     {
-
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Sequential_ctor();
-
             /// <summary>
             /// Get empty sequential
             /// </summary>
             /// <returns></returns>
-            static public Sequential Sequential()
+            public static Sequential Sequential()
             {
                 var handle = THSNN_Sequential_ctor();
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -223,7 +218,7 @@ namespace TorchSharp
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <returns></returns>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(params (string name, torch.nn.Module<Tensor, Tensor> submodule)[] modules)
+            public static Sequential Sequential(params (string name, torch.nn.Module<Tensor, Tensor> submodule)[] modules)
             {
                 var res = Sequential();
                 foreach (var module in modules)
@@ -240,7 +235,7 @@ namespace TorchSharp
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <returns></returns>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(params torch.nn.Module<Tensor, Tensor>[] modules)
+            public static Sequential Sequential(params torch.nn.Module<Tensor, Tensor>[] modules)
             {
                 var res = Sequential();
                 foreach (var m in modules)
@@ -257,7 +252,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(params System.Tuple<string, torch.nn.Module<Tensor, Tensor>>[] modules)
+            public static Sequential Sequential(params System.Tuple<string, torch.nn.Module<Tensor, Tensor>>[] modules)
             {
                 var res = Sequential();
                 foreach (var module in modules)
@@ -274,7 +269,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(IEnumerable<(string name, torch.nn.Module<Tensor, Tensor> submodule)> modules)
+            public static Sequential Sequential(IEnumerable<(string name, torch.nn.Module<Tensor, Tensor> submodule)> modules)
             {
                 var res = Sequential();
                 foreach (var module in modules)
@@ -291,7 +286,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(IEnumerable<System.Tuple<string, torch.nn.Module<Tensor, Tensor>>> modules)
+            public static Sequential Sequential(IEnumerable<System.Tuple<string, torch.nn.Module<Tensor, Tensor>>> modules)
             {
                 var res = Sequential();
                 foreach (var module in modules)
@@ -308,7 +303,7 @@ namespace TorchSharp
             /// <param name="modules">An ordered list of the contained modules.</param>
             /// <returns></returns>
             /// <remarks>Sequential will take ownership of the modules and dispose of them when disposed.</remarks>
-            static public Sequential Sequential(IEnumerable<torch.nn.Module<Tensor, Tensor>> modules)
+            public static Sequential Sequential(IEnumerable<torch.nn.Module<Tensor, Tensor>> modules)
             {
                 var res = Sequential();
                 foreach (var module in modules)

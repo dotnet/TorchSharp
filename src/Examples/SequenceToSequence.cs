@@ -4,11 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
-
-using TorchSharp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
-using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp.Examples
 {

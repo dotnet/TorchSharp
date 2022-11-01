@@ -8,8 +8,6 @@ using System.Globalization;
 using Xunit;
 using Xunit.Sdk;
 using static TorchSharp.torch;
-using ICSharpCode.SharpZipLib;
-using System.Diagnostics.CodeAnalysis;
 
 #nullable enable
 

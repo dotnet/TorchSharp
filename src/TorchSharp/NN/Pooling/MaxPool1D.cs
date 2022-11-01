@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,18 +18,12 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_MaxPool1d_forward(torch.nn.Module.HType module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_MaxPool1d_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_MaxPool1d_forward_with_indices(torch.nn.Module.HType module, IntPtr tensor, out IntPtr indices);
 
             public (Tensor Values, Tensor Indices) forward_with_indices(Tensor tensor)
             {
@@ -44,9 +38,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_MaxPool1d_ctor(IntPtr pkernelSize, IntPtr pStrides, IntPtr pPadding, IntPtr pDilation, [MarshalAs(UnmanagedType.U1)] bool ceilMode, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 1D max pooling over an input signal composed of several input planes.
             /// </summary>
@@ -56,7 +47,7 @@ namespace TorchSharp
             /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
             /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
             /// <returns></returns>
-            static public MaxPool1d MaxPool1d(long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
+            public static MaxPool1d MaxPool1d(long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
             {
                 var pStride = stride.HasValue ? new long[] { stride.Value } : null;
                 var pPadding = padding.HasValue ? new long[] { padding.Value } : null;
@@ -64,7 +55,7 @@ namespace TorchSharp
                 return MaxPool1d(new long[] { kernelSize }, pStride, pPadding, pDilation, ceilMode);
             }
 
-            static private MaxPool1d MaxPool1d(long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
+            private static MaxPool1d MaxPool1d(long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
             {
                 unsafe {
                     fixed (long* pkernelSize = kernelSize, pstrides = strides, pPadding = padding, pDilation = dilation) {

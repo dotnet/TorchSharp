@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -24,9 +24,6 @@ namespace TorchSharp
             private long _num_layers;
             private bool _bidirectional;
             private bool _batch_first;
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTM_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0, IntPtr c_0, out IntPtr h_n, out IntPtr c_n);
 
             /// <summary>
             /// Applies a multi-layer long short-term memory (LSTM) RNN to an input sequence.
@@ -53,9 +50,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero || hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(res), new Tensor(hN), new Tensor(cN));
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static torch.nn.utils.rnn.PackedSequence.HType THSNN_LSTM_forward_with_packed_input(torch.nn.Module.HType module, torch.nn.utils.rnn.PackedSequence.HType input, IntPtr h_0, IntPtr c_0, out IntPtr h_n, out IntPtr c_n);
 
             /// <summary>
             /// Applies a multi-layer long short-term memory (LSTM) RNN to an input sequence.
@@ -85,9 +79,6 @@ namespace TorchSharp
                 return (new torch.nn.utils.rnn.PackedSequence(res), new Tensor(hN), new Tensor(cN));
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_LSTM_flatten_parameters(torch.nn.Module.HType module);
-
             public void flatten_parameters()
             {
                 THSNN_LSTM_flatten_parameters(handle);
@@ -100,9 +91,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_LSTM_ctor(long input_size, long hidden_size, long num_layers, bool bias, bool batchFirst, double dropout, bool bidirectional, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Creates a multi-layer long short-term memory (LSTM) RNN module.
             /// </summary>
@@ -116,7 +104,7 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public LSTM LSTM(long inputSize, long hiddenSize, long numLayers = 1, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false, Device? device = null, ScalarType? dtype = null)
+            public static LSTM LSTM(long inputSize, long hiddenSize, long numLayers = 1, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_LSTM_ctor(inputSize, hiddenSize, numLayers, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

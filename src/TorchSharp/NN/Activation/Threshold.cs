@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -15,9 +15,6 @@ namespace TorchSharp
         public sealed class Threshold : torch.nn.Module<Tensor, Tensor>
         {
             internal Threshold(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Threshold_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
@@ -37,9 +34,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Threshold_ctor(double threshold, double value, [MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Threshold
             /// </summary>
@@ -47,7 +41,7 @@ namespace TorchSharp
             /// <param name="value">The value to replace with</param>
             /// <param name="inplace">Do the operation in-place</param>
             /// <returns></returns>
-            static public Threshold Threshold(double threshold, double value, bool inplace = false)
+            public static Threshold Threshold(double threshold, double value, bool inplace = false)
             {
                 var handle = THSNN_Threshold_ctor(threshold, value, inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -64,7 +58,7 @@ namespace TorchSharp
                 /// <param name="value">The value to replace with</param>
                 /// <param name="inplace">Do the operation in-place</param>
                 /// <returns></returns>
-                static public Tensor Threshold(Tensor x, double threshold, double value, bool inplace = false)
+                public static Tensor Threshold(Tensor x, double threshold, double value, bool inplace = false)
                 {
                     using (var m = nn.Threshold(threshold, value, inplace)) {
                         return m.forward(x);

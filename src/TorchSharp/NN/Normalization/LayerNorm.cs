@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -20,24 +20,12 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_LayerNorm_forward(IntPtr module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_LayerNorm_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_LayerNorm_bias(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_LayerNorm_set_bias(torch.nn.Module.HType module, IntPtr bias);
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_LayerNorm_weight(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_LayerNorm_set_weight(torch.nn.Module.HType module, IntPtr weight);
 
             public Parameter? bias {
                 get {
@@ -71,9 +59,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LayerNorm_ctor(IntPtr norm_shape, long norm_shape_len, double eps, [MarshalAs(UnmanagedType.U1)] bool elementwise_affine, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies Layer Normalization over a mini-batch of inputs as described in the paper Layer Normalization
             /// </summary>
@@ -83,7 +68,7 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public LayerNorm LayerNorm(long[] normalized_shape, double eps = 1e-05, bool elementwise_affine = true, Device? device = null, ScalarType? dtype = null)
+            public static LayerNorm LayerNorm(long[] normalized_shape, double eps = 1e-05, bool elementwise_affine = true, Device? device = null, ScalarType? dtype = null)
             {
                 unsafe {
                     fixed (long* pNormShape = normalized_shape) {
@@ -103,7 +88,7 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public LayerNorm LayerNorm(long normalized_shape, double eps = 1e-05, bool elementwise_affine = true, Device? device = null, ScalarType? dtype = null)
+            public static LayerNorm LayerNorm(long normalized_shape, double eps = 1e-05, bool elementwise_affine = true, Device? device = null, ScalarType? dtype = null)
             {
                 return LayerNorm(new[] { normalized_shape }, eps, elementwise_affine, device, dtype);
             }

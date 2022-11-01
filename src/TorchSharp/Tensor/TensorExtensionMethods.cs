@@ -238,7 +238,7 @@ namespace TorchSharp
             bool copied = false;
 
             if (tensor.device_type != DeviceType.CPU) {
-                tensor = tensor.to(torch.CPU);
+                tensor = tensor.to(CPU);
                 copied = true;
             }
 
@@ -301,7 +301,7 @@ namespace TorchSharp
 
             if (!skip) {
                 var device = tensor.device;
-                if (device.type != DeviceType.CPU) tensor.to(torch.CPU);
+                if (device.type != DeviceType.CPU) tensor.to(CPU);
                 tensor.bytes = bytes;
                 tensor.to(device);
             }
@@ -320,37 +320,25 @@ namespace TorchSharp
         {
             var array = doCopy ? (T[])rawArray.Clone() : rawArray;
 
-            switch (true) {
-            case bool _ when typeof(T) == typeof(byte): {
-                    return torch.tensor((array as byte[])!, dimensions, requires_grad: requires_grad); ;
-                }
-            case bool _ when typeof(T) == typeof(sbyte): {
-                    return torch.tensor((array as sbyte[])!, dimensions, requires_grad: requires_grad); ;
-                }
-            case bool _ when typeof(T) == typeof(short): {
-                    return torch.tensor((array as short[])!, dimensions, requires_grad: requires_grad); ;
-                }
-            case bool _ when typeof(T) == typeof(int): {
-                    return torch.tensor((array as int[])!, dimensions, requires_grad: requires_grad);
-                }
-            case bool _ when typeof(T) == typeof(long): {
-                    return torch.tensor((array as long[])!, dimensions, requires_grad: requires_grad);
-                }
-            case bool _ when typeof(T) == typeof(double): {
-                    return torch.tensor((array as double[])!, dimensions, requires_grad: requires_grad);
-                }
-            case bool _ when typeof(T) == typeof(float): {
-                    return torch.tensor((array as float[])!, dimensions, requires_grad: requires_grad);
-                }
-            case bool _ when typeof(T) == typeof(bool): {
-                    return torch.tensor((array as bool[])!, dimensions, requires_grad: requires_grad);
-                }
-            //case bool _ when typeof(T) == typeof(System.Numerics.Complex):
-            //    {
-            //        return ComplexFloat64Tensor.from(array as System.Numerics.Complex[], dimensions, requires_grad);
-            //    }
-            default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
-            }
+            return true switch {
+                true when typeof(T) == typeof(byte) => tensor((array as byte[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(sbyte) => tensor((array as sbyte[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(short) => tensor((array as short[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(int) => tensor((array as int[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(long) => tensor((array as long[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(double) => tensor((array as double[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(float) => tensor((array as float[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(bool) => tensor((array as bool[])!, dimensions,
+                    requires_grad: requires_grad),
+                _ => throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.")
+            };
         }
 
         /// <summary>
@@ -361,26 +349,26 @@ namespace TorchSharp
         /// <param name="device">The device to place the tensor on.</param>
         /// <param name="requires_grad">If true, the tensor must track its gradients.</param>
         /// <returns></returns>
-        public static Tensor ToTensor<T>(this T scalar, torch.Device? device = null, bool requires_grad = false) where T : struct
+        public static Tensor ToTensor<T>(this T scalar, Device? device = null, bool requires_grad = false) where T : struct
         {
             if (requires_grad && typeof(T) != typeof(float) && typeof(T) != typeof(double)) {
                 throw new ArgumentException(nameof(requires_grad), "Only floating point types support gradients.");
             }
 
             if (typeof(T) == typeof(byte))
-                return torch.tensor((byte)(object)scalar, uint8, device, requires_grad);
+                return tensor((byte)(object)scalar, uint8, device, requires_grad);
             if (typeof(T) == typeof(sbyte))
-                return torch.tensor((sbyte)(object)scalar, int8, device, requires_grad);
+                return tensor((sbyte)(object)scalar, int8, device, requires_grad);
             if (typeof(T) == typeof(short))
-                return torch.tensor((short)(object)scalar, int16, device, requires_grad);
+                return tensor((short)(object)scalar, int16, device, requires_grad);
             if (typeof(T) == typeof(int))
-                return torch.tensor((int)(object)scalar, int32, device, requires_grad);
+                return tensor((int)(object)scalar, int32, device, requires_grad);
             if (typeof(T) == typeof(long))
-                return torch.tensor((long)(object)scalar, int64, device, requires_grad);
+                return tensor((long)(object)scalar, int64, device, requires_grad);
             if (typeof(T) == typeof(float))
-                return torch.tensor((float)(object)scalar, float32, device, requires_grad);
+                return tensor((float)(object)scalar, float32, device, requires_grad);
             if (typeof(T) == typeof(double))
-                return torch.tensor((double)(object)scalar, float64, device, requires_grad);
+                return tensor((double)(object)scalar, float64, device, requires_grad);
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 

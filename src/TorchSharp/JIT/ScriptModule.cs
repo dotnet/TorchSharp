@@ -1,13 +1,11 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
+using System.Linq;
 using System.Runtime.InteropServices;
-using static TorchSharp.torch;
-using System.Net;
-using static TorchSharp.torch.nn;
+using TorchSharp.PInvoke;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,7 +16,7 @@ namespace TorchSharp
             /// <summary>
             /// This class represents a TorchScript module.
             /// </summary>
-            public class ScriptModule : torch.nn.Module
+            public class ScriptModule : nn.Module
             {
                 internal ScriptModule(IntPtr handle) : base(new HType(handle, true, THSJIT_Module_dispose), null)
                 {
@@ -28,12 +26,6 @@ namespace TorchSharp
                 {
                     Dispose(false);
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_Module_dispose(HType handle);
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_Module_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
                 protected override (string name, TorchSharp.Modules.Parameter parameter)[] _named_parameters()
                 {
@@ -47,9 +39,6 @@ namespace TorchSharp
                     return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new TorchSharp.Modules.Parameter(x))).ToArray();
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_Module_named_buffers(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
-
                 protected override (string name, Tensor buffer)[] _named_buffers()
                 {
                     using var pa = new PinnedArray<IntPtr>();
@@ -61,9 +50,6 @@ namespace TorchSharp
 
                     return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_Module_named_modules(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
                 /// <summary>
                 /// Returns an enumerable of all modules in the network, yielding both the name of the module as well as the module itself.
@@ -78,11 +64,8 @@ namespace TorchSharp
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
 
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new ScriptModule(x) as nn.Module)).Where(m => !String.IsNullOrEmpty(m.Item1));
+                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new ScriptModule(x) as nn.Module)).Where(m => !string.IsNullOrEmpty(m.Item1));
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_Module_named_children(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
                 /// <summary>
                 /// Returns an enumerable of immediate children modules, yielding both the name of the module as well as the module itself.
@@ -100,27 +83,15 @@ namespace TorchSharp
                     return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new ScriptModule(x) as nn.Module));
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern long THSJIT_getNumModules(HType module);
-
-                [DllImport("LibTorchSharp")]
-                private static extern int THSJIT_Module_num_inputs(HType module);
-
                 public int GetNumberOfInputs()
                 {
                     return THSJIT_Module_num_inputs(handle);
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern int THSJIT_Module_num_outputs(HType module);
-
                 public int GetNumberOfOutputs()
                 {
                     return THSJIT_Module_num_outputs(handle);
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_Module_train(HType module, bool on);
 
                 /// <summary>
                 /// Sets the module in evaluation mode.
@@ -135,9 +106,6 @@ namespace TorchSharp
                     CheckForErrors();
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_Module_eval(HType module);
-
                 /// <summary>
                 /// Sets the module in evaluation mode.
                 /// </summary>
@@ -151,9 +119,6 @@ namespace TorchSharp
                     CheckForErrors();
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern bool THSJIT_Module_is_training(HType module);
-
                 /// <summary>
                 /// Check whether the module is set to training or evaluation mode.
                 /// </summary>
@@ -165,16 +130,7 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern void THSJIT_Module_to_device(HType module, long deviceType, long deviceIndex);
-
-                [DllImport("LibTorchSharp")]
-                static extern void THSJIT_Module_to_device_dtype(HType module, sbyte dtype, long deviceType, long deviceIndex);
-
-                [DllImport("LibTorchSharp")]
-                static extern void THSJIT_Module_to_dtype(HType module, sbyte dtype);
-
-                internal protected override nn.Module _to(Device device, ScalarType dtype)
+                protected internal override nn.Module _to(Device device, ScalarType dtype)
                 {
                     if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
 
@@ -196,7 +152,7 @@ namespace TorchSharp
                 /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
                 /// <param name="deviceIndex">The optional device index.</param>
                 /// <returns></returns>
-                internal protected override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+                protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
@@ -223,7 +179,7 @@ namespace TorchSharp
                 /// Convert the parameters and buffers.
                 /// </summary>
                 /// <returns></returns>
-                internal protected override nn.Module _to(ScalarType dtype)
+                protected internal override nn.Module _to(ScalarType dtype)
                 {
                     THSJIT_Module_to_dtype(handle, (sbyte)dtype);
                     CheckForErrors();
@@ -235,18 +191,12 @@ namespace TorchSharp
 
 #if false   // These functions "work," but the native code doesn't seem to find any interesting information.
 
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSJIT_Module_getInputType(HType module, int index);
-
                 public Type GetInputType(int index)
                 {
                     var type = new Type(THSJIT_Module_getInputType(handle, index), Type.TypeKind.AnyType);
 
                     return GetType(type);
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSJIT_getOutputType(HType module, int index);
 
                 public Type GetOutputType(int index)
                 {
@@ -271,9 +221,6 @@ namespace TorchSharp
                     }
                 }
 #endif
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_Module_forward(HType module, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
 
                 /// <summary>
                 /// Invoke the 'forward' function of the script with any number of arguments.
@@ -314,16 +261,6 @@ namespace TorchSharp
                     return ProcessReturnValue(name, ptrArray, typeCode);
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_Module_invoke(HType module, string name, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
-
-                [StructLayout(LayoutKind.Sequential)]
-                internal struct TensorOrScalar
-                {
-                    public long TypeCode;
-                    public IntPtr Handle;
-                }
-
                 /// <summary>
                 /// Invoke a function from the script module.
                 /// </summary>
@@ -349,7 +286,7 @@ namespace TorchSharp
                 /// </remarks>
                 public object invoke(string name, params object[] objs)
                 {
-                    if (String.IsNullOrEmpty(name)) throw new ArgumentNullException("method name");
+                    if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("method name");
 
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
@@ -665,9 +602,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSJIT_load(string filename, long deviceType, long deviceIndex);
-
             /// <summary>
             /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
             /// </summary>
@@ -877,12 +811,9 @@ namespace TorchSharp
                 return result;
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern void THSJIT_save(nn.Module.HType handle, string filename);
-
             /// <summary>
             /// Save an offline version of a previously loaded script module.
-            /// 
+            ///
             /// The saved module serializes all of the methods, submodules, parameters, and attributes of this module.
             /// It can be loaded into the C++ API using torch::jit::load(filename) or into the .NET API with torch.jit.load().
             /// </summary>

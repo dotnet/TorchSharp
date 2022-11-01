@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -25,7 +26,7 @@ namespace TorchSharp
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetDllDirectory(string lpPathName);
+        internal static extern bool SetDllDirectory(string lpPathName);
 
         static string nativeRid =>
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "win-x64" :
@@ -97,8 +98,8 @@ namespace TorchSharp
                     if (isWindows) {
                         trace.AppendLine($"    Try loading Windows cuda native components");
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
-                        // requests a load of another through dynamic linking techniques.  
-                        // 
+                        // requests a load of another through dynamic linking techniques.
+                        //
                         TryLoadNativeLibraryByName("cudnn_adv_infer64_8", typeof(torch).Assembly, trace);
                         TryLoadNativeLibraryByName("cudnn_adv_train64_8", typeof(torch).Assembly, trace);
                         TryLoadNativeLibraryByName("cudnn_cnn_infer64_8", typeof(torch).Assembly, trace);
@@ -270,7 +271,7 @@ namespace TorchSharp
                 var result = cuda.CallTorchCudaIsAvailable();
                 if (!result)
                     throw new InvalidOperationException($"Torch device type {deviceType} did not initialise on the current machine. Trace from LoadNativeBackend:\n{trace}");
-            } 
+            }
         }
 
         public static Device InitializeDevice(torch.Device device)
@@ -283,9 +284,6 @@ namespace TorchSharp
 
         public static partial class random
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSGenerator_manual_seed(long seed);
-
             /// <summary>
             /// Sets the seed for generating random numbers. Returns a torch.Generator object.
             /// </summary>
@@ -305,18 +303,6 @@ namespace TorchSharp
         {
             public static partial class utils
             {
-                [DllImport("LibTorchSharp")]
-                extern static double THSTensor_clip_grad_norm_(IntPtr tensors, int len, double max_norm, double norm_type);
-
-                [DllImport("LibTorchSharp")]
-                extern static void THSTensor_clip_grad_value_(IntPtr tensors, int len, double clip_value);
-
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSTensor_parameters_to_vector(IntPtr tensors, int len);
-
-                [DllImport("LibTorchSharp")]
-                extern static void THSTensor_vector_to_parameters(IntPtr vec, IntPtr tensors, int len);
-
                 /// <summary>
                 /// Clips gradient norm of an iterable of parameters.
                 /// The norm is computed over all gradients together, as if they were concatenated into a single vector.
@@ -387,8 +373,6 @@ namespace TorchSharp
 
         public static partial class cuda
         {
-            [DllImport("LibTorchSharp")]
-            private static extern bool THSTorchCuda_is_available();
 
             /// This must be a separate method to the failure to bind DllImport THSTorchCuda_is_available
             /// is not raised as early as a DllImportException
@@ -408,9 +392,6 @@ namespace TorchSharp
                 return CallTorchCudaIsAvailable();
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern bool THSTorchCuda_cudnn_is_available();
-
             /// <summary>
             /// Returns a bool indicating if CUDNN is currently available.
             /// </summary>
@@ -419,9 +400,6 @@ namespace TorchSharp
                 TryInitializeDeviceType(DeviceType.CUDA);
                 return THSTorchCuda_cudnn_is_available();
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern int THSTorchCuda_device_count();
 
             /// <summary>
             /// Returns the number of GPUs available.
@@ -432,9 +410,6 @@ namespace TorchSharp
                 TryInitializeDeviceType(DeviceType.CUDA);
                 return THSTorchCuda_device_count();
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern void THSCuda_manual_seed(long seed);
 
             /// <summary>
             /// Sets the seed for generating random numbers for the current GPU.
@@ -447,9 +422,6 @@ namespace TorchSharp
                 THSCuda_manual_seed(seed);
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern void THSCuda_manual_seed_all(long seed);
-
             /// <summary>
             /// Sets the seed for generating random numbers on all GPUs.
             /// It’s safe to call this function if CUDA is not available; in that case, it is silently ignored.
@@ -460,9 +432,6 @@ namespace TorchSharp
                 TryInitializeDeviceType(DeviceType.CUDA);
                 THSCuda_manual_seed_all(seed);
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern void THSCuda_synchronize(long device_index);
 
             /// <summary>
             /// Waits for all kernels in all streams on a CUDA device to complete.
@@ -480,9 +449,6 @@ namespace TorchSharp
         /// Workaround for F# issue.
         /// </summary>
         public static bool cuda_is_available() => torch.cuda.is_available();
-
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTorch_get_and_reset_last_err();
 
         //[Conditional("DEBUG")]
         public static void CheckForErrors()

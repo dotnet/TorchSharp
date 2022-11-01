@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -22,17 +22,10 @@ namespace TorchSharp
                     type.Dispose();
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern sbyte THSJIT_TensorType_dtype(HType handle);
-
-                public torch.ScalarType GetScalarType()
+                public ScalarType GetScalarType()
                 {
-                    return (torch.ScalarType)THSJIT_TensorType_dtype(handle);
+                    return (ScalarType)THSJIT_TensorType_dtype(handle);
                 }
-
-
-                [DllImport("LibTorchSharp")]
-                static extern long THSJIT_TensorType_sizes(HType handle, AllocatePinnedArray allocator);
 
                 /// <summary>
                 ///  Retrieves the sizes of all dimensions of the tensor.
@@ -43,23 +36,17 @@ namespace TorchSharp
 
                     using (var pa = new PinnedArray<long>()) {
                         THSJIT_TensorType_sizes(handle, pa.CreateArray);
-                        torch.CheckForErrors();
+                        CheckForErrors();
                         ptrArray = pa.Array;
                     }
 
                     return ptrArray;
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern int THSJIT_getDimensionedTensorTypeDimensions(HType handle);
-
                 public int GetDimensions()
                 {
                     return THSJIT_getDimensionedTensorTypeDimensions(handle);
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern string THSJIT_getDimensionedTensorDevice(HType handle);
 
                 public string GetDevice()
                 {

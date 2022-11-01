@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static TorchSharp.torch;
-using static TorchSharp.torch.optim;
 
 namespace TorchSharp
 {

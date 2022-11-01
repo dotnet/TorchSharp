@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_LPPool1d_forward(IntPtr module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_LPPool1d_forward(handle.DangerousGetHandle(), tensor.Handle);
@@ -34,9 +31,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LPPool1d_ctor(double norm_type, IntPtr pkernelSize, IntPtr pstrides, [MarshalAs(UnmanagedType.U1)] bool ceil_mode, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 1D power-average pooling over an input signal composed of several input planes.
             /// </summary>
@@ -45,7 +39,7 @@ namespace TorchSharp
             /// <param name="stride">The stride of the window. Default value is kernel_size</param>
             /// <param name="ceil_mode">Use ceil instead of floor to compute the output shape</param>
             /// <returns></returns>
-            static public LPPool1d LPPool1d(double norm_type, long kernelSize, long? stride = null, bool ceil_mode = false)
+            public static LPPool1d LPPool1d(double norm_type, long kernelSize, long? stride = null, bool ceil_mode = false)
             {
                 return stride.HasValue ?
                     LPPool1d(norm_type, new long[] { kernelSize }, new long[] { stride.Value }, ceil_mode) :
@@ -60,7 +54,7 @@ namespace TorchSharp
             /// <param name="strides">The stride of the window. Default value is kernel_size</param>
             /// <param name="ceil_mode">Use ceil instead of floor to compute the output shape</param>
             /// <returns></returns>
-            static private LPPool1d LPPool1d(double norm_type, long[] kernelSize, long[] strides = null, bool ceil_mode = false)
+            private static LPPool1d LPPool1d(double norm_type, long[] kernelSize, long[] strides = null, bool ceil_mode = false)
             {
                 unsafe {
                     fixed (long* pkernelSize = kernelSize, pstrides = strides) {

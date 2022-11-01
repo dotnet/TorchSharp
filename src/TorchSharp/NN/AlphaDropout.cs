@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -21,9 +21,6 @@ namespace TorchSharp
         {
             internal AlphaDropout(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_AlphaDropout_forward(torch.nn.Module.HType module, IntPtr tensor);
-
             /// <summary>
             /// Forward pass.
             /// </summary>
@@ -42,9 +39,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_AlphaDropout_ctor(double p, [MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Randomly zero out entire channels (a channel is a 2D feature map, e.g., the jj -th channel of the ii -th sample in the batched input is a 2D tensor \text{input}[i, j]input[i,j] ).
             /// Each channel will be zeroed out independently on every forward call with probability p using samples from a Bernoulli distribution.
@@ -52,23 +46,21 @@ namespace TorchSharp
             /// <param name="p">Probability of an element to be zeroed. Default: 0.5</param>
             /// <param name="inplace">If set to true, will do this operation in-place. Default: false</param>
             /// <returns></returns>
-            static public AlphaDropout AlphaDropout(double p = 0.5, bool inplace = false)
+            public static AlphaDropout AlphaDropout(double p = 0.5, bool inplace = false)
             {
                 var handle = THSNN_AlphaDropout_ctor(p, inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new AlphaDropout(handle, boxedHandle);
             }
+
             public static partial class functional
             {
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSNN_alpha_dropout(IntPtr input, double p, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inplace);
-
                 /// <summary>
                 /// Randomly zero out entire channels (a channel is a 2D feature map, e.g., the jj -th channel of the ii -th sample in the batched input is a 2D tensor \text{input}[i, j]input[i,j] ).
                 /// Each channel will be zeroed out independently on every forward call with probability p using samples from a Bernoulli distribution.
                 /// </summary>
                 /// <returns></returns>
-                static public Tensor alpha_dropout(Tensor input, double p = 0.5, bool training = false, bool inplace = false)
+                public static Tensor alpha_dropout(Tensor input, double p = 0.5, bool training = false, bool inplace = false)
                 {
                     var res = THSNN_alpha_dropout(input.Handle, p, training, inplace);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }

@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
-
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -16,14 +15,11 @@ namespace TorchSharp
         {
             internal LSTMCell(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public new static LSTMCell Load(String modelPath)
+            public new static LSTMCell Load(string modelPath)
             {
                 var res = Module<Tensor, Tensor>.Load(modelPath);
                 return new LSTMCell(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTMCell_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0, IntPtr c_0, out IntPtr c_n);
 
             /// <summary>
             /// Apply the RNN cell to an input tensor.
@@ -37,15 +33,6 @@ namespace TorchSharp
                 if (hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(hN), new Tensor(cN));
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTMCell_bias_ih(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_LSTMCell_set_bias_ih(torch.nn.Module.HType module, IntPtr tensor);
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTMCell_bias_hh(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_LSTMCell_set_bias_hh(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? bias_ih {
                 get {
@@ -72,15 +59,6 @@ namespace TorchSharp
                     ConditionallyRegisterParameter("bias_hh", value);
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTMCell_weight_ih(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_LSTMCell_set_weight_ih(torch.nn.Module.HType module, IntPtr tensor);
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LSTMCell_weight_hh(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_LSTMCell_set_weight_hh(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? weight_ih {
                 get {
@@ -114,9 +92,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_LSTMCell_ctor(long input_size, long hidden_size, bool bias, out IntPtr pBoxedModule);
-
             /// <summary>
             /// A long short-term memory (LSTM) cell.
             /// </summary>
@@ -125,7 +100,7 @@ namespace TorchSharp
             /// <param name="bias">If False, then the layer does not use bias weights b_ih and b_hh. Default: True</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            static public LSTMCell LSTMCell(long inputSize, long hiddenSize, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static LSTMCell LSTMCell(long inputSize, long hiddenSize, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_LSTMCell_ctor(inputSize, hiddenSize, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

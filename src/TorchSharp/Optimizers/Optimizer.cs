@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
     using System.IO;
-    using Google.Protobuf.WellKnownTypes;
     using Modules;
     using TorchSharp.Utils;
 
@@ -37,9 +37,6 @@ namespace TorchSharp
                     internal HType() : base(IntPtr.Zero, true)
                     {
                     }
-
-                    [DllImport("LibTorchSharp")]
-                    private static extern void THSNN_Optimizer_dispose(HType handle);
 
                     protected override bool ReleaseHandle()
                     {
@@ -93,9 +90,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Optimizer_zero_grad(HType module);
-
                 /// <summary>
                 /// Sets the gradients of all parameters to zero.
                 /// </summary>
@@ -119,9 +113,6 @@ namespace TorchSharp
                 }
 
 
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSNN_Optimizer_step(HType module, LossClosure closure);
-
                 /// <summary>
                 /// Performs a single optimization step (parameter update).
                 /// </summary>
@@ -140,9 +131,6 @@ namespace TorchSharp
 
                     return (res == IntPtr.Zero) ? null : new Tensor(res);
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Optimizer_getParameters(HType module, AllocatePinnedArray allocator);
 
                 /// <summary>
                 /// Get the parameters that the optimizer is handling.
