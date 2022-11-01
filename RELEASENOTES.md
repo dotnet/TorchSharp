@@ -8,11 +8,24 @@ __Breaking Changes__:
 
 The .NET 5.0 is no longer supported. Instead, .NET 6.0 is the minimum version. .NET FX 4.7.2 and higher are still supported.
 
+__API Changes__:
+
+Support 'null' as input and output to/from TorchScript.<br/>
+Added support for label smoothing in CrossEntropyLoss.<br/>
+Added torchaudio.transforms.MelSpectrogram().<br/>
+Adding squeeze_()<br/>
+Adding older-style tensor factories -- IntTensor, FloatTensor, etc.<br/>
+
 __Fixed Bugs__:
 
 #783 Download progress bar missing<br/>
 #787 torch.where(condition) → tuple of LongTensor function missing<br/>
 #799 TorchSharp.csproj refers Skia<br/>
+
+__Source Code Cleanup__:
+
+Moved P/Invoke declarations into dedicated class.<br/>
+Added C# language version to all .csproj files.<br/>
 
 ## NuGet Version 0.98.1
 
