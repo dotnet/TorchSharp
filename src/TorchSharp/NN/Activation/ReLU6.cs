@@ -2,10 +2,12 @@
 using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
     using Modules;
+    using TorchSharp.PInvoke;
 
     namespace Modules
     {
@@ -16,12 +18,9 @@ namespace TorchSharp
         {
             internal ReLU6(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            [DllImport("LibTorchSharp")]
-            internal static extern IntPtr THSNN_ReLU6_forward(torch.nn.Module.HType module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_ReLU6_forward(handle, tensor.Handle);
+                var res = LibTorchSharp.THSNN_ReLU6_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -37,9 +36,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            internal static extern IntPtr THSNN_ReLU6_ctor([MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Rectified Linear Unit
             ///
@@ -49,7 +45,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReLU6 ReLU6(bool inplace = false)
             {
-                var handle = THSNN_ReLU6_ctor(inplace, out var boxedHandle);
+                var handle = LibTorchSharp.THSNN_ReLU6_ctor(inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ReLU6(handle, boxedHandle);
             }

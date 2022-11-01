@@ -3730,6 +3730,44 @@ namespace TorchSharp
 
         [Fact]
         [TestOf(nameof(Tensor.to))]
+        public void TestCast()
+        {
+            using var input = torch.rand(new long[] { 128 }, float64, torch.CPU);
+
+            {
+                using var moved = input.to(ScalarType.Float32);
+                Assert.Equal(ScalarType.Float32, moved.dtype);
+                Assert.Equal(DeviceType.CPU, moved.device_type);
+            }
+            {
+                using var moved = input.type(ScalarType.Float32);
+                Assert.Equal(ScalarType.Float32, moved.dtype);
+                Assert.Equal(DeviceType.CPU, moved.device_type);
+            }
+            {
+                using var moved = input.type(torch.FloatTensor);
+                Assert.Equal(ScalarType.Float32, moved.dtype);
+                Assert.Equal(DeviceType.CPU, moved.device_type);
+            }
+            {
+                using var moved = input.to(ScalarType.Int32);
+                Assert.Equal(ScalarType.Int32, moved.dtype);
+                Assert.Equal(DeviceType.CPU, moved.device_type);
+            }
+            {
+                using var moved = input.type(ScalarType.Int32);
+                Assert.Equal(ScalarType.Int32, moved.dtype);
+                Assert.Equal(DeviceType.CPU, moved.device_type);
+            }
+            {
+                using var moved = input.type(torch.IntTensor);
+                Assert.Equal(ScalarType.Int32, moved.dtype);
+                Assert.Equal(DeviceType.CPU, moved.device_type);
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.to))]
         public void TestMoveAndCast()
         {
             var input = torch.rand(new long[] { 128 }, float64, torch.CPU);
