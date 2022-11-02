@@ -787,5 +787,43 @@ namespace TorchSharp
             // This should not blow up.
             var tmp = bone.forward(x);
         }
+
+
+
+        [Fact]
+        public void ValidateMultiStepLR()
+        {
+            var gen = new Generator(4711);
+            TestTraining.CreateLinearLayers(gen, out var lin1, out var lin2);
+            TestTraining.CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.1;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, new int[] { 3, 5, 7 }, 0.9);
+
+            optimizer.zero_grad();
+            optimizer.step();
+            scheduler.step(1);
+            Assert.Equal(0.1, optimizer.ParamGroups.First().LearningRate);
+            scheduler.step(2);
+            Assert.Equal(0.1, optimizer.ParamGroups.First().LearningRate);
+            scheduler.step(3);
+            Assert.Equal(0.09, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(4);
+            Assert.Equal(0.09, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(5);
+            Assert.Equal(0.09 * 0.9, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(6);
+            scheduler.step(7);
+            Assert.Equal(0.09 * 0.9 * 0.9, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(8);
+            Assert.Equal(0.09 * 0.9 * 0.9, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(9);
+            Assert.Equal(0.09 * 0.9 * 0.9, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(10);
+            Assert.Equal(0.09 * 0.9 * 0.9, optimizer.ParamGroups.First().LearningRate, 0.00001);
+        }
     }
 }

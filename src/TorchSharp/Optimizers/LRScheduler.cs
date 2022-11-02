@@ -272,7 +272,7 @@ namespace TorchSharp
                             var idx = _milestones.IndexOf(_last_epoch);
                             return idx == -1
                                 ? _optimizer.ParamGroups.Select(pg => pg.LearningRate)
-                                : _optimizer.ParamGroups.Select(pg => pg.LearningRate * Math.Pow(_gamma, _milestones[idx]));
+                                : _optimizer.ParamGroups.Select(pg => pg.LearningRate * _gamma);
                         }
 
                         private IList<int> _milestones;
