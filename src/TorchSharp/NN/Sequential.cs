@@ -98,7 +98,11 @@ namespace TorchSharp
             {
             }
 
-            public Sequential(params (string name, torch.nn.Module<Tensor, Tensor> submodule)[] modules) : base(IntPtr.Zero, IntPtr.Zero)
+            /// <summary>
+            /// Constructor, intended for derived modules.
+            /// </summary>
+            /// <param name="modules">An ordered list of the contained modules.</param>
+            protected Sequential(params (string name, torch.nn.Module<Tensor, Tensor> submodule)[] modules) : base(IntPtr.Zero, IntPtr.Zero)
             {
                 var handle = THSNN_Sequential_ctor();
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -108,7 +112,11 @@ namespace TorchSharp
                 foreach (var module in modules) Add(module.name, module.submodule);
             }
 
-            public Sequential(params torch.nn.Module<Tensor, Tensor>[] modules) : base(IntPtr.Zero, IntPtr.Zero)
+            /// <summary>
+            /// Constructor, intended for derived modules.
+            /// </summary>
+            /// <param name="modules">An ordered list of the contained modules.</param>
+            protected Sequential(params torch.nn.Module<Tensor, Tensor>[] modules) : base(IntPtr.Zero, IntPtr.Zero)
             {
                 var handle = THSNN_Sequential_ctor();
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
