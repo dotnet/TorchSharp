@@ -1543,7 +1543,7 @@ namespace TorchSharp
 
             Assert.True(finalLoss < initialLoss);
 
-            LossIsClose(69.423f, finalLoss);
+            LossIsClose(64.019f, finalLoss);
         }
 
         [Fact]
