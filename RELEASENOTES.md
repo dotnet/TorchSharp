@@ -2,6 +2,11 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.98.3
+
+Fixed incorrect version in package reference.
+Added missing package references to TorchVision manifest.
+
 ## NuGet Version 0.98.2
 
 __Breaking Changes__:
