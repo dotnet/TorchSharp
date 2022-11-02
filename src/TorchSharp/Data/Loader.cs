@@ -1,16 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
-using System;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp.Data
 {
     public class Loader
     {
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSData_loaderMNIST([MarshalAs(UnmanagedType.LPStr)]string filename,
-            long batchSize,
-            bool isTrain);
-
         /// <summary>
         /// Create an iterator scanning the MNIST dataset.
         /// </summary>
@@ -18,14 +12,10 @@ namespace TorchSharp.Data
         /// <param name="batchSize">The required batch size</param>
         /// <param name="isTrain">Wheter the iterator is for training or testing</param>
         /// <returns></returns>
-        static public DataIterator MNIST(string filename, long batchSize, bool isTrain = true)
+        public static DataIterator MNIST(string filename, long batchSize, bool isTrain = true)
         {
             return new DataIterator(THSData_loaderMNIST(filename, batchSize, isTrain));
         }
-
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSData_loaderCIFAR10([MarshalAs(UnmanagedType.LPStr)] string path,
-            long batchSize, bool isTrain);
 
         /// <summary>
         /// Create an iterator scanning the CIFAR10 dataset.
@@ -34,7 +24,7 @@ namespace TorchSharp.Data
         /// <param name="batchSize">The required batch size</param>
         /// <param name="isTrain">Wheter the iterator is for training or testing</param>
         /// <returns></returns>
-        static public DataIterator CIFAR10(string path, long batchSize, bool isTrain = true)
+        public static DataIterator CIFAR10(string path, long batchSize, bool isTrain = true)
         {
             return new DataIterator(THSData_loaderCIFAR10(path, batchSize, isTrain));
         }

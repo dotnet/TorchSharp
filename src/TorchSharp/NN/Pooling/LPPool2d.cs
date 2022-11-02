@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_LPPool2d_forward(IntPtr module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_LPPool2d_forward(handle.DangerousGetHandle(), tensor.Handle);
@@ -34,9 +31,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LPPool2d_ctor(double norm_type, IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, [MarshalAs(UnmanagedType.U1)] bool ceil_mode, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 2D power-average pooling over an input signal composed of several input planes.
             /// </summary>
@@ -45,7 +39,7 @@ namespace TorchSharp
             /// <param name="strides">The stride of the window. Default value is kernel_size</param>
             /// <param name="ceil_mode">Use ceil instead of floor to compute the output shape</param>
             /// <returns></returns>
-            static public LPPool2d LPPool2d(double norm_type, long[] kernel_size, long[] strides = null, bool ceil_mode = false)
+            public static LPPool2d LPPool2d(double norm_type, long[] kernel_size, long[] strides = null, bool ceil_mode = false)
             {
                 unsafe {
                     fixed (long* pkernelSize = kernel_size, pstrides = strides) {
@@ -64,7 +58,7 @@ namespace TorchSharp
             /// <param name="stride">The stride of the window.</param>
             /// <param name="ceil_mode">Use ceil instead of floor to compute the output shape</param>
             /// <returns></returns>
-            static public LPPool2d LPPool2d(double norm_type, long kernel_size, long? stride = null, bool ceil_mode = false)
+            public static LPPool2d LPPool2d(double norm_type, long kernel_size, long? stride = null, bool ceil_mode = false)
             {
                 return stride.HasValue ?
                     LPPool2d(norm_type, new long[] { kernel_size, kernel_size }, new long[] { stride.Value, stride.Value }, ceil_mode) :

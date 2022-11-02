@@ -4,7 +4,6 @@ using System.Diagnostics;
 using static TorchSharp.torch;
 
 using static TorchSharp.torch.nn;
-using static TorchSharp.torch.nn.functional;
 using static TorchSharp.torch.utils.data;
 
 namespace TorchSharp.Examples

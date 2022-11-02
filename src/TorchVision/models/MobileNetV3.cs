@@ -12,10 +12,7 @@
 
 using System.Collections.Generic;
 using System;
-using System.Collections;
-using System.Linq;
 using static TorchSharp.torch;
-using static TorchSharp.torchvision;
 using static TorchSharp.torchvision.models._utils;
 using static TorchSharp.torchvision.ops;
 using TorchSharp.Modules;

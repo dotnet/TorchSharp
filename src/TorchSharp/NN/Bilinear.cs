@@ -1,8 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -11,56 +11,45 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class Bilinear : torch.nn.Module<Tensor, Tensor, Tensor>
+        public sealed class Bilinear : Module<Tensor, Tensor, Tensor>
         {
             internal Bilinear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public new static Bilinear Load(String modelPath)
+            public new static Bilinear Load(string modelPath)
             {
                 var res = Module<Tensor, Tensor>.Load(modelPath);
                 return new Bilinear(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Bilinear_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
-
             public override Tensor forward(Tensor input1, Tensor input2)
             {
                 var res = THSNN_Bilinear_forward(handle, input1.Handle, input2.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
             }
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Bilinear_bias(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_Bilinear_set_bias(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? bias {
                 get {
                     var res = THSNN_Bilinear_bias(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { CheckForErrors(); }
                     return ((res == IntPtr.Zero) ? null : new Parameter(res));
                 }
                 set {
-                    THSNN_Bilinear_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
-                    torch.CheckForErrors();
+                    THSNN_Bilinear_set_bias(handle, value?.Handle ?? IntPtr.Zero);
+                    CheckForErrors();
                     ConditionallyRegisterParameter("bias", value);
                 }
             }
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Bilinear_weight(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_Bilinear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? weight {
                 get {
                     var res = THSNN_Bilinear_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { CheckForErrors(); }
                     return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
-                    THSNN_Bilinear_set_weight(handle, (value is null ? IntPtr.Zero : value.Handle));
-                    torch.CheckForErrors();
+                    THSNN_Bilinear_set_weight(handle, value?.Handle ?? IntPtr.Zero);
+                    CheckForErrors();
                     ConditionallyRegisterParameter("weight", value);
                 }
             }
@@ -71,11 +60,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Bilinear_ctor(long in1_features, long in2_features, long output_size, bool bias, out IntPtr pBoxedModule);
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_functional_bilinear(IntPtr input1, IntPtr input2, IntPtr weights, IntPtr bias);
 
             /// <summary>
             /// Applies a bilinear transformation to the incoming data
@@ -87,10 +71,10 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public Bilinear Bilinear(long in1Features, long in2Features, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null)
+            public static Bilinear Bilinear(long in1Features, long in2Features, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Bilinear_ctor(in1Features, in2Features, outputSize, hasBias, out var boxedHandle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                if (res == IntPtr.Zero) { CheckForErrors(); }
 
                 return new Bilinear(res, boxedHandle).MoveModule<Bilinear>(device, dtype);
             }
@@ -106,11 +90,11 @@ namespace TorchSharp
                 /// <param name="bias">Optional bias of shape (Hout)</param>
                 /// <returns>Tensor of shape (N,*,Hout)</returns>
                 /// <remarks>The '*' sub-shape must be the same among the two inputs.</remarks>
-                static public Tensor bilinear(Tensor input1, Tensor input2, Tensor weight, Tensor? bias = null)
+                public static Tensor bilinear(Tensor input1, Tensor input2, Tensor weight, Tensor? bias = null)
                 {
-                    IntPtr bPtr = bias is null ? IntPtr.Zero : bias.Handle;
+                    IntPtr bPtr = bias?.Handle ?? IntPtr.Zero;
                     var res = THSNN_functional_bilinear(input1.Handle, input2.Handle, weight.Handle, bPtr);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (res == IntPtr.Zero) { CheckForErrors(); }
                     return new Tensor(res);
                 }
             }

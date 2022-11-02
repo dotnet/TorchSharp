@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -15,9 +15,6 @@ namespace TorchSharp
         public sealed class ZeroPad2d : torch.nn.Module<Tensor, Tensor>
         {
             internal ZeroPad2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_ZeroPad2d_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             /// <summary>
             /// Forward pass.
@@ -37,15 +34,12 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_ZeroPad2d_ctor(long padding, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Pads the input tensor boundaries with zero.
             /// </summary>
             /// <param name="padding">The size of the padding.</param>
             /// <returns></returns>
-            static public ZeroPad2d ZeroPad2d(long padding)
+            public static ZeroPad2d ZeroPad2d(long padding)
             {
                 var handle = THSNN_ZeroPad2d_ctor(padding, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }

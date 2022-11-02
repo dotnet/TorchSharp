@@ -152,7 +152,7 @@ namespace System
         }
 
         internal const float NegativeZero = (float)-0.0;
-        internal static bool IsNegative(float x) => (((UInt64)BitConverter.DoubleToInt64Bits(x)) & 0x8000000000000000) == 0x8000000000000000;
+        internal static bool IsNegative(float x) => (((ulong)BitConverter.DoubleToInt64Bits(x)) & 0x8000000000000000) == 0x8000000000000000;
 
         private const string CrtLibrary = "ucrtbase.dll";
         [DllImport(CrtLibrary)] private static extern float asinhf(float x);
@@ -180,7 +180,7 @@ namespace System
     internal static partial class NativeLibrary
     {
         [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError = true)]
-        private static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hReservedNull, int dwFlags);
+        internal static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hReservedNull, int dwFlags);
 
         public static bool TryLoad(string libraryPath, out IntPtr handle)
         {

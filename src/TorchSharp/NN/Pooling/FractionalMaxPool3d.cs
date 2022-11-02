@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -19,9 +19,6 @@ namespace TorchSharp
                 _used_ratio = ratio;
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_FractionalMaxPool3d_forward(torch.nn.Module.HType module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 if (_used_ratio && tensor.ndim != 5)
@@ -32,9 +29,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_FractionalMaxPool3d_forward_with_indices(torch.nn.Module.HType module, IntPtr tensor, out IntPtr indices);
 
             public (Tensor Values, Tensor Indices) forward_with_indices(Tensor tensor)
             {
@@ -55,9 +49,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_FractionalMaxPool3d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pOutputSize, int sizeLength, IntPtr pOutputRatio, int ratioLength, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 3d fractional max pooling over an input signal composed of several input planes.
             ///
@@ -68,7 +59,7 @@ namespace TorchSharp
             /// <param name="output_size">The target output size of the image of the form oH x oW. Can be a tuple (oH, oW) or a single number oH for a square image oH x oH</param>
             /// <param name="output_ratio">If one wants to have an output size as a ratio of the input size, this option can be given. This has to be a number or tuple in the range (0, 1)</param>
             /// <returns></returns>
-            static public FractionalMaxPool3d FractionalMaxPool3d(long kernel_size, long? output_size = null, double? output_ratio = null)
+            public static FractionalMaxPool3d FractionalMaxPool3d(long kernel_size, long? output_size = null, double? output_ratio = null)
             {
                 var pSize = output_size.HasValue ? new long[] { output_size.Value, output_size.Value, output_size.Value } : null;
                 var pRatio = output_ratio.HasValue ? new double[] { output_ratio.Value, output_ratio.Value, output_ratio.Value } : null;
@@ -85,7 +76,7 @@ namespace TorchSharp
             /// <param name="output_size">The target output size of the image of the form oH x oW. Can be a tuple (oH, oW) or a single number oH for a square image oH x oH</param>
             /// <param name="output_ratio">If one wants to have an output size as a ratio of the input size, this option can be given. This has to be a number or tuple in the range (0, 1)</param>
             /// <returns></returns>
-            static public FractionalMaxPool3d FractionalMaxPool3d((long, long, long) kernel_size, (long, long, long)? output_size = null, (double, double, double)? output_ratio = null)
+            public static FractionalMaxPool3d FractionalMaxPool3d((long, long, long) kernel_size, (long, long, long)? output_size = null, (double, double, double)? output_ratio = null)
             {
                 var pSize = output_size.HasValue ? new long[] { output_size.Value.Item1, output_size.Value.Item2, output_size.Value.Item3 } : null;
                 var pRatio = output_ratio.HasValue ? new double[] { output_ratio.Value.Item1, output_ratio.Value.Item2, output_ratio.Value.Item3 } : null;
@@ -102,7 +93,7 @@ namespace TorchSharp
             /// <param name="output_size">The target output size of the image of the form oH x oW. Can be a tuple (oH, oW) or a single number oH for a square image oH x oH</param>
             /// <param name="output_ratio">If one wants to have an output size as a ratio of the input size, this option can be given. This has to be a number or tuple in the range (0, 1)</param>
             /// <returns></returns>
-            static public FractionalMaxPool3d FractionalMaxPool3d(long[] kernel_size, long[] output_size = null, double[] output_ratio = null)
+            public static FractionalMaxPool3d FractionalMaxPool3d(long[] kernel_size, long[] output_size = null, double[] output_ratio = null)
             {
                 if (kernel_size == null || kernel_size.Length != 3)
                     throw new ArgumentException("Kernel size must contain three elements.");

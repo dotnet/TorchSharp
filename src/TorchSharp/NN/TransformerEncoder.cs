@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             }
 
             internal TransformerEncoder(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_TransformerEncoder_forward(torch.nn.Module.HType module, IntPtr src, IntPtr src_mask, IntPtr src_key_padding_mask);
 
             /// <summary>
             /// Pass the input through the encoder layers in turn.
@@ -76,16 +73,13 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_TransformerEncoder_ctor(torch.nn.Module.HType encoder_layer, long num_layers, out IntPtr pBoxedModule);
-
             /// <summary>
             /// TransformerEncoder is a stack of N encoder layers
             /// </summary>
             /// <param name="encoder_layer">An instance of the TransformerEncoderLayer class (required).</param>
             /// <param name="num_layers">The number of sub-encoder-layers in the encoder (required).</param>
             /// <returns></returns>
-            static public TransformerEncoder TransformerEncoder(TransformerEncoderLayer encoder_layer, long num_layers)
+            public static TransformerEncoder TransformerEncoder(TransformerEncoderLayer encoder_layer, long num_layers)
             {
                 var res = THSNN_TransformerEncoder_ctor(encoder_layer.handle, num_layers, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

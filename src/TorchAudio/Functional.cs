@@ -1,9 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
 using static TorchSharp.torch;
 using System.Diagnostics;
 
@@ -357,7 +354,7 @@ namespace TorchSharp
             /// <param name="norm">If MelNorm.slaney, divide the triangular mel weights by the width of the mel band</param>
             /// <param name="mel_scale">Scale to use</param>
             /// <returns>Triangular filter banks</returns>
-            public static Tensor melscale_fbanks(int n_freqs, double f_min, double f_max, int n_mels, int sample_rate, MelNorm norm = MelNorm.none, MelScale mel_scale = MelScale.htk)
+            public static Tensor melscale_fbanks(long n_freqs, double f_min, double f_max, long n_mels, long sample_rate, MelNorm norm = MelNorm.none, MelScale mel_scale = MelScale.htk)
             {
                 // freq bins
                 var all_freqs = torch.linspace(0, sample_rate / 2, n_freqs);

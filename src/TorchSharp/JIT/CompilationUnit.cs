@@ -1,14 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using static TorchSharp.torch;
-using System.Net;
-using static TorchSharp.torch.nn;
-using static TorchSharp.torch.jit.ScriptModule;
+using TorchSharp.PInvoke;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -32,7 +25,7 @@ namespace TorchSharp
             /// </remarks>
             public class CompilationUnit : IDisposable
             {
-                internal CompilationUnit(IntPtr handle) 
+                internal CompilationUnit(IntPtr handle)
                 {
                     this.handle = handle;
                 }
@@ -58,13 +51,7 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_CompilationUnit_dispose(IntPtr handle);
-
                 internal IntPtr handle;
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSJIT_CompilationUnit_Invoke(IntPtr module, string name, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
 
                 /// <summary>
                 /// Invoke a function from the compilation unit.
@@ -73,7 +60,7 @@ namespace TorchSharp
                 /// <param name="objs">Function arguments.</param>
                 public object invoke(string name, params object[] objs)
                 {
-                    if (String.IsNullOrEmpty(name)) throw new ArgumentNullException("method name");
+                    if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("method name");
 
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
@@ -108,9 +95,6 @@ namespace TorchSharp
                 public TResult invoke<T, TResult>(string name, params T[] inputs) => (TResult)invoke(name, inputs);
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSJIT_compile(string script);
-
             /// <summary>
             /// Create a TorchScript compilation unit containing TorchScript-compliant Python from a string.
             /// </summary>
@@ -118,7 +102,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static CompilationUnit compile(string script)
             {
-                if (String.IsNullOrEmpty(script))
+                if (string.IsNullOrEmpty(script))
                     throw new ArgumentNullException("empty script");
 
                 var result = THSJIT_compile(script);

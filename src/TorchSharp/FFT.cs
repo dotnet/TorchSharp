@@ -1,12 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
-
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
     // This file contains the mathematical operators on Tensor
-
     public enum FFTNormType
     {
         Backward = 0,
@@ -18,9 +16,6 @@ namespace TorchSharp
     {
         public static partial class fft
         {
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_fft(IntPtr tensor, long n, long dim, sbyte norm);
-
             /// <summary>
             /// Computes the one dimensional discrete Fourier transform of input.
             /// </summary>
@@ -37,9 +32,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ifft(IntPtr tensor, long n, long dim, sbyte norm);
-
             /// <summary>
             /// Computes the one dimensional inverse discrete Fourier transform of input.
             /// </summary>
@@ -54,9 +46,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_fft2(IntPtr tensor, IntPtr s, IntPtr dim, sbyte norm);
 
             /// <summary>
             /// Computes the two-dimensional discrete Fourier transform of input.
@@ -83,9 +72,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ifft2(IntPtr tensor, IntPtr s, IntPtr dim, sbyte norm);
-
             /// <summary>
             /// Computes the two-dimensional inverse discrete Fourier transform of input.
             /// </summary>
@@ -109,9 +95,6 @@ namespace TorchSharp
                     }
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_fftn(IntPtr tensor, IntPtr s, int s_length, IntPtr dim, int dim_length, sbyte norm);
 
             /// <summary>
             /// Computes the N-dimensional discrete Fourier transform of input.
@@ -138,9 +121,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ifftn(IntPtr tensor, IntPtr s, int s_length, IntPtr dim, int dim_length, sbyte norm);
-
             /// <summary>
             /// Computes the N-dimensional inverse discrete Fourier transform of input.
             /// </summary>
@@ -166,9 +146,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_irfft(IntPtr tensor, long n, long dim, sbyte norm);
-
             /// <summary>
             /// Computes the one dimensional inverse Fourier transform of real-valued input.
             /// </summary>
@@ -182,9 +159,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_rfft(IntPtr tensor, long n, long dim, sbyte norm);
 
             /// <summary>
             /// Computes the one dimensional Fourier transform of real-valued input.
@@ -200,9 +174,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_rfft2(IntPtr tensor, IntPtr s, IntPtr dim, sbyte norm);
 
             /// <summary>
             /// Computes the two-dimensional discrete Fourier transform of real-vaued input.
@@ -228,9 +199,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_irfft2(IntPtr tensor, IntPtr s, IntPtr dim, sbyte norm);
-
             /// <summary>
             /// Computes the two-dimensional inverse discrete Fourier transform of real-valued input.
             /// </summary>
@@ -254,9 +222,6 @@ namespace TorchSharp
                     }
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_rfftn(IntPtr tensor, IntPtr s, int s_length, IntPtr dim, int dim_length, sbyte norm);
 
             /// <summary>
             /// Computes the N-dimensional discrete Fourier transform of real-valued input.
@@ -282,9 +247,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_irfftn(IntPtr tensor, IntPtr s, int s_length, IntPtr dim, int dim_length, sbyte norm);
-
             /// <summary>
             /// Computes the N-dimensional inverse discrete Fourier transform of real-valued input.
             /// </summary>
@@ -309,9 +271,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_hfft(IntPtr tensor, long n, long dim, sbyte norm);
-
             /// <summary>
             /// Computes the one dimensional discrete Fourier transform of a Hermitian symmetric input signal.
             /// </summary>
@@ -329,9 +288,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ihfft(IntPtr tensor, long n, long dim, sbyte norm);
-
             /// <summary>
             /// Computes the inverse of hfft().
             /// </summary>
@@ -347,9 +303,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_fftshift(IntPtr tensor, IntPtr dim, int dim_length);
 
             /// <summary>
             /// Reorders n-dimensional FFT data, as provided by fftn(), to have negative frequency terms first.
@@ -370,9 +323,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_ifftshift(IntPtr tensor, IntPtr dim, int dim_length);
-
             /// <summary>
             /// Inverse of fftshift().
             /// </summary>
@@ -390,9 +340,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_fftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
             /// <summary>
             /// Computes the discrete Fourier Transform sample frequencies for a signal of size n.
             /// </summary>
@@ -401,7 +348,7 @@ namespace TorchSharp
             /// <param name="dtype">The desired data type of the returned tensor</param>
             /// <param name="device">the desired device of the returned tensor</param>
             /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
-            static public Tensor fftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requires_grad = false)
+            public static Tensor fftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
                 if (!dtype.HasValue) {
@@ -419,9 +366,6 @@ namespace TorchSharp
                 return new Tensor(handle);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_rfftfreq(long n, double d, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
             /// <summary>
             /// Computes the sample frequencies for rfft() with a signal of size n.
             /// </summary>
@@ -430,7 +374,7 @@ namespace TorchSharp
             /// <param name="dtype">The desired data type of the returned tensor</param>
             /// <param name="device">the desired device of the returned tensor</param>
             /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
-            static public Tensor rfftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requires_grad = false)
+            public static Tensor rfftfreq(long n, double d = 1.0, torch.ScalarType? dtype = null, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
                 if (!dtype.HasValue) {
@@ -447,9 +391,6 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(handle);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_hfft2(IntPtr tensor, IntPtr s, IntPtr dim, sbyte norm);
 
             /// <summary>
             /// Computes the 2-dimensional discrete Fourier transform of a Hermitian symmetric input signal.
@@ -479,9 +420,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_ihfft2(IntPtr tensor, IntPtr s, IntPtr dim, sbyte norm);
-
             /// <summary>
             /// Computes the 2-dimensional inverse discrete Fourier transform of a Hermitian symmetric input signal.
             ///
@@ -509,9 +447,6 @@ namespace TorchSharp
                     }
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_hfftn(IntPtr tensor, IntPtr s, int s_length, IntPtr dim, int dim_length, sbyte norm);
 
             /// <summary>
             /// Computes the n-dimensional discrete Fourier transform of a Herimitian symmetric input signal.
@@ -541,8 +476,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_ihfftn(IntPtr tensor, IntPtr s, int s_length, IntPtr dim, int dim_length, sbyte norm);
             /// <summary>
             /// Computes the n-dimensional inverse discrete Fourier transform of a Herimitian symmetric input signal.
             ///

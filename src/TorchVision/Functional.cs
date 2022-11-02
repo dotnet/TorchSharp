@@ -2,9 +2,8 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
 using static TorchSharp.torch;
+using static TorchSharp.LibTorchSharp;
 
 // A number of implementation details in this file have been translated from the Python version of torchvision,
 // largely located in the files found in this folder:
@@ -132,11 +131,6 @@ namespace TorchSharp
                     if (res == IntPtr.Zero) { CheckForErrors(); }
                     return Tensor.UnsafeCreateTensor(res);
                 }
-
-                /* Tensor THSVision_AdjustHue(const Tensor i, const double hue_factor) */
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSVision_AdjustHue(IntPtr img, double hue_factor);
-
 
                 /// <summary>
                 /// Adjust the color saturation of an image.
@@ -704,10 +698,6 @@ namespace TorchSharp
                         }
                     }
 
-                    if (interpolation != InterpolationMode.Nearest) {
-                        throw new NotImplementedException("Interpolation mode != 'Nearest'");
-                    }
-
                     using var img0 = SqueezeIn(input, new ScalarType[] { ScalarType.Float32, ScalarType.Float64 }, out var needCast, out var needSqueeze, out var dtype);
 
                     using var img1 = torch.nn.functional.interpolate(img0, new long[] { h, w }, mode: interpolation, align_corners: null);
@@ -867,10 +857,6 @@ namespace TorchSharp
                     return kernel_Y.mm(kernel_X);
                 }
 
-                // EXPORT_API(Tensor) THSVision_ApplyGridTransform(Tensor img, Tensor grid, const int8_t m, const float* fill, const int64_t fill_length);
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSVision_ApplyGridTransform(IntPtr img, IntPtr grid, sbyte mode, IntPtr fill, long fill_length);
-
                 private static Tensor ApplyGridTransform(Tensor img, Tensor grid, InterpolationMode mode, IList<float> fill = null)
                 {
                     img = SqueezeIn(img, new ScalarType[] { grid.dtype }, out var needCast, out var needSqueeze, out var out_dtype);
@@ -890,21 +876,12 @@ namespace TorchSharp
                     return img;
                 }
 
-                /* Tensor THSVision_GenerateAffineGrid(Tensor theta, const int64_t w, const int64_t h, const int64_t ow, const int64_t oh); */
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSVision_GenerateAffineGrid(IntPtr theta, long w, long h, long ow, long oh);
-
-
                 private static Tensor GenerateAffineGrid(Tensor theta, long w, long h, long ow, long oh)
                 {
                     var img = THSVision_GenerateAffineGrid(theta.Handle, w, h, ow, oh);
                     if (img == IntPtr.Zero) { torch.CheckForErrors(); }
                     return Tensor.UnsafeCreateTensor(img);
                 }
-
-                /* Tensor THSVision_ComputeOutputSize(const float* matrix, const int64_t matrix_length, const int64_t w, const int64_t h); */
-                [DllImport("LibTorchSharp")]
-                extern static void THSVision_ComputeOutputSize(IntPtr matrix, long matrix_length, long w, long h, out int first, out int second);
 
                 private static (int, int) ComputeOutputSize(IList<float> matrix, long w, long h)
                 {
@@ -955,10 +932,6 @@ namespace TorchSharp
                     var hOffset = img.shape.Length - 2;
                     return (img.shape[hOffset + 1], img.shape[hOffset]);
                 }
-
-                /* Tensor THSVision_PerspectiveGrid(const float* coeffs, const int64_t coeffs_length, const int64_t ow, const int64_t oh, const int8_t scalar_type, const int device_type, const int device_index); */
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSVision_PerspectiveGrid(IntPtr coeffs, long coeffs_length, long ow, long oh, sbyte dtype, int device_type, int device_index);
 
                 private static Tensor PerspectiveGrid(IList<float> coeffs, long ow, long oh, ScalarType dtype, Device device)
                 {
@@ -1014,11 +987,6 @@ namespace TorchSharp
                     foreach (var c in t0) { c.Dispose(); }
                     return t1;
                 }
-
-                /* Tensor THSVision_ScaleChannel(Tensor ic); */
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSVision_ScaleChannel(IntPtr img);
-
 
                 private static Tensor ScaleChannel(Tensor img_chan)
                 {

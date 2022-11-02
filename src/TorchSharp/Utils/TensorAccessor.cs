@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp.Utils
 {
@@ -28,7 +29,7 @@ namespace TorchSharp.Utils
             // Get the data from native code.
 
             unsafe {
-                var res = torch.Tensor.THSTensor_data(tensor.Handle);
+                var res = THSTensor_data(tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 // NOTE: there is no safety here.
                 _tensor_data_ptr = res;
@@ -165,7 +166,7 @@ namespace TorchSharp.Utils
             }
 
             unsafe {
-                var res = torch.Tensor.THSTensor_data(tensor.Handle);
+                var res = THSTensor_data(tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 // NOTE: there is no safety here.
                 T* ptr = (T*)res;
@@ -174,7 +175,7 @@ namespace TorchSharp.Utils
         }
 
         /// <summary>
-        /// Compare two tensors element-wise. 
+        /// Compare two tensors element-wise.
         /// </summary>
         /// <param name="left">A tensor</param>
         /// <param name="right">Another tensor</param>
@@ -194,7 +195,7 @@ namespace TorchSharp.Utils
         }
 
         /// <summary>
-        /// Compare two tensors element-wise. 
+        /// Compare two tensors element-wise.
         /// </summary>
         /// <param name="left">A tensor</param>
         /// <param name="right">Another tensor</param>
@@ -280,7 +281,7 @@ namespace TorchSharp.Utils
         {
             // If there was an overload for Enumerable.Range that
             // produced long integers, we wouldn't need this implementation.
-            
+
             long index = startingIndex;
             while (index < Count) {
                 yield return index;
@@ -290,7 +291,7 @@ namespace TorchSharp.Utils
 
 
         /// <summary>
-        /// Compare two tensors element-wise. 
+        /// Compare two tensors element-wise.
         /// </summary>
         /// <param name="obj">Another tensor</param>
         /// <returns></returns>

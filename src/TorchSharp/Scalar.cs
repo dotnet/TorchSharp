@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -114,9 +114,6 @@ namespace TorchSharp
             return value.ToScalar();
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static byte THSTorch_scalar_type(IntPtr value);
-
         /// <summary>
         /// Gets the actual type of the Scalar value
         /// </summary>
@@ -130,15 +127,12 @@ namespace TorchSharp
         ///   Finalize the tensor. Releases the tensor and its associated data.
         /// </summary>
         ~Scalar() => Dispose(false);
- 
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static void THSTorch_dispose_scalar(IntPtr handle);
 
         /// <summary>
         ///   Implements the .NET Dispose pattern.
@@ -154,10 +148,6 @@ namespace TorchSharp
 
     public static class ScalarExtensionMethods
     {
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_uint8_to_scalar(byte value);
-
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
@@ -167,9 +157,6 @@ namespace TorchSharp
             torch.InitializeDeviceType(DeviceType.CPU);
             return new Scalar(THSTorch_uint8_to_scalar(value));
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_int8_to_scalar(sbyte value);
 
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
@@ -181,9 +168,6 @@ namespace TorchSharp
             return new Scalar(THSTorch_int8_to_scalar(value));
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_int16_to_scalar(short value);
-
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
@@ -193,9 +177,6 @@ namespace TorchSharp
             torch.InitializeDeviceType(DeviceType.CPU);
             return new Scalar(THSTorch_int16_to_scalar(value));
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_int32_to_scalar(int value);
 
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
@@ -207,9 +188,6 @@ namespace TorchSharp
             return new Scalar(THSTorch_int32_to_scalar(value));
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_int64_to_scalar(long value);
-
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
@@ -219,9 +197,6 @@ namespace TorchSharp
             torch.InitializeDeviceType(DeviceType.CPU);
             return new Scalar(THSTorch_int64_to_scalar(value));
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_float32_to_scalar(float value);
 
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
@@ -233,9 +208,6 @@ namespace TorchSharp
             return new Scalar(THSTorch_float32_to_scalar(value));
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_float64_to_scalar(double value);
-
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
@@ -245,9 +217,6 @@ namespace TorchSharp
             torch.InitializeDeviceType(DeviceType.CPU);
             return new Scalar(THSTorch_float64_to_scalar(value));
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_complex32_to_scalar(float real, float imaginary);
 
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
@@ -259,9 +228,6 @@ namespace TorchSharp
             return new Scalar(THSTorch_complex32_to_scalar(value.Item1, value.Item2));
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_complex64_to_scalar(double real, double imaginary);
-
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
@@ -271,9 +237,6 @@ namespace TorchSharp
             torch.InitializeDeviceType(DeviceType.CPU);
             return new Scalar(THSTorch_complex64_to_scalar(value.Real, value.Imaginary));
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_bool_to_scalar([MarshalAs(UnmanagedType.U1)] bool value);
 
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
@@ -285,9 +248,6 @@ namespace TorchSharp
             return new Scalar(THSTorch_bool_to_scalar(value));
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_float16_to_scalar(float value);
-
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
@@ -297,9 +257,6 @@ namespace TorchSharp
             torch.InitializeDeviceType(DeviceType.CPU);
             return new Scalar(THSTorch_float16_to_scalar(value));
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTorch_bfloat16_to_scalar(float value);
 
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
@@ -311,9 +268,6 @@ namespace TorchSharp
             return new Scalar(THSTorch_bfloat16_to_scalar(value));
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static float THSTorch_scalar_to_float32(IntPtr handle);
-
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
         /// </summary>
@@ -322,9 +276,6 @@ namespace TorchSharp
         {
             return THSTorch_scalar_to_float32(value.Handle);
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static double THSTorch_scalar_to_float64(IntPtr handle);
 
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
@@ -335,9 +286,6 @@ namespace TorchSharp
             return THSTorch_scalar_to_float64(value.Handle);
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static sbyte THSTorch_scalar_to_int8(IntPtr handle);
-
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
         /// </summary>
@@ -346,9 +294,6 @@ namespace TorchSharp
         {
             return THSTorch_scalar_to_int8(value.Handle);
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static byte THSTorch_scalar_to_uint8(IntPtr handle);
 
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
@@ -359,9 +304,6 @@ namespace TorchSharp
             return THSTorch_scalar_to_uint8(value.Handle);
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static short THSTorch_scalar_to_int16(IntPtr handle);
-
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
         /// </summary>
@@ -370,9 +312,6 @@ namespace TorchSharp
         {
             return THSTorch_scalar_to_int16(value.Handle);
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static int THSTorch_scalar_to_int32(IntPtr handle);
 
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
@@ -383,9 +322,6 @@ namespace TorchSharp
             return THSTorch_scalar_to_int32(value.Handle);
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static long THSTorch_scalar_to_int64(IntPtr handle);
-
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
         /// </summary>
@@ -395,10 +331,6 @@ namespace TorchSharp
             return THSTorch_scalar_to_int64(value.Handle);
         }
 
-        [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.U1)]
-        extern static bool THSTorch_scalar_to_bool(IntPtr handle);
-
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
         /// </summary>
@@ -407,9 +339,6 @@ namespace TorchSharp
         {
             return THSTorch_scalar_to_bool(value.Handle);
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static void THSTorch_scalar_to_complex32(IntPtr handle, AllocatePinnedArray allocator);
 
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
@@ -427,9 +356,6 @@ namespace TorchSharp
 
             return (floatArray[0], floatArray[1]);
         }
-
-        [DllImport("LibTorchSharp")]
-        extern static void THSTorch_scalar_to_complex64(IntPtr handle, AllocatePinnedArray allocator);
 
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar

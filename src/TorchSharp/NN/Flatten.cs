@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Flatten_forward(torch.nn.Module.HType module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Flatten_forward(handle, tensor.Handle);
@@ -34,16 +31,13 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Flatten_ctor(long startDim, long endDim, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Flattens a contiguous range of dims into a tensor. For use with Sequential.
             /// </summary>
             /// <param name="startDim">First dim to flatten (default = 1).</param>
             /// <param name="endDim">Last dim to flatten (default = -1).</param>
             /// <returns></returns>
-            static public Flatten Flatten(long startDim = 1, long endDim = -1)
+            public static Flatten Flatten(long startDim = 1, long endDim = -1)
             {
                 var handle = THSNN_Flatten_ctor(startDim, endDim, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }

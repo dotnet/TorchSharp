@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -15,9 +15,6 @@ namespace TorchSharp
 
         public partial class Tensor
         {
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_angle(IntPtr tensor);
-
             /// <summary>
             /// Computes the element-wise angle (in radians) of the given input tensor.
             /// </summary>
@@ -33,9 +30,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_asin(IntPtr tensor);
 
             /// <summary>
             /// Computes the arcsine of the elements of input.
@@ -55,9 +49,6 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor arcsin() => asin();
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_asin_(IntPtr tensor);
-
             /// <summary>
             /// Computes the arcsine of the elements of input.
             /// </summary>
@@ -71,9 +62,6 @@ namespace TorchSharp
             }
 
             public Tensor arcsin_() => asin_();
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_acos(IntPtr tensor);
 
             /// <summary>
             /// Computes the arccosine of the elements of input.
@@ -93,9 +81,6 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor arccos() => acos();
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_acos_(IntPtr tensor);
-
             /// <summary>
             /// Computes the arccosine of the elements of input.
             /// </summary>
@@ -113,9 +98,6 @@ namespace TorchSharp
             /// </summary>
             /// <returns></returns>
             public Tensor arccos_() => acos_();
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_atan(IntPtr tensor);
 
             /// <summary>
             /// Computes the arctangent of the elements of input.
@@ -135,9 +117,6 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor arctan() => atan();
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_atan_(IntPtr tensor);
-
             /// <summary>
             /// Computes the arctangent of the elements of input.
             /// </summary>
@@ -156,9 +135,6 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor arctan_() => atan_();
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_atan2(IntPtr tensor, IntPtr other);
-
             /// <summary>
             /// Element-wise arctangent of input / other with consideration of the quadrant.
             /// </summary>
@@ -170,9 +146,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_atan2_(IntPtr tensor, IntPtr other);
 
             /// <summary>
             /// Element-wise arctangent of input / other with consideration of the quadrant.
@@ -187,9 +160,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cos(IntPtr tensor);
-
             /// <summary>
             /// Computes the cosine of the elements of input.
             /// </summary>
@@ -201,9 +171,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cos_(IntPtr tensor);
 
             /// <summary>
             /// Computes the cosine of the elements of input.
@@ -217,9 +184,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_sin(IntPtr tensor);
-
             /// <summary>
             /// Computes the sine of the elements of input.
             /// </summary>
@@ -231,9 +195,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_sin_(IntPtr tensor);
 
             /// <summary>
             /// Computes the sine of the elements of input.
@@ -247,9 +208,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_tan(IntPtr tensor);
-
             /// <summary>
             /// Computes the tangent of the elements of input.
             /// </summary>
@@ -261,9 +219,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_tan_(IntPtr tensor);
 
             /// <summary>
             /// Computes the tangent of the elements of input.
@@ -277,9 +232,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_sinc(IntPtr tensor);
-
             /// <summary>
             /// Computes the normalized sinc of input.
             /// </summary>
@@ -291,9 +243,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_sinc_(IntPtr tensor);
 
             /// <summary>
             /// Computes the normalized sinc of input, in place.
@@ -307,9 +256,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_sinh(IntPtr tensor);
-
             /// <summary>
             /// Computes the hyperbolic sine of the elements of input.
             /// </summary>
@@ -321,9 +267,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_sinh_(IntPtr tensor);
 
             /// <summary>
             /// Computes the hyperbolic sine of the elements of input.
@@ -337,9 +280,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cosh(IntPtr tensor);
-
             /// <summary>
             /// Computes the hyperbolic cosine of the elements of input.
             /// </summary>
@@ -352,9 +292,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_cosh_(IntPtr tensor);
-
             /// <summary>
             /// Computes the hyperbolic cosine of the elements of input.
             /// </summary>
@@ -366,8 +303,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_tanh(IntPtr tensor);
 
             /// <summary>
             /// Computes the hyperbolic tangent of the elements of input.
@@ -381,9 +316,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_tanh_(IntPtr tensor);
-
             /// <summary>
             /// Computes the hyperbolic tangent of the elements of input.
             /// </summary>
@@ -395,9 +327,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_arcsinh(IntPtr tensor);
 
             /// <summary>
             /// Computes the hyperbolic arcsine of the elements of input.
@@ -417,9 +346,6 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor asinh() => arcsinh();
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_arcsinh_(IntPtr tensor);
-
             /// <summary>
             /// Computes the hyperbolic arcsine of the elements of input.
             /// </summary>
@@ -437,9 +363,6 @@ namespace TorchSharp
             /// </summary>
             /// <returns></returns>
             public Tensor asinh_() => arcsinh_();
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_arccosh(IntPtr tensor);
 
             /// <summary>
             /// Computes the hyperbolic arccosine of the elements of input.
@@ -459,10 +382,6 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor acosh() => arccosh();
 
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_arccosh_(IntPtr tensor);
-
             /// <summary>
             /// Computes the hyperbolic arccosine of the elements of input.
             /// </summary>
@@ -481,9 +400,6 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor acosh_() => arccosh_();
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_arctanh(IntPtr tensor);
-
             /// <summary>
             /// Computes the hyperbolic arctangent of the elements of input.
             /// </summary>
@@ -501,9 +417,6 @@ namespace TorchSharp
             /// </summary>
             /// <returns></returns>
             public Tensor atanh() => arctanh();
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_arctanh_(IntPtr tensor);
 
             /// <summary>
             /// Computes the hyperbolic arctangent of the elements of input.

@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -12,9 +12,6 @@ namespace TorchSharp
         public sealed class TransformerDecoderLayer : torch.nn.Module<Tensor, Tensor, Tensor>
         {
             internal TransformerDecoderLayer(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_TransformerDecoderLayer_forward(torch.nn.Module.HType module, IntPtr tgt, IntPtr memory, IntPtr tgt_mask, IntPtr memory_mask, IntPtr tgt_key_padding_mask, IntPtr memory_key_padding_mask);
 
             /// <summary>
             /// Pass the inputs (and mask) through the decoder layer.
@@ -63,9 +60,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_TransformerDecoderLayer_ctor(long d_model, long nhead, long dim_feedforward, double dropout, long activation, out IntPtr pBoxedModule);
-
             /// <summary>
             /// TransformerDecoderLayer is made up of self-attn, multi-head-attn and feedforward network. This standard decoder layer is based on the paper “Attention Is All You Need”.
             /// </summary>
@@ -75,7 +69,7 @@ namespace TorchSharp
             /// <param name="dropout">The dropout value (default=0.1).</param>
             /// <param name="activation">The activation function of intermediate layer, relu or gelu (default=relu).</param>
             /// <returns></returns>
-            static public TransformerDecoderLayer TransformerDecoderLayer(long d_model = 512, long nhead = 8, long dim_feedforward = 2048, double dropout = 0.1, Activations activation = nn.Activations.ReLU)
+            public static TransformerDecoderLayer TransformerDecoderLayer(long d_model = 512, long nhead = 8, long dim_feedforward = 2048, double dropout = 0.1, Activations activation = nn.Activations.ReLU)
             {
                 var res = THSNN_TransformerDecoderLayer_ctor(d_model, nhead, dim_feedforward, dropout, (long)activation, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

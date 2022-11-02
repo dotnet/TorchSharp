@@ -3,7 +3,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Collections.Generic;
 using System.Threading;
 using Google.Protobuf;
@@ -33,7 +32,7 @@ namespace TorchSharp
                 /// <param name="createRunName">Create a time-based run name, even if log_dir is specified.</param>
                 public static Modules.SummaryWriter SummaryWriter(string log_dir = null, string filename_suffix = null, bool createRunName = false)
                 {
-                    if (createRunName && !String.IsNullOrEmpty(log_dir)) {
+                    if (createRunName && !string.IsNullOrEmpty(log_dir)) {
                         log_dir = CreateRunName(log_dir);
                     }
 
@@ -67,7 +66,7 @@ namespace TorchSharp
             {
                 _suffix = filename_suffix;
 
-                if (String.IsNullOrEmpty(log_dir)) {
+                if (string.IsNullOrEmpty(log_dir)) {
                     _log_dir = torch.utils.tensorboard.CreateRunName("runs");
                 } else {
                     _log_dir = log_dir;
@@ -78,7 +77,7 @@ namespace TorchSharp
                 }
 
                 var fileName = Path.Combine(_log_dir, $"events.out.tfevents.{DateTime.Now.Ticks}.{System.Net.Dns.GetHostName()}.{Process.GetCurrentProcess().Id}.{Interlocked.Increment(ref _global_uid)}");
-                if (!String.IsNullOrEmpty(_suffix)) {
+                if (!string.IsNullOrEmpty(_suffix)) {
                     fileName = fileName + "." + _suffix;
                 }
 

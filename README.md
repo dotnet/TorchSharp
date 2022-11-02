@@ -2,11 +2,12 @@
 <br/>
 [![Build Status](https://dotnet.visualstudio.com/TorchSharp/_apis/build/status/dotnet.TorchSharp?branchName=main)](https://dotnet.visualstudio.com/TorchSharp/_build/latest?definitionId=174&branchName=main)
 <br/>
-[![TorchSharp](https://img.shields.io/nuget/vpre/TorchSharp.svg?cacheSeconds=3600&label=TorchSharp%20nuget)](https://www.nuget.org/packages/TorchSharp)
+[![TorchSharp](https://img.shields.io/nuget/vpre/TorchSharp.svg?cacheSeconds=3600&label=TorchSharp%20nuget)](https://www.nuget.org/packages/TorchSharp)<br/>
+[![TorchAudio](https://img.shields.io/nuget/vpre/TorchAudio.svg?cacheSeconds=3600&label=TorchAudio%20nuget)](https://www.nuget.org/packages/TorchAudio)<br/>
+[![TorchVision](https://img.shields.io/nuget/vpre/TorchVision.svg?cacheSeconds=3600&label=TorchVision%20nuget)](https://www.nuget.org/packages/TorchVision)<br/>
 [![TorchSharp-cpu](https://img.shields.io/nuget/vpre/TorchSharp-cpu.svg?cacheSeconds=3600&label=TorchSharp-cpu%20nuget)](https://www.nuget.org/packages/TorchSharp-cpu)
 [![TorchSharp-cuda-windows](https://img.shields.io/nuget/vpre/TorchSharp-cuda-windows.svg?cacheSeconds=3600&label=TorchSharp-cuda-windows%20nuget)](https://www.nuget.org/packages/TorchSharp-cuda-windows)
-[![TorchSharp-cuda-linux](https://img.shields.io/nuget/vpre/TorchSharp-cuda-linux.svg?cacheSeconds=3600&label=TorchSharp-cuda-linux%20nuget)](https://www.nuget.org/packages/TorchSharp-cuda-linux)
-<br/>
+[![TorchSharp-cuda-linux](https://img.shields.io/nuget/vpre/TorchSharp-cuda-linux.svg?cacheSeconds=3600&label=TorchSharp-cuda-linux%20nuget)](https://www.nuget.org/packages/TorchSharp-cuda-linux)<br/>
 <br/>
 Please check the [Release Notes](RELEASENOTES.md) file for news on what's been updated in each new release.
 
@@ -51,11 +52,10 @@ var x = torch.randn(64, 1000);
 var y = torch.randn(64, 10);
 
 var optimizer = torch.optim.Adam(seq.parameters());
-var loss = functional.mse_loss(Reduction.Sum);
 
 for (int i = 0; i < 10; i++) {
     var eval = seq.forward(x);
-    var output = loss(eval, y);
+    var output = functional.mse_loss(eval, y, Reduction.Sum);
 
     optimizer.zero_grad();
 

@@ -1,5 +1,5 @@
 using System;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -219,26 +219,6 @@ namespace TorchSharp
                         return (numInputFMaps * receptiveFieldSize, numOutputFMaps * receptiveFieldSize);
                     }
                 }
-
-                [DllImport("LibTorchSharp")] private static extern double THSInit_calculate_gain(long nonlinearity, double param);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_constant_(IntPtr tensor, IntPtr value);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_dirac_(IntPtr tensor);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_eye_(IntPtr matrix);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_normal_(IntPtr tensor, double mean, double std);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_trunc_normal_(IntPtr tensor, double mean, double std, double a, double b);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_ones_(IntPtr tensor);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_orthogonal_(IntPtr tensor, double gain);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_sparse_(IntPtr tensor, double sparsity, double std);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_uniform_(IntPtr tensor, double low, double high);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_kaiming_normal_(IntPtr tensor, double a, long mode, long nonlinearity);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_kaiming_uniform_(IntPtr tensor, double a, long mode, long nonlinearity);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_xavier_normal_(IntPtr tensor, double gain);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_xavier_uniform_(IntPtr tensor, double gain);
-                [DllImport("LibTorchSharp")] private static extern IntPtr THSInit_zeros_(IntPtr tensor);
-
-                [DllImport("LibTorchSharp")] private static extern double THSSpecial_erf_scalar(double x);
-                [DllImport("LibTorchSharp")] private static extern double THSSpecial_erfc_scalar(double x);
-
             }
         }
     }

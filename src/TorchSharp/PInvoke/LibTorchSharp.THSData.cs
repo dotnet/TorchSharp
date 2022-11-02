@@ -1,0 +1,37 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+#nullable enable
+using System;
+using System.Runtime.InteropServices;
+
+namespace TorchSharp.PInvoke
+{
+    internal static partial class LibTorchSharp
+    {
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSData_loaderMNIST(
+            [MarshalAs(UnmanagedType.LPStr)] string filename,
+            long batchSize,
+            bool isTrain);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSData_loaderCIFAR10(
+            [MarshalAs(UnmanagedType.LPStr)] string path,
+            long batchSize,
+            bool isTrain);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSData_current(IntPtr iterator, IntPtr data, IntPtr target);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern bool THSData_moveNext(IntPtr iterator);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern long THSData_size(IntPtr iterator);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSData_reset(IntPtr iterator);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSData_dispose(IntPtr iterator);
+    }
+}

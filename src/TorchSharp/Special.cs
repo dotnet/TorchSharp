@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -8,9 +8,6 @@ namespace TorchSharp
     {
         public static class special
         {
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_entr(IntPtr tensor);
-
             /// <summary>
             /// Computes the entropy on input, elementwise.
             /// </summary>
@@ -23,9 +20,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_erf(IntPtr tensor);
 
             /// <summary>
             /// Computes the error function of input.
@@ -40,9 +34,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_erfc(IntPtr tensor);
-
             /// <summary>
             /// Computes the complementary error function of input.
             /// </summary>
@@ -55,9 +46,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_erfcx(IntPtr tensor);
 
             /// <summary>
             /// Computes the scaled complementary error function of input.
@@ -72,9 +60,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_erfinv(IntPtr tensor);
-
             /// <summary>
             /// Computes the inverse error function of input.
             /// </summary>
@@ -87,9 +72,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_expit(IntPtr tensor);
 
             /// <summary>
             /// Computes the expit (also known as the logistic sigmoid function) of the elements of input.
@@ -104,9 +86,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_expm1(IntPtr tensor);
-
             /// <summary>
             /// Computes the exponential of the elements minus 1 of input.
             /// </summary>
@@ -119,9 +98,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_exp2(IntPtr tensor);
 
             /// <summary>
             /// Computes the base two exponential function of input.
@@ -136,9 +112,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_gammaln(IntPtr tensor);
-
             /// <summary>
             /// Computes the natural logarithm of the absolute value of the gamma function on input.
             /// </summary>
@@ -151,9 +124,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_gammainc(IntPtr tensor, IntPtr other);
 
             /// <summary>
             /// Computes the regularized lower incomplete gamma function.
@@ -169,9 +139,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_gammaincc(IntPtr tensor, IntPtr other);
-
             /// <summary>
             /// Computes the regularized upper incomplete gamma function.
             /// </summary>
@@ -185,9 +152,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_polygamma(long n, IntPtr tensor);
 
             /// <summary>
             /// Computes the n-th derivative of the digamma function on input.
@@ -203,9 +167,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_multigammaln(IntPtr tensor, long p);
-
             /// <summary>
             /// Computes the multivariate log-gamma function with dimension pp element-wise.
             /// </summary>
@@ -219,9 +180,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_digamma(IntPtr tensor);
 
             /// <summary>
             /// Computes the logarithmic derivative of the gamma function on input.
@@ -242,9 +200,6 @@ namespace TorchSharp
             /// <param name="input">The second non-negative input tensor</param>
             public static Tensor psi(Tensor input) => digamma(input);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_i0(IntPtr tensor);
-
             /// <summary>
             /// Computes the zeroth order modified Bessel function of the first kind for each element of input.
             /// </summary>
@@ -257,9 +212,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_i0e(IntPtr tensor);
 
             /// <summary>
             /// Computes the exponentially scaled zeroth order modified Bessel function of the first kind (as defined below) for each element of input.
@@ -274,9 +226,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_i1(IntPtr tensor);
-
             /// <summary>
             /// Computes the first order modified Bessel function of the first kind for each element of input.
             /// </summary>
@@ -289,9 +238,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_i1e(IntPtr tensor);
 
             /// <summary>
             /// Computes the exponentially scaled first order modified Bessel function of the first kind (as defined below) for each element of input.
@@ -306,9 +252,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_logit(IntPtr tensor);
-
             /// <summary>
             /// Returns a new tensor with the logit of the elements of input.
             /// </summary>
@@ -322,9 +265,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_log_softmax(IntPtr tensor, long dim, sbyte scalar_type);
-
             /// <summary>
             /// Returns a new tensor with the logit of the elements of input.
             /// </summary>
@@ -332,7 +272,7 @@ namespace TorchSharp
             /// <param name="dim">A dimension along which log_softmax will be computed.</param>
             /// <param name="dtype">The desired data type of returned tensor.</param>
             /// <returns></returns>
-            public static Tensor log_softmax(Tensor input, int dim, ScalarType? dtype = null)
+            public static Tensor log_softmax(Tensor input, long dim, ScalarType? dtype = null)
             {
                 var dt = dtype.HasValue ? dtype.Value : input.dtype;
                 var res = THSSpecial_log_softmax(input.Handle, dim, (sbyte)dt);
@@ -340,9 +280,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_ndtr(IntPtr tensor);
 
             /// <summary>
             /// Computes the area under the standard Gaussian probability density function, integrated from minus infinity to input, elementwise.
@@ -357,9 +294,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_ndtri(IntPtr tensor);
-
             /// <summary>
             /// Computes the argument, x, for which the area under the Gaussian probability density function (integrated from minus infinity to x) is equal to input, elementwise.
             /// </summary>
@@ -372,9 +306,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_sinc(IntPtr tensor);
 
             /// <summary>
             /// Computes the normalized sinc of input.
@@ -401,9 +332,6 @@ namespace TorchSharp
             /// <returns></returns>
             public static Tensor sigmoid_(Tensor input) => input.sigmoid_();
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_xlog1py(IntPtr tensor, IntPtr other);
-
             /// <summary>
             /// Computes input * log1p(other). Similar to SciPy’s scipy.special.xlog1py.
             /// </summary>
@@ -417,9 +345,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_zeta(IntPtr tensor, IntPtr other);
 
             /// <summary>
             /// Computes the Hurwitz zeta function, elementwise.

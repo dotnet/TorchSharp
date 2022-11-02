@@ -1,33 +1,22 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 // The scalar 'from' factories for complex tensors require some hand-written code, cannot be generated.
 
 namespace TorchSharp
 {
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void GCHandleDeleter(IntPtr memory);
-
     public static partial class torch
     {
-
         internal partial class ComplexFloat32Tensor
         {
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type);
-
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requireGrad);
-
             /// <summary>
             /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
             /// common difference step, starting from start.
             /// </summary>
             /// <remarks>In the case of complex element types, 'arange' will create a complex tensor with img=0 in all elements.</remarks>
-            static public Tensor arange(Scalar start, Scalar stop, Scalar step, torch.Device device = null, bool requires_grad = false)
+            public static Tensor arange(Scalar start, Scalar stop, Scalar step, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
 
@@ -45,9 +34,6 @@ namespace TorchSharp
 
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_newComplexFloat32Scalar(float real, float imaginary, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Create a scalar tensor from a single value
@@ -71,23 +57,11 @@ namespace TorchSharp
                 return new Tensor(handle);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_view_as_complex(IntPtr tensor);
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_copy_(IntPtr handle, IntPtr source, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
-
-            [DllImport("LibTorchSharp")]
-            extern static void THSTensor_dispose(IntPtr handle);
-
             /// <summary>
             ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
             ///  The real and imaginary parts will be filled independently of each other.
             /// </summary>
-            static public Tensor randint(long max, long[] size, torch.Device device = null, bool requires_grad = false)
+            public static Tensor randint(long max, long[] size, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
 
@@ -137,18 +111,12 @@ namespace TorchSharp
 
         internal partial class ComplexFloat64Tensor
         {
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSTensor_to_type(IntPtr handle, sbyte scalar_type);
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requireGrad);
-
             /// <summary>
             /// Creates 1-D tensor of size [(end - start) / step] with values from interval [start, end) and
             /// common difference step, starting from start.
             /// </summary>
             /// <remarks>In the case of complex element types, 'arange' will create a complex tensor with img=0 in all elements.</remarks>
-            static public Tensor arange(Scalar start, Scalar stop, Scalar step, torch.Device device = null, bool requires_grad = false)
+            public static Tensor arange(Scalar start, Scalar stop, Scalar step, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
 
@@ -166,9 +134,6 @@ namespace TorchSharp
 
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_newComplexFloat64Scalar(double real, double imaginary, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
             /// <summary>
             /// Create a scalar tensor from a single value
@@ -192,23 +157,11 @@ namespace TorchSharp
                 return new Tensor(handle);
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_randint(long max, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_view_as_complex(IntPtr tensor);
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSTensor_copy_(IntPtr handle, IntPtr source, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
-
-            [DllImport("LibTorchSharp")]
-            extern static void THSTensor_dispose(IntPtr handle);
-
             /// <summary>
             ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
             ///  The real and imaginary parts will be filled independently of each other.
             /// </summary>
-            static public Tensor randint(long max, long[] size, torch.Device device = null, bool requires_grad = false)
+            public static Tensor randint(long max, long[] size, torch.Device device = null, bool requires_grad = false)
             {
                 device = torch.InitializeDevice(device);
 

@@ -8,6 +8,7 @@ using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
+using System.Drawing;
 
 #nullable enable
 
@@ -1084,6 +1085,32 @@ namespace TorchSharp
                 () => Assert.False(double.IsNaN(values[0]))
                 );
             }
+        }
+
+        [Fact]
+        public void TestCTCLossWithError()
+        {
+            var device = cuda.is_available() ? DeviceType.CUDA : DeviceType.CPU;
+
+            int T = 50, C = 20, N = 16, S = 30, S_min = 10;
+
+            using var input = torch.randn(T, N, C).log_softmax(2).detach().requires_grad_().to(device);
+            using var target = torch.randint(low: 1, high: C, size: (N, S), dtype: torch.@long).to(device);
+            using var input_lengths = torch.full(size: N, value: T, dtype: torch.@long).to(device);
+            using var target_lengths = torch.randint(low: S_min, high: S, size: N, dtype: torch.@long).to(device);
+
+            using var ctc_loss = nn.CTCLoss().to(device);
+            using var loss = ctc_loss.forward(input, target, input_lengths, target_lengths);
+            loss.backward();
+
+            var outTensor = loss.cpu();
+
+            var values = outTensor.data<float>().ToArray();
+            Assert.Multiple(
+            () => Assert.Empty(outTensor.shape),
+            () => Assert.Single(values),
+            () => Assert.False(float.IsNaN(values[0]))
+            );
         }
 
         [Fact]
