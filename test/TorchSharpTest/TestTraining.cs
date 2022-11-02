@@ -149,13 +149,13 @@ namespace TorchSharp
         }
 
 
-        private static void CreateDataAndLabels(Generator gen, out Tensor data, out Tensor labels, int batchSize = 64, int inputSize = 1000, int categories = 10)
+        internal static void CreateDataAndLabels(Generator gen, out Tensor data, out Tensor labels, int batchSize = 64, int inputSize = 1000, int categories = 10)
         {
             data = torch.rand(new long[] { 64, inputSize }, generator: gen);
             labels = torch.rand(new long[] { 64, categories }, generator: gen);
         }
 
-        private static void CreateLinearLayers(Generator gen, out Linear linear1, out Linear linear2, int inputSize = 1000, int categories = 10, int hiddenSize = 100)
+        internal static void CreateLinearLayers(Generator gen, out Linear linear1, out Linear linear2, int inputSize = 1000, int categories = 10, int hiddenSize = 100)
         {
             linear1 = Linear(inputSize, hiddenSize);
             linear2 = Linear(hiddenSize, categories);
