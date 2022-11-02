@@ -4,6 +4,9 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.98.3
 
+__Fixed Bugs__:
+
+MultiStepLR scheduler was not computing the next LR correctly.
 Fixed incorrect version in package reference.
 Added missing package references to TorchVision manifest.
 
