@@ -18,6 +18,6 @@
     <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netstandard2.0\_._" />
     <Content Include="$(RepoRoot)\LICENSE.txt" Pack="true" PackagePath="" />
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.3" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.3" />
   </ItemGroup>
 </Project>
