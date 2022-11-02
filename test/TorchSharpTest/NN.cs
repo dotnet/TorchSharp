@@ -2148,6 +2148,67 @@ namespace TorchSharp
             private ModuleDict<Module<torch.Tensor, torch.Tensor>> dict = new ModuleDict<Module<torch.Tensor, torch.Tensor>>();
         }
 
+        private class SequenceModel1 : Sequential
+        {
+            public SequenceModel1() :
+                base(Linear(1000, 100, false),
+                     Linear(100, 10, false))
+            {
+            }
+        }
+
+        private class SequenceModel2 : Sequential
+        {
+            public SequenceModel2() :
+                base(("lin1", Linear(1000, 100, false)),
+                     ("lin2", Linear(100, 10, false)))
+            {
+            }
+        }
+
+        [Fact]
+        public void TestDerivedSequence1Grad()
+        {
+            using var seq = new SequenceModel1();
+
+            var x = torch.randn(new long[] { 64, 1000 }, requires_grad: true);
+            var y = torch.randn(new long[] { 64, 10 }, requires_grad: true);
+
+            var eval = seq.forward(x);
+            var loss = MSELoss(Reduction.Sum);
+            var output = loss.forward(eval, y);
+
+            seq.zero_grad();
+
+            output.backward();
+
+            foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+            }
+        }
+
+        [Fact]
+        public void TestDerivedSequence2Grad()
+        {
+            using var seq = new SequenceModel2();
+
+            var x = torch.randn(new long[] { 64, 1000 }, requires_grad: true);
+            var y = torch.randn(new long[] { 64, 10 }, requires_grad: true);
+
+            var eval = seq.forward(x);
+            var loss = MSELoss(Reduction.Sum);
+            var output = loss.forward(eval, y);
+
+            seq.zero_grad();
+
+            output.backward();
+
+            foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+            }
+        }
+
+
         [Fact]
         public void TestDatatypeTo()
         {

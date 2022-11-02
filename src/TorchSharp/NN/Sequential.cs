@@ -98,6 +98,26 @@ namespace TorchSharp
             {
             }
 
+            public Sequential(params (string name, torch.nn.Module<Tensor, Tensor> submodule)[] modules) : base(IntPtr.Zero, IntPtr.Zero)
+            {
+                var handle = THSNN_Sequential_ctor();
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+
+                this.handle = new HType(handle, true);
+
+                foreach (var module in modules) Add(module.name, module.submodule);
+            }
+
+            public Sequential(params torch.nn.Module<Tensor, Tensor>[] modules) : base(IntPtr.Zero, IntPtr.Zero)
+            {
+                var handle = THSNN_Sequential_ctor();
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+
+                this.handle = new HType(handle, true);
+
+                foreach (var m in modules) Add(m);
+            }
+
             public override Tensor forward(Tensor tensor)
             {
                 // If there are no modules, just return a fresh handle to the input.
