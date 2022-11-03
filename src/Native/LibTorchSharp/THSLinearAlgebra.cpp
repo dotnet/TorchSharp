@@ -64,6 +64,7 @@ Tensor THSLinalg_eig(const Tensor tensor, Tensor* eigenvectors)
 }
 
 
+#if 0
 Tensor THSTensor_eig(const Tensor tensor, bool vectors, Tensor* eigenvectors)
 {
     std::tuple<at::Tensor, at::Tensor> res;
@@ -73,6 +74,7 @@ Tensor THSTensor_eig(const Tensor tensor, bool vectors, Tensor* eigenvectors)
     }
     return ResultTensor(std::get<0>(res));
 }
+#endif
 
 Tensor THSLinalg_eigh(const Tensor tensor, const char UPLO, Tensor* eigenvectors)
 {
@@ -243,15 +245,15 @@ Tensor THSLinalg_qr(const Tensor tensor, const char mode, Tensor* R)
 
 }
 
-Tensor THSLinalg_solve(const Tensor tensor, Tensor other)
+Tensor THSLinalg_solve(const Tensor tensor, Tensor other, bool left)
 {
-    CATCH_TENSOR(torch::linalg::solve(*tensor, *other));
+    CATCH_TENSOR(torch::linalg::solve(*tensor, *other, left));
 }
 
 Tensor THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, Tensor* Vh)
 {
     std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
-    CATCH(res = torch::linalg::svd(*tensor, full_matrices););
+    CATCH(res = torch::linalg::svd(*tensor, full_matrices, c10::nullopt););
     *S = ResultTensor(std::get<1>(res));
     *Vh = ResultTensor(std::get<2>(res));
     return ResultTensor(std::get<0>(res));
@@ -259,7 +261,7 @@ Tensor THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, T
 
 Tensor THSLinalg_svdvals(const Tensor tensor)
 {
-    CATCH_TENSOR(res = torch::linalg::svdvals(*tensor));
+    CATCH_TENSOR(res = torch::linalg::svdvals(*tensor, c10::nullopt));
 }
 
 Tensor THSLinalg_tensorinv(const Tensor tensor, const int64_t ind)

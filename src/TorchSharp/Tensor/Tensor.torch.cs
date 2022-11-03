@@ -362,20 +362,6 @@ namespace TorchSharp
         public static Tensor[] unbind(Tensor tensor, int dim = 0) => tensor.unbind(dim);
 
         /// <summary>
-        /// Computes the solution to the least squares and least norm problems for a full rank matrix A of size m×n and a matrix B of size m×k.
-        /// </summary>
-        /// <param name="A">the m by n matrix AA</param>
-        /// <param name="B">the matrix BB</param>
-        /// <returns></returns>
-        public static (Tensor Solution, Tensor QR) lstsq(Tensor B, Tensor A)
-        {
-            var solution = THSTorch_lstsq(B.Handle, A.Handle, out var qr);
-            if (solution == IntPtr.Zero || qr == IntPtr.Zero)
-                torch.CheckForErrors();
-            return (new Tensor(solution), new Tensor(qr));
-        }
-
-        /// <summary>
         ///  Writes all values from the tensor src into input at the indices specified in the index tensor. For each
         ///  value in src, its output index is specified by its index in src for dimension != dim and by the #
         ///  corresponding value in index for dimension = dim.

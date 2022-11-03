@@ -46,7 +46,7 @@
     <NativeAssemblyReference Include="libiomp5md" Variant="cuda\" />
     <NativeAssemblyReference Include="libiompstubs5md" Variant="cuda\" />
     <NativeAssemblyReference Include="nvrtc64_112_0" Variant="cuda\" />
-    <NativeAssemblyReference Include="nvrtc-builtins64_113" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvrtc-builtins64_117" Variant="cuda\" />
     <NativeAssemblyReference Include="nvToolsExt64_1" Variant="cuda\" />
     <NativeAssemblyReference Include="torch" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cpu" Variant="cuda\" />

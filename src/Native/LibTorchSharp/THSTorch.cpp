@@ -219,14 +219,6 @@ void THSTorch_dispose_scalar(Scalar scalar)
     delete scalar;
 }
 
-Tensor THSTorch_lstsq(const Tensor input, const Tensor A, Tensor* qr)
-{
-    std::tuple<at::Tensor, at::Tensor> res;
-    CATCH(res = torch::lstsq(*input, *A);)
-    *qr = ResultTensor(std::get<1>(res));
-    return ResultTensor(std::get<0>(res));
-}
-
 double THSSpecial_erf_scalar(const double x)
 {
     return erf(x);
