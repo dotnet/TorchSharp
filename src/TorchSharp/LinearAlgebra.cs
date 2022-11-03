@@ -518,10 +518,11 @@ namespace TorchSharp
             /// </summary>
             /// <param name="input">Tensor of shape (*, n, n) where * is zero or more batch dimensions.</param>
             /// <param name="other">Right-hand side tensor of shape (*, n) or (*, n, k) or (n,) or (n, k)</param>
+            /// <param name="left">whether to solve the system AX = B or XA = B.</param>
             /// <returns></returns>
-            public static Tensor solve(Tensor input, Tensor other)
+            public static Tensor solve(Tensor input, Tensor other, bool left = true)
             {
-                var res = THSLinalg_solve(input.Handle, other.Handle);
+                var res = THSLinalg_solve(input.Handle, other.Handle, left);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);

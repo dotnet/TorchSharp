@@ -98,7 +98,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSLinalg_qr(IntPtr tensor, byte mode, out IntPtr pR);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSLinalg_solve(IntPtr tensor, IntPtr other);
+        internal static extern IntPtr THSLinalg_solve(IntPtr tensor, IntPtr other, bool left);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_svd(IntPtr tensor, bool fullMatrices, out IntPtr pS, out IntPtr pVh);

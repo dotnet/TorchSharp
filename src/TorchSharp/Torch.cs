@@ -13,13 +13,13 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_1_12_0_1
-        const string libtorchPackageVersion = "1.12.0.1";
+#if LIBTORCH_1_13_0_1
+        const string libtorchPackageVersion = "1.13.0.1";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
-#if CUDA_11_3
-        const string cudaVersion = "11.3";
+#if CUDA_11_7
+        const string cudaVersion = "11.7";
 #else
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif

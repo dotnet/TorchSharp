@@ -103,8 +103,8 @@ For this reason, we do the following
 1. The head, referenceable packages that deliver a functioning runtime are any of:
 
        libtorch-cpu
-       libtorch-cuda-11.3-linux-x64
-       libtorch-cuda-11.3-win-x64
+       libtorch-cuda-11.7-linux-x64
+       libtorch-cuda-11.7-win-x64
 
 2. These packages are combo packages that reference multiple parts.  The parts are **not** independently useful.
    Some parts deliver a single vast file via `primary` and `fragment` packages.  A build task is then used to "stitch" these files back together
@@ -113,7 +113,7 @@ For this reason, we do the following
    install/detect/link of PyTorch CUDA on all downstream systems, whcih is extremely problematic
    for many practical reasons).
 
-   For example, the CUDA package fragments are defined in [libtorch-cuda](src/Redist/libtorch-cuda-11.3/libtorch-cuda-11.3.proj). See more details later in this document.
+   For example, the CUDA package fragments are defined in [libtorch-cuda](src/Redist/libtorch-cuda-11.7/libtorch-cuda-11.7.proj). See more details later in this document.
 
 3. The `libtorch-*` packages are built in Azure DevOps CI
    [using this build pipeline](https://donsyme.visualstudio.com/TorchSharp/_build?definitionId=1&_a=summary) but only in main
@@ -174,14 +174,14 @@ version of PyTorch then quite a lot of careful work needs to be done.
        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
 
-       dotnet build src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-       dotnet build src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
-       dotnet build src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+       dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
+       dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
+       dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
 
    Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done in CI.
 
    At this point you must **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
-   [libtorch-cpu](src/Redist/libtorch-cpu/libtorch-cpu.proj) and [libtorch-cuda](src/Redist/libtorch-cuda-11.3/libtorch-cuda-11.3.proj).
+   [libtorch-cpu](src/Redist/libtorch-cpu/libtorch-cpu.proj) and [libtorch-cuda](src/Redist/libtorch-cuda-11.7/libtorch-cuda-11.7.proj).
 
    This is the step in the upgrade process that takes the most effort and time. It requires extreme care.
 
@@ -208,7 +208,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 3. Add the SHA files:
 
        git add src\Redist\libtorch-cpu\*.sha
-       git add src\Redist\libtorch-cuda-11.3\*.sha
+       git add src\Redist\libtorch-cuda-11.7\*.sha
 
    After this you may as well submit to CI just to see what happens, though keep going with the other steps below as well.
 

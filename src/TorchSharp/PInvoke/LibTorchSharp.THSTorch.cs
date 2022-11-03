@@ -12,9 +12,6 @@ namespace TorchSharp.PInvoke
         internal static extern bool THSTorch_scalar_to_bool(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTorch_lstsq(IntPtr input, IntPtr A, out IntPtr pQR);
-
-        [DllImport("LibTorchSharp")]
         internal static extern void THSTorch_dispose_scalar(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
