@@ -169,14 +169,14 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 2. Run these to test downloads and update SHA hashes for the various LibTorch downloads:
 
-       dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-       dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /t:Build
-       dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
-       dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
+        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true
+        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true 
+        dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCpuPackages=true
 
-       dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build
-       dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build
-       dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build
+        dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCudaPackages=true
 
    Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done in CI.
 
@@ -248,9 +248,9 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
        <LibTorchPackageVersion>1.11.0.1</LibTorchPackageVersion>
 
-       dotnet pack -c Debug /p:SkipCuda=true
+       dotnet pack -c Debug /p:SkipCuda=true 
        dotnet pack -c Release /p:SkipCuda=true
-       dotnet pack -c Debug
+       dotnet pack -c Debug 
        dotnet pack -c Release
 
 9. Submit to CI and debug problems.
