@@ -12,7 +12,8 @@
      <ProjectReference Include="../libtorch-cuda-11.7-win-x64-part3-fragment1/libtorch-cuda-11.7-win-x64-part3-fragment1.nupkgproj" />
 
      <ProjectReference Include="../libtorch-cuda-11.7-win-x64-part4/libtorch-cuda-11.7-win-x64-part4.nupkgproj" />
-     <ProjectReference Include="../libtorch-cuda-11.7-win-x64-part5/libtorch-cuda-11.7-win-x64-part5.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-11.7-win-x64-part5-primary/libtorch-cuda-11.7-win-x64-part5-primary.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-11.7-win-x64-part5-fragment1/libtorch-cuda-11.7-win-x64-part5-fragment1.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-11.7-win-x64-part6/libtorch-cuda-11.7-win-x64-part6.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-11.7-win-x64-part7/libtorch-cuda-11.7-win-x64-part7.nupkgproj" />
      <ProjectReference Include="../libtorch-cuda-11.7-win-x64-part8/libtorch-cuda-11.7-win-x64-part8.nupkgproj" />
@@ -22,6 +23,7 @@
      <ProjectReference Include="../libtorch-cuda-11.7-win-x64-part9-fragment2/libtorch-cuda-11.7-win-x64-part9-fragment2.nupkgproj" />
 
      <ProjectReference Include="../libtorch-cuda-11.7-win-x64-part10/libtorch-cuda-11.7-win-x64-part10.nupkgproj" />
+     <ProjectReference Include="../libtorch-cuda-11.7-win-x64-part11/libtorch-cuda-11.7-win-x64-part11.nupkgproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
