@@ -151,20 +151,20 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 1. Familiarise yourself with download links. See https://pytorch.org/get-started/locally/ for download links.
 
-   For example Linux, LibTorch 1.11.0 uses link
+   For example Linux, LibTorch 1.13.0 uses link
 
-       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.11.0%2Bcpu.zip
+       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.13.0%2Bcpu.zip
 
    Don't download anything yet, or manually. The downloads are acquired automatically in step 2.
    
    To update the version, update this in [Dependencies.props](build/Dependencies.props):
 
-       <LibTorchVersion>1.11.0</LibTorchVersion>
+       <LibTorchVersion>1.13.0</LibTorchVersion>
 
     The libtorch version number is also referenced in source code, in the file 'src/TorchSharp/Torch.cs':
 
     ```C#
-    const string libtorchPackageVersion = "1.11.0.1";
+    const string libtorchPackageVersion = "1.13.0.1";
     ```
 
 2. Run these to test downloads and update SHA hashes for the various LibTorch downloads:
@@ -180,18 +180,25 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
    Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done in CI.
 
-   At this point you must **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
+   If file names in the distribution have changed, or files have been removed, you will get errors saying that files cannot be found. That's okay and will be taken care of in the next step.
+
+3. At this point you must **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
    [libtorch-cpu](src/Redist/libtorch-cpu/libtorch-cpu.proj) and [libtorch-cuda](src/Redist/libtorch-cuda-11.7/libtorch-cuda-11.7.proj).
 
    This is the step in the upgrade process that takes the most effort and time. It requires extreme care.
 
    Check the contents of the unzip of the archive, e.g.
 
-       bin\obj\x86.Debug\libtorch-cpu\libtorch-shared-with-deps-1.11.0\libtorch\lib
+       bin\obj\x64.Debug\libtorch-cpu\libtorch-shared-with-deps-1.13.0\libtorch\lib
 
-   You must also precisely refactor the CUDA binaries into multiple parts so each package ends up under ~300MB.
+   You may also need to precisely refactor the CUDA binaries into multiple parts so each package ends up under ~300MB. The NuGet gallery does not allow packages larger than 250MB, so if files are
+   300MB, after compression, they are likely to be smaller than 250MB. However, you have to look out: if the compression is poor, then packages may end up larger. Note that it is 250 million
+   bytes that is the limit, **not** 250*1024*1024. In other words, it is 250 MB, not 250 MiB. Note that Windows Explorer will show file sizes in KiB, not thousands of bytes. Use 'dir' from a CMD window to get the
+   exact size in bytes for each file. For example -- the file `libtorch_cpu.so` shows up as 511,872 KB in Windows Explorer, but 524,156,144 bytes in CMD. The 2.4% difference can be significant.
 
-   For example, the following snippet spreads the `torch_cuda_cu.dll` binary file into four fragments. 
+   If the combined size of the files going into a part is smaller than 250MB, then everything is fine, and there is no need to split the part. It can be singular. If that is not the case, then the part should be fragmented into two or more parts that are linked together by their names.
+
+   For example, the following snippet spreads the `torch_cuda_cu.dll` binary file into four fragments of 250 MB each. After compression, they will be even smaller.
 
    ```xml
     <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
@@ -203,16 +210,32 @@ version of PyTorch then quite a lot of careful work needs to be done.
    They must all be called either 'primary,' which should be the first fragment, or 'fragmentN' where 'N' is the ordinal number of the fragment, starting with '1'. The current logic allows for as many as 10 non-primary fragments. If more are needed, the code in [FileRestitcher.cs](pkg/FileRestitcher/FileRestitcher/FileRestitcher.cs) and [RestitchPackage.targets](pkg/common/RestitchPackage.targets) needs to be updated. Note that the size of each fragment is expressed in bytes, and that fragment start must be
    the sum of the size of all previous fragments. A '-1' should be used for the last fragment (and only for the last fragment): it means that the fragment size will be based on how much there is still left of the file.
 
+   Each part, whether singular or fragmented, should have its own .nupkgproj file in its own folder under pkg. The folder and file should have the same name as the part. If you need to add new fragments, it is straightforward to just copy an existing fragment folder and rename it as well as the project file to the new fragment. If you must fragment a previously singular part, it is best to rename the existing folder and file to '-fragment1' and then copy a '-primary' folder and rename with the right part name. This is because the primary .nupkgproj files look different from others. Specifically, they include different build targets:
+
+```
+<Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
+<Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
+```
+vs.
+```
+<Content Include="..\common\RestitchPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
+<Content Include="..\common\RestitchPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
+```
+
+   It is the 'RestitchPackage.targets' that will trigger restitching packages on first build after a download.
+
    Because file sizes change from release to release, it may be necessary to add or remove fragments. When you add a fragment, you also need to add a corresponding project folder under the `pkg/` top-level folder. The process of doing so is copy-paste-rename of existing folders. The same goes for adding parts (whether fragmented or not): you should add a corresponding folder and project file. If you remove a fragment (or part), you should remove the corresponding folder, or CI will end up building empty packages.
 
-3. Add the SHA files:
+   Once you have carefully edited the parts and the files that go into them, clean the build directory and re-issue the libtorch downloads commands until there are no errors.
+
+4. Add the SHA files:
 
        git add src\Redist\libtorch-cpu\*.sha
        git add src\Redist\libtorch-cuda-11.7\*.sha
 
    After this you may as well submit to CI just to see what happens, though keep going with the other steps below as well.
 
-4. Build the native and managed code without CUDA
+5. Build the native and managed code without CUDA
 
        dotnet build /p:SkipCuda=true
 
@@ -231,31 +254,31 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
        bin\obj\x64.Debug\Native\LibTorchSharp\LibTorchSharp.vcxproj
 
-5. Similarly build the native code with CUDA
+6. Similarly build the native code with CUDA
 
        dotnet build
 
-6. You must also adjust the set of binaries referenced for tests, see various files under `tests` and `NativeAssemblyReference` in
+7. You must also adjust the set of binaries referenced for tests, see various files under `tests` and `NativeAssemblyReference` in
 `TorchSharp\Directory.Build.targets`.
 
-7. Run tests
+8. Run tests
 
        dotnet build test -c Debug
        dotnet build test -c Release
 
-8. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
+9. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
    get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` in [azure-pipelines.yml](azure-pipelines.yml):
 
-       <LibTorchPackageVersion>1.11.0.1</LibTorchPackageVersion>
+       <LibTorchPackageVersion>1.13.0.1</LibTorchPackageVersion>
 
        dotnet pack -c Debug /p:SkipCuda=true 
        dotnet pack -c Release /p:SkipCuda=true
        dotnet pack -c Debug 
        dotnet pack -c Release
 
-9. Submit to CI and debug problems.
+10. Submit to CI and debug problems.
 
-10. Remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in in [azure-pipelines.yml](azure-pipelines.yml)
+11. Remember to delete all massive artifacts from Azure DevOps and reset this `BuildLibTorchPackages` in in [azure-pipelines.yml](azure-pipelines.yml)
 
 
 ## Building with Visual Studio

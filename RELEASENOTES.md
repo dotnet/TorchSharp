@@ -2,6 +2,12 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.99.0
+
+This is an upgrade to libtorch 1.13. It also moves the underlying CUDA support to 11.7 from 11.3, which means that all the libtorch-cuda-* packages have been renamed.
+
+There are no API changes or bugs fixed in this release.
+
 ## NuGet Version 0.98.3
 
 __Fixed Bugs__:
