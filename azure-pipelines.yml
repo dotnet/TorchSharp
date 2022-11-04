@@ -106,7 +106,7 @@ jobs:
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native binaries
 
-  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-11.7/libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native CUDA binaries
 
@@ -139,7 +139,7 @@ jobs:
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native binaries
 
-  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCudaPackages=true
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-11.7/libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCudaPackages=true
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native CUDA binaries
 
