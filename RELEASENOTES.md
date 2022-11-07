@@ -2,6 +2,19 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.99.0
+
+This is an upgrade to libtorch 1.13. It also moves the underlying CUDA support to 11.7 from 11.3, which means that all the libtorch-cuda-* packages have been renamed.
+
+__Breaking Changes__:
+
+See API Changes.<br/>
+
+__API Changes__:
+
+Removed Tensor.lstsq, paralleling PyTorch. Use torch.linalg.lstsq, instead. This is a breaking change.<br/>
+Added 'left' Boolean argument to `torch.linalg.solve()`<br/>
+
 ## NuGet Version 0.98.3
 
 __Fixed Bugs__:
