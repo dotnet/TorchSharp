@@ -31,7 +31,7 @@ namespace TorchSharp
             /// <param name="generator"></param>
             public Bernoulli(Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
             {
-                if ((p is null && logits is null) || (p is not null && l is not null))
+                if ((p is null && l is null) || (p is not null && l is not null))
                     throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
 
                 this.batch_shape = p is null ? l.size() : p.size();

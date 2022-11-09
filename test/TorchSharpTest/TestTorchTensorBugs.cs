@@ -788,7 +788,34 @@ namespace TorchSharp
             var tmp = bone.forward(x);
         }
 
+        [Fact]
+        [TestOf(nameof(Modules.Categorical.probs))]
+        public void ValidateBug836()
+        {
+            int nSamples = Convert.ToInt32(5e3);
+            random.manual_seed(1);
+            Tensor actionLogits = ones(nSamples, 2);
+            Modules.Categorical distribution = new(logits: actionLogits);
+            Tensor actions = distribution.sample();
+            Tensor entropy = distribution.entropy();
+            Tensor log_prob = distribution.log_prob(actions);
+            var eMean = entropy.mean().ToSingle();
+            var lMean = log_prob.mean().ToSingle();
 
+            Assert.Equal(0.693147, eMean, 0.0001);
+            Assert.Equal(-0.693147, lMean, 0.0001);
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.distributions.Bernoulli))]
+        public void ValidateBug838()
+        {
+            int nSamples = Convert.ToInt32(5e6);
+            random.manual_seed(1);
+            Tensor actionLogits = rand(nSamples, 2);
+            // This should not blow up.
+            var distribution = distributions.Bernoulli(logits: actionLogits);
+        }
 
         [Fact]
         public void ValidateMultiStepLR()
