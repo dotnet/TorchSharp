@@ -2,6 +2,13 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.99.1
+
+__Fixed Bugs__:
+
+836 Categorical seems to be miscalculated<br/>
+838 New Bernoulli get "Object reference not set to an instance of an object."<br/>
+
 ## NuGet Version 0.99.0
 
 This is an upgrade to libtorch 1.13. It also moves the underlying CUDA support to 11.7 from 11.3, which means that all the libtorch-cuda-* packages have been renamed.
@@ -19,9 +26,9 @@ Added 'left' Boolean argument to `torch.linalg.solve()`<br/>
 
 __Fixed Bugs__:
 
-MultiStepLR scheduler was not computing the next LR correctly.
-Fixed incorrect version in package reference.
-Added missing package references to TorchVision manifest.
+MultiStepLR scheduler was not computing the next LR correctly.<br/>
+Fixed incorrect version in package reference.<br/>
+Added missing package references to TorchVision manifest.<br/>
 
 ## NuGet Version 0.98.2
 
