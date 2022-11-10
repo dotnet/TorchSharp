@@ -24,6 +24,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Bessel function of the first kind of order 0.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
             public static Tensor bessel_j0(Tensor input, Tensor @out = null)
             {
                 var res = @out is null ?
@@ -34,6 +39,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Bessel function of the first kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
             public static Tensor bessel_j1(Tensor input, Tensor @out = null)
             {
                 var res = @out is null ?
@@ -44,6 +54,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Bessel function of the second kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
             public static Tensor bessel_y0(Tensor input, Tensor @out = null)
             {
                 var res = @out is null ?
@@ -54,6 +69,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Bessel function of the second kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
             public static Tensor bessel_y1(Tensor input, Tensor @out = null)
             {
                 var res = @out is null ?
@@ -64,6 +84,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Modified Bessel function of the first kind of order 0.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
             public static Tensor modified_bessel_i0(Tensor input, Tensor @out = null)
             {
                 var res = @out is null ?
@@ -74,6 +99,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Modified Bessel function of the first kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
             public static Tensor modified_bessel_i1(Tensor input, Tensor @out = null)
             {
                 var res = @out is null ?
@@ -84,6 +114,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Modified Bessel function of the second kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
             public static Tensor modified_bessel_k0(Tensor input, Tensor @out = null)
             {
                 var res = @out is null ?
@@ -94,6 +129,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Modified Bessel function of the second kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
             public static Tensor modified_bessel_k1(Tensor input, Tensor @out = null)
             {
                 var res = @out is null ?
@@ -104,6 +144,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Scaled modified Bessel function of the second kind of order 0
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
             public static Tensor scaled_modified_bessel_k0(Tensor input, Tensor @out = null)
             {
                 var res = @out is null ?
@@ -114,6 +159,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Scaled modified Bessel function of the second kind of order 1
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
             public static Tensor scaled_modified_bessel_k1(Tensor input, Tensor @out = null)
             {
                 var res = @out is null ?
@@ -124,6 +174,11 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Bessel function of the first kind of order 0.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
             public static Tensor spherical_bessel_j0(Tensor input, Tensor @out = null)
             {
                 var res = @out is null ?
