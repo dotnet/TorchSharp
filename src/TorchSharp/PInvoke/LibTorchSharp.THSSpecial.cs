@@ -102,6 +102,24 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSSpecial_shifted_chebyshev_polynomial_w_out(IntPtr x, IntPtr n, IntPtr @out);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_hermite_polynomial_h(IntPtr x, IntPtr n);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_hermite_polynomial_h_out(IntPtr x, IntPtr n, IntPtr @out);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_hermite_polynomial_he(IntPtr x, IntPtr n);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_hermite_polynomial_he_out(IntPtr x, IntPtr n, IntPtr @out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_laguerre_polynomial_l(IntPtr x, IntPtr n);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_laguerre_polynomial_l_out(IntPtr x, IntPtr n, IntPtr @out);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_legendre_polynomial_p(IntPtr x, IntPtr n);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_legendre_polynomial_p_out(IntPtr x, IntPtr n, IntPtr @out);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSSpecial_entr(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]

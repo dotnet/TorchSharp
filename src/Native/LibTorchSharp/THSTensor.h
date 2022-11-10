@@ -1487,6 +1487,15 @@ EXPORT_API(Tensor) THSSpecial_shifted_chebyshev_polynomial_v_out(const Tensor x,
 EXPORT_API(Tensor) THSSpecial_shifted_chebyshev_polynomial_w(const Tensor x, const Tensor n);
 EXPORT_API(Tensor) THSSpecial_shifted_chebyshev_polynomial_w_out(const Tensor x, const Tensor n, Tensor out);
 
+EXPORT_API(Tensor) THSSpecial_hermite_polynomial_h(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_hermite_polynomial_h_out(const Tensor x, const Tensor n, Tensor out);
+EXPORT_API(Tensor) THSSpecial_hermite_polynomial_he(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_hermite_polynomial_he_out(const Tensor x, const Tensor n, Tensor out);
+
+EXPORT_API(Tensor) THSSpecial_laguerre_polynomial_l(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_laguerre_polynomial_l_out(const Tensor x, const Tensor n, Tensor out);
+EXPORT_API(Tensor) THSSpecial_legendre_polynomial_p(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_legendre_polynomial_p_out(const Tensor x, const Tensor n, Tensor out);
 
 EXPORT_API(Tensor) THSSpecial_entr(const Tensor tensor);
 

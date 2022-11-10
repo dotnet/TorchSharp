@@ -336,6 +336,79 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Probabilist's Hermite polynomials.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Hermite_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor hermite_polynomial_h(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_hermite_polynomial_h(x.Handle, n.Handle) :
+                    THSSpecial_hermite_polynomial_h_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Physicists's Hermite polynomials.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Hermite_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor hermite_polynomial_he(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_hermite_polynomial_he(x.Handle, n.Handle) :
+                    THSSpecial_hermite_polynomial_he_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Laguerre polynomials
+            /// 
+            /// See: https://en.wikipedia.org/wiki/Laguerre_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            /// <returns></returns>
+            public static Tensor laguerre_polynomial_l(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_laguerre_polynomial_l(x.Handle, n.Handle) :
+                    THSSpecial_laguerre_polynomial_l_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Legendre polynomials
+            /// 
+            /// https://en.wikipedia.org/wiki/Legendre_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor legendre_polynomial_p(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_legendre_polynomial_p(x.Handle, n.Handle) :
+                    THSSpecial_legendre_polynomial_p_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Computes the entropy on input, elementwise.
             /// </summary>
             /// <param name="input">The input tensor</param>

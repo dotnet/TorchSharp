@@ -204,6 +204,46 @@ Tensor THSSpecial_shifted_chebyshev_polynomial_w_out(const Tensor x, const Tenso
     CATCH_TENSOR(torch::special::shifted_chebyshev_polynomial_w_out(*out, *x, *n));
 }
 
+Tensor THSSpecial_hermite_polynomial_h(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::hermite_polynomial_h(*x, *n));
+}
+
+Tensor THSSpecial_hermite_polynomial_h_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::hermite_polynomial_h_out(*out, *x, *n));
+}
+
+Tensor THSSpecial_hermite_polynomial_he(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::hermite_polynomial_he(*x, *n));
+}
+
+Tensor THSSpecial_hermite_polynomial_he_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::hermite_polynomial_he_out(*out, *x, *n));
+}
+
+Tensor THSSpecial_laguerre_polynomial_l(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::laguerre_polynomial_l(*x, *n));
+}
+
+Tensor THSSpecial_laguerre_polynomial_l_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::laguerre_polynomial_l_out(*out, *x, *n));
+}
+
+Tensor THSSpecial_legendre_polynomial_p(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::legendre_polynomial_p(*x, *n));
+}
+
+Tensor THSSpecial_legendre_polynomial_p_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::legendre_polynomial_p_out(*out, *x, *n));
+}
+
 Tensor THSSpecial_entr(const Tensor tensor)
 {
     CATCH_TENSOR(torch::special::entr(*tensor));

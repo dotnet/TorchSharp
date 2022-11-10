@@ -7423,6 +7423,54 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.hermite_polynomial_h))]
+        public void HermitePolynomial1()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { 2.0256e+09f, 2.6235e+09f, 3.0913e+09f });
+            var b = torch.special.hermite_polynomial_h(x, n);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.hermite_polynomial_he))]
+        public void HermitePolynomial2()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { 4129906.25f, 5600832f, 7537106f });
+            var b = torch.special.hermite_polynomial_he(x, n);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.laguerre_polynomial_l))]
+        public void LaguerrePolynomial1()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { -0.2612f, -0.4182f, -0.4087f });
+            var b = torch.special.laguerre_polynomial_l(x, n);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.legendre_polynomial_p))]
+        public void LegendrePolynomial1()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { 0.1554f, 0.0051f, -0.1942f });
+            var b = torch.special.legendre_polynomial_p(x, n);
+            Assert.True(b.allclose(expected, 0.01));
+        }
+
+        [Fact]
         [TestOf(nameof(special.erf))]
         public void TestSpecialErrorFunction()
         {
