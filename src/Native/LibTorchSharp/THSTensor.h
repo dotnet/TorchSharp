@@ -321,6 +321,8 @@ EXPORT_API(Tensor) THSTensor_count_nonzero(const Tensor tensor, const int64_t* d
 
 EXPORT_API(Tensor) THSTensor_cov(const Tensor input, int64_t correction, const Tensor fweights, const Tensor aweights);
 
+EXPORT_API(bool) THSTensor_is_cpu(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_cpu(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_cross(const Tensor tensor, const Tensor other, const int64_t dim);
@@ -1437,6 +1439,35 @@ EXPORT_API(Tensor) THSLinalg_vector_norm(const Tensor tensor, const Scalar ord, 
 
 
 // torch.special:
+
+EXPORT_API(Tensor) THSSpecial_airy_ai(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_airy_ai_out(const Tensor tensor, Tensor out);
+
+EXPORT_API(Tensor) THSSpecial_bessel_j0(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_bessel_j0_out(const Tensor tensor, Tensor out);
+EXPORT_API(Tensor) THSSpecial_bessel_j1(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_bessel_j1_out(const Tensor tensor, Tensor out);
+EXPORT_API(Tensor) THSSpecial_bessel_y0(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_bessel_y0_out(const Tensor tensor, Tensor out);
+EXPORT_API(Tensor) THSSpecial_bessel_y1(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_bessel_y1_out(const Tensor tensor, Tensor out);
+
+EXPORT_API(Tensor) THSSpecial_modified_bessel_i0(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_modified_bessel_i0_out(const Tensor tensor, Tensor out);
+EXPORT_API(Tensor) THSSpecial_modified_bessel_i1(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_modified_bessel_i1_out(const Tensor tensor, Tensor out);
+EXPORT_API(Tensor) THSSpecial_modified_bessel_k0(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_modified_bessel_k0_out(const Tensor tensor, Tensor out);
+EXPORT_API(Tensor) THSSpecial_modified_bessel_k1(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_modified_bessel_k1_out(const Tensor tensor, Tensor out);
+
+EXPORT_API(Tensor) THSSpecial_scaled_modified_bessel_k0(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_scaled_modified_bessel_k0_out(const Tensor tensor, Tensor out);
+EXPORT_API(Tensor) THSSpecial_scaled_modified_bessel_k1(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_scaled_modified_bessel_k1_out(const Tensor tensor, Tensor out);
+
+EXPORT_API(Tensor) THSSpecial_spherical_bessel_j0(const Tensor tensor);
+EXPORT_API(Tensor) THSSpecial_spherical_bessel_j0_out(const Tensor tensor, Tensor out);
 
 EXPORT_API(Tensor) THSSpecial_entr(const Tensor tensor);
 

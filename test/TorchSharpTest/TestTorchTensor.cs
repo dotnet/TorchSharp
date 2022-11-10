@@ -7195,6 +7195,138 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.airy_ai))]
+        public void AiryAI()
+        {
+            var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { 0.47573f, 0.41872f, 0.13529f, 0.29116f, 0.23169f });
+            var b = torch.special.airy_ai(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.bessel_j0))]
+        public void BesselJ0()
+        {
+            var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { 0.93847f, 0.98444f, 0.7652f, 0.98444f, 0.93847f });
+            var b = torch.special.bessel_j0(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.bessel_j1))]
+        public void BesselJ1()
+        {
+            var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { -0.24227f, -0.12403f, 0.44005f, 0.12403f, 0.24227f });
+            var b = torch.special.bessel_j1(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.bessel_y0))]
+        public void BesselY0()
+        {
+            var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { 0.0883f, -0.9316f, -0.4445f });
+            var b = torch.special.bessel_y0(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.bessel_y1))]
+        public void BesselY1()
+        {
+            var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { -0.7812f, -2.7041f, -1.4715f });
+            var b = torch.special.bessel_y1(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.modified_bessel_i0))]
+        public void ModifiedBesselI0()
+        {
+            var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { 1.0635f, 1.0157f, 1.2661f, 1.0157f, 1.0635f });
+            var b = torch.special.modified_bessel_i0(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.modified_bessel_i1))]
+        public void ModifiedBesselI1()
+        {
+            var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { -0.2579f, -0.1260f, 0.5652f, 0.1260f, 0.2579f });
+            var b = torch.special.modified_bessel_i1(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.modified_bessel_k0))]
+        public void ModifiedBesselK0()
+        {
+            var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { 0.4210f, 1.5415f, 0.9244f });
+            var b = torch.special.modified_bessel_k0(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.modified_bessel_k1))]
+        public void ModifiedBesselK1()
+        {
+            var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { 0.6019f, 3.7470f, 1.6564f });
+            var b = torch.special.modified_bessel_k1(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.scaled_modified_bessel_k0))]
+        public void ScaledModifiedBesselK0()
+        {
+            var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { 1.1445f, 1.9793f, 1.5241f });
+            var b = torch.special.scaled_modified_bessel_k0(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.scaled_modified_bessel_k1))]
+        public void ScaledModifiedBesselK1()
+        {
+            var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { 1.6362f, 4.8113f, 2.7310f });
+            var b = torch.special.scaled_modified_bessel_k1(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.spherical_bessel_j0))]
+        public void SphericalBesselJ0()
+        {
+            var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var expected = torch.tensor(
+                    new float[] { 0.9589f, 0.9896f, 0.8415f, 0.9896f, 0.9589f });
+            var b = torch.special.spherical_bessel_j0(a);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
         [TestOf(nameof(special.erf))]
         public void TestSpecialErrorFunction()
         {

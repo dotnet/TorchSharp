@@ -273,6 +273,9 @@ namespace TorchSharp.PInvoke
         internal static extern void THSTensor_retain_grad(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
+        internal static extern bool THSTensor_is_cpu(IntPtr handle);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_cpu(IntPtr handle);
 
         [DllImport("LibTorchSharp")]

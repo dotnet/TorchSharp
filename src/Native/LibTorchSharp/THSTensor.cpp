@@ -302,6 +302,13 @@ Tensor THSTensor_cov(const Tensor input, int64_t correction, const Tensor fweigh
     CATCH_TENSOR(input->cov(correction, fw, aw));
 }
 
+bool THSTensor_is_cpu(const Tensor tensor)
+{
+    bool result = true;
+    CATCH(result = tensor->is_cpu(););
+    return result;
+}
+
 Tensor THSTensor_cpu(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->cpu());

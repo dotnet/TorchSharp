@@ -4,6 +4,126 @@
 #include <iostream>
 #include <fstream>
 
+Tensor THSSpecial_airy_ai(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::airy_ai(*tensor));
+}
+
+Tensor THSSpecial_airy_ai_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::airy_ai_out(*out, *tensor));
+}
+
+Tensor THSSpecial_bessel_j0(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::bessel_j0(*tensor));
+}
+
+Tensor THSSpecial_bessel_j0_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::bessel_j0_out(*out, *tensor));
+}
+
+Tensor THSSpecial_bessel_j1(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::bessel_j1(*tensor));
+}
+
+Tensor THSSpecial_bessel_j1_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::bessel_j1_out(*out, *tensor));
+}
+
+Tensor THSSpecial_bessel_y0(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::bessel_y0(*tensor));
+}
+
+Tensor THSSpecial_bessel_y0_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::bessel_y0_out(*out, *tensor));
+}
+
+Tensor THSSpecial_bessel_y1(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::bessel_y1(*tensor));
+}
+
+Tensor THSSpecial_bessel_y1_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::bessel_y1_out(*out, *tensor));
+}
+
+Tensor THSSpecial_modified_bessel_i0(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::modified_bessel_i0(*tensor));
+}
+
+Tensor THSSpecial_modified_bessel_i0_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::modified_bessel_i0_out(*out, *tensor));
+}
+
+Tensor THSSpecial_modified_bessel_i1(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::modified_bessel_i1(*tensor));
+}
+
+Tensor THSSpecial_modified_bessel_i1_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::modified_bessel_i1_out(*out, *tensor));
+}
+
+Tensor THSSpecial_modified_bessel_k0(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::modified_bessel_k0(*tensor));
+}
+
+Tensor THSSpecial_modified_bessel_k0_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::modified_bessel_k0_out(*out, *tensor));
+}
+
+Tensor THSSpecial_modified_bessel_k1(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::modified_bessel_k1(*tensor));
+}
+
+Tensor THSSpecial_modified_bessel_k1_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::modified_bessel_k1_out(*out, *tensor));
+}
+
+Tensor THSSpecial_scaled_modified_bessel_k0(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::scaled_modified_bessel_k0(*tensor));
+}
+
+Tensor THSSpecial_scaled_modified_bessel_k0_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::scaled_modified_bessel_k0_out(*out, *tensor));
+}
+
+Tensor THSSpecial_scaled_modified_bessel_k1(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::scaled_modified_bessel_k1(*tensor));
+}
+
+Tensor THSSpecial_scaled_modified_bessel_k1_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::scaled_modified_bessel_k1_out(*out, *tensor));
+}
+
+Tensor THSSpecial_spherical_bessel_j0(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::special::spherical_bessel_j0(*tensor));
+}
+
+Tensor THSSpecial_spherical_bessel_j0_out(const Tensor tensor, Tensor out)
+{
+    CATCH_TENSOR(torch::special::spherical_bessel_j0_out(*out, *tensor));
+}
+
 Tensor THSSpecial_entr(const Tensor tensor)
 {
     CATCH_TENSOR(torch::special::entr(*tensor));

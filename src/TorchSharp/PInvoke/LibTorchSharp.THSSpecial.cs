@@ -8,6 +8,66 @@ namespace TorchSharp.PInvoke
     internal static partial class LibTorchSharp
     {
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_airy_ai(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_airy_ai_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_bessel_j0(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_bessel_j0_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_bessel_j1(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_bessel_j1_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_bessel_y0(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_bessel_y0_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_bessel_y1(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_bessel_y1_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_modified_bessel_i0(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_modified_bessel_i0_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_modified_bessel_i1(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_modified_bessel_i1_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_modified_bessel_k0(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_modified_bessel_k0_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_modified_bessel_k1(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_modified_bessel_k1_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_scaled_modified_bessel_k0(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_scaled_modified_bessel_k0_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_scaled_modified_bessel_k1(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_scaled_modified_bessel_k1_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_spherical_bessel_j0(IntPtr tensor);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_spherical_bessel_j0_out(IntPtr tensor, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSSpecial_entr(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]

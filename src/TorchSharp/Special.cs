@@ -9,6 +9,133 @@ namespace TorchSharp
         public static class special
         {
             /// <summary>
+            /// Airy function \text{Ai}\left(\text{input}\right)Ai(input).
+            /// </summary>
+            /// <param name="input">Input tensor</param>
+            /// <param name="out">Optional output tensor, will be modified if present.</param>
+            /// <returns></returns>
+            public static Tensor airy_ai(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_airy_ai(input.Handle) :
+                    THSSpecial_airy_ai_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor bessel_j0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_bessel_j0(input.Handle) :
+                    THSSpecial_bessel_j0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor bessel_j1(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_bessel_j1(input.Handle) :
+                    THSSpecial_bessel_j1_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor bessel_y0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_bessel_y0(input.Handle) :
+                    THSSpecial_bessel_y0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor bessel_y1(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_bessel_y1(input.Handle) :
+                    THSSpecial_bessel_y1_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor modified_bessel_i0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_modified_bessel_i0(input.Handle) :
+                    THSSpecial_modified_bessel_i0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor modified_bessel_i1(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_modified_bessel_i1(input.Handle) :
+                    THSSpecial_modified_bessel_i1_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor modified_bessel_k0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_modified_bessel_k0(input.Handle) :
+                    THSSpecial_modified_bessel_k0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor modified_bessel_k1(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_modified_bessel_k1(input.Handle) :
+                    THSSpecial_modified_bessel_k1_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor scaled_modified_bessel_k0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_scaled_modified_bessel_k0(input.Handle) :
+                    THSSpecial_scaled_modified_bessel_k0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor scaled_modified_bessel_k1(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_scaled_modified_bessel_k1(input.Handle) :
+                    THSSpecial_scaled_modified_bessel_k1_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            public static Tensor spherical_bessel_j0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_spherical_bessel_j0(input.Handle) :
+                    THSSpecial_spherical_bessel_j0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+
+            /// <summary>
             /// Computes the entropy on input, elementwise.
             /// </summary>
             /// <param name="input">The input tensor</param>
