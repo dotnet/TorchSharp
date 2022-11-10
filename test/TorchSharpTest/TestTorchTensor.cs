@@ -7199,6 +7199,7 @@ namespace TorchSharp
         public void AiryAI()
         {
             var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { 0.47573f, 0.41872f, 0.13529f, 0.29116f, 0.23169f });
             var b = torch.special.airy_ai(a);
@@ -7210,10 +7211,13 @@ namespace TorchSharp
         public void BesselJ0()
         {
             var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { 0.93847f, 0.98444f, 0.7652f, 0.98444f, 0.93847f });
             var b = torch.special.bessel_j0(a);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.bessel_j0(a, z);
+            Assert.True(z.allclose(expected, 0.001));
         }
 
         [Fact]
@@ -7221,10 +7225,13 @@ namespace TorchSharp
         public void BesselJ1()
         {
             var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { -0.24227f, -0.12403f, 0.44005f, 0.12403f, 0.24227f });
             var b = torch.special.bessel_j1(a);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.bessel_j1(a, z);
+            Assert.True(z.allclose(expected, 0.001));
         }
 
         [Fact]
@@ -7232,10 +7239,13 @@ namespace TorchSharp
         public void BesselY0()
         {
             var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { 0.0883f, -0.9316f, -0.4445f });
             var b = torch.special.bessel_y0(a);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.bessel_y0(a, z);
+            Assert.True(z.allclose(expected, 0.001));
         }
 
         [Fact]
@@ -7243,10 +7253,13 @@ namespace TorchSharp
         public void BesselY1()
         {
             var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { -0.7812f, -2.7041f, -1.4715f });
             var b = torch.special.bessel_y1(a);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.bessel_y1(a, z);
+            Assert.True(z.allclose(expected, 0.001));
         }
 
         [Fact]
@@ -7254,10 +7267,13 @@ namespace TorchSharp
         public void ModifiedBesselI0()
         {
             var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { 1.0635f, 1.0157f, 1.2661f, 1.0157f, 1.0635f });
             var b = torch.special.modified_bessel_i0(a);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.modified_bessel_i0(a, z);
+            Assert.True(z.allclose(expected, 0.001));
         }
 
         [Fact]
@@ -7265,10 +7281,13 @@ namespace TorchSharp
         public void ModifiedBesselI1()
         {
             var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { -0.2579f, -0.1260f, 0.5652f, 0.1260f, 0.2579f });
             var b = torch.special.modified_bessel_i1(a);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.modified_bessel_i1(a, z);
+            Assert.True(z.allclose(expected, 0.001));
         }
 
         [Fact]
@@ -7276,10 +7295,13 @@ namespace TorchSharp
         public void ModifiedBesselK0()
         {
             var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { 0.4210f, 1.5415f, 0.9244f });
             var b = torch.special.modified_bessel_k0(a);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.modified_bessel_k0(a, z);
+            Assert.True(z.allclose(expected, 0.001));
         }
 
         [Fact]
@@ -7287,10 +7309,13 @@ namespace TorchSharp
         public void ModifiedBesselK1()
         {
             var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { 0.6019f, 3.7470f, 1.6564f });
             var b = torch.special.modified_bessel_k1(a);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.modified_bessel_k1(a, z);
+            Assert.True(z.allclose(expected, 0.001));
         }
 
         [Fact]
@@ -7298,10 +7323,13 @@ namespace TorchSharp
         public void ScaledModifiedBesselK0()
         {
             var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { 1.1445f, 1.9793f, 1.5241f });
             var b = torch.special.scaled_modified_bessel_k0(a);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.scaled_modified_bessel_k0(a, z);
+            Assert.True(z.allclose(expected, 0.001));
         }
 
         [Fact]
@@ -7309,10 +7337,13 @@ namespace TorchSharp
         public void ScaledModifiedBesselK1()
         {
             var a = torch.tensor(new float[] { 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { 1.6362f, 4.8113f, 2.7310f });
             var b = torch.special.scaled_modified_bessel_k1(a);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.scaled_modified_bessel_k1(a, z);
+            Assert.True(z.allclose(expected, 0.001));
         }
 
         [Fact]
@@ -7320,10 +7351,13 @@ namespace TorchSharp
         public void SphericalBesselJ0()
         {
             var a = torch.tensor(new float[] { -0.5f, -0.25f, 1.0f, 0.25f, 0.5f });
+            var z = torch.zeros_like(a);
             var expected = torch.tensor(
                     new float[] { 0.9589f, 0.9896f, 0.8415f, 0.9896f, 0.9589f });
             var b = torch.special.spherical_bessel_j0(a);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.spherical_bessel_j0(a, z);
+            Assert.True(z.allclose(expected, 0.001));
         }
 
         [Fact]
@@ -7332,10 +7366,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { 0.8474f, 0.1164f, -0.9931f });
             var b = torch.special.chebyshev_polynomial_t(x, n);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.chebyshev_polynomial_t(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
@@ -7344,10 +7381,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { 0.7805f, -0.0622f, -1.0256f });
             var b = torch.special.chebyshev_polynomial_u(x, n);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.chebyshev_polynomial_u(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
@@ -7356,10 +7396,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { 1.3157f, 0.9469f, -0.9038f });
             var b = torch.special.chebyshev_polynomial_v(x, n);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.chebyshev_polynomial_v(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
@@ -7368,10 +7411,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { 0.2453f, -1.0714f, -1.1474f });
             var b = torch.special.chebyshev_polynomial_w(x, n);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.chebyshev_polynomial_w(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
@@ -7380,10 +7426,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { -0.9611f, 0.5865f, -0.9260f });
             var b = torch.special.shifted_chebyshev_polynomial_t(x, n);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.shifted_chebyshev_polynomial_t(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
@@ -7392,10 +7441,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { -0.6478f, -0.0990f, -0.7273f });
             var b = torch.special.shifted_chebyshev_polynomial_u(x, n);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.shifted_chebyshev_polynomial_u(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
@@ -7404,10 +7456,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { -0.2302f, -1.1600f, -0.3007f });
             var b = torch.special.shifted_chebyshev_polynomial_v(x, n);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.shifted_chebyshev_polynomial_v(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
@@ -7416,10 +7471,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { -1.0655f, 0.9621f, -1.1538f });
             var b = torch.special.shifted_chebyshev_polynomial_w(x, n);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.shifted_chebyshev_polynomial_w(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
@@ -7428,10 +7486,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { 2.0256e+09f, 2.6235e+09f, 3.0913e+09f });
             var b = torch.special.hermite_polynomial_h(x, n);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.hermite_polynomial_h(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
@@ -7440,10 +7501,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { 4129906.25f, 5600832f, 7537106f });
             var b = torch.special.hermite_polynomial_he(x, n);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.hermite_polynomial_he(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
@@ -7452,10 +7516,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { -0.2612f, -0.4182f, -0.4087f });
             var b = torch.special.laguerre_polynomial_l(x, n);
             Assert.True(b.allclose(expected, 0.001));
+            torch.special.laguerre_polynomial_l(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
@@ -7464,10 +7531,13 @@ namespace TorchSharp
         {
             var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
             var n = torch.ones(3, dtype: torch.int64) * 17;
+            var z = torch.zeros_like(x);
             var expected = torch.tensor(
                     new float[] { 0.1554f, 0.0051f, -0.1942f });
             var b = torch.special.legendre_polynomial_p(x, n);
             Assert.True(b.allclose(expected, 0.01));
+            torch.special.legendre_polynomial_p(x, n, z);
+            Assert.True(z.allclose(expected, 0.01));
         }
 
         [Fact]
