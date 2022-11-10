@@ -43,7 +43,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor probs {
                 get {
-                    return _probs ?? LogitsToProbs(_logits, true);
+                    return _probs ?? LogitsToProbs(_logits);
                 }
             }
 
