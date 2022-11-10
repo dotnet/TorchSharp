@@ -9,7 +9,7 @@ namespace TorchSharp
         public static class special
         {
             /// <summary>
-            /// Airy function \text{Ai}\left(\text{input}\right)Ai(input).
+            /// Airy function.
             /// </summary>
             /// <param name="input">Input tensor</param>
             /// <param name="out">Optional output tensor, will be modified if present.</param>
@@ -189,6 +189,151 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the first kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor chebyshev_polynomial_t(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_chebyshev_polynomial_t(x.Handle, n.Handle) :
+                    THSSpecial_chebyshev_polynomial_t_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the second kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor chebyshev_polynomial_u(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_chebyshev_polynomial_u(x.Handle, n.Handle) :
+                    THSSpecial_chebyshev_polynomial_u_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the third kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor chebyshev_polynomial_v(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_chebyshev_polynomial_v(x.Handle, n.Handle) :
+                    THSSpecial_chebyshev_polynomial_v_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the fourth kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor chebyshev_polynomial_w(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_chebyshev_polynomial_w(x.Handle, n.Handle) :
+                    THSSpecial_chebyshev_polynomial_w_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the first kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor shifted_chebyshev_polynomial_t(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_shifted_chebyshev_polynomial_t(x.Handle, n.Handle) :
+                    THSSpecial_shifted_chebyshev_polynomial_t_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the second kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor shifted_chebyshev_polynomial_u(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_shifted_chebyshev_polynomial_u(x.Handle, n.Handle) :
+                    THSSpecial_shifted_chebyshev_polynomial_u_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the third kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor shifted_chebyshev_polynomial_v(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_shifted_chebyshev_polynomial_v(x.Handle, n.Handle) :
+                    THSSpecial_shifted_chebyshev_polynomial_v_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the fourth kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor shifted_chebyshev_polynomial_w(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_shifted_chebyshev_polynomial_w(x.Handle, n.Handle) :
+                    THSSpecial_shifted_chebyshev_polynomial_w_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
 
             /// <summary>
             /// Computes the entropy on input, elementwise.

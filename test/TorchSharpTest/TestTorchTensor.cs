@@ -7327,6 +7327,102 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(special.chebyshev_polynomial_t))]
+        public void ChebyshevPolynomial1()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { 0.8474f, 0.1164f, -0.9931f });
+            var b = torch.special.chebyshev_polynomial_t(x, n);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.chebyshev_polynomial_u))]
+        public void ChebyshevPolynomial2()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { 0.7805f, -0.0622f, -1.0256f });
+            var b = torch.special.chebyshev_polynomial_u(x, n);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.chebyshev_polynomial_v))]
+        public void ChebyshevPolynomial3()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { 1.3157f, 0.9469f, -0.9038f });
+            var b = torch.special.chebyshev_polynomial_v(x, n);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.chebyshev_polynomial_w))]
+        public void ChebyshevPolynomial4()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { 0.2453f, -1.0714f, -1.1474f });
+            var b = torch.special.chebyshev_polynomial_w(x, n);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.shifted_chebyshev_polynomial_t))]
+        public void ShiftedChebyshevPolynomial1()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { -0.9611f, 0.5865f, -0.9260f });
+            var b = torch.special.shifted_chebyshev_polynomial_t(x, n);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.shifted_chebyshev_polynomial_u))]
+        public void ShiftedChebyshevPolynomial2()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { -0.6478f, -0.0990f, -0.7273f });
+            var b = torch.special.shifted_chebyshev_polynomial_u(x, n);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.shifted_chebyshev_polynomial_v))]
+        public void ShiftedChebyshevPolynomial3()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { -0.2302f, -1.1600f, -0.3007f });
+            var b = torch.special.shifted_chebyshev_polynomial_v(x, n);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
+        [TestOf(nameof(special.shifted_chebyshev_polynomial_w))]
+        public void ShiftedChebyshevPolynomial4()
+        {
+            var x = torch.tensor(new float[] { 0.125f, 0.177f, 0.267f });
+            var n = torch.ones(3, dtype: torch.int64) * 17;
+            var expected = torch.tensor(
+                    new float[] { -1.0655f, 0.9621f, -1.1538f });
+            var b = torch.special.shifted_chebyshev_polynomial_w(x, n);
+            Assert.True(b.allclose(expected, 0.001));
+        }
+
+        [Fact]
         [TestOf(nameof(special.erf))]
         public void TestSpecialErrorFunction()
         {

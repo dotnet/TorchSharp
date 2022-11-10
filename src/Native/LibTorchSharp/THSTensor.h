@@ -1469,6 +1469,25 @@ EXPORT_API(Tensor) THSSpecial_scaled_modified_bessel_k1_out(const Tensor tensor,
 EXPORT_API(Tensor) THSSpecial_spherical_bessel_j0(const Tensor tensor);
 EXPORT_API(Tensor) THSSpecial_spherical_bessel_j0_out(const Tensor tensor, Tensor out);
 
+EXPORT_API(Tensor) THSSpecial_chebyshev_polynomial_t(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_chebyshev_polynomial_t_out(const Tensor x, const Tensor n, Tensor out);
+EXPORT_API(Tensor) THSSpecial_chebyshev_polynomial_u(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_chebyshev_polynomial_u_out(const Tensor x, const Tensor n, Tensor out);
+EXPORT_API(Tensor) THSSpecial_chebyshev_polynomial_v(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_chebyshev_polynomial_v_out(const Tensor x, const Tensor n, Tensor out);
+EXPORT_API(Tensor) THSSpecial_chebyshev_polynomial_w(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_chebyshev_polynomial_w_out(const Tensor x, const Tensor n, Tensor out);
+
+EXPORT_API(Tensor) THSSpecial_shifted_chebyshev_polynomial_t(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_shifted_chebyshev_polynomial_t_out(const Tensor x, const Tensor n, Tensor out);
+EXPORT_API(Tensor) THSSpecial_shifted_chebyshev_polynomial_u(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_shifted_chebyshev_polynomial_u_out(const Tensor x, const Tensor n, Tensor out);
+EXPORT_API(Tensor) THSSpecial_shifted_chebyshev_polynomial_v(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_shifted_chebyshev_polynomial_v_out(const Tensor x, const Tensor n, Tensor out);
+EXPORT_API(Tensor) THSSpecial_shifted_chebyshev_polynomial_w(const Tensor x, const Tensor n);
+EXPORT_API(Tensor) THSSpecial_shifted_chebyshev_polynomial_w_out(const Tensor x, const Tensor n, Tensor out);
+
+
 EXPORT_API(Tensor) THSSpecial_entr(const Tensor tensor);
 
 EXPORT_API(Tensor) THSSpecial_erf(const Tensor tensor);

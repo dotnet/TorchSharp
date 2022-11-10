@@ -124,6 +124,86 @@ Tensor THSSpecial_spherical_bessel_j0_out(const Tensor tensor, Tensor out)
     CATCH_TENSOR(torch::special::spherical_bessel_j0_out(*out, *tensor));
 }
 
+Tensor THSSpecial_chebyshev_polynomial_t(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::chebyshev_polynomial_t(*x, *n));
+}
+
+Tensor THSSpecial_chebyshev_polynomial_t_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::chebyshev_polynomial_t_out(*out, *x, *n));
+}
+
+Tensor THSSpecial_chebyshev_polynomial_u(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::chebyshev_polynomial_u(*x, *n));
+}
+
+Tensor THSSpecial_chebyshev_polynomial_u_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::chebyshev_polynomial_u_out(*out, *x, *n));
+}
+
+Tensor THSSpecial_chebyshev_polynomial_v(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::chebyshev_polynomial_v(*x, *n));
+}
+
+Tensor THSSpecial_chebyshev_polynomial_v_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::chebyshev_polynomial_v_out(*out, *x, *n));
+}
+
+Tensor THSSpecial_chebyshev_polynomial_w(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::chebyshev_polynomial_w(*x, *n));
+}
+
+Tensor THSSpecial_chebyshev_polynomial_w_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::chebyshev_polynomial_w_out(*out, *x, *n));
+}
+
+Tensor THSSpecial_shifted_chebyshev_polynomial_t(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::shifted_chebyshev_polynomial_t(*x, *n));
+}
+
+Tensor THSSpecial_shifted_chebyshev_polynomial_t_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::shifted_chebyshev_polynomial_t_out(*out, *x, *n));
+}
+
+Tensor THSSpecial_shifted_chebyshev_polynomial_u(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::shifted_chebyshev_polynomial_u(*x, *n));
+}
+
+Tensor THSSpecial_shifted_chebyshev_polynomial_u_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::shifted_chebyshev_polynomial_u_out(*out, *x, *n));
+}
+
+Tensor THSSpecial_shifted_chebyshev_polynomial_v(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::shifted_chebyshev_polynomial_v(*x, *n));
+}
+
+Tensor THSSpecial_shifted_chebyshev_polynomial_v_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::shifted_chebyshev_polynomial_v_out(*out, *x, *n));
+}
+
+Tensor THSSpecial_shifted_chebyshev_polynomial_w(const Tensor x, const Tensor n)
+{
+    CATCH_TENSOR(torch::special::shifted_chebyshev_polynomial_w(*x, *n));
+}
+
+Tensor THSSpecial_shifted_chebyshev_polynomial_w_out(const Tensor x, const Tensor n, Tensor out)
+{
+    CATCH_TENSOR(torch::special::shifted_chebyshev_polynomial_w_out(*out, *x, *n));
+}
+
 Tensor THSSpecial_entr(const Tensor tensor)
 {
     CATCH_TENSOR(torch::special::entr(*tensor));
