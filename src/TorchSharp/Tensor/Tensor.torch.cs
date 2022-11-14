@@ -83,10 +83,10 @@ namespace TorchSharp
         public static Tensor nonzero(Tensor input) => input.nonzero();
 
         /// <summary>
-        /// Concatenates the given sequence of seq tensors in the given dimension.
+        /// Concatenates the given sequence of tensors in the given dimension.
         /// </summary>
-        /// <param name="tensors"></param>
-        /// <param name="dim"></param>
+        /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
+        /// <param name="dim">The dimension over which the tensors are concatenated</param>
         /// <returns></returns>
         /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
         public static Tensor cat(IList<Tensor> tensors, long dim = 0)
@@ -107,6 +107,15 @@ namespace TorchSharp
                 return new Tensor(res);
             }
         }
+
+        /// <summary>
+        /// Concatenates the given sequence of tensors along the given axis (dimension).
+        /// </summary>
+        /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
+        /// <param name="axis">The dimension over which the tensors are concatenated</param>
+        /// <returns></returns>
+        /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
+        public static Tensor concatenate(IList<Tensor> tensors, long axis = 0) => torch.cat(tensors, axis);
 
         /// <summary>
         /// Returns a new tensor which indexes the input tensor along dimension dim using the entries in index which is a LongTensor.

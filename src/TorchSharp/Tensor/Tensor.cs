@@ -632,6 +632,15 @@ namespace TorchSharp
                 return this;
             }
 
+            /// <summary>
+            /// Returns true if the tensor is on the CPU
+            /// </summary>
+            public bool is_cpu()
+            {
+                var res = LibTorchSharp.THSTensor_is_cpu(Handle);
+                torch.CheckForErrors();
+                return res;
+            }
 
             /// <summary>
             /// Moves the tensor data to the CPU device
