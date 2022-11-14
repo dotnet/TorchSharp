@@ -1044,8 +1044,13 @@ namespace TorchSharp
             }
 
             /// <summary>
-            ///
+            /// Generates a Vandermonde matrix.
             /// </summary>
+            /// <param name="N">Number of columns in the output. If N is not specified, a square array is returned (N = len(x)).</param>
+            /// <param name="increasing">
+            /// Order of the powers of the columns.
+            /// If true, the powers increase from left to right, if false (the default) they are reversed.
+            /// </param>
             public Tensor vander(long N = -1, bool increasing = false)
             {
                 if (this.Dimensions != 1) throw new InvalidOperationException("Input argument for 'vander()' must be 1-D.");

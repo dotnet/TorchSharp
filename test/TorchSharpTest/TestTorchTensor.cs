@@ -5714,6 +5714,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.linalg.vander))]
+        public void LinalgVanderTest()
+        {
+            var x = torch.tensor(new int[] { 1, 2, 3, 5 });
+            {
+                var res = torch.linalg.vander(x);
+                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 1, 2, 4, 8, 1, 3, 9, 27, 1, 5, 25, 125 }, 4, 4);
+                Assert.Equal(expected, res);
+            }
+            {
+                var res = torch.linalg.vander(x,3);
+                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 2, 4, 1, 3, 9, 1, 5, 25 }, 4, 3);
+                Assert.Equal(expected, res);
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.expand))]
         public void ExpandTest()
         {
@@ -6879,6 +6896,16 @@ namespace TorchSharp
 
             Assert.Equal(a.shape, l.Q.shape);
             Assert.Equal(a.shape, l.R.shape);
+        }
+
+        [Fact]
+        [TestOf(nameof(linalg.solve))]
+        public void SolveTest()
+        {
+            var A = torch.randn(3, 3);
+            var b = torch.randn(3);
+            var x = torch.linalg.solve(A, b);
+            Assert.True(A.matmul(x).allclose(b));
         }
 
         [Fact]

@@ -1426,6 +1426,7 @@ EXPORT_API(Tensor) THSLinalg_pinv_tensor(const Tensor tensor, const Tensor atol,
 EXPORT_API(Tensor) THSLinalg_qr(const Tensor tensor, const char mode, Tensor* R);
 
 EXPORT_API(Tensor) THSLinalg_solve(const Tensor tensor, Tensor other, bool left);
+EXPORT_API(Tensor) THSLinalg_solve_ex(const Tensor tensor, Tensor other, bool left, bool check_errors, Tensor* S);
 
 EXPORT_API(Tensor) THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, Tensor* Vh);
 
@@ -1436,6 +1437,13 @@ EXPORT_API(Tensor) THSLinalg_tensorinv(const Tensor tensor, const int64_t ind);
 EXPORT_API(Tensor) THSLinalg_tensorsolve(const Tensor tensor, Tensor other, const int64_t* dim, const int dim_length);
 
 EXPORT_API(Tensor) THSLinalg_vector_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int dim_length, const bool keepdim);
+
+EXPORT_API(Tensor) THSLinalg_vander(const Tensor tensor, const int64_t N);
+
+EXPORT_API(Tensor) THSLinalg_vecdot(const Tensor x, const Tensor y, const int64_t dim, Tensor out);
+
+EXPORT_API(Tensor) THSLinalg_lu_solve(const Tensor B, const Tensor LU, const Tensor pivots, bool left, bool adjoint, Tensor out);
+
 
 
 // torch.special:

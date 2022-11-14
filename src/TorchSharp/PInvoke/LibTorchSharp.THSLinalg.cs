@@ -2,6 +2,7 @@
 #nullable enable
 using System;
 using System.Runtime.InteropServices;
+using static TorchSharp.torch;
 
 namespace TorchSharp.PInvoke
 {
@@ -101,6 +102,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSLinalg_solve(IntPtr tensor, IntPtr other, bool left);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSLinalg_solve_ex(IntPtr tensor, IntPtr other, bool left, bool check_errors, out IntPtr infos);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_svd(IntPtr tensor, bool fullMatrices, out IntPtr pS, out IntPtr pVh);
 
         [DllImport("LibTorchSharp")]
@@ -120,5 +124,15 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_pinverse(IntPtr tensor, double rcond, bool hermitian);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSLinalg_vander(IntPtr tensor, long N);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSLinalg_vecdot(IntPtr x, IntPtr y, long dim, IntPtr output);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSLinalg_lu_solve(IntPtr B, IntPtr LU, IntPtr pivots, bool left, bool adjoint, IntPtr output);
+
     }
 }
