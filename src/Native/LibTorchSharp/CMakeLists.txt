@@ -1,47 +1,84 @@
 project(LibTorchSharp)
-
 if(APPLE)
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
  link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
 endif()
-find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
+ find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
 
-set(SOURCES
-    cifar10.h
-	crc32c.h
-    THSAutograd.h
-    THSData.h
-    THSJIT.h
-    THSNN.h
-	THSStorage.h
-    THSTensor.h
-    THSTorch.h
-	THSVision.h
-    Utils.h
-    cifar10.cpp
-	crc32c.c
-	THSActivation.cpp
-    THSAutograd.cpp
-	THSConvolution.cpp
-    THSData.cpp
-	THSFFT.cpp
-    THSJIT.cpp
-	THSLinearAlgebra.cpp
-	THSLoss.cpp
-	THSModule.cpp
-    THSNN.cpp
-	THSNormalization.cpp
-	THSOptimizers.cpp
-	THSRandom.cpp
-	THSSpecial.cpp
-	THSStorage.cpp
-    THSTensor.cpp
-	THSTensorConv.cpp
-	THSTensorFactories.cpp
-	THSTensorMath.cpp
-    THSTorch.cpp
-	THSVision.cpp
-    Utils.cpp)
+ if ( CMAKE_SYSTEM_PROCESSOR MATCHES "x86|X86|amd64|AMD64" )
+    set(SOURCES
+        cifar10.h
+        crc32c.h
+        THSAutograd.h
+        THSData.h
+        THSJIT.h
+        THSNN.h
+        THSStorage.h
+        THSTensor.h
+        THSTorch.h
+        THSVision.h
+        Utils.h
+        cifar10.cpp
+        crc32c.c
+        THSActivation.cpp
+        THSAutograd.cpp
+        THSConvolution.cpp
+        THSData.cpp
+        THSFFT.cpp
+        THSJIT.cpp
+        THSLinearAlgebra.cpp
+        THSLoss.cpp
+        THSModule.cpp
+        THSNN.cpp
+        THSNormalization.cpp
+        THSOptimizers.cpp
+        THSRandom.cpp
+        THSSpecial.cpp
+        THSStorage.cpp
+        THSTensor.cpp
+        THSTensorConv.cpp
+        THSTensorFactories.cpp
+        THSTensorMath.cpp
+        THSTorch.cpp
+        THSVision.cpp
+        Utils.cpp)
+else()
+    message(STATUS "Trying to compile LibTorchSharp for non-x86 based device. Some features will not works fine.")
+    set(SOURCES
+        cifar10.h
+        THSAutograd.h
+        THSData.h
+        THSJIT.h
+        THSNN.h
+        THSStorage.h
+        THSTensor.h
+        THSTorch.h
+        THSVision.h
+        Utils.h
+        cifar10.cpp
+        THSActivation.cpp
+        THSAutograd.cpp
+        THSConvolution.cpp
+        THSData.cpp
+        THSFFT.cpp
+        THSJIT.cpp
+        THSLinearAlgebra.cpp
+        THSLoss.cpp
+        THSModule.cpp
+        THSNN.cpp
+        THSNormalization.cpp
+        THSOptimizers.cpp
+        THSRandom.cpp
+        THSSpecial.cpp
+        THSStorage.cpp
+        THSTensor.cpp
+        THSTensorConv.cpp
+        THSTensorFactories.cpp
+        THSTensorMath.cpp
+        THSTorch.cpp
+        THSVision.cpp
+        Utils.cpp)
+endif()
 
 if(NOT WIN32)
     list(APPEND SOURCES ${VERSION_FILE_PATH})
