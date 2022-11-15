@@ -134,7 +134,16 @@ jobs:
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
     vmImage: 'windows-2022'
+
   steps:
+
+	- task: UseDotNet@2
+	  displayName: 'Use .NET Core sdk'
+	  inputs:
+		packageType: sdk
+		version: 6.0.402
+		installationPath: $(Agent.ToolsDirectory)/dotnet
+
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCpuPackages=true
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native binaries
