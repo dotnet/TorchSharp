@@ -11,7 +11,7 @@ namespace TorchSharp.PInvoke
         internal static extern bool THSAutograd_isGradEnabled();
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSAutograd_setGrad(bool enabled);
+        internal static extern void THSAutograd_setGrad([MarshalAs(UnmanagedType.U1)] bool enabled);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSAutograd_grad(

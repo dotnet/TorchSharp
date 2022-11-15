@@ -108,7 +108,7 @@ Tensor THSNN_dropout(const Tensor input, const double p, bool training, bool inp
     CATCH_TENSOR(torch::nn::functional::dropout(*input, opts));
 }
 
-Tensor THSNN_dopout2d(const Tensor input, const double p, bool training, bool inplace)
+Tensor THSNN_dropout2d(const Tensor input, const double p, bool training, bool inplace)
 {
     auto opts = torch::nn::functional::Dropout2dFuncOptions()
         .inplace(inplace)
@@ -173,6 +173,24 @@ Tensor THSNN_AlphaDropout_forward(const NNModule module, const Tensor tensor)
 {
     CATCH_TENSOR((*module)->as<torch::nn::AlphaDropout>()->forward(*tensor));
 }
+
+NNModule THSNN_Dropout1d_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        // Creating a Dropout2d instance here is done on purpose. There's no torch::nn::Dropout1d
+        auto opts = torch::nn::Dropout2dOptions(probability).inplace(inplace);
+        res = create_module<torch::nn::Dropout2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_Dropout1d_forward(const NNModule module, const Tensor tensor)
+{
+    auto drop1d = (*module)->as<torch::nn::Dropout2d>();
+    CATCH_TENSOR(drop1d->options.inplace()
+        ? drop1d->forward((*tensor).unsqueeze_(-1)).squeeze_(-1)
+        : drop1d->forward((*tensor).unsqueeze(-1)).squeeze(-1));
+}
+
 
 NNModule THSNN_Dropout2d_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
 {
