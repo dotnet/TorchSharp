@@ -247,10 +247,24 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Computes the LU decomposition with partial pivoting of a matrix.
+            /// </summary>
+            /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="pivot">Controls whether to compute the LU decomposition with partial pivoting or no pivoting</param>
+            /// <returns></returns>
+            public static (Tensor P, Tensor L, Tensor U) lu(Tensor input, bool pivot = true)
+            {
+                var solution = THSLinalg_lu(input.Handle, pivot, out var pL, out var pU);
+                if (solution == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(solution), new Tensor(pL), new Tensor(pU));
+            }
+
+            /// <summary>
             /// Computes a compact representation of the LU factorization with partial pivoting of a matrix.
             /// </summary>
-            /// <param name="input"></param>
-            /// <param name="pivot"></param>
+            /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="pivot">Controls whether to compute the LU decomposition with partial pivoting or no pivoting</param>
             /// <returns></returns>
             public static (Tensor LU, Tensor? Pivots) lu_factor(Tensor input, bool pivot = true)
             {

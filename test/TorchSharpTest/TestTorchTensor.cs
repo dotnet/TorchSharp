@@ -6959,6 +6959,33 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.lu_factor))]
+        public void LUTest()
+        {
+            var A = torch.randn(2, 3, 3);
+            var A_factor = torch.linalg.lu(A);
+            // For right now, pretty much just checking that it's not blowing up.
+            Assert.Multiple(
+                () => Assert.NotNull(A_factor.P),
+                () => Assert.NotNull(A_factor.L),
+                () => Assert.NotNull(A_factor.U)
+            );
+        }
+
+        [Fact]
+        [TestOf(nameof(linalg.lu_factor))]
+        public void LUFactorTest()
+        {
+            var A = torch.randn(2, 3, 3);
+            var A_factor = torch.linalg.lu_factor(A);
+            // For right now, pretty much just checking that it's not blowing up.
+            Assert.Multiple(
+                () => Assert.NotNull(A_factor.LU),
+                () => Assert.NotNull(A_factor.Pivots)
+            );
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.matrix_power))]
         public void MatrixPowerTest()
         {

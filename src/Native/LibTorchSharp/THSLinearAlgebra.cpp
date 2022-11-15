@@ -131,6 +131,15 @@ Tensor THSLinalg_lstsq_rcond(const Tensor A, const Tensor B, const double rcond,
     return ResultTensor(std::get<0>(res));
 }
 
+Tensor THSLinalg_lu(const Tensor A, const bool pivot, Tensor* L, Tensor* U)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg::lu(*A, pivot););
+    *L = ResultTensor(std::get<1>(res));
+    *U = ResultTensor(std::get<2>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 Tensor THSLinalg_lu_factor(const Tensor A, const bool pivot, Tensor* pivots)
 {
     std::tuple<at::Tensor, at::Tensor> res;

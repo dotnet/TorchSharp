@@ -60,6 +60,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSLinalg_lstsq_rcond(IntPtr tensor, IntPtr other, double rcond, out IntPtr pResiduals, out IntPtr pRank, out IntPtr pSingularValues);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSLinalg_lu(IntPtr tensor, [MarshalAs(UnmanagedType.U1)] bool pivot, out IntPtr pL, out IntPtr pU);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_lu_factor(IntPtr tensor, [MarshalAs(UnmanagedType.U1)] bool pivot, out IntPtr pPivots);
 
         [DllImport("LibTorchSharp")]
