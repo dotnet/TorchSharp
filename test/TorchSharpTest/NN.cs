@@ -3959,6 +3959,32 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestDropout1d()
+        {
+            var drop = Dropout1d(0.75);
+            var data = torch.rand(new long[] { 12, 23, 24 });
+            var output = drop.forward(data);
+            Assert.Equal(data.shape, output.shape);
+
+            var dataVal = data.data<float>().ToArray();
+            var outVal = output.data<float>().ToArray();
+            Assert.NotEqual(dataVal, outVal);
+        }
+
+        [Fact]
+        public void TestDropout1dInPlace()
+        {
+            var drop = Dropout1d(0.75, inplace: true);
+            var data = torch.rand(new long[] { 12, 23, 24 });
+            var output = drop.forward(data);
+            Assert.Equal(data.shape, output.shape);
+
+            var dataVal = data.data<float>().ToArray();
+            var outVal = output.data<float>().ToArray();
+            Assert.Equal(outVal, dataVal);
+        }
+
+        [Fact]
         public void TestDropout2d()
         {
             var drop = Dropout2d(0.75);

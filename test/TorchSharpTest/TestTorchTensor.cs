@@ -5714,6 +5714,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.linalg.vander))]
+        public void LinalgVanderTest()
+        {
+            var x = torch.tensor(new int[] { 1, 2, 3, 5 });
+            {
+                var res = torch.linalg.vander(x);
+                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 1, 2, 4, 8, 1, 3, 9, 27, 1, 5, 25, 125 }, 4, 4);
+                Assert.Equal(expected, res);
+            }
+            {
+                var res = torch.linalg.vander(x,3);
+                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 2, 4, 1, 3, 9, 1, 5, 25 }, 4, 3);
+                Assert.Equal(expected, res);
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.expand))]
         public void ExpandTest()
         {
@@ -6882,6 +6899,16 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(linalg.solve))]
+        public void SolveTest()
+        {
+            var A = torch.randn(3, 3);
+            var b = torch.randn(3);
+            var x = torch.linalg.solve(A, b);
+            Assert.True(A.matmul(x).allclose(b));
+        }
+
+        [Fact]
         [TestOf(nameof(linalg.svd))]
         public void SVDTest()
         {
@@ -6929,6 +6956,33 @@ namespace TorchSharp
             Assert.Equal(new long[] { 4 }, l.Rank.shape);
             Assert.Equal(new long[] { 4, 15, 10 }, l.Solution.shape);
             Assert.Equal(0, l.SingularValues.shape[0]);
+        }
+
+        [Fact]
+        [TestOf(nameof(linalg.lu_factor))]
+        public void LUTest()
+        {
+            var A = torch.randn(2, 3, 3);
+            var A_factor = torch.linalg.lu(A);
+            // For right now, pretty much just checking that it's not blowing up.
+            Assert.Multiple(
+                () => Assert.NotNull(A_factor.P),
+                () => Assert.NotNull(A_factor.L),
+                () => Assert.NotNull(A_factor.U)
+            );
+        }
+
+        [Fact]
+        [TestOf(nameof(linalg.lu_factor))]
+        public void LUFactorTest()
+        {
+            var A = torch.randn(2, 3, 3);
+            var A_factor = torch.linalg.lu_factor(A);
+            // For right now, pretty much just checking that it's not blowing up.
+            Assert.Multiple(
+                () => Assert.NotNull(A_factor.LU),
+                () => Assert.NotNull(A_factor.Pivots)
+            );
         }
 
         [Fact]

@@ -131,6 +131,15 @@ Tensor THSLinalg_lstsq_rcond(const Tensor A, const Tensor B, const double rcond,
     return ResultTensor(std::get<0>(res));
 }
 
+Tensor THSLinalg_lu(const Tensor A, const bool pivot, Tensor* L, Tensor* U)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg::lu(*A, pivot););
+    *L = ResultTensor(std::get<1>(res));
+    *U = ResultTensor(std::get<2>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 Tensor THSLinalg_lu_factor(const Tensor A, const bool pivot, Tensor* pivots)
 {
     std::tuple<at::Tensor, at::Tensor> res;
@@ -250,6 +259,14 @@ Tensor THSLinalg_solve(const Tensor tensor, Tensor other, bool left)
     CATCH_TENSOR(torch::linalg::solve(*tensor, *other, left));
 }
 
+Tensor THSLinalg_solve_ex(const Tensor tensor, Tensor other, bool left, bool check_errors, Tensor* S)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg::solve_ex(*tensor, *other, left, check_errors););
+    *S = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 Tensor THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, Tensor* Vh)
 {
     std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
@@ -273,6 +290,21 @@ Tensor THSLinalg_tensorsolve(const Tensor tensor, Tensor other, const int64_t* d
 {
     c10::optional<at::IntArrayRef> dims = (dim == nullptr) ? c10::nullopt : c10::optional<at::IntArrayRef>(at::ArrayRef<int64_t>(dim, dim_length));
     CATCH_TENSOR(torch::linalg::tensorsolve(*tensor, *other, dims));
+}
+
+Tensor THSLinalg_vander(const Tensor tensor, const int64_t N)
+{
+    CATCH_TENSOR(torch::linalg_vander(*tensor, N));
+}
+
+Tensor THSLinalg_vecdot(const Tensor x, const Tensor y, const int64_t dim, Tensor out)
+{
+    CATCH_TENSOR(out == nullptr ? torch::linalg_vecdot(* x, *y, dim) : torch::linalg_vecdot_out(*out, *x, *y, dim));
+}
+
+Tensor THSTensor_lu_solve(const Tensor B, const Tensor LU, const Tensor pivots, bool left, bool adjoint, Tensor out)
+{
+    CATCH_TENSOR(out == nullptr ? torch::linalg_lu_solve(*LU, *pivots, *B, left, adjoint) : torch::linalg_lu_solve_out(*out, *LU, *pivots, *B, left, adjoint));
 }
 
 Tensor THSTensor_cholesky(const Tensor tensor, const bool upper)

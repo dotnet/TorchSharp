@@ -185,9 +185,29 @@ namespace TorchSharp
             }
         }
 
-        private static float TrainLoop(IModule<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer)
+
+        /// <summary>
+        /// Used to test optimizers created with 'maximize: true'
+        /// </summary>
+        class NegateLoss : Loss<Tensor, Tensor, Tensor>
         {
-            var loss = MSELoss(Reduction.Sum);
+            internal NegateLoss(Loss<Tensor, Tensor, Tensor> base_loss)
+            {
+                this.base_loss = base_loss;
+            }
+
+            public override Tensor forward(Tensor input1, Tensor input2)
+            {
+                return base_loss.forward(input1, input2).neg();
+            }
+
+            private Loss<Tensor, Tensor, Tensor> base_loss;
+        }
+
+        private static float TrainLoop(IModule<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer, bool maximize = false)
+        {
+            Loss<Tensor, Tensor, Tensor> loss = MSELoss(Reduction.Sum);
+            if (maximize) loss = new NegateLoss(loss);
 
             float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -206,15 +226,20 @@ namespace TorchSharp
                 optimizer.step();
             }
 
-            // After 10 iterations, the final loss should always be less than the initial loss.
-            Assert.True(finalLoss < initialLoss);
+            // After 10 iterations, the final criterion value should always be better than the initial value.
+            if (maximize) {
+                Assert.True(finalLoss > initialLoss);
+            } else {
+                Assert.True(finalLoss < initialLoss);
+            }
 
             return finalLoss;
         }
 
-        private static float TrainLoop(IModule<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true, int iters = 10)
+        private static float TrainLoop(IModule<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true, int iters = 10, bool maximize = false)
         {
-            var loss = MSELoss(Reduction.Sum);
+            Loss<Tensor, Tensor, Tensor> loss = MSELoss(Reduction.Sum);
+            if (maximize) loss = new NegateLoss(loss);
 
             float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
             float finalLoss = float.MaxValue;
@@ -244,8 +269,12 @@ namespace TorchSharp
                 }
             }
 
-            // After 10 iterations, the final loss should always be less than the initial loss.
-            Assert.True(finalLoss < initialLoss);
+            // After 10 iterations, the final criterion value should always be better than the initial value.
+            if (maximize) {
+                Assert.True(finalLoss > initialLoss);
+            } else {
+                Assert.True(finalLoss < initialLoss);
+            }
 
             return finalLoss;
         }
@@ -276,6 +305,22 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer);
 
             LossIsClose(53.3606f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamMax()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Adam(seq.parameters(), maximize:true);
+
+            var loss = TrainLoop(seq, x, y, optimizer, maximize:true);
+
+            LossIsClose(53.3606f, -loss);
         }
 
         [Fact]
@@ -992,6 +1037,22 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestTrainingASGDMax()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.ASGD(seq.parameters(), maximize:true);
+
+            var loss = TrainLoop(seq, x, y, optimizer, maximize:true);
+
+            LossIsClose(57.748f, -loss);
+        }
+
+        [Fact]
         public void TestTrainingASGDLambda()
         {
             var gen = new Generator(4711);
@@ -1095,6 +1156,23 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer);
 
             LossIsClose(229.68f, loss);
+        }
+
+
+        [Fact]
+        public void TestTrainingRpropMax()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Rprop(seq.parameters(), maximize: true);
+
+            var loss = TrainLoop(seq, x, y, optimizer, maximize:true);
+
+            LossIsClose(229.68f, -loss);
         }
 
         [Fact]
@@ -1208,6 +1286,23 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer);
 
             LossIsClose(156.339f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRMSAlphaMax()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, alpha: 0.75, maximize:true);
+
+            var loss = TrainLoop(seq, x, y, optimizer, maximize:true);
+
+            LossIsClose(156.339f, -loss);
         }
 
         [Fact]

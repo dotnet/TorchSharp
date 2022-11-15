@@ -247,10 +247,24 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Computes the LU decomposition with partial pivoting of a matrix.
+            /// </summary>
+            /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="pivot">Controls whether to compute the LU decomposition with partial pivoting or no pivoting</param>
+            /// <returns></returns>
+            public static (Tensor P, Tensor L, Tensor U) lu(Tensor input, bool pivot = true)
+            {
+                var solution = THSLinalg_lu(input.Handle, pivot, out var pL, out var pU);
+                if (solution == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(solution), new Tensor(pL), new Tensor(pU));
+            }
+
+            /// <summary>
             /// Computes a compact representation of the LU factorization with partial pivoting of a matrix.
             /// </summary>
-            /// <param name="input"></param>
-            /// <param name="pivot"></param>
+            /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="pivot">Controls whether to compute the LU decomposition with partial pivoting or no pivoting</param>
             /// <returns></returns>
             public static (Tensor LU, Tensor? Pivots) lu_factor(Tensor input, bool pivot = true)
             {
@@ -529,6 +543,22 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Computes the solution of a square system of linear equations with a unique solution.
+            /// </summary>
+            /// <param name="input">Ttensor of shape (*, n, n) where * is zero or more batch dimensions.</param>
+            /// <param name="other">Right-hand side tensor of shape (*, n) or (*, n, k) or (n,) or (n, k)</param>
+            /// <param name="left">whether to solve the system AX = B or XA = B.</param>
+            /// <param name="check_errors">controls whether to check the content of infos and raise an error if it is non-zero</param>
+            /// <returns></returns>
+            public static (Tensor result, Tensor info) solve_ex(Tensor input, Tensor other, bool left = true, bool check_errors = false)
+            {
+                var res = THSLinalg_solve_ex(input.Handle, other.Handle, left, check_errors, out var infos);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), new Tensor(infos));
+            }
+
+            /// <summary>
             /// Computes the singular value decomposition (SVD) of a matrix.
             /// </summary>
             /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
@@ -604,6 +634,55 @@ namespace TorchSharp
                         return new Tensor(res);
                     }
                 }
+            }
+
+            /// <summary>
+            /// Generates a Vandermonde matrix.
+            /// </summary>
+            /// <param name="input">tensor of shape (*, n) where * is zero or more batch dimensions consisting of vectors.</param>
+            /// <param name="N">Number of columns in the output. Default: x.size(-1)</param>
+            public static Tensor vander(Tensor input, long? N = null)
+            {
+                if (!N.HasValue) {
+                    N = input.shape[input.ndim - 1];
+                }
+                var res = THSLinalg_vander(input.Handle, N.Value);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the dot product of two batches of vectors along a dimension.
+            /// </summary>
+            /// <param name="x">First batch of vectors.</param>
+            /// <param name="y">Second batch of vectors</param>
+            /// <param name="dim">Dimension along which to compute the dot product.</param>
+            /// <param name="out">Optional output tensor.</param>
+            public static Tensor vecdot(Tensor x, Tensor y, long dim = -1, Tensor? @out = null)
+            {
+                var res = THSLinalg_vecdot(x.Handle, y.Handle, dim, @out is null ? IntPtr.Zero : @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the solution of a square system of linear equations with a unique solution given an LU decomposition.
+            /// </summary>
+            /// <param name="LU">Tensor of shape (*, n, n) (or (*, k, k) if left= True) where * is zero or more batch dimensions as returned by lu_factor().</param>
+            /// <param name="pivots">Tensor of shape (*, n) (or (*, k) if left= True) where * is zero or more batch dimensions as returned by lu_factor().</param>
+            /// <param name="B">Right-hand side tensor of shape (*, n, k).</param>
+            /// <param name="left">Whether to solve the system AX=B or XA = B. Default: True.</param>
+            /// <param name="adjoint">Whether to solve the adjoint system.</param>
+            /// <param name="out">Optional output tensor.</param>
+            /// <returns></returns>
+            public static Tensor lu_solve(Tensor LU, Tensor pivots, Tensor B, bool left = true, bool adjoint = false, Tensor? @out = null)
+            {
+                var res = THSLinalg_lu_solve(B.Handle, LU.Handle, pivots.Handle, left, adjoint, @out is null ? IntPtr.Zero : @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
             }
         }
     }

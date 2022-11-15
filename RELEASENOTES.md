@@ -4,6 +4,15 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.99.1
 
+__Breaking Changes__:
+
+The options to the ASGD, Rprop, and RMSprop optimizers have been changed to add a 'maximize' flag. This means that saved state dictionaries for these optimizers will not carry over.
+
+__API Changes__:
+
+Added a number of 1.13 APIs under `torch.special`
+Added a `maximize` flag to the ASGD, Rprop and RMSprop optimizers.
+
 __Fixed Bugs__:
 
 836 Categorical seems to be miscalculated<br/>
