@@ -852,5 +852,55 @@ namespace TorchSharp
             scheduler.step(10);
             Assert.Equal(0.09 * 0.9 * 0.9, optimizer.ParamGroups.First().LearningRate, 0.00001);
         }
+
+
+        [Fact]
+        public void Validate845()
+        {
+            var module1 = new Module845(10, 10);
+            var module2 = new Module845(10, 10);
+            var module3 = new Module845(10, 10);
+
+            var dev = torch.cuda.is_available() ? CUDA : CPU;
+
+            module1.to(dev);
+            module1.validate(float32, dev.type);
+
+            module2.to(dev, float64);
+            module2.validate(float64, dev.type);
+
+            module3.to(float64);
+            module3.validate(float64, CPU.type);
+        }
+
+        internal class Module845 : Module<Tensor, Tensor>
+        {
+            private Module<Tensor, Tensor> seq;
+
+            public Module845(int in_channels, int out_channels) : base(String.Empty)
+            {
+                seq = Sequential(Conv2d(1, 32, 3),
+                     ReLU(),
+                     Flatten(),
+                     LogSoftmax(1)
+                );
+
+                register_buffer("test", torch.ones(10, 10));
+                RegisterComponents();
+            }
+
+            public override torch.Tensor forward(torch.Tensor t)
+            {
+                return this.seq.forward(t);
+            }
+
+            public void validate(ScalarType expected, DeviceType devType)
+            {
+                foreach (var (name,buffer) in named_buffers()) {
+                    Assert.Equal(expected, buffer.dtype);
+                    Assert.Equal(devType, buffer.device_type);
+                }
+            }
+        }
     }
 }

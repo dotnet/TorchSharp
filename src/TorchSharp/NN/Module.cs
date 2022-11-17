@@ -165,6 +165,8 @@ namespace TorchSharp
                 {
                     foreach (var (_, sm) in named_children()) sm._to(device, dtype);
 
+                    var alreadyHandled = new HashSet<IntPtr>();
+
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
                         var fieldName = field.Name;
@@ -181,6 +183,7 @@ namespace TorchSharp
                                 var p = new Parameter(t, param.requires_grad);
                                 field.SetValue(this, p);
                                 ConditionallyRegisterParameter(fieldName, p);
+                                alreadyHandled.Add(p.handle);
                                 break;
                             }
 
@@ -188,9 +191,22 @@ namespace TorchSharp
                                 var t = tensor.to(dtype, device);
                                 field.SetValue(this, t);
                                 ConditionallyRegisterBuffer(fieldName, t);
+                                alreadyHandled.Add(t.handle);
                                 break;
                             }
                         }
+                    }
+
+                    foreach (var (name, param) in named_parameters().ToList()) {
+                        if (alreadyHandled.Contains(param.handle)) continue;
+                        var t = param.to(dtype, device);
+                        ConditionallyRegisterParameter(name, t);
+                    }
+
+                    foreach (var (name, buffer) in named_buffers().ToList()) {
+                        if (alreadyHandled.Contains(buffer.handle)) continue;
+                        var t = buffer.to(dtype, device);
+                        ConditionallyRegisterBuffer(name, t);
                     }
 
                     _deviceType = device.type;
@@ -230,6 +246,8 @@ namespace TorchSharp
                 {
                     foreach (var (_, sm) in named_children()) sm._to(deviceType, deviceIndex);
 
+                    var alreadyHandled = new HashSet<IntPtr>();
+
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
                         var fieldName = field.Name;
@@ -246,6 +264,7 @@ namespace TorchSharp
                                 var p = new Parameter(t, param.requires_grad);
                                 field.SetValue(this, p);
                                 ConditionallyRegisterParameter(fieldName, p);
+                                alreadyHandled.Add(p.handle);
                                 break;
                             }
 
@@ -253,9 +272,22 @@ namespace TorchSharp
                                 var t = tensor.to(deviceType, deviceIndex);
                                 field.SetValue(this, t);
                                 ConditionallyRegisterBuffer(fieldName, t);
+                                alreadyHandled.Add(t.handle);
                                 break;
                             }
                         }
+                    }
+
+                    foreach (var (name, param) in named_parameters().ToList()) {
+                        if (alreadyHandled.Contains(param.handle)) continue;
+                        var t = param.to(deviceType, deviceIndex);
+                        ConditionallyRegisterParameter(name, t);
+                    }
+
+                    foreach (var (name, buffer) in named_buffers().ToList()) {
+                        if (alreadyHandled.Contains(buffer.handle)) continue;
+                        var t = buffer.to(deviceType, deviceIndex);
+                        ConditionallyRegisterBuffer(name, t);
                     }
 
                     _deviceType = deviceType;
@@ -282,6 +314,9 @@ namespace TorchSharp
                 protected void _toEpilog(ScalarType dtype)
                 {
                     foreach (var (_, sm) in named_children()) sm._to(dtype);
+
+                    var alreadyHandled = new HashSet<IntPtr>();
+
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
                         var fieldName = field.Name;
@@ -298,6 +333,7 @@ namespace TorchSharp
                                 var p = new Parameter(t, param.requires_grad);
                                 field.SetValue(this, p);
                                 ConditionallyRegisterParameter(fieldName, p);
+                                alreadyHandled.Add(p.handle);
                                 break;
                             }
 
@@ -308,9 +344,22 @@ namespace TorchSharp
                                 var t = tensor.to(dtype);
                                 field.SetValue(this, t);
                                 ConditionallyRegisterBuffer(fieldName, t);
+                                alreadyHandled.Add(t.handle);
                                 break;
                             }
                         }
+                    }
+
+                    foreach (var (name, param) in named_parameters().ToList()) {
+                        if (alreadyHandled.Contains(param.handle)) continue;
+                        var t = param.to(dtype);
+                        ConditionallyRegisterParameter(name, t);
+                    }
+
+                    foreach (var (name, buffer) in named_buffers().ToList()) {
+                        if (alreadyHandled.Contains(buffer.handle)) continue;
+                        var t = buffer.to(dtype);
+                        ConditionallyRegisterBuffer(name, t);
                     }
                 }
 
