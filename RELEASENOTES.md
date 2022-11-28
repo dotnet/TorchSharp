@@ -8,10 +8,13 @@ __Breaking Changes__:
 
 The options to the ASGD, Rprop, and RMSprop optimizers have been changed to add a 'maximize' flag. This means that saved state dictionaries for these optimizers will not carry over.
 
+The return type of Sequential.append() has changed from 'void' to 'Sequential.' This breaks binary compatibility, but not source compat.
+
 __API Changes__:
 
-Added a number of 1.13 APIs under `torch.special`
-Added a `maximize` flag to the ASGD, Rprop and RMSprop optimizers.
+Added a number of 1.13 APIs under `torch.special`<br/>
+Added a `maximize` flag to the ASGD, Rprop and RMSprop optimizers.<br/>
+The return type of Sequential.append() has changed from 'void' to 'Sequential.'<br/>
 
 __Fixed Bugs__:
 
@@ -19,6 +22,7 @@ __Fixed Bugs__:
 #838 New Bernoulli get "Object reference not set to an instance of an object."<br/>
 #845 registered buffers are being ignored in move model to device<br/>
 #851 tensor.ToString(TorchSharp.TensorStringStyle.Numpy)<br/>
+#852 The content returned by torch.nn.Sequential.append is inconsistent with the official<br/>
 
 ## NuGet Version 0.99.0
 
