@@ -6134,7 +6134,10 @@ namespace TorchSharp
                     }
                 } else {
                     var newline = string.Join("", Enumerable.Repeat(newLine, (int)dim - 1).ToList());
-                    if (currentSize <= 6) {
+
+                    if (currentSize == 1) {
+                        sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
+                    } else if (currentSize <= 6) {
                         sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
                         sb.Append(newline);
                         for (var i = 1; i < currentSize - 1; i++) {

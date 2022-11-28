@@ -15,8 +15,10 @@ Added a `maximize` flag to the ASGD, Rprop and RMSprop optimizers.
 
 __Fixed Bugs__:
 
-836 Categorical seems to be miscalculated<br/>
-838 New Bernoulli get "Object reference not set to an instance of an object."<br/>
+#836 Categorical seems to be miscalculated<br/>
+#838 New Bernoulli get "Object reference not set to an instance of an object."<br/>
+#845 registered buffers are being ignored in move model to device<br/>
+#851 tensor.ToString(TorchSharp.TensorStringStyle.Numpy)<br/>
 
 ## NuGet Version 0.99.0
 
