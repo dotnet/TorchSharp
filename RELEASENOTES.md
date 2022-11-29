@@ -14,6 +14,7 @@ __API Changes__:
 
 Added a number of 1.13 APIs under `torch.special`<br/>
 Added a `maximize` flag to the ASGD, Rprop and RMSprop optimizers.<br/>
+Added PolynomialLR scheduler<br/>
 The return type of Sequential.append() has changed from 'void' to 'Sequential.'<br/>
 
 __Fixed Bugs__:
