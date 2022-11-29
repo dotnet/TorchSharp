@@ -17,9 +17,10 @@ namespace TorchSharp
         /// </summary>
         public class Sequential : torch.nn.Module<Tensor, Tensor>
         {
-            public void append(string name, torch.nn.IModule<Tensor, Tensor> module)
+            public Sequential append(string name, torch.nn.IModule<Tensor, Tensor> module)
             {
                 Add(name, module);
+                return this;
             }
 
             internal void Add(string name, torch.nn.IModule<Tensor, Tensor> sm)
@@ -34,10 +35,11 @@ namespace TorchSharp
                 _names.Add(name);
             }
 
-            public void append(torch.nn.IModule<Tensor, Tensor> module)
+            public Sequential append(torch.nn.IModule<Tensor, Tensor> module)
             {
                 var name = _modules.Count.ToString();
                 Add(name, module);
+                return this;
             }
 
             internal void Add(torch.nn.IModule<Tensor, Tensor> module)

@@ -653,13 +653,16 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(
                 ("lin1", lin1),
-                ("relu1", ReLU()),
-                ("lin2", lin2));
+                ("relu1", ReLU()));
+
+            var s2 = seq.append("lin2", lin2);
+            Assert.Same(seq, s2);
+
             var parameters = seq.parameters();
             var parametersCount = parameters.Count();
             Assert.Equal(4, parametersCount);
 
-            var namedParams = seq.parameters();
+            var namedParams = seq.named_parameters();
             var namedParamsCount = namedParams.Count();
             Assert.Equal(4, namedParamsCount);
         }
@@ -705,8 +708,11 @@ namespace TorchSharp
             var lin2 = Linear(100, 10);
             var seq = Sequential(
                 lin1,
-                ReLU(),
-                lin2);
+                ReLU());
+
+            var s2 = seq.append(lin2);
+            Assert.Same(seq, s2);
+
             var parameters = seq.parameters();
             var parametersCount = parameters.Count();
             Assert.Equal(4, parametersCount);
