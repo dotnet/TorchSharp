@@ -854,6 +854,81 @@ namespace TorchSharp
         }
 
 
+
+        [Fact]
+        public void ValidatePolynomialLR()
+        {
+            {
+                // Linear decay
+                var gen = new Generator(4711);
+                TestTraining.CreateLinearLayers(gen, out var lin1, out var lin2);
+                TestTraining.CreateDataAndLabels(gen, out var x, out var y);
+
+                var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+                double learning_rate = 0.1;
+                var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+                var scheduler = torch.optim.lr_scheduler.PolynomialLR(optimizer, 10, 1);
+
+                optimizer.zero_grad();
+                optimizer.step();
+                scheduler.step(1);
+                Assert.Equal(0.09, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(2);
+                Assert.Equal(0.08, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(3);
+                Assert.Equal(0.07, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(4);
+                Assert.Equal(0.06, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(5);
+                Assert.Equal(0.05, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(6);
+                scheduler.step(7);
+                Assert.Equal(0.03, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(8);
+                Assert.Equal(0.02, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(9);
+                Assert.Equal(0.01, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(10);
+                Assert.Equal(0.0, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            }
+            {
+                // Squared decay
+                var gen = new Generator(4711);
+                TestTraining.CreateLinearLayers(gen, out var lin1, out var lin2);
+                TestTraining.CreateDataAndLabels(gen, out var x, out var y);
+
+                var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+                double learning_rate = 0.1;
+                var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+                var scheduler = torch.optim.lr_scheduler.PolynomialLR(optimizer, 10, 2);
+
+                optimizer.zero_grad();
+                optimizer.step();
+                scheduler.step(1);
+                Assert.Equal(0.081, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(2);
+                Assert.Equal(0.064, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(3);
+                Assert.Equal(0.049, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(4);
+                Assert.Equal(0.036, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(5);
+                Assert.Equal(0.025, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(6);
+                scheduler.step(7);
+                Assert.Equal(0.009, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(8);
+                Assert.Equal(0.004, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(9);
+                Assert.Equal(0.001, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(10);
+                Assert.Equal(0.0, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            }
+        }
+
+
         [Fact]
         public void Validate845()
         {

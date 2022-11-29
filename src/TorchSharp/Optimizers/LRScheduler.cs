@@ -1,7 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Security;
+using TorchSharp.Modules;
 
 // All LR schedulers in this file are directly based on the Pytorch implementation at:
 //
@@ -277,6 +280,50 @@ namespace TorchSharp
 
                         private IList<int> _milestones;
                         private double _gamma;
+                    }
+
+                    /// <summary>
+                    /// Decays the learning rate of each parameter group using a polynomial function in the given total_iters.
+                    /// When last_epoch=-1, sets initial lr as lr.
+                    /// </summary>
+                    public class PolynomialLR : LRScheduler
+                    {
+                        /// <summary>
+                        /// Constructor
+                        /// </summary>
+                        /// <param name="optimizer">Wrapped optimizer.</param>
+                        /// <param name="total_iters">The number of steps that the scheduler decays the learning rate.</param>
+                        /// <param name="power">The power of the polynomial.</param>
+                        /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
+                        /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
+                        /// <returns>A scheduler</returns>
+                        public PolynomialLR(Optimizer optimizer, int total_iters = 5, int power = 1, int last_epoch = -1, bool verbose = false) : base(optimizer, last_epoch, verbose)
+                        {
+                            if (optimizer == null) throw new ArgumentNullException("optimizer");
+                            _power = power;
+                            _total_iters = total_iters;
+                            step();
+                        }
+
+                        /// <summary>
+                        /// Compute the current learning rate for the scheduler.
+                        /// </summary>
+                        protected override IEnumerable<double> get_lr()
+                        {
+                            if (_last_epoch == 0 || _last_epoch > _total_iters) {
+                                return _optimizer.ParamGroups.Select(pg => pg.LearningRate);
+                            }
+                            else {
+                                var decay_factor = ((1.0 - _last_epoch / _total_iters) / (1.0 - (_last_epoch - 1) / _total_iters));
+                                if (_power != 1) {
+                                    decay_factor = Math.Pow(decay_factor, _power);
+                                }
+                                return _optimizer.ParamGroups.Select(pg => pg.LearningRate * decay_factor);
+                            }
+                        }
+
+                        private double _total_iters;
+                        private int _power;
                     }
 
                     /// <summary>
@@ -1180,6 +1227,20 @@ namespace TorchSharp
                 {
                     return new impl.MultiStepLR(optimizer, milestones, gamma, last_epoch, verbose);
 
+                }
+
+                /// <summary>
+                /// Constructor
+                /// </summary>
+                /// <param name="optimizer">Wrapped optimizer.</param>
+                /// <param name="total_iters">The number of steps that the scheduler decays the learning rate.</param>
+                /// <param name="power">The power of the polynomial.</param>
+                /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
+                /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
+                /// <returns>A scheduler</returns>
+                public static LRScheduler PolynomialLR(Optimizer optimizer, int total_iters = 5, int power = 1, int last_epoch = -1, bool verbose = false)
+                {
+                    return new impl.PolynomialLR(optimizer, total_iters, power, last_epoch, verbose);
                 }
 
                 /// <summary>
