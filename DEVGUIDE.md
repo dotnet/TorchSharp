@@ -13,6 +13,9 @@ Requirements:
 - git
 - cmake (tested with 3.18)
 
+__NOTE:__ At this moment, VS versions 17.4.X will not build the native code library. Use 17.3.X until further notice. See: https://github.com/dotnet/TorchSharp/issues/858 for more information.
+
+
 ## Linux
 
 Requirements:
