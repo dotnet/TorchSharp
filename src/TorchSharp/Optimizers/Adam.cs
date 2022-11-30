@@ -27,7 +27,7 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
-            /// <param name="maximize"></param>
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
             /// <returns></returns>
             public static Adam Adam(IEnumerable<Parameter> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
@@ -47,7 +47,7 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
-            /// <param name="maximize"></param>
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
             /// <returns></returns>
             public static Adam Adam(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
@@ -67,7 +67,7 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
-            /// <param name="maximize"></param>
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
             /// <returns></returns>
             public static Adam Adam(IEnumerable<Adam.ParamGroup> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {

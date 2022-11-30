@@ -597,6 +597,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestTrainingAdadeltaMax()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 1.0f;
+            var optimizer = torch.optim.Adadelta(seq.parameters(), learning_rate, maximize:true);
+
+            var loss = TrainLoop(seq, x, y, optimizer, maximize: true);
+
+            LossIsClose(74.754f, -loss);
+        }
+
+        [Fact]
         public void TestTrainingAdadeltaWD()
         {
             var gen = new Generator(4711);

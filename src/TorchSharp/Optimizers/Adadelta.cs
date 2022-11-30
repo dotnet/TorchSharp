@@ -25,10 +25,10 @@ namespace TorchSharp
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            /// <returns></returns>
-            public static Adadelta Adadelta(IEnumerable<Parameter> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
+            public static Adadelta Adadelta(IEnumerable<Parameter> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0, bool maximize = false)
             {
-                return new Adadelta(parameters, lr, rho, eps, weight_decay);
+                return new Adadelta(parameters, lr, rho, eps, weight_decay, maximize);
             }
 
             /// <summary>
@@ -42,10 +42,10 @@ namespace TorchSharp
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            /// <returns></returns>
-            public static Adadelta Adadelta(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
+            public static Adadelta Adadelta(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0, bool maximize = false)
             {
-                return new Adadelta(parameters.Select(np => np.parameter), lr, rho, eps, weight_decay);
+                return new Adadelta(parameters.Select(np => np.parameter), lr, rho, eps, weight_decay, maximize);
             }
 
             /// <summary>
@@ -59,10 +59,10 @@ namespace TorchSharp
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            /// <returns></returns>
-            public static Adadelta Adadelta(IEnumerable<Adadelta.ParamGroup> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
+            public static Adadelta Adadelta(IEnumerable<Adadelta.ParamGroup> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0, bool maximize = false)
             {
-                return new Adadelta(parameters, lr, rho, eps, weight_decay);
+                return new Adadelta(parameters, lr, rho, eps, weight_decay, maximize);
             }
         }
     }
@@ -79,8 +79,9 @@ namespace TorchSharp
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            public Adadelta(IEnumerable<Parameter> parameters, double lr, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
-                : this(new ParamGroup[] { new ParamGroup { Parameters = parameters } }, lr, rho, eps, weight_decay)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
+            public Adadelta(IEnumerable<Parameter> parameters, double lr, double rho = 0.9, double eps = 1e-6, double weight_decay = 0, bool maximize = false)
+                : this(new ParamGroup[] { new ParamGroup { Parameters = parameters } }, lr, rho, eps, weight_decay, maximize)
             {
             }
 
@@ -92,7 +93,8 @@ namespace TorchSharp
             /// <param name="rho">Coefficient used for computing a running average of squared gradients (default: 0.9)</param>
             /// <param name="eps">Term added to the denominator to improve numerical stability, i.e. avoid division-by-zero (default: 1e-6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            public Adadelta(IEnumerable<ParamGroup> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
+            public Adadelta(IEnumerable<ParamGroup> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0, bool maximize = false)
             {
                 if (lr < 0.0) throw new ArgumentException($"Invalid learning rate: {lr}");
                 if (rho < 0.0 || rho > 1.0) throw new ArgumentException($"Invalid rho value: {rho}");
@@ -104,6 +106,7 @@ namespace TorchSharp
                     InitialLearningRate = lr,
                     rho = rho,
                     eps = eps,
+                    maximize = maximize,
                     weight_decay = weight_decay
                 };
 
@@ -116,11 +119,11 @@ namespace TorchSharp
             }
 
             /// <summary>
-                /// Performs a single optimization step (parameter update).
-                /// </summary>
-                /// <param name="closure">A closure that reevaluates the model and returns the loss. Optional for most optimizers.</param>
-                /// <returns></returns>
-                public override Tensor step(Func<Tensor> closure = null)
+            /// Performs a single optimization step (parameter update).
+            /// </summary>
+            /// <param name="closure">A closure that reevaluates the model and returns the loss. Optional for most optimizers.</param>
+            /// <returns></returns>
+            public override Tensor step(Func<Tensor> closure = null)
             {
                 return _step<ParamGroup>(group => {
 
@@ -128,11 +131,12 @@ namespace TorchSharp
                     var rho = options.rho.Value;
                     var eps = options.eps.Value;
                     var weight_decay = options.weight_decay.Value;
+                    var maximize = options.maximize.Value;
                     var lr = options.LearningRate.Value;
 
                     foreach (var param in group.Parameters) {
 
-                        var grad = param.grad();
+                        var grad = (maximize) ? -param.grad() : param.grad();
 
                         if (grad is null) continue;
 
@@ -253,6 +257,7 @@ namespace TorchSharp
                 if (!opt.rho.HasValue) opt.rho = def.rho;
                 if (!opt.eps.HasValue) opt.eps = def.eps;
                 if (!opt.weight_decay.HasValue) opt.weight_decay = def.weight_decay;
+                if (!opt.maximize.HasValue) opt.maximize = def.maximize;
 
                 opt.InitialLearningRate = opt.LearningRate.Value;
 
@@ -272,6 +277,7 @@ namespace TorchSharp
                 public double? rho;
                 public double? eps;
                 public double? weight_decay;
+                public bool? maximize;
 
                 /// <summary>
                 /// Load optimizer options (param-group hyperparameters) from another optimizer.
@@ -284,6 +290,7 @@ namespace TorchSharp
                     rho = opts.rho;
                     eps = opts.eps;
                     weight_decay = opts.weight_decay;
+                    maximize = opts.maximize;
                 }
 
                 /// <summary>
@@ -296,6 +303,7 @@ namespace TorchSharp
                     rho = reader.ReadDouble();
                     eps = reader.ReadDouble();
                     weight_decay = reader.ReadDouble();
+                    maximize = reader.ReadBoolean();
                 }
 
                 /// <summary>
@@ -308,6 +316,7 @@ namespace TorchSharp
                     writer.Write(rho.Value);
                     writer.Write(eps.Value);
                     writer.Write(weight_decay.Value);
+                    writer.Write(maximize.Value);
                 }
             }
 
@@ -317,8 +326,8 @@ namespace TorchSharp
 
                 public ParamGroup(IEnumerable<Parameter> parameters, Options options) : base(parameters, options) { }
 
-                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0)
-                    : base(parameters, new Adadelta.Options { LearningRate = lr, rho = rho, eps = eps, weight_decay = weight_decay })
+                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 1.0, double rho = 0.9, double eps = 1e-6, double weight_decay = 0, bool maximize = false)
+                    : base(parameters, new Adadelta.Options { LearningRate = lr, rho = rho, eps = eps, weight_decay = weight_decay, maximize = maximize })
                 {
                 }
             }
