@@ -107,9 +107,19 @@ namespace TorchSharp
             return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
+        public static Tensor as_tensor(bool[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
+        }
+
         public static Tensor as_tensor(IList<byte> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
             return torch.from_array(rawArray.ToArray(), dtype, device);
+        }
+
+        public static Tensor as_tensor(byte[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
         }
 
         public static Tensor as_tensor(IList<sbyte> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
@@ -117,9 +127,19 @@ namespace TorchSharp
             return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
+        public static Tensor as_tensor(sbyte[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
+        }
+
         public static Tensor as_tensor(IList<short> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
             return torch.from_array(rawArray.ToArray(), dtype, device);
+        }
+
+        public static Tensor as_tensor(short[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
         }
 
         public static Tensor as_tensor(IList<int> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
@@ -127,9 +147,19 @@ namespace TorchSharp
             return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
+        public static Tensor as_tensor(int[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
+        }
+
         public static Tensor as_tensor(IList<long> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
             return torch.from_array(rawArray.ToArray(), dtype, device);
+        }
+
+        public static Tensor as_tensor(long[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
         }
 
         public static Tensor as_tensor(IList<float> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
@@ -137,9 +167,19 @@ namespace TorchSharp
             return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
+        public static Tensor as_tensor(float[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
+        }
+
         public static Tensor as_tensor(IList<double> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
             return torch.from_array(rawArray.ToArray(), dtype, device);
+        }
+
+        public static Tensor as_tensor(double[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
         }
 
         public static Tensor as_tensor(IList<(float, float)> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
@@ -147,9 +187,19 @@ namespace TorchSharp
             return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
+        public static Tensor as_tensor((float, float)[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
+        }
+
         public static Tensor as_tensor(IList<System.Numerics.Complex> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
             return torch.from_array(rawArray.ToArray(), dtype, device);
+        }
+
+        public static Tensor as_tensor(System.Numerics.Complex[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
         }
 
 

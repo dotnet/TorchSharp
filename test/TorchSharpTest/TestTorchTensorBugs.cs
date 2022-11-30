@@ -986,5 +986,12 @@ namespace TorchSharp
             var str = a.ToString(TorchSharp.TensorStringStyle.Numpy);
             Assert.Equal("[[100 200 300 400]]", str);
         }
+
+        [Fact]
+        public void Validate852()
+        {
+            float[] a = new float[12];
+            var x = torch.as_tensor(a);
+        }
     }
 }
