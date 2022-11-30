@@ -13,7 +13,9 @@ Please check the [Release Notes](RELEASENOTES.md) file for news on what's been u
 
 __TorchSharp is now in the .NET Foundation!__
 
-If you are using TorchSharp from NuGet, you should be using a version >= 0.95.1 of TorchSharp, and >= 1.10.0.1 of the libtorch-xxx redistributable packages. We recommend using one of the 'bundled' packages: TorchSharp-cpu, TorchSharp-cuda-windows, or TorchSharp-cuda-linux. They will pull in the right libtorch backends.
+If you are using TorchSharp from NuGet, you should be using a version >= 0.98.3 of TorchSharp, and >= 1.12.0 of the libtorch-xxx redistributable packages. We recommend using one of the 'bundled' packages: TorchSharp-cpu, TorchSharp-cuda-windows, or TorchSharp-cuda-linux. They will pull in the right libtorch backends.
+
+__NOTE:__ At this moment, VS versions 17.4.X will not build the TorchSharp native code library. Use 17.3.X until further notice. See: https://github.com/dotnet/TorchSharp/issues/858 for more information and workarounds.
 
 __NOTE:__ Please do __not__ use 0.95.0 -- the package was released to NuGet in error, and without its many dependencies.
 
