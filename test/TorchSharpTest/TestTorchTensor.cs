@@ -6959,7 +6959,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(linalg.lu_factor))]
+        [TestOf(nameof(linalg.lu))]
         public void LUTest()
         {
             var A = torch.randn(2, 3, 3);
@@ -6982,6 +6982,33 @@ namespace TorchSharp
             Assert.Multiple(
                 () => Assert.NotNull(A_factor.LU),
                 () => Assert.NotNull(A_factor.Pivots)
+            );
+        }
+
+        [Fact]
+        [TestOf(nameof(linalg.ldl_factor))]
+        public void LDLFactorTest()
+        {
+            var A = torch.randn(2, 3, 3);
+            var A_factor = torch.linalg.ldl_factor(A);
+            // For right now, pretty much just checking that it's not blowing up.
+            Assert.Multiple(
+                () => Assert.NotNull(A_factor.LU),
+                () => Assert.NotNull(A_factor.Pivots)
+            );
+        }
+
+        [Fact]
+        [TestOf(nameof(linalg.ldl_factor))]
+        public void LDLFactorExTest()
+        {
+            var A = torch.randn(2, 3, 3);
+            var A_factor = torch.linalg.ldl_factor_ex(A);
+            // For right now, pretty much just checking that it's not blowing up.
+            Assert.Multiple(
+                () => Assert.NotNull(A_factor.LU),
+                () => Assert.NotNull(A_factor.Pivots),
+                () => Assert.NotNull(A_factor.Info)
             );
         }
 
