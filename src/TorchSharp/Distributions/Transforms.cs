@@ -529,11 +529,11 @@ namespace TorchSharp
 
                     protected internal override Tensor _sign() => 1;
 
-                    protected internal override Tensor log_abs_det_jacobian(Tensor x, Tensor y) => torch.WrappedTensorDisposeScope(() => -nn.functional.softplus(-x));
+                    protected internal override Tensor log_abs_det_jacobian(Tensor x, Tensor y) => -nn.functional.softplus(-x);
 
-                    protected internal override Tensor _call(Tensor x) => nn.functional.softplus(x);
+                    protected internal override Tensor _call(Tensor x) => nn.functional.softplus(-x);
 
-                    protected internal override Tensor _inverse(Tensor y) => torch.WrappedTensorDisposeScope(() => (-y).expm1().neg().log() + y);
+                    protected internal override Tensor _inverse(Tensor y) => (-y).expm1().neg().log() + y;
                 }
 
                 public class SoftmaxTransform : Transform
