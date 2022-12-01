@@ -51,7 +51,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetFxBuild=true -c
     testScript: dotnet test /p:SkipCuda=true /p:SkipNetFxBuild=true --blame -c
     pool:
-      vmImage: 'windows-2022'
+      vmImage: 'windows-2019'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -60,7 +60,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetCoreBuild=true -c
     testScript: dotnet test /p:SkipCuda=true /p:SkipNetCoreBuild=true --blame -c
     pool:
-      vmImage: 'windows-2022'
+      vmImage: 'windows-2019'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -133,7 +133,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2022'
+    vmImage: 'windows-2019'
 
   steps:
 
@@ -209,7 +209,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2022'
+    vmImage: 'windows-2019'
   steps:
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -346,7 +346,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2022'
+    vmImage: 'windows-2019'
   steps:
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -458,7 +458,7 @@ jobs:
   variables:
   - group: SignClient Credentials
   pool:
-    vmImage: 'windows-2022'
+    vmImage: 'windows-2019'
   steps:
 
   - task: DotNetCoreCLI@2
@@ -507,7 +507,7 @@ jobs:
   variables:
   - group: SignClient Credentials
   pool:
-    vmImage: 'windows-2022'
+    vmImage: 'windows-2019'
   steps:
 
   - task: DotNetCoreCLI@2
@@ -586,7 +586,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2022'
+    vmImage: 'windows-2019'
   steps:
 
   # Push packages to feed
@@ -687,7 +687,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2022'
+    vmImage: 'windows-2019'
   steps:
 
   # Push packages to feed
@@ -772,7 +772,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2022'
+    vmImage: 'windows-2019'
   # container: UbuntuContainer
   # Exact copy of the dependency install above - TODO share this somewhere
   steps:
