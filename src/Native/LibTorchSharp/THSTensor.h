@@ -1404,6 +1404,10 @@ EXPORT_API(Tensor) THSLinalg_lstsq_rcond(const Tensor A, const Tensor B, const d
 EXPORT_API(Tensor) THSLinalg_lu(const Tensor A, const bool pivot, Tensor* L, Tensor* U);
 EXPORT_API(Tensor) THSLinalg_lu_factor(const Tensor A, const bool pivot, Tensor* pivots);
 
+EXPORT_API(Tensor) THSLinalg_ldl_factor(const Tensor A, const bool hermitian, Tensor* pivots);
+EXPORT_API(Tensor) THSLinalg_ldl_factor_ex(const Tensor A, const bool hermitian, const bool check_errors, Tensor* pivots, Tensor* info);
+EXPORT_API(Tensor) THSLinalg_ldl_solve(const Tensor LD, const Tensor pivots, const Tensor B, const bool hermitian);
+
 EXPORT_API(Tensor) THSLinalg_matrix_power(const Tensor target, const int64_t n);
 
 EXPORT_API(Tensor) THSLinalg_matrix_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int dim_length, const bool keepdim);

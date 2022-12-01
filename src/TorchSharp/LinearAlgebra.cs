@@ -275,6 +275,51 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Computes a compact representation of the LU factorization with partial pivoting of a matrix.
+            /// </summary>
+            /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="hermitian">Controls whether to consider the input to be Hermitian or symmetric. For real-valued matrices, this switch has no effect.</param>
+            /// <returns></returns>
+            public static (Tensor LU, Tensor? Pivots) ldl_factor(Tensor input, bool hermitian = true)
+            {
+                var solution = THSLinalg_ldl_factor(input.Handle, hermitian, out var pivots);
+                if (solution == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(solution), pivots == IntPtr.Zero ? null : new Tensor(pivots));
+            }
+
+            /// <summary>
+            /// Computes a compact representation of the LU factorization with partial pivoting of a matrix.
+            /// </summary>
+            /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="hermitian">Controls whether to consider the input to be Hermitian or symmetric. For real-valued matrices, this switch has no effect.</param>
+            /// <param name="check_errors">Controls whether to check the content of info and raise an error if it is non-zero.</param>
+            /// <returns></returns>
+            public static (Tensor LU, Tensor? Pivots, Tensor? Info) ldl_factor_ex(Tensor input, bool hermitian = true, bool check_errors = false)
+            {
+                var solution = THSLinalg_ldl_factor_ex(input.Handle, hermitian, check_errors, out var pivots, out var info);
+                if (solution == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(solution), pivots == IntPtr.Zero ? null : new Tensor(pivots), info == IntPtr.Zero ? null : new Tensor(info));
+            }
+
+            /// <summary>
+            /// Computes the solution of a system of linear equations using the LDL factorization.
+            /// </summary>
+            /// <param name="LD">the n times n matrix or the batch of such matrices of size (*, n, n) where * is one or more batch dimensions</param>
+            /// <param name="pivots">the pivots corresponding to the LDL factorization of LD</param>
+            /// <param name="B">Right-hand side tensor of shape (*, n, k)</param>
+            /// <param name="hermitian">Whether to consider the decomposed matrix to be Hermitian or symmetric. For real-valued matrices, this switch has no effect</param>
+            /// <returns></returns>
+            public static Tensor ldl_solve(Tensor LD, Tensor pivots, Tensor B, bool hermitian = false)
+            {
+                var res = THSLinalg_ldl_solve(LD.Handle, pivots.Handle, B.Handle, hermitian);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Computes a solution to the least squares problem of a system of linear equations.
             /// </summary>
             /// <param name="input">lhs tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>

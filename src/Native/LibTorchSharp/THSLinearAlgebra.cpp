@@ -148,6 +148,28 @@ Tensor THSLinalg_lu_factor(const Tensor A, const bool pivot, Tensor* pivots)
     return ResultTensor(std::get<0>(res));
 }
 
+Tensor THSLinalg_ldl_factor(const Tensor A, const bool hermitian, Tensor* pivots)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg_ldl_factor(*A, hermitian););
+    *pivots = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSLinalg_ldl_factor_ex(const Tensor A, const bool hermitian, const bool check_errors, Tensor* pivots, Tensor* info)
+{
+    std::tuple<at::Tensor, at::Tensor, at::Tensor> res;
+    CATCH(res = torch::linalg_ldl_factor_ex(*A, hermitian, check_errors););
+    *pivots = ResultTensor(std::get<1>(res));
+    *info = ResultTensor(std::get<2>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSLinalg_ldl_solve(const Tensor LD, const Tensor pivots, const Tensor B, const bool hermitian)
+{
+    CATCH_TENSOR(torch::linalg_ldl_solve(*LD, *pivots, *B, hermitian));
+}
+
 Tensor THSLinalg_matrix_norm(const Tensor tensor, const Scalar ord, const int64_t* dim, const int dim_length, const bool keepdim)
 {
     auto dims = c10::ArrayRef<int64_t>(dim, dim_length);
