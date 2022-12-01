@@ -2,6 +2,14 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.99.2
+
+__API Changes__:
+
+Adding 'maximize' argument to the Adadelta optimizer
+Adding linalg.ldl_factor and linalg.ldl_solve
+Adding SoftplusTransform
+
 ## NuGet Version 0.99.1
 
 __Breaking Changes__:
