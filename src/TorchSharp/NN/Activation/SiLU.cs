@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal SiLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_SiLU_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -55,7 +55,7 @@ namespace TorchSharp
                 public static Tensor SiLU(Tensor x)
                 {
                     using (var m = nn.SiLU()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

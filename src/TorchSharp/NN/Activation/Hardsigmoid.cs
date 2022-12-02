@@ -20,7 +20,7 @@ namespace TorchSharp
                 this.inplace = inplace;
             }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 return torch.nn.functional.hardsigmoid(tensor, this.inplace);
             }

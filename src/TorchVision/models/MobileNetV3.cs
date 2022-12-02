@@ -139,9 +139,9 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                public override Tensor forward(Tensor input)
+                protected override Tensor forward(Tensor input)
                 {
-                    var result = this.block.forward(input);
+                    var result = this.block.call(input);
                     if (this.use_res_connect) {
                         result += input;
                     }
@@ -247,12 +247,12 @@ namespace TorchSharp
                 }
             }
 
-            public override Tensor forward(Tensor x)
+            protected override Tensor forward(Tensor x)
             {
-                x = this.features.forward(x);
-                x = this.avgpool.forward(x);
+                x = this.features.call(x);
+                x = this.avgpool.call(x);
                 x = torch.flatten(x, 1);
-                x = this.classifier.forward(x);
+                x = this.classifier.call(x);
                 return x;
             }
         }

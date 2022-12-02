@@ -85,12 +85,12 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                public override Tensor forward(Tensor x)
+                protected override Tensor forward(Tensor x)
                 {
                     if (this.use_res_connect) {
-                        return x + this.conv.forward(x);
+                        return x + this.conv.call(x);
                     } else {
-                        return this.conv.forward(x);
+                        return this.conv.call(x);
                     }
                 }
             }
@@ -199,13 +199,13 @@ namespace TorchSharp
                 }
             }
 
-            public override Tensor forward(Tensor x)
+            protected override Tensor forward(Tensor x)
             {
-                x = this.features.forward(x);
+                x = this.features.call(x);
                 // Cannot use "squeeze" as batch-size can be 1
                 x = nn.functional.adaptive_avg_pool2d(x, (1, 1));
                 x = torch.flatten(x, 1);
-                x = this.classifier.forward(x);
+                x = this.classifier.call(x);
                 return x;
             }
         }

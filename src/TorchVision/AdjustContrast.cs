@@ -15,7 +15,7 @@ namespace TorchSharp
                 this.contrast_factor = contrast_factor;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return transforms.functional.adjust_contrast(input, contrast_factor);
             }

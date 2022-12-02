@@ -19,7 +19,7 @@ namespace TorchSharp
                 _used_ratio = ratio;
             }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 if (_used_ratio && tensor.ndim != 5)
                     // Not sure why this is the case, but there's an exception in the native runtime

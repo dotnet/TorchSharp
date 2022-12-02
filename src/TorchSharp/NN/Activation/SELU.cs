@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal SELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_SELU_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -57,7 +57,7 @@ namespace TorchSharp
                 public static Tensor selu(Tensor x, bool inplace = false)
                 {
                     using (var m = nn.SELU(inplace)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

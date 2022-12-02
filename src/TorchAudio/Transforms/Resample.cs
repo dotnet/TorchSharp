@@ -60,7 +60,7 @@ namespace TorchSharp.Transforms
             }
         }
 
-        public override Tensor forward(Tensor waveform)
+        protected override Tensor forward(Tensor waveform)
         {
             using (var d = torch.NewDisposeScope()) {
 

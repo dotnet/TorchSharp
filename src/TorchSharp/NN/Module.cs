@@ -9,6 +9,7 @@ using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
 using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.torch.nn;
 
 namespace TorchSharp
 {
@@ -966,7 +967,7 @@ namespace TorchSharp
                     IntPtr ForwardNative(IntPtr t)
                     {
                         var input = new Tensor(t);
-                        var output = ((nn.Module<Tensor, Tensor>)this).forward(input);
+                        var output = ((nn.Module<Tensor, Tensor>)this).call(input);
 
                         // handles must live on - we don't own them, but
                         // the managed objects should go away.
@@ -1112,7 +1113,7 @@ namespace TorchSharp
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public interface IModule<T, TResult>
             {
-                public abstract TResult forward(T input1);
+                public TResult call(T input1);
             }
 
             /// <summary>
@@ -1123,7 +1124,7 @@ namespace TorchSharp
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public interface IModule<T1, T2, TResult>
             {
-                public abstract TResult forward(T1 input1, T2 input2);
+                public abstract TResult call(T1 input1, T2 input2);
             }
 
             /// <summary>
@@ -1135,7 +1136,7 @@ namespace TorchSharp
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public interface IModule<T1, T2, T3, TResult>
             {
-                public abstract TResult forward(T1 input1, T2 input2, T3 input3);
+                public abstract TResult call(T1 input1, T2 input2, T3 input3);
             }
 
             /// <summary>
@@ -1148,21 +1149,120 @@ namespace TorchSharp
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public interface IModule<T1, T2, T3, T4, TResult>
             {
-                public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);
+                public abstract TResult call(T1 input1, T2 input2, T3 input3, T4 input4);
             }
 
+            /// <summary>
+            /// Interface for concrete modules with a forward() that takes five arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T5">The fifth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
+            public interface IModule<T1, T2, T3, T4, T5, TResult>
+            {
+                public abstract TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5);
+            }
+
+            /// <summary>
+            /// Interface for concrete modules with a forward() that takes six arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T5">The fifth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T6">The sixth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
+            public interface IModule<T1, T2, T3, T4, T5, T6, TResult>
+            {
+                public abstract TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6);
+            }
+
+            public class HookableModule<TPreHook,TPostHook> : Module
+            {
+                protected HookableModule(string name) : base(name) { }
+
+                protected HookableModule(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+                internal HookableModule(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                public HookRemover register_forward_hook(TPostHook hook)
+                {
+                    var key = Guid.NewGuid().ToString();
+                    post_hooks.Add(key, hook);
+                    return new HookRemover(this, key);
+                }
+
+                public HookRemover register_forward_pre_hook(TPreHook hook)
+                {
+                    var key = Guid.NewGuid().ToString();
+                    pre_hooks.Add(key, hook);
+                    return new HookRemover(this, key);
+                }
+
+                private void remove(string key)
+                {
+                    if (pre_hooks.ContainsKey(key)) pre_hooks.Remove(key);
+                    if (post_hooks.ContainsKey(key)) post_hooks.Remove(key);
+                }
+
+                protected Dictionary<string, TPreHook> pre_hooks = new Dictionary<string, TPreHook>();
+                protected Dictionary<string, TPostHook> post_hooks = new Dictionary<string, TPostHook>();
+
+                public class HookRemover
+                {
+                    public HookRemover(HookableModule<TPreHook, TPostHook> module, string key)
+                    {
+                        this.module = module;
+                        this.key = key;
+                    }
+
+                    public void remove()
+                    {
+                        module.remove(key);
+                    }
+
+                    private HookableModule<TPreHook, TPostHook> module;
+                    private string key;
+                }
+            }
 
             /// <summary>
             /// Base class for concrete modules with a forward() that takes a single argument.
             /// </summary>
             /// <typeparam name="T">The argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T, TResult> : Module, IModule<T, TResult>
+            public abstract class Module<T, TResult> : HookableModule<Func<Module<T,TResult>, T, T>, Func<Module<T, TResult>, T, TResult, TResult>>, IModule<T, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                public abstract TResult forward(T input1);
+                protected abstract TResult forward(T input1);
+
+                public TResult call(T input1)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1);
+                        if (modified is not null)
+                            input1 = modified;
+                    }
+
+                    var result = forward(input1);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
             }
 
             /// <summary>
@@ -1171,12 +1271,38 @@ namespace TorchSharp
             /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
             /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T1, T2, TResult> : Module, IModule<T1, T2, TResult>
+            public abstract class Module<T1, T2, TResult> : HookableModule<Func<Module<T1, T2, TResult>, T1, T2, (T1, T2)?>, Func<Module<T1, T2, TResult>, T1, T2, TResult, TResult>>, IModule<T1, T2, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                public abstract TResult forward(T1 input1, T2 input2);
+                protected abstract TResult forward (T1 input1, T2 input2);
+
+
+                public TResult call(T1 input1, T2 input2)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                        }
+                    }
+
+                    var result = forward(input1,  input2);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
             }
 
             /// <summary>
@@ -1186,12 +1312,38 @@ namespace TorchSharp
             /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
             /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T1, T2, T3, TResult> : Module, IModule<T1, T2, T3, TResult>
+            public abstract class Module<T1, T2, T3, TResult> : HookableModule<Func<Module<T1, T2, T3, TResult>, T1, T2, T3, (T1, T2, T3)?>, Func<Module<T1, T2, T3, TResult>, T1, T2, T3, TResult, TResult>>, IModule<T1, T2, T3, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                public abstract TResult forward(T1 input1, T2 input2, T3 input3);
+                protected abstract TResult forward(T1 input1, T2 input2, T3 input3);
+
+                public TResult call(T1 input1, T2 input2, T3 input3)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                            input3 = modified.Value.Item3;
+                        }
+                    }
+
+                    var result = forward(input1, input2, input3);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
             }
 
             /// <summary>
@@ -1202,12 +1354,131 @@ namespace TorchSharp
             /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
             /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T1, T2, T3, T4, TResult> : Module, IModule<T1, T2, T3, T4, TResult>
+            public abstract class Module<T1, T2, T3, T4, TResult> : HookableModule<Func<Module<T1, T2, T3, T4, TResult>, T1, T2, T3, T4, (T1, T2, T3, T4)?>, Func<Module<T1, T2, T3, T4, TResult>, T1, T2, T3, T4, TResult, TResult>>, IModule<T1, T2, T3, T4, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);
+                protected abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);
+
+                public TResult call(T1 input1, T2 input2, T3 input3, T4 input4)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                            input3 = modified.Value.Item3;
+                            input4 = modified.Value.Item4;
+                        }
+                    }
+
+                    var result = forward(input1, input2, input3, input4);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
+            }
+
+            /// <summary>
+            /// Base class for concrete modules with a forward() that takes five arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T5">The fifth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
+            public abstract class Module<T1, T2, T3, T4, T5,TResult> : HookableModule<Func<Module<T1, T2, T3, T4, T5, TResult>, T1, T2, T3, T4, T5, (T1, T2, T3, T4, T5)?>, Func<Module<T1, T2, T3, T4, T5, TResult>, T1, T2, T3, T4, T5, TResult, TResult>>, IModule<T1, T2, T3, T4, T5, TResult>
+            {
+                protected Module(string name) : base(name) { }
+                protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+                internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+                protected abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5);
+
+                public TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4, input5);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                            input3 = modified.Value.Item3;
+                            input4 = modified.Value.Item4;
+                            input5 = modified.Value.Item5;
+                        }
+                    }
+
+                    var result = forward(input1, input2, input3, input4, input5);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4, input5, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
+            }
+
+            /// <summary>
+            /// Base class for concrete modules with a forward() that takes six arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T5">The fifth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T6">The sixth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
+            public abstract class Module<T1, T2, T3, T4, T5, T6, TResult> : HookableModule<Func<Module<T1, T2, T3, T4, T5, T6, TResult>, T1, T2, T3, T4, T5, T6, (T1, T2, T3, T4, T5, T6)?>, Func<Module<T1, T2, T3, T4, T5, T6, TResult>, T1, T2, T3, T4, T5, T6, TResult, TResult>>, IModule<T1, T2, T3, T4, T5, T6, TResult>
+            {
+                protected Module(string name) : base(name) { }
+                protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+                internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+                protected abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6);
+
+                public TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4, input5, input6);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                            input3 = modified.Value.Item3;
+                            input4 = modified.Value.Item4;
+                            input5 = modified.Value.Item5;
+                            input6 = modified.Value.Item6;
+                        }
+                    }
+
+                    var result = forward(input1, input2, input3, input4, input5, input6);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4, input5, input6, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
             }
         }
     }

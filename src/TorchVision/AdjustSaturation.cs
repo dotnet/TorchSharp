@@ -15,7 +15,7 @@ namespace TorchSharp
                 this.saturation_factor = saturation_factor;
             }
 
-            public Tensor forward(Tensor img)
+            public Tensor call(Tensor img)
             {
                 return transforms.functional.adjust_saturation(img, saturation_factor);
             }

@@ -53,7 +53,7 @@ let hasCUDA = torch.cuda_is_available() //torch.cuda.is_available()
 let device = if hasCUDA then torch.CUDA else torch.CPU
 
 let _loss = torch.nn.NLLLoss()
-let criterion x y = _loss.forward(x,y)
+let criterion x y = _loss.call(x,y)
 
 let attack (image:torch.Tensor) (eps:Scalar) (data_grad:torch.Tensor) =
     use sign = data_grad.sign()

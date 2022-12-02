@@ -58,9 +58,9 @@ namespace TorchSharp.Examples
                 this.to(device);
         }
 
-        public override Tensor forward(Tensor input)
+        protected override Tensor forward(Tensor input)
         {
-            return layers.forward(input);
+            return layers.call(input);
         }
     }
 }

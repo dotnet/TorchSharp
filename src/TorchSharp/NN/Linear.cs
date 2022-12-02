@@ -23,7 +23,7 @@ namespace TorchSharp
                 return new Linear(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Linear_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

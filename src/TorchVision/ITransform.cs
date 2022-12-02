@@ -8,7 +8,7 @@ namespace TorchSharp
     {
         public interface ITransform
         {
-            Tensor forward(Tensor input);
+            Tensor call(Tensor input);
         }
     }
 }

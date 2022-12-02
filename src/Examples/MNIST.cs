@@ -124,25 +124,25 @@ namespace TorchSharp.Examples
                     this.to(device);
             }
 
-            public override Tensor forward(Tensor input)
+            protected override Tensor forward(Tensor input)
             {
-                var l11 = conv1.forward(input);
-                var l12 = relu1.forward(l11);
+                var l11 = conv1.call(input);
+                var l12 = relu1.call(l11);
 
-                var l21 = conv2.forward(l12);
-                var l22 = relu2.forward(l21);
-                var l23 = pool1.forward(l22);
-                var l24 = dropout1.forward(l23);
+                var l21 = conv2.call(l12);
+                var l22 = relu2.call(l21);
+                var l23 = pool1.call(l22);
+                var l24 = dropout1.call(l23);
 
-                var x = flatten.forward(l24);
+                var x = flatten.call(l24);
 
-                var l31 = fc1.forward(x);
-                var l32 = relu3.forward(l31);
-                var l33 = dropout2.forward(l32);
+                var l31 = fc1.call(x);
+                var l32 = relu3.call(l31);
+                var l33 = dropout2.call(l32);
 
-                var l41 = fc2.forward(l33);
+                var l41 = fc2.call(l33);
 
-                return logsm.forward(l41);
+                return logsm.call(l41);
             }
         }
 
@@ -168,8 +168,8 @@ namespace TorchSharp.Examples
                     optimizer.zero_grad();
 
                     var target = data["label"];
-                    var prediction = model.forward(data["data"]);
-                    var output = loss.forward(prediction, target);
+                    var prediction = model.call(data["data"]);
+                    var output = loss.call(prediction, target);
 
                     output.backward();
 
@@ -202,8 +202,8 @@ namespace TorchSharp.Examples
             using (var d = torch.NewDisposeScope()) {
 
                 foreach (var data in dataLoader) {
-                    var prediction = model.forward(data["data"]);
-                    var output = loss.forward(prediction, data["label"]);
+                    var prediction = model.call(data["data"]);
+                    var output = loss.call(prediction, data["label"]);
                     testLoss += output.ToSingle();
 
                     var pred = prediction.argmax(1);

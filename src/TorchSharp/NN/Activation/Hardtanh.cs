@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal Hardtanh(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Hardtanh_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -61,7 +61,7 @@ namespace TorchSharp
                 public static Tensor Hardtanh(Tensor x, double min_val = -1.0, double max_val = 1.0, bool inplace = false)
                 {
                     using (var m = nn.Hardtanh(min_val, max_val, inplace)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

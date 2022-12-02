@@ -15,7 +15,7 @@ namespace TorchSharp
                 this.hue_factor = hue_factor;
             }
 
-            public Tensor forward(Tensor img)
+            public Tensor call(Tensor img)
             {
                 return transforms.functional.adjust_hue(img, hue_factor);
             }

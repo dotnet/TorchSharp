@@ -56,7 +56,7 @@ namespace TorchSharp
 
             /// <param name="specgram">A spectrogram STFT of dimension (..., freq, time).</param>
             /// <returns>Mel frequency spectrogram of size (..., ``n_mels``, time).</returns>
-            public override Tensor forward(Tensor specgram)
+            protected override Tensor forward(Tensor specgram)
             {
                 var mel_specgram = torch.matmul(specgram.transpose(-1, -2), this.fb).transpose(-1, -2);
 

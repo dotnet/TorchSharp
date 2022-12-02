@@ -15,7 +15,7 @@ namespace TorchSharp
                 this.brightness_factor = brightness_factor;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return transforms.functional.adjust_brightness(input, brightness_factor);
             }

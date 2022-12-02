@@ -21,7 +21,7 @@ using static TorchSharp.torchaudio.models;
 #nullable enable
 namespace TorchSharp.Modules
 {
-    public partial class Wav2Vec2Model : nn.Module
+    public partial class Wav2Vec2Model : nn.Module<Tensor, Tensor?, (Tensor, Tensor?)>
     {
         /// <summary>
         /// Layer norm with transpose
@@ -46,7 +46,7 @@ namespace TorchSharp.Modules
                 RegisterComponents();
             }
 
-            public override Tensor forward(Tensor input)
+            protected override Tensor forward(Tensor input)
             {
                 var x = input.transpose(-2, -1);
                 x = nn.functional.layer_norm(x, this.normalized_shape, this.weight, this.bias, this.eps);
@@ -92,13 +92,13 @@ namespace TorchSharp.Modules
             /// Shape ``[batch, out_channels, out_frames]``.
             /// Shape ``[batch, ]``.
             /// </returns>
-            public override (Tensor, Tensor?) forward(
+            protected override (Tensor, Tensor?) forward(
                 Tensor x,
                 Tensor? length)
             {
-                x = this.conv.forward(x);
+                x = this.conv.call(x);
                 if (this.layer_norm != null) {
-                    x = this.layer_norm.forward(x);
+                    x = this.layer_norm.call(x);
                 }
                 x = nn.functional.gelu(x);
 
@@ -114,7 +114,7 @@ namespace TorchSharp.Modules
         /// <summary>
         /// Extract features from audio
         /// </summary>
-        internal class FeatureExtractor : Module
+        internal class FeatureExtractor : Module<Tensor, Tensor?, (Tensor, Tensor?)>
         {
             public readonly ModuleList<Module<Tensor, Tensor?, (Tensor, Tensor?)>> conv_layers;
 
@@ -135,7 +135,7 @@ namespace TorchSharp.Modules
             /// Valid length of each output sample. shape: ``[batch, ]``.
             /// </returns>
             /// <exception cref="ArgumentException"></exception>
-            public (Tensor, Tensor?) forward(Tensor x, Tensor? length)
+            protected override (Tensor, Tensor?) forward(Tensor x, Tensor? length)
             {
                 if (x.ndim != 2) {
                     throw new ArgumentException("Expected the input Tensor to be 2D (batch, time), but received {list(x.shape)}");
@@ -144,7 +144,7 @@ namespace TorchSharp.Modules
                 x = x.unsqueeze(1);  // (batch, channel==1, frame)
                 foreach (var layer in this.conv_layers) {
                     var conv_layer = (ConvLayerBlock)layer;
-                    (x, length) = conv_layer.forward(x, length);  // (batch, feature, frame)
+                    (x, length) = conv_layer.call(x, length);  // (batch, feature, frame)
                 }
                 x = x.transpose(1, 2);  // (batch, frame, feature)
                 return (x, length);
@@ -183,11 +183,11 @@ namespace TorchSharp.Modules
 
             /// <param name="x">Feature Tensor. shape: ``[batch, frame, in_feature]``</param>
             /// <returns>Projected features. ``[batch, frame, out_feature]``.</returns>
-            public override Tensor forward(Tensor x)
+            protected override Tensor forward(Tensor x)
             {
-                x = this.layer_norm.forward(x);
-                x = this.projection.forward(x);
-                x = this.dropout.forward(x);
+                x = this.layer_norm.call(x);
+                x = this.projection.call(x);
+                x = this.dropout.call(x);
                 return x;
             }
         }
@@ -229,10 +229,10 @@ namespace TorchSharp.Modules
 
             /// <param name="x">shape ``[batch, frame, feature]``.</param>
             /// <returns>The resulting feature. Shape ``[batch, frame, feature]``.</returns>
-            public override Tensor forward(Tensor x)
+            protected override Tensor forward(Tensor x)
             {
                 x = x.transpose(-2, -1);
-                x = this.conv.forward(x);
+                x = this.conv.call(x);
                 if (this.num_remove > 0) {
                     x = x[TensorIndex.Ellipsis, TensorIndex.Slice(null, -this.num_remove)];
                 }
@@ -279,7 +279,7 @@ namespace TorchSharp.Modules
                     init.uniform_(this.bias, -bound, bound);
                 }
 
-                public override Tensor forward(Tensor input)
+                protected override Tensor forward(Tensor input)
                 {
                     var weight_v_norm = torch.linalg.norm(weight_v, dims: new long[] { 0, 1 }, keepdim: true);
                     var weight = torch.mul(weight_v / weight_v_norm, weight_g);
@@ -291,7 +291,7 @@ namespace TorchSharp.Modules
         /// <summary>
         /// Multihead Self Attention module
         /// </summary>
-        private class SelfAttention : Module
+        private class SelfAttention : Module<Tensor, Tensor?, Tensor>
         {
             public readonly Module<Tensor, Tensor> dropout;
             public readonly long embed_dim;
@@ -336,7 +336,7 @@ namespace TorchSharp.Modules
             /// <param name="attention_mask">shape: ``[batch_size, 1, sequence_length, sequence_length]``</param>
             /// <returns>The resulting tensor. shape: ``[batch, sequence_length, embed_dim]``</returns>
             /// <exception cref="ArgumentException"></exception>
-            public Tensor forward(Tensor x, Tensor? attention_mask = null)
+            protected override Tensor forward(Tensor x, Tensor? attention_mask)
             {
                 if (x.ndim != 3 || x.shape[2] != this.embed_dim) {
                     throw new ArgumentException("The expected input shape is (batch, sequence, embed_dim=={self.embed_dim}). Found {x.shape}.");
@@ -356,9 +356,9 @@ namespace TorchSharp.Modules
                 }
 
                 var shape = new long[] { batch_size, length, this.num_heads, this.head_dim };
-                var q = this.q_proj.forward(x).view(shape).transpose(2, 1);  // B, nH, L, Hd
-                var k = this.k_proj.forward(x).view(shape).permute(0, 2, 3, 1);  // B, nH, Hd, L
-                var v = this.v_proj.forward(x).view(shape).transpose(2, 1);  // B, nH, L, Hd
+                var q = this.q_proj.call(x).view(shape).transpose(2, 1);  // B, nH, L, Hd
+                var k = this.k_proj.call(x).view(shape).permute(0, 2, 3, 1);  // B, nH, Hd, L
+                var v = this.v_proj.call(x).view(shape).transpose(2, 1);  // B, nH, L, Hd
 
                 var weights = this.scaling * torch.matmul(q, k);  // B, nH, L, L
                 if (attention_mask is not null) {
@@ -366,13 +366,18 @@ namespace TorchSharp.Modules
                 }
 
                 weights = torch.nn.functional.softmax(weights, dim: -1);
-                weights = this.dropout.forward(weights);
+                weights = this.dropout.call(weights);
 
                 var output = torch.matmul(weights, v);  // B, nH, L, Hd
                 output = output.transpose(2, 1).reshape(batch_size, length, embed_dim);
 
-                output = this.out_proj.forward(output);
+                output = this.out_proj.call(output);
                 return output;
+            }
+
+            public new Tensor call(Tensor x, Tensor? attention_mask = null)
+            {
+                return base.call(x, attention_mask);
             }
         }
 
@@ -402,14 +407,14 @@ namespace TorchSharp.Modules
 
             /// <param name="x">shape: `(batch, sequence_length, io_features)`</param>
             /// <returns>shape: `(batch, sequence_length, io_features)`</returns>
-            public override Tensor forward(Tensor x)
+            protected override Tensor forward(Tensor x)
             {
-                x = this.intermediate_dense.forward(x);
+                x = this.intermediate_dense.call(x);
                 x = torch.nn.functional.gelu(x);
-                x = this.intermediate_dropout.forward(x);
+                x = this.intermediate_dropout.call(x);
 
-                x = this.output_dense.forward(x);
-                x = this.output_dropout.forward(x);
+                x = this.output_dense.call(x);
+                x = this.output_dropout.call(x);
                 return x;
             }
         }
@@ -445,25 +450,25 @@ namespace TorchSharp.Modules
             /// <param name="x">shape: `(batch, sequence_length, embed_dim)`</param>
             /// <param name="attention_mask">shape: `(batch, 1, sequence_length, sequence_length)`</param>
             /// <returns></returns>
-            public override Tensor forward(
+            protected override Tensor forward(
                 Tensor x,
                 Tensor? attention_mask = null)
             {
                 var residual = x;
 
                 if (this.layer_norm_first) {
-                    x = this.layer_norm.forward(x);
+                    x = this.layer_norm.call(x);
                 }
 
-                x = this.attention.forward(x, attention_mask);
-                x = this.dropout.forward(x);
+                x = this.attention.call(x, attention_mask);
+                x = this.dropout.call(x);
                 x = residual + x;
 
                 if (this.layer_norm_first) {
-                    x = x + this.feed_forward.forward(this.final_layer_norm.forward(x));
+                    x = x + this.feed_forward.call(this.final_layer_norm.call(x));
                 } else {
-                    x = this.layer_norm.forward(x);
-                    x = this.final_layer_norm.forward(x + this.feed_forward.forward(x));
+                    x = this.layer_norm.call(x);
+                    x = this.final_layer_norm.call(x + this.feed_forward.call(x));
                 }
                 return x;
             }
@@ -498,33 +503,35 @@ namespace TorchSharp.Modules
 
             public Tensor _preprocess(Tensor x)
             {
-                x = x + this.pos_conv_embed.forward(x);
+                x = x + this.pos_conv_embed.call(x);
 
                 if (this.layer_norm_first) {
-                    x = this.layer_norm.forward(x);
+                    x = this.layer_norm.call(x);
                 }
 
-                x = this.dropout.forward(x);
+                x = this.dropout.call(x);
                 return x;
             }
 
-            public override Tensor forward(
+            protected override Tensor forward(
                 Tensor x,
                 Tensor? attention_mask = null)
             {
                 x = this._preprocess(x);
                 foreach (var layer in this.layers) {
                     if (!(this.training && torch.rand(1).item<float>() <= this.layer_drop)) {
-                        x = ((nn.Module<Tensor, Tensor?, Tensor>)layer).forward(x, attention_mask);
+                        x = ((nn.Module<Tensor, Tensor?, Tensor>)layer).call(x, attention_mask);
                     }
                 }
 
                 if (!this.layer_norm_first) {
-                    x = this.layer_norm.forward(x);
+                    x = this.layer_norm.call(x);
                 }
 
                 return x;
             }
+
+            public new Tensor call(Tensor x, Tensor? attention_mask = null) => base.call(x, attention_mask);
 
             public Tensor[] get_intermediate_outputs(
                 Tensor x,
@@ -539,7 +546,7 @@ namespace TorchSharp.Modules
                 var ret = new List<Tensor>();
                 x = this._preprocess(x);
                 foreach (var layer in this.layers) {
-                    x = ((nn.Module<Tensor, Tensor?, Tensor>)layer).forward(x, attention_mask);
+                    x = ((nn.Module<Tensor, Tensor?, Tensor>)layer).call(x, attention_mask);
                     ret.Add(x);
                     if (num_layers != null && ret.Count >= num_layers) {
                         return ret.ToArray();
@@ -568,7 +575,7 @@ namespace TorchSharp.Modules
                 Tensor features,
                 Tensor? lengths = null)
             {
-                var x = this.feature_projection.forward(features);
+                var x = this.feature_projection.call(features);
 
                 Tensor? mask = null;
                 if (lengths is not null) {
@@ -584,12 +591,12 @@ namespace TorchSharp.Modules
                 return (x, mask);
             }
 
-            public override Tensor forward(
+            protected override Tensor forward(
                 Tensor features,
                 Tensor? lengths = null)
             {
                 var (x, mask) = this._preprocess(features, lengths);
-                x = this.transformer.forward(x, attention_mask: mask);
+                x = this.transformer.call(x, attention_mask: mask);
                 return x;
             }
 
@@ -1005,7 +1012,7 @@ namespace TorchSharp.Modules
         /// <summary>
         /// Generate the masks for masked prediction.
         /// </summary>
-        internal class MaskGenerator : Module
+        internal class MaskGenerator : Module<Tensor, Tensor?, (Tensor, Tensor?)>
         {
             public readonly long mask_channel_length;
             public readonly long mask_channel_min_space;
@@ -1080,7 +1087,7 @@ namespace TorchSharp.Modules
             /// The feature representations after masking.
             /// The generated mask indices.
             /// </returns>
-            public (Tensor, Tensor?) forward(Tensor x, Tensor? padding_mask)
+            protected override (Tensor, Tensor?) forward(Tensor x, Tensor? padding_mask)
             {
                 Tensor? mask_indices;
                 var B = x.size(0);
@@ -1152,7 +1159,7 @@ namespace TorchSharp.Modules
         /// <summary>
         /// Generate the logits of masked and unmasked inputs.
         /// </summary>
-        internal class LogitGenerator : Module
+        internal class LogitGenerator : Module<Tensor, Tensor, Tensor, Tensor, (Tensor?, Tensor?)>
         {
             public readonly Module<Tensor, Tensor> final_proj;
             public readonly Tensor label_embeddings;
@@ -1189,11 +1196,11 @@ namespace TorchSharp.Modules
             /// The logits of masked frames. Tensor of dimension `[masked_frame, final_dim]`.
             /// The logits of unmasked frames. Tensor of dimension `[unmasked_frame, final_dim]`.
             /// </returns>
-            public (Tensor?, Tensor?) forward(Tensor x, Tensor label, Tensor mask_m, Tensor mask_u)
+            protected override (Tensor?, Tensor?) forward(Tensor x, Tensor label, Tensor mask_m, Tensor mask_u)
             {
                 Tensor? logit_u;
                 Tensor? logit_m;
-                var proj_x = this.final_proj.forward(x);
+                var proj_x = this.final_proj.call(x);
                 if (this.skip_masked) {
                     logit_m = null;
                 } else {

@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal Dropout1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 if (tensor.ndim != 3)
                     throw new ArgumentException("tensor passed to Dropout1d must be of the shape (N,C,L");

@@ -18,7 +18,7 @@ namespace TorchSharp
             {
             }
 
-            public override Tensor forward(Tensor input1, Tensor input2)
+            protected override Tensor forward(Tensor input1, Tensor input2)
             {
                 var res = THSNN_PairwiseDistance_forward(handle, input1.Handle, input2.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -52,7 +52,7 @@ namespace TorchSharp
                 public static Tensor pairwise_distance(Tensor input1, Tensor input2, double p = 2.0, double eps = 1e-6, bool keep_dim = false)
                 {
                     using (var f = nn.PairwiseDistance(p, eps, keep_dim)) {
-                        return f.forward(input1, input2);
+                        return f.call(input1, input2);
                     }
                 }
             }

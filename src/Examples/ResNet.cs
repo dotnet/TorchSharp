@@ -104,9 +104,9 @@ namespace TorchSharp.Examples
             }
         }
 
-        public override Tensor forward(Tensor input)
+        protected override Tensor forward(Tensor input)
         {
-            return layers.forward(input);
+            return layers.call(input);
         }
 
         class BasicBlock : Module<Tensor, Tensor>
@@ -137,10 +137,10 @@ namespace TorchSharp.Examples
                 RegisterComponents();
             }
 
-            public override Tensor forward(Tensor t)
+            protected override Tensor forward(Tensor t)
             {
-                var x = layers.forward(t);
-                var y = shortcut.forward(t);
+                var x = layers.call(t);
+                var y = shortcut.call(t);
                 return x.add_(y).relu_();
             }
 
@@ -178,10 +178,10 @@ namespace TorchSharp.Examples
                 RegisterComponents();
             }
 
-            public override Tensor forward(Tensor t)
+            protected override Tensor forward(Tensor t)
             {
-                var x = layers.forward(t);
-                using var y = shortcut.forward(t);
+                var x = layers.call(t);
+                using var y = shortcut.call(t);
                 return x.add_(y).relu_();
             }
 

@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal Tanhshrink(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Tanhshrink_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -55,7 +55,7 @@ namespace TorchSharp
                 public static Tensor Tanhshrink(Tensor x)
                 {
                     using (var m = nn.Tanhshrink()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

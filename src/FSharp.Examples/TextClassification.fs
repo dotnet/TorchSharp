@@ -43,7 +43,7 @@ let hasCUDA = torch.cuda_is_available() //torch.cuda.is_available()
 let device = if hasCUDA then torch.CUDA else torch.CPU
 
 let loss = torch.nn.CrossEntropyLoss()
-let criterion x y = loss.forward(x,y)
+let criterion x y = loss.call(x,y)
 
 type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.Device) as this =
     inherit Module<torch.Tensor, torch.Tensor, torch.Tensor>("Transformer")
@@ -64,7 +64,7 @@ type TextClassificationModel(vocabSize, embedDim, nClasses, device:torch.Device)
             this.``to``(device) |> ignore
 
     override _.forward(input, offsets) =
-        embedding.forward(input, offsets) --> fc
+        embedding.call(input, offsets) --> fc
 
 let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (model:TextClassificationModel) (optimizer:torch.optim.Optimizer) =
 
@@ -82,7 +82,7 @@ let train epoch (trainData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) 
 
         optimizer.zero_grad()
 
-        let predicted_labels = model.forward(texts, offsets)
+        let predicted_labels = model.call(texts, offsets)
         let loss = criterion predicted_labels labels
 
         loss.backward()
@@ -109,7 +109,7 @@ let evaluate (testData:IEnumerable<torch.Tensor*torch.Tensor*torch.Tensor>) (mod
 
         use d = torch.NewDisposeScope()
 
-        let predicted_labels = model.forward(texts, offsets)
+        let predicted_labels = model.call(texts, offsets)
         let loss = criterion predicted_labels labels
 
         total_acc <- total_acc + float ((predicted_labels.argmax(1L).eq(labels)).sum().cpu().item<int64>())

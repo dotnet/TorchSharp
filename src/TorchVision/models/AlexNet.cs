@@ -102,13 +102,13 @@ namespace TorchSharp
                     this.to(device);
             }
 
-            public override Tensor forward(Tensor input)
+            protected override Tensor forward(Tensor input)
             {
                 using (var _ = NewDisposeScope()) {
-                    var f = features.forward(input);
-                    var avg = avgpool.forward(f);
+                    var f = features.call(input);
+                    var avg = avgpool.call(f);
                     var x = avg.flatten(1);
-                    return classifier.forward(x).MoveToOuterDisposeScope();
+                    return classifier.call(x).MoveToOuterDisposeScope();
                 }
             }
         }

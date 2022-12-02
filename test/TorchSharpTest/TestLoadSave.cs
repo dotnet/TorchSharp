@@ -251,7 +251,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            public override torch.Tensor forward(torch.Tensor input)
+            protected override torch.Tensor forward(torch.Tensor input)
             {
                 throw new NotImplementedException();
             }
@@ -684,8 +684,8 @@ namespace TorchSharp
 
             var loss = torch.nn.MSELoss(Reduction.Sum);
 
-            using var eval = seq.forward(x);
-            var output = loss.forward(eval, y);
+            using var eval = seq.call(x);
+            var output = loss.call(eval, y);
 
             var l = output.ToSingle();
 
@@ -754,8 +754,8 @@ namespace TorchSharp
 
             var loss = torch.nn.MSELoss(Reduction.Sum);
 
-            using var eval = seq.forward(x);
-            var output = loss.forward(eval, y);
+            using var eval = seq.call(x);
+            var output = loss.call(eval, y);
 
             var l = output.ToSingle();
 

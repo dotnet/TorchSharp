@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal Softplus(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Softplus_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -59,7 +59,7 @@ namespace TorchSharp
                 public static Tensor softplus(Tensor x, double beta = 1.0, double threshold = 20.0)
                 {
                     using (var m = nn.Softplus(beta, threshold)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

@@ -83,10 +83,10 @@ namespace TorchSharp
 
             /// <param name="waveform">Tensor of audio of dimension (..., time).</param>
             /// <returns>Mel frequency spectrogram of size (..., ``n_mels``, time).</returns>
-            public override Tensor forward(Tensor waveform)
+            protected override Tensor forward(Tensor waveform)
             {
-                var specgram = this.spectrogram.forward(waveform);
-                var mel_specgram = this.mel_scale.forward(specgram);
+                var specgram = this.spectrogram.call(waveform);
+                var mel_specgram = this.mel_scale.call(specgram);
                 return mel_specgram;
             }
         }

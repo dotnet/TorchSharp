@@ -18,7 +18,7 @@ namespace TorchSharp
         {
             internal ReLU6(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = LibTorchSharp.THSNN_ReLU6_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -63,7 +63,7 @@ namespace TorchSharp
                 public static Tensor relu6(Tensor x, bool inplace = false)
                 {
                     using (var m = nn.ReLU6(inplace)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

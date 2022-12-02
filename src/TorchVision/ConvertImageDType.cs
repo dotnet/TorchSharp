@@ -14,7 +14,7 @@ namespace TorchSharp
                 this.dtype = dtype;
             }
 
-            public Tensor forward(Tensor image)
+            public Tensor call(Tensor image)
             {
                 return transforms.functional.convert_image_dtype(image, dtype);
             }

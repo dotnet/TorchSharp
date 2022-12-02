@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal Softmax2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Softmax2d_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -54,7 +54,7 @@ namespace TorchSharp
                 public static Tensor softmax2d(Tensor x)
                 {
                     using (var m = nn.Softmax2d()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

@@ -18,7 +18,7 @@ namespace TorchSharp
             {
             }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_AdaptiveMaxPool1d_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -60,7 +60,7 @@ namespace TorchSharp
                 public static Tensor adaptive_max_pool1d(Tensor x, long outputSize)
                 {
                     using (var d = nn.AdaptiveMaxPool1d(outputSize)) {
-                        return d.forward(x);
+                        return d.call(x);
                     }
                 }
             }

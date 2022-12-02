@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal CELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_CELU_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -59,7 +59,7 @@ namespace TorchSharp
                 public static Tensor celu(Tensor x, double alpha, bool inplace = false)
                 {
                     using (var m = nn.CELU(alpha, inplace)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

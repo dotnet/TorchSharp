@@ -21,7 +21,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="tensor">Input tensor</param>
             /// <returns></returns>
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_PixelUnshuffle_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -60,7 +60,7 @@ namespace TorchSharp
                 public static Tensor pixel_unshuffle(Tensor x, long downscaleFactor)
                 {
                     using (var d = nn.PixelUnshuffle(downscaleFactor)) {
-                        return d.forward(x);
+                        return d.call(x);
                     }
                 }
             }

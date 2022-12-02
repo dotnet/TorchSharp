@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal GELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_GELU_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -55,7 +55,7 @@ namespace TorchSharp
                 public static Tensor gelu(Tensor x)
                 {
                     using (var m = nn.GELU()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal GLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_GLU_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -57,7 +57,7 @@ namespace TorchSharp
                 public static Tensor glu(Tensor input, long dim = -1)
                 {
                     using (var m = nn.GLU(dim)) {
-                        return m.forward(input);
+                        return m.call(input);
                     }
                 }
             }

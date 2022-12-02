@@ -54,7 +54,7 @@ namespace TorchSharp
                 public static Tensor upsample(Tensor x, long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool alignCorners = false)
                 {
                     using (var d = nn.Upsample(size, scale_factor, mode, alignCorners)) {
-                        return d.forward(x);
+                        return d.call(x);
                     }
                 }
             }
@@ -75,7 +75,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="tensor">Input tensor</param>
             /// <returns></returns>
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Upsample_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

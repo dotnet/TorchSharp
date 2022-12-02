@@ -14,10 +14,10 @@ namespace TorchSharp
                 resizer = transforms.Resize(newHeight, newWidth);
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
-                using var cr = cropper.forward(input);
-                return resizer.forward(cr);
+                using var cr = cropper.call(input);
+                return resizer.call(cr);
             }
 
             private ITransform cropper;

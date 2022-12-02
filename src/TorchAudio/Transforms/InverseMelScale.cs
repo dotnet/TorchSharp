@@ -64,7 +64,7 @@ namespace TorchSharp
             /// <param name="melspec">A Mel frequency spectrogram of dimension (..., ``n_mels``, time)</param>
             /// <returns>Linear scale spectrogram of size (..., freq, time)</returns>
             /// <exception cref="ArgumentException"></exception>
-            public override Tensor forward(Tensor melspec)
+            protected override Tensor forward(Tensor melspec)
             {
                 // pack batch
                 var shape = melspec.size();

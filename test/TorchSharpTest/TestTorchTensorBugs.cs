@@ -60,7 +60,7 @@ namespace TorchSharp
         {
             public DoubleIt() : base("double") { }
 
-            public override Tensor forward(Tensor t) => t * 2;
+            protected override Tensor forward(Tensor t) => t * 2;
         }
 
         [Fact]
@@ -78,7 +78,7 @@ namespace TorchSharp
             );
 
             using var @in = torch.tensor(3);
-            using var @out = net.forward(@in);
+            using var @out = net.call(@in);
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
@@ -98,7 +98,7 @@ namespace TorchSharp
             using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
 
                 var output = nn.TripletMarginWithDistanceLoss(distance);
-                using (var result = output.forward(anchor, positive, negative)) { }
+                using (var result = output.call(anchor, positive, negative)) { }
             }
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -123,8 +123,8 @@ namespace TorchSharp
             var loss = nn.MSELoss(Reduction.Sum);
 
             Func<Tensor> closure = () => {
-                using var eval = seq.forward(x);
-                var output = loss.forward(eval, y);
+                using var eval = seq.call(x);
+                var output = loss.call(eval, y);
 
                 var l = output.ToSingle();
 
@@ -153,7 +153,7 @@ namespace TorchSharp
             using var @in = torch.tensor(3);
 
             for (var i = 0; i < 1000; i++) {
-                using var @out = net.forward(@in);
+                using var @out = net.call(@in);
             }
         }
 
@@ -182,7 +182,7 @@ namespace TorchSharp
         {
             public TestModule() : base(nameof(TestModule)) { }
 
-            public override torch.Tensor forward(torch.Tensor t) => t.clone();
+            protected override torch.Tensor forward(torch.Tensor t) => t.clone();
 
             public static void Reproduce()
             {
@@ -194,7 +194,7 @@ namespace TorchSharp
                 for (var i = 0; i < 100; i++) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    t = seq.forward(t);
+                    t = seq.call(t);
                 }
             }
 
@@ -452,7 +452,7 @@ namespace TorchSharp
 
             var c2 = torch.nn.Conv2d(3, 16, kernelSize: (1, 7), stride: (1, 1), padding: (0, 3));
             var Win = torch.rand(16, 3, 8, 8);
-            var s = c2.forward(Win).shape;
+            var s = c2.call(Win).shape;
             Assert.Equal(new long[] { 16, 16, 8, 8 }, s);
         }
 
@@ -463,16 +463,16 @@ namespace TorchSharp
 
             using (var pool = BatchNorm1d(28)) {
                 pool.eval();
-                pool.forward(torch.ones(1, 28));
+                pool.call(torch.ones(1, 28));
             }
             using (var pool = BatchNorm1d(28))
             using (var seq = Sequential(pool)) {
                 seq.eval();
-                seq.forward(torch.ones(1, 28));
+                seq.call(torch.ones(1, 28));
             }
             using (var seq = new Module500()) {
                 seq.eval();
-                seq.forward(torch.ones(1, 28));
+                seq.call(torch.ones(1, 28));
             }
         }
 
@@ -482,7 +482,7 @@ namespace TorchSharp
 
             public Module500() : base(nameof(TestModule)) { RegisterComponents(); }
 
-            public override torch.Tensor forward(torch.Tensor t) => bn1.forward(t);
+            protected override torch.Tensor forward(torch.Tensor t) => bn1.call(t);
         }
 
         [Fact]
@@ -491,7 +491,7 @@ namespace TorchSharp
             using var _ = NewDisposeScope();
 
             var model = new Module510(1, 32);
-            model.forward(torch.randn(16, 1, 32));
+            model.call(torch.randn(16, 1, 32));
 
             var w0 = model.get_parameter("stack.0.weight").clone();
             var w1 = model.get_parameter("stack.1.weight").clone();
@@ -539,9 +539,9 @@ namespace TorchSharp
                 this.RegisterComponents();
             }
 
-            public override torch.Tensor forward(torch.Tensor t)
+            protected override torch.Tensor forward(torch.Tensor t)
             {
-                return this.stack.forward(t);
+                return this.stack.call(t);
             }
         }
 
@@ -560,9 +560,9 @@ namespace TorchSharp
                 var x = torch.ones(5, 3).cuda();
                 var y = torch.ones(5, 4).cuda();
 
-                var z = model.forward(x);
+                var z = model.call(x);
                 var lossFunc = torch.nn.CrossEntropyLoss();
-                var loss = lossFunc.forward(y, z);
+                var loss = lossFunc.call(y, z);
                 loss.backward();
                 optimizer.step();
 
@@ -593,7 +593,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            public override torch.Tensor forward(torch.Tensor t)
+            protected override torch.Tensor forward(torch.Tensor t)
             {
                 return torch.matmul(t, Weight);
             }
@@ -631,9 +631,9 @@ namespace TorchSharp
                 this.RegisterComponents();
             }
 
-            public override torch.Tensor forward(torch.Tensor t)
+            protected override torch.Tensor forward(torch.Tensor t)
             {
-                return this.seq.forward(t);
+                return this.seq.call(t);
             }
         }
 
@@ -672,9 +672,9 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            public override torch.Tensor forward(torch.Tensor t)
+            protected override torch.Tensor forward(torch.Tensor t)
             {
-                return this.seq.forward(t);
+                return this.seq.call(t);
             }
         }
 
@@ -687,7 +687,7 @@ namespace TorchSharp
                    h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
             using (var gru = GRU(10, 20)) {
                 gru.to(device);
-                var (output, hN) = gru.forward(input);
+                var (output, hN) = gru.call(input);
                 Assert.Equal(h0.shape, hN.shape);
                 Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
             }
@@ -702,7 +702,7 @@ namespace TorchSharp
                    h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
             using (var lstm = LSTM(10, 20)) {
                 lstm.to(device);
-                var (output, hN, hX) = lstm.forward(input);
+                var (output, hN, hX) = lstm.call(input);
                 Assert.Equal(h0.shape, hN.shape);
                 Assert.Equal(h0.shape, hX.shape);
                 Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
@@ -718,7 +718,7 @@ namespace TorchSharp
                h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
             using (var rnn = RNN(10, 20)) {
                 rnn.to(device);
-                var (output, hN) = rnn.forward(input);
+                var (output, hN) = rnn.call(input);
                 Assert.Equal(h0.shape, hN.shape);
                 Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
             }
@@ -785,7 +785,7 @@ namespace TorchSharp
             var x = torch.zeros(1, 3, 64, 160);
 
             // This should not blow up.
-            var tmp = bone.forward(x);
+            var tmp = bone.call(x);
         }
 
         [Fact]
@@ -964,9 +964,9 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            public override torch.Tensor forward(torch.Tensor t)
+            protected override torch.Tensor forward(torch.Tensor t)
             {
-                return this.seq.forward(t);
+                return this.seq.call(t);
             }
 
             public void validate(ScalarType expected, DeviceType devType)

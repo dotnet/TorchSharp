@@ -35,7 +35,7 @@ namespace TorchSharp.Examples
                 torchvision.transforms.Resize(256, 256)
                 );
 
-            var second = transform.forward(first);
+            var second = transform.call(first);
 
             for (; n < second.shape[0]; n++) {
 

@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal Hardshrink(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public override Tensor forward(Tensor tensor)
+            protected override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Hardshrink_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -57,7 +57,7 @@ namespace TorchSharp
                 public static Tensor Hardshrink(Tensor x, double lambda = 0.5)
                 {
                     using (var m = nn.Hardshrink(lambda)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

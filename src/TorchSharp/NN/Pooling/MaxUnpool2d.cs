@@ -18,7 +18,7 @@ namespace TorchSharp
             {
             }
 
-            public override Tensor forward(Tensor tensor, Tensor indices, long[] output_size = null)
+            protected override Tensor forward(Tensor tensor, Tensor indices, long[] output_size = null)
             {
                 unsafe {
                     fixed (long* pOutSize = output_size) {
@@ -27,6 +27,11 @@ namespace TorchSharp
                         return new Tensor(res);
                     }
                 }
+            }
+
+            public new Tensor call(Tensor tensor, Tensor indices, long[] output_size = null)
+            {
+                return base.call(tensor, indices, output_size);
             }
         }
     }
