@@ -24,3 +24,5 @@ EXPORT_API(void) THSVision_BRGA_RGB(const uint8_t* inputBytes, uint8_t* redBytes
 EXPORT_API(void) THSVision_BRGA_RGBA(const uint8_t* inputBytes, uint8_t* redBytes, uint8_t* greenBytes, uint8_t* blueBytes, uint8_t* alphaBytes, int64_t inputChannelCount, int64_t imageSize);
 
 EXPORT_API(void) THSVision_RGB_BRGA(const uint8_t* inputBytes, uint8_t* outBytes, int64_t inputChannelCount, int64_t imageSize);
+
+EXPORT_API(Tensor) THSVision_nms(const Tensor dets, const Tensor scores, double iou_threshold);

@@ -20,7 +20,7 @@ namespace TorchSharp
                 });
                 var scores = torch.from_array(new[] { 0.9 });
 
-                var nms_boxes = nms(boxes, scores);
+                var nms_boxes = nms_custom(boxes, scores);
                 Assert.Multiple(
                     () => Assert.Single(nms_boxes.shape),
                     () => Assert.Equal(1, nms_boxes.shape[0])
@@ -41,7 +41,7 @@ namespace TorchSharp
                 torch.Tensor nms_boxes = null;
 
                 // Less than iou threshold.
-                nms_boxes = nms(boxes, scores, 0.6);
+                nms_boxes = nms_custom(boxes, scores, 0.6);
                 Assert.Multiple(
                     () => Assert.Single(nms_boxes.shape),
                     () => Assert.Equal(2, nms_boxes.shape[0]),
@@ -50,7 +50,7 @@ namespace TorchSharp
                 );
 
                 // Larger than iou threshold.
-                nms_boxes = nms(boxes, scores, 0.3);
+                nms_boxes = nms_custom(boxes, scores, 0.3);
                 Assert.Multiple(
                     () => Assert.Single(nms_boxes.shape),
                     () => Assert.Equal(1, nms_boxes.shape[0]),

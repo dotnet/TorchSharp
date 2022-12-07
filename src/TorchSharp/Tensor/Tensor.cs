@@ -36,7 +36,7 @@ namespace TorchSharp
 
             internal DisposeScope? OwningDisposeScope { get; set; }
 
-            internal Tensor(IntPtr handle)
+            public Tensor(IntPtr handle)
             {
                 this.handle = handle;
                 System.Threading.Interlocked.Increment(ref _totalCount);

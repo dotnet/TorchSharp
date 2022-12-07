@@ -678,5 +678,13 @@ namespace TorchSharp
         /// </summary>
         public static Tensor argsort(Tensor input, long dim = -1, bool descending = false) => input.argsort(dim, descending);
 
+        /// <summary>
+        /// Returns the unique elements of the input tensor.
+        /// </summary>
+        /// <returns></returns>
+        public static Tensor unique(Tensor input)
+        {
+            return input.unique().output;
+        }
     }
 }

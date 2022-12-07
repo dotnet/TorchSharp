@@ -42,7 +42,7 @@ namespace TorchSharp
             /// <param name="scores">Scores (Tensor[N]) for each one of the boxes.</param>
             /// <param name="iou_threshold">Discards all overlapping boxes with IoU > iou_threshold.</param>
             /// <returns>The indices (Tensor) of the elements that have been kept by NMS, sorted in decreasing order of scores.</returns>
-            public static Tensor nms(Tensor boxes, Tensor scores, double iou_threshold = 0.5)
+            public static Tensor nms_custom(Tensor boxes, Tensor scores, double iou_threshold = 0.5)
             {
                 using (var _ = torch.NewDisposeScope()) {
                     var x1 = boxes.select(1, 0);

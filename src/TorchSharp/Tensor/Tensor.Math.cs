@@ -2754,7 +2754,14 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The first input tensor</param>
         /// <param name="other">The second input tensor</param>
-        public static Tensor maximum(Tensor input, Tensor other) => input.maximum(other);
+        public static Tensor max(Tensor input, Tensor other) => maximum(input, other);
+
+        /// <summary>
+        /// Computes the element-wise maximum of input and other.
+        /// </summary>
+        /// <param name="input">The first input tensor</param>
+        /// <param name="other">The second input tensor</param>
+        static public Tensor maximum(Tensor input, Tensor other) => input.maximum(other);
 
         /// <summary>
         /// Returns a named tuple (values, indexes) where values is the maximum value of each row of the input tensor in the given dimension dim.
@@ -2797,7 +2804,14 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The first input tensor</param>
         /// <param name="other">The second input tensor</param>
-        public static Tensor minimum(Tensor input, Tensor other) => input.minimum(other);
+        public static Tensor min(Tensor input, Tensor other) => minimum(input, other);
+
+        /// <summary>
+        /// Computes the element-wise minimum of input and other.
+        /// </summary>
+        /// <param name="input">The first input tensor</param>
+        /// <param name="other">The second input tensor</param>
+        static public Tensor minimum(Tensor input, Tensor other) => input.minimum(other);
 
         /// <summary>
         /// Returns a named tuple (values, indexes) where values is the minimum value of each row of the input tensor in the given dimension dim.

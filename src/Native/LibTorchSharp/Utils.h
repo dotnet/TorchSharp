@@ -2,25 +2,38 @@
 #pragma once
 
 #include <string>
+#include<iostream>
+#include<stdio.h>
 
 #include "torch/torch.h"
 
-extern thread_local char *torch_last_err;
+#if _WIN32
+#include <Windows.h>
+#include <tchar.h>
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#else
+#include <dlfcn.h>
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
 
-typedef torch::Tensor *Tensor;
-typedef torch::Scalar *Scalar;
+extern thread_local char* torch_last_err;
+
+typedef torch::Tensor* Tensor;
+typedef torch::Scalar* Scalar;
 typedef torch::Generator* Generator;
 typedef c10::Storage* Storage;
 typedef torch::nn::utils::rnn::PackedSequence* PackedSequence;
 
-typedef std::shared_ptr<torch::nn::Module> * NNModule;
-typedef std::shared_ptr<torch::nn::AnyModule> * NNAnyModule;
-typedef std::shared_ptr<torch::optim::Optimizer> * Optimizer;
-typedef std::shared_ptr<torch::jit::CompilationUnit> * JITCompilationUnit;
+typedef std::shared_ptr<torch::nn::Module>* NNModule;
+typedef std::shared_ptr<torch::nn::AnyModule>* NNAnyModule;
+typedef std::shared_ptr<torch::optim::Optimizer>* Optimizer;
+typedef std::shared_ptr<torch::jit::CompilationUnit>* JITCompilationUnit;
 typedef std::shared_ptr<torch::jit::Module>* JITModule;
 typedef std::shared_ptr<torch::jit::Method>* JITMethod;
-typedef std::shared_ptr<torch::jit::Function> * JITFunction;
-typedef std::shared_ptr<c10::Type> * JITType;
+typedef std::shared_ptr<torch::jit::Function>* JITFunction;
+typedef std::shared_ptr<c10::Type>* JITType;
 typedef std::shared_ptr<c10::TensorType>* JITTensorType;
 
 //typedef std::shared_ptr<torch::jit::DimensionedTensorType>* JITDimensionedTensorType;
@@ -49,7 +62,7 @@ typedef std::shared_ptr<c10::TensorType>* JITTensorType;
 #define CATCH_RETURN_Tensor(stmt) CATCH_RETURN_RES(Tensor, NULL, stmt)
 
 // Return undefined tensors as NULL to C#
-inline Tensor ResultTensor(const at::Tensor & res)
+inline Tensor ResultTensor(const at::Tensor& res)
 {
     if (res.defined())
         return new torch::Tensor(res);
@@ -82,11 +95,11 @@ inline Tensor ResultTensor(const at::Tensor & res)
 
 
 // Utility method used to built sharable strings.
-const char * make_sharable_string(const std::string str);
+const char* make_sharable_string(const std::string str);
 
 // Method concerting arrays of tensor pointers into arrays of tensors.
 template<class T>
-std::vector<T> toTensors(torch::Tensor ** tensorPtrs, const int length)
+std::vector<T> toTensors(torch::Tensor** tensorPtrs, const int length)
 {
     std::vector<T> tensors;
 
@@ -296,4 +309,49 @@ torch::nn::init::NonlinearityType get_nl_type(const int64_t nl)
     case 9:  return torch::kReLU;
     case 10: return torch::kLeakyReLU;
     }
+}
+
+inline
+void* LoadNativeSymbol(const std::string libName, const std::string symbolName)
+{
+    void* lib = NULL;
+#if _WIN32
+#ifdef UNICODE
+    auto fullName = libName;
+    std::wstring widestr = std::wstring(fullName.begin(), fullName.end());
+    lib = LoadLibrary(widestr.c_str());
+#else
+    lib = LoadLibrary(libName.c_str());
+#endif // !UNICODE
+    
+#else
+    lib = dlopen((libName + ".so").c_str(), RTLD_LAZY);
+#endif
+
+    if (lib == NULL)
+    {
+        char buff[FILENAME_MAX];
+        GetCurrentDir(buff, FILENAME_MAX);
+        std::string current_working_dir(buff);
+
+        torch_last_err = strdup(("Failed to load library: " + libName + " " +
+            std::to_string(GetLastError()) + " " + current_working_dir).c_str());
+        return NULL;
+    }
+
+    void* symbol = NULL;
+#if _WIN32
+    symbol = (void*)GetProcAddress((HMODULE)lib, symbolName.c_str());
+#else
+    symbol = dlsym(libHandle, symbolName.c_str());
+#endif
+
+    if (symbol == NULL)
+    {
+        torch_last_err = strdup(("Cannot find symbol: " + symbolName + " " +
+            std::to_string(GetLastError())).c_str());
+        return NULL;
+    }
+
+    return symbol;
 }

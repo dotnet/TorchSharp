@@ -359,3 +359,13 @@ void THSVision_RGB_BRGA(const uint8_t* inputBytes, uint8_t* outBytes, int64_t in
         outBytes[outputAlpha + j] = inputHasAlpha ? inputBytes[inputBlue + i] : 255;
     }
 }
+
+Tensor THSVision_nms(const Tensor dets, const Tensor scores, double iou_threshold)
+{
+    typedef at::Tensor (*TorchVisionFunc)(at::Tensor&, at::Tensor&, double);
+    auto nms = (TorchVisionFunc)LoadNativeSymbol("libtorchvision.dll", "?nms@ops@vision@@YA?AVTensor@at@@AEBV34@0N@Z");
+    if (nms == NULL)
+        return NULL;
+
+    CATCH_TENSOR(nms(*dets, *scores, iou_threshold));
+}
