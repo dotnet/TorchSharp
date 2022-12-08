@@ -323,11 +323,6 @@ void* LoadNativeSymbol(const std::string libName, const std::string symbolName)
 #else
     lib = LoadLibrary(libName.c_str());
 #endif // !UNICODE
-    
-#else
-    lib = dlopen((libName + ".so").c_str(), RTLD_LAZY);
-#endif
-
     if (lib == NULL)
     {
         char buff[FILENAME_MAX];
@@ -337,21 +332,23 @@ void* LoadNativeSymbol(const std::string libName, const std::string symbolName)
         torch_last_err = strdup(("Failed to load library: " + libName + " " +
             std::to_string(GetLastError()) + " " + current_working_dir).c_str());
         return NULL;
-    }
+}
+#else
+    lib = dlopen((libName + ".so").c_str(), RTLD_LAZY);
+#endif
 
     void* symbol = NULL;
 #if _WIN32
     symbol = (void*)GetProcAddress((HMODULE)lib, symbolName.c_str());
-#else
-    symbol = dlsym(libHandle, symbolName.c_str());
-#endif
-
     if (symbol == NULL)
     {
         torch_last_err = strdup(("Cannot find symbol: " + symbolName + " " +
             std::to_string(GetLastError())).c_str());
         return NULL;
     }
+#else
+    symbol = dlsym(lib, symbolName.c_str());
+#endif
 
     return symbol;
 }
