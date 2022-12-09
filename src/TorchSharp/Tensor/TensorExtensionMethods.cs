@@ -56,11 +56,6 @@ namespace TorchSharp
             return new Modules.Parameter(tensor);
         }
 
-        public static System.Numerics.Tensors.DenseTensor<T> ToDenseTensor<T>(this Tensor tensor) where T : unmanaged
-        {
-            return new System.Numerics.Tensors.DenseTensor<T>(tensor.data<T>().ToArray().AsMemory(), tensor.IntShape());
-        }
-
         /// <summary>
         /// Get a string representation of the tensor.
         /// </summary>

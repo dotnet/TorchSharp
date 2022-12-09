@@ -3529,33 +3529,33 @@ namespace TorchSharp
             Assert.Equal(6, t6[0, 0].ToInt32());
             Assert.Equal(5, t6[0, 1].ToInt32());
 #else
-                var t1 = i[0..2, 0];
-                Assert.Equal(0, t1[0].ToInt32());
-                Assert.Equal(6, t1[1].ToInt32());
+            var t1 = i[0..2, 0];
+            Assert.Equal(0, t1[0].ToInt32());
+            Assert.Equal(6, t1[1].ToInt32());
 
-                // one slice
-                var t2 = i[1..2, 0];
-                Assert.Equal(6, t2[0].ToInt32());
+            // one slice
+            var t2 = i[1..2, 0];
+            Assert.Equal(6, t2[0].ToInt32());
 
-                // two slice
-                var t3 = i[1..2, 1..3];
-                Assert.Equal(5, t3[0, 0].ToInt32());
-                Assert.Equal(4, t3[0, 1].ToInt32());
+            // two slice
+            var t3 = i[1..2, 1..3];
+            Assert.Equal(5, t3[0, 0].ToInt32());
+            Assert.Equal(4, t3[0, 1].ToInt32());
 
-                // both absent
-                var t4 = i[.., ..];
-                Assert.Equal(0, t4[0, 0].ToInt32());
-                Assert.Equal(1, t4[0, 1].ToInt32());
+            // both absent
+            var t4 = i[.., ..];
+            Assert.Equal(0, t4[0, 0].ToInt32());
+            Assert.Equal(1, t4[0, 1].ToInt32());
 
-                // end absent
-                var t5 = i[1.., 1..];
-                Assert.Equal(5, t5[0, 0].ToInt32());
-                Assert.Equal(4, t5[0, 1].ToInt32());
+            // end absent
+            var t5 = i[1.., 1..];
+            Assert.Equal(5, t5[0, 0].ToInt32());
+            Assert.Equal(4, t5[0, 1].ToInt32());
 
-                // start absent
-                var t6 = i[1.., ..2];
-                Assert.Equal(6, t6[0, 0].ToInt32());
-                Assert.Equal(5, t6[0, 1].ToInt32());
+            // start absent
+            var t6 = i[1.., ..2];
+            Assert.Equal(6, t6[0, 0].ToInt32());
+            Assert.Equal(5, t6[0, 1].ToInt32());
 #endif // NET472_OR_GREATER
         }
 
@@ -5724,7 +5724,7 @@ namespace TorchSharp
                 Assert.Equal(expected, res);
             }
             {
-                var res = torch.linalg.vander(x,3);
+                var res = torch.linalg.vander(x, 3);
                 var expected = torch.tensor(new long[] { 1, 1, 1, 1, 2, 4, 1, 3, 9, 1, 5, 25 }, 4, 3);
                 Assert.Equal(expected, res);
             }
@@ -9115,6 +9115,87 @@ namespace TorchSharp
             Assert.Multiple(
             () => Assert.Equal(new long[] { 32, 8, 16 }, t.mT.shape)
             );
+        }
+
+        [Fact]
+        [TestOf(nameof(TorchSharp.Utils.TensorAccessor<float>.ToNDArray))]
+        public void ToNDArray()
+        {
+            {
+                var t = torch.rand(10);
+                var a = t[0].data<float>().ToNDArray() as float[];
+
+                Assert.NotNull(a);
+                Assert.Equal(1, a.Rank);
+                Assert.Single(a);
+            }
+            {
+                var t = torch.rand(10);
+                var a = t.data<float>().ToNDArray() as float[];
+
+                Assert.NotNull(a);
+                Assert.Equal(1, a.Rank);
+                Assert.Equal(10, a.Length);
+            }
+            {
+                var t = torch.rand(10, 20);
+                var a = t.data<float>().ToNDArray() as float[,];
+
+                Assert.NotNull(a);
+                Assert.Equal(2, a.Rank);
+                Assert.Equal(10, a.GetLength(0));
+                Assert.Equal(20, a.GetLength(1));
+            }
+            {
+                var t = torch.rand(10, 20, 30);
+                var a = t.data<float>().ToNDArray() as float[,,];
+
+                Assert.NotNull(a);
+                Assert.Equal(3, a.Rank);
+                Assert.Equal(10, a.GetLength(0));
+                Assert.Equal(20, a.GetLength(1));
+                Assert.Equal(30, a.GetLength(2));
+            }
+            {
+                var t = torch.rand(10, 20, 30, 2);
+                var a = t.data<float>().ToNDArray() as float[,,,];
+
+                Assert.NotNull(a);
+                Assert.Equal(4, a.Rank);
+                Assert.Equal(10, a.GetLength(0));
+                Assert.Equal(20, a.GetLength(1));
+                Assert.Equal(30, a.GetLength(2));
+                Assert.Equal(2, a.GetLength(3));
+            }
+            {
+                var t = torch.rand(new long[] { 10, 20, 30, 2, 4 });
+                var a = t.data<float>().ToNDArray() as float[,,,,];
+
+                Assert.NotNull(a);
+                Assert.Equal(5, a.Rank);
+                Assert.Equal(10, a.GetLength(0));
+                Assert.Equal(20, a.GetLength(1));
+                Assert.Equal(30, a.GetLength(2));
+                Assert.Equal(2, a.GetLength(3));
+                Assert.Equal(4, a.GetLength(4));
+            }
+            {
+                var t = torch.rand(new long[] { 10, 20, 30, 2, 4, 8 });
+                var a = t.data<float>().ToNDArray() as float[,,,,,];
+
+                Assert.NotNull(a);
+                Assert.Equal(6, a.Rank);
+                Assert.Equal(10, a.GetLength(0));
+                Assert.Equal(20, a.GetLength(1));
+                Assert.Equal(30, a.GetLength(2));
+                Assert.Equal(2, a.GetLength(3));
+                Assert.Equal(4, a.GetLength(4));
+                Assert.Equal(8, a.GetLength(5));
+            }
+            {
+                var t = torch.rand(new long[] { 10, 20, 30, 2, 4, 8, 16 });
+                Assert.Throws<NotImplementedException>(() => t.data<float>().ToNDArray());
+            }
         }
     }
 }
