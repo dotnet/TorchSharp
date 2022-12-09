@@ -2577,6 +2577,26 @@ namespace TorchSharp
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requires_grad, names: names);
         }
 
+        public static Tensor tensor<T>(System.Numerics.Tensors.DenseTensor<T> dense, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        {
+            var buffer = dense.Buffer;
+
+            using var _ = torch.NewDisposeScope();
+
+            dtype = dtype is not null ? dtype : torch.ToScalarType(typeof(T));
+
+            long[] shape = new long[dense.Dimensions.Length];
+            for (var i = 0; i < shape.Length; i++) shape[i] = dense.Dimensions[i];
+
+            var result = torch.from_array(buffer.ToArray(), dtype.Value, requires_grad: requires_grad).reshape(shape);
+
+            if (device is not null) {
+                result = result.to(device);
+            }
+
+            return result.MoveToOuterDisposeScope();
+        }
+
 
         /// <summary>
         /// Cast a tensor to a Boolean tensor.

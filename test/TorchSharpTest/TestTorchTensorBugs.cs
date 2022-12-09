@@ -13,6 +13,9 @@ using Xunit;
 using static TorchSharp.torch;
 using static TorchSharp.torchvision.models;
 
+
+using System.Numerics;
+
 #nullable enable
 
 namespace TorchSharp
@@ -992,6 +995,15 @@ namespace TorchSharp
         {
             float[] a = new float[12];
             var x = torch.as_tensor(a);
+        }
+
+        [Fact]
+        public void ValidateSystemNumericsTensor()
+        {
+            var t = torch.rand(3, 4, 5);
+            var tn = t.ToDenseTensor<float>();
+            var t1 = torch.tensor(tn);
+            Assert.True(t.allclose(t1));
         }
     }
 }

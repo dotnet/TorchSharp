@@ -56,6 +56,11 @@ namespace TorchSharp
             return new Modules.Parameter(tensor);
         }
 
+        public static System.Numerics.Tensors.DenseTensor<T> ToDenseTensor<T>(this Tensor tensor) where T : unmanaged
+        {
+            return new System.Numerics.Tensors.DenseTensor<T>(tensor.data<T>().ToArray().AsMemory(), tensor.IntShape());
+        }
+
         /// <summary>
         /// Get a string representation of the tensor.
         /// </summary>
@@ -166,6 +171,13 @@ namespace TorchSharp
         internal static bool IsIntegral(this Tensor tensor)
         {
             return IsIntegral(tensor.dtype);
+        }
+
+        public static ReadOnlySpan<int> IntShape(this Tensor tensor) {
+            var shape = tensor.shape;
+            var int_shape = new int[shape.Length];
+            for (var i = 0; i < shape.Length; ++i) int_shape[i] = (int)shape[i];
+            return int_shape;
         }
 
         /// <summary>
