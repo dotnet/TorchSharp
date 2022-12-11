@@ -256,6 +256,18 @@ namespace TorchSharp.Examples
                 return decoder.forward(enc);
             }
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    transformer_encoder.Dispose();
+                    pos_encoder.Dispose();
+                    encoder.Dispose();
+                    decoder.Dispose();
+                    ClearModules();
+                }
+                base.Dispose(disposing);
+            }
+
             protected override Module _to(DeviceType deviceType, int deviceIndex = -1)
             {
                 this.device = new Device(deviceType, deviceIndex);
@@ -285,6 +297,16 @@ namespace TorchSharp.Examples
             {
                 using var x = t + pe[TensorIndex.Slice(null, t.shape[0]), TensorIndex.Slice()];
                 return dropout.forward(x);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    dropout.Dispose();
+                    pe.Dispose();
+                    ClearModules();
+                }
+                base.Dispose(disposing);
             }
         }
     }

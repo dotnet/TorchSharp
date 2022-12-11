@@ -58,6 +58,17 @@ namespace TorchSharp.Examples
             using (var x = avg.reshape(new long[] { avg.shape[0], 256 * 2 * 2 }))
                 return classifier.forward(x);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                features.Dispose();
+                avgPool.Dispose();
+                classifier.Dispose();
+                ClearModules();
+            }
+            base.Dispose(disposing);
+        }
     }
 
 }
