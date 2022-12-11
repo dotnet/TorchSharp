@@ -53,90 +53,29 @@ namespace TorchSharp.Utils
         /// Extract tensor data as a multi-dimensional .NET array, with the same number of dimensions as the tensor.
         /// </summary>
         /// <returns>An array object, which should be cast to the concrete array type.</returns>
-        /// <exception cref="NotImplementedException">Thrown if the tensor has more than 6 dimensions.</exception>
         public System.Array ToNDArray()
         {
             var shape = _tensor.shape;
-            switch (_tensor.ndim) {
-            default:
-                throw new NotImplementedException("ToNDArray() for more than '6' dimensions.");
-            case 0:
-            case 1:
-                return ToArray();
-            case 2:
+
+            Array array = Array.CreateInstance(typeof(T), shape);
+            long[] indexes = new long[_tensor.ndim];
+
+            while (true) {
                 unsafe {
-                    var result = new T[shape[0], shape[1]];
                     T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0; i0 < shape[0]; i0++) {
-                        for (long i1 = 0; i1 < shape[1]; i1++) {
-                            result[i0, i1] = ptr[TranslateIndex(i0, i1, _tensor)];
-                        }
-                    }
-                    return result;
+                    array.SetValue(ptr[TranslateIndex(indexes, _tensor)], indexes);
                 }
-            case 3:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0; i0 < shape[0]; i0++) {
-                        for (long i1 = 0; i1 < shape[1]; i1++) {
-                            for (long i2 = 0; i2 < shape[2]; i2++) {
-                                result[i0, i1, i2] = ptr[TranslateIndex(i0, i1, i2, _tensor)];
-                            }
+
+                for (int i = array.Rank - 1; i >= 0; i--) {
+                    if (indexes[i] < array.GetLength(i) - 1) {
+                        indexes[i]++;
+                        break;
+                    } else {
+                        indexes[i] = 0;
+                        if (i == 0) {
+                            return array;
                         }
                     }
-                    return result;
-                }
-            case 4:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2], shape[3]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0; i0 < shape[0]; i0++) {
-                        for (long i1 = 0; i1 < shape[1]; i1++) {
-                            for (long i2 = 0; i2 < shape[2]; i2++) {
-                                for (long i3 = 0; i3 < shape[3]; i3++) {
-                                    result[i0, i1, i2, i3] = ptr[TranslateIndex(i0, i1, i2, i3, _tensor)];
-                                }
-                            }
-                        }
-                    }
-                    return result;
-                }
-            case 5:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2], shape[3], shape[4]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0; i0 < shape[0]; i0++) {
-                        for (long i1 = 0; i1 < shape[1]; i1++) {
-                            for (long i2 = 0; i2 < shape[2]; i2++) {
-                                for (long i3 = 0; i3 < shape[3]; i3++) {
-                                    for (long i4 = 0; i4 < shape[4]; i4++) {
-                                        result[i0, i1, i2, i3, i4] = ptr[TranslateIndex(i0, i1, i2, i3, i4, _tensor)];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return result;
-                }
-            case 6:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2], shape[3], shape[4], shape[5]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0; i0 < shape[0]; i0++) {
-                        for (long i1 = 0; i1 < shape[1]; i1++) {
-                            for (long i2 = 0; i2 < shape[2]; i2++) {
-                                for (long i3 = 0; i3 < shape[3]; i3++) {
-                                    for (long i4 = 0; i4 < shape[4]; i4++) {
-                                        for (long i5 = 0; i5 < shape[5]; i5++) {
-                                            result[i0, i1, i2, i3, i4, i5] = ptr[TranslateIndex(i0, i1, i2, i3, i4, i5, _tensor)];
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return result;
                 }
             }
         }
