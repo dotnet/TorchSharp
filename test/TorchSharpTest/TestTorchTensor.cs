@@ -9193,10 +9193,6 @@ namespace TorchSharp
                 Assert.Equal(8, a.GetLength(5));
             }
             {
-                var t = torch.rand(new long[] { 10, 20, 30, 2, 4, 8, 16 });
-                Assert.Throws<NotImplementedException>(() => t.data<float>().ToNDArray());
-            }
-            {
                 var t = torch.rand(new long[] { 10, 20, 30 });
                 var a = t.data<float>().ToNDArray() as float[,,,];
                 Assert.Null(a);

@@ -56,7 +56,8 @@ namespace TorchSharp.Utils
         public System.Array ToNDArray()
         {
             var shape = _tensor.shape;
-
+            if (_tensor.ndim <= 1)
+                return ToArray();
             Array array = Array.CreateInstance(typeof(T), shape);
             long[] indexes = new long[_tensor.ndim];
 
