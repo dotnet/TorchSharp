@@ -11,6 +11,9 @@ namespace TorchSharp
     {
         public static partial class ops
         {
+            /// <summary>
+            /// Protects from numerical overflows in multiplications by upcasting to the equivalent higher type.
+            /// </summary>
             public static Tensor _upcast(Tensor t)
             {
                 if (t.is_floating_point())
