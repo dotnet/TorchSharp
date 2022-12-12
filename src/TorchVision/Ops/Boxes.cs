@@ -30,9 +30,6 @@ namespace TorchSharp
     {
         public static partial class ops
         {
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSVision_nms(IntPtr dets, IntPtr scores, double iou_threshold);
-
             /// <summary>
             /// Performs non-maximum suppression(NMS) on the boxes according
             /// to their intersection-over-union(IoU).
@@ -50,7 +47,7 @@ namespace TorchSharp
             /// <returns>int64 tensor with the indices of the elements that have been kept by NMS, sorted in decreasing order of scores</returns>
             public static Tensor nms(Tensor boxes, Tensor scores, double iou_threshold)
             {
-                var res = THSVision_nms(boxes.Handle, scores.Handle, iou_threshold);
+                var res = LibTorchSharp.THSVision_nms(boxes.Handle, scores.Handle, iou_threshold);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }

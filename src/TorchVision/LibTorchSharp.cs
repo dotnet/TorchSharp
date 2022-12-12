@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 
@@ -41,5 +41,8 @@ namespace TorchSharp
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSVision_RGB_BRGA(IntPtr inputBytes, IntPtr outBytes, long inputChannelCount, long imageSize);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSVision_nms(IntPtr dets, IntPtr scores, double iou_threshold);
     }
 }
