@@ -60,97 +60,36 @@ namespace TorchSharp.Utils
         {
             var shape = _tensor.shape;
             var strides = _tensor.stride();
-            switch (_tensor.ndim) {
-            default:
-                throw new NotImplementedException("ToNDArray() for more than '6' dimensions.");
-            case 0:
+
+            if (_tensor.ndim == 0) {
                 unsafe {
-                    var result = new T[1];
                     T* ptr = (T*)_tensor_data_ptr;
-                    result[0] = ptr[0];
-                    return result;
+                    return new T[] { ptr[0] };
                 }
-            case 1:
+            }
+
+            Array array = Array.CreateInstance(typeof(T), shape);
+            long[] indexes = new long[_tensor.ndim];
+            long[] off = new long[_tensor.ndim];
+
+            while (true) {
                 unsafe {
-                    var result = new T[shape[0]];
                     T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        result[i0] = ptr[off0];
-                    }
-                    return result;
+                    array.SetValue(ptr[TranslateIndex(indexes, _tensor)], indexes);
                 }
-            case 2:
-                unsafe {
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
-                            result[i0, i1] = ptr[off1];
+
+                for (int i = array.Rank - 1; i >= 0; i--) {
+                    if (indexes[i] < array.GetLength(i) - 1) {
+                        indexes[i]++;
+                        off[i] += strides[i];
+                        break;
+                    } else {
+                        if (i == 0) {
+                            return array;
                         }
+                        indexes[i] = 0;
+                        off[i] = off[i - 1];
                     }
-                    return result;
-                }
-            case 3:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
-                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
-                                result[i0, i1, i2] = ptr[off2];
-                            }
-                        }
-                    }
-                }
-            case 4:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2], shape[3]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
-                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
-                                for (long i3 = 0, off3 = off2; i3 < shape[3]; i3++, off3 += strides[3]) {
-                                    result[i0, i1, i2, i3] = ptr[off3];
-                                }
-                            }
-                        }
-                    }
-                    return result;
-                }
-            case 5:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2], shape[3], shape[4]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
-                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
-                                for (long i3 = 0, off3 = off2; i3 < shape[3]; i3++, off3 += strides[3]) {
-                                    for (long i4 = 0, off4 = off3; i4 < shape[4]; i4++, off4 += strides[4]) {
-                                        result[i0, i1, i2, i3, i4] = ptr[off4];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return result;
-                }
-            case 6:
-                unsafe {
-                    var result = new T[shape[0], shape[1], shape[2], shape[3], shape[4], shape[5]];
-                    T* ptr = (T*)_tensor_data_ptr;
-                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
-                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
-                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
-                                for (long i3 = 0, off3 = off2; i3 < shape[3]; i3++, off3 += strides[3]) {
-                                    for (long i4 = 0, off4 = off3; i4 < shape[4]; i4++, off4 += strides[4]) {
-                                        for (long i5 = 0, off5 = off4; i5 < shape[5]; i5++, off5 += strides[5]) {
-                                            result[i0, i1, i2, i3, i4, i5] = ptr[off5];
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return result;
                 }
             }
         }
