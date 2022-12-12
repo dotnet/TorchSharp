@@ -62,5 +62,14 @@ namespace TorchSharp.Examples
         {
             return layers.forward(input);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                layers.Dispose();
+                ClearModules();
+            }
+            base.Dispose(disposing);
+        }
     }
 }

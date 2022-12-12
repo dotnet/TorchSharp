@@ -1035,6 +1035,8 @@ namespace TorchSharp
                        (dtype.HasValue ? (T)module._to(dtype.Value) : module);
                 }
 
+                protected void ClearModules() { _internal_submodules.clear(); }
+
                 private bool _areComponentsRegistered;
 
                 protected Utils.OrderedDict<string, Module> _internal_submodules = new Utils.OrderedDict<string, Module>();
