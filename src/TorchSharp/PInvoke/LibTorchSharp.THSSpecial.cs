@@ -180,6 +180,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSSpecial_log_softmax(IntPtr tensor, long dim, sbyte scalar_type);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSSpecial_softmax(IntPtr tensor, long dim, sbyte scalar_type);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSSpecial_ndtr(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]

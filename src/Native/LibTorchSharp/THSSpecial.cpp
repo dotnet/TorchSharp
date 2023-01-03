@@ -359,6 +359,11 @@ Tensor THSSpecial_sinc(const Tensor tensor)
     CATCH_TENSOR(torch::special::sinc(*tensor));
 }
 
+Tensor THSSpecial_softmax(const Tensor tensor, int64_t dim, int8_t scalar_type)
+{
+    CATCH_TENSOR(torch::special::softmax(*tensor, dim, c10::ScalarType(scalar_type)));
+}
+
 Tensor THSSpecial_xlog1py(const Tensor input, const Tensor other)
 {
     CATCH_TENSOR(torch::special::xlog1py(*input, *other));

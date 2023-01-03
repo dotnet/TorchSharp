@@ -1542,6 +1542,7 @@ EXPORT_API(Tensor) THSSpecial_i1e(const Tensor tensor);
 EXPORT_API(Tensor) THSSpecial_logit(const Tensor tensor);
 
 EXPORT_API(Tensor) THSSpecial_log_softmax(const Tensor tensor, int64_t dim, int8_t scalar_type);
+EXPORT_API(Tensor) THSSpecial_softmax(const Tensor tensor, int64_t dim, int8_t scalar_type);
 
 EXPORT_API(Tensor) THSSpecial_ndtr(const Tensor tensor);
 EXPORT_API(Tensor) THSSpecial_ndtri(const Tensor tensor);

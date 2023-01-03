@@ -1191,19 +1191,19 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSNN_AvgPool1d_forward(IntPtr module, IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_AvgPool1d_ctor(IntPtr pkernelSize, IntPtr pstrides, out IntPtr pBoxedModule);
+        internal static extern IntPtr THSNN_AvgPool1d_ctor(IntPtr pkernelSize, IntPtr pstrides, IntPtr ppadding, bool ceil_mode, bool count_include_pad, long divisor_override, out IntPtr pBoxedModule);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_AvgPool2d_forward(IntPtr module, IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_AvgPool2d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, out IntPtr pBoxedModule);
+        internal static extern IntPtr THSNN_AvgPool2d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr ppadding, int paddingLength, bool ceil_mode, bool count_include_pad, long divisor_override, out IntPtr pBoxedModule);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_AvgPool3d_forward(IntPtr module, IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_AvgPool3d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, out IntPtr pBoxedModule);
+        internal static extern IntPtr THSNN_AvgPool3d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr ppadding, int paddingLength, bool ceil_mode, bool count_include_pad, long divisor_override, out IntPtr pBoxedModule);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_FractionalMaxPool2d_forward(torch.nn.Module.HType module, IntPtr tensor);

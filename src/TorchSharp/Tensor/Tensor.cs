@@ -3452,6 +3452,13 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            public Tensor masked_fill_(Tensor mask, Scalar value)
+            {
+                var res = LibTorchSharp.THSTensor_masked_fill_(Handle, mask.Handle, value.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
+            }
+
             public Tensor masked_scatter(Tensor mask, Tensor value)
             {
                 var res = LibTorchSharp.THSTensor_masked_scatter(Handle, mask.Handle, value.Handle);
