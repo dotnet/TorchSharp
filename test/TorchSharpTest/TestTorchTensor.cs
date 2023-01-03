@@ -9122,7 +9122,7 @@ namespace TorchSharp
         public void ToNDArray()
         {
             {
-                var t = torch.rand(10);
+                var t = torch.ones(10);
                 var a = t[0].data<float>().ToNDArray() as float[];
 
                 Assert.NotNull(a);
@@ -9130,67 +9130,79 @@ namespace TorchSharp
                 Assert.Single(a);
             }
             {
-                var t = torch.rand(10);
-                var a = t.data<float>().ToNDArray() as float[];
+                var t = torch.arange(10);
+                var a = t.data<long>().ToNDArray() as long[];
+                var expected = new long[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
                 Assert.NotNull(a);
                 Assert.Equal(1, a.Rank);
                 Assert.Equal(10, a.Length);
+                Assert.Equal(expected, a);
             }
             {
-                var t = torch.rand(10, 20);
-                var a = t.data<float>().ToNDArray() as float[,];
+                var t = torch.arange(10).reshape(2,5);
+                var a = t.data<long>().ToNDArray() as long[,];
+                var expected = new long[,] { { 0, 1, 2, 3, 4 }, { 5, 6, 7, 8, 9 } };
 
                 Assert.NotNull(a);
                 Assert.Equal(2, a.Rank);
-                Assert.Equal(10, a.GetLength(0));
-                Assert.Equal(20, a.GetLength(1));
+                Assert.Equal(2, a.GetLength(0));
+                Assert.Equal(5, a.GetLength(1));
+                Assert.Equal(expected, a);
             }
             {
-                var t = torch.rand(10, 20, 30);
-                var a = t.data<float>().ToNDArray() as float[,,];
+                var t = torch.arange(12).reshape(2,2,3);
+                var a = t.data<long>().ToNDArray() as long[,,];
+                var expected = new long[,,] { { { 0, 1, 2 }, { 3, 4, 5 } }, { { 6, 7, 8 }, { 9, 10, 11 } } };
 
                 Assert.NotNull(a);
                 Assert.Equal(3, a.Rank);
-                Assert.Equal(10, a.GetLength(0));
-                Assert.Equal(20, a.GetLength(1));
-                Assert.Equal(30, a.GetLength(2));
+                Assert.Equal(2, a.GetLength(0));
+                Assert.Equal(2, a.GetLength(1));
+                Assert.Equal(3, a.GetLength(2));
+                Assert.Equal(expected, a);
             }
             {
-                var t = torch.rand(10, 20, 30, 2);
-                var a = t.data<float>().ToNDArray() as float[,,,];
+                var t = torch.arange(16).reshape(2, 2, 2, 2);
+                var a = t.data<long>().ToNDArray() as long[,,,];
+                var expected = new long[,,,] { { { { 0, 1 }, { 2, 3 } }, { { 4, 5 }, { 6, 7 } } }, { { { 8, 9 }, { 10, 11 } }, { { 12, 13 }, { 14, 15 } } } };
 
                 Assert.NotNull(a);
                 Assert.Equal(4, a.Rank);
-                Assert.Equal(10, a.GetLength(0));
-                Assert.Equal(20, a.GetLength(1));
-                Assert.Equal(30, a.GetLength(2));
+                Assert.Equal(2, a.GetLength(0));
+                Assert.Equal(2, a.GetLength(1));
+                Assert.Equal(2, a.GetLength(2));
                 Assert.Equal(2, a.GetLength(3));
+                Assert.Equal(expected, a);
             }
             {
-                var t = torch.rand(new long[] { 10, 20, 30, 2, 4 });
-                var a = t.data<float>().ToNDArray() as float[,,,,];
+                var t = torch.arange(16).reshape(1, 2, 2, 2, 2);
+                var a = t.data<long>().ToNDArray() as long[,,,,];
+                var expected = new long[,,,,] { { { { { 0, 1 }, { 2, 3 } }, { { 4, 5 }, { 6, 7 } } }, { { { 8, 9 }, { 10, 11 } }, { { 12, 13 }, { 14, 15 } } } } };
 
                 Assert.NotNull(a);
                 Assert.Equal(5, a.Rank);
-                Assert.Equal(10, a.GetLength(0));
-                Assert.Equal(20, a.GetLength(1));
-                Assert.Equal(30, a.GetLength(2));
+                Assert.Equal(1, a.GetLength(0));
+                Assert.Equal(2, a.GetLength(1));
+                Assert.Equal(2, a.GetLength(2));
                 Assert.Equal(2, a.GetLength(3));
-                Assert.Equal(4, a.GetLength(4));
+                Assert.Equal(2, a.GetLength(4));
+                Assert.Equal(expected, a);
             }
             {
-                var t = torch.rand(new long[] { 10, 20, 30, 2, 4, 8 });
-                var a = t.data<float>().ToNDArray() as float[,,,,,];
+                var t = torch.arange(16).reshape(1, 1, 2, 2, 2, 2);
+                var a = t.data<long>().ToNDArray() as long[,,,,,];
+                var expected = new long[,,,,,] { { { { { { 0, 1 }, { 2, 3 } }, { { 4, 5 }, { 6, 7 } } }, { { { 8, 9 }, { 10, 11 } }, { { 12, 13 }, { 14, 15 } } } } } };
 
                 Assert.NotNull(a);
                 Assert.Equal(6, a.Rank);
-                Assert.Equal(10, a.GetLength(0));
-                Assert.Equal(20, a.GetLength(1));
-                Assert.Equal(30, a.GetLength(2));
+                Assert.Equal(1, a.GetLength(0));
+                Assert.Equal(1, a.GetLength(1));
+                Assert.Equal(2, a.GetLength(2));
                 Assert.Equal(2, a.GetLength(3));
-                Assert.Equal(4, a.GetLength(4));
-                Assert.Equal(8, a.GetLength(5));
+                Assert.Equal(2, a.GetLength(4));
+                Assert.Equal(2, a.GetLength(5));
+                Assert.Equal(expected, a);
             }
             {
                 var t = torch.rand(new long[] { 10, 20, 30, 2, 4, 8, 16 });
