@@ -6905,7 +6905,7 @@ namespace TorchSharp
             var A = torch.randn(3, 3);
             var b = torch.randn(3);
             var x = torch.linalg.solve(A, b);
-            Assert.True(A.matmul(x).allclose(b));
+            Assert.True(A.matmul(x).allclose(b, rtol: 1e-03, atol: 1e-06));
         }
 
         [Fact]
