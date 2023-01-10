@@ -6,9 +6,16 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __API Changes__:
 
-Adding 'maximize' argument to the Adadelta optimizer
-Adding linalg.ldl_factor and linalg.ldl_solve
-Adding SoftplusTransform
+Adding 'maximize' argument to the Adadelta optimizer<br/>
+Adding linalg.ldl_factor and linalg.ldl_solve<br/>
+Adding a couple of missing APIs (see #872)<br/>
+Adding SoftplusTransform<br/>
+
+__Fixed Bugs__:
+
+#872 Tensor.masked_fill_(mask, value) missing<br/>
+#870 nn.AvgPool2d(kernel_size=3, stride=2, padding=1) torchsharp not support padding<br/>
+#877 duplicate module parameters called named_parameters() while load model by cuda<br/>
 
 ## NuGet Version 0.99.1
 
