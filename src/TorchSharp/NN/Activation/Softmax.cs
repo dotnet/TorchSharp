@@ -49,17 +49,12 @@ namespace TorchSharp
             public static partial class functional
             {
                 /// <summary>
-                /// Softmax
+                /// Computes the softmax function for the input tensor.
                 /// </summary>
-                /// <param name="x">The input tensor</param>
-                /// <param name="dim">A dimension along which Softmax will be computed (so every slice along dim will sum to 1)</param>
-                /// <returns></returns>
-                public static Tensor softmax(Tensor x, long dim)
-                {
-                    using (var m = nn.Softmax(dim)) {
-                        return m.forward(x);
-                    }
-                }
+                /// <param name="input">The input tensor</param>
+                /// <param name="dim">A dimension along which softmax will be computed.</param>
+                /// <param name="dtype">The desired data type of returned tensor.</param>
+                public static Tensor softmax(Tensor input, long dim, ScalarType? dtype = null) => torch.special.softmax(input, dim, dtype);
             }
         }
     }

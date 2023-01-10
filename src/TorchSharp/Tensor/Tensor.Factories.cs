@@ -2577,7 +2577,6 @@ namespace TorchSharp
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requires_grad, names: names);
         }
 
-
         /// <summary>
         /// Cast a tensor to a Boolean tensor.
         /// </summary>

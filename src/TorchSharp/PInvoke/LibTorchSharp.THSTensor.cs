@@ -867,6 +867,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_masked_fill(IntPtr tensor, IntPtr mask, IntPtr value);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_masked_fill_(IntPtr tensor, IntPtr mask, IntPtr value);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_masked_scatter(IntPtr tensor, IntPtr mask, IntPtr value);
 
         [DllImport("LibTorchSharp")]

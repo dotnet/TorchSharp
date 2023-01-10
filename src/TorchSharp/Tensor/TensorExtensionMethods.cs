@@ -168,6 +168,13 @@ namespace TorchSharp
             return IsIntegral(tensor.dtype);
         }
 
+        public static ReadOnlySpan<int> IntShape(this Tensor tensor) {
+            var shape = tensor.shape;
+            var int_shape = new int[shape.Length];
+            for (var i = 0; i < shape.Length; ++i) int_shape[i] = (int)shape[i];
+            return int_shape;
+        }
+
         /// <summary>
         /// Indicates whether a given element type is integral.
         /// </summary>

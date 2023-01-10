@@ -5,13 +5,18 @@
 
 
 
-NNModule THSNN_AvgPool1d_ctor(const int64_t* kernelSize, const int64_t* stride,
+NNModule THSNN_AvgPool1d_ctor(const int64_t* kernelSize, const int64_t* stride, const int64_t* padding,
+    bool ceil_mode, bool count_include_pad, int64_t divisor_override,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::AvgPool1dOptions(at::ArrayRef<int64_t>(kernelSize, 1));
+        auto opts = torch::nn::AvgPool1dOptions(at::ArrayRef<int64_t>(kernelSize, 1)).ceil_mode(ceil_mode).count_include_pad(count_include_pad);
         if (stride)
             opts = opts.stride(at::ArrayRef<int64_t>(stride, 1));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, 1));
+        if (divisor_override > 0)
+            opts = opts.divisor_override(divisor_override);
         res = create_module<torch::nn::AvgPool1dImpl>(opts, outAsAnyModule);
     );
 }
@@ -21,13 +26,18 @@ Tensor THSNN_AvgPool1d_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::AvgPool1d>()->forward(*tensor));
 }
 
-NNModule THSNN_AvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength,
+NNModule THSNN_AvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const int64_t* padding, const int paddingLength,
+    bool ceil_mode, bool count_include_pad, int64_t divisor_override,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::AvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        auto opts = torch::nn::AvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength)).ceil_mode(ceil_mode).count_include_pad(count_include_pad);
         if (stride)
             opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, paddingLength));
+        if (divisor_override > 0)
+            opts = opts.divisor_override(divisor_override);
         res = create_module<torch::nn::AvgPool2dImpl>(opts, outAsAnyModule);
     );
 }
@@ -37,13 +47,18 @@ Tensor THSNN_AvgPool2d_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::AvgPool2d>()->forward(*tensor));
 }
 
-NNModule THSNN_AvgPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength,
+NNModule THSNN_AvgPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const int64_t* padding, const int paddingLength,
+    bool ceil_mode, bool count_include_pad, int64_t divisor_override,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::AvgPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        auto opts = torch::nn::AvgPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength)).ceil_mode(ceil_mode).count_include_pad(count_include_pad);
         if (stride)
             opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, paddingLength));
+        if (divisor_override > 0)
+            opts = opts.divisor_override(divisor_override);
         res = create_module<torch::nn::AvgPool3dImpl>(opts, outAsAnyModule);
     );
 }

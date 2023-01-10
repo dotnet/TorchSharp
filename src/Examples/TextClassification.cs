@@ -197,5 +197,15 @@ namespace TorchSharp.Examples
         {
             return fc.forward(embedding.forward(input, offsets));
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                embedding.Dispose();
+                fc.Dispose();
+                ClearModules();
+            }
+            base.Dispose(disposing);
+        }
     }
 }

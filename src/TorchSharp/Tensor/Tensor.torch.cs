@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
@@ -399,6 +400,11 @@ namespace TorchSharp
         public static Tensor scatter_add_(Tensor input, long dim, Tensor index, Tensor src) => input.scatter_add_(dim, index, src);
 
         /// <summary>
+        /// Gathers values along an axis specified by dim.
+        /// </summary>
+        public static Tensor gather(Tensor input, long dim, Tensor index) => input.gather(dim, index);
+
+        /// <summary>
         /// Clamps all elements in input into the range [ min, max ].
         /// </summary>
         /// <param name="input">The input tensor</param>
@@ -609,6 +615,22 @@ namespace TorchSharp
         /// <param name="input">The input tensor</param>
         /// <param name="dims">The number of repetitions per dimension.</param>
         public static Tensor tile(Tensor input, long[] dims) => input.tile(dims);
+
+        /// <summary>
+        /// Returns the upper triangular part of a matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+        /// The upper triangular part of the matrix is defined as the elements on and above the diagonal.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="diagonal">The diagonal to consider</param>
+        public static Tensor triu(Tensor input, long diagonal = 0) => input.triu(diagonal);
+
+        /// <summary>
+        /// Returns the lower triangular part of the matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+        /// The lower triangular part of the matrix is defined as the elements on and below the diagonal.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="diagonal">The diagonal to consider</param>
+        public static Tensor tril(Tensor input, long diagonal = 0) => input.tril(diagonal);
 
         /// <summary>
         /// Tests if all elements in input evaluate to true.
