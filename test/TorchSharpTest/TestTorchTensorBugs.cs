@@ -974,7 +974,7 @@ namespace TorchSharp
 
             public void validate(ScalarType expected, DeviceType devType)
             {
-                foreach (var (name,buffer) in named_buffers()) {
+                foreach (var (name, buffer) in named_buffers()) {
                     Assert.Equal(expected, buffer.dtype);
                     Assert.Equal(devType, buffer.device_type);
                 }
@@ -995,6 +995,97 @@ namespace TorchSharp
         {
             float[] a = new float[12];
             var x = torch.as_tensor(a);
+        }
+
+        [Fact]
+        public void Validate877()
+        {
+            if (torch.cuda.is_available()) {
+                var device = torch.CUDA;
+                torch.TryInitializeDeviceType(device.type);
+                var train = new GitBlockTest("test", device);
+
+                var p0 = train.named_parameters().Select(p => p.name).ToArray();
+
+                train.to(device);
+
+                int named_parameters_1 = train.named_parameters().Count();
+                train.to(torch.CUDA);
+                int named_parameters_2 = train.named_parameters().Count();
+
+                Assert.Equal(named_parameters_1, named_parameters_2);
+            }
+        }
+
+
+        class GitTestCnn : Module<Tensor, Tensor>
+        {
+            private readonly TorchSharp.Modules.Sequential layers0;
+
+            public GitTestCnn(string name, Device? device = null) : base(name)
+            {
+                var modules = new List<(string, Module<Tensor, Tensor>)>();
+                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernelSize: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), paddingMode: PaddingModes.Replicate, bias: false)));
+                layers0 = Sequential(modules);
+
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor t)
+            {
+                var t1 = layers0.forward(t).squeeze_(3);
+                return t1;
+            }
+        }
+
+        class GitTestGru : Module<Tensor, Tensor>
+        {
+            private TorchSharp.Modules.GRU layers1;
+            private TorchSharp.Modules.GRU layers2;
+            private Tensor init_h0;
+            private Tensor init_h1;
+
+            public GitTestGru(string name, Device? device = null) : base(name)
+            {
+                layers1 = nn.GRU(1, 4, batchFirst: true);
+                layers2 = nn.GRU(4, 4, batchFirst: true);
+
+                var state_size = new long[] { 1, 1, 4 };
+                init_h0 = torch.nn.Parameter(torch.zeros(state_size, device: device));
+                init_h1 = torch.nn.Parameter(torch.zeros(state_size, device: device));
+
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                var (rnn_output, states_h0) = layers1.forward(input, init_h0);
+                init_h0 = states_h0.detach_();
+                var (_, states_h1) = layers2.forward(rnn_output, init_h1);
+                init_h1 = states_h1.detach_();
+                var x2 = states_h1[-1];
+                return x2;
+            }
+        }
+
+        class GitBlockTest : Module<Tensor, Tensor>
+        {
+            private readonly Module<Tensor, Tensor> sequence_layers;
+
+            public GitBlockTest(string name, Device? device = null) : base(name)
+            {
+                var modules = nn.ModuleDict<Module<Tensor, Tensor>>();
+                modules.Add(("cnn-1", new GitTestCnn("GitTest", device)));
+                modules.Add(("rnn-2", new GitTestGru("GitTestGru", device)));
+                sequence_layers = Sequential(modules.values());
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                var t0 = sequence_layers.forward(input);
+                return t0;
+            }
         }
     }
 }

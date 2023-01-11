@@ -24,7 +24,7 @@ namespace TorchSharp
 
                 img = (gain * img.pow(gamma)).clamp(0, 1);
 
-                return transforms.ConvertImageDType(dtype).forward(img); ;
+                return transforms.ConvertImageDType(dtype).forward(img);
             }
 
             private double gamma;

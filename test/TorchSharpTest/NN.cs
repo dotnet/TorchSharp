@@ -550,12 +550,27 @@ namespace TorchSharp
         [Fact]
         public void EvaluateSoftmax()
         {
-            var rel = Softmax(1);
             var input = torch.randn(new long[] { 64, 8 }) * 25.0;
-            var output = rel.forward(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            {
+                var rel = Softmax(1);
+                var output = rel.forward(input);
+                var values = output.data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            }
+            {
+                var output = torch.special.softmax(input, 1);
+                var values = output.data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            }
+            {
+                var output = torch.special.softmax(input, 1, float64);
+                Assert.Equal(ScalarType.Float64, output.dtype);
+                var values = output.data<double>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            }
         }
 
         [Fact]

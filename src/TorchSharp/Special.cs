@@ -733,6 +733,22 @@ namespace TorchSharp
             public static Tensor sigmoid_(Tensor input) => input.sigmoid_();
 
             /// <summary>
+            /// Computes the softmax function for the input tensor.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="dim">A dimension along which softmax will be computed.</param>
+            /// <param name="dtype">The desired data type of returned tensor.</param>
+            /// <returns></returns>
+            public static Tensor softmax(Tensor input, long dim, ScalarType? dtype = null)
+            {
+                var dt = dtype.HasValue ? dtype.Value : input.dtype;
+                var res = THSSpecial_softmax(input.Handle, dim, (sbyte)dt);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Computes input * log1p(other). Similar to SciPy’s scipy.special.xlog1py.
             /// </summary>
             /// <param name="input">The input tensor</param>
