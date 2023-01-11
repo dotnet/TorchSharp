@@ -75,20 +75,21 @@ namespace TorchSharp.Utils
             while (true) {
                 unsafe {
                     T* ptr = (T*)_tensor_data_ptr;
-                    array.SetValue(ptr[TranslateIndex(indexes, _tensor)], indexes);
+                    array.SetValue(ptr[off[array.Rank - 1]], indexes);
                 }
 
                 for (int i = array.Rank - 1; i >= 0; i--) {
                     if (indexes[i] < array.GetLength(i) - 1) {
                         indexes[i]++;
                         off[i] += strides[i];
+                        for (int j = i; j < array.Rank - 1; j++)
+                            off[j + 1] = off[j];
                         break;
                     } else {
                         if (i == 0) {
                             return array;
                         }
                         indexes[i] = 0;
-                        off[i] = off[i - 1];
                     }
                 }
             }
