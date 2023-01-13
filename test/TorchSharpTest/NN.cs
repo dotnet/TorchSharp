@@ -700,6 +700,9 @@ namespace TorchSharp
             var output = loss.forward(eval, y);
 
             var result = output.ToSingle();
+
+            Assert.Same(lin1, seq[0]);
+            Assert.Same(lin2, seq[2]);
         }
 
         [Fact]

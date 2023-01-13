@@ -8,7 +8,9 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
+    using System.Runtime.CompilerServices;
     using Modules;
+    using TorchSharp.PInvoke;
 
     namespace Modules
     {
@@ -162,6 +164,16 @@ namespace TorchSharp
                 fn(this);
                 return this;
 
+            }
+
+            /// <summary>
+            /// Module indexer.
+            /// </summary>
+            [IndexerName("SequentialItems")]
+            public nn.IModule<Tensor,Tensor> this[int index] {
+                get {
+                    return _modules[index];
+                }
             }
 
             protected override void Dispose(bool disposing)

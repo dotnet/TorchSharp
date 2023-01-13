@@ -10,6 +10,7 @@ Adding 'maximize' argument to the Adadelta optimizer<br/>
 Adding linalg.ldl_factor and linalg.ldl_solve<br/>
 Adding a couple of missing APIs (see #872)<br/>
 Adding SoftplusTransform<br/>
+Support indexing of Sequential<br/>
 
 __Fixed Bugs__:
 
