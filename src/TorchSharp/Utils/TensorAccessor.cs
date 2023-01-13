@@ -170,7 +170,7 @@ namespace TorchSharp.Utils
                 }
 
                 for (int i = array.Rank - 1; i >= 0; i--) {
-                    if (indexes[i] < array.GetLength(i) - 1) {
+                    if (indexes[i] < shape[i] - 1) {
                         indexes[i]++;
                         off[i] += strides[i];
                         for (int j = i; j < array.Rank - 1; j++)
