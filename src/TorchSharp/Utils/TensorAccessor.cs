@@ -56,14 +56,13 @@ namespace TorchSharp.Utils
         /// Extract tensor data as a multi-dimensional .NET array, with the same number of dimensions as the tensor.
         /// </summary>
         /// <returns>An array object, which should be cast to the concrete array type.</returns>
-        /// <exception cref="NotImplementedException">Thrown if the tensor has more than 6 dimensions.</exception>
-        public System.Array ToNDArray()
+        public Array ToNDArray()
         {
             var shape = _tensor.shape;
             var strides = _tensor.stride();
             switch (_tensor.ndim) {
             default:
-                throw new NotImplementedException("ToNDArray() for more than '6' dimensions.");
+                return ToNDArray(shape, strides);
             case 0:
                 unsafe {
                     var result = new T[1];
@@ -154,6 +153,35 @@ namespace TorchSharp.Utils
                         }
                     }
                     return result;
+                }
+            }
+        }
+
+        private Array ToNDArray(long[] shape, long[] strides)
+        {
+            Array array = Array.CreateInstance(typeof(T), shape);
+            long[] indexes = new long[_tensor.ndim];
+            long[] off = new long[_tensor.ndim];
+
+            while (true) {
+                unsafe {
+                    T* ptr = (T*)_tensor_data_ptr;
+                    array.SetValue(ptr[off[array.Rank - 1]], indexes);
+                }
+
+                for (int i = array.Rank - 1; i >= 0; i--) {
+                    if (indexes[i] < shape[i] - 1) {
+                        indexes[i]++;
+                        off[i] += strides[i];
+                        for (int j = i; j < array.Rank - 1; j++)
+                            off[j + 1] = off[j];
+                        break;
+                    } else {
+                        if (i == 0) {
+                            return array;
+                        }
+                        indexes[i] = 0;
+                    }
                 }
             }
         }

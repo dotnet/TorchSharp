@@ -9205,13 +9205,25 @@ namespace TorchSharp
                 Assert.Equal(expected, a);
             }
             {
-                var t = torch.rand(new long[] { 10, 20, 30, 2, 4, 8, 16 });
-                Assert.Throws<NotImplementedException>(() => t.data<float>().ToNDArray());
-            }
-            {
                 var t = torch.rand(new long[] { 10, 20, 30 });
                 var a = t.data<float>().ToNDArray() as float[,,,];
                 Assert.Null(a);
+            }
+            {
+                var t = torch.rand(new long[] { 10, 20, 30, 2, 4, 8, 16 });
+                Array a = t.data<float>().ToNDArray();
+                var t1 = torch.from_array(a);
+
+                Assert.NotNull(a);
+                Assert.Equal(7, a.Rank);
+                Assert.Equal(10, a.GetLength(0));
+                Assert.Equal(20, a.GetLength(1));
+                Assert.Equal(30, a.GetLength(2));
+                Assert.Equal(2, a.GetLength(3));
+                Assert.Equal(4, a.GetLength(4));
+                Assert.Equal(8, a.GetLength(5));
+                Assert.Equal(16, a.GetLength(6));
+                Assert.True(torch.eq(t, t1).data<bool>()[0]);
             }
             {
                 var t = torch.rand(10, 20, 30, 2);
