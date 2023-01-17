@@ -167,6 +167,11 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// The number of modules in the Sequential collection.
+            /// </summary>
+            public int Count => _modules.Count;
+
+            /// <summary>
             /// Module indexer.
             /// </summary>
             [IndexerName("SequentialItems")]
@@ -176,6 +181,48 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Module indexer.
+            /// </summary>
+            [IndexerName("SequentialItems")]
+            public Sequential this[(int? start, int? end) index] {
+                get {
+                    var start = index.start.HasValue ? index.start.Value : 0;
+                    var end = index.end.HasValue ? index.end.Value : _modules.Count;
+
+                    return Slice(start, end);
+                }
+            }
+
+            private Sequential Slice(int start, int end)
+            {
+                if (start < 0 || start > _modules.Count) throw new IndexOutOfRangeException($"{start} is not a valid index.");
+                if (end < 0 || end > _modules.Count) throw new IndexOutOfRangeException($"{end} is not a valid index.");
+
+                var stop = Math.Min(_modules.Count, end);
+
+                var result = new Sequential(Array.Empty<torch.nn.Module<Tensor, Tensor>>());
+
+                for (var i = start; i < stop; i++) {
+                    result.Add(_names[i], _modules[i]);
+                }
+                return result;
+            }
+
+#if !NETSTANDARD2_0_OR_GREATER
+            /// <summary>
+            /// Module indexer.
+            /// </summary>
+            [IndexerName("SequentialItems")]
+            public Sequential this[System.Range index] {
+                get {
+                    var start = index.Start.IsFromEnd ? _modules.Count - index.Start.Value : index.Start.Value;
+                    var end = index.End.IsFromEnd ? _modules.Count - index.End.Value : index.End.Value;
+
+                    return this[(start, end)];
+                }
+            }
+#endif
             protected override void Dispose(bool disposing)
             {
                 if (disposing) {

@@ -706,6 +706,87 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void SequentialSlice()
+        {
+            var seq = Sequential(
+                ("lin1", Linear(10,10)),
+                ("relu1", ReLU()),
+                ("lin2", Linear(10, 10)),
+                ("tanh1", Tanh()),
+                ("lin2", Linear(10, 10)));
+
+            var slice = seq[(0, 2)];
+            Assert.Equal(2, slice.Count);
+            Assert.Same(seq[0], slice[0]);
+
+            slice = seq[(1, null)];
+            Assert.Equal(4, slice.Count);
+            Assert.Same(seq[1], slice[0]);
+
+            slice = seq[(null, 3)];
+            Assert.Equal(3, slice.Count);
+            Assert.Same(seq[0], slice[0]);
+        }
+
+        [Fact]
+        public void SequentialSliceNames()
+        {
+            var seq = Sequential(
+                ("lin1", Linear(10, 10)),
+                ("relu1", ReLU()),
+                ("lin2", Linear(10, 10)),
+                ("tanh1", Tanh()),
+                ("lin2", Linear(10, 10)));
+
+            var slice = seq[(1, 3)].named_modules().ToArray();
+            Assert.Equal("relu1", slice[0].name);
+            Assert.Equal("lin2", slice[1].name);
+        }
+
+#if !NETFRAMEWORK
+        [Fact]
+        public void SequentialSliceWithRange()
+        {
+            var seq = Sequential(
+                ("lin1", Linear(10, 10)),
+                ("relu1", ReLU()),
+                ("lin2", Linear(10, 10)),
+                ("tanh1", Tanh()),
+                ("lin2", Linear(10, 10)));
+
+            var slice = seq[0..2];
+            Assert.Equal(2, slice.Count);
+            Assert.Same(seq[0], slice[0]);
+
+            slice = seq[1..];
+            Assert.Equal(4, slice.Count);
+            Assert.Same(seq[1], slice[0]);
+
+            slice = seq[..3];
+            Assert.Equal(3, slice.Count);
+            Assert.Same(seq[0], slice[0]);
+
+            slice = seq[..^1];
+            Assert.Equal(4, slice.Count);
+            Assert.Same(seq[0], slice[0]);
+        }
+
+        [Fact]
+        public void SequentialSliceNamesRange()
+        {
+            var seq = Sequential(
+                ("lin1", Linear(10, 10)),
+                ("relu1", ReLU()),
+                ("lin2", Linear(10, 10)),
+                ("tanh1", Tanh()),
+                ("lin2", Linear(10, 10)));
+
+            var slice = seq[1..3].named_modules().ToArray();
+            Assert.Equal("relu1", slice[0].name);
+            Assert.Equal("lin2", slice[1].name);
+        }
+#endif
+        [Fact]
         public void EvalSequence2()
         {
             var lin1 = Linear(1000, 100);

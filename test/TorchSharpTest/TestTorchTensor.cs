@@ -9236,5 +9236,18 @@ namespace TorchSharp
                 Assert.Equal(2, a.GetLength(2));
             }
         }
+
+        [Fact]
+        public void TestMeshGrid()
+        {
+            var shifts_x = torch.arange(0, 32, dtype: torch.ScalarType.Int32, device: torch.CPU);
+            var shifts_y = torch.arange(0, 32, dtype: torch.ScalarType.Int32, device: torch.CPU);
+
+            Tensor[] shifts = new Tensor[] { shifts_y, shifts_x };
+
+            var result = torch.meshgrid(shifts, indexing: "ij");
+            Assert.NotNull(result);
+            Assert.Equal(shifts.Length, result.Length);
+        }
     }
 }
