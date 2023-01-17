@@ -15,9 +15,10 @@ Adding ToNDArray() to TensorAccessor<br/>
 
 __Fixed Bugs__:
 
-#872 Tensor.masked_fill_(mask, value) missing<br/>
 #870 nn.AvgPool2d(kernel_size=3, stride=2, padding=1) torchsharp not support padding<br/>
+#872 Tensor.masked_fill_(mask, value) missing<br/>
 #877 duplicate module parameters called named_parameters() while load model by cuda<br/>
+#888 THSTensor_meshgrid throws exception<br/>
 
 ## NuGet Version 0.99.1
 
