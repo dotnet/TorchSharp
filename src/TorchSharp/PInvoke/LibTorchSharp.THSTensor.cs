@@ -1512,7 +1512,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_dstack(IntPtr tensor, int len);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_meshgrid(IntPtr tensor, long len, [MarshalAs(UnmanagedType.LPStr)] string indexing, AllocatePinnedArray allocator);
+        internal static extern IntPtr THSTensor_meshgrid(IntPtr tensor, int len, [MarshalAs(UnmanagedType.LPStr)] string indexing, AllocatePinnedArray allocator);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_standard_gamma_(IntPtr tensor, IntPtr gen);

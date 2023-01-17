@@ -342,11 +342,12 @@ namespace TorchSharp
         public static Tensor[] meshgrid(IEnumerable<Tensor> tensors, string indexing = "ij")
         {
             IntPtr[] ptrArray;
+            var tArr = tensors.Select(p => p.Handle).ToArray();
 
             using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                IntPtr tensorsRef = parray.CreateArray(tArr);
 
-                var res = THSTensor_meshgrid(tensorsRef, parray.Array.LongLength, indexing, parray.CreateArray);
+                var res = THSTensor_meshgrid(tensorsRef, parray.Array.Length, indexing, parray.CreateArray);
                 torch.CheckForErrors();
                 ptrArray = parray.Array;
             }
