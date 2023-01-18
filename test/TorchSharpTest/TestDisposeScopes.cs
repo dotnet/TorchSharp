@@ -25,7 +25,7 @@ namespace TorchSharp
             DisposeScopeManager.Statistics.Reset();
             using (var scope1 = torch.NewDisposeScope()) {
                 var a1 = 1.ToTensor(); // This one is caught
-                var a2 = 2.ToTensor().DetatchFromDisposeScope(); // This one is lost
+                var a2 = 2.ToTensor().DetachFromDisposeScope(); // This one is lost
                 var a3 = 3.ToTensor().MoveToOuterDisposeScope(); // This one is lost also
                 using var a4 = 4.ToTensor(); // This one was manually disposed
                 var disposables = scope1.DisposablesView;

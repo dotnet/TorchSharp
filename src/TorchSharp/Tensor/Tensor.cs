@@ -115,14 +115,26 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Detatches the tensor completely from the DisposeScope system.
+            /// Detaches the tensor completely from the DisposeScope system.
             /// </summary>
             /// <returns>The same tensor that the method was called on</returns>
-            public torch.Tensor DetatchFromDisposeScope()
+            public torch.Tensor DetachFromDisposeScope()
             {
                 OwningDisposeScope?.Detach(this);
                 return this;
             }
+
+            /// <summary>
+            /// Detaches the tensor completely from the DisposeScope system.
+            /// </summary>
+            /// <returns>The same tensor that the method was called on</returns>
+            /// <remarks>
+            /// This was a misspelling of 'Detach'. Keeping it to avoid making a
+            /// breaking change, but it is deprecated and will be removed in a future
+            /// release.
+            /// </remarks>
+            [Obsolete("The method name misspells 'Detach.' Use 'DetachFromDisposeScope' instead.", false)]
+            public torch.Tensor DetatchFromDisposeScope() => DetachFromDisposeScope();
 
             /// <summary>
             /// Decouple the managed tensor from its underlying native tensor.
