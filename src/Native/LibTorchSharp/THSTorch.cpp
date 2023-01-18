@@ -25,14 +25,14 @@ void THSCuda_manual_seed_all(const int64_t seed)
     CATCH(torch::cuda::manual_seed_all(seed);)
 }
 
-bool THSBackend_cuda_get_allow_tf32()
+bool THSBackend_cublas_get_allow_tf32()
 {
     auto result = false;
     CATCH(result = at::globalContext().allowTF32CuBLAS(););
     return result;
 }
 
-void THSBackend_cuda_set_allow_tf32(const bool flag)
+void THSBackend_cublas_set_allow_tf32(const bool flag)
 {
     CATCH(at::globalContext().setAllowTF32CuBLAS(flag););
 }

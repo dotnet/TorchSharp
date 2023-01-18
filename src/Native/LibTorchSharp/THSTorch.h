@@ -28,8 +28,8 @@ EXPORT_API(int) THSTorchCuda_cudnn_is_available();
 EXPORT_API(int) THSTorchCuda_device_count();
 EXPORT_API(void) THSTorchCuda_synchronize(const int64_t device);
 
-EXPORT_API(bool)  THSBackend_cuda_get_allow_tf32();
-EXPORT_API(void)  THSBackend_cuda_set_allow_tf32(const bool flag);
+EXPORT_API(bool)  THSBackend_cublas_get_allow_tf32();
+EXPORT_API(void)  THSBackend_cublas_set_allow_tf32(const bool flag);
 EXPORT_API(bool)  THSBackend_cudnn_get_allow_tf32();
 EXPORT_API(void)  THSBackend_cudnn_set_allow_tf32(const bool flag);
 

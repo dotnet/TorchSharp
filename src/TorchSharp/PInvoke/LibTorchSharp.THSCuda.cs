@@ -16,9 +16,9 @@ namespace TorchSharp.PInvoke
         internal static extern void THSCuda_synchronize(long device_index);
 
         [DllImport("LibTorchSharp")]
-        internal static extern bool THSBackend_cuda_get_allow_tf32();
+        internal static extern bool THSBackend_cublas_get_allow_tf32();
         [DllImport("LibTorchSharp")]
-        internal static extern void THSBackend_cuda_set_allow_tf32(bool flag);
+        internal static extern void THSBackend_cublas_set_allow_tf32(bool flag);
 
         [DllImport("LibTorchSharp")]
         internal static extern bool THSBackend_cudnn_get_allow_tf32();

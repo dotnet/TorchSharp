@@ -470,12 +470,12 @@ namespace TorchSharp
                 {
                     public static bool allow_tf32 {
                         get {
-                            var result = LibTorchSharp.THSBackend_cuda_get_allow_tf32();
+                            var result = LibTorchSharp.THSBackend_cublas_get_allow_tf32();
                             CheckForErrors();
                             return result;
                         }
                         set {
-                            LibTorchSharp.THSBackend_cuda_set_allow_tf32(value);
+                            LibTorchSharp.THSBackend_cublas_set_allow_tf32(value);
                             CheckForErrors();
                         }
                     }
