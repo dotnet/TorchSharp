@@ -13,6 +13,16 @@ namespace TorchSharp
 
     {
         /// <summary>
+        /// This function checks if all input and other lie within a certain distance from each other
+        /// </summary>
+        /// <param name="input">First tensor to compare.</param>
+        /// <param name="other">Second tensor to compare.</param>
+        /// <param name="rtol">Relative tolerance</param>
+        /// <param name="atol">Absolute tolerance</param>
+        /// <param name="equal_nan">If true, then two NaN s will be considered equal</param>
+        public static bool allclose(Tensor input, Tensor other, double rtol = 1e-05, double atol = 1e-08, bool equal_nan = false) => input.allclose(other, rtol, atol, equal_nan);
+
+        /// <summary>
         /// Returns a 1-dimensional view of each input tensor with zero dimensions. Input tensors with one or more dimensions are returned as-is.
         /// </summary>
         public static IEnumerable<Tensor> atleast_1d(params Tensor[] input) => input.Select(t => t.atleast_1d());

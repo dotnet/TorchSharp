@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
@@ -458,6 +459,80 @@ namespace TorchSharp
             if (error != IntPtr.Zero)
             {
                 throw new ExternalException(Marshal.PtrToStringAnsi(error));
+            }
+        }
+
+        public static partial class backends
+        {
+            public static partial class cuda
+            {
+                public static partial class matmul
+                {
+                    public static bool allow_tf32 {
+                        get {
+                            var result = LibTorchSharp.THSBackend_cuda_get_allow_tf32();
+                            CheckForErrors();
+                            return result;
+                        }
+                        set {
+                            LibTorchSharp.THSBackend_cuda_set_allow_tf32(value);
+                            CheckForErrors();
+                        }
+                    }
+
+                    public static bool allow_fp16_reduced_precision_reduction {
+                        get {
+                            var result = LibTorchSharp.THSBackend_cuda_get_allow_fp16_reduced_precision_reduction();
+                            CheckForErrors();
+                            return result;
+                        }
+                        set {
+                            LibTorchSharp.THSBackend_cuda_set_allow_fp16_reduced_precision_reduction(value);
+                            CheckForErrors();
+                        }
+                    }
+                }
+
+                public static bool flash_sdp_enabled()
+                {
+                    var result = LibTorchSharp.THSBackend_cuda_get_enable_flash_sdp();
+                    CheckForErrors();
+                    return result;
+                }
+
+                public static void enable_flash_sdp(bool enable)
+                {
+                    LibTorchSharp.THSBackend_cuda_set_enable_flash_sdp(enable);
+                    CheckForErrors();
+                }
+
+                public static bool math_sdp_enabled()
+                {
+                    var result = LibTorchSharp.THSBackend_cuda_get_enable_math_sdp();
+                    CheckForErrors();
+                    return result;
+                }
+
+                public static void enable_math_sdp(bool enable)
+                {
+                    LibTorchSharp.THSBackend_cuda_set_enable_math_sdp(enable);
+                    CheckForErrors();
+                }
+            }
+
+            public static partial class cudnn
+            {
+                public static bool allow_tf32 {
+                    get {
+                        var result = LibTorchSharp.THSBackend_cudnn_get_allow_tf32();
+                        CheckForErrors();
+                        return result;
+                    }
+                    set {
+                        LibTorchSharp.THSBackend_cudnn_set_allow_tf32(value);
+                        CheckForErrors();
+                    }
+                }
             }
         }
     }

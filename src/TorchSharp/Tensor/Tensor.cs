@@ -3240,7 +3240,6 @@ namespace TorchSharp
             /// <param name="rtol">Relative tolerance</param>
             /// <param name="atol">Absolute tolerance</param>
             /// <param name="equal_nan">If true, then two NaN s will be considered equal</param>
-
             public bool allclose(Tensor target, double rtol = 1e-05, double atol = 1e-08, bool equal_nan = false)
             {
                 if (target is null) return false;

@@ -188,6 +188,9 @@ namespace TorchSharp
             var vec = torch.nn.utils.parameters_to_vector(seq.parameters());
 
             Assert.Equal(101110, vec.NumberOfElements);
+
+            var array = vec.detach().data<float>().ToArray();
+            torch.nn.utils.vector_to_parameters(torch.as_tensor(array).cpu(), seq.parameters());
         }
         [Fact]
         public void TestUtilsVtoP()
@@ -210,6 +213,40 @@ namespace TorchSharp
 
             Assert.Equal(data.shape, data1.shape);
             Assert.Equal(data, data1);
+        }
+
+        [Fact]
+        public void AllowTF32()
+        {
+            Assert.False(torch.backends.cuda.matmul.allow_tf32);
+            Assert.True(torch.backends.cudnn.allow_tf32);
+
+            torch.backends.cuda.matmul.allow_tf32 = true;
+            torch.backends.cudnn.allow_tf32 = false;
+
+            Assert.True(torch.backends.cuda.matmul.allow_tf32);
+            Assert.False(torch.backends.cudnn.allow_tf32);
+        }
+
+        [Fact]
+        public void EndableSDP()
+        {
+            Assert.True(torch.backends.cuda.flash_sdp_enabled());
+            Assert.True(torch.backends.cuda.math_sdp_enabled());
+
+            torch.backends.cuda.enable_flash_sdp(false);
+            torch.backends.cuda.enable_math_sdp(false);
+
+            Assert.False(torch.backends.cuda.flash_sdp_enabled());
+            Assert.False(torch.backends.cuda.math_sdp_enabled());
+        }
+
+        [Fact]
+        public void AllowFP16ReductionCuBLAS()
+        {
+            Assert.True(torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction);
+            torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = false;
+            Assert.False(torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction);
         }
 
         // Because some of the tests mess with global state, and are run in parallel, we need to

@@ -25,6 +25,65 @@ void THSCuda_manual_seed_all(const int64_t seed)
     CATCH(torch::cuda::manual_seed_all(seed);)
 }
 
+bool THSBackend_cuda_get_allow_tf32()
+{
+    auto result = false;
+    CATCH(result = at::globalContext().allowTF32CuBLAS(););
+    return result;
+}
+
+void THSBackend_cuda_set_allow_tf32(const bool flag)
+{
+    CATCH(at::globalContext().setAllowTF32CuBLAS(flag););
+}
+
+bool THSBackend_cudnn_get_allow_tf32()
+{
+    auto result = false;
+    CATCH(result = at::globalContext().allowTF32CuDNN(););
+    return result;
+}
+
+void THSBackend_cudnn_set_allow_tf32(const bool flag)
+{
+    CATCH(at::globalContext().setAllowTF32CuDNN(flag););
+}
+
+bool THSBackend_cuda_get_allow_fp16_reduced_precision_reduction()
+{
+    auto result = false;
+    CATCH(result = at::globalContext().allowFP16ReductionCuBLAS(););
+    return result;
+}
+
+void THSBackend_cuda_set_allow_fp16_reduced_precision_reduction(const bool flag)
+{
+    CATCH(at::globalContext().setAllowFP16ReductionCuBLAS(flag););
+}
+
+bool THSBackend_cuda_get_enable_flash_sdp()
+{
+    auto result = false;
+    CATCH(result = at::globalContext().userEnabledFlashSDP(););
+    return result;
+}
+
+void THSBackend_cuda_set_enable_flash_sdp(const bool flag)
+{
+    CATCH(at::globalContext().setSDPUseFlash(flag););
+}
+
+bool THSBackend_cuda_get_enable_math_sdp()
+{
+    auto result = false;
+    CATCH(result = at::globalContext().userEnabledMathSDP(););
+    return result;
+}
+
+void THSBackend_cuda_set_enable_math_sdp(const bool flag)
+{
+    CATCH(at::globalContext().setSDPUseMath(flag););
+}
 
 void THSGenerator_gen_manual_seed(const Generator generator, const int64_t seed)
 {
