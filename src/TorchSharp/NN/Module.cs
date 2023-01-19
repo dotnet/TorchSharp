@@ -851,6 +851,18 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Save the parameters and buffers of the module to a disk location.
+                /// </summary>
+                /// <param name="stream">A writable stream instance.</param>
+                /// <param name="skip">A list of keys not to consider when saving the weights.</param>
+                /// <returns></returns>
+                public Module save(System.IO.Stream stream, IList<string> skip = null)
+                {
+                    using var writer = new System.IO.BinaryWriter(stream);
+                    return save(writer, skip);
+                }
+
+                /// <summary>
                 ///
                 /// </summary>
                 /// <param name="writer">A binary writer instance.</param>
@@ -952,6 +964,28 @@ namespace TorchSharp
                     }
 
                     return this;
+                }
+
+                /// <summary>
+                /// Load the parameters and buffers
+                /// </summary>
+                /// <param name="stream">A readable stream instance.</param>
+                /// <param name="strict">
+                /// If true, will only load a module if it exactly corresponds to the current module's state.
+                /// If false, will load the parameters and buffers that it finds in the saved file,
+                /// leaving everything else alone.
+                /// </param>
+                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <returns>The module, with parameters and buffers loaded.</returns>
+                /// <remarks>
+                /// Using a skip list only prevents tensors in the target module from being modified, it
+                /// does not alter any logic related to checking for matching tensor element types or entries.
+                /// It may be necessary to also pass 'strict=false' to avoid exceptions.
+                /// </remarks>
+                public Module load(System.IO.Stream stream, bool strict = true, IList<string> skip = null)
+                {
+                    using var reader = new System.IO.BinaryReader(stream);
+                    return load(reader, strict, skip);
                 }
 
                 /// <summary>
