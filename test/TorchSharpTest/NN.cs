@@ -553,7 +553,7 @@ namespace TorchSharp
             var input = torch.randn(new long[] { 64, 8 }) * 25.0;
             {
                 var rel = Softmax(1);
-                var output = rel.forward(input);
+                var output = rel.call(input);
                 var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));

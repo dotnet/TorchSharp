@@ -1031,9 +1031,9 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            public override Tensor forward(Tensor t)
+            protected override Tensor forward(Tensor t)
             {
-                var t1 = layers0.forward(t).squeeze_(3);
+                var t1 = layers0.call(t).squeeze_(3);
                 return t1;
             }
         }
@@ -1057,11 +1057,11 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            public override Tensor forward(Tensor input)
+            protected override Tensor forward(Tensor input)
             {
-                var (rnn_output, states_h0) = layers1.forward(input, init_h0);
+                var (rnn_output, states_h0) = layers1.call(input, init_h0);
                 init_h0 = states_h0.detach_();
-                var (_, states_h1) = layers2.forward(rnn_output, init_h1);
+                var (_, states_h1) = layers2.call(rnn_output, init_h1);
                 init_h1 = states_h1.detach_();
                 var x2 = states_h1[-1];
                 return x2;
@@ -1081,9 +1081,9 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            public override Tensor forward(Tensor input)
+            protected override Tensor forward(Tensor input)
             {
-                var t0 = sequence_layers.forward(input);
+                var t0 = sequence_layers.call(input);
                 return t0;
             }
         }
