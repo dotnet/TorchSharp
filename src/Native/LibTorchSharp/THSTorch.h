@@ -28,7 +28,21 @@ EXPORT_API(int) THSTorchCuda_cudnn_is_available();
 EXPORT_API(int) THSTorchCuda_device_count();
 EXPORT_API(void) THSTorchCuda_synchronize(const int64_t device);
 
+EXPORT_API(bool)  THSBackend_cublas_get_allow_tf32();
+EXPORT_API(void)  THSBackend_cublas_set_allow_tf32(const bool flag);
+EXPORT_API(bool)  THSBackend_cudnn_get_allow_tf32();
+EXPORT_API(void)  THSBackend_cudnn_set_allow_tf32(const bool flag);
+
+EXPORT_API(bool)  THSBackend_cuda_get_allow_fp16_reduced_precision_reduction();
+EXPORT_API(void)  THSBackend_cuda_set_allow_fp16_reduced_precision_reduction(const bool flag);
+
+EXPORT_API(bool)  THSBackend_cuda_get_enable_flash_sdp();
+EXPORT_API(void)  THSBackend_cuda_set_enable_flash_sdp(const bool flag);
+EXPORT_API(bool)  THSBackend_cuda_get_enable_math_sdp();
+EXPORT_API(void)  THSBackend_cuda_set_enable_math_sdp(const bool flag);
+
 // Returns the latest error. This is thread-local.
+
 EXPORT_API(const char *) THSTorch_get_and_reset_last_err();
 
 EXPORT_API(Scalar) THSTorch_int8_to_scalar(int8_t value);

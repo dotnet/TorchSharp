@@ -2,6 +2,14 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.99.3
+
+__API Changes__:
+
+Fixing misspelling of 'DetachFromDisposeScope,' deprecating the old spelling.<br/>
+Adding allow_tf32<br/>
+
+
 ## NuGet Version 0.99.2
 
 __API Changes__:
