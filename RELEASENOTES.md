@@ -2,13 +2,31 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.99.3
+
+__API Changes__:
+
+Fixing misspelling of 'DetachFromDisposeScope,' deprecating the old spelling.<br/>
+Adding allow_tf32<br/>
+
+
 ## NuGet Version 0.99.2
 
 __API Changes__:
 
-Adding 'maximize' argument to the Adadelta optimizer
-Adding linalg.ldl_factor and linalg.ldl_solve
-Adding SoftplusTransform
+Adding 'maximize' argument to the Adadelta optimizer<br/>
+Adding linalg.ldl_factor and linalg.ldl_solve<br/>
+Adding a couple of missing APIs (see #872)<br/>
+Adding SoftplusTransform<br/>
+Support indexing and slicing of Sequential<br/>
+Adding ToNDArray() to TensorAccessor<br/>
+
+__Fixed Bugs__:
+
+#870 nn.AvgPool2d(kernel_size=3, stride=2, padding=1) torchsharp not support padding<br/>
+#872 Tensor.masked_fill_(mask, value) missing<br/>
+#877 duplicate module parameters called named_parameters() while load model by cuda<br/>
+#888 THSTensor_meshgrid throws exception<br/>
 
 ## NuGet Version 0.99.1
 

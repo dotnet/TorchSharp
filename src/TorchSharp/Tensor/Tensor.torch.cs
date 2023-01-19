@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
@@ -11,6 +12,16 @@ namespace TorchSharp
     public static partial class torch
 
     {
+        /// <summary>
+        /// This function checks if all input and other lie within a certain distance from each other
+        /// </summary>
+        /// <param name="input">First tensor to compare.</param>
+        /// <param name="other">Second tensor to compare.</param>
+        /// <param name="rtol">Relative tolerance</param>
+        /// <param name="atol">Absolute tolerance</param>
+        /// <param name="equal_nan">If true, then two NaN s will be considered equal</param>
+        public static bool allclose(Tensor input, Tensor other, double rtol = 1e-05, double atol = 1e-08, bool equal_nan = false) => input.allclose(other, rtol, atol, equal_nan);
+
         /// <summary>
         /// Returns a 1-dimensional view of each input tensor with zero dimensions. Input tensors with one or more dimensions are returned as-is.
         /// </summary>
@@ -341,11 +352,12 @@ namespace TorchSharp
         public static Tensor[] meshgrid(IEnumerable<Tensor> tensors, string indexing = "ij")
         {
             IntPtr[] ptrArray;
+            var tArr = tensors.Select(p => p.Handle).ToArray();
 
             using (var parray = new PinnedArray<IntPtr>()) {
-                IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+                IntPtr tensorsRef = parray.CreateArray(tArr);
 
-                var res = THSTensor_meshgrid(tensorsRef, parray.Array.LongLength, indexing, parray.CreateArray);
+                var res = THSTensor_meshgrid(tensorsRef, parray.Array.Length, indexing, parray.CreateArray);
                 torch.CheckForErrors();
                 ptrArray = parray.Array;
             }
@@ -397,6 +409,11 @@ namespace TorchSharp
         /// corresponding value in index for dimension = dim.
         /// </summary>
         public static Tensor scatter_add_(Tensor input, long dim, Tensor index, Tensor src) => input.scatter_add_(dim, index, src);
+
+        /// <summary>
+        /// Gathers values along an axis specified by dim.
+        /// </summary>
+        public static Tensor gather(Tensor input, long dim, Tensor index) => input.gather(dim, index);
 
         /// <summary>
         /// Clamps all elements in input into the range [ min, max ].
@@ -609,6 +626,22 @@ namespace TorchSharp
         /// <param name="input">The input tensor</param>
         /// <param name="dims">The number of repetitions per dimension.</param>
         public static Tensor tile(Tensor input, long[] dims) => input.tile(dims);
+
+        /// <summary>
+        /// Returns the upper triangular part of a matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+        /// The upper triangular part of the matrix is defined as the elements on and above the diagonal.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="diagonal">The diagonal to consider</param>
+        public static Tensor triu(Tensor input, long diagonal = 0) => input.triu(diagonal);
+
+        /// <summary>
+        /// Returns the lower triangular part of the matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+        /// The lower triangular part of the matrix is defined as the elements on and below the diagonal.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="diagonal">The diagonal to consider</param>
+        public static Tensor tril(Tensor input, long diagonal = 0) => input.tril(diagonal);
 
         /// <summary>
         /// Tests if all elements in input evaluate to true.

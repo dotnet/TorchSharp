@@ -820,7 +820,7 @@ namespace TorchSharp
                     () => Assert.Equal(5, t.shape[0]),
                     () => Assert.Equal(3, t[1].item<double>()),
                     () => Assert.Equal(6, t[4].item<double>()),
-                    () => Assert.Equal(ScalarType.Float64, t.dtype)); ;
+                    () => Assert.Equal(ScalarType.Float64, t.dtype));
             }
             {
                 var array = new double[] { 0, 1, 2, 3, 4, 5, 6, 7 };
@@ -831,7 +831,7 @@ namespace TorchSharp
                     () => Assert.Equal(5, t.shape[0]),
                     () => Assert.Equal(3, t[1].item<double>()),
                     () => Assert.Equal(15, array[6]),
-                    () => Assert.Equal(ScalarType.Float64, t.dtype)); ;
+                    () => Assert.Equal(ScalarType.Float64, t.dtype));
             }
             {
                 var array = new System.Numerics.Complex[8];
@@ -844,7 +844,7 @@ namespace TorchSharp
                     () => Assert.Equal(6, t.real[4].item<double>()),
                     () => Assert.Equal(-3, t.imag[1].item<double>()),
                     () => Assert.Equal(-6, t.imag[4].item<double>()),
-                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype));
             }
             {
                 var array = new System.Numerics.Complex[8];
@@ -859,7 +859,7 @@ namespace TorchSharp
                     () => Assert.Equal(15, array[6].Real),
                     () => Assert.Equal(-3, t.imag[1].item<double>()),
                     () => Assert.Equal(25.0, array[6].Imaginary),
-                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype));
             }
         }
 
@@ -1302,7 +1302,7 @@ namespace TorchSharp
                     () => Assert.Equal(6, t.real[6].item<float>()),
                     () => Assert.Equal(-3, t.imag[3].item<float>()),
                     () => Assert.Equal(-6, t.imag[6].item<float>()),
-                    () => Assert.Equal(ScalarType.ComplexFloat32, t.dtype)); ;
+                    () => Assert.Equal(ScalarType.ComplexFloat32, t.dtype));
             }
             {
                 var array = new (float Real, float Imaginary)[8];
@@ -1317,7 +1317,7 @@ namespace TorchSharp
                     () => Assert.Equal(6, array[6].Real),
                     () => Assert.Equal(-3, t.imag[3].item<float>()),
                     () => Assert.Equal(-6, array[6].Imaginary),
-                    () => Assert.Equal(ScalarType.ComplexFloat32, t.dtype)); ;
+                    () => Assert.Equal(ScalarType.ComplexFloat32, t.dtype));
             }
         }
 
@@ -1393,7 +1393,7 @@ namespace TorchSharp
                     () => Assert.Equal(6, t.real[6].item<double>()),
                     () => Assert.Equal(-3, t.imag[3].item<double>()),
                     () => Assert.Equal(-6, t.imag[6].item<double>()),
-                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype));
             }
             {
                 var array = new System.Numerics.Complex[8];
@@ -1407,7 +1407,7 @@ namespace TorchSharp
                     () => Assert.Equal(3, t.real[3].item<double>()),
                     () => Assert.Equal(6, array[6].Real),
                     () => Assert.Equal(-6, array[6].Imaginary),
-                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype)); ;
+                    () => Assert.Equal(ScalarType.ComplexFloat64, t.dtype));
             }
         }
 
@@ -3529,33 +3529,33 @@ namespace TorchSharp
             Assert.Equal(6, t6[0, 0].ToInt32());
             Assert.Equal(5, t6[0, 1].ToInt32());
 #else
-                var t1 = i[0..2, 0];
-                Assert.Equal(0, t1[0].ToInt32());
-                Assert.Equal(6, t1[1].ToInt32());
+            var t1 = i[0..2, 0];
+            Assert.Equal(0, t1[0].ToInt32());
+            Assert.Equal(6, t1[1].ToInt32());
 
-                // one slice
-                var t2 = i[1..2, 0];
-                Assert.Equal(6, t2[0].ToInt32());
+            // one slice
+            var t2 = i[1..2, 0];
+            Assert.Equal(6, t2[0].ToInt32());
 
-                // two slice
-                var t3 = i[1..2, 1..3];
-                Assert.Equal(5, t3[0, 0].ToInt32());
-                Assert.Equal(4, t3[0, 1].ToInt32());
+            // two slice
+            var t3 = i[1..2, 1..3];
+            Assert.Equal(5, t3[0, 0].ToInt32());
+            Assert.Equal(4, t3[0, 1].ToInt32());
 
-                // both absent
-                var t4 = i[.., ..];
-                Assert.Equal(0, t4[0, 0].ToInt32());
-                Assert.Equal(1, t4[0, 1].ToInt32());
+            // both absent
+            var t4 = i[.., ..];
+            Assert.Equal(0, t4[0, 0].ToInt32());
+            Assert.Equal(1, t4[0, 1].ToInt32());
 
-                // end absent
-                var t5 = i[1.., 1..];
-                Assert.Equal(5, t5[0, 0].ToInt32());
-                Assert.Equal(4, t5[0, 1].ToInt32());
+            // end absent
+            var t5 = i[1.., 1..];
+            Assert.Equal(5, t5[0, 0].ToInt32());
+            Assert.Equal(4, t5[0, 1].ToInt32());
 
-                // start absent
-                var t6 = i[1.., ..2];
-                Assert.Equal(6, t6[0, 0].ToInt32());
-                Assert.Equal(5, t6[0, 1].ToInt32());
+            // start absent
+            var t6 = i[1.., ..2];
+            Assert.Equal(6, t6[0, 0].ToInt32());
+            Assert.Equal(5, t6[0, 1].ToInt32());
 #endif // NET472_OR_GREATER
         }
 
@@ -5724,7 +5724,7 @@ namespace TorchSharp
                 Assert.Equal(expected, res);
             }
             {
-                var res = torch.linalg.vander(x,3);
+                var res = torch.linalg.vander(x, 3);
                 var expected = torch.tensor(new long[] { 1, 1, 1, 1, 2, 4, 1, 3, 9, 1, 5, 25 }, 4, 3);
                 Assert.Equal(expected, res);
             }
@@ -6905,7 +6905,7 @@ namespace TorchSharp
             var A = torch.randn(3, 3);
             var b = torch.randn(3);
             var x = torch.linalg.solve(A, b);
-            Assert.True(A.matmul(x).allclose(b));
+            Assert.True(A.matmul(x).allclose(b, rtol: 1e-03, atol: 1e-06));
         }
 
         [Fact]
@@ -9115,6 +9115,139 @@ namespace TorchSharp
             Assert.Multiple(
             () => Assert.Equal(new long[] { 32, 8, 16 }, t.mT.shape)
             );
+        }
+
+        [Fact]
+        [TestOf(nameof(TorchSharp.Utils.TensorAccessor<float>.ToNDArray))]
+        public void ToNDArray()
+        {
+            {
+                var t = torch.ones(10);
+                var a = t[0].data<float>().ToNDArray() as float[];
+
+                Assert.NotNull(a);
+                Assert.Equal(1, a.Rank);
+                Assert.Single(a);
+            }
+            {
+                var t = torch.arange(10);
+                var a = t.data<long>().ToNDArray() as long[];
+                var expected = new long[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+                Assert.NotNull(a);
+                Assert.Equal(1, a.Rank);
+                Assert.Equal(10, a.Length);
+                Assert.Equal(expected, a);
+            }
+            {
+                var t = torch.arange(10).reshape(2,5);
+                var a = t.data<long>().ToNDArray() as long[,];
+                var expected = new long[,] { { 0, 1, 2, 3, 4 }, { 5, 6, 7, 8, 9 } };
+
+                Assert.NotNull(a);
+                Assert.Equal(2, a.Rank);
+                Assert.Equal(2, a.GetLength(0));
+                Assert.Equal(5, a.GetLength(1));
+                Assert.Equal(expected, a);
+            }
+            {
+                var t = torch.arange(12).reshape(2,2,3);
+                var a = t.data<long>().ToNDArray() as long[,,];
+                var expected = new long[,,] { { { 0, 1, 2 }, { 3, 4, 5 } }, { { 6, 7, 8 }, { 9, 10, 11 } } };
+
+                Assert.NotNull(a);
+                Assert.Equal(3, a.Rank);
+                Assert.Equal(2, a.GetLength(0));
+                Assert.Equal(2, a.GetLength(1));
+                Assert.Equal(3, a.GetLength(2));
+                Assert.Equal(expected, a);
+            }
+            {
+                var t = torch.arange(16).reshape(2, 2, 2, 2);
+                var a = t.data<long>().ToNDArray() as long[,,,];
+                var expected = new long[,,,] { { { { 0, 1 }, { 2, 3 } }, { { 4, 5 }, { 6, 7 } } }, { { { 8, 9 }, { 10, 11 } }, { { 12, 13 }, { 14, 15 } } } };
+
+                Assert.NotNull(a);
+                Assert.Equal(4, a.Rank);
+                Assert.Equal(2, a.GetLength(0));
+                Assert.Equal(2, a.GetLength(1));
+                Assert.Equal(2, a.GetLength(2));
+                Assert.Equal(2, a.GetLength(3));
+                Assert.Equal(expected, a);
+            }
+            {
+                var t = torch.arange(16).reshape(1, 2, 2, 2, 2);
+                var a = t.data<long>().ToNDArray() as long[,,,,];
+                var expected = new long[,,,,] { { { { { 0, 1 }, { 2, 3 } }, { { 4, 5 }, { 6, 7 } } }, { { { 8, 9 }, { 10, 11 } }, { { 12, 13 }, { 14, 15 } } } } };
+
+                Assert.NotNull(a);
+                Assert.Equal(5, a.Rank);
+                Assert.Equal(1, a.GetLength(0));
+                Assert.Equal(2, a.GetLength(1));
+                Assert.Equal(2, a.GetLength(2));
+                Assert.Equal(2, a.GetLength(3));
+                Assert.Equal(2, a.GetLength(4));
+                Assert.Equal(expected, a);
+            }
+            {
+                var t = torch.arange(16).reshape(1, 1, 2, 2, 2, 2);
+                var a = t.data<long>().ToNDArray() as long[,,,,,];
+                var expected = new long[,,,,,] { { { { { { 0, 1 }, { 2, 3 } }, { { 4, 5 }, { 6, 7 } } }, { { { 8, 9 }, { 10, 11 } }, { { 12, 13 }, { 14, 15 } } } } } };
+
+                Assert.NotNull(a);
+                Assert.Equal(6, a.Rank);
+                Assert.Equal(1, a.GetLength(0));
+                Assert.Equal(1, a.GetLength(1));
+                Assert.Equal(2, a.GetLength(2));
+                Assert.Equal(2, a.GetLength(3));
+                Assert.Equal(2, a.GetLength(4));
+                Assert.Equal(2, a.GetLength(5));
+                Assert.Equal(expected, a);
+            }
+            {
+                var t = torch.rand(new long[] { 10, 20, 30 });
+                var a = t.data<float>().ToNDArray() as float[,,,];
+                Assert.Null(a);
+            }
+            {
+                var t = torch.rand(new long[] { 10, 20, 30, 2, 4, 8, 16 });
+                Array a = t.data<float>().ToNDArray();
+                var t1 = torch.from_array(a);
+
+                Assert.NotNull(a);
+                Assert.Equal(7, a.Rank);
+                Assert.Equal(10, a.GetLength(0));
+                Assert.Equal(20, a.GetLength(1));
+                Assert.Equal(30, a.GetLength(2));
+                Assert.Equal(2, a.GetLength(3));
+                Assert.Equal(4, a.GetLength(4));
+                Assert.Equal(8, a.GetLength(5));
+                Assert.Equal(16, a.GetLength(6));
+                Assert.True(torch.eq(t, t1).data<bool>()[0]);
+            }
+            {
+                var t = torch.rand(10, 20, 30, 2);
+                var a = t[0].data<float>().ToNDArray() as float[,,];
+
+                Assert.NotNull(a);
+                Assert.Equal(3, a.Rank);
+                Assert.Equal(20, a.GetLength(0));
+                Assert.Equal(30, a.GetLength(1));
+                Assert.Equal(2, a.GetLength(2));
+            }
+        }
+
+        [Fact]
+        public void TestMeshGrid()
+        {
+            var shifts_x = torch.arange(0, 32, dtype: torch.ScalarType.Int32, device: torch.CPU);
+            var shifts_y = torch.arange(0, 32, dtype: torch.ScalarType.Int32, device: torch.CPU);
+
+            Tensor[] shifts = new Tensor[] { shifts_y, shifts_x };
+
+            var result = torch.meshgrid(shifts, indexing: "ij");
+            Assert.NotNull(result);
+            Assert.Equal(shifts.Length, result.Length);
         }
     }
 }

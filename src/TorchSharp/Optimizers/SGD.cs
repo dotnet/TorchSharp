@@ -162,7 +162,7 @@ namespace TorchSharp
                             var buf = state.momentum_buffer;
 
                             if (buf is null) {
-                                buf = grad.clone().detach().DetatchFromDisposeScope();
+                                buf = grad.clone().detach().DetachFromDisposeScope();
                                 state.momentum_buffer = buf;
                             } else {
                                 buf.mul_(momentum).add_(grad, alpha: (1 - dampening));
@@ -230,7 +230,7 @@ namespace TorchSharp
                             shape[i] = reader.ReadInt64();
 
                         if (momentum_buffer is null) {
-                            momentum_buffer = torch.empty(shape).DetatchFromDisposeScope();
+                            momentum_buffer = torch.empty(shape).DetachFromDisposeScope();
                         }
                         momentum_buffer.Load(reader);
                     }

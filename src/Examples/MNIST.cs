@@ -49,7 +49,7 @@ namespace TorchSharp.Examples
                 _testBatchSize *= 4;
             }
 
-            var model = new Model("model", device);
+            using var model = new Model("model", device);
 
             var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 });
 
@@ -143,6 +143,26 @@ namespace TorchSharp.Examples
                 var l41 = fc2.call(l33);
 
                 return logsm.call(l41);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    conv1.Dispose();
+                    conv2.Dispose();
+                    fc1.Dispose();
+                    fc2.Dispose();
+                    pool1.Dispose();
+                    relu1.Dispose();
+                    relu2.Dispose();
+                    relu3.Dispose();
+                    dropout1.Dispose();
+                    dropout2.Dispose();
+                    flatten.Dispose();
+                    logsm.Dispose();
+                    ClearModules();
+                }
+                base.Dispose(disposing);
             }
         }
 

@@ -109,6 +109,15 @@ namespace TorchSharp.Examples
             return layers.call(input);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                layers.Dispose();
+                ClearModules();
+            }
+            base.Dispose(disposing);
+        }
+
         class BasicBlock : Module<Tensor, Tensor>
         {
             public BasicBlock (string name, int in_planes, int planes, int stride) : base(name)
@@ -142,6 +151,16 @@ namespace TorchSharp.Examples
                 var x = layers.call(t);
                 var y = shortcut.call(t);
                 return x.add_(y).relu_();
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    layers.Dispose();
+                    shortcut.Dispose();
+                    ClearModules();
+                }
+                base.Dispose(disposing);
             }
 
             public static int expansion = 1;
@@ -183,6 +202,16 @@ namespace TorchSharp.Examples
                 var x = layers.call(t);
                 using var y = shortcut.call(t);
                 return x.add_(y).relu_();
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    layers.Dispose();
+                    shortcut.Dispose();
+                    ClearModules();
+                }
+                base.Dispose(disposing);
             }
 
             public static int expansion = 4;

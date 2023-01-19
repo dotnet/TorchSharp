@@ -44,11 +44,147 @@ namespace TorchSharp.Utils
 
         public T[] ToArray()
         {
+            if (_tensor.ndim < 2)
+                return (T[])ToNDArray();
+
             var result = new T[Count];
             CopyTo(result);
             return result;
         }
 
+        /// <summary>
+        /// Extract tensor data as a multi-dimensional .NET array, with the same number of dimensions as the tensor.
+        /// </summary>
+        /// <returns>An array object, which should be cast to the concrete array type.</returns>
+        public Array ToNDArray()
+        {
+            var shape = _tensor.shape;
+            var strides = _tensor.stride();
+            switch (_tensor.ndim) {
+            default:
+                return ToNDArray(shape, strides);
+            case 0:
+                unsafe {
+                    var result = new T[1];
+                    T* ptr = (T*)_tensor_data_ptr;
+                    result[0] = ptr[0];
+                    return result;
+                }
+            case 1:
+                unsafe {
+                    var result = new T[shape[0]];
+                    T* ptr = (T*)_tensor_data_ptr;
+                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
+                        result[i0] = ptr[off0];
+                    }
+                    return result;
+                }
+            case 2:
+                unsafe {
+                    var result = new T[shape[0], shape[1]];
+                    T* ptr = (T*)_tensor_data_ptr;
+                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
+                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
+                            result[i0, i1] = ptr[off1];
+                        }
+                    }
+                    return result;
+                }
+            case 3:
+                unsafe {
+                    var result = new T[shape[0], shape[1], shape[2]];
+                    T* ptr = (T*)_tensor_data_ptr;
+                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
+                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
+                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
+                                result[i0, i1, i2] = ptr[off2];
+                            }
+                        }
+                    }
+                    return result;
+                }
+            case 4:
+                unsafe {
+                    var result = new T[shape[0], shape[1], shape[2], shape[3]];
+                    T* ptr = (T*)_tensor_data_ptr;
+                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
+                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
+                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
+                                for (long i3 = 0, off3 = off2; i3 < shape[3]; i3++, off3 += strides[3]) {
+                                    result[i0, i1, i2, i3] = ptr[off3];
+                                }
+                            }
+                        }
+                    }
+                    return result;
+                }
+            case 5:
+                unsafe {
+                    var result = new T[shape[0], shape[1], shape[2], shape[3], shape[4]];
+                    T* ptr = (T*)_tensor_data_ptr;
+                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
+                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
+                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
+                                for (long i3 = 0, off3 = off2; i3 < shape[3]; i3++, off3 += strides[3]) {
+                                    for (long i4 = 0, off4 = off3; i4 < shape[4]; i4++, off4 += strides[4]) {
+                                        result[i0, i1, i2, i3, i4] = ptr[off4];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return result;
+                }
+            case 6:
+                unsafe {
+                    var result = new T[shape[0], shape[1], shape[2], shape[3], shape[4], shape[5]];
+                    T* ptr = (T*)_tensor_data_ptr;
+                    for (long i0 = 0, off0 = 0; i0 < shape[0]; i0++, off0 += strides[0]) {
+                        for (long i1 = 0, off1 = off0; i1 < shape[1]; i1++, off1 += strides[1]) {
+                            for (long i2 = 0, off2 = off1; i2 < shape[2]; i2++, off2 += strides[2]) {
+                                for (long i3 = 0, off3 = off2; i3 < shape[3]; i3++, off3 += strides[3]) {
+                                    for (long i4 = 0, off4 = off3; i4 < shape[4]; i4++, off4 += strides[4]) {
+                                        for (long i5 = 0, off5 = off4; i5 < shape[5]; i5++, off5 += strides[5]) {
+                                            result[i0, i1, i2, i3, i4, i5] = ptr[off5];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return result;
+                }
+            }
+        }
+
+        private Array ToNDArray(long[] shape, long[] strides)
+        {
+            Array array = Array.CreateInstance(typeof(T), shape);
+            long[] indexes = new long[_tensor.ndim];
+            long[] off = new long[_tensor.ndim];
+
+            while (true) {
+                unsafe {
+                    T* ptr = (T*)_tensor_data_ptr;
+                    array.SetValue(ptr[off[array.Rank - 1]], indexes);
+                }
+
+                for (int i = array.Rank - 1; i >= 0; i--) {
+                    if (indexes[i] < shape[i] - 1) {
+                        indexes[i]++;
+                        off[i] += strides[i];
+                        for (int j = i; j < array.Rank - 1; j++)
+                            off[j + 1] = off[j];
+                        break;
+                    } else {
+                        if (i == 0) {
+                            return array;
+                        }
+                        indexes[i] = 0;
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Access elements of the underlying tensor / tensor view.
@@ -65,8 +201,7 @@ namespace TorchSharp.Utils
                         T* ptr = (T*)_tensor_data_ptr;
                         return ptr[TranslateIndex(index, _tensor)];
                     }
-                }
-                else {
+                } else {
                     unsafe {
                         T* ptr = (T*)_tensor_data_ptr;
                         return ptr[TranslateIndex(indices, _tensor)];
@@ -82,8 +217,7 @@ namespace TorchSharp.Utils
                         T* ptr = (T*)_tensor_data_ptr;
                         ptr[TranslateIndex(indices, _tensor)] = value;
                     }
-                }
-                else {
+                } else {
                     unsafe {
                         T* ptr = (T*)_tensor_data_ptr;
                         ptr[TranslateIndex(indices, _tensor)] = value;
@@ -117,7 +251,7 @@ namespace TorchSharp.Utils
         /// used by the underlying tensor. The two should only be different if the tensor is a view
         /// rather than an allocated tensor.
         /// </summary>
-        internal static long TranslateIndex(long idx, torch.Tensor tensor)
+        private static long TranslateIndex(long idx, torch.Tensor tensor)
         {
             if (idx >= tensor.numel() || idx < 0)
                 throw new ArgumentOutOfRangeException($"{idx} in a collection of  ${tensor.numel()} elements.");
@@ -136,7 +270,7 @@ namespace TorchSharp.Utils
             return result;
         }
 
-        internal static long TranslateIndex(long[] idx, torch.Tensor tensor)
+        private static long TranslateIndex(long[] idx, torch.Tensor tensor)
         {
             long result = 0;
             var shape = tensor.shape;
@@ -216,7 +350,7 @@ namespace TorchSharp.Utils
                     return Enumerable.Empty<long>();
                 }
 
-                return (new long [] { 0 }).AsEnumerable<long>();
+                return (new long[] { 0 }).AsEnumerable<long>();
             }
 
             if (_tensor.is_contiguous()) {

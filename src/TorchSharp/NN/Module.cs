@@ -174,8 +174,9 @@ namespace TorchSharp
                         var value = field.GetValue(this);
 
                         switch (value) {
-                        // This test must come before the Tensor test
+                        // This order in which these cases are arranged is significant.
                         case Parameter param when dtype == param.dtype && device.type == param.device_type && device.index == param.device_index:
+                            alreadyHandled.Add(param.handle);
                             continue;
 
                         case Parameter param: {
@@ -195,16 +196,20 @@ namespace TorchSharp
                                 alreadyHandled.Add(t.handle);
                                 break;
                             }
+
+                        case Tensor tensor:
+                            alreadyHandled.Add(tensor.handle);
+                            break;
                         }
                     }
 
-                    foreach (var (name, param) in named_parameters().ToList()) {
+                    foreach (var (name, param) in named_parameters(false).ToList()) {
                         if (alreadyHandled.Contains(param.handle)) continue;
                         var t = param.to(dtype, device);
                         ConditionallyRegisterParameter(name, t);
                     }
 
-                    foreach (var (name, buffer) in named_buffers().ToList()) {
+                    foreach (var (name, buffer) in named_buffers(false).ToList()) {
                         if (alreadyHandled.Contains(buffer.handle)) continue;
                         var t = buffer.to(dtype, device);
                         ConditionallyRegisterBuffer(name, t);
@@ -255,8 +260,9 @@ namespace TorchSharp
                         var value = field.GetValue(this);
 
                         switch (value) {
-                        // This test must come before the Tensor test
+                        // This order in which these cases are arranged is significant.
                         case Parameter param when deviceType == param.device_type && deviceIndex == param.device_index:
+                            alreadyHandled.Add(param.handle);
                             continue;
 
                         case Parameter param: {
@@ -276,16 +282,20 @@ namespace TorchSharp
                                 alreadyHandled.Add(t.handle);
                                 break;
                             }
+
+                        case Tensor tensor:
+                            alreadyHandled.Add(tensor.handle);
+                            break;
                         }
                     }
 
-                    foreach (var (name, param) in named_parameters().ToList()) {
+                    foreach (var (name, param) in named_parameters(false).ToList()) {
                         if (alreadyHandled.Contains(param.handle)) continue;
                         var t = param.to(deviceType, deviceIndex);
                         ConditionallyRegisterParameter(name, t);
                     }
 
-                    foreach (var (name, buffer) in named_buffers().ToList()) {
+                    foreach (var (name, buffer) in named_buffers(false).ToList()) {
                         if (alreadyHandled.Contains(buffer.handle)) continue;
                         var t = buffer.to(deviceType, deviceIndex);
                         ConditionallyRegisterBuffer(name, t);
@@ -324,8 +334,9 @@ namespace TorchSharp
                         var value = field.GetValue(this);
 
                         switch (value) {
-                        // This test must come before the Tensor test
+                        // This order in which these cases are arranged is significant.
                         case Parameter param when dtype == param.dtype:
+                            alreadyHandled.Add(param.handle);
                             continue;
 
                         case Parameter param: {
@@ -339,6 +350,7 @@ namespace TorchSharp
                             }
 
                         case Tensor tensor when dtype == tensor.dtype:
+                            alreadyHandled.Add(tensor.handle);
                             continue;
 
                         case Tensor tensor: {
@@ -351,13 +363,13 @@ namespace TorchSharp
                         }
                     }
 
-                    foreach (var (name, param) in named_parameters().ToList()) {
+                    foreach (var (name, param) in named_parameters(false).ToList()) {
                         if (alreadyHandled.Contains(param.handle)) continue;
                         var t = param.to(dtype);
                         ConditionallyRegisterParameter(name, t);
                     }
 
-                    foreach (var (name, buffer) in named_buffers().ToList()) {
+                    foreach (var (name, buffer) in named_buffers(false).ToList()) {
                         if (alreadyHandled.Contains(buffer.handle)) continue;
                         var t = buffer.to(dtype);
                         ConditionallyRegisterBuffer(name, t);
@@ -840,6 +852,18 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Save the parameters and buffers of the module to a disk location.
+                /// </summary>
+                /// <param name="stream">A writable stream instance.</param>
+                /// <param name="skip">A list of keys not to consider when saving the weights.</param>
+                /// <returns></returns>
+                public Module save(System.IO.Stream stream, IList<string> skip = null)
+                {
+                    using var writer = new System.IO.BinaryWriter(stream);
+                    return save(writer, skip);
+                }
+
+                /// <summary>
                 ///
                 /// </summary>
                 /// <param name="writer">A binary writer instance.</param>
@@ -944,6 +968,28 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Load the parameters and buffers
+                /// </summary>
+                /// <param name="stream">A readable stream instance.</param>
+                /// <param name="strict">
+                /// If true, will only load a module if it exactly corresponds to the current module's state.
+                /// If false, will load the parameters and buffers that it finds in the saved file,
+                /// leaving everything else alone.
+                /// </param>
+                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <returns>The module, with parameters and buffers loaded.</returns>
+                /// <remarks>
+                /// Using a skip list only prevents tensors in the target module from being modified, it
+                /// does not alter any logic related to checking for matching tensor element types or entries.
+                /// It may be necessary to also pass 'strict=false' to avoid exceptions.
+                /// </remarks>
+                public Module load(System.IO.Stream stream, bool strict = true, IList<string> skip = null)
+                {
+                    using var reader = new System.IO.BinaryReader(stream);
+                    return load(reader, strict, skip);
+                }
+
+                /// <summary>
                 /// Create a module and load its weights from disk.
                 /// </summary>
                 /// <typeparam name="T"></typeparam>
@@ -1035,6 +1081,8 @@ namespace TorchSharp
                        (dtype.HasValue ? (T)module._to(device, dtype.Value) : (T)module._to(device.type, device.index)) :
                        (dtype.HasValue ? (T)module._to(dtype.Value) : module);
                 }
+
+                protected void ClearModules() { _internal_submodules.clear(); }
 
                 private bool _areComponentsRegistered;
 

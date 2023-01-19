@@ -867,6 +867,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_masked_fill(IntPtr tensor, IntPtr mask, IntPtr value);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_masked_fill_(IntPtr tensor, IntPtr mask, IntPtr value);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_masked_scatter(IntPtr tensor, IntPtr mask, IntPtr value);
 
         [DllImport("LibTorchSharp")]
@@ -1509,7 +1512,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_dstack(IntPtr tensor, int len);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_meshgrid(IntPtr tensor, long len, [MarshalAs(UnmanagedType.LPStr)] string indexing, AllocatePinnedArray allocator);
+        internal static extern IntPtr THSTensor_meshgrid(IntPtr tensor, int len, [MarshalAs(UnmanagedType.LPStr)] string indexing, AllocatePinnedArray allocator);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_standard_gamma_(IntPtr tensor, IntPtr gen);

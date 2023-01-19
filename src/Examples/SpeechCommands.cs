@@ -270,6 +270,27 @@ namespace TorchSharp.Examples
                 x = fc1.call(x);
                 return log_softmax(x, dim: 2);
             }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    pool1.Dispose();
+                    pool2.Dispose();
+                    pool3.Dispose();
+                    pool4.Dispose();
+                    conv1.Dispose();
+                    conv2.Dispose();
+                    conv3.Dispose();
+                    conv4.Dispose();
+                    bn1.Dispose();
+                    bn2.Dispose();
+                    bn3.Dispose();
+                    bn4.Dispose();
+                    fc1.Dispose();
+                    ClearModules();
+                }
+                base.Dispose(disposing);
+            }
         }
     }
 }

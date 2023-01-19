@@ -1184,7 +1184,7 @@ EXPORT_API(Tensor) THSTensor_column_stack(const Tensor* tensor, const int length
 
 EXPORT_API(Tensor) THSTensor_row_stack(const Tensor* tensor, const int length);
 
-EXPORT_API(void) THSTensor_meshgrid(const Tensor* tensors, const int64_t length, const char* indexing, Tensor* (*allocator)(size_t length));
+EXPORT_API(void) THSTensor_meshgrid(const Tensor* tensors, const int length, const char* indexing, Tensor* (*allocator)(size_t length));
 
 EXPORT_API(int64_t) THSTensor_stride(const Tensor tensor, const int64_t dim);
 
@@ -1542,6 +1542,7 @@ EXPORT_API(Tensor) THSSpecial_i1e(const Tensor tensor);
 EXPORT_API(Tensor) THSSpecial_logit(const Tensor tensor);
 
 EXPORT_API(Tensor) THSSpecial_log_softmax(const Tensor tensor, int64_t dim, int8_t scalar_type);
+EXPORT_API(Tensor) THSSpecial_softmax(const Tensor tensor, int64_t dim, int8_t scalar_type);
 
 EXPORT_API(Tensor) THSSpecial_ndtr(const Tensor tensor);
 EXPORT_API(Tensor) THSSpecial_ndtri(const Tensor tensor);

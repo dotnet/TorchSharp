@@ -36,12 +36,15 @@ namespace TorchSharp
             /// </summary>
             /// <param name="kernelSize">The size of the window</param>
             /// <param name="stride">The stride of the window. Default value is kernel_size</param>
-            /// <returns></returns>
-            public static AvgPool1d AvgPool1d(long kernelSize, long? stride = null)
+            /// <param name="padding">implicit zero padding to be added on both sides</param>
+            /// <param name="ceil_mode">Whether to use ceil instead of floor to compute the output shape</param>
+            /// <param name="count_include_pad">Whether to include the zero-padding in the averaging calculation</param>
+            /// <param name="divisor_override">If specified, it will be used as divisor, otherwise size of the pooling region will be used</param>
+            public static AvgPool1d AvgPool1d(long kernelSize, long? stride = null, long padding = 0, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
             {
                 return stride.HasValue ?
-                    AvgPool1d(new long[] { kernelSize }, new long[] { stride.Value }) :
-                    AvgPool1d(new long[] { kernelSize }, null);
+                    AvgPool1d(new long[] { kernelSize }, new long[] { stride.Value }, new long[] { padding }, ceil_mode, count_include_pad, divisor_override.HasValue ? divisor_override.Value : 0) :
+                    AvgPool1d(new long[] { kernelSize }, null, new long[] { padding }, ceil_mode, count_include_pad, divisor_override.HasValue ? divisor_override.Value : 0);
             }
 
             /// <summary>
@@ -49,12 +52,15 @@ namespace TorchSharp
             /// </summary>
             /// <param name="kernelSize">The size of the window</param>
             /// <param name="strides">The stride of the window. Default value is kernel_size</param>
-            /// <returns></returns>
-            private static AvgPool1d AvgPool1d(long[] kernelSize, long[] strides = null)
+            /// <param name="padding">implicit zero padding to be added on both sides</param>
+            /// <param name="ceil_mode">Whether to use ceil instead of floor to compute the output shape</param>
+            /// <param name="count_include_pad">Whether to include the zero-padding in the averaging calculation</param>
+            /// <param name="divisor_override">If specified, it will be used as divisor, otherwise size of the pooling region will be used</param>
+            private static AvgPool1d AvgPool1d(long[] kernelSize, long[] strides = null, long[] padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
             {
                 unsafe {
-                    fixed (long* pkernelSize = kernelSize, pstrides = strides) {
-                        var handle = THSNN_AvgPool1d_ctor((IntPtr)pkernelSize, (IntPtr)pstrides, out var boxedHandle);
+                    fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding) {
+                        var handle = THSNN_AvgPool1d_ctor((IntPtr)pkernelSize, (IntPtr)pstrides, (IntPtr)ppadding, ceil_mode, count_include_pad, divisor_override.HasValue ? divisor_override.Value : 0, out var boxedHandle);
                         if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new AvgPool1d(handle, boxedHandle);
                     }

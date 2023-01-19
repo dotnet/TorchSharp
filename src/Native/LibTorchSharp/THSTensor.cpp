@@ -1595,16 +1595,15 @@ Tensor THSTensor_row_stack(const Tensor* tensors, const int length)
     CATCH_TENSOR(torch::row_stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
-void THSTensor_meshgrid(const Tensor* tensors, const int64_t length, const char* indexing, Tensor* (*allocator)(size_t length))
+void THSTensor_meshgrid(const Tensor* tensors, const int length, const char* indexing, Tensor* (*allocator)(size_t length))
 {
     std::string str = indexing;
-    at::TensorList tList = toTensors<at::Tensor>((torch::Tensor**)tensors, length);
     CATCH(
-        auto res = torch::meshgrid(tList, indexing);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        auto res = torch::meshgrid(toTensors<at::Tensor>((torch::Tensor**)tensors, length), indexing);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 

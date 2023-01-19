@@ -183,7 +183,7 @@ namespace TorchSharp
                         Tensor denom = null;
                         if (amsgrad) {
                             var t0 = state.max_exp_avg_sq;
-                            state.max_exp_avg_sq = torch.maximum(t0, state.exp_avg_sq).DetatchFromDisposeScope();
+                            state.max_exp_avg_sq = torch.maximum(t0, state.exp_avg_sq).DetachFromDisposeScope();
                             t0.Dispose();
                             denom = (state.max_exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
                         } else {
@@ -334,10 +334,10 @@ namespace TorchSharp
                     var state = new State();
                     _state[p.Handle] = state;
                     state.step = 0;
-                    state.exp_avg = torch.zeros_like(p).DetatchFromDisposeScope();
-                    state.exp_avg_sq = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.exp_avg = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.exp_avg_sq = torch.zeros_like(p).DetachFromDisposeScope();
                     if (opt.amsgrad.Value) {
-                        state.max_exp_avg_sq = torch.zeros_like(p).DetatchFromDisposeScope();
+                        state.max_exp_avg_sq = torch.zeros_like(p).DetachFromDisposeScope();
                     }
                 }
             }
