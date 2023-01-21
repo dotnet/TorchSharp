@@ -417,6 +417,7 @@ namespace TorchSharp
             Assert.Throws<InvalidOperationException>(() => t1.Handle);
         }
 
+        #if !LINUX
         [Fact(Skip = "Sensitive to parallelism in the xUnit test driver")]
         [TestOf(nameof(torch.randn))]
         public void TestUsings()
@@ -427,6 +428,7 @@ namespace TorchSharp
 
             Assert.Equal(tCount, Tensor.TotalCount);
         }
+        #endif
 
         [Fact]
         [TestOf(nameof(torch.ones))]
@@ -4761,9 +4763,13 @@ namespace TorchSharp
 
                 var (P, A_L, A_U) = torch.lu_unpack(A_LU, pivots);
 
+                Assert.NotNull(P);
+                Assert.NotNull(A_L);
+                Assert.NotNull(A_U);
+
                 Assert.Equal(new long[] { 2, 3, 3 }, P.shape);
-                Assert.Equal(new long[] { 2, 3, 3 }, A_L.shape);
-                Assert.Equal(new long[] { 2, 3, 3 }, A_U.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, A_L!.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, A_U!.shape);
             }
         }
 

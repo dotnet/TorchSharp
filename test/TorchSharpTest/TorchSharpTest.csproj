@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets. We have to clear that out to set only the targets we support. -->
+    <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets.
+    We have to clear that out to set only the targets we support. -->
     <TargetFrameworks></TargetFrameworks>
     <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net6.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">net472;$(TargetFrameworks)</TargetFrameworks>
@@ -71,18 +72,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="3.2.0" Condition="'$(TargetFramework)' != 'net472'" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Numerics.Tensors" Version="7.0.0-rtm.22518.5" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.5" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive"/>
     <PackageReference Update="xunit" Version="2.4.2" />
-    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
-
 
   <PropertyGroup Condition="'$(Coverage)' == 'true'">
       <CollectCoverage>true</CollectCoverage>
