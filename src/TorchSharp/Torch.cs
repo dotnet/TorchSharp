@@ -1,4 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -79,11 +80,9 @@ namespace TorchSharp
 
         private static void LoadNativeBackend(bool useCudaBackend, out StringBuilder trace)
         {
-
             var alreadyLoaded = useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded;
-            trace = null;
+            trace = new StringBuilder();
             if (!alreadyLoaded) {
-                trace = new StringBuilder();
                 bool ok;
 
                 trace.AppendLine($"");
@@ -146,14 +145,14 @@ namespace TorchSharp
                     //
                     // TODO: on linux make these copies link not shadow-copy
                     var torchsharpLoc = Path.GetDirectoryName(typeof(torch).Assembly.Location);
-                    var packagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc, "..", "..", "..", ".."));
-                    var torchsharpHome = Path.GetFullPath(Path.Combine(torchsharpLoc, "..", ".."));
+                    var packagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc!, "..", "..", "..", ".."));
+                    var torchsharpHome = Path.GetFullPath(Path.Combine(torchsharpLoc!, "..", ".."));
 
                     trace.AppendLine($"    torchsharpLoc = {torchsharpLoc}");
                     trace.AppendLine($"    packagesDir = {packagesDir}");
                     trace.AppendLine($"    torchsharpHome = {torchsharpHome}");
 
-                    if (torchsharpLoc.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(packagesDir) && Directory.Exists(torchsharpHome)) {
+                    if (torchsharpLoc!.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(packagesDir) && Directory.Exists(torchsharpHome)) {
 
                         var torchSharpVersion = Path.GetFileName(torchsharpHome); // really GetDirectoryName
 
@@ -275,7 +274,7 @@ namespace TorchSharp
             }
         }
 
-        public static Device InitializeDevice(torch.Device device)
+        public static Device InitializeDevice(Device? device)
         {
             if (device == null)
                 device = torch.CPU;
