@@ -9,6 +9,7 @@ using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
 using static TorchSharp.PInvoke.LibTorchSharp;
+using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace TorchSharp
 {
@@ -908,18 +909,9 @@ namespace TorchSharp
                     if (!System.IO.File.Exists(location))
                         throw new System.IO.FileNotFoundException(location);
 
-                    var dt = _deviceType;
-                    var di = _deviceIndex;
-
-                    this.cpu();
-
-                    try {
-                        using var stream = System.IO.File.OpenRead(location);
-                        using var reader = new System.IO.BinaryReader(stream);
-                        load(reader, strict, skip);
-                    } finally {
-                        _to(dt, di);
-                    }
+                    using var stream = System.IO.File.OpenRead(location);
+                    using var reader = new System.IO.BinaryReader(stream);
+                    load(reader, strict, skip);
 
                     return this;
                 }
@@ -944,23 +936,32 @@ namespace TorchSharp
                 {
                     skip ??= Array.Empty<string>();
 
-                    var sd = state_dict();
+                    var dt = _deviceType;
+                    var di = _deviceIndex;
 
-                    // First, figure out how many entries.
-                    var streamEntries = reader.Decode();
+                    if (dt != DeviceType.CPU) this.cpu();
 
-                    if (streamEntries != sd.Count && strict)
-                        throw new ArgumentException($"Mismatched state_dict sizes: expected {sd.Count}, but found {streamEntries} entries.");
+                    try {
+                        var sd = state_dict();
 
-                    for (int i = 0; i < streamEntries; ++i) {
-                        var key = reader.ReadString();
-                        var found = sd.ContainsKey(key);
-                        if (!found && strict)
-                            throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
+                        // First, figure out how many entries.
+                        var streamEntries = reader.Decode();
 
-                        if (found) {
-                            sd[key].Load(reader, skip: skip.Contains(key));
+                        if (streamEntries != sd.Count && strict)
+                            throw new ArgumentException($"Mismatched state_dict sizes: expected {sd.Count}, but found {streamEntries} entries.");
+
+                        for (int i = 0; i < streamEntries; ++i) {
+                            var key = reader.ReadString();
+                            var found = sd.ContainsKey(key);
+                            if (!found && strict)
+                                throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
+
+                            if (found) {
+                                sd[key].Load(reader, skip: skip.Contains(key));
+                            }
                         }
+                    } finally {
+                        if (dt != DeviceType.CPU) _to(dt, di);
                     }
 
                     return this;
