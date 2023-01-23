@@ -1635,10 +1635,10 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_conj_physical(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_div_scalar(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string rounding_mode);
+        internal static extern IntPtr THSTensor_div_scalar(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string? rounding_mode);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_div_(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string rounding_mode);
+        internal static extern IntPtr THSTensor_div_(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string? rounding_mode);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_conj_physical_(IntPtr tensor);
@@ -1671,7 +1671,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_gcd(IntPtr tensor, IntPtr other);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_div(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string rounding_mode);
+        internal static extern IntPtr THSTensor_div(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string? rounding_mode);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_fmod_(IntPtr tensor, IntPtr trg);
@@ -1689,7 +1689,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_cumprod(IntPtr tensor, long dim, [MarshalAs(UnmanagedType.U1)] bool has_type, sbyte scalar_type);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_div_scalar_(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string rounding_mode);
+        internal static extern IntPtr THSTensor_div_scalar_(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string? rounding_mode);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_histc(IntPtr tensor, long bins, long min, long max);

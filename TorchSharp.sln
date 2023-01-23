@@ -68,6 +68,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		DEVGUIDE.md = DEVGUIDE.md
 		README.md = README.md
 		RELEASENOTES.md = RELEASENOTES.md
+		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TorchVision", "src\TorchVision\TorchVision.csproj", "{DCF01EE5-6431-4115-85E0-1FC4C3DE86A2}"

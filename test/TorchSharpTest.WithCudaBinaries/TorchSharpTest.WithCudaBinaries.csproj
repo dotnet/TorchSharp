@@ -19,6 +19,7 @@
     <Compile Include="..\TorchSharpTest\GlobalSuppressions.cs" Link="GlobalSuppressions.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="..\TorchSharpTest\FactIgnoreOnPlattformAttribute.cs" Link="FactIgnoreOnPlattformAttribute.cs" />
     <Compile Include="..\TorchSharpTest\NN.cs" Link="NN.cs" />
     <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs" />
     <Compile Include="..\TorchSharpTest\TestDistributions.cs" Link="TestDistributions.cs" />

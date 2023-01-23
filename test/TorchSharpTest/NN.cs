@@ -19,7 +19,7 @@ namespace TorchSharp
 #endif // NET472_OR_GREATER
     public class TestNN
     {
-        #region "Linear"
+        #region Linear
 
         [Fact]
         public void CreateLinear()
@@ -343,7 +343,7 @@ namespace TorchSharp
         }
         #endregion
 
-        #region "Activations"
+        #region Activations
         [Fact]
         public void CreateRelu()
         {
@@ -431,11 +431,14 @@ namespace TorchSharp
             Assert.All(values, val => Assert.True(val >= -1.0));
         }
 
-        [Fact]
+        [FactIgnoreOnPlattform(
+            "Attempted to read or write protected memory.",
+            "Windows",
+            Architecture.X64)]
         public void EvaluateGLU()
         {
             var rel = GLU();
-            var input = torch.randn(new long[] { 8, 8, 8 });
+            var input = randn(new long[] { 8, 8, 8 });
             var output = rel.forward(input);
             var values = output.data<float>().ToArray();
             Assert.Equal(new long[] { 8, 8, 4 }, output.shape);

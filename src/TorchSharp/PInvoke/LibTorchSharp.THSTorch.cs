@@ -82,5 +82,8 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTorch_get_and_reset_last_err();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTorch_lstsq(IntPtr handle, IntPtr b, out IntPtr qr);
     }
 }

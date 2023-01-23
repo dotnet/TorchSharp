@@ -11,7 +11,7 @@ namespace TorchSharp
         /// <summary>
         /// A Normal (Gaussian) distribution.
         /// </summary>
-        public class Normal : torch.distributions.Distribution
+        public class Normal : distributions.Distribution
         {
             /// <summary>
             /// The mean of the distribution.
@@ -35,10 +35,10 @@ namespace TorchSharp
             /// <param name="loc">Mode or median of the distribution.</param>
             /// <param name="scale">Standard deviation.</param>
             /// <param name="generator">An optional random number generator object.</param>
-            public Normal(Tensor loc, Tensor scale, torch.Generator generator = null) : base(generator)
+            public Normal(Tensor loc, Tensor scale, Generator generator = null) : base(generator)
             {
-                this.batch_shape = loc.size();
-                var locScale = torch.broadcast_tensors(loc, scale);
+                batch_shape = loc.size();
+                var locScale = broadcast_tensors(loc, scale);
                 this.loc = locScale[0];
                 this.scale = locScale[1];
             }
@@ -53,8 +53,8 @@ namespace TorchSharp
             public override Tensor sample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
-                using (torch.no_grad()) {
-                    return torch.normal(loc.expand(shape), scale.expand(shape), generator);
+                using (no_grad()) {
+                    return normal(loc.expand(shape), scale.expand(shape), generator);
                 }
             }
 
@@ -67,7 +67,7 @@ namespace TorchSharp
             public override Tensor rsample(params long[] sample_shape)
             {
                 var shape = ExtendedShape(sample_shape);
-                var eps = torch.empty(shape, dtype: loc.dtype, device: loc.device).normal_(generator: generator);
+                var eps = empty(shape, dtype: loc.dtype, device: loc.device).normal_(generator: generator);
                 return loc + eps * scale;
             }
 
@@ -88,8 +88,8 @@ namespace TorchSharp
             /// </summary>
             public override Tensor entropy()
             {
-                return torch.WrappedTensorDisposeScope(() =>
-                    0.5 + 0.5 * Math.Log(2 * Math.PI) + torch.log(scale)
+                return WrappedTensorDisposeScope(() =>
+                    0.5 + 0.5 * Math.Log(2 * Math.PI) + log(scale)
                 );
             }
 
@@ -99,8 +99,8 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
-                return torch.WrappedTensorDisposeScope(() =>
-                    0.5 * (1 + torch.special.erf((value - loc) * scale.reciprocal() / Math.Sqrt(2)))
+                return WrappedTensorDisposeScope(() =>
+                    0.5 * (1 + special.erf((value - loc) * scale.reciprocal() / Math.Sqrt(2)))
                 );
             }
 
@@ -110,8 +110,8 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor icdf(Tensor value)
             {
-                return torch.WrappedTensorDisposeScope(() =>
-                    loc + scale * torch.special.erfinv(2 * value - 1) * Math.Sqrt(2)
+                return WrappedTensorDisposeScope(() =>
+                    loc + scale * special.erfinv(2 * value - 1) * Math.Sqrt(2)
                 );
             }
 
@@ -151,7 +151,7 @@ namespace TorchSharp
             /// <param name="scale">Standard deviation.</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Normal Normal(Tensor loc, Tensor scale, torch.Generator generator = null)
+            public static Normal Normal(Tensor loc, Tensor scale, Generator generator = null)
             {
                 return new Normal(loc, scale, generator);
             }
@@ -164,9 +164,9 @@ namespace TorchSharp
             /// <param name="scale">Standard deviation.</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Normal Normal(float loc, float scale = 1.0f, torch.Generator generator = null)
+            public static Normal Normal(float loc, float scale = 1.0f, Generator generator = null)
             {
-                return new Normal(torch.tensor(loc), torch.tensor(scale), generator);
+                return new Normal(tensor(loc), tensor(scale), generator);
             }
 
 
@@ -178,9 +178,9 @@ namespace TorchSharp
             /// <param name="scale">Standard deviation.</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Normal Normal(double loc, double scale = 1.0, torch.Generator generator = null)
+            public static Normal Normal(double loc, double scale = 1.0, Generator generator = null)
             {
-                return new Normal(torch.tensor(loc), torch.tensor(scale), generator);
+                return new Normal(tensor(loc), tensor(scale), generator);
             }
         }
     }
