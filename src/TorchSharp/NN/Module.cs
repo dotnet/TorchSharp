@@ -9,6 +9,7 @@ using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
 using static TorchSharp.PInvoke.LibTorchSharp;
+using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace TorchSharp
 {
@@ -851,6 +852,18 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Save the parameters and buffers of the module to a disk location.
+                /// </summary>
+                /// <param name="stream">A writable stream instance.</param>
+                /// <param name="skip">A list of keys not to consider when saving the weights.</param>
+                /// <returns></returns>
+                public Module save(System.IO.Stream stream, IList<string> skip = null)
+                {
+                    using var writer = new System.IO.BinaryWriter(stream);
+                    return save(writer, skip);
+                }
+
+                /// <summary>
                 ///
                 /// </summary>
                 /// <param name="writer">A binary writer instance.</param>
@@ -896,18 +909,9 @@ namespace TorchSharp
                     if (!System.IO.File.Exists(location))
                         throw new System.IO.FileNotFoundException(location);
 
-                    var dt = _deviceType;
-                    var di = _deviceIndex;
-
-                    this.cpu();
-
-                    try {
-                        using var stream = System.IO.File.OpenRead(location);
-                        using var reader = new System.IO.BinaryReader(stream);
-                        load(reader, strict, skip);
-                    } finally {
-                        _to(dt, di);
-                    }
+                    using var stream = System.IO.File.OpenRead(location);
+                    using var reader = new System.IO.BinaryReader(stream);
+                    load(reader, strict, skip);
 
                     return this;
                 }
@@ -932,26 +936,57 @@ namespace TorchSharp
                 {
                     skip ??= Array.Empty<string>();
 
-                    var sd = state_dict();
+                    var dt = _deviceType;
+                    var di = _deviceIndex;
 
-                    // First, figure out how many entries.
-                    var streamEntries = reader.Decode();
+                    if (dt != DeviceType.CPU) this.cpu();
 
-                    if (streamEntries != sd.Count && strict)
-                        throw new ArgumentException($"Mismatched state_dict sizes: expected {sd.Count}, but found {streamEntries} entries.");
+                    try {
+                        var sd = state_dict();
 
-                    for (int i = 0; i < streamEntries; ++i) {
-                        var key = reader.ReadString();
-                        var found = sd.ContainsKey(key);
-                        if (!found && strict)
-                            throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
+                        // First, figure out how many entries.
+                        var streamEntries = reader.Decode();
 
-                        if (found) {
-                            sd[key].Load(reader, skip: skip.Contains(key));
+                        if (streamEntries != sd.Count && strict)
+                            throw new ArgumentException($"Mismatched state_dict sizes: expected {sd.Count}, but found {streamEntries} entries.");
+
+                        for (int i = 0; i < streamEntries; ++i) {
+                            var key = reader.ReadString();
+                            var found = sd.ContainsKey(key);
+                            if (!found && strict)
+                                throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
+
+                            if (found) {
+                                sd[key].Load(reader, skip: skip.Contains(key));
+                            }
                         }
+                    } finally {
+                        if (dt != DeviceType.CPU) _to(dt, di);
                     }
 
                     return this;
+                }
+
+                /// <summary>
+                /// Load the parameters and buffers
+                /// </summary>
+                /// <param name="stream">A readable stream instance.</param>
+                /// <param name="strict">
+                /// If true, will only load a module if it exactly corresponds to the current module's state.
+                /// If false, will load the parameters and buffers that it finds in the saved file,
+                /// leaving everything else alone.
+                /// </param>
+                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <returns>The module, with parameters and buffers loaded.</returns>
+                /// <remarks>
+                /// Using a skip list only prevents tensors in the target module from being modified, it
+                /// does not alter any logic related to checking for matching tensor element types or entries.
+                /// It may be necessary to also pass 'strict=false' to avoid exceptions.
+                /// </remarks>
+                public Module load(System.IO.Stream stream, bool strict = true, IList<string> skip = null)
+                {
+                    using var reader = new System.IO.BinaryReader(stream);
+                    return load(reader, strict, skip);
                 }
 
                 /// <summary>

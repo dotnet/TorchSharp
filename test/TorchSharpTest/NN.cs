@@ -431,7 +431,7 @@ namespace TorchSharp
             Assert.All(values, val => Assert.True(val >= -1.0));
         }
 
-        [FactIgnoreOnPlattform(
+        [FactIgnoreOnPlatform(
             "Attempted to read or write protected memory.",
             "Windows",
             Architecture.X64)]

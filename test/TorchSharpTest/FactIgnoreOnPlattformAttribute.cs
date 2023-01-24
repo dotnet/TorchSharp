@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using System.Linq;
 using System.Runtime.InteropServices;
 using Xunit;
@@ -8,35 +8,35 @@ namespace TorchSharp
     /// <summary>
     /// To ignore an xUnit <see cref="FactAttribute">Fact</see> on a given platform or architecture.
     /// </summary>
-    public sealed class FactIgnoreOnPlattformAttribute : FactAttribute
+    public sealed class FactIgnoreOnPlatformAttribute : FactAttribute
     {
-        public FactIgnoreOnPlattformAttribute(string skip, params string[] plattforms)
+        public FactIgnoreOnPlatformAttribute(string skip, params string[] platforms)
         {
-            if (plattforms.Any(p => RuntimeInformation.IsOSPlatform(OSPlatform.Create(p.ToUpperInvariant())))) {
+            if (platforms.Any(p => RuntimeInformation.IsOSPlatform(OSPlatform.Create(p.ToUpperInvariant())))) {
                 Skip = skip;
             }
         }
 
-        public FactIgnoreOnPlattformAttribute(params string[] plattforms)
+        public FactIgnoreOnPlatformAttribute(params string[] platforms)
         {
-            if (plattforms.Any(p => RuntimeInformation.IsOSPlatform(OSPlatform.Create(p.ToUpperInvariant())))) {
+            if (platforms.Any(p => RuntimeInformation.IsOSPlatform(OSPlatform.Create(p.ToUpperInvariant())))) {
                 Skip = $"based on platform {RuntimeInformation.OSDescription}";
             }
         }
 
-        public FactIgnoreOnPlattformAttribute(string skip, string plattform, Architecture architecture)
+        public FactIgnoreOnPlatformAttribute(string skip, string platform, Architecture architecture)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Create(plattform.ToUpperInvariant()))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Create(platform.ToUpperInvariant()))
                 && RuntimeInformation.ProcessArchitecture == architecture) {
                 Skip = skip;
             }
         }
 
-        public FactIgnoreOnPlattformAttribute(string plattform, Architecture architecture)
+        public FactIgnoreOnPlatformAttribute(string platform, Architecture architecture)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Create(plattform.ToUpperInvariant()))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Create(platform.ToUpperInvariant()))
                 && RuntimeInformation.ProcessArchitecture == architecture) {
-                Skip = $"based on platform {plattform} {architecture}";
+                Skip = $"based on platform {platform} {architecture}";
             }
         }
     }
