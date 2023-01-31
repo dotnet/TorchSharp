@@ -286,26 +286,6 @@ namespace TorchSharp
             private long[] _shape;
         }
 
-        public static Size broadcast_shapes(params long[][] shapes)
-        {
-            var max_len = 0;
-            foreach (var shape in shapes) {
-                var s = shape.Length;
-                if (s > max_len) max_len = s;
-            }
 
-            var result = Enumerable.Repeat<long>(1, max_len).ToArray();
-
-            foreach (var shape in shapes) {
-                for (var i = shape.Length - 1; i >= 0; i--) {
-                    if (shape.Length == 0 || shape[i] == 1 || shape[i] == result[i])
-                        continue;
-                    if (result[i] != 1)
-                        throw new System.ArgumentException("Shape mismatch: objects cannot be broadcast to a single shape");
-                    result[i] = shape[i];
-                }
-            }
-            return result;
-        }
     }
 }

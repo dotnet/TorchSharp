@@ -127,6 +127,34 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSaveLoadConv2DStream()
+        {
+            var location = "TestSaveLoadConv2D.ts";
+            if (File.Exists(location)) File.Delete(location);
+            try {
+                using var conv = Conv2d(100, 10, 5);
+                var params0 = conv.parameters();
+
+                using (var stream = System.IO.File.OpenWrite(location))
+                {
+                    conv.save(stream);
+                }
+
+                using var loaded = Conv2d(100, 10, 5);
+
+                using (var stream = System.IO.File.OpenRead(location)) {
+                    loaded.load(stream);
+                }
+                var params1 = loaded.parameters();
+
+                Assert.Equal(params0, params1);
+
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
+        }
+
+        [Fact]
         public void TestSaveLoadSequential()
         {
             var location = "TestSaveLoadSequential.ts";
@@ -137,6 +165,29 @@ namespace TorchSharp
                 conv.save(location);
                 using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
                 loaded.load(location);
+                var params1 = loaded.parameters();
+
+                Assert.Equal(params0, params1);
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveLoadSequentialStream()
+        {
+            var location = "TestSaveLoadSequential.ts";
+            if (File.Exists(location)) File.Delete(location);
+            try {
+                using var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+                var params0 = conv.parameters();
+                using (var stream = System.IO.File.OpenWrite(location)) {
+                    conv.save(stream);
+                }
+                using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+                using (var stream = System.IO.File.OpenRead(location)) {
+                    loaded.load(stream);
+                }
                 var params1 = loaded.parameters();
 
                 Assert.Equal(params0, params1);
