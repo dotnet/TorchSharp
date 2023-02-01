@@ -7,8 +7,9 @@
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
     <Configurations>Debug;Release</Configurations>
-    <Platform Condition="'$(Platform)'==''">x64</Platform>
-    <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
+    <_DefaultArchitecture>$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLower())</_DefaultArchitecture>
+    <Platform Condition="'$(Platform)'==''">$(_DefaultArchitecture)</Platform>
+    <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">$(_DefaultArchitecture)</TargetArchitecture>
     <NativeTargetArchitecture Condition="'$(NativeTargetArchitecture)' == ''">$(TargetArchitecture)</NativeTargetArchitecture>
     <PlatformConfig>$(Platform).$(Configuration)</PlatformConfig>
   </PropertyGroup>
@@ -50,9 +51,12 @@
     <TargetOS Condition="'$(TargetOS)' == '' AND $([MSBuild]::IsOSPlatform('osx'))">mac</TargetOS>
     <TargetOS Condition="'$(TargetOS)' == '' AND '$(OS)' != 'Windows_NT'">linux</TargetOS>
 
+    <TargetPlatform Condition="'$(TargetPlatform)' == ''">$(TargetOS)-$(TargetArchitecture)</TargetPlatform>
+
     <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">osx-x64</TargetRuntimeID>
+    <TargetRuntimeID Condition="'$(TargetPlatform)' == 'mac-arm64'">osx-arm64</TargetRuntimeID>
 
     <!-- on windows separate debug binaries of LibTorch are available-->
     <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND '$(TargetOS)' == 'windows'">-debug</LibTorchDebug>
@@ -125,13 +129,18 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <LibTorchArchiveSource>pytorch</LibTorchArchiveSource>
+    <LibTorchArchiveSource Condition="'$(TargetPlatform)' == 'mac-arm64'">conda</LibTorchArchiveSource>
+    <CondaArchivePlatformName Condition="'$(TargetPlatform)' == 'mac-arm64'">osx-arm64</CondaArchivePlatformName>
     <LibTorchCpuArchiveNameSuffix Condition="'$(TargetOS)' != 'mac'">%252Bcpu</LibTorchCpuArchiveNameSuffix>
+    <LibTorchCpuArchiveNameSuffix Condition="'$(LibTorchArchiveSource)' == 'conda'">-py3.10_0</LibTorchCpuArchiveNameSuffix>
     <LibTorchCudaArchiveNameSuffix>%252Bcu$(CudaVersionNoDot)</LibTorchCudaArchiveNameSuffix>
     <LibTorchCpuLocalNameSuffix>cpu</LibTorchCpuLocalNameSuffix>
     <LibTorchCudaLocalNameSuffix>cu$(CudaVersionNoDot)</LibTorchCudaLocalNameSuffix>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibTorchArchiveCoreName>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac'">libtorch-macos</LibTorchArchiveCoreName>
+    <LibTorchArchiveCoreName Condition="'$(LibTorchArchiveSource)' == 'conda'">pytorch</LibTorchArchiveCoreName>
     <LibTorchCpuArchiveBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCpuArchiveNameSuffix)</LibTorchCpuArchiveBase>
     <LibTorchCudaArchiveBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCudaArchiveNameSuffix)</LibTorchCudaArchiveBase>
     <LibTorchCpuLocalBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCpuLocalNameSuffix)</LibTorchCpuLocalBase>

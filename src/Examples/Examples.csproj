@@ -15,7 +15,6 @@
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
     <StartupObject>TorchSharp.Examples.Program</StartupObject>
     <IsPackable>false</IsPackable>
-    <PlatformTarget>x64</PlatformTarget>
     <RootNamespace>TorchSharp.Examples</RootNamespace>
   </PropertyGroup>
 

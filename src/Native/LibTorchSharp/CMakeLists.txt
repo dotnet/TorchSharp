@@ -8,7 +8,6 @@ find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
 
 set(SOURCES
     cifar10.h
-	crc32c.h
     THSAutograd.h
     THSData.h
     THSJIT.h
@@ -19,7 +18,6 @@ set(SOURCES
 	THSVision.h
     Utils.h
     cifar10.cpp
-	crc32c.c
 	THSActivation.cpp
     THSAutograd.cpp
 	THSConvolution.cpp
@@ -43,6 +41,10 @@ set(SOURCES
 	THSVision.cpp
     Utils.cpp)
 
+if(NOT LIBTORCH_ARCH STREQUAL "arm64")
+	list(APPEND SOURCES crc32c.h crc32c.c)
+endif()
+
 if(NOT WIN32)
     list(APPEND SOURCES ${VERSION_FILE_PATH})
     if(NOT APPLE)
@@ -54,6 +56,15 @@ if(NOT WIN32)
     else()
         SET(CMAKE_MACOSX_RPATH TRUE)
     endif()
+endif()
+
+# Enable cross compilation for arm64/x64 on macOS
+if(APPLE)
+	if(LIBTORCH_ARCH STREQUAL "arm64")
+		set(CMAKE_OSX_ARCHITECTURES "arm64")
+	else()
+		set(CMAKE_OSX_ARCHITECTURES "x86_64")
+	endif()
 endif()
 
 # Add libTorch bindings
