@@ -105,9 +105,11 @@ To use TorchSharp, you also need one of the LibTorch backend packages: https://w
 
 * `libtorch-cpu-win-x64` (CPU, Windows)
 
-* `libtorch-cpu-osx-x64` (CPU, OSX)
+* `libtorch-cpu-osx-x64` (CPU, OSX-x64)
 
-* `libtorch-cpu` (CPU, references all three, larger download but simpler)
+* `libtorch-cpu-osx-arm64` (CPU, OSX-arm64)
+
+* `libtorch-cpu` (CPU, references all four, larger download but simpler)
 
 * `libtorch-cuda-11.7-linux-x64` (CPU/CUDA 11.3, Linux)
 

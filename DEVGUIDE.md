@@ -45,6 +45,8 @@ Requirements:
 Build with
 
     dotnet build /p:SkipNative=true
+    
+By default, this will build for your system's architecture (x64 vs arm64/M1). To override this, add `/p:TargetArchitecture=x64` or `/p:TargetArchitecture=arm64` to your build command.
 
 ## Packages
 
