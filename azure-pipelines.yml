@@ -71,6 +71,15 @@ jobs:
     pool:
       vmImage: 'macos-11'
 
+- template: /build/ci/job-template.yml
+  parameters:
+    prepScript: echo "no prep needed"
+    name: MacOS_arm64
+    buildScript: dotnet build /p:SkipCuda=true /p:TargetArchitecture=arm64 -c
+    testScript: echo "Azure Pipelines does not support arm64 yet, can't run tests"
+    pool:
+      vmImage: 'macos-11'
+
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
 ################################################################################
@@ -166,7 +175,7 @@ jobs:
     artifact: WindowsAssets
 
 # ################################################################################
-- job: MacOS_Native_Build_For_Packages
+- job: MacOS_x64_Native_Build_For_Packages
 # ################################################################################
   condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
   variables:
@@ -182,7 +191,7 @@ jobs:
     displayName: Download libtorch native binaries
 
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
-    displayName: Build mac
+    displayName: Build mac-x64
 
   - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
     displayName: Build TorchVision
@@ -191,7 +200,35 @@ jobs:
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
-    artifact: MacAssets
+    artifact: MacAssets_x64
+
+  # ################################################################################
+- job: MacOS_arm64_Native_Build_For_Packages
+  # ################################################################################
+  condition: and(ne(variables['system.pullrequest.isfork'], true), eq(variables['build.sourcebranchname'], 'main'))
+  variables:
+    BuildConfig: Release
+    OfficialBuildId: $(BUILD.BUILDNUMBER)
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_MULTILEVEL_LOOKUP: 0
+  pool:
+    vmImage: 'macos-11'
+  steps:
+    - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /p:TargetArchitecture=arm64 /t:Build /p:IncludeLibTorchCpuPackages=true
+      displayName: Download libtorch native binaries
+
+    - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:TargetArchitecture=arm64
+      displayName: Build mac-arm64
+
+    - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:TargetArchitecture=arm64
+      displayName: Build TorchVision
+
+    - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:TargetArchitecture=arm64
+      displayName: Build TorchAudio
+
+    - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
+      artifact: MacAssets_arm64
 
 
 ################################################################################
@@ -201,7 +238,8 @@ jobs:
   dependsOn:
   - Linux_Native_Build_For_Packages
   - Windows_Native_Build_For_Packages
-  - MacOS_Native_Build_For_Packages
+  - MacOS_x64_Native_Build_For_Packages
+  - MacOS_arm64_Native_Build_For_Packages
   variables:
     BuildConfig: Release
     OfficialBuildId: $(BUILD.BUILDNUMBER)
@@ -249,36 +287,67 @@ jobs:
   - script: rmdir /s /q  $(Pipeline.Workspace)\LinuxAssets
     displayName: Free up space (LinuxAssets in workspace)
 
-    # Download all bits contributing to the packages from the Mac build
+    # Download all bits contributing to the packages from the Mac x64 build
   - download: current
-    artifact: MacAssets
+    artifact: MacAssets_x64
 
   - task: CopyFiles@2
-    displayName: Copy mac native assets (TorchSharp) to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy mac-x64 native assets (TorchSharp) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchSharp
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
 
   - task: CopyFiles@2
-    displayName: Copy mac native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy mac-x64 native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchAudio
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64/TorchAudio
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
 
   - task: CopyFiles@2
-    displayName: Copy mac native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy mac-x64 native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchVision
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64/TorchVision
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
 
   - task: CopyFiles@2
-    displayName: Copy mac native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
+    displayName: Copy mac-x64 native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/libtorch-cpu-osx-x64
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64/libtorch-cpu-osx-x64
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-osx-x64
 
-  - script: rmdir /s /q  $(Pipeline.Workspace)\MacAssets
-    displayName: Free up space (MacAssets in workspace)
+  - script: rmdir /s /q  $(Pipeline.Workspace)\MacAssets_x64
+    displayName: Free up space (MacAssets_x64 in workspace)
+
+    # Download all bits contributing to the packages from the Mac arm64 build
+  - download: current
+    artifact: MacAssets_arm64
+
+  - task: CopyFiles@2
+    displayName: Copy mac-arm64 native assets (TorchSharp) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_arm64/TorchSharp
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
+
+  - task: CopyFiles@2
+    displayName: Copy mac-arm64 native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_arm64/TorchAudio
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
+
+  - task: CopyFiles@2
+    displayName: Copy mac-arm64 native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_arm64/TorchVision
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
+
+  - task: CopyFiles@2
+    displayName: Copy mac-arm64 native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
+    inputs:
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_arm64/libtorch-cpu-osx-arm64
+      targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-osx-arm64
+
+  - script: rmdir /s /q  $(Pipeline.Workspace)\MacAssets_arm64
+    displayName: Free up space (MacAssets_arm64 in workspace)
 
   - download: current
     artifact: WindowsAssets

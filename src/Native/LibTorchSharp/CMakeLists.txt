@@ -1,6 +1,6 @@
 project(LibTorchSharp)
 
-if(APPLE)
+if(APPLE AND NOT LIBTORCH_ARCH STREQUAL "arm64")
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
  link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
 endif()
