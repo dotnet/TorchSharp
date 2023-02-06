@@ -6,10 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using TorchSharp.Modules;
+using static TorchSharp.PInvoke.LibTorchSharp;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
-using static TorchSharp.PInvoke.LibTorchSharp;
-using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace TorchSharp
 {
@@ -757,27 +756,50 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// Register a submodule.
+                /// Adds a child module to the current module.
+                /// The module can be accessed as an attribute using the given name.
                 /// </summary>
-                /// <param name="name">Name of the submodule.</param>
-                /// <param name="submodule">The module to register.</param>
+                /// <param name="name">
+                /// name of the child module.
+                /// The child module can be accessed from this module using the given name
+                /// </param>
+                /// <param name="module">child module to be added to the module.</param>
+                /// <exception cref="ArgumentException"></exception>
                 /// <exception cref="InvalidOperationException"></exception>
-                public virtual void register_module(string name, Module submodule)
+                public virtual void add_module(string name, Module module)
                 {
-                    if (submodule is null || submodule.handle.IsInvalid) {
+                    if (module is null || module.handle.IsInvalid) {
                         if (_internal_submodules.ContainsKey(name)) {
                             _internal_submodules.Remove(name);
                         }
                     } else {
+                        if (name.Contains(".")) {
+                            throw new ArgumentException($"module name can't contain \".\", got: {name}");
+                        }
+                        if (string.IsNullOrEmpty(name)) {
+                            throw new ArgumentException("module name can't be empty string \"\"");
+                        }
                         if (_internal_submodules.ContainsKey(name)) {
                             throw new InvalidOperationException($"Sub-module {name} is already registered.");
                         }
 
-                        submodule.RegisterComponents();
+                        module.RegisterComponents();
 
-                        _internal_submodules.Add(name, submodule);
+                        _internal_submodules.Add(name, module);
                     }
                 }
+
+                /// <summary>
+                /// Alias for add_module().
+                /// </summary>
+                /// <param name="name">
+                /// name of the child module.
+                /// The child module can be accessed from this module using the given name
+                /// </param>
+                /// <param name="module">child module to be added to the module.</param>
+                /// <exception cref="InvalidOperationException"></exception>
+                public virtual void register_module(string name, Module module)
+                    => add_module(name, module);
 
                 protected void ConditionallyRegisterParameter(string name, Tensor value)
                 {
