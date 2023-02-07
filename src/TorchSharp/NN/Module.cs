@@ -756,8 +756,7 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// Adds a child module to the current module.
-                /// The module can be accessed as an attribute using the given name.
+                /// Alias for register_module()
                 /// </summary>
                 /// <param name="name">
                 /// name of the child module.
@@ -766,9 +765,19 @@ namespace TorchSharp
                 /// <param name="module">child module to be added to the module.</param>
                 /// <exception cref="ArgumentException"></exception>
                 /// <exception cref="InvalidOperationException"></exception>
-                public virtual void add_module(string name, Module module)
+                public void add_module(string name, Module module)
+                    => register_module(name, module);
+
+                /// <summary>
+                /// Register a submodule.
+                /// </summary>
+                /// <param name="name">Name of the submodule.</param>
+                /// <param name="submodule">The module to register.</param>
+                /// <exception cref="ArgumentException"></exception>
+                /// <exception cref="InvalidOperationException"></exception>
+                public virtual void register_module(string name, Module submodule)
                 {
-                    if (module is null || module.handle.IsInvalid) {
+                    if (submodule is null || submodule.handle.IsInvalid) {
                         if (_internal_submodules.ContainsKey(name)) {
                             _internal_submodules.Remove(name);
                         }
@@ -783,23 +792,11 @@ namespace TorchSharp
                             throw new InvalidOperationException($"Sub-module {name} is already registered.");
                         }
 
-                        module.RegisterComponents();
+                        submodule.RegisterComponents();
 
-                        _internal_submodules.Add(name, module);
+                        _internal_submodules.Add(name, submodule);
                     }
                 }
-
-                /// <summary>
-                /// Alias for add_module().
-                /// </summary>
-                /// <param name="name">
-                /// name of the child module.
-                /// The child module can be accessed from this module using the given name
-                /// </param>
-                /// <param name="module">child module to be added to the module.</param>
-                /// <exception cref="InvalidOperationException"></exception>
-                public virtual void register_module(string name, Module module)
-                    => add_module(name, module);
 
                 protected void ConditionallyRegisterParameter(string name, Tensor value)
                 {
