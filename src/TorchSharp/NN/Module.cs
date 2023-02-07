@@ -756,10 +756,24 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Alias for register_module()
+                /// </summary>
+                /// <param name="name">
+                /// name of the child module.
+                /// The child module can be accessed from this module using the given name
+                /// </param>
+                /// <param name="module">child module to be added to the module.</param>
+                /// <exception cref="ArgumentException"></exception>
+                /// <exception cref="InvalidOperationException"></exception>
+                public void add_module(string name, Module module)
+                    => register_module(name, module);
+
+                /// <summary>
                 /// Register a submodule.
                 /// </summary>
                 /// <param name="name">Name of the submodule.</param>
                 /// <param name="submodule">The module to register.</param>
+                /// <exception cref="ArgumentException"></exception>
                 /// <exception cref="InvalidOperationException"></exception>
                 public virtual void register_module(string name, Module submodule)
                 {
@@ -768,6 +782,12 @@ namespace TorchSharp
                             _internal_submodules.Remove(name);
                         }
                     } else {
+                        if (name.Contains(".")) {
+                            throw new ArgumentException($"module name can't contain \".\", got: {name}");
+                        }
+                        if (string.IsNullOrEmpty(name)) {
+                            throw new ArgumentException("module name can't be empty string \"\"");
+                        }
                         if (_internal_submodules.ContainsKey(name)) {
                             throw new InvalidOperationException($"Sub-module {name} is already registered.");
                         }
