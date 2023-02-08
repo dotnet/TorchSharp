@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 
 using System;
@@ -374,6 +374,15 @@ namespace TorchSharp
                 IDictionary<string, string>? ortho_fparams=null,
                 IDictionary<string, string>? ortho_bparams=null)
             => throw new NotImplementedException();
+
+        /// <summary>
+        /// Computes the softmax function for the input tensor.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="dim">A dimension along which softmax will be computed.</param>
+        /// <param name="dtype">The desired data type of returned tensor.</param>
+        public static Tensor softmax(Tensor input, int dim, ScalarType? dtype = null)
+            => torch.special.softmax(input, dim, dtype);
 
         // https://pytorch.org/docs/stable/generated/torch.trapz
         [Obsolete("not implemented", true)]
