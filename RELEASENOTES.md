@@ -8,7 +8,8 @@ __API Changes__:
 
 Fixing misspelling of 'DetachFromDisposeScope,' deprecating the old spelling.<br/>
 Adding allow_tf32<br/>
-
+Adding overloads of Module.save() and Module.load() taking a 'Stream' argument.<br/>
+Adding torch.softmax() as an alias for torch.special.softmax()<br/>
 
 ## NuGet Version 0.99.2
 
