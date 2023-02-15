@@ -10,6 +10,7 @@ Fixing misspelling of 'DetachFromDisposeScope,' deprecating the old spelling.<br
 Adding allow_tf32<br/>
 Adding overloads of Module.save() and Module.load() taking a 'Stream' argument.<br/>
 Adding torch.softmax() and Tensor.softmax() as aliases for torch.special.softmax()<br/>
+Adding torch.from_file()<br/>
 
 __Fixed Bugs__:
 
