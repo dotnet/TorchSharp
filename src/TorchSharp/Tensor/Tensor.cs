@@ -616,7 +616,7 @@ namespace TorchSharp
 
             public Tensor requires_grad_(bool requires_grad = true)
             {
-                this.requires_grad = true;
+                this.requires_grad = requires_grad;
                 return this;
             }
 
@@ -2467,6 +2467,14 @@ namespace TorchSharp
                     CheckForErrors();
                 return new Tensor(res);
             }
+
+            /// <summary>
+            /// Computes the softmax function for the input tensor.
+            /// </summary>
+            /// <param name="dim">A dimension along which softmax will be computed.</param>
+            /// <param name="dtype">The desired data type of returned tensor.</param>
+            public Tensor softmax(long dim, ScalarType? dtype = null) =>
+                torch.special.softmax(this, dim, dtype);
 
             public Tensor softplus()
             {

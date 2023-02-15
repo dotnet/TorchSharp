@@ -1087,5 +1087,52 @@ namespace TorchSharp
                 return t0;
             }
         }
+
+
+        [Fact]
+        public void Validate912()
+        {
+            var test = new Test_912(2);
+            Dictionary<string, Tensor> sd = test.state_dict(); // No layer2.modules keyword
+            Assert.Contains(sd.Keys, k => k.StartsWith("layer2.modules"));
+        }
+
+        public class Test_912 : nn.Module
+        {
+            public nn.Module layer;
+            public nn.Module layer2;
+
+            public Test_912(int layernum) : base("Test_912")
+            {
+                layer = nn.Linear(16, 2);
+                layer2 = new Test2_912((from l in Enumerable.Range(0, layernum)
+                                    select new Test3_912()).ToArray(),
+                                    (from l in Enumerable.Range(0, layernum)
+                                     select new Test3_912()).ToArray());
+                this.RegisterComponents();
+            }
+        }
+        public class Test2_912 : nn.Module
+        {
+            public new Modules.ModuleList<Test3_912> modules;
+            public Modules.ModuleList<nn.Module> modules2;
+            public nn.Module layer;
+            public Test2_912(Test3_912[] ms, nn.Module[] ms2) : base("Test2_912")
+            {
+                layer = nn.Linear(16, 2);
+                modules = nn.ModuleList(ms);
+                modules2 = nn.ModuleList(ms2);
+                this.RegisterComponents();
+            }
+        }
+        public class Test3_912 : nn.Module
+        {
+            public nn.Module layer;
+            public Test3_912() : base("Test3_912")
+            {
+                layer = nn.Linear(16, 2);
+                this.RegisterComponents();
+            }
+        }
     }
 }
