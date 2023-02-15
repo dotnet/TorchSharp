@@ -475,6 +475,11 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Returns an enumerable of buffers.
+                /// </summary>
+                public virtual IEnumerable<Tensor> buffers(bool recurse = true) => named_buffers(recurse).Select(np => np.buffer);
+
+                /// <summary>
                 /// Returns an enumerable of immediate children modules, yielding both the name of the module as well as the module itself.
                 /// </summary>
                 /// <returns>(string, Module) – Tuple containing a name and child module</returns>
@@ -496,6 +501,16 @@ namespace TorchSharp
                         }
                     }
                 }
+
+                /// <summary>
+                /// Returns an enumerable of modules.
+                /// </summary>
+                public virtual IEnumerable<Module> modules() => named_modules().Select(np => np.module);
+
+                /// <summary>
+                /// Returns an enumerable of immediate modules.
+                /// </summary>
+                public virtual IEnumerable<Module> children() => named_children().Select(np => np.module);
 
                 /// <summary>
                 /// Returns a dictionary containing a whole state of the module.
