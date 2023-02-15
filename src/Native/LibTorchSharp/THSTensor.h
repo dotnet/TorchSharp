@@ -1010,6 +1010,8 @@ EXPORT_API(Tensor) THSTensor_randperm(const Generator gen, const int64_t n, cons
 
 EXPORT_API(Tensor) THSTensor_randperm_out(const Generator gen, const int64_t n, const Tensor out);
 
+EXPORT_API(Tensor) THSTensor_from_file(const char* filename, const int8_t shared, const int64_t size, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
+
 EXPORT_API(Tensor) THSTensor_ravel(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_real(const Tensor tensor);

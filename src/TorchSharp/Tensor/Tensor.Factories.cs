@@ -2812,6 +2812,20 @@ namespace TorchSharp
             return new Tensor(res);
         }
 
+        public static Tensor from_file(string filename, bool? shared = null, long? size = 0, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
+        {
+            device = InitializeDevice(device);
+            if (!dtype.HasValue) {
+                // Determine the element type dynamically.
+                dtype = get_default_dtype();
+            }
+
+            var handle = THSTensor_from_file(filename, (sbyte)(!shared.HasValue ? -1 : shared.Value ? 1 : 0), size.HasValue ? size.Value : -1, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
+            return new Tensor(handle);
+        }
+
         /// <summary>
         /// Create a one-dimensional tensor of size steps whose values are evenly spaced from start to end, inclusive.
         /// </summary>
