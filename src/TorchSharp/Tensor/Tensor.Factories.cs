@@ -2815,7 +2815,7 @@ namespace TorchSharp
             return new Tensor(res);
         }
 
-        public static unsafe Tensor from_file(string filename, bool? shared = null, long? size = 0, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
+        public static Tensor from_file(string filename, bool? shared = null, long? size = 0, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -2823,11 +2823,9 @@ namespace TorchSharp
                 dtype = get_default_dtype();
             }
 
-            fixed (byte* ptr = StringEncoder.GetNullTerminatedUTF8ByteArray(filename)) {
-                var handle = THSTensor_from_file((IntPtr)ptr, (sbyte)(!shared.HasValue ? -1 : shared.Value ? 1 : 0), size.HasValue ? size.Value : -1, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-                if (handle == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(handle);
-            }
+            var handle = THSTensor_from_file(StringEncoder.GetNullTerminatedUTF8ByteArray(filename), (sbyte)(!shared.HasValue ? -1 : shared.Value ? 1 : 0), size.HasValue ? size.Value : -1, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
+            return new Tensor(handle);
         }
 
         /// <summary>
