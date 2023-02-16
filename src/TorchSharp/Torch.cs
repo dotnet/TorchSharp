@@ -80,6 +80,10 @@ namespace TorchSharp
 
         private static void LoadNativeBackend(bool useCudaBackend, out StringBuilder trace)
         {
+            if (!System.Environment.Is64BitProcess) {
+                throw new NotSupportedException("TorchSharp only supports 64-bit processes.");
+            }
+
             var alreadyLoaded = useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded;
             trace = new StringBuilder();
             if (!alreadyLoaded) {
