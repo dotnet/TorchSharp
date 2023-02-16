@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Diagnostics.Contracts;
@@ -15,20 +15,30 @@ namespace TorchSharp
         [Pure]public static bool is_storage(object obj) => obj is Storage;
 
         // https://pytorch.org/docs/stable/generated/torch.is_complex
-        [Pure, Obsolete("not implemented", true)]
-        public static bool is_complex(object input) => throw new NotImplementedException();
+        /// <summary>
+        /// Returns True if the data type of input is a complex data type i.e., one of torch.complex64, and torch.complex128.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        //public static bool is_complex(Tensor input) => input.is_complex();
 
         // https://pytorch.org/docs/stable/generated/torch.is_conj
-        [Pure, Obsolete("not implemented", true)]
-        public static bool is_conj(object input) => throw new NotImplementedException();
+        //public static bool is_conj(Tensor input) => input.is_conj();
 
         // https://pytorch.org/docs/stable/generated/torch.is_floating_point
-        [Pure, Obsolete("not implemented", true)]
-        public static bool is_floating_point(object input) => throw new NotImplementedException();
+        /// <summary>
+        /// Returns True if the data type of input is a floating point data type.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        //public static bool is_floating_point(Tensor input) => input.is_floating_point();
 
         // https://pytorch.org/docs/stable/generated/torch.is_nonzero
-        [Pure, Obsolete("not implemented", true)]
-        public static bool is_nonzero(object input) => throw new NotImplementedException();
+        /// <summary>
+        /// Returns True if the input is a single element tensor which is not equal to zero after type conversions,
+        /// i.e. not equal to torch.tensor([0.]) or torch.tensor([0]) or torch.tensor([False]).
+        /// Throws an InvalidOperationException if torch.numel() != 1.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        public static bool is_nonzero(Tensor input) => input.is_nonzero();
 
         // https://pytorch.org/docs/stable/generated/torch.set_default_dtype
         /// <summary>

@@ -55,6 +55,8 @@ EXPORT_API(Tensor) THSTensor_addr(const Tensor input, const Tensor mat1, const T
 
 EXPORT_API(Tensor) THSTensor_addr_(const Tensor input, const Tensor mat1, const Tensor vec2, const float beta, const float alpha);
 
+EXPORT_API(Tensor) THSTensor_adjoint(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_alias(const Tensor tensor);
 
 EXPORT_API(int) THSTensor_allclose(const Tensor left, const Tensor right, double rtol, double atol, bool equal_nan);
@@ -257,7 +259,9 @@ EXPORT_API(Tensor) THSTensor_complex(const Tensor real, const Tensor imag);
 
 EXPORT_API(Tensor) THSTensor_conj(const Tensor tensor);
 
-EXPORT_API(int64_t)   THSTensor_is_conj(const Tensor tensor);
+EXPORT_API(int64_t) THSTensor_is_conj(const Tensor tensor);
+
+EXPORT_API(int64_t) THSTensor_is_nonzero(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_conj_physical(const Tensor tensor);
 

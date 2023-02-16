@@ -238,9 +238,29 @@ namespace TorchSharp
 
             public bool is_integral() => torch.is_integral(dtype);
 
+            /// <summary>
+            /// Returns True if the data type of input is a floating point data type.
+            /// </summary>
             public bool is_floating_point() => torch.is_floating_point(dtype);
 
+            /// <summary>
+            /// Returns True if the data type of input is a complex data type i.e., one of torch.complex64, and torch.complex128.
+            /// </summary>
             public bool is_complex() => torch.is_complex(dtype);
+
+            /// <summary>
+            /// Returns True if the input is a single element tensor which is not equal to zero after type conversions,
+            /// i.e. not equal to torch.tensor([0.]) or torch.tensor([0]) or torch.tensor([False]).
+            /// Throws an InvalidOperationException if torch.numel() != 1.
+            /// </summary>
+            public bool is_nonzero()
+            {
+                if (numel() != 1)
+                    throw new InvalidOperationException("is_nonzero() called on non-singleton tensor");
+                var res = LibTorchSharp.THSTensor_is_nonzero(Handle);
+                CheckForErrors();
+                return res != 0;
+            }
 
             public bool is_cuda => device.type == DeviceType.CUDA;
 
@@ -1983,6 +2003,17 @@ namespace TorchSharp
             public Tensor transpose(long dim0, long dim1)
             {
                 var res = LibTorchSharp.THSTensor_transpose(Handle, dim0, dim1);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Returns a view of the tensor conjugated and with the last two dimensions transposed.
+            /// </summary>
+            public Tensor adjoint()
+            {
+                var res = LibTorchSharp.THSTensor_adjoint(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -6772,8 +6803,8 @@ namespace TorchSharp
         }
 
         public static bool is_integral(Tensor t) => is_integral(t.dtype);
-        public static bool is_floating_point(Tensor t) => is_floating_point(t.dtype);
-        public static bool is_complex(Tensor t) => is_complex(t.dtype);
+        //public static bool is_floating_point(Tensor t) => is_floating_point(t.dtype);
+        //public static bool is_complex(Tensor t) => is_complex(t.dtype);
 
         public static ScalarType @bool = ScalarType.Bool;
 

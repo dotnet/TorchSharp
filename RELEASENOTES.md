@@ -12,6 +12,7 @@ Adding overloads of Module.save() and Module.load() taking a 'Stream' argument.<
 Adding torch.softmax() and Tensor.softmax() as aliases for torch.special.softmax()<br/>
 Adding torch.from_file()<br/>
 Adding a number of missing pointwise Tensors operations.<br/>
+Adding select_scatter, diagonal_scatter, and slice_scatter<br/>
 
 __Fixed Bugs__:
 

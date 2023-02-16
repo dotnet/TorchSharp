@@ -66,6 +66,12 @@ Tensor THSTensor_any_along_dimension(const Tensor tensor, const int64_t dim, boo
 {
     CATCH_TENSOR(tensor->any(dim, keepdim));
 }
+
+Tensor THSTensor_adjoint(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->adjoint());
+}
+
 Tensor THSTensor_argmax(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->argmax());
@@ -287,6 +293,13 @@ int THSTensor_is_contiguous(const Tensor tensor)
 {
     bool result = false;
     CATCH(result = tensor->is_contiguous(););
+    return result;
+}
+
+int64_t THSTensor_is_nonzero(const Tensor tensor)
+{
+    bool result = false;
+    CATCH(result = tensor->is_nonzero();)
     return result;
 }
 
