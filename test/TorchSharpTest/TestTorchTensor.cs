@@ -9255,5 +9255,14 @@ namespace TorchSharp
             Assert.NotNull(result);
             Assert.Equal(shifts.Length, result.Length);
         }
+
+        [Fact]
+        public void TestFromFile()
+        {
+            var location = "tensor_åöä_ασδφεες_አስድፋስድፍ.dat";
+            if (File.Exists(location)) File.Delete(location);
+            var t = torch.from_file(location, true, 256 * 16);
+            Assert.True(File.Exists(location));
+        }
     }
 }
