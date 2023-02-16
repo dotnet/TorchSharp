@@ -1154,6 +1154,10 @@ EXPORT_API(void) THSTensor_save(const Tensor tensor, const char* location);
 EXPORT_API(Tensor) THSTensor_scatter(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 EXPORT_API(Tensor) THSTensor_scatter_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 
+EXPORT_API(Tensor) THSTensor_diagonal_scatter(const Tensor tensor, const Tensor source, const int64_t offset, const int64_t dim1, const int64_t dim2);
+EXPORT_API(Tensor) THSTensor_select_scatter(const Tensor tensor, const Tensor source, const int64_t dim, const int64_t index);
+EXPORT_API(Tensor) THSTensor_slice_scatter(const Tensor tensor, const Tensor source, const int64_t dim, const int64_t* start, const int64_t* end, const int64_t step);
+
 EXPORT_API(Tensor) THSTensor_scatter_add(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 EXPORT_API(Tensor) THSTensor_scatter_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 

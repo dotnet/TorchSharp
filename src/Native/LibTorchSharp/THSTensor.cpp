@@ -1199,6 +1199,36 @@ Tensor THSTensor_scatter_(
     CATCH_TENSOR(tensor->scatter_(dim, *index, *source));
 }
 
+Tensor THSTensor_select_scatter(
+    const Tensor tensor,
+    const Tensor source,
+    const int64_t dim,
+    const int64_t index)
+{
+    CATCH_TENSOR(torch::select_scatter(*tensor, *source, dim, index));
+}
+
+Tensor THSTensor_diagonal_scatter(
+    const Tensor tensor,
+    const Tensor source,
+    const int64_t offset,
+    const int64_t dim1,
+    const int64_t dim2)
+{
+    CATCH_TENSOR(torch::diagonal_scatter(*tensor, *source, offset, dim1, dim2));
+}
+
+Tensor THSTensor_slice_scatter(
+    const Tensor tensor,
+    const Tensor source,
+    const int64_t dim,
+    const int64_t *start,
+    const int64_t *end,
+    const int64_t step)
+{
+    CATCH_TENSOR(torch::slice_scatter(*tensor, *source, dim, start == nullptr ? c10::optional<int64_t>() : c10::optional<int64_t>(*start), end == nullptr ? c10::optional<int64_t>() : c10::optional<int64_t>(*end), step));
+}
+
 Tensor THSTensor_scatter_add(
     const Tensor tensor,
     const int64_t dim,

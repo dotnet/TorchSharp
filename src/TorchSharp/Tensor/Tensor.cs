@@ -5492,6 +5492,47 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+
+            public Tensor diagonal_scatter(Tensor src, long offset = 0L, long dim1 = 0L, long dim2 = 1L)
+            {
+                var res = LibTorchSharp.THSTensor_diagonal_scatter(Handle, src.Handle, offset, dim1, dim2);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Embeds the values of the src tensor into input at the given index. This function returns a tensor with fresh storage; it does not create a view.
+            /// </summary>
+            /// <param name="src">The tensor to embed into 'this'</param>
+            /// <param name="dim">The dimension to insert the slice into</param>
+            /// <param name="index">The index to select with</param>
+            /// <remarks>This function returns a tensor with fresh storage; it does not create a view.</remarks>
+            public Tensor select_scatter(Tensor src, long dim, long index)
+            {
+                var res = LibTorchSharp.THSTensor_select_scatter(Handle, src.Handle, dim, index);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Embeds the values of the src tensor into input at the given dimension.
+            /// </summary>
+            /// <param name="src">The tensor to embed into 'this'.</param>
+            /// <param name="dim">The dimension to insert the slice into</param>
+            /// <param name="start">The start index of where to insert the slice</param>
+            /// <param name="end">The end index of where to insert the slice</param>
+            /// <param name="step">How many elements to skip</param>
+            public unsafe Tensor slice_scatter(Tensor src, long dim = 0L, long? start = null, long? end = null, long step = 1L)
+            {
+                var _start = start.HasValue ? new long[] { start.Value } : null;
+                var _end = end.HasValue ? new long[] { end.Value } : null;
+                fixed (long* pstart = _start, pend = _end) {
+                    var res = LibTorchSharp.THSTensor_slice_scatter(Handle, src.Handle, dim, (IntPtr)pstart, (IntPtr)pend, step);
+                    if (res == IntPtr.Zero) { CheckForErrors(); }
+                    return new Tensor(res);
+                }
+            }
+
             /// <summary>
             /// Gathers values along an axis specified by dim.
             /// </summary>

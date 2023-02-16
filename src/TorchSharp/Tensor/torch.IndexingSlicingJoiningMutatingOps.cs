@@ -404,19 +404,42 @@ namespace TorchSharp
             => input.scatter_(dim, index, src);
 
         // https://pytorch.org/docs/stable/generated/torch.diagonal_scatter
-        [Obsolete("not implemented", true)]
-        public static Tensor diagonal_scatter(Tensor input, Tensor src, long offset = 0L, long dim1 = 0L, long dim2 = 1L)
-            => throw new NotImplementedException();
+        /// <summary>
+        /// Embeds the values of the src tensor into input along the diagonal elements of input, with respect to dim1 and dim2.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="src">The tensor to embed into 'this'.</param>
+        /// <param name="offset">Which diagonal to consider. Default: main diagonal.</param>
+        /// <param name="dim1">First dimension with respect to which to take diagonal.</param>
+        /// <param name="dim2">Second dimension with respect to which to take diagonal.</param>
+        [Obsolete("not implemented", true)] 
+        public static Tensor diagonal_scatter(Tensor input, Tensor src, long offset = 0L, long dim1 = 0L, long dim2 = 1L) => input.diagonal_scatter(src, offset, dim1, dim2);
 
         // https://pytorch.org/docs/stable/generated/torch.select_scatter
-        [Obsolete("not implemented", true)]
-        public static Tensor select_scatter(Tensor input, Tensor src, long dim, long index)
-            => throw new NotImplementedException();
+        /// <summary>
+        /// Embeds the values of the src tensor into input at the given index. This function returns a tensor with fresh storage; it does not create a view.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="src">The tensor to embed into 'this'</param>
+        /// <param name="dim">The dimension to insert the slice into</param>
+        /// <param name="index">The index to select with</param>
+        /// <remarks>This function returns a tensor with fresh storage; it does not create a view.</remarks>
+        public static Tensor select_scatter(Tensor input, Tensor src, long dim, long index) => input.select_scatter(src, dim, index);
 
         // https://pytorch.org/docs/stable/generated/torch.slice_scatter
+        /// <summary>
+        /// Embeds the values of the src tensor into input at the given dimension.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="src">The tensor to embed into 'this'.</param>
+        /// <param name="dim">The dimension to insert the slice into</param>
+        /// <param name="start">The start index of where to insert the slice</param>
+        /// <param name="end">The end index of where to insert the slice</param>
+        /// <param name="step">How many elements to skip</param>
+        /// <returns></returns>
         [Obsolete("not implemented", true)]
-        public static Tensor slice_scatter(Tensor input, Tensor src, long dim=0L, long? start=null, long? end=null, long step=1L)
-            => throw new NotImplementedException();
+        public static Tensor slice_scatter(Tensor input, Tensor src, long dim = 0L, long? start = null, long? end = null, long step = 1L)
+            => input.slice_scatter(src, dim, start, end, step);
 
         // https://pytorch.org/docs/stable/generated/torch.scatter_add
         /// <summary>

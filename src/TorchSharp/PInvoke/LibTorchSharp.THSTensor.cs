@@ -2,6 +2,7 @@
 #nullable enable
 using System;
 using System.Runtime.InteropServices;
+using TorchSharp.Modules;
 
 namespace TorchSharp.PInvoke
 {
@@ -1177,6 +1178,15 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_scatter_add(IntPtr tensor, long dim, IntPtr index, IntPtr source);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_diagonal_scatter(IntPtr tensor, IntPtr source, long offset, long dim1, long dim2);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_select_scatter(IntPtr tensor, IntPtr source, long dim, long index);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_slice_scatter(IntPtr tensor, IntPtr source, long dim, IntPtr start, IntPtr end, long step);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_scatter_add_(IntPtr tensor, long dim, IntPtr index, IntPtr source);

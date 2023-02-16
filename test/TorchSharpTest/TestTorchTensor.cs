@@ -417,7 +417,7 @@ namespace TorchSharp
             Assert.Throws<InvalidOperationException>(() => t1.Handle);
         }
 
-        #if !LINUX
+#if !LINUX
         [Fact(Skip = "Sensitive to parallelism in the xUnit test driver")]
         [TestOf(nameof(torch.randn))]
         public void TestUsings()
@@ -428,7 +428,7 @@ namespace TorchSharp
 
             Assert.Equal(tCount, Tensor.TotalCount);
         }
-        #endif
+#endif
 
         [Fact]
         [TestOf(nameof(torch.ones))]
@@ -3832,6 +3832,46 @@ namespace TorchSharp
 
             var res = input.masked_select(mask);
             Assert.Equal(4, res.numel());
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.diagonal_scatter))]
+        public void TestDiagonalScatter()
+        {
+            var a = torch.zeros(3,3);
+
+            var res = a.diagonal_scatter(torch.ones(3), 0);
+
+            Assert.Equal(0, res[0, 1].item<float>());
+
+            Assert.Equal(1, res[0, 0].item<float>());
+            Assert.Equal(1, res[1, 1].item<float>());
+            Assert.Equal(1, res[2, 2].item<float>());
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.slice_scatter))]
+        public void TestSliceScatter()
+        {
+            var a = torch.zeros(8, 8);
+
+            var res = a.slice_scatter(torch.ones(2, 8), start: 6);
+
+            Assert.Equal(0, res[0, 0].item<float>());
+            Assert.Equal(1, res[6, 0].item<float>());
+            Assert.Equal(1, res[7, 0].item<float>());
+
+            res = a.slice_scatter(torch.ones(2, 8), start: 5, step:2);
+
+            Assert.Equal(0, res[0, 0].item<float>());
+            Assert.Equal(1, res[5, 0].item<float>());
+            Assert.Equal(1, res[7, 0].item<float>());
+
+            res = a.slice_scatter(torch.ones(8, 2), dim: 1, start: 6);
+
+            Assert.Equal(0, res[0, 0].item<float>());
+            Assert.Equal(1, res[0, 6].item<float>());
+            Assert.Equal(1, res[0, 7].item<float>());
         }
 
         [Fact]
@@ -9160,7 +9200,7 @@ namespace TorchSharp
                 Assert.Equal(expected, a);
             }
             {
-                var t = torch.arange(10).reshape(2,5);
+                var t = torch.arange(10).reshape(2, 5);
                 var a = t.data<long>().ToNDArray() as long[,];
                 var expected = new long[,] { { 0, 1, 2, 3, 4 }, { 5, 6, 7, 8, 9 } };
 
@@ -9171,7 +9211,7 @@ namespace TorchSharp
                 Assert.Equal(expected, a);
             }
             {
-                var t = torch.arange(12).reshape(2,2,3);
+                var t = torch.arange(12).reshape(2, 2, 3);
                 var a = t.data<long>().ToNDArray() as long[,,];
                 var expected = new long[,,] { { { 0, 1, 2 }, { 3, 4, 5 } }, { { 6, 7, 8 }, { 9, 10, 11 } } };
 
