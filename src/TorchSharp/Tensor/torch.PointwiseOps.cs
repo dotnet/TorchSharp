@@ -1,8 +1,9 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using ICSharpCode.SharpZipLib.BZip2;
 
 namespace TorchSharp
 {
@@ -795,7 +796,7 @@ namespace TorchSharp
         /// Replaces each element with the floor of the input, the largest integer less than or equal to each element.
         /// </summary>
         /// <param name="input">The input tensor.</param>
-        public static Tensor floor_(Tensor input) => input.exp_();
+        public static Tensor floor_(Tensor input) => input.floor_();
 
         // https://pytorch.org/docs/stable/generated/torch.floor_divide
         /// <summary>
@@ -805,10 +806,18 @@ namespace TorchSharp
         /// <param name="input">the dividend</param>
         /// <param name="other">the divisor</param>
         /// <returns>the output tensor</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        [Pure, Obsolete("not implemented", true)]
-        public static Tensor floor_divide(Tensor input, Tensor other)
-            => throw new NotImplementedException();
+        [Pure]
+        public static Tensor floor_divide(Tensor input, Tensor other) => input.floor_divide(other);
+
+        // https://pytorch.org/docs/stable/generated/torch.floor_divide
+        /// <summary>
+        /// Computes input divided by other, elementwise, and floors the result.
+        /// Supports broadcasting to a common shape, type promotion, and integer and float inputs.
+        /// </summary>
+        /// <param name="input">the dividend</param>
+        /// <param name="other">the divisor</param>
+        /// <returns>the output tensor</returns>
+        public static Tensor floor_divide_(Tensor input, Tensor other) => input.floor_divide_(other);
 
         // https://pytorch.org/docs/stable/generated/torch.fmod
         /// <summary>
@@ -1441,6 +1450,13 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         [Pure]public static Tensor sign(Tensor input) => input.sign();
 
+        // https://pytorch.org/docs/stable/generated/torch.sign
+        /// <summary>
+        /// Returns a new tensor with the signs (-1, 0, 1) of the elements of input.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        [Pure] public static Tensor sign_(Tensor input) => input.sign_();
+
         // https://pytorch.org/docs/stable/generated/torch.sgn
         /// <summary>
         /// This function is an extension of torch.sign() to complex tensors.
@@ -1450,8 +1466,20 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">the input tensor.</param>
         /// <returns>the output tensor.</returns>
-        [Pure, Obsolete("not implemented", true)]
-        public static Tensor sgn(Tensor input) => throw new NotImplementedException();
+        [Pure]
+        public static Tensor sgn(Tensor input) => input.sgn();
+
+        // https://pytorch.org/docs/stable/generated/torch.sgn
+        /// <summary>
+        /// This function is an extension of torch.sign() to complex tensors.
+        /// It computes a new tensor whose elements have the same angles as the corresponding
+        /// elements of input and absolute values (i.e. magnitudes) of one for complex tensors
+        /// and is equivalent to torch.sign() for non-complex tensors.
+        /// </summary>
+        /// <param name="input">the input tensor.</param>
+        /// <returns>the output tensor.</returns>
+        [Pure]
+        public static Tensor sgn_(Tensor input) => input.sgn_();
 
         // https://pytorch.org/docs/stable/generated/torch.signbit
         /// <summary>
@@ -1596,7 +1624,7 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.tan
         /// <summary>
-        /// Computes the tangent of the elements of input.
+        /// Computes the tangent of the elements of input. In-place version.
         /// </summary>
         /// <returns></returns>
         public static Tensor tan_(Tensor input) => input.tan_();
@@ -1617,10 +1645,17 @@ namespace TorchSharp
         public static Tensor tanh_(Tensor input) => input.tanh_();
 
         // https://pytorch.org/docs/stable/generated/torch.true_divide
-        // TODO: implement true_divide
-        [Pure, Obsolete("not implemented", true)]
-        public static Tensor true_divide(Tensor dividend, Tensor divisor)
-            => throw new NotImplementedException();
+        /// <summary>
+        /// Alias for torch.div() with rounding_mode=None.
+        /// </summary>
+        [Pure]
+        public static Tensor true_divide(Tensor dividend, Tensor divisor) => dividend.true_divide(divisor);
+
+        // https://pytorch.org/docs/stable/generated/torch.true_divide
+        /// <summary>
+        /// Alias for torch.div_() with rounding_mode=None.
+        /// </summary>
+        public static Tensor true_divide_(Tensor dividend, Tensor divisor) => dividend.true_divide_(divisor);
 
         // https://pytorch.org/docs/stable/generated/torch.trunc
         /// <summary>

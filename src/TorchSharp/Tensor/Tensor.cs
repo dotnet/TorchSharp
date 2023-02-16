@@ -1512,6 +1512,21 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Returns a tensor containing the indices of all non-zero elements of input.
+            /// Each row in the result contains the indices of a non-zero element in input.
+            /// The result is sorted lexicographically, with the last index changing the fastest (C-style).
+            /// If input has n dimensions, then the resulting indices tensor out is of size (z×n), where
+            /// z is the total number of non-zero elements in the input tensor.
+            /// </summary>
+            public Tensor argwhere()
+            {
+                var res = LibTorchSharp.THSTensor_argwhere(Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Selects values from input at the 1-dimensional indices from indices along the given dim.
             /// </summary>
             /// <param name="indices">The indices into input. Must have long dtype.</param>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Collections.Generic;
@@ -16,8 +16,14 @@ namespace TorchSharp
         public static Tensor adjoint(Tensor input) => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.argwhere
-        [Obsolete("not implemented", true)]
-        public static Tensor argwhere(Tensor input) => throw new NotImplementedException();
+        /// <summary>
+        /// Returns a tensor containing the indices of all non-zero elements of input.
+        /// Each row in the result contains the indices of a non-zero element in input.
+        /// The result is sorted lexicographically, with the last index changing the fastest (C-style).
+        /// If input has n dimensions, then the resulting indices tensor out is of size (z×n), where
+        /// z is the total number of non-zero elements in the input tensor.
+        /// </summary>
+        public static Tensor argwhere(Tensor input) => input.argwhere();
 
         // https://pytorch.org/docs/stable/generated/torch.cat
         /// <summary>
@@ -25,7 +31,6 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
         /// <param name="dim">The dimension over which the tensors are concatenated</param>
-        /// <returns></returns>
         /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
         public static Tensor cat(IList<Tensor> tensors, long dim = 0)
         {
@@ -44,9 +49,13 @@ namespace TorchSharp
         }
 
         // https://pytorch.org/docs/stable/generated/torch.concat
-        [Obsolete("not implemented", true)]
-        public static Tensor concat(IList<Tensor> tensors, long dim = 0)
-            => throw new NotImplementedException();
+        /// <summary>
+        /// Alias of torch.cat()
+        /// </summary>
+        /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
+        /// <param name="dim">The dimension over which the tensors are concatenated</param>
+        /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
+        public static Tensor concat(IList<Tensor> tensors, long dim = 0) => torch.cat(tensors, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.conj
         /// <summary>
@@ -82,11 +91,6 @@ namespace TorchSharp
         // https://pytorch.org/docs/stable/generated/torch.dsplit
         public static Tensor[] dsplit(Tensor input, (long, long, long, long) indices_or_sections)
             => input.dsplit(indices_or_sections);
-
-        // https://pytorch.org/docs/stable/generated/torch.column_stack
-        [Obsolete("not implemented", true)]
-        public static Tensor column_stack(params Tensor[] tensors)
-            => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.dstack
         /// <summary>
@@ -376,10 +380,6 @@ namespace TorchSharp
         /// <param name="input">The input tensor</param>
         /// <param name="shape">The new tensor shape.</param>
         public static Tensor reshape(Tensor input, params long[] shape) => input.reshape(shape);
-
-        // https://pytorch.org/docs/stable/generated/torch.row_stack
-        public static Tensor row_stack(params Tensor[] tensors)
-            => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.select
         public static Tensor select(Tensor input, long dim, long index)

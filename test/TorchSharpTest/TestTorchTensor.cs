@@ -5544,6 +5544,20 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.floor_divide))]
+        public void FloorDivideTest()
+        {
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
+            var expected = data.Select(d => MathF.Floor(d / 2)).ToArray();
+            var input = torch.tensor(data);
+            var res = input.floor_divide(2.0f);
+            Assert.True(res.allclose(torch.tensor(expected)));
+
+            input.floor_divide_(2.0f);
+            Assert.True(input.allclose(torch.tensor(expected)));
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.trunc))]
         public void TruncTest()
         {

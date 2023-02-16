@@ -103,6 +103,8 @@ EXPORT_API(Tensor) THSTensor_argmin_along_dimension(const Tensor tensor, const i
 
 EXPORT_API(Tensor) THSTensor_argsort(const Tensor tensor, const int64_t dim, bool descending);
 
+EXPORT_API(Tensor) THSTensor_argwhere(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_asin(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_asin_(const Tensor tensor);
@@ -477,6 +479,22 @@ EXPORT_API(Tensor) THSTensor_float_power(const Tensor input, const Tensor expone
 EXPORT_API(Tensor) THSTensor_floor(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_floor_(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_floor_divide(const Tensor left, const Tensor right);
+
+EXPORT_API(Tensor) THSTensor_floor_divide_scalar(const Tensor left, const Scalar right);
+
+EXPORT_API(Tensor) THSTensor_floor_divide_(const Tensor left, const Tensor right);
+
+EXPORT_API(Tensor) THSTensor_floor_divide_scalar_(const Tensor left, const Scalar right);
+
+EXPORT_API(Tensor) THSTensor_true_divide(const Tensor left, const Tensor right);
+
+EXPORT_API(Tensor) THSTensor_true_divide_scalar(const Tensor left, const Scalar right);
+
+EXPORT_API(Tensor) THSTensor_true_divide_(const Tensor left, const Tensor right);
+
+EXPORT_API(Tensor) THSTensor_true_divide_scalar_(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_frac(const Tensor tensor);
 
@@ -1072,6 +1090,10 @@ EXPORT_API(Tensor) THSTensor_sigmoid_(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_sign(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_sign_(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_sgn(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_sgn_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_signbit(const Tensor tensor);
 

@@ -826,6 +826,54 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Computes input divided by other, elementwise, and floors the result.
+            /// </summary>
+            /// <param name="other">the divisor</param>
+            public Tensor floor_divide(Tensor other)
+            {
+                var res = THSTensor_floor_divide(Handle, other.Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes input divided by other, elementwise, and floors the result.
+            /// </summary>
+            /// <param name="other">the divisor</param>
+            public Tensor floor_divide(Scalar other)
+            {
+                var res = THSTensor_floor_divide_scalar(Handle, other.Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes input divided by other, elementwise, and floors the result, computation done in place.
+            /// </summary>
+            /// <param name="other">the divisor</param>
+            public Tensor floor_divide_(Tensor other)
+            {
+                var res = THSTensor_floor_divide_(Handle, other.Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes input divided by other, elementwise, and floors the result, computation done in place.
+            /// </summary>
+            /// <param name="other">the divisor</param>
+            public Tensor floor_divide_(Scalar other)
+            {
+                var res = THSTensor_floor_divide_scalar_(Handle, other.Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Computes the element-wise remainder of division.
             /// </summary>
             /// <param name="target">Denominator</param>
@@ -1541,6 +1589,36 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// This function is an extension of torch.sign() to complex tensors.
+            /// It computes a new tensor whose elements have the same angles as the corresponding
+            /// elements of input and absolute values (i.e. magnitudes) of one for complex tensors
+            /// and is equivalent to torch.sign() for non-complex tensors.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor sgn()
+            {
+                var res = THSTensor_sgn(Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// This function is an extension of torch.sign() to complex tensors.
+            /// It computes a new tensor whose elements have the same angles as the corresponding
+            /// elements of input and absolute values (i.e. magnitudes) of one for complex tensors
+            /// and is equivalent to torch.sign() for non-complex tensors. In-place version.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor sgn_()
+            {
+                var res = THSTensor_sgn_(Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Tests if each element of input has its sign bit set (is less than zero) or not.
             /// </summary>
             /// <returns>A boolean tensor of the same shape as the input.</returns>
@@ -1658,6 +1736,54 @@ namespace TorchSharp
             {
                 IntPtr res = THSTensor_trapezoid_x(Handle, x.Handle, dim);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes input divided by other, elementwise, and floors the result.
+            /// </summary>
+            /// <param name="other">the divisor</param>
+            public Tensor true_divide(Tensor other)
+            {
+                var res = THSTensor_true_divide(Handle, other.Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes input divided by other, elementwise, and floors the result.
+            /// </summary>
+            /// <param name="other">the divisor</param>
+            public Tensor true_divide(Scalar other)
+            {
+                var res = THSTensor_true_divide_scalar(Handle, other.Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes input divided by other, elementwise, and floors the result, computation done in place.
+            /// </summary>
+            /// <param name="other">the divisor</param>
+            public Tensor true_divide_(Tensor other)
+            {
+                var res = THSTensor_true_divide_(Handle, other.Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes input divided by other, elementwise, and floors the result, computation done in place.
+            /// </summary>
+            /// <param name="other">the divisor</param>
+            public Tensor true_divide_(Scalar other)
+            {
+                var res = THSTensor_true_divide_scalar_(Handle, other.Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
                 return new Tensor(res);
             }
 

@@ -86,6 +86,11 @@ Tensor THSTensor_argmin_along_dimension(const Tensor tensor, const int64_t dim, 
     CATCH_TENSOR(tensor->argmin(dim, keepdim));
 }
 
+Tensor THSTensor_argwhere(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->argwhere());
+}
+
 Tensor THSTensor_atleast_1d(const Tensor tensor)
 {
     CATCH_TENSOR(torch::atleast_1d(*tensor));

@@ -430,6 +430,46 @@ Tensor THSTensor_floor_(const Tensor tensor)
     CATCH_TENSOR(tensor->floor_());
 }
 
+Tensor THSTensor_floor_divide(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->floor_divide(*right));
+}
+
+Tensor THSTensor_floor_divide_scalar(const Tensor left, const Scalar right)
+{
+    CATCH_TENSOR(left->floor_divide(*right));
+}
+
+Tensor THSTensor_floor_divide_(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->floor_divide_(*right));
+}
+
+Tensor THSTensor_floor_divide_scalar_(const Tensor left, const Scalar right)
+{
+    CATCH_TENSOR(left->floor_divide_(*right));
+}
+
+Tensor THSTensor_true_divide(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->true_divide(*right));
+}
+
+Tensor THSTensor_true_divide_scalar(const Tensor left, const Scalar right)
+{
+    CATCH_TENSOR(left->true_divide(*right));
+}
+
+Tensor THSTensor_true_divide_(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->true_divide_(*right));
+}
+
+Tensor THSTensor_true_divide_scalar_(const Tensor left, const Scalar right)
+{
+    CATCH_TENSOR(left->true_divide_(*right));
+}
+
 Tensor THSTensor_fmax(const Tensor left, const Tensor right)
 {
     CATCH_TENSOR(left->fmax(*right));
@@ -854,6 +894,16 @@ Tensor THSTensor_sign(const Tensor tensor)
 Tensor THSTensor_sign_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->sign_());
+}
+
+Tensor THSTensor_sgn(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->sgn());
+}
+
+Tensor THSTensor_sgn_(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->sgn_());
 }
 
 Tensor THSTensor_signbit(const Tensor tensor)
