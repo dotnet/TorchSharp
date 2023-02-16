@@ -9259,7 +9259,7 @@ namespace TorchSharp
         [Fact]
         public void TestFromFile()
         {
-            var location = "tensor_.dat";
+            var location = "tensor_åöä_ασδφεες_አስድፋስድፍ.dat";
             var t = torch.from_file(location, true, 256 * 16);
         }
     }
