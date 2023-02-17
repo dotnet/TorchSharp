@@ -274,6 +274,9 @@ namespace TorchSharp.PInvoke
         internal static extern void THSTensor_retain_grad(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
+        internal static extern int THSTensor_result_type(IntPtr tensor1, IntPtr tensor2);
+
+        [DllImport("LibTorchSharp")]
         internal static extern bool THSTensor_is_cpu(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
@@ -1658,6 +1661,12 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_resolve_conj(IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern long THSTensor_is_neg(IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_resolve_neg(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_bitwise_left_shift(IntPtr tensor, IntPtr other);

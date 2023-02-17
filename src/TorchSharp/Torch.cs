@@ -301,6 +301,23 @@ namespace TorchSharp
                     CheckForErrors();
                 return new Generator(res);
             }
+
+            /// <summary>
+            /// Returns the random number generator state as a torch.ByteTensor.
+            /// </summary>
+            /// <returns></returns>
+            public static Tensor get_rng_state()
+            {
+                return Generator.Default.get_state();
+            }
+            /// <summary>
+            /// Sets the random number generator state.
+            /// </summary>
+            /// <param name="new_state">The desired state</param>
+            public static void set_rng_state(Tensor new_state)
+            {
+                Generator.Default.set_state(new_state);
+            }
         }
 
         public static partial class nn

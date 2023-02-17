@@ -570,7 +570,7 @@ namespace TorchSharp
             public bool is_conj()
             {
                 var res = THSTensor_is_conj(Handle);
-                CheckForErrors();
+                if (res == -1) CheckForErrors();
                 return res != 0;
             }
 
@@ -582,6 +582,29 @@ namespace TorchSharp
             public Tensor resolve_conj()
             {
                 var res = THSTensor_resolve_conj(Handle);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Returns true if the input's negative bit is set to True.
+            /// </summary>
+            public bool is_neg()
+            {
+                var res = THSTensor_is_neg(Handle);
+                if (res == -1) CheckForErrors();
+                return res != 0;
+            }
+
+            /// <summary>
+            /// Returns a new tensor with materialized negation if input’s negative bit is set to True, else returns input.
+            /// The output tensor will always have its negative bit set to False.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor resolve_neg()
+            {
+                var res = THSTensor_resolve_neg(Handle);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);

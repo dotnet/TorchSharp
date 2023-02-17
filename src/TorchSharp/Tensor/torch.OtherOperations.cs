@@ -726,7 +726,15 @@ namespace TorchSharp
         public static Tensor resolve_conj(Tensor input) => input.resolve_conj();
 
         // https://pytorch.org/docs/stable/generated/torch.resolve_neg
-        [Obsolete("not implemented", true)]
-        public static Tensor resolve_neg(Tensor input) => throw new NotImplementedException();
+        /// <summary>
+        /// Returns a new tensor with materialized negation if input’s negative bit is set to True, else returns input.
+        /// The output tensor will always have its negative bit set to False.
+        /// </summary>
+        public static Tensor resolve_neg(Tensor input) => input.resolve_neg();
+
+        /// <summary>
+        /// Returns true if the input's negative bit is set to True.
+        /// </summary>
+        public static Tensor is_neg(Tensor input) => input.is_neg();
     }
 }

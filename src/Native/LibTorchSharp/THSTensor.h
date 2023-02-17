@@ -265,13 +265,13 @@ EXPORT_API(Tensor) THSTensor_complex(const Tensor real, const Tensor imag);
 
 EXPORT_API(Tensor) THSTensor_conj(const Tensor tensor);
 
-EXPORT_API(int64_t) THSTensor_is_conj(const Tensor tensor);
-
 EXPORT_API(int64_t) THSTensor_is_nonzero(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_conj_physical(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_conj_physical_(const Tensor tensor);
+
+EXPORT_API(int64_t) THSTensor_is_conj(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_resolve_conj(const Tensor tensor);
 
@@ -909,6 +909,10 @@ EXPORT_API(Tensor) THSTensor_neg(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_neg_(const Tensor tensor);
 
+EXPORT_API(int64_t) THSTensor_is_neg(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_resolve_neg(const Tensor tensor);
+
 EXPORT_API(Tensor) THSTensor_new(
     void* data,
     void (*deleter)(void*),
@@ -1084,6 +1088,8 @@ EXPORT_API(Tensor) THSTensor_remainder_scalar(const Tensor left, const Scalar ri
 EXPORT_API(Tensor) THSTensor_remainder_scalar_(const Tensor left, const Scalar right);
 
 EXPORT_API(void) THSTensor_retain_grad(const Tensor tensor);
+
+EXPORT_API(int) THSTensor_result_type(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_rsqrt(const Tensor tensor);
 

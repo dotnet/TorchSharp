@@ -11,7 +11,6 @@ void THSTorch_manual_seed(const int64_t seed)
 
 Generator THSGenerator_manual_seed(const int64_t seed)
 {
-    torch::manual_seed(seed);
     return THSGenerator_default_generator();
 }
 
@@ -151,6 +150,37 @@ const char * THSTorch_get_and_reset_last_err()
     torch_last_err = nullptr;
     return tmp;
 }
+
+int THSTorch_get_num_threads()
+{
+    CATCH_RETURN_RES(int, -1, torch::get_num_threads());
+}
+
+void THSTorch_set_num_threads(const int threads)
+{
+    torch::set_num_threads(threads);
+}
+
+int THSTorch_get_num_interop_threads()
+{
+    CATCH_RETURN_RES(int, -1, torch::get_num_interop_threads());
+}
+
+void THSTorch_set_num_interop_threads(const int threads)
+{
+    torch::set_num_interop_threads(threads);
+}
+
+int THSTorch_can_cast(const int type1, const int type2)
+{
+    CATCH_RETURN_RES(int, -1, (int)torch::can_cast((c10::ScalarType)type1, (c10::ScalarType)type2));
+}
+
+int THSTorch_promote_types(const int type1, const int type2)
+{
+    CATCH_RETURN_RES(int, -1, (int)torch::promote_types((c10::ScalarType)type1, (c10::ScalarType)type2));
+}
+
 
 Scalar THSTorch_int8_to_scalar(int8_t value)
 {

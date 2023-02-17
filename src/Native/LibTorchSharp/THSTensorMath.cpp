@@ -265,7 +265,12 @@ Tensor THSTensor_conj(const Tensor tensor)
 
 int64_t THSTensor_is_conj(const Tensor tensor)
 {
-    CATCH_RETURN_RES(int64_t, 0, res = tensor->is_conj();)
+    CATCH_RETURN_RES(int64_t, -1, res = tensor->is_conj();)
+}
+
+int64_t THSTensor_is_neg(const Tensor tensor)
+{
+    CATCH_RETURN_RES(int64_t, -1, res = tensor->is_neg();)
 }
 
 Tensor THSTensor_conj_physical(const Tensor tensor)
@@ -281,6 +286,11 @@ Tensor THSTensor_conj_physical_(const Tensor tensor)
 Tensor THSTensor_resolve_conj(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->resolve_conj());
+}
+
+Tensor THSTensor_resolve_neg(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->resolve_neg());
 }
 
 Tensor THSTensor_cos(const Tensor tensor)
