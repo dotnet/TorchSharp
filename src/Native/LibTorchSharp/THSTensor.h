@@ -209,6 +209,8 @@ EXPORT_API(void) THSTensor_broadcast_tensors(const Tensor* tensor, const int len
 
 EXPORT_API(Tensor) THSTensor_bucketize(const Tensor tensor, const Tensor boundaries, const bool out_int32, const bool right);
 
+EXPORT_API(Tensor) THSTensor_cartesian_prod(const Tensor* tensor, const int length);
+
 EXPORT_API(Tensor) THSTensor_cat(const Tensor* tensor, const int length, const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_channel_shuffle(const Tensor tensor, const int64_t groups);
@@ -222,6 +224,8 @@ EXPORT_API(Tensor) THSTensor_parameters_to_vector(const Tensor* tensors, const i
 EXPORT_API(void) THSTensor_vector_to_parameters(const Tensor vec, const Tensor* tensors, const int length);
 
 EXPORT_API(Tensor) THSTensor_clone(const Tensor input);
+
+EXPORT_API(Tensor) THSTensor_combinations(const Tensor tensor, const int r, const bool with_replacement);
 
 EXPORT_API(Tensor) THSTensor_contiguous(const Tensor input);
 

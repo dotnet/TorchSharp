@@ -119,9 +119,26 @@ namespace TorchSharp
             => input.bucketize(boundaries, outInt32, right);
 
         // https://pytorch.org/docs/stable/generated/torch.cartesian_prod
-        [Obsolete("not implemented", true)]
-        public static Tensor cartesian_prod(params Tensor[] tensors)
-            => throw new NotImplementedException();
+        /// <summary>
+        /// Do cartesian product of the given sequence of tensors. 
+        /// </summary>
+        /// <param name="tensors"></param>
+        public static Tensor cartesian_prod(IList<Tensor> tensors)
+        {
+            using var parray = new PinnedArray<IntPtr>();
+            IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
+
+            var res = THSTensor_cartesian_prod(tensorsRef, parray.Array.Length);
+            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+            return new Tensor(res);
+        }
+
+        // https://pytorch.org/docs/stable/generated/torch.cartesian_prod
+        /// <summary>
+        /// Do cartesian product of the given sequence of tensors. 
+        /// </summary>
+        /// <param name="tensors"></param>
+        public static Tensor cartesian_prod(params Tensor[] tensors) => cartesian_prod((IList<Tensor>)tensors);
 
         // https://pytorch.org/docs/stable/generated/torch.cdist
         [Obsolete("not implemented", true)]
@@ -136,17 +153,53 @@ namespace TorchSharp
         public static Tensor clone(Tensor input) => input.clone();
 
         // https://pytorch.org/docs/stable/generated/torch.combinations
-        [Obsolete("not implemented", true)]
-        public static IEnumerable<Tensor> combinations(Tensor input, long r = 2L, bool with_replacement = false)
-            => throw new NotImplementedException();
+        /// <summary>
+        /// Compute combinations of length r of the given tensor
+        /// </summary>
+        /// <param name="input">1D vector.</param>
+        /// <param name="r">Number of elements to combine</param>
+        /// <param name="with_replacement">Whether to allow duplication in combination</param>
+        /// <returns></returns>
+        public static Tensor combinations(Tensor input, int r = 2, bool with_replacement = false)
+        {
+            if (input.ndim != 1)
+                throw new ArgumentException($"Expected a 1D vector, but got one with {input.ndim} dimensions.");
+            if (r < 0)
+                throw new ArgumentException($"r must be non-negative");
+
+            var res = THSTensor_combinations(input.Handle, r, with_replacement);
+            if (res == IntPtr.Zero)
+                CheckForErrors();
+            return new Tensor(res);
+        }
+
+
 
         // https://pytorch.org/docs/stable/generated/torch.corrcoef
         public static Tensor corrcoef(Tensor input) => input.corrcoef();
 
         // https://pytorch.org/docs/stable/generated/torch.cov
-        [Obsolete("not implemented", true)]
+        /// <summary>
+        /// Estimates the covariance matrix of the variables given by the input matrix, where rows are the variables and columns are the observations.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="correction">
+        /// Difference between the sample size and sample degrees of freedom.
+        /// Defaults to Bessel’s correction, correction = 1 which returns the unbiased estimate,
+        /// even if both fweights and aweights are specified.
+        /// Correction = 0 will return the simple average.
+        /// </param>
+        /// <param name="fweights">
+        /// A Scalar or 1D tensor of observation vector frequencies representing the number of times each observation should be repeated.
+        /// Its numel must equal the number of columns of input.
+        /// Must have integral dtype.</param>
+        /// <param name="aweights">A Scalar or 1D array of observation vector weights.
+        /// These relative weights are typically large for observations considered “important” and smaller for
+        /// observations considered less “important”.
+        /// Its numel must equal the number of columns of input.
+        /// Must have floating point dtype.</param>
         public static Tensor cov(Tensor input, long correction = 1, Tensor? fweights = null, Tensor? aweights = null)
-            => throw new NotImplementedException();
+            => input.cov(correction, fweights, aweights);
 
         // https://pytorch.org/docs/stable/generated/torch.cross
         /// <summary>
@@ -395,8 +448,7 @@ namespace TorchSharp
         /// <remarks>All tensors need to be of the same size.</remarks>
         static IEnumerable<Tensor> meshgrid(IEnumerable<Tensor> tensors, indexing indexing = indexing.ij)
         {
-            var idx = indexing switch
-            {
+            var idx = indexing switch {
                 indexing.ij => "ij",
                 indexing.xy => "xy",
                 _ => throw new ArgumentOutOfRangeException()
@@ -545,7 +597,7 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.tensordot
         [Obsolete("not implemented", true)]
-        public static Tensor tensordot(Tensor a, Tensor b, long dims=2) => throw new NotImplementedException();
+        public static Tensor tensordot(Tensor a, Tensor b, long dims = 2) => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.trace
         /// <summary>

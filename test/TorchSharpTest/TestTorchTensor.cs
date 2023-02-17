@@ -5444,8 +5444,14 @@ namespace TorchSharp
             var data = new float[] { 0, 2, 1, 1, 2, 0 };
             var expected = new float[] { 1, -1, -1, 1 };
             var res = torch.tensor(data).reshape(3, 2).T;
-            var cov1 = res.cov();
-            Assert.True(cov1.allclose(torch.tensor(expected).reshape(2, 2)));
+            {
+                var cov1 = res.cov();
+                Assert.True(cov1.allclose(torch.tensor(expected).reshape(2, 2)));
+            }
+            {
+                var cov1 = torch.cov(res);
+                Assert.True(cov1.allclose(torch.tensor(expected).reshape(2, 2)));
+            }
         }
 
         [Fact]
@@ -9318,6 +9324,29 @@ namespace TorchSharp
             if (File.Exists(location)) File.Delete(location);
             var t = torch.from_file(location, true, 256 * 16);
             Assert.True(File.Exists(location));
+        }
+
+        [Fact]
+        public void TestCartesianProd()
+        {
+            var a = torch.arange(1, 4);
+            var b = torch.arange(4, 6);
+
+            var expected = torch.from_array(new int[] { 1, 4, 1, 5, 2, 4, 2, 5, 3, 4, 3, 5 }).reshape(6, 2);
+
+            var res = torch.cartesian_prod(a, b);
+            Assert.Equal(expected, res);
+        }
+
+        [Fact]
+        public void TestCombinations()
+        {
+            var t = torch.arange(5);
+            Assert.Equal(0, torch.combinations(t, 0).numel());
+            Assert.Equal(5, torch.combinations(t, 1).numel());
+            Assert.Equal(20, torch.combinations(t, 2).numel());
+            Assert.Equal(30, torch.combinations(t, 3).numel());
+            Assert.Equal(105, torch.combinations(t, 3, true).numel());
         }
     }
 }

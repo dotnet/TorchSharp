@@ -14,6 +14,7 @@ Adding torch.from_file()<br/>
 Adding a number of missing pointwise Tensors operations.<br/>
 Adding select_scatter, diagonal_scatter, and slice_scatter<br/>
 Adding torch.set_printoptions<br/>
+Adding torch.cartesian_prod, combinations, and cov.<br/>
 
 __Fixed Bugs__:
 

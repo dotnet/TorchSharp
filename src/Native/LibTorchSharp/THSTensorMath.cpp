@@ -296,6 +296,13 @@ Tensor THSTensor_cosh_(const Tensor tensor)
     CATCH_TENSOR(tensor->cosh_());
 }
 
+Tensor THSTensor_cov(const Tensor input, int64_t correction, const Tensor fweights, const Tensor aweights)
+{
+    c10::optional<at::Tensor> fw = (fweights == nullptr) ? c10::optional<at::Tensor>() : *fweights;
+    c10::optional<at::Tensor> aw = (aweights == nullptr) ? c10::optional<at::Tensor>() : *aweights;
+    CATCH_TENSOR(input->cov(correction, fw, aw));
+}
+
 Tensor THSTensor_cross(const Tensor tensor, const Tensor other, const int64_t dim)
 {
     CATCH_TENSOR(tensor->cross(*other, dim));

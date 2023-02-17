@@ -343,6 +343,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_clone(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_combinations(IntPtr handle, int r, [MarshalAs(UnmanagedType.U1)] bool with_replacement);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_copy_(IntPtr handle, IntPtr source, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
 
         [DllImport("LibTorchSharp")]
@@ -1514,6 +1517,9 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_cat(IntPtr tensor, int len, long dim);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_cartesian_prod(IntPtr tensor, int len);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_stack(IntPtr tensor, int len, long dim);

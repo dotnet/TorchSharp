@@ -170,6 +170,11 @@ void THSTensor_vector_to_parameters(const Tensor vec, const Tensor* tensors, con
     CATCH(torch::nn::utils::vector_to_parameters(*vec, toTensors<at::Tensor>((torch::Tensor**)tensors, length)););
 }
 
+Tensor THSTensor_cartesian_prod(const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::cartesian_prod(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
+}
+
 double THSTensor_clip_grad_norm_(const Tensor* tensors, const int length, const double max_norm, const double norm_type)
 {
     double res = 0.0;
@@ -269,6 +274,11 @@ Tensor THSTensor_clone(const Tensor tensor)
     CATCH_TENSOR(tensor->clone());
 }
 
+Tensor THSTensor_combinations(const Tensor tensor, const int r, const bool with_replacement)
+{
+    CATCH_TENSOR(torch::combinations(*tensor, r, with_replacement));
+}
+
 Tensor THSTensor_copy_(const Tensor input, const Tensor other, const bool non_blocking)
 {
     CATCH_TENSOR(input->copy_(*other, non_blocking));
@@ -311,13 +321,6 @@ Tensor THSTensor_copysign(const Tensor input, const Tensor other)
 Tensor THSTensor_corrcoef(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->corrcoef());
-}
-
-Tensor THSTensor_cov(const Tensor input, int64_t correction, const Tensor fweights, const Tensor aweights)
-{
-    c10::optional<at::Tensor> fw = (fweights == nullptr) ? c10::optional<at::Tensor>() : *fweights;
-    c10::optional<at::Tensor> aw = (aweights == nullptr) ? c10::optional<at::Tensor>() : *aweights;
-    CATCH_TENSOR(input->cov(correction, fw, aw));
 }
 
 bool THSTensor_is_cpu(const Tensor tensor)
