@@ -629,6 +629,7 @@ namespace TorchSharp
         public static Tensor roll(Tensor input, ReadOnlySpan<long> shifts, ReadOnlySpan<long> dims = default) => input.roll(shifts, dims);
 
         // https://pytorch.org/docs/stable/generated/torch.searchsorted
+        [Obsolete("not implemented", true)]
         static Tensor searchsorted(
             Tensor sorted_sequence,
             Tensor values,

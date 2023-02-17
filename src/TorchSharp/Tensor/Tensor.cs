@@ -4173,6 +4173,13 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Outer product of input and vec2.
+            /// </summary>
+            /// <param name="vec2">1-D input vector.</param>
+            /// <remarks>If input is a vector of size n and vec2 is a vector of size m, then out must be a matrix of size n×m.</remarks>
+            public Tensor ger(Tensor vec2) => outer(vec2);
+
+            /// <summary>
             /// Computes the dot product for 1D tensors.
             /// For higher dimensions, sums the product of elements from input and other along their last dimension.
             /// </summary>

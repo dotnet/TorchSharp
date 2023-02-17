@@ -1021,6 +1021,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_outer(IntPtr input, IntPtr vec2);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_ormqr(IntPtr input, IntPtr tau, IntPtr other, bool left, bool transpose);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_inner(IntPtr input, IntPtr vec2);
 
         [DllImport("LibTorchSharp")]
@@ -2018,6 +2021,12 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_vdot(IntPtr tensor, IntPtr target);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_dot(IntPtr tensor, IntPtr target);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_logdet(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_lu(IntPtr tensor, [MarshalAs(UnmanagedType.U1)] bool pivot, [MarshalAs(UnmanagedType.U1)] bool get_infos, out IntPtr infos, out IntPtr pivots);

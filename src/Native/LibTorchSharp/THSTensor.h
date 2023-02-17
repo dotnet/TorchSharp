@@ -992,6 +992,8 @@ EXPORT_API(Tensor) THSTensor_ones_out(const int64_t* sizes, const int length, co
 
 EXPORT_API(Tensor) THSTensor_ones_like(const Tensor input, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
+EXPORT_API(Tensor) THSTensor_ormqr(const Tensor input, const Tensor tau, const Tensor other, bool left, bool transpose);
+
 EXPORT_API(Tensor) THSTensor_outer(const Tensor left, const Tensor right);
 
 EXPORT_API(Tensor) THSTensor_mT(const Tensor tensor);
@@ -1285,6 +1287,9 @@ EXPORT_API(Tensor) THSTensor_cumulative_trapezoid_dx(const Tensor y, const doubl
 EXPORT_API(Tensor) THSTensor_trapezoid_x(const Tensor y, const Tensor x, int64_t dim);
 EXPORT_API(Tensor) THSTensor_trapezoid_dx(const Tensor y, const double dx, int64_t dim);
 
+EXPORT_API(Tensor) THSTensor_cumulative_trapezoid_x(const Tensor y, const Tensor x, int64_t dim);
+EXPORT_API(Tensor) THSTensor_cumulative_trapezoid_dx(const Tensor y, const double dx, int64_t dim);
+
 EXPORT_API(Tensor) THSTensor_to_dense(Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_to_device(const Tensor tensor, const int device_type, const int device_index, const bool copy);
@@ -1435,6 +1440,7 @@ EXPORT_API(Tensor) THSLinalg_cholesky_ex(const Tensor tensor, bool check_errors,
 EXPORT_API(Tensor) THSLinalg_cross(const Tensor input, const Tensor other, const int64_t dim);
 
 EXPORT_API(Tensor) THSLinalg_det(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_logdet(const Tensor tensor);
 
 EXPORT_API(Tensor) THSLinalg_slogdet(const Tensor tensor, Tensor *logabsdet);
 
@@ -1445,6 +1451,10 @@ EXPORT_API(Tensor) THSTensor_eig(const Tensor tensor, bool vectors, Tensor* eige
 
 EXPORT_API(Tensor) THSLinalg_eigvals(const Tensor tensor);
 EXPORT_API(Tensor) THSLinalg_eigvalsh(const Tensor tensor, const char UPLO);
+
+EXPORT_API(Tensor) THSTensor_geqrf(const Tensor tensor, Tensor* tau);
+
+EXPORT_API(Tensor) THSLinalg_householder_product(const Tensor tensor, const Tensor tau);
 
 EXPORT_API(Tensor) THSLinalg_inv(const Tensor tensor);
 EXPORT_API(Tensor) THSLinalg_inv_ex(const Tensor tensor, bool check_errors, Tensor* info);

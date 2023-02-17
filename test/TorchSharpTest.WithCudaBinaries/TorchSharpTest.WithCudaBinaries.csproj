@@ -20,7 +20,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="..\TorchSharpTest\FactIgnoreOnPlattformAttribute.cs" Link="FactIgnoreOnPlattformAttribute.cs" />
+    <Compile Include="..\TorchSharpTest\LinearAlgebra.cs" Link="LinearAlgebra.cs" />
     <Compile Include="..\TorchSharpTest\NN.cs" Link="NN.cs" />
+    <Compile Include="..\TorchSharpTest\PointwiseTensorMath.cs" Link="PointwiseTensorMath.cs" />
     <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs" />
     <Compile Include="..\TorchSharpTest\TestDistributions.cs" Link="TestDistributions.cs" />
     <Compile Include="..\TorchSharpTest\TestJIT.cs" Link="TestJIT.cs" />

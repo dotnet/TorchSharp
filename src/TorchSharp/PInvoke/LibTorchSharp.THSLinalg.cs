@@ -39,6 +39,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSLinalg_eig(IntPtr tensor, out IntPtr pEigenvectors);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_geqrf(IntPtr tensor, out IntPtr tau);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_eigh(IntPtr tensor, byte UPLO, out IntPtr pEigenvectors);
 
         [DllImport("LibTorchSharp")]
@@ -46,6 +49,9 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_eigvalsh(IntPtr tensor, byte UPLO);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSLinalg_householder_product(IntPtr tensor, IntPtr tau);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_inv(IntPtr tensor);
@@ -83,6 +89,9 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_matrix_rank_tensor(IntPtr tensor, IntPtr atol, IntPtr rtol, [MarshalAs(UnmanagedType.U1)] bool hermitian);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSLinalg_dot(IntPtr tensor, int len);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_multi_dot(IntPtr tensor, int len);

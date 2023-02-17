@@ -1715,7 +1715,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cumulative_trapezoid(double dx = 1, long dim = -1)
             {
-                IntPtr res = THSTensor_trapezoid_dx(Handle, dx, dim);
+                IntPtr res = THSTensor_cumulative_trapezoid_dx(Handle, dx, dim);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -1729,7 +1729,7 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cumulative_trapezoid(Tensor x, long dim = -1)
             {
-                IntPtr res = THSTensor_trapezoid_x(Handle, x.Handle, dim);
+                IntPtr res = THSTensor_cumulative_trapezoid_x(Handle, x.Handle, dim);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
             }

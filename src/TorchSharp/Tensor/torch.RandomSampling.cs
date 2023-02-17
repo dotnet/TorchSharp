@@ -10,15 +10,23 @@ namespace TorchSharp
     public static partial class torch
     {
         // https://pytorch.org/docs/stable/generated/torch.seed
-        [Obsolete("not implemented", true)]
-        public static int seed() => throw new NotImplementedException();
+        /// <summary>
+        /// Sets the seed for generating random numbers to a non-deterministic random number. Returns a 64 bit number used to seed the RNG.
+        /// </summary>
+        public static long seed() => torch.random.seed();
 
         // https://pytorch.org/docs/stable/generated/torch.manual_seed
+        /// <summary>
+        /// Sets the seed for generating random numbers. Returns a torch.Generator object.
+        /// </summary>
+        /// <param name="seed">The desired seed.</param>
         public static Generator manual_seed(long seed) => torch.random.manual_seed(seed);
 
         // https://pytorch.org/docs/stable/generated/torch.initial_seed
-        [Obsolete("not implemented", true)]
-        public static long initial_seed() => throw new NotImplementedException();
+        /// <summary>
+        /// Returns the initial seed for generating random numbers.
+        /// </summary>
+        public static long initial_seed() => torch.random.initial_seed();
 
         // https://pytorch.org/docs/stable/generated/torch.get_rng_state
         /// <summary>

@@ -289,6 +289,16 @@ namespace TorchSharp
         public static partial class random
         {
             /// <summary>
+            /// Sets the seed for generating random numbers to a non-deterministic random number. Returns a 64 bit number used to seed the RNG.
+            /// </summary>
+            public static long seed() => Generator.Default.seed();
+
+            /// <summary>
+            /// Returns the initial seed for generating random numbers.
+            /// </summary>
+            public static long initial_seed() => Generator.Default.initial_seed();
+
+            /// <summary>
             /// Sets the seed for generating random numbers. Returns a torch.Generator object.
             /// </summary>
             /// <param name="seed">The desired seed.</param>

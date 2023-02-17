@@ -1101,6 +1101,11 @@ Tensor THSTensor_outer(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->outer(*right));
 }
 
+Tensor THSTensor_ormqr(const Tensor input, const Tensor tau, const Tensor other, bool left, bool transpose)
+{
+    CATCH_TENSOR(torch::ormqr(*input, *tau, *other, left, transpose));
+}
+
 Tensor THSTensor_mH(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->mH());
