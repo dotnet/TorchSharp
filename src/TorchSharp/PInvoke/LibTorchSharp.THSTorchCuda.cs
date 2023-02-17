@@ -7,9 +7,11 @@ namespace TorchSharp.PInvoke
     internal static partial class LibTorchSharp
     {
         [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.U1)]
         internal static extern bool THSTorchCuda_is_available();
 
         [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.U1)]
         internal static extern bool THSTorchCuda_cudnn_is_available();
 
         [DllImport("LibTorchSharp")]
