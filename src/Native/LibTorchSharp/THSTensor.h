@@ -215,6 +215,8 @@ EXPORT_API(Tensor) THSTensor_cat(const Tensor* tensor, const int length, const i
 
 EXPORT_API(Tensor) THSTensor_channel_shuffle(const Tensor tensor, const int64_t groups);
 
+EXPORT_API(Tensor) THSTensor_cdist(const Tensor x1, const Tensor x2, const double p, const int64_t compute_mode);
+
 EXPORT_API(double) THSTensor_clip_grad_norm_(const Tensor* tensor, const int length, const double max_norm, const double norm_type);
 
 EXPORT_API(void) THSTensor_clip_grad_value_(const Tensor* tensors, const int length, const double value);
@@ -369,6 +371,8 @@ EXPORT_API(int) THSTensor_device_type(const Tensor tensor);
 EXPORT_API(int) THSTensor_device_index(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_diag(const Tensor tensor, const int64_t diagonal);
+
+EXPORT_API(Tensor) THSTensor_diag_embed(const Tensor tensor, const int64_t offset, const int64_t dim1, const int64_t dim2);
 
 EXPORT_API(Tensor) THSTensor_trace(const Tensor tensor);
 
@@ -1066,6 +1070,8 @@ EXPORT_API(Tensor) THSTensor_reshape(const Tensor tensor, const int64_t* shape, 
 
 EXPORT_API(Tensor) THSTensor_roll(const Tensor tensor, const int64_t* shifts, const int shLength, const int64_t* dims, const int dimLength);
 
+EXPORT_API(Tensor) THSTensor_rot90(const Tensor tensor, const int64_t k, const int64_t dim1, const int64_t dim2);
+
 EXPORT_API(Tensor) THSTensor_round(const Tensor tensor, const int64_t decimals);
 EXPORT_API(Tensor) THSTensor_round_(const Tensor tensor, const int64_t decimals);
 
@@ -1259,6 +1265,9 @@ EXPORT_API(Tensor) THSTensor_tile(const Tensor tensor, const int64_t* rep, const
 EXPORT_API(Tensor) THSTensor_tril(const Tensor tensor, const int64_t diagonal);
 
 EXPORT_API(Tensor) THSTensor_triu(const Tensor tensor, const int64_t diagonal);
+
+EXPORT_API(Tensor) THSTensor_tril_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index);
+EXPORT_API(Tensor) THSTensor_triu_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index);
 
 EXPORT_API(Tensor) THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2);
 

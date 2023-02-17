@@ -11,10 +11,11 @@ Adding allow_tf32<br/>
 Adding overloads of Module.save() and Module.load() taking a 'Stream' argument.<br/>
 Adding torch.softmax() and Tensor.softmax() as aliases for torch.special.softmax()<br/>
 Adding torch.from_file()<br/>
-Adding a number of missing pointwise Tensors operations.<br/>
+Adding a number of missing pointwise Tensor operations.<br/>
 Adding select_scatter, diagonal_scatter, and slice_scatter<br/>
 Adding torch.set_printoptions<br/>
 Adding torch.cartesian_prod, combinations, and cov.<br/>
+Adding torch.cdist, diag_embed, rot90, triu_indices, tril_indices<br/>
 
 __Fixed Bugs__:
 

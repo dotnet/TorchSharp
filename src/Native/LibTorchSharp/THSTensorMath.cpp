@@ -241,6 +241,13 @@ Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
     CATCH_TENSOR(batch1->bmm(*batch2));
 }
 
+Tensor THSTensor_cdist(const Tensor x1, const Tensor x2, const double p, const int64_t compute_mode)
+{
+    CATCH_TENSOR(compute_mode == 0
+        ? torch::cdist(*x1, *x2, p)
+        : torch::cdist(*x1, *x2, p, compute_mode));
+}
+
 Tensor THSTensor_ceil(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->ceil());

@@ -3839,7 +3839,7 @@ namespace TorchSharp
         [TestOf(nameof(Tensor.diagonal_scatter))]
         public void TestDiagonalScatter()
         {
-            var a = torch.zeros(3,3);
+            var a = torch.zeros(3, 3);
 
             var res = a.diagonal_scatter(torch.ones(3), 0);
 
@@ -3862,7 +3862,7 @@ namespace TorchSharp
             Assert.Equal(1, res[6, 0].item<float>());
             Assert.Equal(1, res[7, 0].item<float>());
 
-            res = a.slice_scatter(torch.ones(2, 8), start: 5, step:2);
+            res = a.slice_scatter(torch.ones(2, 8), start: 5, step: 2);
 
             Assert.Equal(0, res[0, 0].item<float>());
             Assert.Equal(1, res[5, 0].item<float>());
@@ -9347,6 +9347,55 @@ namespace TorchSharp
             Assert.Equal(20, torch.combinations(t, 2).numel());
             Assert.Equal(30, torch.combinations(t, 3).numel());
             Assert.Equal(105, torch.combinations(t, 3, true).numel());
+        }
+
+        [Fact]
+        public void TestCDist()
+        {
+            var a = torch.randn(3, 2);
+            var b = torch.randn(2, 2);
+            var res = torch.cdist(a, b);
+
+            Assert.Equal(3, res.shape[0]);
+            Assert.Equal(2, res.shape[1]);
+        }
+
+        [Fact]
+        public void TestRot90()
+        {
+            var a = torch.arange(8).view(2, 2, 2);
+            var res = a.rot90();
+
+            var data = res.data<long>().ToArray();
+            Assert.Equal(new long[] { 2, 3, 6, 7, 0, 1, 4, 5 }, data);
+        }
+
+        [Fact]
+        public void TestTrilIndex()
+        {
+            var a = torch.tril_indices(3, 3);
+            var expected = new long[] { 0, 1, 1, 2, 2, 2, 0, 0, 1, 0, 1, 2 };
+            Assert.Equal(expected, a.data<long>().ToArray());
+        }
+
+        [Fact]
+        public void TestTriuIndex()
+        {
+            var a = torch.triu_indices(3, 3);
+            var expected = new long[] { 0, 0, 0, 1, 1, 2, 0, 1, 2, 1, 2, 2 };
+            Assert.Equal(expected, a.data<long>().ToArray());
+        }
+
+        [Fact]
+        public void TestDiagembed()
+        {
+            var a = torch.randn(2, 3);
+            var res = torch.diag_embed(a);
+
+            Assert.Equal(3, res.ndim);
+            Assert.Equal(2, res.shape[0]);
+            Assert.Equal(3, res.shape[1]);
+            Assert.Equal(3, res.shape[1]);
         }
     }
 }

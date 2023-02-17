@@ -423,6 +423,11 @@ int THSTensor_device_type(const Tensor tensor)
     return (int)device.type();
 }
 
+Tensor THSTensor_diag_embed(const Tensor tensor, const int64_t offset, const int64_t dim1, const int64_t dim2)
+{
+    CATCH_TENSOR(tensor->diag_embed(offset, dim1, dim2));
+}
+
 Tensor THSTensor_diff(const Tensor tensor, const int64_t n, const int64_t dim, const Tensor prepend, const Tensor append)
 {
     c10::optional<at::Tensor> prep = prepend != nullptr ? *prepend : c10::optional<at::Tensor>(c10::nullopt);
@@ -1182,6 +1187,11 @@ Tensor THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int le
     CATCH_TENSOR(tensor->reshape(at::ArrayRef<int64_t>(shape, length)));
 }
 
+Tensor THSTensor_rot90(const Tensor tensor, const int64_t k, const int64_t dim1, const int64_t dim2)
+{
+    CATCH_TENSOR(tensor->rot90(k, { dim1, dim2 }));
+}
+
 Tensor THSTensor_roll(const Tensor tensor, const int64_t* shifts, const int shLength, const int64_t* dims, const int dimLength)
 {
     CATCH_TENSOR(
@@ -1812,6 +1822,23 @@ Tensor THSTensor_tril(const Tensor tensor, const int64_t diagonal)
 {
     CATCH_TENSOR(tensor->tril(diagonal));
 }
+
+Tensor THSTensor_tril_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index));
+    CATCH_TENSOR(torch::tril_indices(row, col, offset, options));
+}
+
+Tensor THSTensor_triu_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index));
+    CATCH_TENSOR(torch::triu_indices(row, col, offset, options));
+}
+
 
 Tensor THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2)
 {

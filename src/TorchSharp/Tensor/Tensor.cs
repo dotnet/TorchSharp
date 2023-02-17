@@ -3085,6 +3085,29 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Creates a tensor whose diagonals of certain 2D planes (specified by dim1 and dim2) are filled by input.
+            /// To facilitate creating batched diagonal matrices, the 2D planes formed by the last two dimensions of the returned tensor are chosen by default.
+            /// 
+            /// The argument offset controls which diagonal to consider:
+            ///   If offset is equal to 0, it is the main diagonal.
+            ///   If offset is greater than 0, it is above the main diagonal.
+            ///   If offset is less than 0, it is below the main diagonal.
+            ///   
+            /// The size of the new matrix will be calculated to make the specified diagonal of the size of the last input dimension.Note that for offset other than 0,
+            /// 
+            /// the order of dim1 and dim2 matters.Exchanging them is equivalent to changing the sign of offset.
+            /// </summary>
+            /// <param name="offset">Which diagonal to consider.</param>
+            /// <param name="dim1">First dimension with respect to which to take diagonal. </param>
+            /// <param name="dim2">Second dimension with respect to which to take diagonal</param>
+            public Tensor diag_embed(long offset = 0L, long dim1 = -2L, long dim2 = -1L)
+            {
+                var res = LibTorchSharp.THSTensor_diag_embed(Handle, offset, dim1, dim2);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// If input is a vector (1-D tensor), then returns a 2-D square tensor with the elements of input as the diagonal.
             /// If input is a matrix (2-D tensor), then returns a 2-D tensor with diagonal elements equal to a flattened input.
             /// </summary>
@@ -5740,6 +5763,25 @@ namespace TorchSharp
             /// If a dimension is not specified, the tensor will be flattened before rolling and then restored to the original shape.
             /// </summary>
             public Tensor roll(long[] shifts) => _roll(shifts, new long[] { 0 });
+
+            /// <summary>
+            /// Rotate a n-D tensor by 90 degrees in the plane specified by dims axis.
+            /// Rotation direction is from the first towards the second axis if k is greater than 0,
+            /// and from the second towards the first for k less than 0.
+            /// </summary>
+            /// <param name="k">The number of times to rotate.</param>
+            /// <param name="dims">Axes to rotate</param>
+            public Tensor rot90(long k = 1, (long, long)? dims = null)
+            {
+                if (!dims.HasValue) {
+                    dims = (0, 1);
+                }
+
+                var res =
+                    LibTorchSharp.THSTensor_rot90(Handle, k, dims.Value.Item1, dims.Value.Item2);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
 
             /// <summary>
             /// Roll the tensor along the given dimension(s).

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
@@ -141,13 +142,32 @@ namespace TorchSharp
         public static Tensor cartesian_prod(params Tensor[] tensors) => cartesian_prod((IList<Tensor>)tensors);
 
         // https://pytorch.org/docs/stable/generated/torch.cdist
-        [Obsolete("not implemented", true)]
-        static Tensor cdist(
+        /// <summary>
+        /// Computes batched the p-norm distance between each pair of the two collections of row vectors.
+        /// </summary>
+        /// <param name="x1">Input tensor of shape BxPxM</param>
+        /// <param name="x2">Input tensor of shape BxRxM</param>
+        /// <param name="p">p value for the p-norm distance to calculate between each vector (p > 0)</param>
+        /// <param name="compute_mode">
+        /// use_mm_for_euclid_dist_if_necessary - will use matrix multiplication approach to calculate euclidean distance (p = 2) if P > 25 or R > 25
+        /// use_mm_for_euclid_dist - will always use matrix multiplication approach to calculate euclidean distance (p = 2)
+        /// donot_use_mm_for_euclid_dist - will never use matrix multiplication approach to calculate euclidean distance (p = 2)
+        /// </param>
+        /// <exception cref="ArgumentException"></exception>
+        public static Tensor cdist(
             Tensor x1,
             Tensor x2,
             double p = 2.0,
             compute_mode compute_mode = compute_mode.use_mm_for_euclid_dist_if_necessary)
-            => throw new NotImplementedException();
+        {
+            if (p < 0)
+                throw new ArgumentException($"p must be non-negative");
+
+            var res = THSTensor_cdist(x1.Handle, x2.Handle, p, (long)compute_mode);
+            if (res == IntPtr.Zero)
+                CheckForErrors();
+            return new Tensor(res);
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.clone
         public static Tensor clone(Tensor input) => input.clone();
@@ -242,9 +262,25 @@ namespace TorchSharp
         public static Tensor diag(Tensor input, long diagonal = 0) => input.diag(diagonal);
 
         // https://pytorch.org/docs/stable/generated/torch.diag_embed
-        [Obsolete("not implemented", true)]
+        /// <summary>
+        /// Creates a tensor whose diagonals of certain 2D planes (specified by dim1 and dim2) are filled by input.
+        /// To facilitate creating batched diagonal matrices, the 2D planes formed by the last two dimensions of the returned tensor are chosen by default.
+        /// 
+        /// The argument offset controls which diagonal to consider:
+        ///   If offset is equal to 0, it is the main diagonal.
+        ///   If offset is greater than 0, it is above the main diagonal.
+        ///   If offset is less than 0, it is below the main diagonal.
+        ///   
+        /// The size of the new matrix will be calculated to make the specified diagonal of the size of the last input dimension.Note that for offset other than 0,
+        /// 
+        /// the order of dim1 and dim2 matters.Exchanging them is equivalent to changing the sign of offset.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="offset">Which diagonal to consider.</param>
+        /// <param name="dim1">First dimension with respect to which to take diagonal. </param>
+        /// <param name="dim2">Second dimension with respect to which to take diagonal</param>
         public static Tensor diag_embed(Tensor input, long offset = 0L, long dim1 = -2L, long dim2 = -1L)
-            => throw new NotImplementedException();
+            => input.diag_embed(offset, dim1, dim2);
 
         // https://pytorch.org/docs/stable/generated/torch.diagflat
         /// <summary>
@@ -348,8 +384,15 @@ namespace TorchSharp
         public static Tensor kron(Tensor input, Tensor other) => input.kron(other);
 
         // https://pytorch.org/docs/stable/generated/torch.rot90
-        [Obsolete("not implemented", true)]
-        public static Tensor rot90(Tensor input, long k, params long[] dims) => throw new NotImplementedException();
+        /// <summary>
+        /// Rotate a n-D tensor by 90 degrees in the plane specified by dims axis.
+        /// Rotation direction is from the first towards the second axis if k is greater than 0,
+        /// and from the second towards the first for k less than 0.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        /// <param name="k">The number of times to rotate.</param>
+        /// <param name="dims">Axes to rotate</param>
+        public static Tensor rot90(Tensor input, long k = 1, (long, long)? dims = null) => input.rot90(k, dims);
 
         // https://pytorch.org/docs/stable/generated/torch.gcd
         /// <summary>
@@ -611,28 +654,49 @@ namespace TorchSharp
         public static Tensor tril(Tensor input, long diagonal = 0) => input.tril(diagonal);
 
         // https://pytorch.org/docs/stable/generated/torch.tril_indices
-        [Obsolete("not implemented", true)]
-        static Tensor tril_indices(
+        public static Tensor tril_indices(
             long row,
             long col,
             long offset = 0L,
             ScalarType dtype = ScalarType.Int64,
-            Device? device = null,
-            layout layout = layout.strided)
-            => throw new NotImplementedException();
+            Device? device = null)
+        {
+            if (!torch.is_integral(dtype))
+                throw new ArgumentException("dtype must be integral.");
+
+            if (device == null) {
+                device = torch.CPU;
+            }
+
+            var res = LibTorchSharp.THSTensor_tril_indices(row, col, offset, (sbyte)dtype, (int)device.type, device.index);
+            if (res == IntPtr.Zero)
+                CheckForErrors();
+            return new Tensor(res);
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.triu
         public static Tensor triu(Tensor input, long diagonal = 0L) => input.triu(diagonal);
 
         // https://pytorch.org/docs/stable/generated/torch.triu_indices
-        static Tensor triu_indices(
+        public static Tensor triu_indices(
             long row,
             long col,
             long offset = 0L,
-            ScalarType dtype = ScalarType.Float64,
-            Device? device = null,
-            layout layout = layout.strided)
-            => throw new NotImplementedException();
+            ScalarType dtype = ScalarType.Int64,
+            Device? device = null)
+        {
+            if (!torch.is_integral(dtype))
+                throw new ArgumentException("dtype must be integral.");
+            
+            if (device == null) {
+                device = torch.CPU;
+            }
+
+            var res = LibTorchSharp.THSTensor_triu_indices(row, col, offset, (sbyte)dtype, (int)device.type, device.index);
+            if (res == IntPtr.Zero)
+                CheckForErrors();
+            return new Tensor(res);
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.vander
         public static Tensor vander(Tensor x, long N = -1, bool increasing = false) => x.vander(N, increasing);
