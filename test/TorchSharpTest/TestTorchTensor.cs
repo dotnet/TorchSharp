@@ -304,13 +304,14 @@ namespace TorchSharp
         [TestOf(nameof(Tensor.ToString))]
         public void Test2DToNumpyString()
         {
-            Assert.Equal($"[[0 3.141 6.2834 3.1415]{_sep} [6.28e-06 -13.142 0.01 4713.1]]", torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4).ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture));
+            string str = torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4).ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture);
+            Assert.Equal($"[[0 3.141 6.2834 3.1415]{_sep} [6.28e-06 -13.142 0.01 4713.1]]", str);
             {
                 Tensor t = torch.zeros(5, 5, torch.complex64);
                 for (int i = 0; i < t.shape[0]; i++)
                     for (int j = 0; j < t.shape[1]; j++)
                         t[i][j] = torch.tensor((1.24f * i, 2.491f * i * 2), torch.complex64);
-                var str = t.ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture);
+                str = t.ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[[0 0 0 0 0]{_sep} [1.24+4.982i 1.24+4.982i 1.24+4.982i 1.24+4.982i 1.24+4.982i]{_sep} [2.48+9.964i 2.48+9.964i 2.48+9.964i 2.48+9.964i 2.48+9.964i]{_sep} [3.72+14.946i 3.72+14.946i 3.72+14.946i 3.72+14.946i 3.72+14.946i]{_sep} [4.96+19.928i 4.96+19.928i 4.96+19.928i 4.96+19.928i 4.96+19.928i]]", str);
             }
             Assert.Equal($"[[0 0 0 0]{_sep} [0 0 0 0]]", torch.zeros(2, 4, torch.complex64).ToString(torch.numpy));

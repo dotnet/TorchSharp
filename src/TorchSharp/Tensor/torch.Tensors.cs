@@ -19,17 +19,14 @@ namespace TorchSharp
         /// Returns True if the data type of input is a complex data type i.e., one of torch.complex64, and torch.complex128.
         /// </summary>
         /// <param name="input">The input tensor</param>
-        //public static bool is_complex(Tensor input) => input.is_complex();
-
-        // https://pytorch.org/docs/stable/generated/torch.is_conj
-        //public static bool is_conj(Tensor input) => input.is_conj();
+        public static bool is_complex(Tensor input) => is_complex(input.dtype);
 
         // https://pytorch.org/docs/stable/generated/torch.is_floating_point
         /// <summary>
         /// Returns True if the data type of input is a floating point data type.
         /// </summary>
         /// <param name="input">The input tensor</param>
-        //public static bool is_floating_point(Tensor input) => input.is_floating_point();
+        public static bool is_floating_point(Tensor input) => is_floating_point(input.dtype);
 
         // https://pytorch.org/docs/stable/generated/torch.is_nonzero
         /// <summary>
@@ -66,15 +63,5 @@ namespace TorchSharp
         /// Get the number of elements in the input tensor.
         /// </summary>
         [Pure]public static long numel(Tensor input) => input.numel();
-
-        // https://pytorch.org/docs/stable/generated/torch.set_printoptions
-        [Obsolete("not implemented", true)]
-        public static void set_printoptions(
-            int precision = 4,
-            int threshold = 1000,
-            int edgeitems = 3,
-            int linewidth = 80,
-            PrintOptionsProfile profile = PrintOptionsProfile.@default,
-            bool? sci_mode = null) => throw new NotImplementedException();
     }
 }

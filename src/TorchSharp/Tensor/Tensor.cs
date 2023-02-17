@@ -6116,10 +6116,10 @@ namespace TorchSharp
             /// </summary>
             /// <returns></returns>
             public string ToString(bool disamb,
-                                   string fltFormat = "g5",
-                                   int width = 100,
+                                   string? fltFormat = null,
+                                   int? width = null,
                                    CultureInfo? cultureInfo = null,
-                                   string newLine = "") => disamb ? ToString(torch.TensorStringStyle, fltFormat, width, cultureInfo, newLine) : ToMetadataString();
+                                   string? newLine = null) => disamb ? ToString(torch.TensorStringStyle, fltFormat, width, cultureInfo, newLine) : ToMetadataString();
 
             /// <summary>
             /// Tensor-specific ToString()
@@ -6133,11 +6133,15 @@ namespace TorchSharp
             /// <param name="newLine">The newline string to use, defaults to system default.</param>
             /// <returns></returns>
             public string ToString(TensorStringStyle style,
-                                   string fltFormat = "g5",
-                                   int width = 100,
+                                   string? fltFormat = null,
+                                   int? width = null,
                                    CultureInfo? cultureInfo = null,
-                                   string newLine = "")
+                                   string? newLine = null)
             {
+                var w = width.HasValue ? width.Value : torch.lineWidth;
+                var nl = newLine is null ? torch.newLine : newLine;
+                var fmt = fltFormat is null ? torch.floatFormat : fltFormat;
+
                 if (String.IsNullOrEmpty(newLine))
                     newLine = Environment.NewLine;
 
@@ -6145,10 +6149,10 @@ namespace TorchSharp
                     return ToMetadataString();
 
                 return style switch {
-                    TensorStringStyle.Default => ToString(torch.TensorStringStyle, fltFormat, width, cultureInfo, newLine),
+                    TensorStringStyle.Default => ToString(torch.TensorStringStyle, fltFormat, width, cultureInfo, nl),
                     TensorStringStyle.Metadata => ToMetadataString(),
-                    TensorStringStyle.Julia => ToJuliaString(fltFormat, width, cultureInfo, newLine),
-                    TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fltFormat, cultureInfo, newLine),
+                    TensorStringStyle.Julia => ToJuliaString(fmt, w, cultureInfo, nl),
+                    TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fmt, cultureInfo, nl),
                     _ => throw new InvalidEnumArgumentException($"Unsupported tensor string style: {style}")
                 };
             }
