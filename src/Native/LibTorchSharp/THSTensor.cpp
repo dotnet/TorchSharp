@@ -501,7 +501,7 @@ Tensor THSTensor_repeat_interleave_int64(const Tensor tensor, const int64_t repe
 
 int THSTensor_result_type(const Tensor left, const Tensor right)
 {
-    CATCH_RETURN_RES(int, -1, (int)torch::result_type(*left, *right));
+    CATCH_RETURN_RES(int, -1, res = (int)torch::result_type(*left, *right));
 }
 
 Tensor THSTensor_movedim(const Tensor tensor, const int64_t* src, const int src_len, const int64_t* dst, const int dst_len)

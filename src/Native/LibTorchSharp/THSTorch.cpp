@@ -153,7 +153,7 @@ const char * THSTorch_get_and_reset_last_err()
 
 int THSTorch_get_num_threads()
 {
-    CATCH_RETURN_RES(int, -1, torch::get_num_threads());
+    CATCH_RETURN_RES(int, -1, res = torch::get_num_threads());
 }
 
 void THSTorch_set_num_threads(const int threads)
@@ -163,7 +163,7 @@ void THSTorch_set_num_threads(const int threads)
 
 int THSTorch_get_num_interop_threads()
 {
-    CATCH_RETURN_RES(int, -1, torch::get_num_interop_threads());
+    CATCH_RETURN_RES(int, -1, res = torch::get_num_interop_threads());
 }
 
 void THSTorch_set_num_interop_threads(const int threads)
@@ -173,12 +173,12 @@ void THSTorch_set_num_interop_threads(const int threads)
 
 int THSTorch_can_cast(const int type1, const int type2)
 {
-    CATCH_RETURN_RES(int, -1, (int)torch::can_cast((c10::ScalarType)type1, (c10::ScalarType)type2));
+    CATCH_RETURN_RES(int, -1, res = (int)torch::can_cast((c10::ScalarType)type1, (c10::ScalarType)type2));
 }
 
 int THSTorch_promote_types(const int type1, const int type2)
 {
-    CATCH_RETURN_RES(int, -1, (int)torch::promote_types((c10::ScalarType)type1, (c10::ScalarType)type2));
+    CATCH_RETURN_RES(int, -1, res = (int)torch::promote_types((c10::ScalarType)type1, (c10::ScalarType)type2));
 }
 
 
