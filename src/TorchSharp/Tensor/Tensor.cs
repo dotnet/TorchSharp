@@ -5784,8 +5784,7 @@ namespace TorchSharp
                     dims = (0, 1);
                 }
 
-                var res =
-                    LibTorchSharp.THSTensor_rot90(Handle, k, dims.Value.Item1, dims.Value.Item2);
+                var res = LibTorchSharp.THSTensor_rot90(Handle, k, dims.Value.Item1, dims.Value.Item2);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
             }
