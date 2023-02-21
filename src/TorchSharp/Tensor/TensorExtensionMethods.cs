@@ -44,8 +44,8 @@ namespace TorchSharp
         /// <param name="sci_mode">Enable scientific notation.</param>
         public static void set_printoptions(
             int precision,
-            int? linewidth = 100,
-            string? newLine = "\n",
+            int? linewidth = null,
+            string? newLine = null,
             bool sci_mode = false)
         {
             torch.floatFormat = sci_mode ? $"E{precision}" : $"F{precision}";
@@ -66,11 +66,13 @@ namespace TorchSharp
         /// <param name="linewidth">The number of characters per line for the purpose of inserting line breaks (default = 100).</param>
         /// <param name="newLine">The string to use to represent new-lines. Starts out as 'Environment.NewLine'</param>
         public static void set_printoptions(
-            TensorStringStyle style = TensorStringStyle.Julia,
+            TensorStringStyle? style = null,
             string? floatFormat = null,
             int? linewidth = null,
             string? newLine = null)
         {
+            if (style.HasValue)
+                torch._style = style.Value;
             if (floatFormat is not null)
                 torch.floatFormat = floatFormat;
             if (newLine is not null)
