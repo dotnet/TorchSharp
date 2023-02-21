@@ -44,18 +44,21 @@ namespace TorchSharp
         /// <param name="sci_mode">Enable scientific notation.</param>
         public static void set_printoptions(
             int precision,
-            int linewidth = 100,
-            string newLine = "\n",
+            int? linewidth = null,
+            string? newLine = null,
             bool sci_mode = false)
         {
             torch.floatFormat = sci_mode ? $"E{precision}" : $"F{precision}";
-            torch.newLine = newLine;
-            torch.lineWidth = linewidth;
+            if (newLine is not null)
+                torch.newLine = newLine;
+            if (linewidth.HasValue)
+                torch.lineWidth = linewidth.Value;
         }
 
         /// <summary>
         /// Set options for printing.
         /// </summary>
+        /// <param name="style">The default string formatting style used by ToString(), print(), and str()</param>
         /// <param name="floatFormat">
         /// The format string to use for floating point values.
         /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
@@ -63,13 +66,19 @@ namespace TorchSharp
         /// <param name="linewidth">The number of characters per line for the purpose of inserting line breaks (default = 100).</param>
         /// <param name="newLine">The string to use to represent new-lines. Starts out as 'Environment.NewLine'</param>
         public static void set_printoptions(
-            string floatFormat = "g5",
-            int linewidth = 100,
-            string newLine = "\n")
+            TensorStringStyle? style = null,
+            string? floatFormat = null,
+            int? linewidth = null,
+            string? newLine = null)
         {
-            torch.floatFormat = floatFormat;
-            torch.newLine = newLine;
-            torch.lineWidth = linewidth;
+            if (style.HasValue)
+                torch._style = style.Value;
+            if (floatFormat is not null)
+                torch.floatFormat = floatFormat;
+            if (newLine is not null)
+                torch.newLine = newLine;
+            if (linewidth.HasValue)
+                torch.lineWidth = linewidth.Value;
         }
 
         public const TensorStringStyle julia = TensorStringStyle.Julia;
