@@ -77,7 +77,7 @@ namespace TorchSharp
                 using (var gen = random.manual_seed(17)) {
                     c = gen.initial_seed();
                 }
-                Assert.NotEqual(a, c);
+                Assert.Equal(a, c);
 
                 var x = rand(new long[] { 10, 10, 10 });
                 Assert.Equal(new long[] { 10, 10, 10 }, x.shape);

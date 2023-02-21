@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Collections.Generic;
@@ -12,12 +12,21 @@ namespace TorchSharp
     public static partial class torch
     {
         // https://pytorch.org/docs/stable/generated/torch.adjoint
-        [Obsolete("not implemented", true)]
-        public static Tensor adjoint(Tensor input) => throw new NotImplementedException();
+        /// <summary>
+        /// Returns a view of the tensor conjugated and with the last two dimensions transposed.
+        /// </summary>
+        /// <param name="input">The input tensor</param>
+        public static Tensor adjoint(Tensor input) => input.adjoint();
 
         // https://pytorch.org/docs/stable/generated/torch.argwhere
-        [Obsolete("not implemented", true)]
-        public static Tensor argwhere(Tensor input) => throw new NotImplementedException();
+        /// <summary>
+        /// Returns a tensor containing the indices of all non-zero elements of input.
+        /// Each row in the result contains the indices of a non-zero element in input.
+        /// The result is sorted lexicographically, with the last index changing the fastest (C-style).
+        /// If input has n dimensions, then the resulting indices tensor out is of size (z×n), where
+        /// z is the total number of non-zero elements in the input tensor.
+        /// </summary>
+        public static Tensor argwhere(Tensor input) => input.argwhere();
 
         // https://pytorch.org/docs/stable/generated/torch.cat
         /// <summary>
@@ -25,7 +34,6 @@ namespace TorchSharp
         /// </summary>
         /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
         /// <param name="dim">The dimension over which the tensors are concatenated</param>
-        /// <returns></returns>
         /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
         public static Tensor cat(IList<Tensor> tensors, long dim = 0)
         {
@@ -44,9 +52,13 @@ namespace TorchSharp
         }
 
         // https://pytorch.org/docs/stable/generated/torch.concat
-        [Obsolete("not implemented", true)]
-        public static Tensor concat(IList<Tensor> tensors, long dim = 0)
-            => throw new NotImplementedException();
+        /// <summary>
+        /// Alias of torch.cat()
+        /// </summary>
+        /// <param name="tensors">A sequence of tensors of the same type. Non-empty tensors provided must have the same shape, except in the cat dimension.</param>
+        /// <param name="dim">The dimension over which the tensors are concatenated</param>
+        /// <remarks> All tensors must either have the same shape (except in the concatenating dimension) or be empty.</remarks>
+        public static Tensor concat(IList<Tensor> tensors, long dim = 0) => torch.cat(tensors, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.conj
         /// <summary>
@@ -82,11 +94,6 @@ namespace TorchSharp
         // https://pytorch.org/docs/stable/generated/torch.dsplit
         public static Tensor[] dsplit(Tensor input, (long, long, long, long) indices_or_sections)
             => input.dsplit(indices_or_sections);
-
-        // https://pytorch.org/docs/stable/generated/torch.column_stack
-        [Obsolete("not implemented", true)]
-        public static Tensor column_stack(params Tensor[] tensors)
-            => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.dstack
         /// <summary>
@@ -377,10 +384,6 @@ namespace TorchSharp
         /// <param name="shape">The new tensor shape.</param>
         public static Tensor reshape(Tensor input, params long[] shape) => input.reshape(shape);
 
-        // https://pytorch.org/docs/stable/generated/torch.row_stack
-        public static Tensor row_stack(params Tensor[] tensors)
-            => throw new NotImplementedException();
-
         // https://pytorch.org/docs/stable/generated/torch.select
         public static Tensor select(Tensor input, long dim, long index)
             => input.select(dim, index);
@@ -404,19 +407,39 @@ namespace TorchSharp
             => input.scatter_(dim, index, src);
 
         // https://pytorch.org/docs/stable/generated/torch.diagonal_scatter
-        [Obsolete("not implemented", true)]
-        public static Tensor diagonal_scatter(Tensor input, Tensor src, long offset = 0L, long dim1 = 0L, long dim2 = 1L)
-            => throw new NotImplementedException();
+        /// <summary>
+        /// Embeds the values of the src tensor into input along the diagonal elements of input, with respect to dim1 and dim2.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="src">The tensor to embed into 'this'.</param>
+        /// <param name="offset">Which diagonal to consider. Default: main diagonal.</param>
+        /// <param name="dim1">First dimension with respect to which to take diagonal.</param>
+        /// <param name="dim2">Second dimension with respect to which to take diagonal.</param>
+        public static Tensor diagonal_scatter(Tensor input, Tensor src, long offset = 0L, long dim1 = 0L, long dim2 = 1L) => input.diagonal_scatter(src, offset, dim1, dim2);
 
         // https://pytorch.org/docs/stable/generated/torch.select_scatter
-        [Obsolete("not implemented", true)]
-        public static Tensor select_scatter(Tensor input, Tensor src, long dim, long index)
-            => throw new NotImplementedException();
+        /// <summary>
+        /// Embeds the values of the src tensor into input at the given index. This function returns a tensor with fresh storage; it does not create a view.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="src">The tensor to embed into 'this'</param>
+        /// <param name="dim">The dimension to insert the slice into</param>
+        /// <param name="index">The index to select with</param>
+        /// <remarks>This function returns a tensor with fresh storage; it does not create a view.</remarks>
+        public static Tensor select_scatter(Tensor input, Tensor src, long dim, long index) => input.select_scatter(src, dim, index);
 
         // https://pytorch.org/docs/stable/generated/torch.slice_scatter
-        [Obsolete("not implemented", true)]
-        public static Tensor slice_scatter(Tensor input, Tensor src, long dim=0L, long? start=null, long? end=null, long step=1L)
-            => throw new NotImplementedException();
+        /// <summary>
+        /// Embeds the values of the src tensor into input at the given dimension.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="src">The tensor to embed into 'this'.</param>
+        /// <param name="dim">The dimension to insert the slice into</param>
+        /// <param name="start">The start index of where to insert the slice</param>
+        /// <param name="end">The end index of where to insert the slice</param>
+        /// <param name="step">How many elements to skip</param>
+        public static Tensor slice_scatter(Tensor input, Tensor src, long dim = 0L, long? start = null, long? end = null, long step = 1L)
+            => input.slice_scatter(src, dim, start, end, step);
 
         // https://pytorch.org/docs/stable/generated/torch.scatter_add
         /// <summary>

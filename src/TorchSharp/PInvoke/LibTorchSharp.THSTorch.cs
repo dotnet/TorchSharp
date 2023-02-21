@@ -18,6 +18,12 @@ namespace TorchSharp.PInvoke
         internal static extern byte THSTorch_scalar_type(IntPtr value);
 
         [DllImport("LibTorchSharp")]
+        internal static extern int THSTorch_can_cast(int type1, int type2);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern int THSTorch_promote_types(int type1, int type2);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTorch_uint8_to_scalar(byte value);
 
         [DllImport("LibTorchSharp")]
@@ -85,5 +91,17 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTorch_lstsq(IntPtr handle, IntPtr b, out IntPtr qr);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern int THSTorch_get_num_threads();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_set_num_threads(int threads);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern int THSTorch_get_num_interop_threads();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_set_num_interop_threads(int threads);
     }
 }

@@ -304,13 +304,14 @@ namespace TorchSharp
         [TestOf(nameof(Tensor.ToString))]
         public void Test2DToNumpyString()
         {
-            Assert.Equal($"[[0 3.141 6.2834 3.1415]{_sep} [6.28e-06 -13.142 0.01 4713.1]]", torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4).ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture));
+            string str = torch.tensor(new float[] { 0.0f, 3.141f, 6.2834f, 3.14152f, 6.28e-06f, -13.141529f, 0.01f, 4713.14f }, 2, 4).ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture);
+            Assert.Equal($"[[0 3.141 6.2834 3.1415]{_sep} [6.28e-06 -13.142 0.01 4713.1]]", str);
             {
                 Tensor t = torch.zeros(5, 5, torch.complex64);
                 for (int i = 0; i < t.shape[0]; i++)
                     for (int j = 0; j < t.shape[1]; j++)
                         t[i][j] = torch.tensor((1.24f * i, 2.491f * i * 2), torch.complex64);
-                var str = t.ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture);
+                str = t.ToString(torch.numpy, cultureInfo: CultureInfo.InvariantCulture);
                 Assert.Equal($"[[0 0 0 0 0]{_sep} [1.24+4.982i 1.24+4.982i 1.24+4.982i 1.24+4.982i 1.24+4.982i]{_sep} [2.48+9.964i 2.48+9.964i 2.48+9.964i 2.48+9.964i 2.48+9.964i]{_sep} [3.72+14.946i 3.72+14.946i 3.72+14.946i 3.72+14.946i 3.72+14.946i]{_sep} [4.96+19.928i 4.96+19.928i 4.96+19.928i 4.96+19.928i 4.96+19.928i]]", str);
             }
             Assert.Equal($"[[0 0 0 0]{_sep} [0 0 0 0]]", torch.zeros(2, 4, torch.complex64).ToString(torch.numpy));
@@ -417,7 +418,7 @@ namespace TorchSharp
             Assert.Throws<InvalidOperationException>(() => t1.Handle);
         }
 
-        #if !LINUX
+#if !LINUX
         [Fact(Skip = "Sensitive to parallelism in the xUnit test driver")]
         [TestOf(nameof(torch.randn))]
         public void TestUsings()
@@ -428,7 +429,7 @@ namespace TorchSharp
 
             Assert.Equal(tCount, Tensor.TotalCount);
         }
-        #endif
+#endif
 
         [Fact]
         [TestOf(nameof(torch.ones))]
@@ -3835,6 +3836,46 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.diagonal_scatter))]
+        public void TestDiagonalScatter()
+        {
+            var a = torch.zeros(3, 3);
+
+            var res = a.diagonal_scatter(torch.ones(3), 0);
+
+            Assert.Equal(0, res[0, 1].item<float>());
+
+            Assert.Equal(1, res[0, 0].item<float>());
+            Assert.Equal(1, res[1, 1].item<float>());
+            Assert.Equal(1, res[2, 2].item<float>());
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.slice_scatter))]
+        public void TestSliceScatter()
+        {
+            var a = torch.zeros(8, 8);
+
+            var res = a.slice_scatter(torch.ones(2, 8), start: 6);
+
+            Assert.Equal(0, res[0, 0].item<float>());
+            Assert.Equal(1, res[6, 0].item<float>());
+            Assert.Equal(1, res[7, 0].item<float>());
+
+            res = a.slice_scatter(torch.ones(2, 8), start: 5, step: 2);
+
+            Assert.Equal(0, res[0, 0].item<float>());
+            Assert.Equal(1, res[5, 0].item<float>());
+            Assert.Equal(1, res[7, 0].item<float>());
+
+            res = a.slice_scatter(torch.ones(8, 2), dim: 1, start: 6);
+
+            Assert.Equal(0, res[0, 0].item<float>());
+            Assert.Equal(1, res[0, 6].item<float>());
+            Assert.Equal(1, res[0, 7].item<float>());
+        }
+
+        [Fact]
         [TestOf(nameof(torch.CPU))]
         public void TestStackCpu()
         {
@@ -4284,624 +4325,6 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(Tensor))]
-        public void TestArithmeticOperatorsFloat16()
-        {
-            // Float16 arange_cuda not available on cuda in LibTorch 1.8.0
-            // Float16 arange_cpu not available on cuda in LibTorch 1.8.0
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.ones(new long[] { 10, 10 }, float16, device: device);
-                    var c2 = torch.ones(new long[] { 10, 10 }, float16, device: device);
-                    var c3 = torch.ones(new long[] { 10, 10 }, float16, device: device);
-                    Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
-                    // scalar-tensor operators
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f + a, a => 0.5f + a);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a - 0.5f, a => a - 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a * 0.5f, a => a * 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f * a, a => 0.5f * a);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a / 0.5f, a => a / 0.5f);
-
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.add(0.5f), a => a + 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.sub(0.5f), a => a - 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.mul(0.5f), a => a * 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.div(0.5f), a => a / 0.5f);
-
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.add_(0.5f), a => a + 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.sub_(0.5f), a => a - 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.mul_(0.5f), a => a * 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.div_(0.5f), a => a / 0.5f);
-
-                    // tensor-tensor operators
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
-
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
-
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
-                }
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor))]
-        public void TestArithmeticOperatorsBFloat16()
-        {
-            // BFloat16 arange_cuda not available on cuda in LibTorch 1.8.0
-            // BFloat16 arange_cpu not available on cuda in LibTorch 1.8.0
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.ones(new long[] { 10, 10 }, bfloat16, device: device);
-                    var c2 = torch.ones(new long[] { 10, 10 }, bfloat16, device: device);
-                    var c3 = torch.ones(new long[] { 10, 10 }, bfloat16, device: device);
-                    Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
-                    // scalar-tensor operators
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f + a, a => 0.5f + a);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a - 0.5f, a => a - 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a * 0.5f, a => a * 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f * a, a => 0.5f * a);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a / 0.5f, a => a / 0.5f);
-
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.add(0.5f), a => a + 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.sub(0.5f), a => a - 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.mul(0.5f), a => a * 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.div(0.5f), a => a / 0.5f);
-
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.add_(0.5f), a => a + 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.sub_(0.5f), a => a - 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.mul_(0.5f), a => a * 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.div_(0.5f), a => a / 0.5f);
-
-                    // tensor-tensor operators
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
-
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
-
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
-                }
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor))]
-        public void TestArithmeticOperatorsFloat32()
-        {
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.arange(0, 10, float32, device: device).expand(new long[] { 10, 10 });
-                    var c2 = torch.arange(10, 0, -1, float32, device: device).expand(new long[] { 10, 10 });
-                    var c3 = torch.ones(new long[] { 10, 10 }, float32, device: device);
-                    Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
-                    // scalar-tensor operators
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a + 0.5f, a => a + 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f + a, a => 0.5f + a);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a - 0.5f, a => a - 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a * 0.5f, a => a * 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => 0.5f * a, a => 0.5f * a);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a / 0.5f, a => a / 0.5f);
-
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.add(0.5f), a => a + 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.sub(0.5f), a => a - 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.mul(0.5f), a => a * 0.5f);
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a.div(0.5f), a => a / 0.5f);
-
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.add_(0.5f), a => a + 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.sub_(0.5f), a => a - 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.mul_(0.5f), a => a * 0.5f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.div_(0.5f), a => a / 0.5f);
-
-                    // tensor-tensor operators
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
-
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
-
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
-                }
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor))]
-        public void TestArithmeticOperatorsFloat64()
-        {
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.arange(0, 10, float64, device: device).expand(new long[] { 10, 10 });
-                    var c2 = torch.arange(10, 0, -1, float64, device: device).expand(new long[] { 10, 10 });
-                    var c3 = torch.ones(new long[] { 10, 10 }, float64, device: device);
-                    Func<Tensor, long, long, double> getFunc = (tt, i, j) => tt[i, j].ToDouble();
-                    // scalar-tensor operators
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a + 0.5, a => a + 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => 0.5 + a, a => 0.5 + a);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a - 0.5, a => a - 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a * 0.5, a => a * 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => 0.5 * a, a => 0.5 * a);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a / 0.5, a => a / 0.5);
-
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.add(0.5), a => a + 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.sub(0.5), a => a - 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.mul(0.5), a => a * 0.5);
-                    TestOneTensor<double, double>(c1, c2, getFunc, getFunc, a => a.div(0.5), a => a / 0.5);
-
-                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.add_(0.5), a => a + 0.5);
-                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.sub_(0.5), a => a - 0.5);
-                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.mul_(0.5), a => a * 0.5);
-                    TestOneTensorInPlace<double>(c1, c2, getFunc, a => a.div_(0.5), a => a / 0.5);
-
-                    // tensor-tensor operators
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
-
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
-                    TestTwoTensor<double, double>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
-
-                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
-                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
-                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
-                    TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
-                }
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor))]
-        public void TestArithmeticOperatorsComplexFloat64()
-        {
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.arange(0, 10, complex128, device: device).expand(new long[] { 10, 10 });
-                    var c2 = torch.arange(10, 0, -1, complex128, device: device).expand(new long[] { 10, 10 });
-                    var c3 = torch.ones(new long[] { 10, 10 }, complex128, device: device);
-                    Func<Tensor, long, long, System.Numerics.Complex> getFunc = (tt, i, j) => tt[i, j].ToComplexFloat64();
-                    // scalar-tensor operators
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a + 0.5, a => a + 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => 0.5 + a, a => 0.5 + a);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a - 0.5, a => a - 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a * 0.5, a => a * 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => 0.5 * a, a => 0.5 * a);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a / 0.5, a => a / 0.5);
-
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.add(0.5), a => a + 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.sub(0.5), a => a - 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.mul(0.5), a => a * 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.div(0.5), a => a / 0.5);
-
-                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.add_(0.5), a => a + 0.5);
-                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.sub_(0.5), a => a - 0.5);
-                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.mul_(0.5), a => a * 0.5);
-                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.div_(0.5), a => a / 0.5);
-
-                    // tensor-tensor operators
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
-
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
-
-                    TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
-                    TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
-                    TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
-                    TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
-                }
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor))]
-        public void TestComparisonOperatorsFloat32()
-        {
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.arange(0, 10, float32, device: device).expand(new long[] { 10, 10 });
-                    var c2 = torch.arange(10, 0, -1, float32, device: device).expand(new long[] { 10, 10 });
-                    var c3 = torch.ones(new long[] { 10, 10 }, float32, device: device);
-                    Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
-                    Func<Tensor, long, long, bool> getFuncBool = (tt, i, j) => tt[i, j].ToBoolean();
-                    // scalar-tensor operators
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a == 5.0f, a => a == 5.0f);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a != 5.0f, a => a != 5.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.eq_(5.0f), a => a == 5.0f ? 1.0f : 0.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.ne_(5.0f), a => a != 5.0f ? 1.0f : 0.0f);
-
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a < 5.0f, a => a < 5.0f);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f < a, a => 5.0f < a);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a <= 5.0f, a => a <= 5.0f);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f <= a, a => 5.0f <= a);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a > 5.0f, a => a > 5.0f);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f > a, a => 5.0f > a);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a >= 5.0f, a => a >= 5.0f);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f >= a, a => 5.0f >= a);
-
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.lt_(5.0f), a => a < 5.0f ? 1.0f : 0.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.le_(5.0f), a => a <= 5.0f ? 1.0f : 0.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.gt_(5.0f), a => a > 5.0f ? 1.0f : 0.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.ge_(5.0f), a => a >= 5.0f ? 1.0f : 0.0f);
-
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a % 5.0f, a => a % 5.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.remainder_(5.0f), a => a % 5.0f);
-
-                    // tensor-tensor operators
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a == b, (a, b) => a == b);
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a != b, (a, b) => a != b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.eq_(b), (a, b) => a == b ? 1.0f : 0.0f);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.ne_(b), (a, b) => a != b ? 1.0f : 0.0f);
-
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a < b, (a, b) => a < b);
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a <= b, (a, b) => a <= b);
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a > b, (a, b) => a > b);
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a >= b, (a, b) => a >= b);
-
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.lt_(b), (a, b) => a < b ? 1.0f : 0.0f);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.le_(b), (a, b) => a <= b ? 1.0f : 0.0f);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.gt_(b), (a, b) => a > b ? 1.0f : 0.0f);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.ge_(b), (a, b) => a >= b ? 1.0f : 0.0f);
-
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a % b, (a, b) => a % b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.remainder_(b), (a, b) => a % b);
-                }
-            }
-        }
-
-        private void TestOneTensor<Tin, Tout>(
-            Tensor c1,
-            Tensor c2,
-            Func<Tensor, long, long, Tin> getFuncIn,
-            Func<Tensor, long, long, Tout> getFuncOut,
-            Func<Tensor, Tensor> tensorFunc,
-            Func<Tin, Tout> scalarFunc)
-        {
-            var x = c1 * c2;
-            var y = tensorFunc(x);
-
-            for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 10; j++) {
-                    var xv = getFuncIn(x, i, j);
-                    var yv = getFuncOut(y, i, j);
-                    Assert.Equal<Tout>(yv, scalarFunc(xv));
-                }
-            }
-        }
-
-        private void TestOneTensorInPlace<Tin>(
-            Tensor c1,
-            Tensor c2,
-            Func<Tensor, long, long, Tin> getFuncIn,
-            Func<Tensor, Tensor> tensorFunc,
-            Func<Tin, Tin> scalarFunc)
-        {
-
-            var x = c1 * c2;
-            var xClone = x.clone();
-            var y = tensorFunc(x);
-
-            for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 10; j++) {
-                    var xClonev = getFuncIn(xClone, i, j);
-                    var xv = getFuncIn(x, i, j);
-                    var yv = getFuncIn(y, i, j);
-                    Assert.Equal(yv, scalarFunc(xClonev));
-                    Assert.Equal(yv, xv);
-                }
-            }
-        }
-
-        private void TestTwoTensor<Tin, Tout>(
-            Tensor c1,
-            Tensor c2,
-            Tensor c3,
-            Func<Tensor, long, long, Tin> getFuncIn,
-            Func<Tensor, long, long, Tout> getFuncOut,
-            Func<Tensor, Tensor, Tensor> tensorFunc,
-            Func<Tin, Tin, Tout> scalarFunc)
-        {
-
-            var x = c1 * c3;
-            var y = c2 * c3;
-
-            var z = tensorFunc(x, y);
-
-            for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 10; j++) {
-                    var xv = getFuncIn(x, i, j);
-                    var yv = getFuncIn(y, i, j);
-                    var zv = getFuncOut(z, i, j);
-                    Assert.Equal(zv, scalarFunc(xv, yv));
-                }
-            }
-        }
-
-        private void TestTwoTensorInPlace<Tin>(
-            Tensor c1,
-            Tensor c2,
-            Tensor c3,
-            Func<Tensor, long, long, Tin> getFuncIn,
-            Func<Tensor, Tensor, Tensor> tensorFunc,
-            Func<Tin, Tin, Tin> scalarFunc) where Tin : unmanaged
-        {
-
-            var x = c1 * c3;
-            var xClone = x.clone();
-            var y = c2 * c3;
-
-            var z = tensorFunc(x, y);
-
-            if (x.device_type == DeviceType.CPU) {
-                var xData = x.data<Tin>();
-                var yData = y.data<Tin>();
-                var zData = z.data<Tin>();
-
-                Assert.True(xData == zData);
-            }
-
-            for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 10; j++) {
-                    var xClonev = getFuncIn(xClone, i, j);
-                    var xv = getFuncIn(x, i, j);
-                    var yv = getFuncIn(y, i, j);
-                    var zv = getFuncIn(z, i, j);
-                    Assert.Equal(zv, scalarFunc(xClonev, yv));
-                    Assert.Equal(zv, xv);
-                }
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.eq))]
-        [TestOf(nameof(Tensor.ne))]
-        [TestOf(nameof(Tensor.lt))]
-        [TestOf(nameof(Tensor.gt))]
-        [TestOf(nameof(Tensor.le))]
-        public void TestComparison()
-        {
-            var A = torch.tensor(new float[] { 1.2f, 3.4f, 1.4f, 3.3f }).reshape(2, 2);
-            var B = torch.tensor(new float[] { 1.3f, 3.3f });
-            Assert.Equal(new bool[] { false, false, false, true }, A.eq(B).data<bool>().ToArray());
-            Assert.Equal(new bool[] { false, false, false, true }, torch.eq(A, B).data<bool>().ToArray());
-            Assert.Equal(new bool[] { true, true, true, false }, A.ne(B).data<bool>().ToArray());
-            Assert.Equal(new bool[] { true, true, true, false }, torch.ne(A, B).data<bool>().ToArray());
-            Assert.Equal(new bool[] { true, false, false, false }, A.lt(B).data<bool>().ToArray());
-            Assert.Equal(new bool[] { true, false, false, false }, torch.lt(A, B).data<bool>().ToArray());
-            Assert.Equal(new bool[] { true, false, false, true }, A.le(B).data<bool>().ToArray());
-            Assert.Equal(new bool[] { true, false, false, true }, torch.le(A, B).data<bool>().ToArray());
-            Assert.Equal(new bool[] { false, true, true, false }, A.gt(B).data<bool>().ToArray());
-            Assert.Equal(new bool[] { false, true, true, false }, torch.gt(A, B).data<bool>().ToArray());
-            Assert.Equal(new bool[] { false, true, true, true }, A.ge(B).data<bool>().ToArray());
-            Assert.Equal(new bool[] { false, true, true, true }, torch.ge(A, B).data<bool>().ToArray());
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.lu))]
-        public void TestLUSolve()
-        {
-            var A = torch.randn(2, 3, 3);
-            var b = torch.randn(2, 3, 1);
-
-            {
-                var (A_LU, pivots, infos) = torch.lu(A);
-
-                Assert.NotNull(A_LU);
-                Assert.NotNull(pivots);
-                Assert.Null(infos);
-
-                Assert.Equal(new long[] { 2, 3, 3 }, A_LU.shape);
-                Assert.Equal(new long[] { 2, 3 }, pivots.shape);
-
-                var x = torch.lu_solve(b, A_LU, pivots);
-                Assert.Equal(new long[] { 2, 3, 1 }, x.shape);
-
-                var y = torch.norm(torch.bmm(A, x) - b);
-                Assert.Empty(y.shape);
-            }
-
-            {
-                var (A_LU, pivots, infos) = torch.lu(A, get_infos: true);
-
-                Assert.NotNull(A_LU);
-                Assert.NotNull(pivots);
-                Assert.NotNull(infos);
-
-                Assert.Equal(new long[] { 2, 3, 3 }, A_LU.shape);
-                Assert.Equal(new long[] { 2, 3 }, pivots.shape);
-                Assert.Equal(new long[] { 2 }, infos.shape);
-
-                var x = torch.lu_solve(b, A_LU, pivots);
-                Assert.Equal(new long[] { 2, 3, 1 }, x.shape);
-
-                var y = torch.norm(torch.bmm(A, x) - b);
-                Assert.Empty(y.shape);
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.lu_unpack))]
-        public void TestLUUnpack()
-        {
-            var A = torch.randn(2, 3, 3);
-
-            {
-                var (A_LU, pivots, infos) = torch.lu(A);
-
-                Assert.NotNull(A_LU);
-                Assert.NotNull(pivots);
-                Assert.Null(infos);
-
-                var (P, A_L, A_U) = torch.lu_unpack(A_LU, pivots);
-
-                Assert.NotNull(P);
-                Assert.NotNull(A_L);
-                Assert.NotNull(A_U);
-
-                Assert.Equal(new long[] { 2, 3, 3 }, P.shape);
-                Assert.Equal(new long[] { 2, 3, 3 }, A_L!.shape);
-                Assert.Equal(new long[] { 2, 3, 3 }, A_U!.shape);
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.mul))]
-        public void TestMul()
-        {
-            var x = torch.ones(new long[] { 100, 100 });
-
-            var y = x.mul(0.5f.ToScalar());
-
-            var ydata = y.data<float>();
-            var xdata = x.data<float>();
-
-            for (int i = 0; i < 100; i++) {
-                for (int j = 0; j < 100; j++) {
-                    Assert.Equal(ydata[i + j], xdata[i + j] * 0.5f);
-                }
-            }
-        }
-
-        void TestMmGen(Device device)
-        {
-            {
-                var x1 = torch.ones(new long[] { 1, 2 }, device: device);
-                var x2 = torch.ones(new long[] { 2, 1 }, device: device);
-
-                var y = x1.mm(x2).to(DeviceType.CPU);
-
-                var ydata = y.data<float>();
-
-                Assert.Equal(2.0f, ydata[0]);
-            }
-            //System.Runtime.InteropServices.ExternalException : addmm for CUDA tensors only supports floating - point types.Try converting the tensors with.float() at C:\w\b\windows\pytorch\aten\src\THC / generic / THCTensorMathBlas.cu:453
-            if (device.type == DeviceType.CPU) {
-                var x1 = torch.ones(new long[] { 1, 2 }, int64, device: device);
-                var x2 = torch.ones(new long[] { 2, 1 }, int64, device: device);
-
-                var y = x1.mm(x2).to(DeviceType.CPU);
-
-                var ydata = y.data<long>();
-
-                Assert.Equal(2L, ydata[0]);
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.CPU))]
-        public void TestMmCpu()
-        {
-            TestMmGen(torch.CPU);
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.CUDA))]
-        public void TestMmCuda()
-        {
-            if (torch.cuda.is_available()) {
-                TestMmGen(torch.CUDA);
-            }
-        }
-
-        void TestMVGen(Device device)
-        {
-            {
-                var mat1 = torch.ones(new long[] { 4, 3 }, device: device);
-                var vec1 = torch.ones(new long[] { 3 }, device: device);
-
-                var y = mat1.mv(vec1).to(DeviceType.CPU);
-
-                Assert.Equal(4, y.shape[0]);
-            }
-        }
-
-        void TestAddMVGen(Device device)
-        {
-            {
-                var x1 = torch.ones(new long[] { 4 }, device: device);
-                var mat1 = torch.ones(new long[] { 4, 3 }, device: device);
-                var vec1 = torch.ones(new long[] { 3 }, device: device);
-
-                var y = x1.addmv(mat1, vec1).to(DeviceType.CPU);
-
-                Assert.Equal(4, y.shape[0]);
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.CPU))]
-        public void TestMVCpu()
-        {
-            TestMVGen(torch.CPU);
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.CUDA))]
-        public void TestMVCuda()
-        {
-            if (torch.cuda.is_available()) {
-                TestMVGen(torch.CUDA);
-            }
-        }
-
-        [Fact]
-        public void TestAddMVCpu()
-        {
-            TestAddMVGen(torch.CPU);
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.CUDA))]
-        public void TestAddMVCuda()
-        {
-            if (torch.cuda.is_available()) {
-                TestAddMVGen(torch.CUDA);
-            }
-        }
-
-        void TestAddRGen(Device device)
-        {
-            {
-                var x1 = torch.ones(new long[] { 4, 3 }, device: device);
-                var vec1 = torch.ones(new long[] { 4 }, device: device);
-                var vec2 = torch.ones(new long[] { 3 }, device: device);
-
-                var y = x1.addr(vec1, vec2).to(DeviceType.CPU);
-
-                Assert.Equal(new long[] { 4, 3 }, y.shape);
-            }
-        }
-
-        [Fact]
         [TestOf(nameof(Tensor.positive))]
         public void TestPositive()
         {
@@ -4912,217 +4335,6 @@ namespace TorchSharp
 
             var c = torch.ones(25, 25, @bool);
             Assert.Throws<ArgumentException>(() => c.positive());
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.frexp))]
-        public void TestFrexp()
-        {
-            var x = torch.arange(9, float32);
-            var r = x.frexp();
-
-            Assert.Equal(new float[] { 0.0000f, 0.5000f, 0.5000f, 0.7500f, 0.5000f, 0.6250f, 0.7500f, 0.8750f, 0.5000f }, r.Mantissa.data<float>().ToArray());
-            Assert.Equal(new int[] { 0, 1, 2, 2, 3, 3, 3, 3, 4 }, r.Exponent.data<int>().ToArray());
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.CPU))]
-        public void TestAddRCpu()
-        {
-            TestAddRGen(torch.CPU);
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.CUDA))]
-        public void TestAddRCuda()
-        {
-            if (torch.cuda.is_available()) {
-                TestAddRGen(torch.CUDA);
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.deg2rad))]
-        public void Deg2RadTest()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(angl => (angl * MathF.PI) / 180.0f).ToArray();
-            var res = torch.tensor(data).deg2rad();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.clamp))]
-        public void ClampTest1()
-        {
-            var data = torch.rand(3, 3, 3) * 10;
-            var cl = data.clamp(1, 5);
-
-            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.clamp))]
-        public void ClampTest2()
-        {
-            var data = torch.rand(3, 3, 3) * 10;
-            var cl = data.clamp(torch.ones(3, 3, 3), torch.ones(3, 3, 3) * 5);
-
-            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.clamp))]
-        public void ClampTest3()
-        {
-            var data = torch.rand(3, 3, 3) * 10;
-            var cl = torch.clamp(data, 1, 5);
-
-            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.clamp))]
-        public void ClampTest4()
-        {
-            var data = torch.rand(3, 3, 3) * 10;
-            var cl = torch.clamp(data, torch.ones(3, 3, 3), torch.ones(3, 3, 3) * 5);
-
-            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.rad2deg))]
-        public void Rad2DegTest()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(angl => (angl * 180.0f) / MathF.PI).ToArray();
-            var res = torch.tensor(data).rad2deg();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.abs))]
-        public void AbsTest()
-        {
-            var data = torch.arange(-10.0f, 10.0f, 1.0f);
-            var expected = data.data<float>().ToArray().Select(MathF.Abs).ToArray();
-            var res = data.abs();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.abs))]
-        public void AbsTestC32()
-        {
-            var data = torch.rand(new long[] { 25 }, complex64);
-            var expected = data.data<(float R, float I)>().ToArray().Select(c => MathF.Sqrt(c.R * c.R + c.I * c.I)).ToArray();
-            var res = data.abs();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.abs))]
-        public void AbsTestC64()
-        {
-            var data = torch.rand(new long[] { 25 }, complex128);
-            var expected = data.data<System.Numerics.Complex>().ToArray().Select(c => Math.Sqrt(c.Real * c.Real + c.Imaginary * c.Imaginary)).ToArray<double>();
-            var res = data.abs();
-            Assert.True(res.allclose(torch.tensor(expected, float64)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.angle))]
-        public void AngleTestC32()
-        {
-            var data = torch.randn(new long[] { 25 }, complex64);
-            var expected = data.data<(float R, float I)>().ToArray().Select(c => {
-                var x = c.R;
-                var y = c.I;
-                return (x > 0 || y != 0) ? 2 * MathF.Atan(y / (MathF.Sqrt(x * x + y * y) + x)) : (x < 0 && y == 0) ? MathF.PI : 0;
-            }).ToArray();
-            var res = data.angle();
-            Assert.True(res.allclose(torch.tensor(expected), rtol: 1e-03, atol: 1e-05));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.angle))]
-        public void AngleTestC64()
-        {
-            var data = torch.randn(new long[] { 25 }, complex128);
-            var expected = data.data<System.Numerics.Complex>().ToArray().Select(c => {
-                var x = c.Real;
-                var y = c.Imaginary;
-                return (x > 0 || y != 0) ? 2 * Math.Atan(y / (Math.Sqrt(x * x + y * y) + x)) : (x < 0 && y == 0) ? Math.PI : 0;
-            }).ToArray<double>();
-            var res = data.angle();
-            Assert.True(res.allclose(torch.tensor(expected, float64), rtol: 1e-03, atol: 1e-05));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.sqrt))]
-        public void SqrtTest()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Sqrt).ToArray();
-            var res = torch.tensor(data).sqrt();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.sin))]
-        public void SinTest()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Sin).ToArray();
-            var res = torch.tensor(data).sin();
-            Assert.True(res.allclose(torch.tensor(expected)));
-            res = torch.sin(torch.tensor(data));
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.cos))]
-        public void CosTest()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Cos).ToArray();
-            var res = torch.tensor(data).cos();
-            Assert.True(res.allclose(torch.tensor(expected)));
-            res = torch.cos(torch.tensor(data));
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.i0))]
-        public void I0Test()
-        {
-            var data = torch.arange(0, 5, 1, float32);
-            var expected = new float[] { 0.99999994f, 1.266066f, 2.27958512f, 4.88079262f, 11.3019209f };
-            var res = data.i0();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.hypot))]
-        public void HypotTest()
-        {
-            var a = new float[] { 1.0f, 2.0f, 3.0f };
-            var b = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = a.Select(x => MathF.Sqrt(2.0f) * x).ToArray();
-            var res = torch.tensor(a).hypot(torch.tensor(b));
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.vdot))]
-        public void VdotTest()
-        {
-            var a = new float[] { 1.0f, 2.0f, 3.0f };
-            var b = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = torch.tensor(a.Zip(b).Select(x => x.First * x.Second).Sum());
-            var res = torch.tensor(a).vdot(torch.tensor(b));
-            Assert.True(res.allclose(expected));
         }
 
         [Fact]
@@ -5277,164 +4489,20 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(Tensor.tan))]
-        public void TanTest()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Tan).ToArray();
-            var res = torch.tensor(data).tan();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.sinh))]
-        public void SinhTest()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Sinh).ToArray();
-            var res = torch.tensor(data).sinh();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.cosh))]
-        public void CoshTest()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Cosh).ToArray();
-            var res = torch.tensor(data).cosh();
-            var tmp = res.data<Single>();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.tanh))]
-        public void TanhTest()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Tanh).ToArray();
-            var res = torch.tensor(data).tanh();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.asinh))]
-        public void ArcSinhTest()
-        {
-            var data = new float[] { -0.1f, 0.0f, 0.1f };
-            var expected = data.Select(MathF.Asinh).ToArray();
-            var res = torch.tensor(data).asinh();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.acosh))]
-        public void ArcCoshTest()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Acosh).ToArray();
-            var res = torch.tensor(data).acosh();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.atanh))]
-        public void ArcTanhTest()
-        {
-            var data = new float[] { -0.1f, 0.0f, 0.1f };
-            var expected = data.Select(MathF.Atanh).ToArray();
-            var res = torch.tensor(data).atanh();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.asin))]
-        public void AsinTest()
-        {
-            var data = new float[] { 1.0f, 0.2f, -0.1f };
-            var expected = data.Select(MathF.Asin).ToArray();
-            {
-                var res = torch.tensor(data).asin();
-                Assert.True(res.allclose(torch.tensor(expected)));
-            }
-            {
-                var res = torch.tensor(data).arcsin();
-                Assert.True(res.allclose(torch.tensor(expected)));
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.acos))]
-        public void AcosTest()
-        {
-            var data = new float[] { 1.0f, 0.2f, -0.1f };
-            var expected = data.Select(MathF.Acos).ToArray();
-            {
-                var res = torch.tensor(data).acos();
-                Assert.True(res.allclose(torch.tensor(expected)));
-            }
-            {
-                var res = torch.tensor(data).arccos();
-                Assert.True(res.allclose(torch.tensor(expected)));
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.atan))]
-        public void AtanTest()
-        {
-            var data = new float[] { 1.0f, 0.2f, -0.1f };
-            var expected = data.Select(MathF.Atan).ToArray();
-            {
-                var res = torch.tensor(data).atan();
-                Assert.True(res.allclose(torch.tensor(expected)));
-            }
-            {
-                var res = torch.tensor(data).arctan();
-                Assert.True(res.allclose(torch.tensor(expected)));
-            }
-        }
-
-
-        [Fact]
         [TestOf(nameof(Tensor.cov))]
         public void CovarianceTest()
         {
             var data = new float[] { 0, 2, 1, 1, 2, 0 };
             var expected = new float[] { 1, -1, -1, 1 };
             var res = torch.tensor(data).reshape(3, 2).T;
-            var cov1 = res.cov();
-            Assert.True(cov1.allclose(torch.tensor(expected).reshape(2, 2)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.log))]
-        public void LogTest()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(x => MathF.Log(x)).ToArray();
-            var res = torch.tensor(data).log();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.log10))]
-        public void Log10Test()
-        {
-            var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Log10).ToArray();
-            var res = torch.tensor(data).log10();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.log2))]
-        public void Log2Test()
-        {
-            var data = new float[] { 1.0f, 2.0f, 32.0f };
-            var expected = data.Select(MathF.Log2).ToArray();
-            var res = torch.tensor(data).log2();
-            Assert.True(res.allclose(torch.tensor(expected)));
+            {
+                var cov1 = res.cov();
+                Assert.True(cov1.allclose(torch.tensor(expected).reshape(2, 2)));
+            }
+            {
+                var cov1 = torch.cov(res);
+                Assert.True(cov1.allclose(torch.tensor(expected).reshape(2, 2)));
+            }
         }
 
         [Fact]
@@ -5465,49 +4533,6 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(Tensor.logaddexp))]
-        public void LogAddExpTest()
-        {
-            var x = new float[] { 1.0f, 2.0f, 3.0f };
-            var y = new float[] { 4.0f, 5.0f, 6.0f };
-            var expected = new float[x.Length];
-            for (int i = 0; i < x.Length; i++) {
-                expected[i] = MathF.Log(MathF.Exp(x[i]) + MathF.Exp(y[i]));
-            }
-            var res = torch.tensor(x).logaddexp(torch.tensor(y));
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.logaddexp2))]
-        public void LogAddExp2Test()
-        {
-            var x = new float[] { 1.0f, 2.0f, 3.0f };
-            var y = new float[] { 4.0f, 5.0f, 6.0f };
-            var expected = new float[x.Length];
-            for (int i = 0; i < x.Length; i++) {
-                expected[i] = MathF.Log(MathF.Pow(2.0f, x[i]) + MathF.Pow(2.0f, y[i]), 2.0f);
-            }
-            var res = torch.tensor(x).logaddexp2(torch.tensor(y));
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.reciprocal))]
-        public void ReciprocalTest()
-        {
-            var x = torch.ones(new long[] { 10, 10 });
-            x.fill_(4.0f);
-            var y = x.reciprocal();
-
-            Assert.All(x.data<float>().ToArray(), a => Assert.Equal(4.0f, a));
-            Assert.All(y.data<float>().ToArray(), a => Assert.Equal(0.25f, a));
-
-            x.reciprocal_();
-            Assert.All(x.data<float>().ToArray(), a => Assert.Equal(0.25f, a));
-        }
-
-        [Fact]
         [TestOf(nameof(Tensor.outer))]
         public void OuterTest()
         {
@@ -5517,57 +4542,6 @@ namespace TorchSharp
 
             var res = x.outer(y);
             Assert.Equal(torch.tensor(expected, 4, 3), res);
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.exp2))]
-        public void Exp2Test()
-        {
-            var x = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = new float[] { 2.0f, 4.0f, 8.0f };
-            var res = torch.tensor(x).exp2();
-            Assert.True(res.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.floor))]
-        public void FloorTest()
-        {
-            var data = new float[] { 1.1f, 2.0f, 3.1f };
-            var expected = data.Select(MathF.Floor).ToArray();
-            var input = torch.tensor(data);
-            var res = input.floor();
-            Assert.True(res.allclose(torch.tensor(expected)));
-
-            input.floor_();
-            Assert.True(input.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.trunc))]
-        public void TruncTest()
-        {
-            var input = torch.randn(new long[] { 25 });
-            var expected = input.data<float>().ToArray().Select(MathF.Truncate).ToArray();
-            var res = input.trunc();
-            Assert.True(res.allclose(torch.tensor(expected)));
-
-            input.trunc_();
-            Assert.True(input.allclose(torch.tensor(expected)));
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.ceil))]
-        public void CeilTest()
-        {
-            var data = new float[] { 1.1f, 2.0f, 3.1f };
-            var expected = data.Select(MathF.Ceiling).ToArray();
-            var input = torch.tensor(data);
-            var res = input.ceil();
-            Assert.True(res.allclose(torch.tensor(expected)));
-
-            input.ceil_();
-            Assert.True(res.allclose(torch.tensor(expected)));
         }
 
         [Fact]
@@ -5588,83 +4562,6 @@ namespace TorchSharp
             var physical = torch.conj_physical(input);
             Assert.Equal(10, res.shape[0]);
             Assert.False(physical.is_conj());
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.round))]
-        public void RoundTest()
-        {
-            var rnd = new Random();
-            var data = Enumerable.Range(1, 100).Select(i => (float)rnd.NextDouble() * 10000).ToArray();
-
-            {
-                var expected = data.Select(x => MathF.Round(x)).ToArray();
-                var input = torch.tensor(data);
-                var res = input.round();
-                Assert.True(res.allclose(torch.tensor(expected)));
-
-                input.round_();
-                Assert.True(input.allclose(torch.tensor(expected)));
-            }
-            {
-                var expected = data.Select(x => MathF.Round(x * 10.0f) / 10.0f).ToArray();
-                var input = torch.tensor(data);
-                var res = input.round(1);
-                Assert.True(res.allclose(torch.tensor(expected)));
-
-                input.round_(1);
-                Assert.True(input.allclose(torch.tensor(expected)));
-            }
-            {
-                var expected = data.Select(x => MathF.Round(x * 100.0f) / 100.0f).ToArray();
-                var input = torch.tensor(data);
-                var res = input.round(2);
-                Assert.True(res.allclose(torch.tensor(expected)));
-
-                input.round_(2);
-                Assert.True(input.allclose(torch.tensor(expected)));
-            }
-            {
-                var expected = data.Select(x => MathF.Round(x * 0.1f) / 0.1f).ToArray();
-                var input = torch.tensor(data);
-                var res = input.round(-1);
-                Assert.True(res.allclose(torch.tensor(expected)));
-
-                input.round_(-1);
-                Assert.True(input.allclose(torch.tensor(expected)));
-            }
-            {
-                var expected = data.Select(x => MathF.Round(x * 0.01f) / 0.01f).ToArray();
-                var input = torch.tensor(data);
-                var res = input.round(-2);
-                Assert.True(res.allclose(torch.tensor(expected)));
-
-                input.round_(-2);
-                Assert.True(input.allclose(torch.tensor(expected)));
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.round))]
-        [TestOf(nameof(torch.round_))]
-        public void RoundTestWithDecimals()
-        {
-            const long n = 7L;
-            var i = eye(n); // identity matrix
-            var a = rand(new[] { n, n });
-            var b = linalg.inv(a);
-
-            // check non-inline version
-            var r0 = round(matmul(a, b), 2L);
-            var r1 = round(matmul(b, a), 3L);
-            Assert.True(i.allclose(r0), "round() failed");
-            Assert.True(i.allclose(r1), "round() failed");
-
-            // check inline version
-            var r0_ = matmul(a, b).round_(2L);
-            var r1_ = matmul(b, a).round_(3L);
-            Assert.True(i.allclose(r0_), "round_() failed");
-            Assert.True(i.allclose(r1_), "round_() failed");
         }
 
         [Fact]
@@ -5694,45 +4591,6 @@ namespace TorchSharp
                 var res = tensor.channel_shuffle(2);
                 var expected = torch.tensor(new int[] { 1, 2, 3, 4, 9, 10, 11, 12, 5, 6, 7, 8, 13, 14, 15, 16 }, 1, 4, 2, 2);
                 Assert.True(res.allclose(expected));
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.vander))]
-        public void VanderTest()
-        {
-            var x = torch.tensor(new int[] { 1, 2, 3, 5 });
-            {
-                var res = x.vander();
-                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 8, 4, 2, 1, 27, 9, 3, 1, 125, 25, 5, 1 }, 4, 4);
-                Assert.Equal(expected, res);
-            }
-            {
-                var res = x.vander(3);
-                var expected = torch.tensor(new long[] { 1, 1, 1, 4, 2, 1, 9, 3, 1, 25, 5, 1 }, 4, 3);
-                Assert.Equal(expected, res);
-            }
-            {
-                var res = x.vander(3, true);
-                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 2, 4, 1, 3, 9, 1, 5, 25 }, 4, 3);
-                Assert.Equal(expected, res);
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.linalg.vander))]
-        public void LinalgVanderTest()
-        {
-            var x = torch.tensor(new int[] { 1, 2, 3, 5 });
-            {
-                var res = torch.linalg.vander(x);
-                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 1, 2, 4, 8, 1, 3, 9, 27, 1, 5, 25, 125 }, 4, 4);
-                Assert.Equal(expected, res);
-            }
-            {
-                var res = torch.linalg.vander(x, 3);
-                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 2, 4, 1, 3, 9, 1, 5, 25 }, 4, 3);
-                Assert.Equal(expected, res);
             }
         }
 
@@ -6809,464 +5667,6 @@ namespace TorchSharp
                             var item = t3p2d3[i, j, k].ToDouble();
                             Assert.True(Math.Abs(itemCorrect - item) < 0.01f);
                         }
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.cholesky))]
-        public void CholeskyTest()
-        {
-            var a = torch.randn(new long[] { 3, 2, 2 }, float64);
-            a = a.matmul(a.swapdims(-2, -1));   // Worked this in to get it tested. Alias for 'transpose'
-            var l = linalg.cholesky(a);
-
-            Assert.True(a.allclose(l.matmul(l.swapaxes(-2, -1)))); // Worked this in to get it tested. Alias for 'transpose'
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.cholesky_ex))]
-        public void CholeskyExTest()
-        {
-            var a = torch.randn(new long[] { 3, 2, 2 }, float64);
-            a = a.matmul(a.swapdims(-2, -1));   // Worked this in to get it tested. Alias for 'transpose'
-            var (l, info) = linalg.cholesky_ex(a);
-
-            Assert.True(a.allclose(l.matmul(l.swapaxes(-2, -1))));
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.inv))]
-        public void InvTest()
-        {
-            var a = torch.randn(new long[] { 3, 2, 2 }, float64);
-            var l = linalg.inv(a);
-
-            Assert.Equal(a.shape, l.shape);
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.inv_ex))]
-        public void InvExTest()
-        {
-            var a = torch.randn(new long[] { 3, 2, 2 }, float64);
-            var (l, info) = linalg.inv_ex(a);
-
-            Assert.Equal(a.shape, l.shape);
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.cond))]
-        public void CondTestF64()
-        {
-            {
-                var a = torch.randn(new long[] { 3, 3, 3 }, float64);
-                // The following mostly checks that the runtime interop doesn't blow up.
-                _ = linalg.cond(a);
-                _ = linalg.cond(a, "fro");
-                _ = linalg.cond(a, "nuc");
-                _ = linalg.cond(a, 1);
-                _ = linalg.cond(a, -1);
-                _ = linalg.cond(a, 2);
-                _ = linalg.cond(a, -2);
-                _ = linalg.cond(a, Double.PositiveInfinity);
-                _ = linalg.cond(a, Double.NegativeInfinity);
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.cond))]
-        public void CondTestCF64()
-        {
-            {
-                var a = torch.randn(new long[] { 3, 3, 3 }, complex128);
-                // The following mostly checks that the runtime interop doesn't blow up.
-                _ = linalg.cond(a);
-                _ = linalg.cond(a, "fro");
-                _ = linalg.cond(a, "nuc");
-                _ = linalg.cond(a, 1);
-                _ = linalg.cond(a, -1);
-                _ = linalg.cond(a, 2);
-                _ = linalg.cond(a, -2);
-                _ = linalg.cond(a, Double.PositiveInfinity);
-                _ = linalg.cond(a, Double.NegativeInfinity);
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.qr))]
-        public void QRTest()
-        {
-            var a = torch.randn(new long[] { 4, 25, 25 });
-
-            var l = linalg.qr(a);
-
-            Assert.Equal(a.shape, l.Q.shape);
-            Assert.Equal(a.shape, l.R.shape);
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.solve))]
-        public void SolveTest()
-        {
-            var A = torch.randn(3, 3);
-            var b = torch.randn(3);
-            var x = torch.linalg.solve(A, b);
-            Assert.True(A.matmul(x).allclose(b, rtol: 1e-03, atol: 1e-06));
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.svd))]
-        public void SVDTest()
-        {
-            var a = torch.randn(new long[] { 4, 25, 15 });
-
-            var l = linalg.svd(a);
-
-            Assert.Equal(new long[] { 4, 25, 25 }, l.U.shape);
-            Assert.Equal(new long[] { 4, 15 }, l.S.shape);
-            Assert.Equal(new long[] { 4, 15, 15 }, l.Vh.shape);
-
-            l = linalg.svd(a, fullMatrices: false);
-
-            Assert.Equal(a.shape, l.U.shape);
-            Assert.Equal(new long[] { 4, 15 }, l.S.shape);
-            Assert.Equal(new long[] { 4, 15, 15 }, l.Vh.shape);
-        }
-
-
-        [Fact]
-        [TestOf(nameof(linalg.svdvals))]
-        public void SVDValsTest()
-        {
-            var a = torch.tensor(new double[] { -1.3490, -0.1723, 0.7730,
-                -1.6118, -0.3385, -0.6490,
-                 0.0908, 2.0704, 0.5647,
-                -0.6451, 0.1911, 0.7353,
-                 0.5247, 0.5160, 0.5110}, 5, 3);
-
-            var l = linalg.svdvals(a);
-            Assert.True(l.allclose(torch.tensor(new double[] { 2.5138929972840613, 2.1086555338402455, 1.1064930672223237 }), rtol: 1e-04, atol: 1e-07));
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.lstsq))]
-        public void LSTSQTest()
-        {
-            var a = torch.randn(new long[] { 4, 25, 15 });
-            var b = torch.randn(new long[] { 4, 25, 10 });
-
-            var l = linalg.lstsq(a, b);
-
-            Assert.Equal(new long[] { 4, 15, 10 }, l.Solution.shape);
-            Assert.Equal(0, l.Residuals.shape[0]);
-            Assert.Equal(new long[] { 4 }, l.Rank.shape);
-            Assert.Equal(new long[] { 4, 15, 10 }, l.Solution.shape);
-            Assert.Equal(0, l.SingularValues.shape[0]);
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.lu))]
-        public void LUTest()
-        {
-            var A = torch.randn(2, 3, 3);
-            var A_factor = torch.linalg.lu(A);
-            // For right now, pretty much just checking that it's not blowing up.
-            Assert.Multiple(
-                () => Assert.NotNull(A_factor.P),
-                () => Assert.NotNull(A_factor.L),
-                () => Assert.NotNull(A_factor.U)
-            );
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.lu_factor))]
-        public void LUFactorTest()
-        {
-            var A = torch.randn(2, 3, 3);
-            var A_factor = torch.linalg.lu_factor(A);
-            // For right now, pretty much just checking that it's not blowing up.
-            Assert.Multiple(
-                () => Assert.NotNull(A_factor.LU),
-                () => Assert.NotNull(A_factor.Pivots)
-            );
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.ldl_factor))]
-        public void LDLFactorTest()
-        {
-            var A = torch.randn(2, 3, 3);
-            var A_factor = torch.linalg.ldl_factor(A);
-            // For right now, pretty much just checking that it's not blowing up.
-            Assert.Multiple(
-                () => Assert.NotNull(A_factor.LU),
-                () => Assert.NotNull(A_factor.Pivots)
-            );
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.ldl_factor))]
-        public void LDLFactorExTest()
-        {
-            var A = torch.randn(2, 3, 3);
-            var A_factor = torch.linalg.ldl_factor_ex(A);
-            // For right now, pretty much just checking that it's not blowing up.
-            Assert.Multiple(
-                () => Assert.NotNull(A_factor.LU),
-                () => Assert.NotNull(A_factor.Pivots),
-                () => Assert.NotNull(A_factor.Info)
-            );
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.matrix_power))]
-        public void MatrixPowerTest()
-        {
-            var a = torch.randn(new long[] { 25, 25 });
-            var b = a.matrix_power(3);
-            Assert.Equal(new long[] { 25, 25 }, b.shape);
-        }
-
-        [Fact]
-        [TestOf(nameof(Tensor.matrix_exp))]
-        public void MatrixExpTest1()
-        {
-            var a = torch.randn(new long[] { 25, 25 });
-            var b = a.matrix_exp();
-            Assert.Equal(new long[] { 25, 25 }, b.shape);
-
-            var c = torch.matrix_exp(a);
-            Assert.Equal(new long[] { 25, 25 }, c.shape);
-        }
-
-        [Fact]
-        [TestOf(nameof(torch.matrix_exp))]
-        public void MatrixExpTest2()
-        {
-            var a = torch.randn(new long[] { 16, 25, 25 });
-            var b = a.matrix_exp();
-            Assert.Equal(new long[] { 16, 25, 25 }, b.shape);
-            var c = torch.matrix_exp(a);
-            Assert.Equal(new long[] { 16, 25, 25 }, c.shape);
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.matrix_rank))]
-        public void MatrixRankTest()
-        {
-            var mr1 = torch.linalg.matrix_rank(torch.randn(4, 3, 2));
-            Assert.Equal(new long[] { 4 }, mr1.shape);
-
-            var mr2 = torch.linalg.matrix_rank(torch.randn(2, 4, 3, 2));
-            Assert.Equal(new long[] { 2, 4 }, mr2.shape);
-
-            // Really just testing that it doesn't blow up in interop for the following lines:
-
-            mr2 = torch.linalg.matrix_rank(torch.randn(2, 4, 3, 2), atol: 1.0);
-            Assert.Equal(new long[] { 2, 4 }, mr2.shape);
-
-            mr2 = torch.linalg.matrix_rank(torch.randn(2, 4, 3, 2), atol: 1.0, rtol: 0.0);
-            Assert.Equal(new long[] { 2, 4 }, mr2.shape);
-
-            mr2 = torch.linalg.matrix_rank(torch.randn(2, 4, 3, 2), atol: torch.tensor(1.0));
-            Assert.Equal(new long[] { 2, 4 }, mr2.shape);
-
-            mr2 = torch.linalg.matrix_rank(torch.randn(2, 4, 3, 2), atol: torch.tensor(1.0), rtol: torch.tensor(0.0));
-            Assert.Equal(new long[] { 2, 4 }, mr2.shape);
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.multi_dot))]
-        public void MultiDotTest()
-        {
-            var a = torch.randn(new long[] { 25, 25 });
-            var b = torch.randn(new long[] { 25, 25 });
-            var c = torch.randn(new long[] { 25, 25 });
-            var d = torch.linalg.multi_dot(new Tensor[] { a, b, c });
-            Assert.Equal(new long[] { 25, 25 }, d.shape);
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.det))]
-        public void DeterminantTest()
-        {
-            {
-                var a = torch.tensor(
-                    new float[] { 0.9478f, 0.9158f, -1.1295f,
-                                  0.9701f, 0.7346f, -1.8044f,
-                                 -0.2337f, 0.0557f, 0.6929f }, 3, 3);
-                var l = linalg.det(a);
-                Assert.True(l.allclose(torch.tensor(0.09335048f)));
-            }
-            {
-                var a = torch.tensor(
-                    new float[] { 0.9254f, -0.6213f, -0.5787f, 1.6843f, 0.3242f, -0.9665f,
-                                  0.4539f, -0.0887f, 1.1336f, -0.4025f, -0.7089f, 0.9032f }, 3, 2, 2);
-                var l = linalg.det(a);
-                Assert.True(l.allclose(torch.tensor(new float[] { 1.19910491f, 0.4099378f, 0.7385352f })));
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.matrix_norm))]
-        public void MatrixNormTest()
-        {
-            {
-                var a = torch.arange(9, float32).view(3, 3);
-
-                var b = linalg.matrix_norm(a);
-                var c = linalg.matrix_norm(a, ord: -1);
-
-                Assert.Equal(14.282857f, b.item<float>());
-                Assert.Equal(9.0f, c.item<float>());
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.vector_norm))]
-        public void VectorNormTest()
-        {
-            {
-                var a = torch.tensor(
-                    new float[] { -4.0f, -3.0f, -2.0f, -1.0f, 0, 1.0f, 2.0f, 3.0f, 4.0f });
-
-                var b = linalg.vector_norm(a, ord: 3.5);
-                var c = linalg.vector_norm(a.view(3, 3), ord: 3.5);
-
-                Assert.Equal(5.4344883f, b.item<float>());
-                Assert.Equal(5.4344883f, c.item<float>());
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.pinv))]
-        public void PinvTest()
-        {
-            var mr1 = torch.linalg.pinv(torch.randn(4, 3, 5));
-            Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
-
-            // Really just testing that it doesn't blow up in interop for the following lines:
-
-            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: 1.0);
-            Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
-
-            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: 1.0, rtol: 0.0);
-            Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
-
-            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: torch.tensor(1.0));
-            Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
-
-            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: torch.tensor(1.0), rtol: torch.tensor(0.0));
-            Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.eig))]
-        public void EigTest32()
-        {
-            {
-                var a = torch.tensor(
-                    new float[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
-
-                var expected = torch.tensor(
-                    new (float, float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
-
-                {
-                    var (values, vectors) = linalg.eig(a);
-                    Assert.NotNull(vectors);
-                    Assert.True(values.allclose(expected));
-                }
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.eigvals))]
-        public void EighvalsTest32()
-        {
-            {
-                var a = torch.tensor(
-                    new float[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
-                var expected = torch.tensor(
-                    new (float, float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
-                var l = linalg.eigvals(a);
-                Assert.True(l.allclose(expected));
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.eigvals))]
-        public void EighvalsTest64()
-        {
-            // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                var a = torch.tensor(
-                    new double[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
-                var expected = torch.tensor(
-                    new System.Numerics.Complex[] { new System.Numerics.Complex(3.44288778f, 0.0f), new System.Numerics.Complex(2.17609453f, 0.0f), new System.Numerics.Complex(-2.128083f, 0.0f) });
-                var l = linalg.eigvals(a);
-                Assert.True(l.allclose(expected));
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.eigvalsh))]
-        public void EighvalshTest32()
-        {
-            // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                var a = torch.tensor(
-                    new float[] {  2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f,
-                                  -2.7457f, -1.7517f, 1.7166f,  2.2207f, 2.2207f, -2.0898f }, 3, 2, 2);
-                var expected = torch.tensor(
-                    new float[] { 2.5797f, 3.46290016f, -4.16046524f, 1.37806475f, -3.11126733f, 2.73806715f }, 3, 2);
-                var l = linalg.eigvalsh(a);
-                Assert.True(l.allclose(expected));
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.eigvalsh))]
-        public void EighvalshTest64()
-        {
-            {
-                var a = torch.tensor(
-                    new double[] {  2.8050, -0.3850, -0.3850, 3.2376, -1.0307, -2.7457,
-                                  -2.7457, -1.7517, 1.7166,  2.2207, 2.2207, -2.0898 }, 3, 2, 2);
-                var expected = torch.tensor(
-                    new double[] { 2.5797, 3.46290016, -4.16046524, 1.37806475, -3.11126733, 2.73806715 }, 3, 2);
-                var l = linalg.eigvalsh(a);
-                Assert.True(l.allclose(expected));
-            }
-        }
-
-        [Fact]
-        [TestOf(nameof(linalg.norm))]
-        public void LinalgNormTest()
-        {
-            {
-                var a = torch.tensor(
-                    new float[] { -4.0f, -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f, 4.0f });
-                var b = a.reshape(3, 3);
-
-                Assert.True(linalg.norm(a).allclose(torch.tensor(7.7460f)));
-                Assert.True(linalg.norm(b).allclose(torch.tensor(7.7460f)));
-                Assert.True(linalg.norm(b, "fro").allclose(torch.tensor(7.7460f)));
-
-                Assert.True(linalg.norm(a, float.PositiveInfinity).allclose(torch.tensor(4.0f)));
-                Assert.True(linalg.norm(b, float.PositiveInfinity).allclose(torch.tensor(9.0f)));
-                Assert.True(linalg.norm(a, float.NegativeInfinity).allclose(torch.tensor(0.0f)));
-                Assert.True(linalg.norm(b, float.NegativeInfinity).allclose(torch.tensor(2.0f)));
-
-                Assert.True(linalg.norm(a, 1).allclose(torch.tensor(20.0f)));
-                Assert.True(linalg.norm(b, 1).allclose(torch.tensor(7.0f)));
-                Assert.True(linalg.norm(a, -1).allclose(torch.tensor(0.0f)));
-                Assert.True(linalg.norm(b, -1).allclose(torch.tensor(6.0f)));
-
-                Assert.True(linalg.norm(a, 2).allclose(torch.tensor(7.7460f)));
-                Assert.True(linalg.norm(b, 2).allclose(torch.tensor(7.3485f)));
-                Assert.True(linalg.norm(a, 3).allclose(torch.tensor(5.8480f)));
-                Assert.True(linalg.norm(a, -2).allclose(torch.tensor(0.0f)));
-                Assert.True(linalg.norm(a, -3).allclose(torch.tensor(0.0f)));
             }
         }
 
@@ -9146,7 +7546,7 @@ namespace TorchSharp
                 Assert.Equal(expected, a);
             }
             {
-                var t = torch.arange(10).reshape(2,5);
+                var t = torch.arange(10).reshape(2, 5);
                 var a = t.data<long>().ToNDArray() as long[,];
                 var expected = new long[,] { { 0, 1, 2, 3, 4 }, { 5, 6, 7, 8, 9 } };
 
@@ -9157,7 +7557,7 @@ namespace TorchSharp
                 Assert.Equal(expected, a);
             }
             {
-                var t = torch.arange(12).reshape(2,2,3);
+                var t = torch.arange(12).reshape(2, 2, 3);
                 var a = t.data<long>().ToNDArray() as long[,,];
                 var expected = new long[,,] { { { 0, 1, 2 }, { 3, 4, 5 } }, { { 6, 7, 8 }, { 9, 10, 11 } } };
 
@@ -9263,6 +7663,62 @@ namespace TorchSharp
             if (File.Exists(location)) File.Delete(location);
             var t = torch.from_file(location, true, 256 * 16);
             Assert.True(File.Exists(location));
+        }
+
+        [Fact]
+        public void TestCartesianProd()
+        {
+            var a = torch.arange(1, 4);
+            var b = torch.arange(4, 6);
+
+            var expected = torch.from_array(new int[] { 1, 4, 1, 5, 2, 4, 2, 5, 3, 4, 3, 5 }).reshape(6, 2);
+
+            var res = torch.cartesian_prod(a, b);
+            Assert.Equal(expected, res);
+        }
+
+        [Fact]
+        public void TestCombinations()
+        {
+            var t = torch.arange(5);
+            Assert.Equal(0, torch.combinations(t, 0).numel());
+            Assert.Equal(5, torch.combinations(t, 1).numel());
+            Assert.Equal(20, torch.combinations(t, 2).numel());
+            Assert.Equal(30, torch.combinations(t, 3).numel());
+            Assert.Equal(105, torch.combinations(t, 3, true).numel());
+        }
+
+        [Fact]
+        public void TestCDist()
+        {
+            var a = torch.randn(3, 2);
+            var b = torch.randn(2, 2);
+            var res = torch.cdist(a, b);
+
+            Assert.Equal(3, res.shape[0]);
+            Assert.Equal(2, res.shape[1]);
+        }
+
+        [Fact]
+        public void TestRot90()
+        {
+            var a = torch.arange(8).view(2, 2, 2);
+            var res = a.rot90();
+
+            var data = res.data<long>().ToArray();
+            Assert.Equal(new long[] { 2, 3, 6, 7, 0, 1, 4, 5 }, data);
+        }
+
+        [Fact]
+        public void TestDiagembed()
+        {
+            var a = torch.randn(2, 3);
+            var res = torch.diag_embed(a);
+
+            Assert.Equal(3, res.ndim);
+            Assert.Equal(2, res.shape[0]);
+            Assert.Equal(3, res.shape[1]);
+            Assert.Equal(3, res.shape[1]);
         }
     }
 }

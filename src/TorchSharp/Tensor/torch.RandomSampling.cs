@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Diagnostics.Contracts;
@@ -10,24 +10,36 @@ namespace TorchSharp
     public static partial class torch
     {
         // https://pytorch.org/docs/stable/generated/torch.seed
-        [Obsolete("not implemented", true)]
-        public static int seed() => throw new NotImplementedException();
+        /// <summary>
+        /// Sets the seed for generating random numbers to a non-deterministic random number. Returns a 64 bit number used to seed the RNG.
+        /// </summary>
+        public static long seed() => torch.random.seed();
 
         // https://pytorch.org/docs/stable/generated/torch.manual_seed
-        [Obsolete("not implemented", true)]
-        public static Generator manual_seed(long seed) => throw new NotImplementedException();
+        /// <summary>
+        /// Sets the seed for generating random numbers. Returns a torch.Generator object.
+        /// </summary>
+        /// <param name="seed">The desired seed.</param>
+        public static Generator manual_seed(long seed) => torch.random.manual_seed(seed);
 
         // https://pytorch.org/docs/stable/generated/torch.initial_seed
-        [Obsolete("not implemented", true)]
-        public static long initial_seed() => throw new NotImplementedException();
+        /// <summary>
+        /// Returns the initial seed for generating random numbers.
+        /// </summary>
+        public static long initial_seed() => torch.random.initial_seed();
 
         // https://pytorch.org/docs/stable/generated/torch.get_rng_state
-        [Obsolete("not implemented", true)]
-        public static Tensor get_rng_state() => throw new NotImplementedException();
+        /// <summary>
+        /// Returns the random number generator state as a torch.ByteTensor.
+        /// </summary>
+        public static Tensor get_rng_state() => torch.random.get_rng_state();
 
         // https://pytorch.org/docs/stable/generated/torch.set_rng_state
-        [Obsolete("not implemented", true)]
-        public static void set_rng_state(Tensor new_state) => throw new NotImplementedException();
+        /// <summary>
+        /// Sets the random number generator state.
+        /// </summary>
+        /// <param name="new_state">The desired state</param>
+        public static void set_rng_state(Tensor new_state) => torch.random.set_rng_state(new_state);
 
         // https://pytorch.org/docs/stable/generated/torch.bernoulli
         /// <summary>

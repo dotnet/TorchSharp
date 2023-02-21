@@ -2794,7 +2794,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// onstructs a complex tensor with its real part equal to real and its imaginary part equal to imag.
+        /// Constructs a complex tensor with its real part equal to real and its imaginary part equal to imag.
         /// </summary>
         public static Tensor complex(Tensor real, Tensor imag)
         {

@@ -41,12 +41,13 @@ namespace TorchSharp.PInvoke
         internal static extern int THSJIT_Module_num_outputs(torch.nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSJIT_Module_train(torch.nn.Module.HType module, bool on);
+        internal static extern void THSJIT_Module_train(torch.nn.Module.HType module, [MarshalAs(UnmanagedType.U1)] bool on);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSJIT_Module_eval(torch.nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.U1)]
         internal static extern bool THSJIT_Module_is_training(torch.nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
