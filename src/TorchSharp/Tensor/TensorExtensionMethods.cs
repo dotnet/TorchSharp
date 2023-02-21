@@ -35,10 +35,51 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        /// Set options for printing.
+        /// </summary>
+        /// <param name="precision">Number of digits of precision for floating point output.</param>
+        /// <param name="linewidth">The number of characters per line for the purpose of inserting line breaks (default = 100).</param>
+        /// <param name="newLine">The string to use to represent new-lines. Starts out as 'Environment.NewLine'</param>
+        /// <param name="sci_mode">Enable scientific notation.</param>
+        public static void set_printoptions(
+            int precision,
+            int linewidth = 100,
+            string newLine = "\n",
+            bool sci_mode = false)
+        {
+            torch.floatFormat = sci_mode ? $"E{precision}" : $"F{precision}";
+            torch.newLine = newLine;
+            torch.lineWidth = linewidth;
+        }
+
+        /// <summary>
+        /// Set options for printing.
+        /// </summary>
+        /// <param name="floatFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
+        /// <param name="linewidth">The number of characters per line for the purpose of inserting line breaks (default = 100).</param>
+        /// <param name="newLine">The string to use to represent new-lines. Starts out as 'Environment.NewLine'</param>
+        public static void set_printoptions(
+            string floatFormat = "g5",
+            int linewidth = 100,
+            string newLine = "\n")
+        {
+            torch.floatFormat = floatFormat;
+            torch.newLine = newLine;
+            torch.lineWidth = linewidth;
+        }
+
         public const TensorStringStyle julia = TensorStringStyle.Julia;
         public const TensorStringStyle numpy = TensorStringStyle.Numpy;
 
         private static TensorStringStyle _style = TensorStringStyle.Julia;
+
+        internal static string floatFormat = "g5";
+        internal static string newLine = Environment.NewLine;
+        internal static int lineWidth = 100;
     }
 
     /// <summary>
@@ -60,7 +101,10 @@ namespace TorchSharp
         /// Get a string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
-        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="fltFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
@@ -74,7 +118,7 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string str(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
+        public static string str(this Tensor tensor, string? fltFormat = null, int? width = null, string? newLine = "\n", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
         {
             return tensor.ToString(style, fltFormat, width, cultureInfo, newLine);
         }
@@ -83,7 +127,10 @@ namespace TorchSharp
         /// Get a Julia-style string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
-        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="fltFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
@@ -95,7 +142,7 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string jlstr(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
+        public static string jlstr(this Tensor tensor, string? fltFormat = null, int? width = null, string? newLine = "\n", CultureInfo? cultureInfo = null)
         {
             return tensor.ToString(TensorStringStyle.Julia, fltFormat, width, cultureInfo, newLine);
         }
@@ -122,7 +169,10 @@ namespace TorchSharp
         /// Get a numpy-style string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
-        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="fltFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
@@ -144,7 +194,10 @@ namespace TorchSharp
         /// interactive notebook use, primarily.
         /// </summary>
         /// <param name="t">The input tensor.</param>
-        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="fltFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>

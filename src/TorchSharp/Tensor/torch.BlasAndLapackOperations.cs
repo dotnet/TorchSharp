@@ -127,8 +127,7 @@ namespace TorchSharp
         public static Tensor bmm(Tensor input, Tensor batch2) => input.bmm(batch2);
 
         // https://pytorch.org/docs/stable/generated/torch.chain_matmul
-        [Obsolete("not implemented")]
-        public static Tensor chain_matmul(params Tensor[] matrices) => throw new NotImplementedException();
+        public static Tensor chain_matmul(params Tensor[] matrices) => torch.linalg.multi_dot(matrices);
 
         // https://pytorch.org/docs/stable/generated/torch.cholesky
 
@@ -151,19 +150,38 @@ namespace TorchSharp
             => input.cholesky_solve(input2, upper);
 
         // https://pytorch.org/docs/stable/generated/torch.dot
-        [Obsolete("not implemented", true)]
-        public static Tensor dot(Tensor input, Tensor other) => throw new NotImplementedException();
+        /// <summary>
+        /// Computes the dot product of two 1D tensors.
+        /// </summary>
+        public static Tensor dot(Tensor input, Tensor other) => input.dot(other);
 
         // https://pytorch.org/docs/stable/generated/torch.eig
+        [Obsolete("Method removed in Pytorch. Please use the `torch.linalg.eig` function instead.", true)]
         public static (Tensor eigenvalues, Tensor eigenvectors) eig(Tensor input, bool eigenvectors = false) => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.geqrf
-        [Obsolete("not implemented", true)]
-        public static Tensor geqrf(Tensor input) => throw new NotImplementedException();
+        /// <summary>
+        /// This is a low-level function for calling LAPACK’s geqrf directly.
+        /// This function returns a namedtuple (a, tau) as defined in LAPACK documentation for geqrf.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <remarks>
+        /// Computes a QR decomposition of input. Both Q and R matrices are stored in the same output tensor a.
+        /// The elements of R are stored on and above the diagonal. Elementary reflectors (or Householder vectors)
+        /// implicitly defining matrix Q are stored below the diagonal. The results of this function can be used
+        /// together with torch.linalg.householder_product() to obtain the Q matrix or with torch.ormqr(), which
+        /// uses an implicit representation of the Q matrix, for an efficient matrix-matrix multiplication.
+        /// </remarks>
+        public static (Tensor a, Tensor tau) geqrf(Tensor input) => input.geqrf();
 
         // https://pytorch.org/docs/stable/generated/torch.ger
-        [Obsolete("not implemented", true)]
-        public static Tensor ger(Tensor input, Tensor vec2) => throw new NotImplementedException();
+        /// <summary>
+        /// Outer product of input and vec2.
+        /// </summary>
+        /// <param name="input">The input vector.</param>
+        /// <param name="vec2">1-D input vector.</param>
+        /// <remarks>If input is a vector of size n and vec2 is a vector of size m, then out must be a matrix of size n×m.</remarks>
+        public static Tensor ger(Tensor input, Tensor vec2) => input.ger(vec2);
 
         // https://pytorch.org/docs/stable/generated/torch.inner
         /// <summary>
@@ -186,12 +204,10 @@ namespace TorchSharp
         public static Tensor det(Tensor input) => input.det();
 
         // https://pytorch.org/docs/stable/generated/torch.logdet
-        [Obsolete("not implemented", true)]
-        public static Tensor logdet(Tensor input) => throw new NotImplementedException();
+        public static Tensor logdet(Tensor input) => input.logdet();
 
         // https://pytorch.org/docs/stable/generated/torch.slogdet
-        [Obsolete("not implemented", true)]
-        public static (Tensor res, Tensor logabsdet) slogdet(Tensor A) => throw new NotImplementedException();
+        public static (Tensor res, Tensor logabsdet) slogdet(Tensor A) => torch.linalg.slogdet(A);
 
         // https://pytorch.org/docs/stable/generated/torch.lstsq
         /// <summary>
@@ -285,7 +301,7 @@ namespace TorchSharp
         public static Tensor matrix_power(Tensor input, int n) => input.matrix_power(n);
 
         // https://pytorch.org/docs/stable/generated/torch.matrix_rank
-        [Obsolete("not implemented", true)]
+        [Obsolete("This function was deprecated since version 1.9 and is now removed. Please use the 'torch.linalg.matrix_rank' function instead.", true)]
         public static Tensor matrix_rank(Tensor input, float? tol = null, bool symmetric = false) => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.matrix_exp
@@ -310,12 +326,23 @@ namespace TorchSharp
         public static Tensor mv(Tensor input, Tensor target) => input.mv(target);
 
         // https://pytorch.org/docs/stable/generated/torch.orgqr
-        [Obsolete("not implemented", true)]
-        public static Tensor orgqr(Tensor input, Tensor tau) => throw new NotImplementedException();
+        /// <summary>
+        /// Computes the first n columns of a product of Householder matrices.
+        /// </summary>
+        /// <param name="input">tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+        /// <param name="tau">tensor of shape (*, k) where * is zero or more batch dimensions.</param>
+        public static Tensor orgqr(Tensor input, Tensor tau) => linalg.householder_product(input, tau);
 
         // https://pytorch.org/docs/stable/generated/torch.ormqr
-        [Obsolete("not implemented", true)]
-        public static Tensor ormqr(Tensor input, Tensor tau, Tensor other, bool left=true, bool transpose=false) => throw new NotImplementedException();
+        /// <summary>
+        /// Computes the matrix-matrix multiplication of a product of Householder matrices with a general matrix.
+        /// </summary>
+        /// <param name="input">Tensor of shape (*, mn, k) where * is zero or more batch dimensions and mn equals to m or n depending on the left.</param>
+        /// <param name="tau">Tensor of shape (*, min(mn, k)) where * is zero or more batch dimensions.</param>
+        /// <param name="other">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+        /// <param name="left">Controls the order of multiplication.</param>
+        /// <param name="transpose">Controls whether the matrix Q is conjugate transposed or not.</param>
+        public static Tensor ormqr(Tensor input, Tensor tau, Tensor other, bool left=true, bool transpose=false) => input.ormqr(tau, other, left, transpose);       
 
         // https://pytorch.org/docs/stable/generated/torch.outer
         /// <summary>
@@ -337,23 +364,25 @@ namespace TorchSharp
         public static Tensor pinverse(Tensor input, double rcond = 1e-15, bool hermitian = false) => input.pinverse(rcond, hermitian);
 
         // https://pytorch.org/docs/stable/generated/torch.qr
-        [Obsolete("not implemented", true)]
-        public static Tensor qr(Tensor input, bool some=true) => throw new NotImplementedException();
+        [Obsolete("torch.qr() is deprecated in favor of torch.linalg.qr() and will be removed in a future PyTorch release.", true)]
+        public static Tensor qr(Tensor input, bool some = true) => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.svd
-        [Obsolete("not implemented", true)]
+        [Obsolete("torch.qr() is deprecated in favor of torch.linalg.svd() and will be removed in a future PyTorch release.", true)]
         public static Tensor svd(Tensor input, bool some=true, bool compute_uv=true) => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.svd_lowrank
+        // NOTE TO SELF: there's no native method for this. PyTorch implements it in Python.
         [Obsolete("not implemented", true)]
         public static Tensor svd_lowrank(Tensor A, int q=6, int niter=2,Tensor? M=null) => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.pca_lowrank
+        // NOTE TO SELF: there's no native method for this. PyTorch implements it in Python.
         [Obsolete("not implemented", true)]
-        public static Tensor pca_lowrank(Tensor A, int? q=null, bool center=true, int niter=2) => throw new NotImplementedException();
+        public static Tensor pca_lowrank(Tensor A, int q=6, bool center=true, int niter=2) => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.symeig
-        [Obsolete("not implemented", true)]
+        [Obsolete("torch.symeig() is deprecated in favor of torch.linalg.eigh() and will be removed in a future PyTorch release", true)]
         public static Tensor symeig(Tensor input, bool eigenvectors = false, bool upper = true) => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.lobpcg
@@ -385,25 +414,64 @@ namespace TorchSharp
             => torch.special.softmax(input, dim, dtype);
 
         // https://pytorch.org/docs/stable/generated/torch.trapz
-        [Obsolete("not implemented", true)]
-        public static Tensor trapz(Tensor input, Tensor x, long dim = -1) => throw new NotImplementedException();
+        /// <summary>
+        /// Computes the trapezoidal rule along dim. By default the spacing between elements is assumed
+        /// to be 1, but dx can be used to specify a different constant spacing, and x can be used to specify arbitrary spacing along dim.
+        /// </summary>
+        /// <param name="y">Values to use when computing the trapezoidal rule.</param>
+        /// <param name="x">Defines spacing between values as specified above.</param>
+        /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+        public static Tensor trapz(Tensor y, Tensor x, long dim = -1) => trapezoid(y, x, dim);
 
-        [Obsolete("not implemented", true)]
-        public static Tensor trapz(Tensor input, double dx = 1, long dim = -1) => throw new NotImplementedException();
+        /// <summary>
+        /// Computes the trapezoidal rule along dim. By default the spacing between elements is assumed
+        /// to be 1, but dx can be used to specify a different constant spacing, and x can be used to specify arbitrary spacing along dim.
+        /// </summary>
+        /// <param name="y">Values to use when computing the trapezoidal rule.</param>
+        /// <param name="dx">Constant spacing between values.</param>
+        /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+        public static Tensor trapz(Tensor y, double dx = 1, long dim = -1) => trapezoid(y, dx, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.trapezoid
-        [Obsolete("not implemented", true)]
-        public static Tensor trapezoid(Tensor input, Tensor x, long dim = -1) => throw new NotImplementedException();
+        /// <summary>
+        /// Computes the trapezoidal rule along dim. By default the spacing between elements is assumed
+        /// to be 1, but dx can be used to specify a different constant spacing, and x can be used to specify arbitrary spacing along dim.
+        /// </summary>
+        /// <param name="y">Values to use when computing the trapezoidal rule.</param>
+        /// <param name="x">Defines spacing between values as specified above.</param>
+        /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+        public static Tensor trapezoid(Tensor y, Tensor x, long dim = -1) => y.trapezoid(x, dim);
 
-        [Obsolete("not implemented", true)]
-        public static Tensor trapezoid(Tensor input, double dx = 1, long dim = -1) => throw new NotImplementedException();
+        /// <summary>
+        /// Computes the trapezoidal rule along dim. By default the spacing between elements is assumed
+        /// to be 1, but dx can be used to specify a different constant spacing, and x can be used to specify arbitrary spacing along dim.
+        /// </summary>
+        /// <param name="y">Values to use when computing the trapezoidal rule.</param>
+        /// <param name="dx">Constant spacing between values.</param>
+        /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+        public static Tensor trapezoid(Tensor y, double dx = 1, long dim = -1) => y.trapezoid(dx, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.cumulative_trapezoid
-        [Obsolete("not implemented", true)]
-        public static Tensor cumulative_trapezoid(Tensor input, Tensor x, long dim = -1) => throw new NotImplementedException();
+        /// <summary>
+        /// Cumulatively computes the trapezoidal rule along dim. By default the spacing between elements is assumed
+        /// to be 1, but dx can be used to specify a different constant spacing, and x can be used to specify arbitrary spacing along dim.
+        /// </summary>
+        /// <param name="y">Values to use when computing the trapezoidal rule.</param>
+        /// <param name="x">Defines spacing between values as specified above.</param>
+        /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+        public static Tensor cumulative_trapezoid(Tensor y, Tensor x, long dim = -1) => y.cumulative_trapezoid(x, dim);
+
+        /// <summary>
+        /// Cumulatively computes the trapezoidal rule along dim. By default the spacing between elements is assumed
+        /// to be 1, but dx can be used to specify a different constant spacing, and x can be used to specify arbitrary spacing along dim.
+        /// </summary>
+        /// <param name="y">Values to use when computing the trapezoidal rule.</param>
+        /// <param name="dx">Constant spacing between values.</param>
+        /// <param name="dim">The dimension along which to compute the trapezoidal rule. The last (inner-most) dimension by default.</param>
+        public static Tensor cumulative_trapezoid(Tensor y, double dx = 1, long dim = -1) => y.cumulative_trapezoid(dx, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.triangular_solve
-        [Obsolete("not implemented", true)]
+        [Obsolete("torch.triangular_solve() is deprecated in favor of torch.linalg.solve_triangular() and will be removed in a future PyTorch release.", true)]
         static Tensor triangular_solve(
                 Tensor b,
                 Tensor A,

@@ -241,6 +241,13 @@ Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
     CATCH_TENSOR(batch1->bmm(*batch2));
 }
 
+Tensor THSTensor_cdist(const Tensor x1, const Tensor x2, const double p, const int64_t compute_mode)
+{
+    CATCH_TENSOR(compute_mode == 0
+        ? torch::cdist(*x1, *x2, p)
+        : torch::cdist(*x1, *x2, p, compute_mode));
+}
+
 Tensor THSTensor_ceil(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->ceil());
@@ -258,7 +265,12 @@ Tensor THSTensor_conj(const Tensor tensor)
 
 int64_t THSTensor_is_conj(const Tensor tensor)
 {
-    CATCH_RETURN_RES(int64_t, 0, res = tensor->is_conj();)
+    CATCH_RETURN_RES(int64_t, -1, res = tensor->is_conj();)
+}
+
+int64_t THSTensor_is_neg(const Tensor tensor)
+{
+    CATCH_RETURN_RES(int64_t, -1, res = tensor->is_neg();)
 }
 
 Tensor THSTensor_conj_physical(const Tensor tensor)
@@ -274,6 +286,11 @@ Tensor THSTensor_conj_physical_(const Tensor tensor)
 Tensor THSTensor_resolve_conj(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->resolve_conj());
+}
+
+Tensor THSTensor_resolve_neg(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->resolve_neg());
 }
 
 Tensor THSTensor_cos(const Tensor tensor)
@@ -294,6 +311,13 @@ Tensor THSTensor_cosh(const Tensor tensor)
 Tensor THSTensor_cosh_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->cosh_());
+}
+
+Tensor THSTensor_cov(const Tensor input, int64_t correction, const Tensor fweights, const Tensor aweights)
+{
+    c10::optional<at::Tensor> fw = (fweights == nullptr) ? c10::optional<at::Tensor>() : *fweights;
+    c10::optional<at::Tensor> aw = (aweights == nullptr) ? c10::optional<at::Tensor>() : *aweights;
+    CATCH_TENSOR(input->cov(correction, fw, aw));
 }
 
 Tensor THSTensor_cross(const Tensor tensor, const Tensor other, const int64_t dim)
@@ -428,6 +452,46 @@ Tensor THSTensor_floor(const Tensor tensor)
 Tensor THSTensor_floor_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->floor_());
+}
+
+Tensor THSTensor_floor_divide(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->floor_divide(*right));
+}
+
+Tensor THSTensor_floor_divide_scalar(const Tensor left, const Scalar right)
+{
+    CATCH_TENSOR(left->floor_divide(*right));
+}
+
+Tensor THSTensor_floor_divide_(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->floor_divide_(*right));
+}
+
+Tensor THSTensor_floor_divide_scalar_(const Tensor left, const Scalar right)
+{
+    CATCH_TENSOR(left->floor_divide_(*right));
+}
+
+Tensor THSTensor_true_divide(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->true_divide(*right));
+}
+
+Tensor THSTensor_true_divide_scalar(const Tensor left, const Scalar right)
+{
+    CATCH_TENSOR(left->true_divide(*right));
+}
+
+Tensor THSTensor_true_divide_(const Tensor left, const Tensor right)
+{
+    CATCH_TENSOR(left->true_divide_(*right));
+}
+
+Tensor THSTensor_true_divide_scalar_(const Tensor left, const Scalar right)
+{
+    CATCH_TENSOR(left->true_divide_(*right));
 }
 
 Tensor THSTensor_fmax(const Tensor left, const Tensor right)
@@ -854,6 +918,16 @@ Tensor THSTensor_sign(const Tensor tensor)
 Tensor THSTensor_sign_(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->sign_());
+}
+
+Tensor THSTensor_sgn(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->sgn());
+}
+
+Tensor THSTensor_sgn_(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->sgn_());
 }
 
 Tensor THSTensor_signbit(const Tensor tensor)
