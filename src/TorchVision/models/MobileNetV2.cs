@@ -85,7 +85,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor x)
+                public override Tensor forward(Tensor x)
                 {
                     if (this.use_res_connect) {
                         return x + this.conv.call(x);
@@ -199,7 +199,7 @@ namespace TorchSharp
                 }
             }
 
-            protected override Tensor forward(Tensor x)
+            public override Tensor forward(Tensor x)
             {
                 x = this.features.call(x);
                 // Cannot use "squeeze" as batch-size can be 1

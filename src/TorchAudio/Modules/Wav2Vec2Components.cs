@@ -46,7 +46,7 @@ namespace TorchSharp.Modules
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 var x = input.transpose(-2, -1);
                 x = nn.functional.layer_norm(x, this.normalized_shape, this.weight, this.bias, this.eps);
@@ -92,7 +92,7 @@ namespace TorchSharp.Modules
             /// Shape ``[batch, out_channels, out_frames]``.
             /// Shape ``[batch, ]``.
             /// </returns>
-            protected override (Tensor, Tensor?) forward(
+            public override (Tensor, Tensor?) forward(
                 Tensor x,
                 Tensor? length)
             {
@@ -135,7 +135,7 @@ namespace TorchSharp.Modules
             /// Valid length of each output sample. shape: ``[batch, ]``.
             /// </returns>
             /// <exception cref="ArgumentException"></exception>
-            protected override (Tensor, Tensor?) forward(Tensor x, Tensor? length)
+            public override (Tensor, Tensor?) forward(Tensor x, Tensor? length)
             {
                 if (x.ndim != 2) {
                     throw new ArgumentException("Expected the input Tensor to be 2D (batch, time), but received {list(x.shape)}");
@@ -183,7 +183,7 @@ namespace TorchSharp.Modules
 
             /// <param name="x">Feature Tensor. shape: ``[batch, frame, in_feature]``</param>
             /// <returns>Projected features. ``[batch, frame, out_feature]``.</returns>
-            protected override Tensor forward(Tensor x)
+            public override Tensor forward(Tensor x)
             {
                 x = this.layer_norm.call(x);
                 x = this.projection.call(x);
@@ -229,7 +229,7 @@ namespace TorchSharp.Modules
 
             /// <param name="x">shape ``[batch, frame, feature]``.</param>
             /// <returns>The resulting feature. Shape ``[batch, frame, feature]``.</returns>
-            protected override Tensor forward(Tensor x)
+            public override Tensor forward(Tensor x)
             {
                 x = x.transpose(-2, -1);
                 x = this.conv.call(x);
@@ -279,7 +279,7 @@ namespace TorchSharp.Modules
                     init.uniform_(this.bias, -bound, bound);
                 }
 
-                protected override Tensor forward(Tensor input)
+                public override Tensor forward(Tensor input)
                 {
                     var weight_v_norm = torch.linalg.norm(weight_v, dims: new long[] { 0, 1 }, keepdim: true);
                     var weight = torch.mul(weight_v / weight_v_norm, weight_g);
@@ -336,7 +336,7 @@ namespace TorchSharp.Modules
             /// <param name="attention_mask">shape: ``[batch_size, 1, sequence_length, sequence_length]``</param>
             /// <returns>The resulting tensor. shape: ``[batch, sequence_length, embed_dim]``</returns>
             /// <exception cref="ArgumentException"></exception>
-            protected override Tensor forward(Tensor x, Tensor? attention_mask)
+            public override Tensor forward(Tensor x, Tensor? attention_mask)
             {
                 if (x.ndim != 3 || x.shape[2] != this.embed_dim) {
                     throw new ArgumentException("The expected input shape is (batch, sequence, embed_dim=={self.embed_dim}). Found {x.shape}.");
@@ -407,7 +407,7 @@ namespace TorchSharp.Modules
 
             /// <param name="x">shape: `(batch, sequence_length, io_features)`</param>
             /// <returns>shape: `(batch, sequence_length, io_features)`</returns>
-            protected override Tensor forward(Tensor x)
+            public override Tensor forward(Tensor x)
             {
                 x = this.intermediate_dense.call(x);
                 x = torch.nn.functional.gelu(x);
@@ -450,7 +450,7 @@ namespace TorchSharp.Modules
             /// <param name="x">shape: `(batch, sequence_length, embed_dim)`</param>
             /// <param name="attention_mask">shape: `(batch, 1, sequence_length, sequence_length)`</param>
             /// <returns></returns>
-            protected override Tensor forward(
+            public override Tensor forward(
                 Tensor x,
                 Tensor? attention_mask = null)
             {
@@ -513,7 +513,7 @@ namespace TorchSharp.Modules
                 return x;
             }
 
-            protected override Tensor forward(
+            public override Tensor forward(
                 Tensor x,
                 Tensor? attention_mask = null)
             {
@@ -591,7 +591,7 @@ namespace TorchSharp.Modules
                 return (x, mask);
             }
 
-            protected override Tensor forward(
+            public override Tensor forward(
                 Tensor features,
                 Tensor? lengths = null)
             {
@@ -1087,7 +1087,7 @@ namespace TorchSharp.Modules
             /// The feature representations after masking.
             /// The generated mask indices.
             /// </returns>
-            protected override (Tensor, Tensor?) forward(Tensor x, Tensor? padding_mask)
+            public override (Tensor, Tensor?) forward(Tensor x, Tensor? padding_mask)
             {
                 Tensor? mask_indices;
                 var B = x.size(0);
@@ -1196,7 +1196,7 @@ namespace TorchSharp.Modules
             /// The logits of masked frames. Tensor of dimension `[masked_frame, final_dim]`.
             /// The logits of unmasked frames. Tensor of dimension `[unmasked_frame, final_dim]`.
             /// </returns>
-            protected override (Tensor?, Tensor?) forward(Tensor x, Tensor label, Tensor mask_m, Tensor mask_u)
+            public override (Tensor?, Tensor?) forward(Tensor x, Tensor label, Tensor mask_m, Tensor mask_u)
             {
                 Tensor? logit_u;
                 Tensor? logit_m;

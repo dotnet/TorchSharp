@@ -139,7 +139,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor input)
+                public override Tensor forward(Tensor input)
                 {
                     var result = this.block.call(input);
                     if (this.use_res_connect) {
@@ -247,7 +247,7 @@ namespace TorchSharp
                 }
             }
 
-            protected override Tensor forward(Tensor x)
+            public override Tensor forward(Tensor x)
             {
                 x = this.features.call(x);
                 x = this.avgpool.call(x);

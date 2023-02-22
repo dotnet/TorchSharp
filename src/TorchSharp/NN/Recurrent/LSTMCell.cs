@@ -27,7 +27,7 @@ namespace TorchSharp
             /// <param name="input">Tensor of shape (batch, input_size) containing the features of the input sequence.</param>
             /// <param name="h0_c0">Tensors of shape (batch, hidden_size) containing the initial hidden and cell state for each element in the batch.</param>
             /// <returns></returns>
-            protected override (Tensor, Tensor) forward(Tensor input, (Tensor, Tensor)? h0_c0)
+            public override (Tensor, Tensor) forward(Tensor input, (Tensor, Tensor)? h0_c0)
             {
                 var hN = THSNN_LSTMCell_forward(handle, input.Handle, h0_c0?.Item1.Handle ?? IntPtr.Zero, h0_c0?.Item2.Handle ?? IntPtr.Zero, out IntPtr cN);
                 if (hN == IntPtr.Zero || cN == IntPtr.Zero) { torch.CheckForErrors(); }

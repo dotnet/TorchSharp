@@ -45,7 +45,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="src">The sequence to the encoder (required).</param>
             /// <param name="tgt">The sequence to the decoder (required).</param>
-            protected override Tensor forward(Tensor src, Tensor tgt)
+            public override Tensor forward(Tensor src, Tensor tgt)
             {
                 var res = THSNN_Transformer_forward(handle,
                     src.Handle,

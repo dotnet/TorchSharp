@@ -25,7 +25,7 @@ namespace TorchSharp
             /// <param name="attn_mask">2D or 3D mask that prevents attention to certain positions. A 2D mask will be broadcasted for all the batches while a 3D mask allows to specify a different mask for the entries of each batch</param>
             /// <returns>attn_output, attn_ouput_weights</returns>
 
-            protected override Tuple<Tensor,Tensor> forward(Tensor query, Tensor key, Tensor value, Tensor? key_padding_mask, bool need_weights, Tensor? attn_mask)
+            public override Tuple<Tensor,Tensor> forward(Tensor query, Tensor key, Tensor value, Tensor? key_padding_mask, bool need_weights, Tensor? attn_mask)
             {
                 THSNN_MultiheadAttention_forward(handle,
                     query.Handle,

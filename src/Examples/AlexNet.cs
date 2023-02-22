@@ -50,7 +50,7 @@ namespace TorchSharp.Examples
                 this.to(device);
         }
 
-        protected override Tensor forward(Tensor input)
+        public override Tensor forward(Tensor input)
         {
             var f = features.call(input);
             var avg = avgPool.call(f);

@@ -18,7 +18,7 @@ namespace TorchSharp
             {
             }
 
-            protected override Tensor forward(Tensor input1, Tensor input2)
+            public override Tensor forward(Tensor input1, Tensor input2)
             {
                 var res = THSNN_CosineSimilarity_forward(handle, input1.Handle, input2.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

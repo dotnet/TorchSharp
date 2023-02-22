@@ -185,7 +185,7 @@ namespace TorchSharp
             private Module<Tensor, Tensor> inception_e(int in_channels) => new InceptionE(in_channels);
             private Module<Tensor, Tensor> inception_aux(int in_channels, int num_classes) => new InceptionAux(in_channels, num_classes);
 
-            protected override Tensor forward(Tensor x)
+            public override Tensor forward(Tensor x)
             {
                 // Transform
                 using (var scope = NewDisposeScope()) {
@@ -263,7 +263,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor x)
+                public override Tensor forward(Tensor x)
                 {
                     var branch1x1_ = branch1x1.call(x);
 
@@ -303,7 +303,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor x)
+                public override Tensor forward(Tensor x)
                 {
 
                     var branch3x3_ = branch3x3.call(x);
@@ -358,7 +358,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor x)
+                public override Tensor forward(Tensor x)
                 {
 
                     var branch1x1_ = branch1x1.call(x);
@@ -403,7 +403,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor x)
+                public override Tensor forward(Tensor x)
                 {
                     var branch3x3 = branch3x3_1.call(x);
                     branch3x3 = branch3x3_2.call(branch3x3);
@@ -452,7 +452,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor x)
+                public override Tensor forward(Tensor x)
                 {
 
                     var branch1x1_ = branch1x1.call(x);
@@ -489,7 +489,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor x)
+                public override Tensor forward(Tensor x)
                 {
                     // N x 768 x 17 x 17
                     x = functional.avg_pool2d(x, kernelSize: 5, stride: 3);

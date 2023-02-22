@@ -31,7 +31,7 @@ namespace TorchSharp
             /// <param name="input">Tensor of shape (seq_len, batch, input_size) containing the features of the input sequence.</param>
             /// <param name="h0_c0">Tensors of shape (num_layers * num_directions, batch, hidden_size) containing the initial hidden and cell state for each element in the batch</param>
             /// <returns></returns>
-            protected override (Tensor, Tensor, Tensor) forward(Tensor input, (Tensor, Tensor)? h0_c0 = null)
+            public override (Tensor, Tensor, Tensor) forward(Tensor input, (Tensor, Tensor)? h0_c0 = null)
             {
                 Tensor c0, h0;
 

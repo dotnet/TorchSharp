@@ -263,7 +263,7 @@ namespace TorchSharp
                 m = torch.jit.load<(Tensor, Tensor)> (filename);
             }
 
-            protected override (Tensor, Tensor) forward(Tensor input1, Tensor input2)
+            public override (Tensor, Tensor) forward(Tensor input1, Tensor input2)
             {
                 return m.call(input1, input2);
             }

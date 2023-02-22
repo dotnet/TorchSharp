@@ -30,7 +30,7 @@ namespace TorchSharp
             /// If specified, per_sample_weights must have exactly the same shape as input and is treated as having the same offsets, if those are not None.
             /// Only supported for mode='sum'.</param>
             /// <returns></returns>
-            protected override Tensor forward(Tensor input, Tensor? offsets, Tensor? perSampleWeights)
+            public override Tensor forward(Tensor input, Tensor? offsets, Tensor? perSampleWeights)
             {                
                 var res = THSNN_EmbeddingBag_forward(handle, input.Handle, (offsets is null) ? IntPtr.Zero : offsets.Handle, (perSampleWeights is null) ? IntPtr.Zero : perSampleWeights.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

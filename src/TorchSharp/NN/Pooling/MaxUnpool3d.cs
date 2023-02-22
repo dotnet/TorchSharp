@@ -18,7 +18,7 @@ namespace TorchSharp
             {
             }
 
-            protected override Tensor forward(Tensor tensor, Tensor indices, long[] output_size = null)
+            public override Tensor forward(Tensor tensor, Tensor indices, long[] output_size = null)
             {
                 unsafe {
                     fixed (long* pOutSize = output_size) {

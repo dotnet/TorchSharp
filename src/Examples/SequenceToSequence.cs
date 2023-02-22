@@ -249,7 +249,7 @@ namespace TorchSharp.Examples
                 init.uniform_(decoder.weight, -initrange, initrange);
             }
 
-            protected override Tensor forward(Tensor t, Tensor mask)
+            public override Tensor forward(Tensor t, Tensor mask)
             {
                 var src = pos_encoder.call(encoder.call(t) * MathF.Sqrt(ninputs));
                 var enc = transformer_encoder.call(src, mask);
@@ -293,7 +293,7 @@ namespace TorchSharp.Examples
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor t)
+            public override Tensor forward(Tensor t)
             {
                 using var x = t + pe[TensorIndex.Slice(null, t.shape[0]), TensorIndex.Slice()];
                 return dropout.call(x);

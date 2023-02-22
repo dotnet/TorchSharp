@@ -65,7 +65,7 @@ namespace TorchSharp.Transforms
             this.onesided = onesided;
         }
 
-        protected override Tensor forward(Tensor input)
+        public override Tensor forward(Tensor input)
         {
             return call(input, null);
         }

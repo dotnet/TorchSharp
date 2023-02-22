@@ -102,7 +102,7 @@ namespace TorchSharp.Modules
         /// is returned.
         /// It indicates the valid length in time axis of the output Tensor.
         /// </returns>
-        protected override (Tensor, Tensor?) forward(
+        public override (Tensor, Tensor?) forward(
             Tensor waveforms,
             Tensor? lengths = null)
         {

@@ -367,7 +367,7 @@ namespace TorchSharp
                 }
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 using (var scope = NewDisposeScope()) {
 
@@ -406,7 +406,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor input)
+                public override Tensor forward(Tensor input)
                 {
                     var x = relu1.call(bn1.call(conv1.call(input)));
                     x = bn2.call(conv2.call(x));
@@ -451,7 +451,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor input)
+                public override Tensor forward(Tensor input)
                 {
                     var x = relu1.call(bn1.call(conv1.call(input)));
                     x = relu2.call(bn2.call(conv2.call(input)));

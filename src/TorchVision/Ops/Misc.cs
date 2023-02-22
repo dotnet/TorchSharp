@@ -206,7 +206,7 @@ namespace TorchSharp
                     return this.scale_activation.call(scale);
                 }
 
-                protected override Tensor forward(Tensor input)
+                public override Tensor forward(Tensor input)
                 {
                     var scale = this._scale(input);
                     return scale * input;

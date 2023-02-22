@@ -124,7 +124,7 @@ namespace TorchSharp.Examples
                     this.to(device);
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 var l11 = conv1.call(input);
                 var l12 = relu1.call(l11);

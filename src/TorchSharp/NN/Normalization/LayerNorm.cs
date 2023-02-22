@@ -20,7 +20,7 @@ namespace TorchSharp
             {
             }
 
-            protected override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_LayerNorm_forward(handle.DangerousGetHandle(), tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

@@ -32,7 +32,7 @@ namespace TorchSharp
             /// <param name="h0">Tensor of shape (num_layers * num_directions, batch, hidden_size)containing the initial hidden state for each element in the batch.
             /// Defaults to 0 if not provided. If the RNN is bidirectional, num_directions should be 2, else it should be 1.</param>
             /// <returns></returns>
-            protected override (Tensor, Tensor) forward(Tensor input, Tensor? h0)
+            public override (Tensor, Tensor) forward(Tensor input, Tensor? h0)
             {
                 if (h0 is null) {
                     var N = _batch_first ? input.shape[0] : input.shape[1];

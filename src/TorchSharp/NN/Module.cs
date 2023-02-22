@@ -1321,7 +1321,7 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                protected abstract TResult forward(T input1);
+                public abstract TResult forward(T input1);
 
                 public TResult call(T input1)
                 {
@@ -1358,7 +1358,7 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                protected abstract TResult forward (T1 input1, T2 input2);
+                public abstract TResult forward (T1 input1, T2 input2);
 
 
                 public TResult call(T1 input1, T2 input2)
@@ -1399,7 +1399,7 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                protected abstract TResult forward(T1 input1, T2 input2, T3 input3);
+                public abstract TResult forward(T1 input1, T2 input2, T3 input3);
 
                 public TResult call(T1 input1, T2 input2, T3 input3)
                 {
@@ -1441,7 +1441,7 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                protected abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);
+                public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);
 
                 public TResult call(T1 input1, T2 input2, T3 input3, T4 input4)
                 {
@@ -1485,7 +1485,7 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                protected abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5);
+                public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5);
 
                 public TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5)
                 {
@@ -1531,7 +1531,7 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                protected abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6);
+                public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6);
 
                 public TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6)
                 {

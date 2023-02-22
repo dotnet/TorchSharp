@@ -250,7 +250,7 @@ namespace TorchSharp.Examples
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 var x = input;
                 x = conv1.call(x);

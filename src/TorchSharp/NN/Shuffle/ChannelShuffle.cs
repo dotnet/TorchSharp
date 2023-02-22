@@ -19,7 +19,7 @@ namespace TorchSharp
             }
             private long groups;
 
-            protected override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 return tensor.channel_shuffle(groups);
             }

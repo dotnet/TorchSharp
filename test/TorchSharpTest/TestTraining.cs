@@ -196,7 +196,7 @@ namespace TorchSharp
                 this.base_loss = base_loss;
             }
 
-            protected override Tensor forward(Tensor input1, Tensor input2)
+            public override Tensor forward(Tensor input1, Tensor input2)
             {
                 return base_loss.call(input1, input2).neg();
             }

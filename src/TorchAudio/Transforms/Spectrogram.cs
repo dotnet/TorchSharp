@@ -76,7 +76,7 @@ namespace TorchSharp.Transforms
             }
         }
 
-        protected override Tensor forward(Tensor input)
+        public override Tensor forward(Tensor input)
         {
             return torchaudio.functional.spectrogram(
                 waveform: input,

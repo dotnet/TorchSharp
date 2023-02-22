@@ -23,7 +23,7 @@ namespace TorchSharp
             /// <param name="tgt_key_padding_mask">The mask for the tgt keys per batch (optional).</param>
             /// <param name="memory_key_padding_mask">The mask for the memory keys per batch (optional).</param>
             /// <returns></returns>
-            protected override Tensor forward(Tensor tgt, Tensor memory, Tensor tgt_mask, Tensor memory_mask = null, Tensor tgt_key_padding_mask = null, Tensor memory_key_padding_mask = null)
+            public override Tensor forward(Tensor tgt, Tensor memory, Tensor tgt_mask, Tensor memory_mask = null, Tensor tgt_key_padding_mask = null, Tensor memory_key_padding_mask = null)
             {
                 var res = THSNN_TransformerDecoder_forward(handle,
                     tgt.Handle,

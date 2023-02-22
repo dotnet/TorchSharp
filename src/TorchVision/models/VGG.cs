@@ -419,7 +419,7 @@ namespace TorchSharp
                     this.to(device);
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 using (var _ = NewDisposeScope()) {
                     input = features.call(input);

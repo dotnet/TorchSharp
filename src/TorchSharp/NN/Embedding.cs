@@ -14,7 +14,7 @@ namespace TorchSharp
         {
             internal Embedding(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 var res = THSNN_Embedding_forward(handle, input.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

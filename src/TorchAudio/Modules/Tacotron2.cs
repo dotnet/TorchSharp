@@ -114,7 +114,7 @@ namespace TorchSharp.Modules
             RegisterComponents();
         }
 
-        protected override (Tensor, Tensor, Tensor, Tensor) forward(
+        public override (Tensor, Tensor, Tensor, Tensor) forward(
             Tensor tokens,
             Tensor token_lengths,
             Tensor mel_specgram,
@@ -244,7 +244,7 @@ namespace TorchSharp.Modules
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor attention_weights_cat)
+            public override Tensor forward(Tensor attention_weights_cat)
             {
                 // (n_batch, attention_n_filter, text_lengths.max())
                 var processed_attention = this.location_conv.call(attention_weights_cat);
@@ -294,7 +294,7 @@ namespace TorchSharp.Modules
                 return alignment;
             }
 
-            protected override (Tensor, Tensor) forward(
+            public override (Tensor, Tensor) forward(
                 Tensor attention_hidden_state,
                 Tensor memory,
                 Tensor processed_memory,
@@ -331,7 +331,7 @@ namespace TorchSharp.Modules
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor x)
+            public override Tensor forward(Tensor x)
             {
                 foreach (var linear in this.layers) {
                     x = F.dropout(F.relu(linear.call(x)), p: 0.5, training: true);
@@ -376,7 +376,7 @@ namespace TorchSharp.Modules
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor x)
+            public override Tensor forward(Tensor x)
             {
                 for (int i = 0; i < this.convolutions.Count; i++) {
                     var conv = this.convolutions[i];
@@ -429,7 +429,7 @@ namespace TorchSharp.Modules
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor x, Tensor input_lengths)
+            public override Tensor forward(Tensor x, Tensor input_lengths)
             {
                 foreach (var conv in this.convolutions) {
                     x = F.dropout(F.relu(conv.call(x)), 0.5, training: this.training);
@@ -636,7 +636,7 @@ namespace TorchSharp.Modules
             }
 
             // Decoder forward pass for training.
-            protected override (Tensor, Tensor, Tensor) forward(Tensor memory, Tensor mel_specgram_truth, Tensor memory_lengths)
+            public override (Tensor, Tensor, Tensor) forward(Tensor memory, Tensor mel_specgram_truth, Tensor memory_lengths)
             {
                 var decoder_input = this._get_initial_frame(memory).unsqueeze(0);
                 var decoder_inputs = this._parse_decoder_inputs(mel_specgram_truth);

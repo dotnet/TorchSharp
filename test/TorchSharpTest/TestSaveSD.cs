@@ -39,7 +39,7 @@ namespace TorchSharp
                     this.to(device);
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 var x_embed = embedding.call(input);
                 var h0 = zeros(1, input.shape[0], HIDDEN_SIZE, device: _device);
@@ -89,7 +89,7 @@ namespace TorchSharp
                     this.to(device);
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 return layers.call(input);
             }

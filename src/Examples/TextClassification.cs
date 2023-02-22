@@ -188,7 +188,7 @@ namespace TorchSharp.Examples
             init.zeros_(fc.bias);
         }
 
-        protected override Tensor forward(Tensor t)
+        public override Tensor forward(Tensor t)
         {
             throw new NotImplementedException();
         }

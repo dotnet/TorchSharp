@@ -104,7 +104,7 @@ namespace TorchSharp.Examples
             }
         }
 
-        protected override Tensor forward(Tensor input)
+        public override Tensor forward(Tensor input)
         {
             return layers.call(input);
         }
@@ -146,7 +146,7 @@ namespace TorchSharp.Examples
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor t)
+            public override Tensor forward(Tensor t)
             {
                 var x = layers.call(t);
                 var y = shortcut.call(t);
@@ -197,7 +197,7 @@ namespace TorchSharp.Examples
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor t)
+            public override Tensor forward(Tensor t)
             {
                 var x = layers.call(t);
                 using var y = shortcut.call(t);

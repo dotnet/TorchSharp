@@ -92,7 +92,7 @@ namespace TorchSharp.Modules
         /// <param name="specgram">The input spectrogram to the WaveRNN layer</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        protected override Tensor forward(Tensor waveform, Tensor specgram)
+        public override Tensor forward(Tensor waveform, Tensor specgram)
         {
             if (waveform.size(1) != 1) {
                 throw new ArgumentException("Require the input channel of waveform is 1");
@@ -232,7 +232,7 @@ namespace TorchSharp.Modules
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor specgram)
+            public override Tensor forward(Tensor specgram)
             {
                 return this.resblock_model.call(specgram) + specgram;
             }
@@ -262,7 +262,7 @@ namespace TorchSharp.Modules
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor specgram)
+            public override Tensor forward(Tensor specgram)
             {
                 return this.melresnet_model.call(specgram);
             }
@@ -280,7 +280,7 @@ namespace TorchSharp.Modules
                 this.RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor specgram)
+            public override Tensor forward(Tensor specgram)
             {
                 return specgram.repeat_interleave(this.freq_scale, -2).repeat_interleave(this.time_scale, -1);
             }
@@ -325,7 +325,7 @@ namespace TorchSharp.Modules
                 this.RegisterComponents();
             }
 
-            protected override (Tensor, Tensor) forward(Tensor specgram)
+            public override (Tensor, Tensor) forward(Tensor specgram)
             {
                 var resnet_output = this.resnet.call(specgram).unsqueeze(1);
                 resnet_output = this.resnet_stretch.call(resnet_output);

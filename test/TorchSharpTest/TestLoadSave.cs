@@ -302,7 +302,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            protected override torch.Tensor forward(torch.Tensor input)
+            public override torch.Tensor forward(torch.Tensor input)
             {
                 throw new NotImplementedException();
             }

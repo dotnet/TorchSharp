@@ -59,7 +59,7 @@ namespace TorchSharp.Transforms
             this.rand_init = rand_init;
         }
 
-        protected override Tensor forward(Tensor specgram)
+        public override Tensor forward(Tensor specgram)
         {
             return torchaudio.functional.griffinlim(
                 specgram,

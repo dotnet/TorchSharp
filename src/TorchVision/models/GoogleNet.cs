@@ -181,7 +181,7 @@ namespace TorchSharp
             private Module<Tensor, Tensor> inception_block(int in_channels, int ch1x1, int ch3x3red,  int ch3x3, int ch5x5red, int ch5x5, int pool_proj) => new Inception(in_channels, ch1x1, ch3x3red, ch3x3, ch5x5red, ch5x5, pool_proj);
             private Module<Tensor, Tensor> inception_aux_block(int in_channels, int num_classes, float dropout) => new InceptionAux(in_channels, num_classes, dropout);
 
-            protected override Tensor forward(Tensor x)
+            public override Tensor forward(Tensor x)
             {
                 // Transform
                 using (var scope = NewDisposeScope()) {
@@ -268,7 +268,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor x)
+                public override Tensor forward(Tensor x)
                 {
                     using var branch1 = this.branch1.call(x);
                     using var branch2 = this.branch2.call(x);
@@ -302,7 +302,7 @@ namespace TorchSharp
                     RegisterComponents();
                 }
 
-                protected override Tensor forward(Tensor x)
+                public override Tensor forward(Tensor x)
                 {
                     // aux1: N x 512 x 14 x 14, aux2: N x 528 x 14 x 14
                     x = functional.adaptive_avg_pool2d(x, 4);

@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             internal GLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            protected override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_GLU_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

@@ -130,7 +130,7 @@ namespace TorchSharp
                 foreach (var m in modules) Add(m);
             }
 
-            protected override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 // If there are no modules, just return a fresh handle to the input.
                 if (_modules.Count == 0) return tensor.alias();

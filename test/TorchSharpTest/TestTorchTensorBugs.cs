@@ -63,7 +63,7 @@ namespace TorchSharp
         {
             public DoubleIt() : base("double") { }
 
-            protected override Tensor forward(Tensor t) => t * 2;
+            public override Tensor forward(Tensor t) => t * 2;
         }
 
         [Fact]
@@ -185,7 +185,7 @@ namespace TorchSharp
         {
             public TestModule() : base(nameof(TestModule)) { }
 
-            protected override torch.Tensor forward(torch.Tensor t) => t.clone();
+            public override torch.Tensor forward(torch.Tensor t) => t.clone();
 
             public static void Reproduce()
             {
@@ -485,7 +485,7 @@ namespace TorchSharp
 
             public Module500() : base(nameof(TestModule)) { RegisterComponents(); }
 
-            protected override torch.Tensor forward(torch.Tensor t) => bn1.call(t);
+            public override torch.Tensor forward(torch.Tensor t) => bn1.call(t);
         }
 
         [Fact]
@@ -542,7 +542,7 @@ namespace TorchSharp
                 this.RegisterComponents();
             }
 
-            protected override torch.Tensor forward(torch.Tensor t)
+            public override torch.Tensor forward(torch.Tensor t)
             {
                 return this.stack.call(t);
             }
@@ -596,7 +596,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            protected override torch.Tensor forward(torch.Tensor t)
+            public override torch.Tensor forward(torch.Tensor t)
             {
                 return torch.matmul(t, Weight);
             }
@@ -634,7 +634,7 @@ namespace TorchSharp
                 this.RegisterComponents();
             }
 
-            protected override torch.Tensor forward(torch.Tensor t)
+            public override torch.Tensor forward(torch.Tensor t)
             {
                 return this.seq.call(t);
             }
@@ -675,7 +675,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            protected override torch.Tensor forward(torch.Tensor t)
+            public override torch.Tensor forward(torch.Tensor t)
             {
                 return this.seq.call(t);
             }
@@ -967,7 +967,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            protected override torch.Tensor forward(torch.Tensor t)
+            public override torch.Tensor forward(torch.Tensor t)
             {
                 return this.seq.call(t);
             }
@@ -1031,7 +1031,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor t)
+            public override Tensor forward(Tensor t)
             {
                 var t1 = layers0.call(t).squeeze_(3);
                 return t1;
@@ -1057,7 +1057,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 var (rnn_output, states_h0) = layers1.call(input, init_h0);
                 init_h0 = states_h0.detach_();
@@ -1081,7 +1081,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 var t0 = sequence_layers.call(input);
                 return t0;

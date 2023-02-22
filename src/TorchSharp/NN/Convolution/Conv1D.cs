@@ -29,7 +29,7 @@ namespace TorchSharp
         {
             internal Conv1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            protected override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Conv1d_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

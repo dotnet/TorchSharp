@@ -20,7 +20,7 @@ namespace TorchSharp
             {
             }
 
-            protected override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor tensor)
             {
                 if (tensor.Dimensions != 5) throw new ArgumentException($"Invalid number of dimensions for InstanceNorm argument: {tensor.Dimensions}");
                 var res = THSNN_InstanceNorm3d_forward(handle.DangerousGetHandle(), tensor.Handle);

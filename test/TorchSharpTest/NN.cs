@@ -1685,7 +1685,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 using (var x = fb.call(input))
                     if (_isTrue) {
@@ -2222,7 +2222,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 throw new NotImplementedException();
             }
@@ -2245,7 +2245,7 @@ namespace TorchSharp
                 RegisterComponents();
             }
 
-            protected override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor input)
             {
                 for (int i = 0; i < list.Count; i++) { input = list[i].call(input); }
                 throw new NotImplementedException();
@@ -2374,7 +2374,7 @@ namespace TorchSharp
         {
             public TestModule3() : base(nameof(TestModule3)) { RegisterComponents(); }
 
-            protected override Tensor forward(Tensor t)
+            public override Tensor forward(Tensor t)
             {
                 return mod2.call(mod1.call(t));
             }

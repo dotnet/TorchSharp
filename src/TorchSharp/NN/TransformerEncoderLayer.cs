@@ -49,7 +49,7 @@ namespace TorchSharp
             /// Pass the input through the encoder layer.
             /// </summary>
             /// <param name="src">The sequence to the encoder (required).</param>
-            protected override Tensor forward(Tensor src)
+            public override Tensor forward(Tensor src)
             {
                 var res = THSNN_TransformerEncoderLayer_forward(handle,
                     src.Handle,
