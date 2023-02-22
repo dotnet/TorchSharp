@@ -104,17 +104,12 @@ namespace TorchSharp
             /// <param name="walltime">Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds())</param>
             public void add_scalar(string tag, float scalar_value, int global_step, long? walltime = null)
             {
-                var fileName = _fileNames["__default__"];
-
-                if (!File.Exists(fileName)) {
-                    InitFile(fileName);
-                }
-
-                var wt = walltime.HasValue ? walltime.Value : DateTimeOffset.Now.ToUnixTimeSeconds();
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
 
                 var summary = new Summary();
                 summary.Value.Add(new Summary.Types.Value() { SimpleValue = scalar_value, Tag = tag });
-                var evnt = new Event() { Step = global_step, WallTime = wt, Summary = summary };
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
 
                 WriteEvent(fileName, evnt);
             }
@@ -128,7 +123,7 @@ namespace TorchSharp
             /// <param name="walltime">Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds())</param>
             public void add_scalars(string main_tag, IDictionary<string, float> tag_scalar_dict, int global_step, long? walltime = null)
             {
-                var wt = walltime.HasValue ? walltime.Value : DateTimeOffset.Now.ToUnixTimeSeconds();
+                SetWalltime(ref walltime);
 
                 foreach (var kv in tag_scalar_dict) {
 
@@ -137,7 +132,7 @@ namespace TorchSharp
 
                     var summary = new Summary();
                     summary.Value.Add(new Summary.Types.Value() { SimpleValue = scalar_value, Tag = main_tag });
-                    var evnt = new Event() { Step = global_step, WallTime = wt, Summary = summary };
+                    var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
 
                     if (!_fileNames.TryGetValue(key, out var fileName)) {
 
@@ -173,13 +168,13 @@ namespace TorchSharp
             /// <param name="walltime">Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds())</param>
             public void add_scalars(string main_tag, IList<(string, float)> tag_scalar_dict, int global_step, long? walltime = null)
             {
-                var wt = walltime.HasValue ? walltime.Value : DateTimeOffset.Now.ToUnixTimeSeconds();
+                SetWalltime(ref walltime);
 
                 foreach (var (key, scalar_value) in tag_scalar_dict) {
 
                     var summary = new Summary();
                     summary.Value.Add(new Summary.Types.Value() { SimpleValue = scalar_value, Tag = main_tag });
-                    var evnt = new Event() { Step = global_step, WallTime = wt, Summary = summary };
+                    var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
 
                     if (!_fileNames.TryGetValue(key, out var fileName)) {
 
@@ -201,11 +196,64 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Add text data to summary.
+            ///
+            /// Examples::
+            /// add_text("lstm", "This is an lstm", 0)
+            /// add_text("rnn", "This is an rnn", 10)
+            /// 
+            /// https://pytorch.org/docs/stable/_modules/torch/utils/tensorboard/writer.html#SummaryWriter.add_text
+            /// </summary>
+            /// <param name="tag"> Data identifier </param>
+            /// <param name="text_string"> String to save </param>
+            /// <param name="global_step"> Global step value to record </param>
+            /// <param name="walltime"> Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds()) </param>
+            public void add_text(string tag, string text_string, int global_step, long? walltime = null)
+            {
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
+
+                // https://github.com/pytorch/pytorch/blob/master/torch/utils/tensorboard/summary.py#L630-L642
+                Summary text_(string tag, string text)
+                {
+                    // TextPluginData(version=0).SerializeToString()
+                    // output: b''
+                    var pluginData = new SummaryMetadata.Types.PluginData() { PluginName = "text", Content = ByteString.CopyFromUtf8("") };
+                    var smd = new SummaryMetadata() { PluginData = pluginData };
+                    var shapeProto = new TensorShapeProto();
+                    shapeProto.Dim.Add(new TensorShapeProto.Types.Dim() { Size = 1 });
+                    var tensor = new TensorProto() { Dtype = DataType.DtString, TensorShape = shapeProto };
+                    tensor.StringVal.Add(ByteString.CopyFromUtf8(text));
+
+                    var summary = new Summary();
+                    summary.Value.Add(new Summary.Types.Value() { Tag = tag + "/text_summary", Metadata = smd, Tensor = tensor });
+                    return summary;
+                }
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = text_(tag, text_string) };
+
+                WriteEvent(fileName, evnt);
+            }   
+
             private static void InitFile(string fileName)
             {
                 var evnt = new Event() { FileVersion = "brain.Event:2", WallTime = DateTime.Now.Ticks };
                 WriteEvent(fileName, evnt);
             }
+
+            private string InitDefaultFile()
+            {
+                var fileName = _fileNames["__default__"];
+
+                if (!File.Exists(fileName)) {
+                    InitFile(fileName);
+                }
+
+                return fileName;
+            }
+
+            private static void SetWalltime(ref long? walltime)
+                => walltime ??= DateTimeOffset.Now.ToUnixTimeSeconds();
 
             private static void WriteEvent(string fileName, Event evnt)
             {
