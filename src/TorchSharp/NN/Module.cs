@@ -1358,7 +1358,7 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                public abstract TResult forward (T1 input1, T2 input2);
+                public abstract TResult forward(T1 input1, T2 input2);
 
 
                 public TResult call(T1 input1, T2 input2)
