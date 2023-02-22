@@ -1263,6 +1263,9 @@ namespace TorchSharp
                 public abstract TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6);
             }
 
+            /// <summary>
+            /// Represents a module that accepts 'hook' to the module logic.
+            /// </summary>
             public class HookableModule<TPreHook,TPostHook> : Module
             {
                 protected HookableModule(string name) : base(name) { }
@@ -1293,6 +1296,10 @@ namespace TorchSharp
                 protected Dictionary<string, TPreHook> pre_hooks = new Dictionary<string, TPreHook>();
                 protected Dictionary<string, TPostHook> post_hooks = new Dictionary<string, TPostHook>();
 
+                /// <summary>
+                /// Used to remove a specific hook, following the PyTorch API design.
+                /// </summary>
+                /// <remarks>The name and namespace of this class is not the same as in PyTorch, but serves the same purpose.</remarks>
                 public class HookRemover
                 {
                     public HookRemover(HookableModule<TPreHook, TPostHook> module, string key)
@@ -1321,8 +1328,17 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
                 public abstract TResult forward(T input1);
 
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
                 public TResult call(T input1)
                 {
                     // Call pre-hooks, if available.
@@ -1358,9 +1374,17 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
                 public abstract TResult forward(T1 input1, T2 input2);
 
-
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
                 public TResult call(T1 input1, T2 input2)
                 {
                     // Call pre-hooks, if available.
@@ -1399,8 +1423,17 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
                 public abstract TResult forward(T1 input1, T2 input2, T3 input3);
 
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
                 public TResult call(T1 input1, T2 input2, T3 input3)
                 {
                     // Call pre-hooks, if available.
@@ -1441,8 +1474,17 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
                 public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);
 
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
                 public TResult call(T1 input1, T2 input2, T3 input3, T4 input4)
                 {
                     // Call pre-hooks, if available.
@@ -1485,8 +1527,17 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
                 public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5);
 
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
                 public TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5)
                 {
                     // Call pre-hooks, if available.
@@ -1531,8 +1582,17 @@ namespace TorchSharp
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
                 public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6);
 
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
                 public TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6)
                 {
                     // Call pre-hooks, if available.
