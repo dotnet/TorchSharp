@@ -152,6 +152,19 @@ Tensor THSTensor_logspace(const double start, const double end, const int64_t st
     CATCH_TENSOR(torch::logspace(start, end, steps, base, options));
 }
 
+
+Tensor THSTensor_from_file(const char* filename, const int8_t shared, const int64_t size, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index))
+        .requires_grad(requires_grad);
+
+    c10::optional<bool> sh = shared == -1 ? c10::optional<bool>() : (shared == 1);
+    c10::optional<int64_t> sz = size == -1 ? c10::optional<int64_t>() : size;
+    CATCH_TENSOR(torch::from_file(filename, sh, sz, options));
+}
+
 Tensor THSTensor_new(
     void* data,
     void (*deleter)(void*),

@@ -41,9 +41,18 @@ EXPORT_API(void)  THSBackend_cuda_set_enable_flash_sdp(const bool flag);
 EXPORT_API(bool)  THSBackend_cuda_get_enable_math_sdp();
 EXPORT_API(void)  THSBackend_cuda_set_enable_math_sdp(const bool flag);
 
+EXPORT_API(int) THSTorch_get_num_threads();
+EXPORT_API(void) THSTorch_set_num_threads(const int threads);
+
+EXPORT_API(int) THSTorch_get_num_interop_threads();
+EXPORT_API(void) THSTorch_set_num_interop_threads(const int threads);
+
 // Returns the latest error. This is thread-local.
 
 EXPORT_API(const char *) THSTorch_get_and_reset_last_err();
+
+EXPORT_API(int) THSTorch_can_cast(const int type1, const int type2);
+EXPORT_API(int) THSTorch_promote_types(const int type1, const int type2);
 
 EXPORT_API(Scalar) THSTorch_int8_to_scalar(int8_t value);
 EXPORT_API(Scalar) THSTorch_uint8_to_scalar(uint8_t value);

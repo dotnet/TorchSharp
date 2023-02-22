@@ -47,6 +47,11 @@ Tensor THSLinalg_det(const Tensor tensor)
     CATCH_TENSOR(torch::linalg::det(*tensor));
 }
 
+Tensor THSTensor_logdet(const Tensor tensor)
+{
+    CATCH_TENSOR(torch::logdet(*tensor));
+}
+
 Tensor THSLinalg_slogdet(const Tensor tensor, Tensor* logabsdet)
 {
     std::tuple<at::Tensor, at::Tensor> res;
@@ -63,6 +68,13 @@ Tensor THSLinalg_eig(const Tensor tensor, Tensor* eigenvectors)
     return ResultTensor(std::get<0>(res));
 }
 
+Tensor THSTensor_geqrf(const Tensor tensor, Tensor* tau)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = torch::geqrf(*tensor);)
+    *tau = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
 
 #if 0
 Tensor THSTensor_eig(const Tensor tensor, bool vectors, Tensor* eigenvectors)
@@ -96,6 +108,11 @@ Tensor THSLinalg_eigvalsh(const Tensor tensor, const char UPLO)
     std::string _uplo;
     _uplo.push_back(UPLO);
     CATCH_TENSOR(torch::linalg::eigvalsh(*tensor, _uplo));
+}
+
+Tensor THSLinalg_householder_product(const Tensor tensor, const Tensor tau)
+{
+    CATCH_TENSOR(torch::linalg::householder_product(*tensor, *tau));
 }
 
 Tensor THSLinalg_inv(const Tensor tensor)

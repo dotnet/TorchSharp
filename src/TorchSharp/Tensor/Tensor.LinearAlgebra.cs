@@ -69,6 +69,41 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Calculates log determinant of a square matrix or batches of square matrices.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor logdet()
+            {
+                var shape = this.shape;
+                var len = shape.Length;
+                if (shape[len - 1] != shape[len - 2]) throw new ArgumentException("The input tensor is not square");
+
+                var res = THSTensor_logdet(Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+
+            /// <summary>
+            /// This is a low-level function for calling LAPACK’s geqrf directly.
+            /// This function returns a namedtuple (a, tau) as defined in LAPACK documentation for geqrf.
+            /// </summary>
+            /// <remarks>
+            /// Computes a QR decomposition of input. Both Q and R matrices are stored in the same output tensor a.
+            /// The elements of R are stored on and above the diagonal. Elementary reflectors (or Householder vectors)
+            /// implicitly defining matrix Q are stored below the diagonal. The results of this function can be used
+            /// together with torch.linalg.householder_product() to obtain the Q matrix or with torch.ormqr(), which
+            /// uses an implicit representation of the Q matrix, for an efficient matrix-matrix multiplication.
+            /// </remarks>
+            public (Tensor a, Tensor tau) geqrf()
+            {
+                var res = THSTensor_geqrf(Handle, out var tau);
+                if (res == IntPtr.Zero || tau == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), new Tensor(tau));
+            }
+
+            /// <summary>
             /// Matrix product of two tensors.
             /// </summary>
             /// <param name="target"></param>
@@ -138,7 +173,6 @@ namespace TorchSharp
             /// <summary>
             /// Computes the dot product of two 1D tensors.
             /// </summary>
-            /// <param name="target"></param>
             /// <returns></returns>
             /// <remarks>
             /// The vdot(a, b) function handles complex numbers differently than dot(a, b).
@@ -153,6 +187,18 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Computes the dot product of two 1D tensors.
+            /// </summary>
+            /// <returns></returns>
+            public Tensor dot(Tensor target)
+            {
+                if (shape.Length != 1 || target.shape.Length != 1 || shape[0] != target.shape[0]) throw new InvalidOperationException("dot arguments must have the same shape.");
+                var res = THSTensor_dot(Handle, target.Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Computes the pseudoinverse (Moore-Penrose inverse) of a matrix.
             /// </summary>
             /// <param name="rcond">The tolerance value to determine when is a singular value zero </param>
@@ -162,6 +208,22 @@ namespace TorchSharp
             public Tensor pinverse(double rcond = 1e-15, bool hermitian = false)
             {
                 var res = THSLinalg_pinverse(Handle, rcond, hermitian);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the matrix-matrix multiplication of a product of Householder matrices with a general matrix.
+            /// </summary>
+            /// <param name="tau">Tensor of shape (*, min(mn, k)) where * is zero or more batch dimensions.</param>
+            /// <param name="other">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="left">Controls the order of multiplication.</param>
+            /// <param name="transpose">Controls whether the matrix Q is conjugate transposed or not.</param>
+            /// <returns></returns>
+            public Tensor ormqr(Tensor tau, Tensor other, bool left = true, bool transpose = false)
+            {
+                var res = THSTensor_ormqr(Handle, tau.handle, other.Handle, left, transpose);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);

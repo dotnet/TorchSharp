@@ -1,7 +1,8 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Diagnostics.Contracts;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -13,16 +14,28 @@ namespace TorchSharp
         public static bool compiled_with_cxx11_abi() => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.result_type
-        [Pure, Obsolete("not implemented", true)]
-        public static ScalarType result_type(Tensor tensor1, Tensor tensor2) => throw new NotImplementedException();
+        public static ScalarType result_type(Tensor tensor1, Tensor tensor2)
+        {
+            var res = THSTensor_result_type(tensor1.Handle, tensor2.Handle);
+            if (res == -1) CheckForErrors();
+            return (ScalarType)res;
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.can_cast
-        [Pure, Obsolete("not implemented", true)]
-        public static bool can_cast(ScalarType from, ScalarType to) => throw new NotImplementedException();
+        public static bool can_cast(ScalarType from, ScalarType to)
+        {
+            var res = THSTorch_can_cast((int)from, (int)to);
+            if (res == -1) CheckForErrors();
+            return res != 0;
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.promote_types
-        [Obsolete("not implemented", true)]
-        public static bool promote_types(ScalarType type1, ScalarType type2) => throw new NotImplementedException();
+        public static ScalarType promote_types(ScalarType type1, ScalarType type2)
+        {
+            var res = THSTorch_promote_types((int)type1, (int)type2);
+            if (res == -1) CheckForErrors();
+            return (ScalarType)res;
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.use_deterministic_algorithms
         [Obsolete("not implemented", true)]

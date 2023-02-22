@@ -66,6 +66,14 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Creates a new tensor by horizontally stacking the input tensors.
+        /// </summary>
+        /// <param name="tensors">A list of input tensors.</param>
+        /// <returns></returns>
+        /// <remarks>Equivalent to torch.hstack(tensors), except each zero or one dimensional tensor t in tensors is first reshaped into a (t.numel(), 1) column before being stacked horizontally.</remarks>
+        public static Tensor column_stack(params Tensor[] tensors) => column_stack((IList<Tensor>)tensors);
+
+        /// <summary>
         /// Stack tensors in sequence vertically (row wise).
         /// </summary>
         /// <param name="tensors"></param>
@@ -79,6 +87,13 @@ namespace TorchSharp
             if (res == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(res);
         }
+
+        /// <summary>
+        /// Stack tensors in sequence vertically (row wise).
+        /// </summary>
+        /// <param name="tensors"></param>
+        /// <returns></returns>
+        public static Tensor row_stack(params Tensor[] tensors) => row_stack((IList<Tensor>)tensors);
 
         /// <summary>
         /// Removes a tensor dimension.
@@ -164,12 +179,6 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor.</param>
         public static bool is_conj(Tensor input) => input.is_conj();
-
-        /// <summary>
-        /// Replaces each element with the signs (-1, 0, 1) of the elements of input.
-        /// </summary>
-        /// <param name="input">The input tensor.</param>
-        public static Tensor sign_(Tensor input) => input.sign_();
 
         /// <summary>
         /// Calculates the standard deviation and mean of all elements in the tensor.

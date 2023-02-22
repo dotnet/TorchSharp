@@ -81,6 +81,10 @@ namespace TorchSharp
 
         private static void LoadNativeBackend(bool useCudaBackend, out StringBuilder trace)
         {
+            if (!System.Environment.Is64BitProcess) {
+                throw new NotSupportedException("TorchSharp only supports 64-bit processes.");
+            }
+
             var alreadyLoaded = useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded;
             trace = new StringBuilder();
             if (!alreadyLoaded) {
@@ -286,6 +290,16 @@ namespace TorchSharp
         public static partial class random
         {
             /// <summary>
+            /// Sets the seed for generating random numbers to a non-deterministic random number. Returns a 64 bit number used to seed the RNG.
+            /// </summary>
+            public static long seed() => Generator.Default.seed();
+
+            /// <summary>
+            /// Returns the initial seed for generating random numbers.
+            /// </summary>
+            public static long initial_seed() => Generator.Default.initial_seed();
+
+            /// <summary>
             /// Sets the seed for generating random numbers. Returns a torch.Generator object.
             /// </summary>
             /// <param name="seed">The desired seed.</param>
@@ -297,6 +311,23 @@ namespace TorchSharp
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Generator(res);
+            }
+
+            /// <summary>
+            /// Returns the random number generator state as a torch.ByteTensor.
+            /// </summary>
+            /// <returns></returns>
+            public static Tensor get_rng_state()
+            {
+                return Generator.Default.get_state();
+            }
+            /// <summary>
+            /// Sets the random number generator state.
+            /// </summary>
+            /// <param name="new_state">The desired state</param>
+            public static void set_rng_state(Tensor new_state)
+            {
+                Generator.Default.set_state(new_state);
             }
         }
 

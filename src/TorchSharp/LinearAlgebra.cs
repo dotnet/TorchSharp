@@ -199,6 +199,19 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Computes the first n columns of a product of Householder matrices.
+            /// </summary>
+            /// <param name="A">tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="tau">tensor of shape (*, k) where * is zero or more batch dimensions.</param>
+            public static Tensor householder_product(Tensor A, Tensor tau)
+            {
+                var res = THSLinalg_householder_product(A.Handle, tau.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Computes the inverse of a square matrix if it exists.
             /// </summary>
             /// <param name="input">The input tensor.</param>

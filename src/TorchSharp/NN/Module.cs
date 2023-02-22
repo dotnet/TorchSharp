@@ -6,10 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using TorchSharp.Modules;
+using static TorchSharp.PInvoke.LibTorchSharp;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
-using static TorchSharp.PInvoke.LibTorchSharp;
-using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace TorchSharp
 {
@@ -476,6 +475,11 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Returns an enumerable of buffers.
+                /// </summary>
+                public virtual IEnumerable<Tensor> buffers(bool recurse = true) => named_buffers(recurse).Select(np => np.buffer);
+
+                /// <summary>
                 /// Returns an enumerable of immediate children modules, yielding both the name of the module as well as the module itself.
                 /// </summary>
                 /// <returns>(string, Module) – Tuple containing a name and child module</returns>
@@ -497,6 +501,16 @@ namespace TorchSharp
                         }
                     }
                 }
+
+                /// <summary>
+                /// Returns an enumerable of modules.
+                /// </summary>
+                public virtual IEnumerable<Module> modules() => named_modules().Select(np => np.module);
+
+                /// <summary>
+                /// Returns an enumerable of immediate modules.
+                /// </summary>
+                public virtual IEnumerable<Module> children() => named_children().Select(np => np.module);
 
                 /// <summary>
                 /// Returns a dictionary containing a whole state of the module.
@@ -757,10 +771,24 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Alias for register_module()
+                /// </summary>
+                /// <param name="name">
+                /// name of the child module.
+                /// The child module can be accessed from this module using the given name
+                /// </param>
+                /// <param name="module">child module to be added to the module.</param>
+                /// <exception cref="ArgumentException"></exception>
+                /// <exception cref="InvalidOperationException"></exception>
+                public void add_module(string name, Module module)
+                    => register_module(name, module);
+
+                /// <summary>
                 /// Register a submodule.
                 /// </summary>
                 /// <param name="name">Name of the submodule.</param>
                 /// <param name="submodule">The module to register.</param>
+                /// <exception cref="ArgumentException"></exception>
                 /// <exception cref="InvalidOperationException"></exception>
                 public virtual void register_module(string name, Module submodule)
                 {
@@ -769,6 +797,12 @@ namespace TorchSharp
                             _internal_submodules.Remove(name);
                         }
                     } else {
+                        if (name.Contains(".")) {
+                            throw new ArgumentException($"module name can't contain \".\", got: {name}");
+                        }
+                        if (string.IsNullOrEmpty(name)) {
+                            throw new ArgumentException("module name can't be empty string \"\"");
+                        }
                         if (_internal_submodules.ContainsKey(name)) {
                             throw new InvalidOperationException($"Sub-module {name} is already registered.");
                         }

@@ -8,7 +8,20 @@ __API Changes__:
 
 Fixing misspelling of 'DetachFromDisposeScope,' deprecating the old spelling.<br/>
 Adding allow_tf32<br/>
+Adding overloads of Module.save() and Module.load() taking a 'Stream' argument.<br/>
+Adding torch.softmax() and Tensor.softmax() as aliases for torch.special.softmax()<br/>
+Adding torch.from_file()<br/>
+Adding a number of missing pointwise Tensor operations.<br/>
+Adding select_scatter, diagonal_scatter, and slice_scatter<br/>
+Adding torch.set_printoptions<br/>
+Adding torch.cartesian_prod, combinations, and cov.<br/>
+Adding torch.cdist, diag_embed, rot90, triu_indices, tril_indices<br/>
 
+__Fixed Bugs__:
+
+#913 conv = nn.Conv2d(c1, 1, 1, bias=False).requires_grad_(False)<br/>
+#910 nn.Module.modules is missing<br/>
+#912 nn.Module save and state_ dict method error<br/>
 
 ## NuGet Version 0.99.2
 
