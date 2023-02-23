@@ -106,7 +106,7 @@ namespace TorchSharp.Examples
 
         public override Tensor forward(Tensor input)
         {
-            return layers.call(input);
+            return layers.forward(input);
         }
 
         protected override void Dispose(bool disposing)
@@ -148,8 +148,8 @@ namespace TorchSharp.Examples
 
             public override Tensor forward(Tensor t)
             {
-                var x = layers.call(t);
-                var y = shortcut.call(t);
+                var x = layers.forward(t);
+                var y = shortcut.forward(t);
                 return x.add_(y).relu_();
             }
 
@@ -199,8 +199,8 @@ namespace TorchSharp.Examples
 
             public override Tensor forward(Tensor t)
             {
-                var x = layers.call(t);
-                using var y = shortcut.call(t);
+                var x = layers.forward(t);
+                using var y = shortcut.forward(t);
                 return x.add_(y).relu_();
             }
 

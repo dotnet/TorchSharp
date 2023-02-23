@@ -1333,28 +1333,28 @@ namespace TorchSharp
                 /// Invoke the logic of the module.
                 /// </summary>
                 /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
-                public abstract TResult forward(T input1);
+                public abstract TResult forward(T input);
 
                 /// <summary>
                 /// Invoke the logic of the module.
                 /// </summary>
                 /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
-                public TResult call(T input1)
+                public TResult call(T input)
                 {
                     // Call pre-hooks, if available.
 
                     foreach (var hook in pre_hooks.Values) {
-                        var modified = hook(this, input1);
+                        var modified = hook(this, input);
                         if (modified is not null)
-                            input1 = modified;
+                            input = modified;
                     }
 
-                    var result = forward(input1);
+                    var result = forward(input);
 
                     // Call post-hooks, if available.
 
                     foreach (var hook in post_hooks.Values) {
-                        var modified = hook(this, input1, result);
+                        var modified = hook(this, input, result);
                         if (modified is not null)
                             result = modified;
                     }

@@ -126,23 +126,25 @@ namespace TorchSharp.Examples
 
             public override Tensor forward(Tensor input)
             {
-                var l11 = conv1.call(input);
-                var l12 = relu1.call(l11);
+                // All these modules are private to the model and won't have hooks,
+                // so we can use 'forward' instead of 'call'
+                var l11 = conv1.forward(input);
+                var l12 = relu1.forward(l11);
 
-                var l21 = conv2.call(l12);
-                var l22 = relu2.call(l21);
-                var l23 = pool1.call(l22);
-                var l24 = dropout1.call(l23);
+                var l21 = conv2.forward(l12);
+                var l22 = relu2.forward(l21);
+                var l23 = pool1.forward(l22);
+                var l24 = dropout1.forward(l23);
 
-                var x = flatten.call(l24);
+                var x = flatten.forward(l24);
 
-                var l31 = fc1.call(x);
-                var l32 = relu3.call(l31);
-                var l33 = dropout2.call(l32);
+                var l31 = fc1.forward(x);
+                var l32 = relu3.forward(l31);
+                var l33 = dropout2.forward(l32);
 
-                var l41 = fc2.call(l33);
+                var l41 = fc2.forward(l33);
 
-                return logsm.call(l41);
+                return logsm.forward(l41);
             }
 
             protected override void Dispose(bool disposing)
