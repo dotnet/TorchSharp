@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using static TorchSharp.torch;
 
 #nullable enable
@@ -164,53 +165,121 @@ namespace TorchSharp
                     rank: 3);
             }
 
-            internal class SqueezeExcitation : torch.nn.Module<Tensor, Tensor>
+
+            /// <summary>
+            /// This block implements the multi-layer perceptron (MLP) module.
+            /// </summary>
+            /// <param name="in_channels">Number of channels in the input image</param>
+            /// <param name="hidden_channels">List of the hidden channel dimensions</param>
+            /// <param name="norm_layer">Norm layer that will be stacked on top of the linear layer. If null, will be ignored</param>
+            /// <param name="activation_layer">Activation function which will be stacked on top of the normalization layer. Defaults to ReLU.</param>
+            /// <param name="inplace">Parameter for the activation layer, which can optionally do the operation in-place.</param>
+            /// <param name="bias">Whether to use bias in the linear and dropout layers.</param>
+            /// <param name="dropout">The probability for the dropout layer.</param>
+            /// <returns></returns>
+            public static Modules.Sequential MLP(
+                long in_channels,
+                IList<int> hidden_channels,
+                Func<int, nn.Module<Tensor, Tensor>>? norm_layer = null,
+                Func<nn.Module<Tensor, Tensor>>? activation_layer = null,
+                bool inplace = false,
+                bool bias = true,
+                double dropout = 0.0
+                )
             {
-                private readonly nn.Module<Tensor, Tensor> avgpool;
-                private readonly nn.Module<Tensor, Tensor> fc1;
-                private readonly nn.Module<Tensor, Tensor> fc2;
-                private readonly nn.Module<Tensor, Tensor> activation;
-                private readonly nn.Module<Tensor, Tensor> scale_activation;
-
-                /// <summary>
-                /// This block implements the Squeeze-and-Excitation block from https://arxiv.org/abs/1709.01507 (see Fig. 1).
-                /// Parameters ``activation``, and ``scale_activation`` correspond to ``delta`` and ``sigma`` in eq. 3.
-                /// </summary>
-                /// <param name="name"></param>
-                /// <param name="input_channels">Number of channels in the input image</param>
-                /// <param name="squeeze_channels">Number of squeeze channels</param>
-                /// <param name="activation">``delta`` activation</param>
-                /// <param name="scale_activation">``sigma`` activation.</param>
-                public SqueezeExcitation(
-                    string name,
-                    long input_channels,
-                    long squeeze_channels,
-                    Func<nn.Module<Tensor, Tensor>> activation,
-                    Func<nn.Module<Tensor, Tensor>> scale_activation) : base(name)
-                {
-                    this.avgpool = torch.nn.AdaptiveAvgPool2d(1);
-                    this.fc1 = torch.nn.Conv2d(input_channels, squeeze_channels, 1);
-                    this.fc2 = torch.nn.Conv2d(squeeze_channels, input_channels, 1);
-                    this.activation = activation();
-                    this.scale_activation = scale_activation();
-
-                    RegisterComponents();
+                if (activation_layer == null) {
+                    activation_layer = () => nn.ReLU(inplace);
                 }
 
-                private Tensor _scale(Tensor input)
-                {
-                    var scale = this.avgpool.call(input);
-                    scale = this.fc1.call(scale);
-                    scale = this.activation.call(scale);
-                    scale = this.fc2.call(scale);
-                    return this.scale_activation.call(scale);
+                var layers = new List<nn.Module<Tensor, Tensor>>();
+                var in_dim = in_channels;
+                for (int i = 0; i < hidden_channels.Count-1; i++) {
+                    var hidden_dim = hidden_channels[i];
+                    layers.Add(nn.Linear(in_dim, hidden_dim, hasBias: bias));
+                    if (norm_layer != null) {
+                        layers.Add(norm_layer(hidden_dim));
+                    }
+                    layers.Add(activation_layer());
+                    layers.Add(nn.Dropout(dropout, inplace));
+                    in_dim = hidden_dim;
                 }
 
-                public override Tensor forward(Tensor input)
-                {
-                    var scale = this._scale(input);
-                    return scale * input;
-                }
+                layers.Add(nn.Linear(in_dim, hidden_channels[hidden_channels.Count-1], hasBias: bias));
+                layers.Add(nn.Dropout(dropout, inplace));
+
+                return nn.Sequential(layers);
+            }
+
+            /// <summary>
+            /// This block implements the Squeeze-and-Excitation block from https://arxiv.org/abs/1709.01507
+            /// Parameters ``activation``, and ``scale_activation`` correspond to ``delta`` and ``sigma`` in eq. 3.
+            /// </summary>
+            /// <param name="input_channels">Number of channels in the input image</param>
+            /// <param name="squeeze_channels">Number of squeeze channels</param>
+            /// <param name="activation">`delta` activation.</param>
+            /// <param name="scale_activation">`sigma` activation</param>
+            /// <returns></returns>
+            public static Modules.SqueezeExcitation SqueezeExcitation(long input_channels, long squeeze_channels, Func<nn.Module<Tensor, Tensor>>? activation, Func<nn.Module<Tensor, Tensor>>? scale_activation)
+            {
+                return new Modules.SqueezeExcitation(input_channels, squeeze_channels, activation, scale_activation);
+            }
+        }
+    }
+
+    namespace Modules
+    {
+        public class SqueezeExcitation : torch.nn.Module<Tensor, Tensor>
+        {
+            private readonly nn.Module<Tensor, Tensor> avgpool;
+            private readonly nn.Module<Tensor, Tensor> fc1;
+            private readonly nn.Module<Tensor, Tensor> fc2;
+            private readonly nn.Module<Tensor, Tensor> activation;
+            private readonly nn.Module<Tensor, Tensor> scale_activation;
+
+            /// <summary>
+            /// This block implements the Squeeze-and-Excitation block from https://arxiv.org/abs/1709.01507 (see Fig. 1).
+            /// Parameters ``activation``, and ``scale_activation`` correspond to ``delta`` and ``sigma`` in eq. 3.
+            /// </summary>
+            /// <param name="input_channels">Number of channels in the input image</param>
+            /// <param name="squeeze_channels">Number of squeeze channels</param>
+            /// <param name="activation">``delta`` activation</param>
+            /// <param name="scale_activation">``sigma`` activation.</param>
+            public SqueezeExcitation(
+                long input_channels,
+                long squeeze_channels,
+                Func<nn.Module<Tensor, Tensor>>? activation = null,
+                Func<nn.Module<Tensor, Tensor>>? scale_activation = null) : base(nameof(SqueezeExcitation))
+            {
+                this.avgpool = torch.nn.AdaptiveAvgPool2d(1);
+                this.fc1 = torch.nn.Conv2d(input_channels, squeeze_channels, 1);
+                this.fc2 = torch.nn.Conv2d(squeeze_channels, input_channels, 1);
+                this.activation = activation is null ? nn.ReLU() : activation();
+                this.scale_activation = scale_activation is null ? nn.Sigmoid() : scale_activation();
+
+                RegisterComponents();
+            }
+
+            private Tensor _scale(Tensor input)
+            {
+                var scale = this.avgpool.call(input);
+                scale = this.fc1.call(scale);
+                scale = this.activation.call(scale);
+                scale = this.fc2.call(scale);
+                return this.scale_activation.call(scale);
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                var scale = this._scale(input);
+                return scale * input;
+            }
+        }
+
+        public class RoIPool : torch.nn.Module<Tensor, Tensor>
+        {
+            public override Tensor forward(Tensor input)
+            {
+                throw new NotImplementedException();
             }
         }
     }

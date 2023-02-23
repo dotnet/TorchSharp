@@ -122,6 +122,13 @@ namespace TorchSharp
         /// <param name="input">The input tensor.</param>
         [Pure]public static Tensor max(Tensor input) => input.max();
 
+        /// <summary>
+        /// Computes the element-wise maximum of input and other.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="other">The second tensor.</param>
+        [Pure] public static Tensor max(Tensor input, Tensor other) => torch.maximum(input, other);
+
         // https://pytorch.org/docs/stable/generated/torch.max
         /// <summary>
         /// Returns a named tuple (values, indexes) where values is the maximum value of each row of the input tensor in the given dimension dim.
@@ -140,6 +147,13 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input">The input tensor.</param>
         [Pure]public static Tensor min(Tensor input) => input.min();
+
+        /// <summary>
+        /// Computes the element-wise minimum of input and other.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="other">The second tensor.</param>
+        [Pure] public static Tensor min(Tensor input, Tensor other) => torch.minimum(input, other);
 
         // https://pytorch.org/docs/stable/generated/torch.min
         /// <summary>
