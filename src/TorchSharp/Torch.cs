@@ -118,6 +118,7 @@ namespace TorchSharp
                     ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
                 } else {
                     TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly, trace);
+                    TryLoadNativeLibraryByName("torch_directml", typeof(torch).Assembly, trace);
                     ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
                 }
 
@@ -494,6 +495,15 @@ namespace TorchSharp
 
         public static partial class backends
         {
+            public static partial class directml
+            {
+                public static UInt64 get_default_directml_device()
+                {
+                    var result = LibTorchSharp.THSBackend_get_default_directml_device();
+                    CheckForErrors();
+                    return result;
+                }
+            }
             public static partial class cuda
             {
                 public static partial class matmul
@@ -584,5 +594,6 @@ namespace TorchSharp
         MSNPU = 8, // MSNPU
         XLA = 9, // XLA / TPU
         META = 14,
+        PRIVATEUSE1 = 19, // DirectML
     }
 }

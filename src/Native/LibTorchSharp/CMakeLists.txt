@@ -6,6 +6,8 @@ if(APPLE)
 endif()
 find_package(Torch REQUIRED PATHS ${LIBTORCH_PATH})
 
+set(LIBTORCH_DIRECTML_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../../libtorch-directml/libtorch-win-debug)
+
 set(SOURCES
     cifar10.h
 	crc32c.h
@@ -58,10 +60,12 @@ endif()
 
 # Add libTorch bindings
 include_directories(${TORCH_INCLUDE_DIRS})
+include_directories(${LIBTORCH_DIRECTML_PATH}/include)
 
 add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
 
 target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
+target_link_libraries(LibTorchSharp ${LIBTORCH_DIRECTML_PATH}/lib/torch_directml.lib)
 
 set_property(TARGET LibTorchSharp PROPERTY CXX_STANDARD 14)
 

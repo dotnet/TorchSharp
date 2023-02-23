@@ -3566,8 +3566,8 @@ namespace TorchSharp
         [TestOf(nameof(Tensor.cuda))]
         public void CopyCpuToCuda()
         {
-            Tensor cpu = torch.ones(new long[] { 2, 2 });
-            Assert.Equal("cpu", cpu.device.ToString());
+            Tensor cpu = torch.ones(new long[] { 2, 2 }, device: torch.DirectML);
+            Assert.Equal("privateuse1:0", cpu.device.ToString());
 
             if (torch.cuda.is_available()) {
                 var cuda = cpu.cuda();

@@ -103,5 +103,8 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSTorch_set_num_interop_threads(int threads);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern UInt64 THSBackend_get_default_directml_device();
     }
 }

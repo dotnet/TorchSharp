@@ -355,10 +355,10 @@ namespace TorchSharp
         [Fact]
         public void EvaluateRelu()
         {
-            var rel = ReLU();
-            var input = torch.randn(new long[] { 64, 8 });
+            var rel = ReLU().to(torch.DirectML);
+            var input = torch.randn(new long[] { 64, 8 }).to(torch.DirectML);
             var output = rel.forward(input);
-            var values = output.data<float>().ToArray();
+            var values = output.to(torch.CPU).data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= 0.0));
         }
@@ -458,10 +458,10 @@ namespace TorchSharp
         [Fact]
         public void EvaluateGELU()
         {
-            var rel = GELU();
-            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
+            var rel = GELU().to(torch.DirectML);
+            var input = torch.randn(new long[] { 64, 8 }).to(torch.DirectML) * 25.0;
             var output = rel.forward(input);
-            var values = output.data<float>().ToArray();
+            var values = output.to(torch.CPU).data<float>().ToArray();
             Assert.Equal(input.shape, output.shape);
             Assert.All(values, val => Assert.True(val >= -0.2));
         }

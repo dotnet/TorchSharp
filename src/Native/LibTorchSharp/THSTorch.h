@@ -41,6 +41,8 @@ EXPORT_API(void)  THSBackend_cuda_set_enable_flash_sdp(const bool flag);
 EXPORT_API(bool)  THSBackend_cuda_get_enable_math_sdp();
 EXPORT_API(void)  THSBackend_cuda_set_enable_math_sdp(const bool flag);
 
+EXPORT_API(uint64_t) THSBackend_get_default_directml_device();
+
 EXPORT_API(int) THSTorch_get_num_threads();
 EXPORT_API(void) THSTorch_set_num_threads(const int threads);
 

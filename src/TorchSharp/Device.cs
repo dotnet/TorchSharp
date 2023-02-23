@@ -88,6 +88,11 @@ namespace TorchSharp
         public static Device CUDA = new Device(DeviceType.CUDA, -1);
 
         /// <summary>
+        /// Convenience declaration of a DirectML device accessible everywhere.
+        /// </summary>
+        public static Device DirectML = new Device(DeviceType.PRIVATEUSE1, 0);
+
+        /// <summary>
         /// Convenience declaration of a META device accessible everywhere.
         /// </summary>
         public static Device META = new Device(DeviceType.META, -1);

@@ -3,6 +3,7 @@
 
 #include "torch/torch.h"
 #include "torch/cuda.h"
+#include "dml_context.h"
 
 void THSTorch_manual_seed(const int64_t seed)
 {
@@ -71,6 +72,12 @@ void THSBackend_cuda_set_enable_flash_sdp(const bool flag)
 {
     CATCH(at::globalContext().setSDPUseFlash(flag););
 }
+
+uint64_t THSBackend_get_default_directml_device()
+{
+    return torch_dml::globalContext().getDmlDefaultBackendIndex();
+}
+
 
 bool THSBackend_cuda_get_enable_math_sdp()
 {
