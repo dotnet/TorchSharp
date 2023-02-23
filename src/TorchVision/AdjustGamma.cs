@@ -20,11 +20,11 @@ namespace TorchSharp
             {
                 var dtype = img.dtype;
                 if (!torch.is_floating_point(img))
-                    img = transforms.ConvertImageDType(torch.float32).call(img);
+                    img = transforms.ConvertImageDtype(torch.float32).call(img);
 
                 img = (gain * img.pow(gamma)).clamp(0, 1);
 
-                return transforms.ConvertImageDType(dtype).call(img); ;
+                return transforms.ConvertImageDtype(dtype).call(img); ;
             }
 
             private double gamma;
