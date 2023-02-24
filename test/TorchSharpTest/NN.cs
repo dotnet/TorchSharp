@@ -9,11 +9,24 @@ using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 using System.Drawing;
+using System.Collections.Generic;
 
 #nullable enable
 
 namespace TorchSharp
 {
+    static internal class TestUtils
+    {
+        public static IList<Device> AvailableDevices {
+            get {
+                List<Device> result = new List<Device>();
+                result.Add(torch.CPU);
+                if (torch.cuda_is_available()) result.Add(torch.CUDA);
+                return result;
+            }
+        }
+    }
+
 #if NET472_OR_GREATER
     [Collection("Sequential")]
 #endif // NET472_OR_GREATER
@@ -48,21 +61,10 @@ namespace TorchSharp
         [Fact]
         public void TestDeviceAndTypeLinear()
         {
+            foreach (var device in TestUtils.AvailableDevices)
             {
-                var lin = Linear(1000, 100, true, dtype: torch.float64);
-                var ps = lin.parameters().ToArray();
-                var nps = ps.Count();
-
-                Assert.Multiple(
-                    () => Assert.Equal(2, nps),
-                    () => Assert.False(lin.bias is null),
-                    () => Assert.Equal(torch.float64, ps[0].dtype),
-                    () => Assert.Equal(torch.float64, ps[1].dtype)
-                );
-            }
-            if (torch.cuda.is_available()) {
                 {
-                    var lin = Linear(1000, 100, true, device: torch.CUDA, dtype: torch.float64);
+                    var lin = Linear(1000, 100, true, device: device, dtype: torch.float64);
                     var ps = lin.parameters().ToArray();
                     var nps = ps.Count();
 
@@ -71,12 +73,12 @@ namespace TorchSharp
                         () => Assert.False(lin.bias is null),
                         () => Assert.Equal(torch.float64, ps[0].dtype),
                         () => Assert.Equal(torch.float64, ps[1].dtype),
-                        () => Assert.Equal(DeviceType.CUDA, ps[0].device_type),
-                        () => Assert.Equal(DeviceType.CUDA, ps[1].device_type)
+                        () => Assert.Equal(device.type, ps[0].device_type),
+                        () => Assert.Equal(device.type, ps[1].device_type)
                     );
                 }
                 {
-                    var lin = Linear(1000, 100, true, device: torch.CUDA);
+                    var lin = Linear(1000, 100, true, device: device);
                     var ps = lin.parameters().ToArray();
                     var nps = ps.Count();
 
@@ -85,8 +87,8 @@ namespace TorchSharp
                         () => Assert.False(lin.bias is null),
                         () => Assert.Equal(torch.float32, ps[0].dtype),
                         () => Assert.Equal(torch.float32, ps[1].dtype),
-                        () => Assert.Equal(DeviceType.CUDA, ps[0].device_type),
-                        () => Assert.Equal(DeviceType.CUDA, ps[1].device_type)
+                        () => Assert.Equal(device.type, ps[0].device_type),
+                        () => Assert.Equal(device.type, ps[1].device_type)
                     );
                 }
             }
@@ -95,25 +97,32 @@ namespace TorchSharp
         [Fact]
         public void TestSetGetBiasInLinear()
         {
-            var lin = Linear(1000, 100, true);
-            var bias = torch.ones(new long[] { 1000 });
-            var bCount = bias.NumberOfElements;
-            lin.bias = bias.AsParameter();
-            Assert.True(!(lin.bias is null));
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin = Linear(1000, 100, true, device: device);
+                var bias = torch.ones(new long[] { 1000 }, device: device);
+                var bCount = bias.NumberOfElements;
+                lin.bias = bias.AsParameter();
+                Assert.NotNull(lin.bias);
 
-            Assert.Equal(lin.bias?.NumberOfElements, bCount);
+                Assert.Equal(lin.bias?.NumberOfElements, bCount);
+                Assert.Equal(device.type, lin.bias!.device_type);
+            }
         }
 
         [Fact]
         public void TestWeightAndBiasShapeInLinear()
         {
-            var lin = Linear(1000, 100, true);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin = Linear(1000, 100, true, device: device);
 
-            Assert.Equal(2, lin.weight!.shape.Length);
-            Assert.Equal(100, lin.weight!.shape[0]);
-            Assert.Equal(1000, lin.weight!.shape[1]);
-            Assert.True(1 == lin.bias?.shape.Length);
-            Assert.Equal(100, lin.bias?.shape[0]);
+                Assert.Equal(2, lin.weight!.shape.Length);
+                Assert.Equal(100, lin.weight!.shape[0]);
+                Assert.Equal(1000, lin.weight!.shape[1]);
+                Assert.True(1 == lin.bias?.shape.Length);
+                Assert.Equal(100, lin.bias?.shape[0]);
+                Assert.Equal(device.type, lin.bias!.device_type);
+                Assert.Equal(device.type, lin.weight!.device_type);
+            }
         }
 
         [Fact]
@@ -150,196 +159,264 @@ namespace TorchSharp
         [Fact]
         public void TestLinearWithBias()
         {
-            var lin = Linear(1000, 100, true);
-            var bias = lin.bias!;
-            var weight = lin.weight!.t();
-            var input = torch.randn(new long[] { 1, 1000 });
-            var forward = lin.call(input);
-            var matmul = input.matmul(weight).add(bias);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin = Linear(1000, 100, true, device: device);
+                var bias = lin.bias!;
+                var weight = lin.weight!.t();
+                var input = torch.randn(new long[] { 1, 1000 }, device: device);
+                var forward = lin.call(input);
+                var matmul = input.matmul(weight).add(bias);
 
-            Assert.Multiple(
-                () => Assert.Equal(forward.shape.Length, matmul.shape.Length),
-                () => Assert.Equal(forward.shape[0], matmul.shape[0]),
-                () => Assert.Equal(forward.shape[1], matmul.shape[1])
-            );
+                Assert.Multiple(
+                    () => Assert.Equal(forward.shape.Length, matmul.shape.Length),
+                    () => Assert.Equal(forward.shape[0], matmul.shape[0]),
+                    () => Assert.Equal(forward.shape[1], matmul.shape[1]),
+                    () => Assert.Equal(device.type, forward.device_type),
+                    () => Assert.Equal(device.type, matmul.device_type)
+                );
 
-            for (int i = 0; i < 100; i++) {
-                Assert.InRange(forward.data<float>()[i], matmul.data<float>()[i] - 10e5f, matmul.data<float>()[i] + 10e5f);
+                var fdata = forward.cpu().data<float>();
+                var mdata = matmul.cpu().data<float>();
+
+                for (int i = 0; i < 100; i++) {
+                    Assert.InRange(fdata[i], mdata[i] - 10e5f, mdata[i] + 10e5f);
+                }
             }
         }
 
         [Fact]
         public void FunctionalLinearWithBias()
         {
-            var input = torch.randn(4, 1000);
-            var weight = torch.randn(100, 1000);
-            var bias = torch.randn(100);
-            var forward = torch.nn.functional.linear(input, weight, bias);
-            var matmul = input.matmul(weight.t()).add(bias);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(4, 1000, device: device);
+                var weight = torch.randn(100, 1000, device: device);
+                var bias = torch.randn(100, device: device);
+                var forward = torch.nn.functional.linear(input, weight, bias);
+                var matmul = input.matmul(weight.t()).add(bias);
 
-            Assert.Multiple(
-                () => Assert.Equal(forward.shape.Length, matmul.shape.Length),
-                () => Assert.Equal(forward.shape[0], matmul.shape[0]),
-                () => Assert.Equal(forward.shape[1], matmul.shape[1])
-            );
-            for (int i = 0; i < 100; i++) {
-                Assert.InRange(forward.data<float>()[i], matmul.data<float>()[i] - 10e5f, matmul.data<float>()[i] + 10e5f);
+                Assert.Multiple(
+                    () => Assert.Equal(forward.shape.Length, matmul.shape.Length),
+                    () => Assert.Equal(forward.shape[0], matmul.shape[0]),
+                    () => Assert.Equal(forward.shape[1], matmul.shape[1]),
+                    () => Assert.Equal(device.type, forward.device_type),
+                    () => Assert.Equal(device.type, matmul.device_type)
+                );
+
+                var fdata = forward.cpu().data<float>();
+                var mdata = matmul.cpu().data<float>();
+
+                for (int i = 0; i < 100; i++) {
+                    Assert.InRange(fdata[i], mdata[i] - 10e5f, mdata[i] + 10e5f);
+                }
             }
         }
 
         [Fact]
         public void FunctionalLinearNoBias()
         {
-            var input = torch.randn(4, 1000);
-            var weight = torch.randn(100, 1000);
-            var forward = torch.nn.functional.linear(input, weight);
-            var matmul = input.matmul(weight.t());
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(4, 1000, device: device);
+                var weight = torch.randn(100, 1000, device: device);
+                var forward = torch.nn.functional.linear(input, weight);
+                var matmul = input.matmul(weight.t());
 
-            Assert.Multiple(
-                () => Assert.Equal(forward.shape.Length, matmul.shape.Length),
-                () => Assert.Equal(forward.shape[0], matmul.shape[0]),
-                () => Assert.Equal(forward.shape[1], matmul.shape[1])
-            );
-            for (int i = 0; i < 100; i++) {
-                Assert.InRange(forward.data<float>()[i], matmul.data<float>()[i] - 10e5f, matmul.data<float>()[i] + 10e5f);
+                Assert.Multiple(
+                    () => Assert.Equal(forward.shape.Length, matmul.shape.Length),
+                    () => Assert.Equal(forward.shape[0], matmul.shape[0]),
+                    () => Assert.Equal(forward.shape[1], matmul.shape[1]),
+                    () => Assert.Equal(device.type, forward.device_type),
+                    () => Assert.Equal(device.type, matmul.device_type)
+                );
+
+                var fdata = forward.cpu().data<float>();
+                var mdata = matmul.cpu().data<float>();
+
+                for (int i = 0; i < 100; i++) {
+                    Assert.InRange(fdata[i], mdata[i] - 10e5f, mdata[i] + 10e5f);
+                }
             }
         }
 
         [Fact]
         public void TestLinearNoBias()
         {
-            var lin = Linear(1000, 100, false);
-            Assert.False(!(lin.bias is null));
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin = Linear(1000, 100, false, device: device);
+                Assert.False(!(lin.bias is null));
 
-            var weight = lin.weight!.transpose(0, 1);
-            var input = torch.randn(new long[] { 1, 1000 });
-            var forward = lin.call(input);
-            var matmul = input.matmul(weight);
+                var weight = lin.weight!.transpose(0, 1);
+                var input = torch.randn(new long[] { 1, 1000 }, device: device);
+                var forward = lin.call(input);
+                var matmul = input.matmul(weight);
 
-            Assert.Equal(forward.shape.Length, matmul.shape.Length);
-            Assert.Equal(forward.shape[0], matmul.shape[0]);
-            Assert.Equal(forward.shape[1], matmul.shape[1]);
+                Assert.Multiple(
+                    () => Assert.Equal(forward.shape.Length, matmul.shape.Length),
+                    () => Assert.Equal(forward.shape[0], matmul.shape[0]),
+                    () => Assert.Equal(forward.shape[1], matmul.shape[1]),
+                    () => Assert.Equal(device.type, forward.device_type),
+                    () => Assert.Equal(device.type, matmul.device_type)
+                );
 
-            for (int i = 0; i < 100; i++) {
-                Assert.Equal(forward.data<float>()[i], matmul.data<float>()[i]);
+                var fdata = forward.cpu().data<float>();
+                var mdata = matmul.cpu().data<float>();
+
+                for (int i = 0; i < 100; i++) {
+                    Assert.InRange(fdata[i], mdata[i] - 10e5f, mdata[i] + 10e5f);
+                }
             }
         }
 
         [Fact]
         public void TestBilinearWithBias()
         {
-            var lin = Bilinear(20, 30, 40);
-            var input1 = torch.randn(new long[] { 128, 20 });
-            var input2 = torch.randn(new long[] { 128, 30 });
-            var forward = lin.call(input1, input2);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin = Bilinear(20, 30, 40, device: device);
+                var input1 = torch.randn(new long[] { 128, 20 }, device: device);
+                var input2 = torch.randn(new long[] { 128, 30 }, device: device);
+                var forward = lin.call(input1, input2);
 
-            Assert.Equal(2, forward.shape.Length);
-            Assert.Equal(128, forward.shape[0]);
-            Assert.Equal(40, forward.shape[1]);
+                Assert.Equal(2, forward.shape.Length);
+                Assert.Equal(128, forward.shape[0]);
+                Assert.Equal(40, forward.shape[1]);
+                Assert.Equal(device.type, forward.device_type);
+            }
         }
 
         [Fact]
         public void FunctionalBilinearWithBias()
         {
-            var input1 = torch.randn(new long[] { 128, 20 });
-            var input2 = torch.randn(new long[] { 128, 30 });
-            var weight = torch.randn(40, 20, 30);
-            var bias = torch.randn(40);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input1 = torch.randn(new long[] { 128, 20 }, device: device);
+                var input2 = torch.randn(new long[] { 128, 30 }, device: device);
+                var weight = torch.randn(40, 20, 30, device: device);
+                var bias = torch.randn(40, device: device);
 
-            var forward = torch.nn.functional.bilinear(input1, input2, weight, bias);
+                var forward = torch.nn.functional.bilinear(input1, input2, weight, bias);
 
-            Assert.Equal(2, forward.shape.Length);
-            Assert.Equal(128, forward.shape[0]);
-            Assert.Equal(40, forward.shape[1]);
+                Assert.Equal(2, forward.shape.Length);
+                Assert.Equal(128, forward.shape[0]);
+                Assert.Equal(40, forward.shape[1]);
+                Assert.Equal(device.type, forward.device_type);
+            }
         }
 
         [Fact]
         public void FunctionalBilinearNoBias()
         {
-            var input1 = torch.randn(new long[] { 128, 20 });
-            var input2 = torch.randn(new long[] { 128, 30 });
-            var weight = torch.randn(40, 20, 30);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input1 = torch.randn(new long[] { 128, 20 }, device: device);
+                var input2 = torch.randn(new long[] { 128, 30 }, device: device);
+                var weight = torch.randn(40, 20, 30, device: device);
 
-            var forward = torch.nn.functional.bilinear(input1, input2, weight);
+                var forward = torch.nn.functional.bilinear(input1, input2, weight);
 
-            Assert.Equal(2, forward.shape.Length);
-            Assert.Equal(128, forward.shape[0]);
-            Assert.Equal(40, forward.shape[1]);
+                Assert.Equal(2, forward.shape.Length);
+                Assert.Equal(128, forward.shape[0]);
+                Assert.Equal(40, forward.shape[1]);
+                Assert.Equal(device.type, forward.device_type);
+            }
         }
 
         [Fact]
         public void TestIdentity()
         {
-            var lin = Identity();
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin = Identity();
 
-            var input = torch.randn(new long[] { 1, 1000 });
-            var output = lin.call(input);
+                var input = torch.randn(new long[] { 1, 1000 }, device: device);
+                var output = lin.call(input);
 
-            for (int i = 0; i < 1000; i++) {
-                Assert.Equal(input.data<float>()[i], output.data<float>()[i]);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(input.cpu().data<float>(), output.cpu().data<float>());
             }
         }
 
         [Fact]
         public void TestLinearEditBias()
         {
-            var lin = Linear(1000, 100, true);
-            var bias = torch.randn(new long[] { 100 });
-            lin.bias = bias.clone().AsParameter();
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin = Linear(1000, 100, true, device: device);
+                var bias = torch.randn(new long[] { 100 }, device: device);
+                lin.bias = bias.clone().AsParameter();
 
-            for (int i = 0; i < 100; i++) {
-                Assert.Equal(lin.bias.data<float>()[i], bias.data<float>()[i]);
+                Assert.Equal(device.type, lin.bias.device_type);
+
+                var fdata = lin.bias.cpu().data<float>();
+                var mdata = bias.cpu().data<float>();
+
+                for (int i = 0; i < 100; i++) {
+                    Assert.Equal(fdata[i], mdata[i]);
+                }
             }
         }
 
         [Fact]
         public void TestLinearEditWeightsAndBias()
         {
-            var lin = Linear(1000, 1000, true);
-            var bias = torch.randn(new long[] { 100 });
-            var weights = torch.randn(new long[] { 100, 1000 });
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin = Linear(1000, 1000, true, device: device);
+                var bias = torch.randn(new long[] { 100 }, device: device);
+                var weights = torch.randn(new long[] { 100, 1000 }, device: device);
 
-            lin.bias = bias.clone().AsParameter();
-            lin.weight = weights.clone().AsParameter();
+                lin.bias = bias.clone().AsParameter();
+                lin.weight = weights.clone().AsParameter();
 
-            var w1 = lin.weight;
-            var b1 = lin.bias;
+                var w1 = lin.weight;
+                var b1 = lin.bias;
 
-            Assert.Equal(w1.shape.Length, weights.shape.Length);
-            Assert.Equal(w1.shape[0], weights.shape[0]);
-            Assert.Equal(w1.shape[1], weights.shape[1]);
+                Assert.Equal(w1.shape.Length, weights.shape.Length);
+                Assert.Equal(w1.shape[0], weights.shape[0]);
+                Assert.Equal(w1.shape[1], weights.shape[1]);
+                Assert.Equal(device.type, b1.device_type);
 
-            for (int i = 0; i < 100; i++) {
-                Assert.Equal(b1.data<float>()[i], bias.data<float>()[i]);
-            }
+                {
+                    var fdata = b1.cpu().data<float>();
+                    var mdata = bias.cpu().data<float>();
 
-            var np = lin.named_parameters().ToArray();
-            var w2 = np[0].parameter;
-            var b2 = np[1].parameter;
+                    for (int i = 0; i < 100; i++) {
+                        Assert.Equal(fdata[i], mdata[i]);
+                    }
+                }
 
-            Assert.Equal(weights.shape.Length, w2.shape.Length);
-            Assert.Equal(weights.shape[0], w2.shape[0]);
-            Assert.Equal(weights.shape[1], w2.shape[1]);
+                var np = lin.named_parameters().ToArray();
+                var w2 = np[0].parameter;
+                var b2 = np[1].parameter;
 
-            for (int i = 0; i < 100; i++) {
-                Assert.Equal(b2.data<float>()[i], bias.data<float>()[i]);
+                Assert.Equal(weights.shape.Length, w2.shape.Length);
+                Assert.Equal(weights.shape[0], w2.shape[0]);
+                Assert.Equal(weights.shape[1], w2.shape[1]);
+                Assert.Equal(device.type, b2.device_type);
+
+                {
+                    var fdata = b2.cpu().data<float>();
+                    var mdata = bias.cpu().data<float>();
+
+                    for (int i = 0; i < 100; i++) {
+                        Assert.Equal(fdata[i], mdata[i]);
+                    }
+                }
             }
         }
 
         [Fact]
         public void TestLinearEditWeightsAndBiasGetParameters()
         {
-            var lin = Linear(1000, 1000, true);
-            var bias = torch.randn(new long[] { 100 });
-            var weights = torch.randn(new long[] { 1000, 1000 });
-            lin.bias = bias.AsParameter();
-            lin.weight = weights.AsParameter();
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin = Linear(1000, 1000, true, device: device);
+                var bias = torch.randn(new long[] { 100 }, device: device);
+                var weights = torch.randn(new long[] { 100, 1000 }, device: device);
+                lin.bias = bias.AsParameter();
+                lin.weight = weights.AsParameter();
 
-            var parameters = lin.parameters().ToArray();
+                var parameters = lin.parameters().ToArray();
 
-            Assert.Equal(lin.weight.shape.Length, parameters[0].shape.Length);
-            Assert.Equal(lin.weight.shape[0], parameters[0].shape[0]);
-            Assert.Equal(lin.weight.shape[1], parameters[0].shape[1]);
+                Assert.Equal(2, parameters.Length);
+                Assert.Equal(lin.weight.shape.Length, parameters[0].shape.Length);
+                Assert.Equal(lin.weight.shape[0], parameters[0].shape[0]);
+                Assert.Equal(lin.weight.shape[1], parameters[0].shape[1]);
+                Assert.Equal(device.type, parameters[0].device_type);
+                Assert.Equal(device.type, parameters[1].device_type);
+            }
         }
         #endregion
 
@@ -356,32 +433,47 @@ namespace TorchSharp
         public void EvaluateRelu()
         {
             var rel = ReLU();
-            var input = torch.randn(new long[] { 64, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= 0.0));
+
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= 0.0));
+            }
         }
 
         [Fact]
         public void EvaluateRelu6()
         {
             var rel = ReLU6();
-            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 6.0));
+
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= 0.0 && val <= 6.0));
+            }
         }
 
         [Fact]
         public void EvaluateLeakyRelu()
         {
             var rel = LeakyReLU(0.1);
-            var input = torch.randn(new long[] { 64, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
+
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+            }
 
             var singleton = torch.tensor(15.0f);
             Assert.Equal(15.0f, rel.call(singleton).item<float>());
@@ -393,42 +485,60 @@ namespace TorchSharp
         public void EvaluateMish()
         {
             var rel = Mish();
-            var input = torch.randn(new long[] { 64, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
+
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+            }
         }
 
         [Fact]
         public void EvaluateRRelu()
         {
             var rel = RReLU();
-            var input = torch.randn(new long[] { 64, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
+
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(input.shape, output.shape);
+            }
         }
 
         [Fact]
         public void EvaluateCELU()
         {
             var rel = CELU();
-            var input = torch.randn(new long[] { 64, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= -1.0));
+
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= -1.0));
+            }
         }
 
         [Fact]
         public void EvaluateELU()
         {
             var rel = ELU();
-            var input = torch.randn(new long[] { 64, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= -1.0));
+
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= -1.0));
+            }
         }
 
         [FactIgnoreOnPlatform(
@@ -448,193 +558,253 @@ namespace TorchSharp
         public void EvaluateSELU()
         {
             var rel = SELU();
-            var input = torch.randn(new long[] { 64, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= -1.76));
+
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= -1.76));
+            }
         }
 
         [Fact]
         public void EvaluateGELU()
         {
             var rel = GELU();
-            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= -0.2));
+
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= -0.2));
+            }
         }
 
         [Fact]
         public void EvaluateHardshrink()
         {
             var rel = Hardshrink();
-            var input = torch.randn(new long[] { 8, 8, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(output.shape, new long[] { 8, 8, 8 });
+
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(output.shape, new long[] { 8, 8, 8 });
+            }
         }
 
         [Fact]
         public void EvaluateHardsigmoid()
         {
             var rel = Hardsigmoid();
-            var input = torch.randn(new long[] { 8, 8, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(output.shape, new long[] { 8, 8, 8 });
+
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(output.shape, new long[] { 8, 8, 8 });
+            }
         }
 
         [Fact]
         public void EvaluateHardswish()
         {
             var rel = Hardswish();
-            var input = torch.from_array(new float[] { -3.5f, 0.6f, 3.25f });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(new float[] { 0f, 0.36f, 3.25f }, values);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.from_array(new float[] { -3.5f, 0.6f, 3.25f }).to(device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(new float[] { 0f, 0.36f, 3.25f }, values);
+            }
         }
 
         [Fact]
         public void EvaluateHardtanh()
         {
             var rel = Hardtanh();
-            var input = torch.randn(new long[] { 8, 8, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(output.shape, new long[] { 8, 8, 8 });
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(output.shape, new long[] { 8, 8, 8 });
+            }
         }
 
         [Fact]
         public void EvaluateSigmoid()
         {
             var rel = Sigmoid();
-            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            }
         }
 
         [Fact]
         public void EvaluateSiLU()
         {
             var rel = SiLU();
-            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= -1.0));
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= -1.0));
+            }
         }
 
         [Fact]
         public void EvaluateSoftmax2d()
         {
             var rel = Softmax2d();
-            var input = torch.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 3, 8, 8 }, device: device) * 25.0;
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            }
         }
 
         [Fact]
         public void EvaluateTanh()
         {
             var rel = Tanh();
-            var input = torch.randn(new long[] { 64, 3, 8, 8 }) * 25.0;
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= -1.0 && val <= 1.0));
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 3, 8, 8 }, device: device) * 25.0;
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= -1.0 && val <= 1.0));
+            }
         }
 
         [Fact]
         public void EvaluateSoftmax()
         {
-            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
-            {
-                var rel = Softmax(1);
-                var output = rel.call(input);
-                var values = output.data<float>().ToArray();
-                Assert.Equal(input.shape, output.shape);
-                Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
-            }
-            {
-                var output = torch.special.softmax(input, 1);
-                var values = output.data<float>().ToArray();
-                Assert.Equal(input.shape, output.shape);
-                Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
-            }
-            {
-                var output = torch.special.softmax(input, 1, float64);
-                Assert.Equal(ScalarType.Float64, output.dtype);
-                var values = output.data<double>().ToArray();
-                Assert.Equal(input.shape, output.shape);
-                Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
+                {
+                    var rel = Softmax(1);
+                    var output = rel.call(input);
+                    Assert.Equal(device.type, output.device_type);
+                    var values = output.cpu().data<float>().ToArray();
+                    Assert.Equal(input.shape, output.shape);
+                    Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+                }
+                {
+                    var output = torch.special.softmax(input, 1);
+                    Assert.Equal(device.type, output.device_type);
+                    var values = output.cpu().data<float>().ToArray();
+                    Assert.Equal(input.shape, output.shape);
+                    Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+                }
+                {
+                    var output = torch.special.softmax(input, 1, float64);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(ScalarType.Float64, output.dtype);
+                    var values = output.cpu().data<double>().ToArray();
+                    Assert.Equal(input.shape, output.shape);
+                    Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+                }
             }
         }
 
         [Fact]
         public void EvaluateSoftmin()
         {
-            var rel = Softmax(1);
-            var input = torch.randn(new long[] { 64, 8 }) * 25.0;
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
-            Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            var rel = Softmin(1);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+                var values = output.cpu().data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            }
         }
 
         [Fact]
         public void EvaluateSoftplus()
         {
             var rel = Softplus();
-            var input = torch.randn(new long[] { 8, 8, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(input.shape, output.shape);
+            }
         }
 
         [Fact]
         public void EvaluateSoftshrink()
         {
             var rel = Softshrink();
-            var input = torch.randn(new long[] { 8, 8, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(input.shape, output.shape);
+            }
         }
 
         [Fact]
         public void EvaluateSoftsign()
         {
             var rel = Softsign();
-            var input = torch.randn(new long[] { 8, 8, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(input.shape, output.shape);
+            }
         }
 
         [Fact]
         public void EvaluateTanhshrink()
         {
             var rel = Tanhshrink();
-            var input = torch.randn(new long[] { 8, 8, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(input.shape, output.shape);
+            }
         }
 
         [Fact]
         public void EvaluateThreshold()
         {
             var rel = Threshold(0.1, 0.0);
-            var input = torch.randn(new long[] { 8, 8, 8 });
-            var output = rel.call(input);
-            var values = output.data<float>().ToArray();
-            Assert.Equal(input.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(input.shape, output.shape);
+            }
         }
         #endregion
 
