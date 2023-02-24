@@ -10,6 +10,7 @@ using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Xml.Schema;
 
 #nullable enable
 
@@ -17,13 +18,12 @@ namespace TorchSharp
 {
     static internal class TestUtils
     {
-        public static IList<Device> AvailableDevices {
-            get {
-                List<Device> result = new List<Device>();
-                result.Add(torch.CPU);
-                if (torch.cuda_is_available()) result.Add(torch.CUDA);
-                return result;
-            }
+        public static IList<Device> AvailableDevices(bool cuda = true)
+        {
+            List<Device> result = new List<Device>();
+            result.Add(torch.CPU);
+            if (cuda && torch.cuda_is_available()) result.Add(torch.CUDA);
+            return result;
         }
     }
 
@@ -61,8 +61,7 @@ namespace TorchSharp
         [Fact]
         public void TestDeviceAndTypeLinear()
         {
-            foreach (var device in TestUtils.AvailableDevices)
-            {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 {
                     var lin = Linear(1000, 100, true, device: device, dtype: torch.float64);
                     var ps = lin.parameters().ToArray();
@@ -97,7 +96,7 @@ namespace TorchSharp
         [Fact]
         public void TestSetGetBiasInLinear()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin = Linear(1000, 100, true, device: device);
                 var bias = torch.ones(new long[] { 1000 }, device: device);
                 var bCount = bias.NumberOfElements;
@@ -112,7 +111,7 @@ namespace TorchSharp
         [Fact]
         public void TestWeightAndBiasShapeInLinear()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin = Linear(1000, 100, true, device: device);
 
                 Assert.Equal(2, lin.weight!.shape.Length);
@@ -159,7 +158,7 @@ namespace TorchSharp
         [Fact]
         public void TestLinearWithBias()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin = Linear(1000, 100, true, device: device);
                 var bias = lin.bias!;
                 var weight = lin.weight!.t();
@@ -187,7 +186,7 @@ namespace TorchSharp
         [Fact]
         public void FunctionalLinearWithBias()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(4, 1000, device: device);
                 var weight = torch.randn(100, 1000, device: device);
                 var bias = torch.randn(100, device: device);
@@ -214,7 +213,7 @@ namespace TorchSharp
         [Fact]
         public void FunctionalLinearNoBias()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(4, 1000, device: device);
                 var weight = torch.randn(100, 1000, device: device);
                 var forward = torch.nn.functional.linear(input, weight);
@@ -240,7 +239,7 @@ namespace TorchSharp
         [Fact]
         public void TestLinearNoBias()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin = Linear(1000, 100, false, device: device);
                 Assert.False(!(lin.bias is null));
 
@@ -269,7 +268,7 @@ namespace TorchSharp
         [Fact]
         public void TestBilinearWithBias()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin = Bilinear(20, 30, 40, device: device);
                 var input1 = torch.randn(new long[] { 128, 20 }, device: device);
                 var input2 = torch.randn(new long[] { 128, 30 }, device: device);
@@ -285,7 +284,7 @@ namespace TorchSharp
         [Fact]
         public void FunctionalBilinearWithBias()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input1 = torch.randn(new long[] { 128, 20 }, device: device);
                 var input2 = torch.randn(new long[] { 128, 30 }, device: device);
                 var weight = torch.randn(40, 20, 30, device: device);
@@ -303,7 +302,7 @@ namespace TorchSharp
         [Fact]
         public void FunctionalBilinearNoBias()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input1 = torch.randn(new long[] { 128, 20 }, device: device);
                 var input2 = torch.randn(new long[] { 128, 30 }, device: device);
                 var weight = torch.randn(40, 20, 30, device: device);
@@ -320,7 +319,7 @@ namespace TorchSharp
         [Fact]
         public void TestIdentity()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin = Identity();
 
                 var input = torch.randn(new long[] { 1, 1000 }, device: device);
@@ -334,7 +333,7 @@ namespace TorchSharp
         [Fact]
         public void TestLinearEditBias()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin = Linear(1000, 100, true, device: device);
                 var bias = torch.randn(new long[] { 100 }, device: device);
                 lin.bias = bias.clone().AsParameter();
@@ -353,7 +352,7 @@ namespace TorchSharp
         [Fact]
         public void TestLinearEditWeightsAndBias()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin = Linear(1000, 1000, true, device: device);
                 var bias = torch.randn(new long[] { 100 }, device: device);
                 var weights = torch.randn(new long[] { 100, 1000 }, device: device);
@@ -401,7 +400,7 @@ namespace TorchSharp
         [Fact]
         public void TestLinearEditWeightsAndBiasGetParameters()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin = Linear(1000, 1000, true, device: device);
                 var bias = torch.randn(new long[] { 100 }, device: device);
                 var weights = torch.randn(new long[] { 100, 1000 }, device: device);
@@ -434,7 +433,7 @@ namespace TorchSharp
         {
             var rel = ReLU();
 
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -450,7 +449,7 @@ namespace TorchSharp
         {
             var rel = ReLU6();
 
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -466,7 +465,7 @@ namespace TorchSharp
         {
             var rel = LeakyReLU(0.1);
 
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -486,7 +485,7 @@ namespace TorchSharp
         {
             var rel = Mish();
 
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -501,7 +500,7 @@ namespace TorchSharp
         {
             var rel = RReLU();
 
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -514,7 +513,7 @@ namespace TorchSharp
         {
             var rel = CELU();
 
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -530,7 +529,7 @@ namespace TorchSharp
         {
             var rel = ELU();
 
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -559,7 +558,7 @@ namespace TorchSharp
         {
             var rel = SELU();
 
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -575,7 +574,7 @@ namespace TorchSharp
         {
             var rel = GELU();
 
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -591,7 +590,7 @@ namespace TorchSharp
         {
             var rel = Hardshrink();
 
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -606,7 +605,7 @@ namespace TorchSharp
         {
             var rel = Hardsigmoid();
 
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -618,7 +617,7 @@ namespace TorchSharp
         public void EvaluateHardswish()
         {
             var rel = Hardswish();
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.from_array(new float[] { -3.5f, 0.6f, 3.25f }).to(device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -632,7 +631,7 @@ namespace TorchSharp
         public void EvaluateHardtanh()
         {
             var rel = Hardtanh();
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -646,7 +645,7 @@ namespace TorchSharp
         public void EvaluateSigmoid()
         {
             var rel = Sigmoid();
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -661,7 +660,7 @@ namespace TorchSharp
         public void EvaluateSiLU()
         {
             var rel = SiLU();
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -676,7 +675,7 @@ namespace TorchSharp
         public void EvaluateSoftmax2d()
         {
             var rel = Softmax2d();
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 3, 8, 8 }, device: device) * 25.0;
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -691,7 +690,7 @@ namespace TorchSharp
         public void EvaluateTanh()
         {
             var rel = Tanh();
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 3, 8, 8 }, device: device) * 25.0;
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -705,7 +704,7 @@ namespace TorchSharp
         [Fact]
         public void EvaluateSoftmax()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
                 {
                     var rel = Softmax(1);
@@ -737,7 +736,7 @@ namespace TorchSharp
         public void EvaluateSoftmin()
         {
             var rel = Softmin(1);
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -751,7 +750,7 @@ namespace TorchSharp
         public void EvaluateSoftplus()
         {
             var rel = Softplus();
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -763,7 +762,7 @@ namespace TorchSharp
         public void EvaluateSoftshrink()
         {
             var rel = Softshrink();
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -775,7 +774,7 @@ namespace TorchSharp
         public void EvaluateSoftsign()
         {
             var rel = Softsign();
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -787,7 +786,7 @@ namespace TorchSharp
         public void EvaluateTanhshrink()
         {
             var rel = Tanhshrink();
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -799,7 +798,7 @@ namespace TorchSharp
         public void EvaluateThreshold()
         {
             var rel = Threshold(0.1, 0.0);
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 8, 8, 8 }, device: device);
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -812,7 +811,7 @@ namespace TorchSharp
         [Fact]
         public void EvalSequence()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin1 = Linear(1000, 100, device: device);
                 var lin2 = Linear(100, 10, device: device);
                 var seq = Sequential(
@@ -832,7 +831,7 @@ namespace TorchSharp
         public void EvalEmptySequence()
         {
             var seq = Sequential();
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var x = torch.randn(new long[] { 64, 1000 }, device: device, requires_grad: true);
                 var eval = seq.call(x);
                 Assert.Equal(x, eval);
@@ -842,7 +841,7 @@ namespace TorchSharp
         [Fact]
         public void CreateSequence()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin1 = Linear(1000, 100, device: device);
                 var lin2 = Linear(100, 10, device: device);
                 var seq = Sequential(
@@ -865,7 +864,7 @@ namespace TorchSharp
         [Fact]
         public void EvalLossSequence()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin1 = Linear(1000, 100, device: device);
                 var lin2 = Linear(100, 10, device: device);
                 var seq = Sequential(
@@ -892,7 +891,7 @@ namespace TorchSharp
         public void SequentialSlice()
         {
             var seq = Sequential(
-                ("lin1", Linear(10,10)),
+                ("lin1", Linear(10, 10)),
                 ("relu1", ReLU()),
                 ("lin2", Linear(10, 10)),
                 ("tanh1", Tanh()),
@@ -972,7 +971,7 @@ namespace TorchSharp
         [Fact]
         public void EvalSequence2()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin1 = Linear(1000, 100, device: device);
                 var lin2 = Linear(100, 10, device: device);
                 var seq = Sequential(
@@ -989,7 +988,7 @@ namespace TorchSharp
         [Fact]
         public void CreateSequence2()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin1 = Linear(1000, 100, device: device);
                 var lin2 = Linear(100, 10, device: device);
                 var seq = Sequential(
@@ -1017,7 +1016,7 @@ namespace TorchSharp
         [Fact]
         public void EvalLossSequence2()
         {
-            foreach (var device in TestUtils.AvailableDevices) {
+            foreach (var device in TestUtils.AvailableDevices()) {
                 var lin1 = Linear(1000, 100, device: device);
                 var lin2 = Linear(100, 10, device: device);
                 var seq = Sequential(
@@ -1944,23 +1943,30 @@ namespace TorchSharp
         public void TestConv1d()
         {
             var shape = new long[] { 16, 3, 28 };
-            Tensor t = torch.rand(shape);
-            var conv = Conv1d(3, 64, 3);
-            var output = conv.call(t);
-            Assert.Equal(16, output.shape[0]);
-            Assert.Equal(64, output.shape[1]);
-            Assert.Equal(26, output.shape[2]);
+            foreach (var device in TestUtils.AvailableDevices(false)) {
+                Tensor t = torch.rand(shape, device: device);
+                var conv = Conv1d(3, 64, 3, device: device);
+                var output = conv.call(t);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(26, output.shape[2]);
+            }
         }
 
         [Fact]
         public void TestConv1dGetWeight()
         {
-            var conv = Conv1d(3, 64, 3);
-            var weight = conv.weight;
-            var bias = conv.bias;
-            Assert.NotNull(weight);
-            Assert.NotNull(bias);
-            Assert.Equal(new long[] { 64, 3, 3 }, weight.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var conv = Conv1d(3, 64, 3, device: device);
+                var weight = conv.weight;
+                var bias = conv.bias;
+                Assert.NotNull(weight);
+                Assert.NotNull(bias);
+                Assert.Equal(device.type, bias.device_type);
+                Assert.Equal(device.type, weight.device_type);
+                Assert.Equal(new long[] { 64, 3, 3 }, weight.shape);
+            }
         }
 
         [Fact]
@@ -1987,37 +1993,47 @@ namespace TorchSharp
         public void TestConv1dStride()
         {
             var shape = new long[] { 16, 3, 28 };
-            Tensor t = torch.rand(shape);
-            var conv = Conv1d(3, 64, 3, stride: 2);
-            var output = conv.call(t);
-            Assert.Equal(16, output.shape[0]);
-            Assert.Equal(64, output.shape[1]);
-            Assert.Equal(13, output.shape[2]);
+            //TODO: Figure out why this is failing on CUDA.
+            foreach (var device in TestUtils.AvailableDevices(false)) {
+                Tensor t = torch.rand(shape, device: device);
+                var conv = Conv1d(3, 64, 3, stride: 2, device: device);
+                var output = conv.call(t);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(13, output.shape[2]);
+            }
         }
 
         [Fact]
         public void TestConv1dPadding()
         {
             var shape = new long[] { 16, 3, 28 };
-            Tensor t = torch.rand(shape);
+            //TODO: Figure out why this is failing on CUDA.
+            foreach (var device in TestUtils.AvailableDevices(false)) {
+                Tensor t = torch.rand(shape, device: device);
 
-            using (var conv = Conv1d(3, 64, 3, padding: 1))
-            using (var output = conv.call(t)) {
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(28, output.shape[2]);
-            }
-            using (var conv = Conv1d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Reflect))
-            using (var output = conv.call(t)) {
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(28, output.shape[2]);
-            }
-            using (var conv = Conv1d(3, 64, 3, padding: Padding.Same))
-            using (var output = conv.call(t)) {
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(28, output.shape[2]);
+                using (var conv = Conv1d(3, 64, 3, padding: 1, device: device))
+                using (var output = conv.call(t)) {
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(28, output.shape[2]);
+                }
+                using (var conv = Conv1d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Reflect, device: device))
+                using (var output = conv.call(t)) {
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(28, output.shape[2]);
+                }
+                using (var conv = Conv1d(3, 64, 3, padding: Padding.Same, device: device))
+                using (var output = conv.call(t)) {
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(28, output.shape[2]);
+                }
             }
         }
 
@@ -2025,34 +2041,45 @@ namespace TorchSharp
         public void TestConv2d()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            Tensor t = torch.rand(shape);
-            {
-                var conv = Conv2d(3, 64, 3);
-                var output = conv.call(t);
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(26, output.shape[2]);
-                Assert.Equal(26, output.shape[3]);
-            }
-            {
-                var conv = Conv2d(3, 64, (3, 3));
-                var output = conv.call(t);
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(26, output.shape[2]);
-                Assert.Equal(26, output.shape[3]);
+            //TODO: Figure out why this is failing on CUDA.
+            foreach (var device in TestUtils.AvailableDevices(false)) {
+                Tensor t = torch.rand(shape, device: device);
+                {
+                    var conv = Conv2d(3, 64, 3, device: device);
+                    Assert.Equal(t.device_type, conv.weight!.device_type);
+                    Assert.Equal(t.device_index, conv.weight!.device_index);
+                    var output = conv.call(t);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(26, output.shape[2]);
+                    Assert.Equal(26, output.shape[3]);
+                }
+                {
+                    var conv = Conv2d(3, 64, (3, 3), device: device);
+                    var output = conv.call(t);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(26, output.shape[2]);
+                    Assert.Equal(26, output.shape[3]);
+                }
             }
         }
 
         [Fact]
         public void TestConv2dGetWeight()
         {
-            var conv = Conv2d(3, 64, (3, 3));
-            var weight = conv.weight;
-            var bias = conv.bias;
-            Assert.NotNull(weight);
-            Assert.NotNull(bias);
-            Assert.Equal(new long[] { 64, 3, 3, 3 }, weight.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var conv = Conv2d(3, 64, (3, 3), device: device);
+                var weight = conv.weight;
+                var bias = conv.bias;
+                Assert.NotNull(weight);
+                Assert.NotNull(bias);
+                Assert.Equal(device.type, bias.device_type);
+                Assert.Equal(device.type, weight.device_type);
+                Assert.Equal(new long[] { 64, 3, 3, 3 }, weight.shape);
+            }
         }
 
         [Fact]
@@ -2079,23 +2106,29 @@ namespace TorchSharp
         public void TestConv2dStride()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            Tensor t = torch.rand(shape);
+            //TODO: Figure out why this is failing on CUDA.
+            foreach (var device in TestUtils.AvailableDevices(false)) {
 
-            {
-                var conv = Conv2d(3, 64, 3, stride: 2);
-                var output = conv.call(t);
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(13, output.shape[2]);
-                Assert.Equal(13, output.shape[3]);
-            }
-            {
-                var conv = Conv2d(3, 64, (3, 3), stride: (2, 2));
-                var output = conv.call(t);
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(13, output.shape[2]);
-                Assert.Equal(13, output.shape[3]);
+                Tensor t = torch.rand(shape, device: device);
+
+                {
+                    var conv = Conv2d(3, 64, 3, stride: 2, device: device);
+                    var output = conv.call(t);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(13, output.shape[2]);
+                    Assert.Equal(13, output.shape[3]);
+                }
+                {
+                    var conv = Conv2d(3, 64, (3, 3), stride: (2, 2), device: device);
+                    var output = conv.call(t);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(13, output.shape[2]);
+                    Assert.Equal(13, output.shape[3]);
+                }
             }
         }
 
@@ -2103,34 +2136,42 @@ namespace TorchSharp
         public void TestConv2dPadding()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            Tensor t = torch.rand(shape);
-            using (var conv = Conv2d(3, 64, 3, padding: 1))
-            using (var output = conv.call(t)) {
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(28, output.shape[2]);
-                Assert.Equal(28, output.shape[3]);
-            }
-            using (var conv = Conv2d(3, 64, (3, 3), padding: (1, 1), paddingMode: PaddingModes.Reflect))
-            using (var output = conv.call(t)) {
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(28, output.shape[2]);
-                Assert.Equal(28, output.shape[3]);
-            }
-            using (var conv = Conv2d(3, 64, 3, padding: Padding.Same))
-            using (var output = conv.call(t)) {
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(28, output.shape[2]);
-                Assert.Equal(28, output.shape[3]);
-            }
-            using (var conv = Conv2d(3, 64, (3, 3), padding: Padding.Same))
-            using (var output = conv.call(t)) {
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(28, output.shape[2]);
-                Assert.Equal(28, output.shape[3]);
+            //TODO: Figure out why this is failing on CUDA.
+            foreach (var device in TestUtils.AvailableDevices(false)) {
+
+                Tensor t = torch.rand(shape);
+                using (var conv = Conv2d(3, 64, 3, padding: 1, device: device))
+                using (var output = conv.call(t)) {
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(28, output.shape[2]);
+                    Assert.Equal(28, output.shape[3]);
+                }
+                using (var conv = Conv2d(3, 64, (3, 3), padding: (1, 1), paddingMode: PaddingModes.Reflect, device: device))
+                using (var output = conv.call(t)) {
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(28, output.shape[2]);
+                    Assert.Equal(28, output.shape[3]);
+                }
+                using (var conv = Conv2d(3, 64, 3, padding: Padding.Same, device: device))
+                using (var output = conv.call(t)) {
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(28, output.shape[2]);
+                    Assert.Equal(28, output.shape[3]);
+                }
+                using (var conv = Conv2d(3, 64, (3, 3), padding: Padding.Same, device: device))
+                using (var output = conv.call(t)) {
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(16, output.shape[0]);
+                    Assert.Equal(64, output.shape[1]);
+                    Assert.Equal(28, output.shape[2]);
+                    Assert.Equal(28, output.shape[3]);
+                }
             }
         }
 
@@ -2261,39 +2302,49 @@ namespace TorchSharp
         public void TestConvTranspose1d()
         {
             var shape = new long[] { 16, 3, 28 };
-            Tensor t = torch.rand(shape);
-            var conv = ConvTranspose1d(3, 64, 3);
-            var output = conv.call(t);
-            Assert.Equal(16, output.shape[0]);
-            Assert.Equal(64, output.shape[1]);
-            Assert.Equal(30, output.shape[2]);
+            //TODO: Figure out why this is failing on CUDA.
+            foreach (var device in TestUtils.AvailableDevices(false)) {
+                Tensor t = torch.rand(shape, device: device);
+                var conv = ConvTranspose1d(3, 64, 3, device: device);
+                var output = conv.call(t);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(30, output.shape[2]);
+            }
         }
 
         [Fact]
         public void TestConvTranspose2d()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            Tensor t = torch.rand(shape);
-            var conv = ConvTranspose2d(3, 64, 3);
-            var output = conv.call(t);
-            Assert.Equal(16, output.shape[0]);
-            Assert.Equal(64, output.shape[1]);
-            Assert.Equal(30, output.shape[2]);
-            Assert.Equal(30, output.shape[3]);
+            //TODO: Figure out why this is failing on CUDA.
+            foreach (var device in TestUtils.AvailableDevices(false)) {
+                Tensor t = torch.rand(shape, device: device);
+                var conv = ConvTranspose2d(3, 64, 3, device: device);
+                var output = conv.call(t);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(30, output.shape[2]);
+                Assert.Equal(30, output.shape[3]);
+            }
         }
 
         [Fact]
         public void TestConvTranspose3d()
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
-            Tensor t = torch.rand(shape);
-            var conv = ConvTranspose3d(3, 64, 3);
-            var output = conv.call(t);
-            Assert.Equal(16, output.shape[0]);
-            Assert.Equal(64, output.shape[1]);
-            Assert.Equal(30, output.shape[2]);
-            Assert.Equal(30, output.shape[3]);
-            Assert.Equal(30, output.shape[4]);
+            //TODO: Figure out why this is failing on CUDA.
+            foreach (var device in TestUtils.AvailableDevices(false)) {
+                Tensor t = torch.rand(shape, device: device);
+                var conv = ConvTranspose3d(3, 64, 3, device: device);
+                var output = conv.call(t);
+                Assert.Equal(16, output.shape[0]);
+                Assert.Equal(64, output.shape[1]);
+                Assert.Equal(30, output.shape[2]);
+                Assert.Equal(30, output.shape[3]);
+                Assert.Equal(30, output.shape[4]);
+            }
         }
         #endregion
 
@@ -2608,754 +2659,864 @@ namespace TorchSharp
         [Fact]
         public void AvgPool2DObjectInitialized()
         {
-            Tensor ones = torch.ones(new long[] { 2, 2, 2 });
-            var obj = avg_pool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
-            Assert.Equal(typeof(Tensor), obj.GetType());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 2, 2, 2 }, device: device);
+                var obj = avg_pool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
+                Assert.Equal(typeof(Tensor), obj.GetType());
+            }
         }
 
         [Fact]
         public void AvgPool2DTensor()
         {
-            {
-                Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
-                var obj = torch.nn.functional.avg_pool2d(ones, new long[] { 2, 2 });
-                Assert.Equal(typeof(Tensor), obj.GetType());
-                Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }), obj);
-            }
-            {
-                Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
-                var obj = torch.nn.functional.avg_pool2d(ones, (2, 2));
-                Assert.Equal(typeof(Tensor), obj.GetType());
-                Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }), obj);
-            }
-            {
-                Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
-                var obj = torch.nn.functional.avg_pool2d(ones, 2);
-                Assert.Equal(typeof(Tensor), obj.GetType());
-                Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }), obj);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                {
+                    Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 }, device: device);
+                    var obj = torch.nn.functional.avg_pool2d(ones, new long[] { 2, 2 });
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }, device: device), obj);
+                }
+                {
+                    Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 }, device: device);
+                    var obj = torch.nn.functional.avg_pool2d(ones, (2, 2));
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }, device: device), obj);
+                }
+                {
+                    Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 }, device: device);
+                    var obj = torch.nn.functional.avg_pool2d(ones, 2);
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }, device: device), obj);
+                }
             }
         }
 
         [Fact]
         public void AvgPool2DTensorNN()
         {
-            Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
-            {
-                var obj = AvgPool2d(new long[] { 2, 2 }).call(ones);
-                Assert.Equal(typeof(Tensor), obj.GetType());
-                Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }), obj);
-            }
-            {
-                var obj = AvgPool2d(2).call(ones);
-                Assert.Equal(typeof(Tensor), obj.GetType());
-                Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }), obj);
-            }
-            {
-                var obj = AvgPool2d((2, 2)).call(ones);
-                Assert.Equal(typeof(Tensor), obj.GetType());
-                Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }), obj);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 }, device: device);
+                {
+                    var obj = AvgPool2d(new long[] { 2, 2 }).call(ones);
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }, device: device), obj);
+                }
+                {
+                    var obj = AvgPool2d(2).call(ones);
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }, device: device), obj);
+                }
+                {
+                    var obj = AvgPool2d((2, 2)).call(ones);
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(torch.ones(new long[] { 4, 2, 1, 1 }, device: device), obj);
+                }
             }
         }
 
         [Fact]
         public void AdaptiveAvgPool2DTensorNN()
         {
-            {
-                Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
-                var obj = AdaptiveAvgPool2d(new long[] { 2, 2 }).call(ones);
-                Assert.Equal(typeof(Tensor), obj.GetType());
-                Assert.Equal(torch.ones(new long[] { 4, 2, 2, 2 }), obj);
-            }
-            {
-                Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
-                var obj = AdaptiveAvgPool2d(2).call(ones);
-                Assert.Equal(typeof(Tensor), obj.GetType());
-                Assert.Equal(torch.ones(new long[] { 4, 2, 2, 2 }), obj);
-            }
-            {
-                Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 });
-                var obj = AdaptiveAvgPool2d((2, 2)).call(ones);
-                Assert.Equal(typeof(Tensor), obj.GetType());
-                Assert.Equal(torch.ones(new long[] { 4, 2, 2, 2 }), obj);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 4, 2, 2, 2 }, device: device);
+                {
+                    var obj = AdaptiveAvgPool2d(new long[] { 2, 2 }).call(ones);
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(torch.ones(new long[] { 4, 2, 2, 2 }, device: device), obj);
+                    Assert.Equal(device.type, obj.device_type);
+                }
+                {
+                    var obj = AdaptiveAvgPool2d(2).call(ones);
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(torch.ones(new long[] { 4, 2, 2, 2 }, device: device), obj);
+                    Assert.Equal(device.type, obj.device_type);
+                }
+                {
+                    var obj = AdaptiveAvgPool2d((2, 2)).call(ones);
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(torch.ones(new long[] { 4, 2, 2, 2 }, device: device), obj);
+                    Assert.Equal(device.type, obj.device_type);
+                }
             }
         }
 
         [Fact]
         public void AvgPool2DBackwardTensor()
         {
-            var ones = torch.ones(new long[] { 4, 2, 2, 2 });
-            var kernelSize = new long[] { 2, 2 };
-            var avg = torch.ones(new long[] { 4, 2, 1, 1 });
-            var res = torch.nn.functional.avg_pool2d_backward(avg, ones, kernelSize) * 4.0;
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 4, 2, 2, 2 }, device: device);
+                var kernelSize = new long[] { 2, 2 };
+                var avg = torch.ones(new long[] { 4, 2, 1, 1 }, device: device);
+                var res = torch.nn.functional.avg_pool2d_backward(avg, ones, kernelSize) * 4.0;
+                Assert.Equal(device.type, res.device_type);
 
-            var ones0000 = ones[0, 0, 0, 0].ToSingle();
-            var res0000 = res[0, 0, 0, 0].ToSingle();
-            Assert.Equal(ones0000, res0000);
-            // This gets back to the original uniform input
-            Assert.Equal(res, ones);
+                var ones0000 = ones.cpu()[0, 0, 0, 0].ToSingle();
+                var res0000 = res.cpu()[0, 0, 0, 0].ToSingle();
+                Assert.Equal(ones0000, res0000);
+                // This gets back to the original uniform input
+                Assert.Equal(res, ones);
+            }
         }
 
 
         [Fact]
         public void AvgPool3DBackwardTensor()
         {
-            var ones = torch.ones(new long[] { 4, 2, 2, 2, 2 });
-            var kernelSize = new long[] { 2, 2, 2 };
-            var avg = torch.ones(new long[] { 4, 2, 1, 1, 1 });
-            var res = torch.nn.functional.avg_pool3d_backward(avg, ones, kernelSize) * 8.0;
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 4, 2, 2, 2, 2 }, device: device);
+                var kernelSize = new long[] { 2, 2, 2 };
+                var avg = torch.ones(new long[] { 4, 2, 1, 1, 1 }, device: device);
+                var res = torch.nn.functional.avg_pool3d_backward(avg, ones, kernelSize) * 8.0;
+                Assert.Equal(device.type, res.device_type);
 
-            var ones0000 = ones[0, 0, 0, 0, 0].ToSingle();
-            var res0000 = res[0, 0, 0, 0, 0].ToSingle();
-            Assert.True(Math.Abs(ones0000 - res0000) < 0.00001);
-            // This gets back to the original uniform input
-            Assert.True(res.allclose(ones));
+                var ones0000 = ones.cpu()[0, 0, 0, 0, 0].ToSingle();
+                var res0000 = res.cpu()[0, 0, 0, 0, 0].ToSingle();
+                Assert.True(Math.Abs(ones0000 - res0000) < 0.00001);
+                // This gets back to the original uniform input
+                Assert.True(res.allclose(ones));
+            }
         }
 
         [Fact]
         public void AvgPool3DBackwardTensorExplicitDivisor()
         {
-            var ones = torch.ones(new long[] { 4, 2, 2, 2, 2 });
-            var kernelSize = new long[] { 2, 2, 2 };
-            var avg = torch.ones(new long[] { 4, 2, 1, 1, 1 });
-            var res = torch.nn.functional.avg_pool3d_backward(avg, ones, kernelSize, divisorOverride: 6) * 6.0;
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 4, 2, 2, 2, 2 }, device: device);
+                var kernelSize = new long[] { 2, 2, 2 };
+                var avg = torch.ones(new long[] { 4, 2, 1, 1, 1 }, device: device);
+                var res = torch.nn.functional.avg_pool3d_backward(avg, ones, kernelSize, divisorOverride: 6) * 6.0;
 
-            var ones0000 = ones[0, 0, 0, 0, 0].ToSingle();
-            var res0000 = res[0, 0, 0, 0, 0].ToSingle();
-            Assert.True(Math.Abs(ones0000 - res0000) < 0.00001);
-            // This gets back to the original uniform input
-            Assert.True(res.allclose(ones));
+                var ones0000 = ones.cpu()[0, 0, 0, 0, 0].ToSingle();
+                var res0000 = res.cpu()[0, 0, 0, 0, 0].ToSingle();
+                Assert.True(Math.Abs(ones0000 - res0000) < 0.00001);
+                // This gets back to the original uniform input
+                Assert.True(res.allclose(ones));
+            }
         }
 
         [Fact]
         public void MaxPool2DObjectInitialized()
         {
-            {
-                Tensor ones = torch.ones(new long[] { 2, 2, 2 });
-                var obj = max_pool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
-                Assert.Equal(typeof(Tensor), obj.GetType());
-            }
-            {
-                Tensor ones = torch.ones(new long[] { 2, 2, 2 });
-                var obj = max_pool2d(ones, (2, 2), (2, 2));
-                Assert.Equal(typeof(Tensor), obj.GetType());
-            }
-            {
-                Tensor ones = torch.ones(new long[] { 2, 2, 2 });
-                var obj = max_pool2d(ones, 2, 2);
-                Assert.Equal(typeof(Tensor), obj.GetType());
-            }
-            {
-                Tensor ones = torch.ones(new long[] { 2, 2, 2 });
-                var obj = max_pool2d(ones, 2);
-                Assert.Equal(typeof(Tensor), obj.GetType());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 2, 2, 2 }, device: device);
+                {
+                    var obj = max_pool2d(ones, new long[] { 2, 2 }, new long[] { 2, 2 });
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(device.type, obj.device_type);
+                }
+                {
+                    var obj = max_pool2d(ones, (2, 2), (2, 2));
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(device.type, obj.device_type);
+                }
+                {
+                    var obj = max_pool2d(ones, 2, 2);
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(device.type, obj.device_type);
+                }
+                {
+                    var obj = max_pool2d(ones, 2);
+                    Assert.Equal(typeof(Tensor), obj.GetType());
+                    Assert.Equal(device.type, obj.device_type);
+                }
             }
         }
 
         [Fact]
         public void TestMaxPool1D_1()
         {
-            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
-            using (var pool = MaxPool1d(2)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 3, 2 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 3, 4 }, device: device);
+                using (var pool = MaxPool1d(2)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 3, 2 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
 
-                var (output, indices) = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, output.shape);
-                Assert.Equal(expShape, indices.shape);
+                    var (output, indices) = pool.forward_with_indices(ones);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(expShape, output.shape);
+                    Assert.Equal(expShape, indices.shape);
+                }
             }
         }
 
         [Fact]
         public void TestMaxPool1D_2()
         {
-            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
-            using (var pool = MaxPool1d(2, 1)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 3, 3 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 3, 4 }, device: device);
+                using (var pool = MaxPool1d(2, 1)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 3, 3 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestMaxPool1D_3()
         {
-            Tensor ones = torch.ones(new long[] { 16, 32, 40 });
-            using (var pool = MaxPool1d(3, 1, 1, 2)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 32, 38 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
-            }
-            using (var pool = MaxPool1d(3, 1, 1, 2, true)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 32, 38 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 32, 40 }, device: device);
+                using (var pool = MaxPool1d(3, 1, 1, 2)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 32, 38 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                }
+                using (var pool = MaxPool1d(3, 1, 1, 2, true)) {
+                    var pooled = pool.call(ones);
+                    var expShape = new long[] { 16, 32, 38 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestMaxPool2D_1()
         {
-            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
-            using (var pool = MaxPool2d(2)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 2, 2 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 4, 4 }, device: device);
+                using (var pool = MaxPool2d(2)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 2, 2 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
-            }
-            using (var pool = MaxPool2d((2, 2))) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 2, 2 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+                    var witIdx = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, witIdx.Values.shape);
+                    Assert.Equal(expShape, witIdx.Indices.shape);
+                }
+                using (var pool = MaxPool2d((2, 2))) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 2, 2 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1].ToSingle());
 
-                var (output, indices) = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, output.shape);
-                Assert.Equal(expShape, indices.shape);
+                    var (output, indices) = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, output.shape);
+                    Assert.Equal(expShape, indices.shape);
+                }
             }
         }
 
         [Fact]
         public void TestMaxPool2D_2()
         {
-            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
-            using (var pool = MaxPool2d(2, 1)) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 2].ToSingle());
-            }
-            using (var pool = MaxPool2d((2, 2), (1, 1))) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 2].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 4, 4 }, device: device);
+                using (var pool = MaxPool2d(2, 1)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 2].ToSingle());
+                }
+                using (var pool = MaxPool2d((2, 2), (1, 1))) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 2].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestMaxPool2D_3()
         {
-            Tensor ones = torch.ones(new long[] { 16, 32, 40 });
-            using (var pool = MaxPool2d(3, 1, 1, 2)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 30, 38 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
-            }
-            using (var pool = MaxPool2d((3, 3), (1, 1), (1, 1), (2, 2))) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 30, 38 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
-            }
-            using (var pool = MaxPool2d(3, 1, 1, 2, true)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 30, 38 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
-            }
-            using (var pool = MaxPool2d((3, 3), (1, 1), (1, 1), (2, 2), true)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 30, 38 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 32, 40 }, device: device);
+                using (var pool = MaxPool2d(3, 1, 1, 2)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 30, 38 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                }
+                using (var pool = MaxPool2d((3, 3), (1, 1), (1, 1), (2, 2))) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 30, 38 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                }
+                using (var pool = MaxPool2d(3, 1, 1, 2, true)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 30, 38 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                }
+                using (var pool = MaxPool2d((3, 3), (1, 1), (1, 1), (2, 2), true)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 30, 38 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestMaxPool3D_1()
         {
-            Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 });
-            using (var pool = MaxPool3d(2)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 2, 2, 4 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+            var expShape = new long[] { 16, 2, 2, 4 };
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 }, device: device);
+                using (var pool = MaxPool3d(2)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
 
-                var witIdx = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, witIdx.Values.shape);
-                Assert.Equal(expShape, witIdx.Indices.shape);
-            }
-            using (var pool = MaxPool3d((2, 2, 2))) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 2, 2, 4 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+                    var witIdx = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, witIdx.Values.shape);
+                    Assert.Equal(expShape, witIdx.Indices.shape);
+                }
+                using (var pool = MaxPool3d((2, 2, 2))) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
 
-                var (output, indices) = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, output.shape);
-                Assert.Equal(expShape, indices.shape);
+                    var (output, indices) = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, output.shape);
+                    Assert.Equal(expShape, indices.shape);
+                }
             }
         }
 
         [Fact]
         public void TestMaxPool3D_2()
         {
-            Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 });
-            using (var pool = MaxPool3d(2, 1)) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 0, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 2].ToSingle());
-            }
-            using (var pool = MaxPool3d((2, 2, 2), (1, 1, 1))) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 0, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 2].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 }, device: device);
+                using (var pool = MaxPool3d(2, 1)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 0, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 2].ToSingle());
+                }
+                using (var pool = MaxPool3d((2, 2, 2), (1, 1, 1))) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 0, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 2].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestMaxPool3D_3()
         {
-            Tensor ones = torch.ones(new long[] { 16, 32, 40, 40 });
-            using (var pool = MaxPool3d(3, 1, 1, 2)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 30, 38, 38 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
-            }
-            using (var pool = MaxPool3d(3, 1, 1, 2, true)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 30, 38, 38 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
-            }
-            using (var pool = MaxPool3d((3, 3, 3), (1, 1, 1), (1, 1, 1), (2, 2, 2))) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 30, 38, 38 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
-            }
-            using (var pool = MaxPool3d((3, 3, 3), (1, 1, 1), (1, 1, 1), (2, 2, 2), true)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 30, 38, 38 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+            var expShape = new long[] { 16, 30, 38, 38 };
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 32, 40, 40 }, device: device);
+                using (var pool = MaxPool3d(3, 1, 1, 2)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+                }
+                using (var pool = MaxPool3d(3, 1, 1, 2, true)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+                }
+                using (var pool = MaxPool3d((3, 3, 3), (1, 1, 1), (1, 1, 1), (2, 2, 2))) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+                }
+                using (var pool = MaxPool3d((3, 3, 3), (1, 1, 1), (1, 1, 1), (2, 2, 2), true)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestFractionalMaxPool2D_1()
         {
-            Tensor ones = torch.ones(new long[] { 16, 24, 24 });
-            using (var pool = FractionalMaxPool2d(2, 12)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 12, 12 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 24, 24 }, device: device);
+                using (var pool = FractionalMaxPool2d(2, 12)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 12, 12 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1].ToSingle());
 
-                var (output, indices) = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, output.shape);
-                Assert.Equal(expShape, indices.shape);
-            }
-            using (var pool = FractionalMaxPool2d((2, 2), (12, 16))) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 12, 16 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+                    var (output, indices) = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, output.shape);
+                    Assert.Equal(expShape, indices.shape);
+                }
+                using (var pool = FractionalMaxPool2d((2, 2), (12, 16))) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 12, 16 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1].ToSingle());
 
-                var (output, indices) = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, output.shape);
-                Assert.Equal(expShape, indices.shape);
+                    var (output, indices) = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, output.shape);
+                    Assert.Equal(expShape, indices.shape);
+                }
             }
         }
 
         [Fact]
         public void TestFractionalMaxPool2D_2()
         {
-            Tensor ones = torch.ones(new long[] { 16, 24, 24 });
-            using (var pool = FractionalMaxPool2d(2, output_ratio: 0.5)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 12, 12 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 24, 24 }, device: device);
+                using (var pool = FractionalMaxPool2d(2, output_ratio: 0.5)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 12, 12 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1].ToSingle());
 
-                var (output, indices) = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, output.shape);
-                Assert.Equal(expShape, indices.shape);
-            }
-            using (var pool = FractionalMaxPool2d((2, 2), output_ratio: (0.5, 2.0 / 3.0))) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 12, 16 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+                    var (output, indices) = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, output.shape);
+                    Assert.Equal(expShape, indices.shape);
+                }
+                using (var pool = FractionalMaxPool2d((2, 2), output_ratio: (0.5, 2.0 / 3.0))) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 12, 16 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1].ToSingle());
 
-                var (output, indices) = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, output.shape);
-                Assert.Equal(expShape, indices.shape);
+                    var (output, indices) = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, output.shape);
+                    Assert.Equal(expShape, indices.shape);
+                }
             }
         }
 
         [Fact]
         public void TestFractionalMaxPool3D_1()
         {
-            Tensor ones = torch.ones(new long[] { 16, 24, 24, 24 });
-            using (var pool = FractionalMaxPool3d(2, 12)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 12, 12, 12 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 24, 24, 24 }, device: device);
+                using (var pool = FractionalMaxPool3d(2, 12)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 12, 12, 12 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
 
-                var (output, indices) = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, output.shape);
-                Assert.Equal(expShape, indices.shape);
-            }
-            using (var pool = FractionalMaxPool3d((2, 2, 2), (12, 16, 20))) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 12, 16, 20 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+                    var (output, indices) = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, output.shape);
+                    Assert.Equal(expShape, indices.shape);
+                }
+                using (var pool = FractionalMaxPool3d((2, 2, 2), (12, 16, 20))) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 12, 16, 20 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
 
-                var (output, indices) = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, output.shape);
-                Assert.Equal(expShape, indices.shape);
+                    var (output, indices) = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, output.shape);
+                    Assert.Equal(expShape, indices.shape);
+                }
             }
         }
 
         [Fact]
         public void TestFractionalMaxPool3D_2()
         {
-            Tensor ones = torch.ones(new long[] { 16, 3, 24, 24, 24 });
-            using (var pool = FractionalMaxPool3d(2, output_ratio: 0.5)) {
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 3, 12, 12, 12 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1, 0, 0].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 3, 24, 24, 24 }, device: device);
+                using (var pool = FractionalMaxPool3d(2, output_ratio: 0.5)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 3, 12, 12, 12 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1, 0, 0].ToSingle());
 
-                var (output, indices) = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, output.shape);
-                Assert.Equal(expShape, indices.shape);
-            }
-            using (var pool = FractionalMaxPool3d((2, 2, 2), output_ratio: (0.5, 2.0 / 3.0, 5.0 / 6.0))) {
+                    var (output, indices) = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, output.shape);
+                    Assert.Equal(expShape, indices.shape);
+                }
+                using (var pool = FractionalMaxPool3d((2, 2, 2), output_ratio: (0.5, 2.0 / 3.0, 5.0 / 6.0))) {
 
-                var pooled = pool.call(ones);
-                var expShape = new long[] { 16, 3, 12, 16, 20 };
-                Assert.Equal(expShape, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1, 0, 0].ToSingle());
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    var expShape = new long[] { 16, 3, 12, 16, 20 };
+                    Assert.Equal(expShape, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1, 0, 0].ToSingle());
 
-                var (output, indices) = pool.forward_with_indices(ones);
-                Assert.Equal(expShape, output.shape);
-                Assert.Equal(expShape, indices.shape);
+                    var (output, indices) = pool.forward_with_indices(ones);
+                    Assert.Equal(expShape, output.shape);
+                    Assert.Equal(expShape, indices.shape);
+                }
             }
         }
 
         [Fact]
         public void TestMaxUnpool1D_1()
         {
-            Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8 }).reshape(1, 1, 8);
-
             using var pool = MaxPool1d(2, 2);
             using var unpool = MaxUnpool1d(2, 2);
 
             var expShape = new long[] { 1, 1, 4 };
 
-            var (output, indices) = pool.forward_with_indices(input);
-            Assert.Equal(expShape, output.shape);
-            Assert.Equal(expShape, indices.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8 }, device: device).reshape(1, 1, 8);
 
-            var result = unpool.call(output, indices);
-            Tensor expected = torch.tensor(new float[] { 0, 2, 0, 4, 0, 6, 0, 8 }).reshape(1, 1, 8);
-            Assert.Equal(input.shape, result.shape);
-            Assert.Equal(expected, result);
+                var (output, indices) = pool.forward_with_indices(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
+
+                var result = unpool.call(output, indices);
+                Tensor expected = torch.tensor(new float[] { 0, 2, 0, 4, 0, 6, 0, 8 }, device: device).reshape(1, 1, 8);
+                Assert.Equal(device.type, result.device_type);
+                Assert.Equal(input.shape, result.shape);
+                Assert.Equal(expected, result);
+            }
         }
 
         [Fact]
         public void TestMaxUnpool2D_1()
         {
-            Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }).reshape(1, 1, 4, 4);
-
             using var pool = MaxPool2d(2, 2);
             using var unpool = MaxUnpool2d(2, 2);
 
             var expShape = new long[] { 1, 1, 2, 2 };
 
-            var (output, indices) = pool.forward_with_indices(input);
-            Assert.Equal(expShape, output.shape);
-            Assert.Equal(expShape, indices.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, device: device).reshape(1, 1, 4, 4);
 
-            var result = unpool.call(output, indices);
-            Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 6, 0, 8, 0, 0, 0, 0, 0, 14, 0, 16 }).reshape(1, 1, 4, 4);
-            Assert.Equal(input.shape, result.shape);
-            Assert.Equal(expected, result);
+                var (output, indices) = pool.forward_with_indices(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
+
+                var result = unpool.call(output, indices);
+                Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 6, 0, 8, 0, 0, 0, 0, 0, 14, 0, 16 }, device: device).reshape(1, 1, 4, 4);
+                Assert.Equal(device.type, result.device_type);
+                Assert.Equal(input.shape, result.shape);
+                Assert.Equal(expected, result);
+            }
         }
 
         [Fact]
         public void TestMaxUnpool2D_2()
         {
-            Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 }).reshape(1, 1, 4, 5);
-
             using var pool = MaxPool2d(2, 2);
             using var unpool = MaxUnpool2d(2, 2);
 
             var expShape = new long[] { 1, 1, 2, 2 };
 
-            var (output, indices) = pool.forward_with_indices(input);
-            Assert.Equal(expShape, output.shape);
-            Assert.Equal(expShape, indices.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 }, device: device).reshape(1, 1, 4, 5);
 
-            var result = unpool.call(output, indices, output_size: input.shape);
-            Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 0, 7, 0, 9, 0, 0, 0, 0, 0, 0, 0, 17, 0, 19, 0 }).reshape(1, 1, 4, 5);
-            Assert.Equal(input.shape, result.shape);
-            Assert.Equal(expected, result);
+                var (output, indices) = pool.forward_with_indices(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
+
+                var result = unpool.call(output, indices, output_size: input.shape);
+                Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 0, 7, 0, 9, 0, 0, 0, 0, 0, 0, 0, 17, 0, 19, 0 }, device: device).reshape(1, 1, 4, 5);
+                Assert.Equal(device.type, result.device_type);
+                Assert.Equal(input.shape, result.shape);
+                Assert.Equal(expected, result);
+            }
         }
 
         [Fact]
         public void TestMaxUnpool3D_1()
         {
-            Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }).reshape(1, 1, 2, 2, 4);
-
             using var pool = MaxPool3d(2, 2);
             using var unpool = MaxUnpool3d(2, 2);
 
             var expShape = new long[] { 1, 1, 1, 1, 2 };
 
-            var (output, indices) = pool.forward_with_indices(input);
-            Assert.Equal(expShape, output.shape);
-            Assert.Equal(expShape, indices.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, device: device).reshape(1, 1, 2, 2, 4);
 
-            var result = unpool.call(output, indices);
-            Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 16 }).reshape(1, 1, 2, 2, 4);
-            Assert.Equal(input.shape, result.shape);
-            Assert.Equal(expected, result);
+                var (output, indices) = pool.forward_with_indices(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
+
+                var result = unpool.call(output, indices);
+                Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 16 }, device: device).reshape(1, 1, 2, 2, 4);
+                Assert.Equal(device.type, result.device_type);
+                Assert.Equal(input.shape, result.shape);
+                Assert.Equal(expected, result);
+            }
         }
 
         [Fact]
         public void TestMaxUnpool3D_2()
         {
-            Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 }).reshape(1, 1, 2, 2, 5);
-
             using var pool = MaxPool3d(2, 2);
             using var unpool = MaxUnpool3d(2, 2);
 
             var expShape = new long[] { 1, 1, 1, 1, 2 };
 
-            var (output, indices) = pool.forward_with_indices(input);
-            Assert.Equal(expShape, output.shape);
-            Assert.Equal(expShape, indices.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor input = torch.tensor(new float[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 }, device: device).reshape(1, 1, 2, 2, 5);
 
-            var result = unpool.call(output, indices, output_size: input.shape);
-            Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 19, 0 }).reshape(1, 1, 2, 2, 5);
-            Assert.Equal(input.shape, result.shape);
-            Assert.Equal(expected, result);
+                var (output, indices) = pool.forward_with_indices(input);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(expShape, output.shape);
+                Assert.Equal(expShape, indices.shape);
+
+                var result = unpool.call(output, indices, output_size: input.shape);
+                Tensor expected = torch.tensor(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 19, 0 }, device: device).reshape(1, 1, 2, 2, 5);
+                Assert.Equal(device.type, result.device_type);
+                Assert.Equal(input.shape, result.shape);
+                Assert.Equal(expected, result);
+            }
         }
 
         [Fact]
         public void TestAvgPool1D_1()
         {
-            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
-            using (var pool = AvgPool1d(2)) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 3, 2 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 3, 4 }, device: device);
+                using (var pool = AvgPool1d(2)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 3, 2 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestAvgPool1D_2()
         {
-            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
-            using (var pool = AvgPool1d(2, 1)) {
-                var pooled = pool.call(ones);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 3, 4 }, device: device);
+                using (var pool = AvgPool1d(2, 1)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
 
-                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                    Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestAvgPool2D_1()
         {
-            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
-            using (var pool = AvgPool2d(new long[] { 2, 2 })) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 2, 2 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 4, 4 }, device: device);
+                using (var pool = AvgPool2d(new long[] { 2, 2 })) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 2, 2 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestAvgPool2D_2()
         {
-            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
-            using (var pool = AvgPool2d(new long[] { 2, 2 }, new long[] { 1, 1 })) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 2].ToSingle());
-            }
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 4, 4 }, device: device);
+                using (var pool = AvgPool2d(new long[] { 2, 2 }, new long[] { 1, 1 })) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 2].ToSingle());
+                }
 
-            ones = torch.ones(new long[] { 16, 4, 4, 4 });
-            using (var pool = AvgPool2d(new long[] { 2, 2 }, new long[] { 1, 1 })) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 4, 3, 3 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 0, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 0, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 2].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 1].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 2].ToSingle());
+                ones = torch.ones(new long[] { 16, 4, 4, 4 }, device: device);
+                using (var pool = AvgPool2d(new long[] { 2, 2 }, new long[] { 1, 1 })) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 4, 3, 3 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 0, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 0, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 2].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 1].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 2].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestAvgPool3D_1()
         {
-            Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 });
-            using (var pool = AvgPool3d(new long[] { 2, 2, 2 })) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 2, 2, 4 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 }, device: device);
+                using (var pool = AvgPool3d(new long[] { 2, 2, 2 })) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 2, 2, 4 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestAvgPool3D_2()
         {
-            Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 });
-            using (var pool = AvgPool3d(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 1, 2, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 2, 2, 0].ToSingle());
-            }
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 4, 4, 8 }, device: device);
+                using (var pool = AvgPool3d(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 3, 3, 7 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 1, 2, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 2, 2, 0].ToSingle());
+                }
 
-            ones = torch.ones(new long[] { 16, 3, 4, 4, 8 });
-            using (var pool = AvgPool3d(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 3, 3, 3, 7 }, pooled.shape);
-                Assert.Equal(1, pooled[0, 0, 0, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 0, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 0, 2, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 1, 2, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 0, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 1, 0].ToSingle());
-                Assert.Equal(1, pooled[0, 0, 2, 2, 0].ToSingle());
+                ones = torch.ones(new long[] { 16, 3, 4, 4, 8 }, device: device);
+                using (var pool = AvgPool3d(new long[] { 2, 2, 2 }, new long[] { 1, 1, 1 })) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 3, 3, 3, 7 }, pooled.shape);
+                    Assert.Equal(1, pooled[0, 0, 0, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 0, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 0, 2, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 1, 2, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 0, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 1, 0].ToSingle());
+                    Assert.Equal(1, pooled[0, 0, 2, 2, 0].ToSingle());
+                }
             }
         }
 
@@ -3364,74 +3525,86 @@ namespace TorchSharp
         [Fact]
         public void TestLPPool1D_1()
         {
-            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
-            using (var pool = LPPool1d(2, 2)) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 3, 2 }, pooled.shape);
-                Assert.Equal(sqrt2, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(sqrt2, pooled[0, 1, 0].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 3, 4 }, device: device);
+                using (var pool = LPPool1d(2, 2)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 3, 2 }, pooled.shape);
+                    Assert.Equal(sqrt2, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(sqrt2, pooled[0, 1, 0].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestLPPool1D_2()
         {
-            Tensor ones = torch.ones(new long[] { 16, 3, 4 });
-            using (var pool = LPPool1d(2, 2, 1)) {
-                var pooled = pool.call(ones);
-
-                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
-                Assert.Equal(sqrt2, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(sqrt2, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(sqrt2, pooled[0, 2, 0].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 3, 4 }, device: device);
+                using (var pool = LPPool1d(2, 2, 1)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                    Assert.Equal(sqrt2, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(sqrt2, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(sqrt2, pooled[0, 2, 0].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestLPPool2D_1()
         {
-            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
-            using (var pool = LPPool2d(2, new long[] { 2, 2 })) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 2, 2 }, pooled.shape);
-                Assert.Equal(2, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(2, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(2, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(2, pooled[0, 1, 1].ToSingle());
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 4, 4 }, device: device);
+                using (var pool = LPPool2d(2, new long[] { 2, 2 })) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 2, 2 }, pooled.shape);
+                    Assert.Equal(2, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(2, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(2, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(2, pooled[0, 1, 1].ToSingle());
+                }
             }
         }
 
         [Fact]
         public void TestLPPool2D_2()
         {
-            Tensor ones = torch.ones(new long[] { 16, 4, 4 });
-            using (var pool = LPPool2d(2, new long[] { 2, 2 }, new long[] { 1, 1 })) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
-                Assert.Equal(2, pooled[0, 0, 0].ToSingle());
-                Assert.Equal(2, pooled[0, 0, 1].ToSingle());
-                Assert.Equal(2, pooled[0, 0, 2].ToSingle());
-                Assert.Equal(2, pooled[0, 1, 0].ToSingle());
-                Assert.Equal(2, pooled[0, 1, 1].ToSingle());
-                Assert.Equal(2, pooled[0, 1, 2].ToSingle());
-                Assert.Equal(2, pooled[0, 2, 0].ToSingle());
-                Assert.Equal(2, pooled[0, 2, 1].ToSingle());
-                Assert.Equal(2, pooled[0, 2, 2].ToSingle());
-            }
+            foreach (var device in TestUtils.AvailableDevices()) {
+                Tensor ones = torch.ones(new long[] { 16, 4, 4 }, device: device);
+                using (var pool = LPPool2d(2, new long[] { 2, 2 }, new long[] { 1, 1 })) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 3, 3 }, pooled.shape);
+                    Assert.Equal(2, pooled[0, 0, 0].ToSingle());
+                    Assert.Equal(2, pooled[0, 0, 1].ToSingle());
+                    Assert.Equal(2, pooled[0, 0, 2].ToSingle());
+                    Assert.Equal(2, pooled[0, 1, 0].ToSingle());
+                    Assert.Equal(2, pooled[0, 1, 1].ToSingle());
+                    Assert.Equal(2, pooled[0, 1, 2].ToSingle());
+                    Assert.Equal(2, pooled[0, 2, 0].ToSingle());
+                    Assert.Equal(2, pooled[0, 2, 1].ToSingle());
+                    Assert.Equal(2, pooled[0, 2, 2].ToSingle());
+                }
 
-            ones = torch.ones(new long[] { 16, 4, 4, 4 });
-            using (var pool = LPPool2d(2, new long[] { 2, 2 }, new long[] { 1, 1 })) {
-                var pooled = pool.call(ones);
-                Assert.Equal(new long[] { 16, 4, 3, 3 }, pooled.shape);
-                Assert.Equal(2, pooled[0, 0, 0, 0].ToSingle());
-                Assert.Equal(2, pooled[0, 0, 0, 1].ToSingle());
-                Assert.Equal(2, pooled[0, 0, 0, 2].ToSingle());
-                Assert.Equal(2, pooled[0, 0, 1, 0].ToSingle());
-                Assert.Equal(2, pooled[0, 0, 1, 1].ToSingle());
-                Assert.Equal(2, pooled[0, 0, 1, 2].ToSingle());
-                Assert.Equal(2, pooled[0, 0, 2, 0].ToSingle());
-                Assert.Equal(2, pooled[0, 0, 2, 1].ToSingle());
-                Assert.Equal(2, pooled[0, 0, 2, 2].ToSingle());
+                ones = torch.ones(new long[] { 16, 4, 4, 4 }, device: device);
+                using (var pool = LPPool2d(2, new long[] { 2, 2 }, new long[] { 1, 1 })) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(new long[] { 16, 4, 3, 3 }, pooled.shape);
+                    Assert.Equal(2, pooled[0, 0, 0, 0].ToSingle());
+                    Assert.Equal(2, pooled[0, 0, 0, 1].ToSingle());
+                    Assert.Equal(2, pooled[0, 0, 0, 2].ToSingle());
+                    Assert.Equal(2, pooled[0, 0, 1, 0].ToSingle());
+                    Assert.Equal(2, pooled[0, 0, 1, 1].ToSingle());
+                    Assert.Equal(2, pooled[0, 0, 1, 2].ToSingle());
+                    Assert.Equal(2, pooled[0, 0, 2, 0].ToSingle());
+                    Assert.Equal(2, pooled[0, 0, 2, 1].ToSingle());
+                    Assert.Equal(2, pooled[0, 0, 2, 2].ToSingle());
+                }
             }
         }
         #endregion
@@ -3440,35 +3613,40 @@ namespace TorchSharp
         [Fact]
         public void TestBatchNorm1D()
         {
-            {
-                var ones = torch.ones(new long[] { 16, 3, 28 });
-                using (var pool = BatchNorm1d(3)) {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                {
+                    var ones = torch.ones(new long[] { 16, 3, 28 }, device: device);
+                    using (var pool = BatchNorm1d(3, device: device)) {
 
-                    var sd = pool.state_dict();
-                    Assert.Equal(5, sd.Count);
-                    var np = pool.named_parameters();
-                    Assert.Equal(2, np.Count());
-                    var nb = pool.named_buffers();
-                    Assert.Equal(3, nb.Count());
+                        var sd = pool.state_dict();
+                        Assert.Equal(5, sd.Count);
+                        var np = pool.named_parameters();
+                        Assert.Equal(2, np.Count());
+                        var nb = pool.named_buffers();
+                        Assert.Equal(3, nb.Count());
 
-                    var pooled = pool.call(ones);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2 })));
+                        var pooled = pool.call(ones);
+                        Assert.Equal(device.type, pooled.device_type);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2 }, device: device)));
+                    }
                 }
-            }
-            {
-                var ones = torch.ones(new long[] { 1, 3, 28 });
-                using (var pool = BatchNorm1d(3)) {
-                    var pooled = pool.call(ones);
-                    Assert.Equal(ones.shape, pooled.shape);
+                {
+                    var ones = torch.ones(new long[] { 1, 3, 28 }, device: device);
+                    using (var pool = BatchNorm1d(3, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(device.type, pooled.device_type);
+                        Assert.Equal(ones.shape, pooled.shape);
+                    }
                 }
-            }
-            {
-                var ones = torch.ones(new long[] { 16, 28 });
-                using (var pool = BatchNorm1d(28)) {
-                    var pooled = pool.call(ones);
-                    Assert.Equal(ones.shape, pooled.shape);
+                {
+                    var ones = torch.ones(new long[] { 16, 28 }, device: device);
+                    using (var pool = BatchNorm1d(28, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(device.type, pooled.device_type);
+                        Assert.Equal(ones.shape, pooled.shape);
+                    }
                 }
             }
         }
@@ -3476,63 +3654,78 @@ namespace TorchSharp
         [Fact]
         public void TestBatchNorm1DWeightAndBias()
         {
-            var ones = torch.ones(new long[] { 16, 3, 28 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 28 }, device: device);
 
-            using (var norm = BatchNorm1d(3, track_running_stats: false)) {
-                var pooled = norm.call(ones);
-                Assert.Equal(ones.shape, pooled.shape);
+                using (var norm = BatchNorm1d(3, track_running_stats: false, device: device)) {
 
-                var w = norm.weight;
-                var b = norm.bias;
+                    var w = norm.weight;
+                    var b = norm.bias;
 
-                Assert.NotNull(w);
-                Assert.NotNull(b);
+                    Assert.NotNull(w);
+                    Assert.NotNull(b);
 
-                Assert.Null(norm.running_mean);
-                Assert.Null(norm.running_var);
+                    Assert.Equal(device.type, w.device_type);
+                    Assert.Equal(device.type, b.device_type);
 
-                Assert.Equal(new long[] { 3 }, w.shape);
-                Assert.Equal(new long[] { 3 }, b.shape);
+                    var pooled = norm.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(ones.shape, pooled.shape);
+
+                    Assert.Null(norm.running_mean);
+                    Assert.Null(norm.running_var);
+
+                    Assert.Equal(new long[] { 3 }, w.shape);
+                    Assert.Equal(new long[] { 3 }, b.shape);
+                }
             }
         }
 
         [Fact]
         public void TestBatchNorm1DRunningStats()
         {
-            var ones = torch.ones(new long[] { 16, 3, 28 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 28 }, device: device);
 
-            using (var norm = BatchNorm1d(3, track_running_stats: true)) {
-                var pooled = norm.call(ones);
-                Assert.Equal(ones.shape, pooled.shape);
+                using (var norm = BatchNorm1d(3, track_running_stats: true, device: device)) {
+                    var pooled = norm.call(ones);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Equal(device.type, pooled.device_type);
 
-                var m = norm.running_mean;
-                var v = norm.running_var;
+                    var m = norm.running_mean;
+                    var v = norm.running_var;
 
-                Assert.NotNull(m);
-                Assert.NotNull(v);
+                    Assert.NotNull(m);
+                    Assert.NotNull(v);
 
-                if (m is not null) Assert.Equal(new long[] { 3 }, m.shape);
-                if (v is not null) Assert.Equal(new long[] { 3 }, v.shape);
+                    Assert.Equal(device.type, m.device_type);
+                    Assert.Equal(device.type, v.device_type);
+
+                    if (m is not null) Assert.Equal(new long[] { 3 }, m.shape);
+                    if (v is not null) Assert.Equal(new long[] { 3 }, v.shape);
+                }
             }
         }
 
         [Fact]
         public void TestBatchNorm2D()
         {
-            {
-                var ones = torch.ones(new long[] { 16, 3, 28, 28 });
-                using (var pool = BatchNorm2d(3)) {
-                    var pooled = pool.call(ones);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+            foreach (var device in TestUtils.AvailableDevices()) {
+                {
+                    var ones = torch.ones(new long[] { 16, 3, 28, 28 }, device: device);
+                    using (var pool = BatchNorm2d(3, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 }, device: device)));
+                    }
                 }
-            }
-            {
-                var ones = torch.ones(new long[] { 1, 3, 28, 28 });
-                using (var pool = BatchNorm2d(3)) {
-                    var pooled = pool.call(ones);
-                    Assert.Equal(ones.shape, pooled.shape);
+                {
+                    var ones = torch.ones(new long[] { 1, 3, 28, 28 }, device: device);
+                    using (var pool = BatchNorm2d(3, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(ones.shape, pooled.shape);
+                    }
                 }
             }
         }
@@ -3540,151 +3733,179 @@ namespace TorchSharp
         [Fact]
         public void TestBatchNorm2dWeightAndBias()
         {
-            var ones = torch.ones(new long[] { 16, 3, 28, 28 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 28, 28 }, device: device);
 
-            using (var norm = BatchNorm2d(3, track_running_stats: false)) {
-                var pooled = norm.call(ones);
-                Assert.Equal(ones.shape, pooled.shape);
+                using (var norm = BatchNorm2d(3, track_running_stats: false, device: device)) {
+                    var w = norm.weight;
+                    var b = norm.bias;
 
-                var w = norm.weight;
-                var b = norm.bias;
+                    Assert.NotNull(w);
+                    Assert.NotNull(b);
 
-                Assert.NotNull(w);
-                Assert.NotNull(b);
+                    Assert.Equal(device.type, w.device_type);
+                    Assert.Equal(device.type, b.device_type);
 
-                Assert.Null(norm.running_mean);
-                Assert.Null(norm.running_var);
+                    var pooled = norm.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(ones.shape, pooled.shape);
 
-                Assert.Equal(new long[] { 3 }, w.shape);
-                Assert.Equal(new long[] { 3 }, b.shape);
+                    Assert.Null(norm.running_mean);
+                    Assert.Null(norm.running_var);
+
+                    Assert.Equal(new long[] { 3 }, w.shape);
+                    Assert.Equal(new long[] { 3 }, b.shape);
+                }
             }
         }
 
         [Fact]
         public void TestBatchNorm2dRunningStats()
         {
-            var ones = torch.ones(new long[] { 16, 3, 28, 28 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 28, 28 }, device: device);
 
-            using (var norm = BatchNorm2d(3, track_running_stats: true)) {
-                var pooled = norm.call(ones);
-                Assert.Equal(ones.shape, pooled.shape);
+                using (var norm = BatchNorm2d(3, track_running_stats: true, device: device)) {
+                    var pooled = norm.call(ones);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Equal(device.type, pooled.device_type);
 
-                var m = norm.running_mean;
-                var v = norm.running_var;
+                    var m = norm.running_mean;
+                    var v = norm.running_var;
 
-                Assert.NotNull(m);
-                Assert.NotNull(v);
+                    Assert.NotNull(m);
+                    Assert.NotNull(v);
 
-                if (m is not null) Assert.Equal(new long[] { 3 }, m.shape);
-                if (v is not null) Assert.Equal(new long[] { 3 }, v.shape);
+                    Assert.Equal(device.type, m.device_type);
+                    Assert.Equal(device.type, v.device_type);
+
+                    if (m is not null) Assert.Equal(new long[] { 3 }, m.shape);
+                    if (v is not null) Assert.Equal(new long[] { 3 }, v.shape);
+                }
             }
         }
 
         [Fact]
         public void TestBatchNorm3D()
         {
-            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
-            using (var pool = BatchNorm3d(3)) {
-                var pooled = pool.call(ones);
-                Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 })));
-                Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 }, device: device);
+                using (var pool = BatchNorm3d(3, device: device)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 }, device: device)));
+                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 }, device: device)));
+                }
             }
         }
 
         [Fact]
         public void TestBatchNorm3dWeightAndBias()
         {
-            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 }, device: device);
 
-            using (var norm = BatchNorm3d(3, track_running_stats: false)) {
-                var pooled = norm.call(ones);
-                Assert.Equal(ones.shape, pooled.shape);
+                using (var norm = BatchNorm3d(3, track_running_stats: false, device: device)) {
+                    var w = norm.weight;
+                    var b = norm.bias;
 
-                var w = norm.weight;
-                var b = norm.bias;
+                    Assert.NotNull(w);
+                    Assert.NotNull(b);
 
-                Assert.NotNull(w);
-                Assert.NotNull(b);
+                    Assert.Equal(device.type, w.device_type);
+                    Assert.Equal(device.type, b.device_type);
 
-                Assert.Null(norm.running_mean);
-                Assert.Null(norm.running_var);
+                    var pooled = norm.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(ones.shape, pooled.shape);
 
-                Assert.Equal(new long[] { 3 }, w.shape);
-                Assert.Equal(new long[] { 3 }, b.shape);
+                    Assert.Null(norm.running_mean);
+                    Assert.Null(norm.running_var);
+
+                    Assert.Equal(new long[] { 3 }, w.shape);
+                    Assert.Equal(new long[] { 3 }, b.shape);
+                }
             }
         }
 
         [Fact]
         public void TestBatchNorm3dRunningStats()
         {
-            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 }, device: device);
 
-            using (var norm = BatchNorm3d(3, track_running_stats: true)) {
-                var pooled = norm.call(ones);
-                Assert.Equal(ones.shape, pooled.shape);
+                using (var norm = BatchNorm3d(3, track_running_stats: true, device: device)) {
+                    var pooled = norm.call(ones);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Equal(device.type, pooled.device_type);
 
-                var m = norm.running_mean;
-                var v = norm.running_var;
+                    var m = norm.running_mean;
+                    var v = norm.running_var;
 
-                Assert.NotNull(m);
-                Assert.NotNull(v);
+                    Assert.NotNull(m);
+                    Assert.NotNull(v);
 
-                if (m is not null) Assert.Equal(new long[] { 3 }, m.shape);
-                if (v is not null) Assert.Equal(new long[] { 3 }, v.shape);
+                    Assert.Equal(device.type, m.device_type);
+                    Assert.Equal(device.type, v.device_type);
+
+                    if (m is not null) Assert.Equal(new long[] { 3 }, m.shape);
+                    if (v is not null) Assert.Equal(new long[] { 3 }, v.shape);
+                }
             }
         }
 
         [Fact]
         public void TestInstanceNorm1D()
         {
-            var ones = torch.ones(new long[] { 16, 3, 28 });
-            {
-                using (var pool = InstanceNorm1d(3)) {
-                    var pooled = pool.call(ones);
-                    Assert.Null(pool.weight);
-                    Assert.Null(pool.bias);
-                    Assert.Null(pool.running_mean);
-                    Assert.Null(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2 })));
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 28 }, device: device);
+                {
+                    using (var pool = InstanceNorm1d(3, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Null(pool.weight);
+                        Assert.Null(pool.bias);
+                        Assert.Null(pool.running_mean);
+                        Assert.Null(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2 }, device: device)));
+                    }
                 }
-            }
-            {
-                using (var pool = InstanceNorm1d(3, affine: true)) {
-                    var pooled = pool.call(ones);
-                    Assert.NotNull(pool.weight);
-                    Assert.NotNull(pool.bias);
-                    Assert.Null(pool.running_mean);
-                    Assert.Null(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2 })));
+                {
+                    using (var pool = InstanceNorm1d(3, affine: true, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.NotNull(pool.weight);
+                        Assert.NotNull(pool.bias);
+                        Assert.Null(pool.running_mean);
+                        Assert.Null(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2 }, device: device)));
+                    }
                 }
-            }
-            {
-                using (var pool = InstanceNorm1d(3, track_running_stats: true)) {
-                    var pooled = pool.call(ones);
-                    Assert.Null(pool.weight);
-                    Assert.Null(pool.bias);
-                    Assert.NotNull(pool.running_mean);
-                    Assert.NotNull(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2 })));
+                {
+                    using (var pool = InstanceNorm1d(3, track_running_stats: true, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Null(pool.weight);
+                        Assert.Null(pool.bias);
+                        Assert.NotNull(pool.running_mean);
+                        Assert.NotNull(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2 }, device: device)));
+                    }
                 }
-            }
-            {
-                using (var pool = InstanceNorm1d(3, affine: true, track_running_stats: true)) {
-                    var pooled = pool.call(ones);
-                    Assert.NotNull(pool.weight);
-                    Assert.NotNull(pool.bias);
-                    Assert.NotNull(pool.running_mean);
-                    Assert.NotNull(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2 })));
+                {
+                    using (var pool = InstanceNorm1d(3, affine: true, track_running_stats: true, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.NotNull(pool.weight);
+                        Assert.NotNull(pool.bias);
+                        Assert.NotNull(pool.running_mean);
+                        Assert.NotNull(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2 }, device: device)));
+                    }
                 }
             }
         }
@@ -3692,53 +3913,59 @@ namespace TorchSharp
         [Fact]
         public void TestInstanceNorm2D()
         {
-            var ones = torch.ones(new long[] { 16, 3, 28, 28 });
-            {
-                using (var pool = InstanceNorm2d(3)) {
-                    var pooled = pool.call(ones);
-                    Assert.Null(pool.weight);
-                    Assert.Null(pool.bias);
-                    Assert.Null(pool.running_mean);
-                    Assert.Null(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 28, 28 }, device: device);
+                {
+                    using (var pool = InstanceNorm2d(3, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(device.type, pooled.device_type);
+                        Assert.Null(pool.weight);
+                        Assert.Null(pool.bias);
+                        Assert.Null(pool.running_mean);
+                        Assert.Null(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 }, device: device)));
+                    }
                 }
-            }
-            {
-                using (var pool = InstanceNorm2d(3, affine: true)) {
-                    var pooled = pool.call(ones);
-                    Assert.NotNull(pool.weight);
-                    Assert.NotNull(pool.bias);
-                    Assert.Null(pool.running_mean);
-                    Assert.Null(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+                {
+                    using (var pool = InstanceNorm2d(3, affine: true, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(device.type, pooled.device_type);
+                        Assert.NotNull(pool.weight);
+                        Assert.NotNull(pool.bias);
+                        Assert.Null(pool.running_mean);
+                        Assert.Null(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 }, device: device)));
+                    }
                 }
-            }
-            {
-                using (var pool = InstanceNorm2d(3, track_running_stats: true)) {
-                    var pooled = pool.call(ones);
-                    Assert.Null(pool.weight);
-                    Assert.Null(pool.bias);
-                    Assert.NotNull(pool.running_mean);
-                    Assert.NotNull(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+                {
+                    using (var pool = InstanceNorm2d(3, track_running_stats: true, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(device.type, pooled.device_type);
+                        Assert.Null(pool.weight);
+                        Assert.Null(pool.bias);
+                        Assert.NotNull(pool.running_mean);
+                        Assert.NotNull(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 }, device: device)));
+                    }
                 }
-            }
-            {
-                using (var pool = InstanceNorm2d(3, affine: true, track_running_stats: true)) {
-                    var pooled = pool.call(ones);
-                    Assert.NotNull(pool.weight);
-                    Assert.NotNull(pool.bias);
-                    Assert.NotNull(pool.running_mean);
-                    Assert.NotNull(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 })));
+                {
+                    using (var pool = InstanceNorm2d(3, affine: true, track_running_stats: true, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(device.type, pooled.device_type);
+                        Assert.NotNull(pool.weight);
+                        Assert.NotNull(pool.bias);
+                        Assert.NotNull(pool.running_mean);
+                        Assert.NotNull(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 }, device: device)));
+                    }
                 }
             }
         }
@@ -3746,53 +3973,59 @@ namespace TorchSharp
         [Fact]
         public void TestInstanceNorm3D()
         {
-            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
-            {
-                using (var pool = InstanceNorm3d(3)) {
-                    var pooled = pool.call(ones);
-                    Assert.Null(pool.weight);
-                    Assert.Null(pool.bias);
-                    Assert.Null(pool.running_mean);
-                    Assert.Null(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 }, device: device);
+                {
+                    using (var pool = InstanceNorm3d(3, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(device.type, pooled.device_type);
+                        Assert.Null(pool.weight);
+                        Assert.Null(pool.bias);
+                        Assert.Null(pool.running_mean);
+                        Assert.Null(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 }, device: device)));
+                    }
                 }
-            }
-            {
-                using (var pool = InstanceNorm3d(3, affine: true)) {
-                    var pooled = pool.call(ones);
-                    Assert.NotNull(pool.weight);
-                    Assert.NotNull(pool.bias);
-                    Assert.Null(pool.running_mean);
-                    Assert.Null(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+                {
+                    using (var pool = InstanceNorm3d(3, affine: true, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(device.type, pooled.device_type);
+                        Assert.NotNull(pool.weight);
+                        Assert.NotNull(pool.bias);
+                        Assert.Null(pool.running_mean);
+                        Assert.Null(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 }, device: device)));
+                    }
                 }
-            }
-            {
-                using (var pool = InstanceNorm3d(3, track_running_stats: true)) {
-                    var pooled = pool.call(ones);
-                    Assert.Null(pool.weight);
-                    Assert.Null(pool.bias);
-                    Assert.NotNull(pool.running_mean);
-                    Assert.NotNull(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+                {
+                    using (var pool = InstanceNorm3d(3, track_running_stats: true, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(device.type, pooled.device_type);
+                        Assert.Null(pool.weight);
+                        Assert.Null(pool.bias);
+                        Assert.NotNull(pool.running_mean);
+                        Assert.NotNull(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 }, device: device)));
+                    }
                 }
-            }
-            {
-                using (var pool = InstanceNorm3d(3, affine: true, track_running_stats: true)) {
-                    var pooled = pool.call(ones);
-                    Assert.NotNull(pool.weight);
-                    Assert.NotNull(pool.bias);
-                    Assert.NotNull(pool.running_mean);
-                    Assert.NotNull(pool.running_var);
-                    Assert.Equal(ones.shape, pooled.shape);
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 })));
-                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 })));
+                {
+                    using (var pool = InstanceNorm3d(3, affine: true, track_running_stats: true, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(device.type, pooled.device_type);
+                        Assert.NotNull(pool.weight);
+                        Assert.NotNull(pool.bias);
+                        Assert.NotNull(pool.running_mean);
+                        Assert.NotNull(pool.running_var);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2, 2 }, device: device)));
+                    }
                 }
             }
         }
@@ -3800,32 +4033,41 @@ namespace TorchSharp
         [Fact]
         public void TestLayerNorm()
         {
-            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
-            using (var pool = LayerNorm(new long[] { 12, 28, 28 })) {
-                var pooled = pool.call(ones);
-                Assert.Equal(ones.shape, pooled.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 }, device: device);
+                using (var pool = LayerNorm(new long[] { 12, 28, 28 }, device: device)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(ones.shape, pooled.shape);
+                }
             }
         }
 
         [Fact]
         public void TestLocalResponseNorm()
         {
-            var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 });
-            using (var pool = LocalResponseNorm(2)) {
-                var pooled = pool.call(ones);
-                Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2 })));
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 16, 3, 12, 28, 28 }, device: device);
+                using (var pool = LocalResponseNorm(2)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2 })));
+                }
             }
         }
 
         [Fact]
         public void TestGroupNorm()
         {
-            var ones = torch.ones(new long[] { 20, 6, 10, 10 });
-            using (var pool = GroupNorm(3, 6)) {
-                var pooled = pool.call(ones);
-                Assert.Equal(ones.shape, pooled.shape);
-                Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2 })));
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var ones = torch.ones(new long[] { 20, 6, 10, 10 }, device: device);
+                using (var pool = GroupNorm(3, 6, device: device)) {
+                    var pooled = pool.call(ones);
+                    Assert.Equal(device.type, pooled.device_type);
+                    Assert.Equal(ones.shape, pooled.shape);
+                    Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2 })));
+                }
             }
         }
 
@@ -3844,83 +4086,103 @@ namespace TorchSharp
         [Fact]
         public void TestBatchNormFunc()
         {
-            var x = torch.randn(3, 2, 4);
-            var running_mean = torch.randn(2);
-            var running_var = torch.square(torch.randn(2));
-            var y = torch.nn.functional.batch_norm(x, running_mean, running_var);
-            var z = NormalizeTensor(x, torch.unsqueeze(running_mean, 1), torch.unsqueeze(running_var, 1));
-            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x = torch.randn(3, 2, 4, device: device);
+                var running_mean = torch.randn(2, device: device);
+                var running_var = torch.square(torch.randn(2, device: device));
+                var y = torch.nn.functional.batch_norm(x, running_mean, running_var);
+                var z = NormalizeTensor(x, torch.unsqueeze(running_mean, 1), torch.unsqueeze(running_var, 1));
+                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
 
-            var weight = torch.randn(2);
-            var bias = torch.randn(2);
-            y = torch.nn.functional.batch_norm(x, running_mean, running_var, weight, bias);
-            z = torch.unsqueeze(weight, 1) * z + torch.unsqueeze(bias, 1);
-            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+                var weight = torch.randn(2, device: device);
+                var bias = torch.randn(2, device: device);
+                y = torch.nn.functional.batch_norm(x, running_mean, running_var, weight, bias);
+                z = torch.unsqueeze(weight, 1) * z + torch.unsqueeze(bias, 1);
+                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
 
-            y = torch.nn.functional.batch_norm(x, running_mean, running_var, weight, bias, training: true);
-            Assert.Equal(x.shape, y.shape);
+                y = torch.nn.functional.batch_norm(x, running_mean, running_var, weight, bias, training: true);
+                Assert.Equal(x.shape, y.shape);
+                Assert.Equal(x.device_type, y.device_type);
+                Assert.Equal(x.device_type, z.device_type);
+            }
         }
 
         [Fact]
         public void TestGroupNormFunc()
         {
-            var x = torch.randn(3, 12, 5);
-            var y = torch.nn.functional.group_norm(x, 4);
-            y = y[TensorIndex.Colon, TensorIndex.Slice(3, 6)];
-            var z = NormalizeTensor(x[TensorIndex.Colon, TensorIndex.Slice(3, 6)], new long[] { 1, 2 });
-            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x = torch.randn(3, 12, 5, device: device);
+                var y = torch.nn.functional.group_norm(x, 4);
+                y = y[TensorIndex.Colon, TensorIndex.Slice(3, 6)];
+                var z = NormalizeTensor(x[TensorIndex.Colon, TensorIndex.Slice(3, 6)], new long[] { 1, 2 });
+                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
 
-            var weight = torch.randn(12);
-            var bias = torch.randn(12);
-            y = torch.nn.functional.group_norm(x, 4, weight, bias);
-            y = y[TensorIndex.Colon, TensorIndex.Slice(3, 6)];
-            z = weight[TensorIndex.Slice(3, 6), TensorIndex.None] * z + bias[TensorIndex.Slice(3, 6), TensorIndex.None];
-            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+                var weight = torch.randn(12, device: device);
+                var bias = torch.randn(12, device: device);
+                y = torch.nn.functional.group_norm(x, 4, weight, bias);
+                y = y[TensorIndex.Colon, TensorIndex.Slice(3, 6)];
+                z = weight[TensorIndex.Slice(3, 6), TensorIndex.None] * z + bias[TensorIndex.Slice(3, 6), TensorIndex.None];
+                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.Equal(x.device_type, y.device_type);
+                Assert.Equal(x.device_type, z.device_type);
+            }
         }
 
         [Fact]
         public void TestInstanceNormFunc()
         {
-            var x = torch.randn(3, 2, 5);
-            var y = torch.nn.functional.instance_norm(x);
-            var z = NormalizeTensor(x, new long[] { 2 });
-            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x = torch.randn(3, 2, 5, device: device);
+                var y = torch.nn.functional.instance_norm(x);
+                var z = NormalizeTensor(x, new long[] { 2 });
+                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
 
-            var running_mean = torch.randn(2);
-            var running_var = torch.square(torch.randn(2));
-            y = torch.nn.functional.instance_norm(x, running_mean, running_var);
-            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+                var running_mean = torch.randn(2, device: device);
+                var running_var = torch.square(torch.randn(2, device: device));
+                y = torch.nn.functional.instance_norm(x, running_mean, running_var);
+                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
 
-            var weight = torch.randn(2);
-            var bias = torch.randn(2);
-            y = torch.nn.functional.instance_norm(x, running_mean, running_var, weight, bias);
-            z = torch.unsqueeze(weight, 1) * z + torch.unsqueeze(bias, 1);
-            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+                var weight = torch.randn(2, device: device);
+                var bias = torch.randn(2, device: device);
+                y = torch.nn.functional.instance_norm(x, running_mean, running_var, weight, bias);
+                z = torch.unsqueeze(weight, 1) * z + torch.unsqueeze(bias, 1);
+                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.Equal(x.device_type, y.device_type);
+                Assert.Equal(x.device_type, z.device_type);
+            }
         }
 
         [Fact]
         public void TestLayerNormFunc()
         {
-            var x = torch.randn(3, 5, 12);
-            var y = torch.nn.functional.layer_norm(x, new long[] { 12 });
-            var z = NormalizeTensor(x, new long[] { 2 });
-            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x = torch.randn(3, 5, 12, device: device);
+                var y = torch.nn.functional.layer_norm(x, new long[] { 12 });
+                var z = NormalizeTensor(x, new long[] { 2 });
+                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
 
-            var weight = torch.randn(12);
-            var bias = torch.randn(12);
-            y = torch.nn.functional.layer_norm(x, new long[] { 12 }, weight, bias);
-            z = weight * z + bias;
-            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+                var weight = torch.randn(12, device: device);
+                var bias = torch.randn(12, device: device);
+                y = torch.nn.functional.layer_norm(x, new long[] { 12 }, weight, bias);
+                z = weight * z + bias;
+                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.Equal(x.device_type, y.device_type);
+                Assert.Equal(x.device_type, z.device_type);
+            }
         }
 
         [Fact]
         public void TestLocalResponseNormFunc()
         {
-            var x = torch.randn(3, 6, 4);
-            var y = torch.nn.functional.local_response_norm(x, 5, alpha: 0.5);
-            y = y[TensorIndex.Colon, 3];
-            var z = x[TensorIndex.Colon, 3] * torch.pow(torch.square(x[TensorIndex.Colon, TensorIndex.Slice(1, 6)]).sum(dim: 1) * 0.5 / 5 + 1, torch.tensor(-0.75f));
-            Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x = torch.randn(3, 6, 4, device: device);
+                var y = torch.nn.functional.local_response_norm(x, 5, alpha: 0.5);
+                y = y[TensorIndex.Colon, 3];
+                var z = x[TensorIndex.Colon, 3] * torch.pow(torch.square(x[TensorIndex.Colon, TensorIndex.Slice(1, 6)]).sum(dim: 1) * 0.5 / 5 + 1, torch.tensor(-0.75f));
+                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.Equal(x.device_type, y.device_type);
+                Assert.Equal(x.device_type, z.device_type);
+            }
         }
         #endregion
 
@@ -4231,14 +4493,17 @@ namespace TorchSharp
         [Fact]
         public void TestDropout()
         {
-            var drop = Dropout(0.75);
-            var data = torch.rand(new long[] { 12, 23, 24 });
-            var output = drop.call(data);
-            Assert.Equal(data.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var drop = Dropout(0.75);
+                var data = torch.rand(new long[] { 12, 23, 24 }, device: device);
+                var output = drop.call(data);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.data<float>().ToArray();
-            var outVal = output.data<float>().ToArray();
-            Assert.NotEqual(outVal, dataVal);
+                var dataVal = data.cpu().data<float>().ToArray();
+                var outVal = output.cpu().data<float>().ToArray();
+                Assert.NotEqual(outVal, dataVal);
+            }
         }
 
         [Fact]
@@ -5147,7 +5412,7 @@ namespace TorchSharp
             var input = torch.randn(32, 100, 100);
             var counter = 0;
 
-            var pre_hook = (Module<Tensor,Tensor> m, Tensor input) => { counter += 1; return input; };
+            var pre_hook = (Module<Tensor, Tensor> m, Tensor input) => { counter += 1; return input; };
 
             var handle = lin1.register_forward_pre_hook(pre_hook);
 
