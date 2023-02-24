@@ -812,70 +812,80 @@ namespace TorchSharp
         [Fact]
         public void EvalSequence()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(
-                ("lin1", lin1),
-                ("relu1", ReLU()));
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Linear(100, 10, device: device);
+                var seq = Sequential(
+                    ("lin1", lin1),
+                    ("relu1", ReLU()));
 
-            var seq1 = Sequential(seq, lin2);
+                var seq1 = Sequential(seq, lin2);
 
-            var x = torch.randn(new long[] { 64, 1000 }, requires_grad: true);
-            var eval = seq.call(x);
+                var x = torch.randn(new long[] { 64, 1000 }, device: device, requires_grad: true);
+                var eval = seq.call(x);
+
+                Assert.Equal(device.type, eval.device_type);
+            }
         }
 
         [Fact]
         public void EvalEmptySequence()
         {
             var seq = Sequential();
-
-            var x = torch.randn(new long[] { 64, 1000 }, requires_grad: true);
-            var eval = seq.call(x);
-            Assert.Equal(x, eval);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var x = torch.randn(new long[] { 64, 1000 }, device: device, requires_grad: true);
+                var eval = seq.call(x);
+                Assert.Equal(x, eval);
+            }
         }
 
         [Fact]
         public void CreateSequence()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(
-                ("lin1", lin1),
-                ("relu1", ReLU()));
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Linear(100, 10, device: device);
+                var seq = Sequential(
+                    ("lin1", lin1),
+                    ("relu1", ReLU()));
 
-            var s2 = seq.append("lin2", lin2);
-            Assert.Same(seq, s2);
+                var s2 = seq.append("lin2", lin2);
+                Assert.Same(seq, s2);
 
-            var parameters = seq.parameters();
-            var parametersCount = parameters.Count();
-            Assert.Equal(4, parametersCount);
+                var parameters = seq.parameters();
+                var parametersCount = parameters.Count();
+                Assert.Equal(4, parametersCount);
 
-            var namedParams = seq.named_parameters();
-            var namedParamsCount = namedParams.Count();
-            Assert.Equal(4, namedParamsCount);
+                var namedParams = seq.named_parameters();
+                var namedParamsCount = namedParams.Count();
+                Assert.Equal(4, namedParamsCount);
+            }
         }
 
         [Fact]
         public void EvalLossSequence()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(
-                ("lin1", lin1),
-                ("relu1", ReLU()),
-                ("lin2", lin2));
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Linear(100, 10, device: device);
+                var seq = Sequential(
+                    ("lin1", lin1),
+                    ("relu1", ReLU()),
+                    ("lin2", lin2));
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+                var x = torch.randn(new long[] { 64, 1000 }, device: device);
+                var y = torch.randn(new long[] { 64, 10 }, device: device);
 
-            var eval = seq.call(x);
-            var loss = MSELoss(Reduction.Sum);
-            var output = loss.call(eval, y);
+                var eval = seq.call(x);
+                var loss = MSELoss(Reduction.Sum);
+                var output = loss.call(eval, y);
+                Assert.Equal(device.type, output.device_type);
 
-            var result = output.ToSingle();
+                var result = output.cpu().ToSingle();
 
-            Assert.Same(lin1, seq[0]);
-            Assert.Same(lin2, seq[2]);
+                Assert.Same(lin1, seq[0]);
+                Assert.Same(lin2, seq[2]);
+            }
         }
 
         [Fact]
@@ -962,61 +972,69 @@ namespace TorchSharp
         [Fact]
         public void EvalSequence2()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(
-                lin1,
-                ReLU(),
-                lin2);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Linear(100, 10, device: device);
+                var seq = Sequential(
+                    lin1,
+                    ReLU(),
+                    lin2);
 
-            var x = torch.randn(new long[] { 64, 1000 }, requires_grad: true);
-            var eval = seq.call(x);
+                var x = torch.randn(new long[] { 64, 1000 }, device: device, requires_grad: true);
+                var eval = seq.call(x);
+                Assert.Equal(device.type, eval.device_type);
+            }
         }
 
         [Fact]
         public void CreateSequence2()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(
-                lin1,
-                ReLU());
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Linear(100, 10, device: device);
+                var seq = Sequential(
+                    lin1,
+                    ReLU());
 
-            var s2 = seq.append(lin2);
-            Assert.Same(seq, s2);
+                var s2 = seq.append(lin2);
+                Assert.Same(seq, s2);
 
-            var parameters = seq.parameters();
-            var parametersCount = parameters.Count();
-            Assert.Equal(4, parametersCount);
+                var parameters = seq.parameters();
+                var parametersCount = parameters.Count();
+                Assert.Equal(4, parametersCount);
 
-            var namedParams = seq.named_parameters().ToArray();
-            var namedParamsCount = namedParams.Count();
-            Assert.Equal(4, namedParamsCount);
+                var namedParams = seq.named_parameters().ToArray();
+                var namedParamsCount = namedParams.Count();
+                Assert.Equal(4, namedParamsCount);
 
-            Assert.Equal("0.weight", namedParams[0].name);
-            Assert.Equal("0.bias", namedParams[1].name);
-            Assert.Equal("2.weight", namedParams[2].name);
-            Assert.Equal("2.bias", namedParams[3].name);
+                Assert.Equal("0.weight", namedParams[0].name);
+                Assert.Equal("0.bias", namedParams[1].name);
+                Assert.Equal("2.weight", namedParams[2].name);
+                Assert.Equal("2.bias", namedParams[3].name);
+            }
         }
 
         [Fact]
         public void EvalLossSequence2()
         {
-            var lin1 = Linear(1000, 100);
-            var lin2 = Linear(100, 10);
-            var seq = Sequential(
-                lin1,
-                ReLU(),
-                lin2);
+            foreach (var device in TestUtils.AvailableDevices) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Linear(100, 10, device: device);
+                var seq = Sequential(
+                    lin1,
+                    ReLU(),
+                    lin2);
 
-            var x = torch.randn(new long[] { 64, 1000 });
-            var y = torch.randn(new long[] { 64, 10 });
+                var x = torch.randn(new long[] { 64, 1000 }, device: device);
+                var y = torch.randn(new long[] { 64, 10 }, device: device);
 
-            var eval = seq.call(x);
-            var loss = MSELoss(Reduction.Sum);
-            var output = loss.call(eval, y);
+                var eval = seq.call(x);
+                var loss = MSELoss(Reduction.Sum);
+                var output = loss.call(eval, y);
+                Assert.Equal(device.type, eval.device_type);
 
-            var result = output.ToSingle();
+                var result = output.ToSingle();
+            }
         }
         #endregion
 
