@@ -28,6 +28,11 @@ namespace TorchSharp
                     }
                 }
             }
+
+            public new Tensor call(Tensor tensor, Tensor indices, long[] output_size = null)
+            {
+                return base.call(tensor, indices, output_size);
+            }
         }
     }
 

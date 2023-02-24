@@ -126,8 +126,8 @@ namespace TorchSharp.Examples
                         src_mask = model.GenerateSquareSubsequentMask(data.shape[0]);
                     }
 
-                    using (var output = model.forward(data, src_mask)) {
-                        var loss = criterion.forward(output.view(-1, ntokens), targets);
+                    using (var output = model.call(data, src_mask)) {
+                        var loss = criterion.call(output.view(-1, ntokens), targets);
                         loss.backward();
                         torch.nn.utils.clip_grad_norm_(model.parameters().ToArray(), 0.5);
                         optimizer.step();
@@ -164,8 +164,8 @@ namespace TorchSharp.Examples
                     if (data.shape[0] != bptt) {
                         src_mask = model.GenerateSquareSubsequentMask(data.shape[0]);
                     }
-                    using (var output = model.forward(data, src_mask)) {
-                        var loss = criterion.forward(output.view(-1, ntokens), targets);
+                    using (var output = model.call(data, src_mask)) {
+                        var loss = criterion.call(output.view(-1, ntokens), targets);
                         total_loss += data.shape[0] * loss.to(torch.CPU).item<float>();
                     }
 
@@ -251,9 +251,9 @@ namespace TorchSharp.Examples
 
             public override Tensor forward(Tensor t, Tensor mask)
             {
-                var src = pos_encoder.forward(encoder.forward(t) * MathF.Sqrt(ninputs));
-                var enc = transformer_encoder.forward(src, mask);
-                return decoder.forward(enc);
+                var src = pos_encoder.call(encoder.call(t) * MathF.Sqrt(ninputs));
+                var enc = transformer_encoder.call(src, mask);
+                return decoder.call(enc);
             }
 
             protected override void Dispose(bool disposing)
@@ -296,7 +296,7 @@ namespace TorchSharp.Examples
             public override Tensor forward(Tensor t)
             {
                 using var x = t + pe[TensorIndex.Slice(null, t.shape[0]), TensorIndex.Slice()];
-                return dropout.forward(x);
+                return dropout.call(x);
             }
 
             protected override void Dispose(bool disposing)

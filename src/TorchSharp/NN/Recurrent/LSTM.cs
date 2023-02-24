@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class LSTM : torch.nn.Module
+        public sealed class LSTM : torch.nn.Module<Tensor, (Tensor, Tensor)?, (Tensor, Tensor, Tensor)>
         {
             internal LSTM(IntPtr handle, IntPtr boxedHandle, long hiddenSize, long numLayers, bool batchFirst, bool bidirectional) : base(handle, boxedHandle)
             {
@@ -31,7 +31,7 @@ namespace TorchSharp
             /// <param name="input">Tensor of shape (seq_len, batch, input_size) containing the features of the input sequence.</param>
             /// <param name="h0_c0">Tensors of shape (num_layers * num_directions, batch, hidden_size) containing the initial hidden and cell state for each element in the batch</param>
             /// <returns></returns>
-            public (Tensor, Tensor, Tensor) forward(Tensor input, (Tensor, Tensor)? h0_c0 = null)
+            public override (Tensor, Tensor, Tensor) forward(Tensor input, (Tensor, Tensor)? h0_c0 = null)
             {
                 Tensor c0, h0;
 
@@ -51,13 +51,15 @@ namespace TorchSharp
                 return (new Tensor(res), new Tensor(hN), new Tensor(cN));
             }
 
+            public new (Tensor, Tensor, Tensor) call(Tensor input, (Tensor, Tensor)? h0_c0 = null) => base.call(input, h0_c0);
+
             /// <summary>
             /// Applies a multi-layer long short-term memory (LSTM) RNN to an input sequence.
             /// </summary>
             /// <param name="input">PackedSequence containing the features of the input sequence.</param>
             /// <param name="h0_c0">Tensors of shape (num_layers * num_directions, batch, hidden_size) containing the initial hidden and cell state for each element in the batch</param>
             /// <returns></returns>
-            public (torch.nn.utils.rnn.PackedSequence, Tensor, Tensor) forward(torch.nn.utils.rnn.PackedSequence input, (Tensor, Tensor)? h0_c0 = null)
+            public (torch.nn.utils.rnn.PackedSequence, Tensor, Tensor) call(torch.nn.utils.rnn.PackedSequence input, (Tensor, Tensor)? h0_c0 = null)
             {
                 Tensor c0, h0;
 

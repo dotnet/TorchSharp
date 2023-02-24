@@ -61,7 +61,7 @@ namespace TorchSharp
                 public static Tensor Threshold(Tensor x, double threshold, double value, bool inplace = false)
                 {
                     using (var m = nn.Threshold(threshold, value, inplace)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

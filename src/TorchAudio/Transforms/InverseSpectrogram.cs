@@ -67,10 +67,10 @@ namespace TorchSharp.Transforms
 
         public override Tensor forward(Tensor input)
         {
-            return forward(input, null);
+            return call(input, null);
         }
 
-        public Tensor forward(Tensor input, long? length = null)
+        public Tensor call(Tensor input, long? length = null)
         {
             return torchaudio.functional.inverse_spectrogram(
                 spectrogram: input,

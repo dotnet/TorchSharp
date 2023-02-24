@@ -75,7 +75,7 @@ type Model(name,device:torch.Device) as this =
         --> logsm
 
 let _loss = torch.nn.NLLLoss(reduction=Reduction.Mean)
-let loss x y = _loss.forward(x,y)
+let loss x y = _loss.call(x,y)
 
 let train (model:Model) (optimizer:Optimizer) (data: Dataset) epoch =
     model.train()

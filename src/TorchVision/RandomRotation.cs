@@ -18,13 +18,13 @@ namespace TorchSharp
                 this.fill = fill;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 var random = new Random();
                 var angle = random.NextDouble() * (degrees.Item2 - degrees.Item1) + degrees.Item1;
 
                 var rotate = torchvision.transforms.Rotate((float)angle, interpolation, expand, center, fill);
-                return rotate.forward(input);
+                return rotate.call(input);
             }
 
             private (double, double) degrees;

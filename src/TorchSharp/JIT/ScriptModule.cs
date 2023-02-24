@@ -244,7 +244,7 @@ namespace TorchSharp
                 /// If a tuple contains both tensors and scalars, it is returned as an object[].
                 /// </remarks>
                 /// <exception cref="NotImplementedException"></exception>
-                public object forward(params object[] objs)
+                public object call(params object[] objs)
                 {
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
@@ -527,9 +527,9 @@ namespace TorchSharp
                 /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
                 /// If a tuple contains both tensors and scalars, it is returned as an object[].
                 /// </remarks>
-                public TResult forward(params Tensor[] tensor)
+                public TResult call(params Tensor[] tensor)
                 {
-                    return (TResult)base.forward(tensor);
+                    return (TResult)base.call(tensor);
                 }
             }
 
@@ -561,9 +561,9 @@ namespace TorchSharp
                 /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
                 /// If a tuple contains both tensors and scalars, it is returned as an object[].
                 /// </remarks>
-                public TResult forward(T tensor)
+                public TResult call(T tensor)
                 {
-                    return (TResult)base.forward(tensor);
+                    return (TResult)base.call(tensor);
                 }
             }
 
@@ -596,9 +596,9 @@ namespace TorchSharp
                 /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
                 /// If a tuple contains both tensors and scalars, it is returned as an object[].
                 /// </remarks>
-                public TResult forward(T1 input1, T2 input2)
+                public TResult call(T1 input1, T2 input2)
                 {
-                    return (TResult)base.forward(input1, input2);
+                    return (TResult)base.call(input1, input2);
                 }
             }
 

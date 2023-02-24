@@ -41,12 +41,12 @@ namespace TorchSharp
             float learning_rate = 0.00004f;
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss.forward(eval, y);
+                var eval = seq.call(x);
+                var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -85,12 +85,12 @@ namespace TorchSharp
             float learning_rate = 0.00004f;
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss.forward(eval, y);
+                var eval = seq.call(x);
+                var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -198,7 +198,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input1, Tensor input2)
             {
-                return base_loss.forward(input1, input2).neg();
+                return base_loss.call(input1, input2).neg();
             }
 
             private Loss<Tensor, Tensor, Tensor> base_loss;
@@ -209,12 +209,12 @@ namespace TorchSharp
             Loss<Tensor, Tensor, Tensor> loss = MSELoss(Reduction.Sum);
             if (maximize) loss = new NegateLoss(loss);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss.forward(eval, y);
+                using var eval = seq.call(x);
+                using var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -241,15 +241,15 @@ namespace TorchSharp
             Loss<Tensor, Tensor, Tensor> loss = MSELoss(Reduction.Sum);
             if (maximize) loss = new NegateLoss(loss);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             var pgFirst = optimizer.ParamGroups.First();
             var lastLR = pgFirst.LearningRate;
 
             for (int i = 0; i < iters; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss.forward(eval, y);
+                using var eval = seq.call(x);
+                using var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -1627,14 +1627,14 @@ namespace TorchSharp
 
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             double lastLR = learning_rate;
 
             for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss.forward(eval, y);
+                using var eval = seq.call(x);
+                using var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -1673,14 +1673,14 @@ namespace TorchSharp
 
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             double lastLR = learning_rate;
 
             for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss.forward(eval, y);
+                using var eval = seq.call(x);
+                using var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -1753,14 +1753,14 @@ namespace TorchSharp
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
 
                 Func<Tensor> closure = () => {
-                    using var eval = seq.forward(x);
-                    var output = loss.forward(eval, y);
+                    using var eval = seq.call(x);
+                    var output = loss.call(eval, y);
 
                     finalLoss = output.ToSingle();
 
@@ -1805,7 +1805,7 @@ namespace TorchSharp
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate, max_iter: 15, max_eval: 15);
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             Assert.Throws<ArgumentNullException>(() => optimizer.step(null));
@@ -1813,8 +1813,8 @@ namespace TorchSharp
             for (int i = 0; i < 10; i++) {
 
                 Func<Tensor> closure = () => {
-                    using var eval = seq.forward(x);
-                    var output = loss.forward(eval, y);
+                    using var eval = seq.call(x);
+                    var output = loss.call(eval, y);
 
                     finalLoss = output.ToSingle();
 
@@ -1902,12 +1902,12 @@ namespace TorchSharp
                     using (Tensor x = torch.randn(new long[] { 64, 3, 28, 28 }, device: (Device)device),
                            y = torch.randn(new long[] { 64, 10 }, device: (Device)device)) {
 
-                        float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+                        float initialLoss = loss.call(seq.call(x), y).ToSingle();
                         float finalLoss = float.MaxValue;
 
                         for (int i = 0; i < 10; i++) {
-                            var eval = seq.forward(x);
-                            var output = loss.forward(eval, y);
+                            var eval = seq.call(x);
+                            var output = loss.call(eval, y);
                             var lossVal = output.ToSingle();
 
                             finalLoss = lossVal;

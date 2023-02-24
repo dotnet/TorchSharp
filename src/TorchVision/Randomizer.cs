@@ -15,12 +15,12 @@ namespace TorchSharp
                 this.transform = transform;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 using (var chance = torch.rand(1))
 
                     if (chance.item<float>() < p) {
-                        return transform.forward(input);
+                        return transform.call(input);
                     } else {
                         return input;
                     }

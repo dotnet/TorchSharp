@@ -54,7 +54,7 @@ namespace TorchSharp
                 public static Tensor softmax2d(Tensor x)
                 {
                     using (var m = nn.Softmax2d()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

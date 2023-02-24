@@ -126,6 +126,8 @@ namespace TorchSharp.Examples
 
             public override Tensor forward(Tensor input)
             {
+                // All these modules are private to the model and won't have hooks,
+                // so we can use 'forward' instead of 'call'
                 var l11 = conv1.forward(input);
                 var l12 = relu1.forward(l11);
 
@@ -188,8 +190,8 @@ namespace TorchSharp.Examples
                     optimizer.zero_grad();
 
                     var target = data["label"];
-                    var prediction = model.forward(data["data"]);
-                    var output = loss.forward(prediction, target);
+                    var prediction = model.call(data["data"]);
+                    var output = loss.call(prediction, target);
 
                     output.backward();
 
@@ -222,8 +224,8 @@ namespace TorchSharp.Examples
             using (var d = torch.NewDisposeScope()) {
 
                 foreach (var data in dataLoader) {
-                    var prediction = model.forward(data["data"]);
-                    var output = loss.forward(prediction, data["label"]);
+                    var prediction = model.call(data["data"]);
+                    var output = loss.call(prediction, data["label"]);
                     testLoss += output.ToSingle();
 
                     var pred = prediction.argmax(1);

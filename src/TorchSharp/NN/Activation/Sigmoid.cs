@@ -54,7 +54,7 @@ namespace TorchSharp
                 public static Tensor Sigmoid(Tensor x)
                 {
                     using (var m = nn.Sigmoid()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

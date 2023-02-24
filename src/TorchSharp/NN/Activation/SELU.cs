@@ -57,7 +57,7 @@ namespace TorchSharp
                 public static Tensor selu(Tensor x, bool inplace = false)
                 {
                     using (var m = nn.SELU(inplace)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

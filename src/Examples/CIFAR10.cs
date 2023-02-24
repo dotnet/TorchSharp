@@ -157,9 +157,9 @@ namespace TorchSharp.Examples
                     optimizer.zero_grad();
 
                     var target = data["label"];
-                    var prediction = model.forward(data["data"]);
+                    var prediction = model.call(data["data"]);
                     var lsm = log_softmax(prediction, 1);
-                    var output = loss.forward(lsm, target);
+                    var output = loss.call(lsm, target);
 
                     output.backward();
 
@@ -198,9 +198,9 @@ namespace TorchSharp.Examples
                 foreach (var data in dataLoader) {
 
                     var target = data["label"];
-                    var prediction = model.forward(data["data"]);
+                    var prediction = model.call(data["data"]);
                     var lsm = log_softmax(prediction, 1);
-                    var output = loss.forward(lsm, target);
+                    var output = loss.call(lsm, target);
 
                     testLoss += output.ToSingle();
                     batchCount += 1;

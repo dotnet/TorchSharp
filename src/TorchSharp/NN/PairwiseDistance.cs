@@ -52,7 +52,7 @@ namespace TorchSharp
                 public static Tensor pairwise_distance(Tensor input1, Tensor input2, double p = 2.0, double eps = 1e-6, bool keep_dim = false)
                 {
                     using (var f = nn.PairwiseDistance(p, eps, keep_dim)) {
-                        return f.forward(input1, input2);
+                        return f.call(input1, input2);
                     }
                 }
             }

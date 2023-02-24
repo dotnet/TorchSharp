@@ -194,55 +194,55 @@ namespace TorchSharp
                     }
 
                     // N x 3 x 224 x 224
-                    x = conv1.forward(x);
+                    x = conv1.call(x);
                     // N x 64 x 112 x 112
-                    x = maxpool1.forward(x);
+                    x = maxpool1.call(x);
                     // N x 64 x 56 x 56
-                    x = conv2.forward(x);
+                    x = conv2.call(x);
                     // N x 64 x 56 x 56
-                    x = conv3.forward(x);
+                    x = conv3.call(x);
                     // N x 192 x 56 x 56
-                    x = maxpool2.forward(x);
+                    x = maxpool2.call(x);
 
                     // N x 192 x 28 x 28
-                    x = inception3a.forward(x);
+                    x = inception3a.call(x);
                     // N x 256 x 28 x 28
-                    x = inception3b.forward(x);
+                    x = inception3b.call(x);
                     // N x 480 x 28 x 28
-                    x = maxpool3.forward(x);
+                    x = maxpool3.call(x);
                     // N x 480 x 14 x 14
-                    x = inception4a.forward(x);
+                    x = inception4a.call(x);
                     // N x 512 x 14 x 14
                     //Tensor aux1;
                     //if (this.aux1 is not null)
-                    //    aux1 = this.aux1.forward(x);
+                    //    aux1 = this.aux1.call(x);
 
-                    x = inception4b.forward(x);
+                    x = inception4b.call(x);
                     // N x 512 x 14 x 14
-                    x = inception4c.forward(x);
+                    x = inception4c.call(x);
                     // N x 512 x 14 x 14
-                    x = inception4d.forward(x);
+                    x = inception4d.call(x);
                     // N x 528 x 14 x 14
                     //Tensor aux2;
                     //if (this.aux2 is not null)
-                    //    aux2 = this.aux2.forward(x);
+                    //    aux2 = this.aux2.call(x);
 
-                    x = inception4e.forward(x);
+                    x = inception4e.call(x);
                     // N x 832 x 14 x 14
-                    x = maxpool4.forward(x);
+                    x = maxpool4.call(x);
                     // N x 832 x 7 x 7
-                    x = inception5a.forward(x);
+                    x = inception5a.call(x);
                     // N x 832 x 7 x 7
-                    x = inception5b.forward(x);
+                    x = inception5b.call(x);
                     // N x 1024 x 7 x 7
 
-                    x = avgpool.forward(x);
+                    x = avgpool.call(x);
                     // N x 1024 x 1 x 1
                     x = torch.flatten(x, 1);
                     // N x 1024
-                    x = dropout.forward(x);
-                    x = fc.forward(x);
-                    // N x 1000 .forward(num_classes);
+                    x = dropout.call(x);
+                    x = fc.call(x);
+                    // N x 1000 .call(num_classes);
 
                     return x.MoveToOuterDisposeScope();
                 }
@@ -270,10 +270,10 @@ namespace TorchSharp
 
                 public override Tensor forward(Tensor x)
                 {
-                    using var branch1 = this.branch1.forward(x);
-                    using var branch2 = this.branch2.forward(x);
-                    using var branch3 = this.branch3.forward(x);
-                    using var branch4 = this.branch4.forward(x);
+                    using var branch1 = this.branch1.call(x);
+                    using var branch2 = this.branch2.call(x);
+                    using var branch3 = this.branch3.call(x);
+                    using var branch4 = this.branch4.call(x);
 
                     var outputs = new[] { branch1, branch2, branch3, branch4 };
                     return torch.cat(outputs, 1);
@@ -307,16 +307,16 @@ namespace TorchSharp
                     // aux1: N x 512 x 14 x 14, aux2: N x 528 x 14 x 14
                     x = functional.adaptive_avg_pool2d(x, 4);
                     // aux1: N x 512 x 4 x 4, aux2: N x 528 x 4 x 4
-                    x = conv.forward(x);
+                    x = conv.call(x);
                     // N x 128 x 4 x 4
                     x = torch.flatten(x);
                     // N x 2048
                     // Adaptive average pooling
-                    x = functional.relu(fc1.forward(x), inplace:true);
+                    x = functional.relu(fc1.call(x), inplace:true);
                     // N x 1024
-                    x = dropout.forward(x);
+                    x = dropout.call(x);
                     // N x 1024
-                    x = fc2.forward(x);
+                    x = fc2.call(x);
                     // N x 1000
 
                     return x;

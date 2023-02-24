@@ -25,7 +25,7 @@ namespace TorchSharp.Modules
     /// To build the model, please use one of the factory functions in
     /// `[hubert_pretrain_base, hubert_pretrain_large, hubert_pretrain_xlarge]`.
     /// </summary>
-    public class HuBERTPretrainModel : nn.Module
+    public class HuBERTPretrainModel : nn.Module<Tensor, Tensor, Tensor?, (Tensor?, Tensor?, Tensor)>
     {
         private readonly Wav2Vec2Model wav2vec2;
         private readonly Wav2Vec2Model.MaskGenerator mask_generator;
@@ -79,7 +79,7 @@ namespace TorchSharp.Modules
         /// The feature mean value for additional penalty loss.
         /// Shape: `(1,)`.
         /// </returns>
-        public (Tensor?, Tensor?, Tensor) forward(
+        public override (Tensor?, Tensor?, Tensor) forward(
             Tensor waveforms,
             Tensor labels,
             Tensor? audio_lengths = null)
@@ -87,7 +87,7 @@ namespace TorchSharp.Modules
             Tensor mask_u;
             Tensor mask_m;
             Tensor? padding_mask;
-            var (x, lengths) = this.wav2vec2.feature_extractor.forward(waveforms, audio_lengths);
+            var (x, lengths) = this.wav2vec2.feature_extractor.call(waveforms, audio_lengths);
             if (this.feature_grad_mult != null && this.feature_grad_mult < 1.0) {
                 x = Wav2Vec2Model.GradMultiply.apply(x, this.feature_grad_mult.Value);
             }
@@ -100,9 +100,9 @@ namespace TorchSharp.Modules
             Tensor? attention_mask;
             Tensor? mask;
             (x, attention_mask) = this.wav2vec2.encoder._preprocess(x, lengths);
-            (x, mask) = this.mask_generator.forward(x, padding_mask);
+            (x, mask) = this.mask_generator.call(x, padding_mask);
             if (mask is null) throw new InvalidDataException();
-            x = this.wav2vec2.encoder.transformer.forward(x, attention_mask: attention_mask);
+            x = this.wav2vec2.encoder.transformer.call(x, attention_mask: attention_mask);
             if (x.shape[1] != labels.shape[1]) {
                 throw new ArgumentException("The length of label must match that of HuBERT model output");
             }
@@ -114,7 +114,7 @@ namespace TorchSharp.Modules
                 mask_u = ~mask_m;
             }
 
-            var (logit_m, logit_u) = this.logit_generator.forward(x, labels, mask_m, mask_u);
+            var (logit_m, logit_u) = this.logit_generator.call(x, labels, mask_m, mask_u);
 
             return (logit_m, logit_u, features_pen);
         }

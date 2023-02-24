@@ -197,7 +197,7 @@ namespace TorchSharp
             {
                 var rdic = new Dictionary<string, Tensor>();
                 if (transform is not null) {
-                    rdic.Add("data", transform.forward(data[(int)index]));
+                    rdic.Add("data", transform.call(data[(int)index]));
                 }
                 else {
                     rdic.Add("data", data[(int)index]);
@@ -289,7 +289,7 @@ namespace TorchSharp
             {
                 var rdic = new Dictionary<string, Tensor>();
                 if (transform is not null) {
-                    rdic.Add("data", transform.forward(data[(int)index]));
+                    rdic.Add("data", transform.call(data[(int)index]));
                 } else {
                     rdic.Add("data", data[(int)index]);
                 }

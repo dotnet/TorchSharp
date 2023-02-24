@@ -605,7 +605,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor gaussian_nll_loss(Tensor input, Tensor target, Tensor variance, bool full = false, float eps = 1e-6f, Reduction reduction = Reduction.Mean)
                 {
-                    return new Modules.GaussianNLLLoss(full, eps, reduction).forward(input, target, variance);
+                    return new Modules.GaussianNLLLoss(full, eps, reduction).call(input, target, variance);
                 }
 
                 /// <summary>

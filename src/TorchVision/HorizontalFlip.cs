@@ -13,7 +13,7 @@ namespace TorchSharp
             {
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return input.flip(-1);
             }

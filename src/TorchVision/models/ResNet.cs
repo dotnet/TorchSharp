@@ -371,14 +371,14 @@ namespace TorchSharp
             {
                 using (var scope = NewDisposeScope()) {
 
-                    var x = maxpool.forward(relu.forward(bn1.forward(conv1.forward(input))));
+                    var x = maxpool.call(relu.call(bn1.call(conv1.call(input))));
 
-                    x = layer1.forward(x);
-                    x = layer2.forward(x);
-                    x = layer3.forward(x);
-                    x = layer4.forward(x);
+                    x = layer1.call(x);
+                    x = layer2.call(x);
+                    x = layer3.call(x);
+                    x = layer4.call(x);
 
-                    var res = fc.forward(flatten.forward(avgpool.forward(x)));
+                    var res = fc.call(flatten.call(avgpool.call(x)));
                     scope.MoveToOuter(res);
                     return res;
                 }
@@ -408,11 +408,11 @@ namespace TorchSharp
 
                 public override Tensor forward(Tensor input)
                 {
-                    var x = relu1.forward(bn1.forward(conv1.forward(input)));
-                    x = bn2.forward(conv2.forward(x));
+                    var x = relu1.call(bn1.call(conv1.call(input)));
+                    x = bn2.call(conv2.call(x));
 
                     var y = input;
-                    foreach (var m in downsample) y = ((nn.Module<Tensor, Tensor>)m).forward(y);
+                    foreach (var m in downsample) y = ((nn.Module<Tensor, Tensor>)m).call(y);
                     return x.add_(y).relu_();
                 }
 
@@ -453,12 +453,12 @@ namespace TorchSharp
 
                 public override Tensor forward(Tensor input)
                 {
-                    var x = relu1.forward(bn1.forward(conv1.forward(input)));
-                    x = relu2.forward(bn2.forward(conv2.forward(input)));
-                    x = bn3.forward(conv3.forward(x));
+                    var x = relu1.call(bn1.call(conv1.call(input)));
+                    x = relu2.call(bn2.call(conv2.call(input)));
+                    x = bn3.call(conv3.call(x));
 
                     var y = input;
-                    foreach (var m in downsample) y = ((nn.Module<Tensor, Tensor>)m).forward(y);
+                    foreach (var m in downsample) y = ((nn.Module<Tensor, Tensor>)m).call(y);
 
                     return x.add_(y).relu_();
                 }

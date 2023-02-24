@@ -55,7 +55,7 @@ namespace TorchSharp
                 public static Tensor Tanhshrink(Tensor x)
                 {
                     using (var m = nn.Tanhshrink()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

@@ -41,14 +41,14 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                var x_embed = embedding.forward(input);
+                var x_embed = embedding.call(input);
                 var h0 = zeros(1, input.shape[0], HIDDEN_SIZE, device: _device);
                 var c0 = zeros(1, input.shape[0], HIDDEN_SIZE, device: _device);
-                var (x_rnn, _, _) = lstm.forward(x_embed, (h0, c0));
+                var (x_rnn, _, _) = lstm.call(x_embed, (h0, c0));
                 var x_rnn_last_seq = x_rnn[(null,null), -1, (null,null)];
-                x_rnn_last_seq = dropout.forward(x_rnn_last_seq);
-                var logits = dense.forward(x_rnn_last_seq);
-                return sigmoid.forward(logits);
+                x_rnn_last_seq = dropout.call(x_rnn_last_seq);
+                var logits = dense.call(x_rnn_last_seq);
+                return sigmoid.call(logits);
             }
         }
         
@@ -91,7 +91,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                return layers.forward(input);
+                return layers.call(input);
             }
         }
         

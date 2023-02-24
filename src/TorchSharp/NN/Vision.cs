@@ -234,7 +234,7 @@ namespace TorchSharp
                 public static Tensor upsample_bilinear(Tensor x, long[]? size = null, double[]? scale_factor = null, bool align_corners = false)
                 {
                     using (var d = torch.nn.Upsample(size, scale_factor, UpsampleMode.Bilinear, align_corners)) {
-                        return d.forward(x);
+                        return d.call(x);
                     }
                 }
 
@@ -252,7 +252,7 @@ namespace TorchSharp
                 public static Tensor upsample_nearest(Tensor x, long[]? size = null, double[]? scale_factor = null, bool align_corners = false)
                 {
                     using (var d = torch.nn.Upsample(size, scale_factor, UpsampleMode.Nearest, align_corners)) {
-                        return d.forward(x);
+                        return d.call(x);
                     }
                 }
             }

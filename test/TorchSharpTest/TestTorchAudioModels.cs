@@ -66,7 +66,7 @@ namespace TorchSharp
                 var spec = torch.randn(new long[] { batch_size, n_mels, max_spec_length });
                 var spec_lengths = torch.tensor(new int[] { 30, 25, 17 });
 
-                var (spec_output, postnet_output, gate_output, alignments) = tacotron2.forward(token, token_lengths, spec, spec_lengths);
+                var (spec_output, postnet_output, gate_output, alignments) = tacotron2.call(token, token_lengths, spec, spec_lengths);
 
                 Assert.Equal(spec.shape, spec_output.shape);
                 Assert.Equal(spec.shape, postnet_output.shape);
@@ -110,7 +110,7 @@ namespace TorchSharp
                 var waveform_len = (specgram.shape[3] - 5 + 1) * (5 * 5 * 11);
                 var waveform = torch.randn(new long[] { batch_size, 1, waveform_len });
                 // specgram: (n_batch, n_freq, (n_time - kernel_size + 1) * total_scale)
-                var output = wavernn.forward(waveform, specgram);
+                var output = wavernn.call(waveform, specgram);
                 Assert.Equal(new long[] { batch_size, 1, waveform.shape[2], 1 << 8 }, output.shape);
             }
         }
@@ -148,7 +148,7 @@ namespace TorchSharp
                     aux_num_out: 29);
                 model.eval();
                 var waveform = torch.randn(new long[] { 2, 1000 }, torch.float32);
-                var (output, length) = model.forward(waveform);
+                var (output, length) = model.call(waveform);
                 Assert.Equal(2, output.size(0));
             }
         }

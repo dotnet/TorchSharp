@@ -55,7 +55,7 @@ namespace TorchSharp
                 public static Tensor gelu(Tensor x)
                 {
                     using (var m = nn.GELU()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

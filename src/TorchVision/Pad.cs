@@ -15,7 +15,7 @@ namespace TorchSharp
                 this.value = value;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return TorchSharp.torch.nn.functional.pad(input, pad, mode, value);
             }

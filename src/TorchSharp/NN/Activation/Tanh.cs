@@ -55,7 +55,7 @@ namespace TorchSharp
                 public static Tensor tanh(Tensor x)
                 {
                     using (var m = nn.Tanh()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }
