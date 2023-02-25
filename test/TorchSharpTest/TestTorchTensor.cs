@@ -3571,11 +3571,15 @@ namespace TorchSharp
 
             if (torch.cuda.is_available()) {
                 var cuda = cpu.cuda();
+                Assert.NotSame(cuda, cpu);
                 Assert.Equal("cuda:0", cuda.device.ToString());
 
                 // Copy back to CPU to inspect the elements
                 var cpu2 = cuda.cpu();
+                Assert.NotSame(cuda, cpu2);
                 Assert.Equal("cpu", cpu2.device.ToString());
+                Assert.Equal("cuda:0", cuda.device.ToString());
+
                 var data = cpu.data<float>();
                 for (int i = 0; i < 4; i++) {
                     Assert.Equal(1, data[i]);
@@ -3594,7 +3598,9 @@ namespace TorchSharp
                 Assert.Equal("cuda:0", cuda.device.ToString());
 
                 var cpu = cuda.cpu();
+                Assert.NotSame(cuda, cpu);
                 Assert.Equal("cpu", cpu.device.ToString());
+                Assert.Equal("cuda:0", cuda.device.ToString());
 
                 var data = cpu.data<float>();
                 for (int i = 0; i < 4; i++) {

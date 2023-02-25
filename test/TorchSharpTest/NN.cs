@@ -174,8 +174,8 @@ namespace TorchSharp
                     () => Assert.Equal(device.type, matmul.device_type)
                 );
 
-                var fdata = forward.cpu().data<float>();
-                var mdata = matmul.cpu().data<float>();
+                var fdata = forward.data<float>();
+                var mdata = matmul.data<float>();
 
                 for (int i = 0; i < 100; i++) {
                     Assert.InRange(fdata[i], mdata[i] - 10e5f, mdata[i] + 10e5f);
@@ -201,8 +201,8 @@ namespace TorchSharp
                     () => Assert.Equal(device.type, matmul.device_type)
                 );
 
-                var fdata = forward.cpu().data<float>();
-                var mdata = matmul.cpu().data<float>();
+                var fdata = forward.data<float>();
+                var mdata = matmul.data<float>();
 
                 for (int i = 0; i < 100; i++) {
                     Assert.InRange(fdata[i], mdata[i] - 10e5f, mdata[i] + 10e5f);
@@ -227,8 +227,8 @@ namespace TorchSharp
                     () => Assert.Equal(device.type, matmul.device_type)
                 );
 
-                var fdata = forward.cpu().data<float>();
-                var mdata = matmul.cpu().data<float>();
+                var fdata = forward.data<float>();
+                var mdata = matmul.data<float>();
 
                 for (int i = 0; i < 100; i++) {
                     Assert.InRange(fdata[i], mdata[i] - 10e5f, mdata[i] + 10e5f);
@@ -256,8 +256,8 @@ namespace TorchSharp
                     () => Assert.Equal(device.type, matmul.device_type)
                 );
 
-                var fdata = forward.cpu().data<float>();
-                var mdata = matmul.cpu().data<float>();
+                var fdata = forward.data<float>();
+                var mdata = matmul.data<float>();
 
                 for (int i = 0; i < 100; i++) {
                     Assert.InRange(fdata[i], mdata[i] - 10e5f, mdata[i] + 10e5f);
@@ -326,7 +326,7 @@ namespace TorchSharp
                 var output = lin.call(input);
 
                 Assert.Equal(device.type, output.device_type);
-                Assert.Equal(input.cpu().data<float>(), output.cpu().data<float>());
+                Assert.Equal(input.data<float>(), output.data<float>());
             }
         }
 
@@ -340,8 +340,8 @@ namespace TorchSharp
 
                 Assert.Equal(device.type, lin.bias.device_type);
 
-                var fdata = lin.bias.cpu().data<float>();
-                var mdata = bias.cpu().data<float>();
+                var fdata = lin.bias.data<float>();
+                var mdata = bias.data<float>();
 
                 for (int i = 0; i < 100; i++) {
                     Assert.Equal(fdata[i], mdata[i]);
@@ -369,8 +369,8 @@ namespace TorchSharp
                 Assert.Equal(device.type, b1.device_type);
 
                 {
-                    var fdata = b1.cpu().data<float>();
-                    var mdata = bias.cpu().data<float>();
+                    var fdata = b1.data<float>();
+                    var mdata = bias.data<float>();
 
                     for (int i = 0; i < 100; i++) {
                         Assert.Equal(fdata[i], mdata[i]);
@@ -387,8 +387,8 @@ namespace TorchSharp
                 Assert.Equal(device.type, b2.device_type);
 
                 {
-                    var fdata = b2.cpu().data<float>();
-                    var mdata = bias.cpu().data<float>();
+                    var fdata = b2.data<float>();
+                    var mdata = bias.data<float>();
 
                     for (int i = 0; i < 100; i++) {
                         Assert.Equal(fdata[i], mdata[i]);
@@ -438,7 +438,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= 0.0));
             }
@@ -454,7 +454,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= 0.0 && val <= 6.0));
             }
@@ -470,7 +470,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
             }
 
@@ -490,7 +490,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
             }
         }
@@ -518,7 +518,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= -1.0));
             }
@@ -534,7 +534,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= -1.0));
             }
@@ -563,7 +563,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= -1.76));
             }
@@ -579,7 +579,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= -0.2));
             }
@@ -595,7 +595,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(output.shape, new long[] { 8, 8, 8 });
             }
         }
@@ -622,7 +622,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(new float[] { 0f, 0.36f, 3.25f }, values);
             }
         }
@@ -636,7 +636,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(output.shape, new long[] { 8, 8, 8 });
             }
         }
@@ -650,7 +650,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
             }
@@ -665,7 +665,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= -1.0));
             }
@@ -680,7 +680,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
             }
@@ -695,7 +695,7 @@ namespace TorchSharp
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
 
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= -1.0 && val <= 1.0));
             }
@@ -710,14 +710,14 @@ namespace TorchSharp
                     var rel = Softmax(1);
                     var output = rel.call(input);
                     Assert.Equal(device.type, output.device_type);
-                    var values = output.cpu().data<float>().ToArray();
+                    var values = output.data<float>().ToArray();
                     Assert.Equal(input.shape, output.shape);
                     Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
                 }
                 {
                     var output = torch.special.softmax(input, 1);
                     Assert.Equal(device.type, output.device_type);
-                    var values = output.cpu().data<float>().ToArray();
+                    var values = output.data<float>().ToArray();
                     Assert.Equal(input.shape, output.shape);
                     Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
                 }
@@ -725,7 +725,7 @@ namespace TorchSharp
                     var output = torch.special.softmax(input, 1, float64);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(ScalarType.Float64, output.dtype);
-                    var values = output.cpu().data<double>().ToArray();
+                    var values = output.data<double>().ToArray();
                     Assert.Equal(input.shape, output.shape);
                     Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
                 }
@@ -740,7 +740,7 @@ namespace TorchSharp
                 var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
-                var values = output.cpu().data<float>().ToArray();
+                var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
             }
@@ -1041,113 +1041,138 @@ namespace TorchSharp
         [Fact]
         public void TestPoissonNLLLoss()
         {
-            using (Tensor input = torch.tensor(new float[] { 0.5f, 1.5f, 2.5f }))
-            using (Tensor target = torch.tensor(new float[] { 1f, 2f, 3f })) {
-                var componentWiseLoss = ((Tensor)input.exp()) - target * input;
-                Assert.True(componentWiseLoss.Equals(torch.nn.PoissonNLLLoss(reduction: Reduction.None).call(input, target)));
-                Assert.True(componentWiseLoss.sum().Equals(torch.nn.PoissonNLLLoss(reduction: Reduction.Sum).call(input, target)));
-                Assert.True(componentWiseLoss.mean().Equals(torch.nn.PoissonNLLLoss(reduction: Reduction.Mean).call(input, target)));
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.tensor(new float[] { 0.5f, 1.5f, 2.5f }, device: device))
+                using (Tensor target = torch.tensor(new float[] { 1f, 2f, 3f }, device: device)) {
+                    var componentWiseLoss = ((Tensor)input.exp()) - target * input;
+                    Assert.Equal(device.type, componentWiseLoss.device_type);
+                    Assert.True(componentWiseLoss.Equals(torch.nn.PoissonNLLLoss(reduction: Reduction.None).call(input, target)));
+                    Assert.True(componentWiseLoss.sum().Equals(torch.nn.PoissonNLLLoss(reduction: Reduction.Sum).call(input, target)));
+                    Assert.True(componentWiseLoss.mean().Equals(torch.nn.PoissonNLLLoss(reduction: Reduction.Mean).call(input, target)));
+                }
             }
         }
+
         [Fact]
         public void TestPoissonNLLLossF()
         {
-            using (Tensor input = torch.tensor(new float[] { 0.5f, 1.5f, 2.5f }))
-            using (Tensor target = torch.tensor(new float[] { 1f, 2f, 3f })) {
-                var componentWiseLoss = ((Tensor)input.exp()) - target * input;
-                Assert.True(componentWiseLoss.Equals(torch.nn.functional.poisson_nll_loss(input, target, reduction: Reduction.None)));
-                Assert.True(componentWiseLoss.sum().Equals(torch.nn.functional.poisson_nll_loss(input, target, reduction: Reduction.Sum)));
-                Assert.True(componentWiseLoss.mean().Equals(torch.nn.functional.poisson_nll_loss(input, target, reduction: Reduction.Mean)));
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.tensor(new float[] { 0.5f, 1.5f, 2.5f }, device: device))
+                using (Tensor target = torch.tensor(new float[] { 1f, 2f, 3f }, device: device)) {
+                    var componentWiseLoss = ((Tensor)input.exp()) - target * input;
+                    Assert.Equal(device.type, componentWiseLoss.device_type);
+                    Assert.True(componentWiseLoss.Equals(torch.nn.functional.poisson_nll_loss(input, target, reduction: Reduction.None)));
+                    Assert.True(componentWiseLoss.sum().Equals(torch.nn.functional.poisson_nll_loss(input, target, reduction: Reduction.Sum)));
+                    Assert.True(componentWiseLoss.mean().Equals(torch.nn.functional.poisson_nll_loss(input, target, reduction: Reduction.Mean)));
+                }
             }
         }
 
         [Fact]
         public void TestPoissonNLLLoss2()
         {
-            using (Tensor input = torch.rand(new long[] { 5, 2 }))
-            using (Tensor target = torch.rand(new long[] { 5, 2 })) {
-                var outTensor = torch.nn.PoissonNLLLoss(true, true).call(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.rand(new long[] { 5, 2 }, device: device))
+                using (Tensor target = torch.rand(new long[] { 5, 2 }, device: device)) {
+                    var outTensor = torch.nn.PoissonNLLLoss(true, true).call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestPoissonNLLLossF2()
         {
-            using (Tensor input = torch.rand(new long[] { 5, 2 }))
-            using (Tensor target = torch.rand(new long[] { 5, 2 })) {
-                var outTensor = torch.nn.functional.poisson_nll_loss(input, target, true, true);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.rand(new long[] { 5, 2 }, device: device))
+                using (Tensor target = torch.rand(new long[] { 5, 2 }, device: device)) {
+                    var outTensor = torch.nn.functional.poisson_nll_loss(input, target, true, true);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestCrossEntropyLoss()
         {
-            using (Tensor input = torch.rand(new long[] { 5, 12 }))
-            using (Tensor target = torch.randint(12, new long[] { 5 }, torch.int64)) {
-                var outTensor = CrossEntropyLoss().call(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.rand(new long[] { 5, 12 }, device: device))
+                using (Tensor target = torch.randint(12, new long[] { 5 }, torch.int64, device: device)) {
+                    var outTensor = CrossEntropyLoss().call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestCrossEntropyLossF()
         {
-            using (Tensor input = torch.rand(new long[] { 5, 12 }))
-            using (Tensor target = torch.randint(12, new long[] { 5 }, torch.int64)) {
-                var outTensor = cross_entropy(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.rand(new long[] { 5, 12 }, device: device))
+                using (Tensor target = torch.randint(12, new long[] { 5 }, torch.int64, device: device)) {
+                    var outTensor = cross_entropy(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestL1Loss()
         {
-            using (Tensor input = torch.rand(new long[] { 5, 2 }))
-            using (Tensor target = torch.rand(new long[] { 5, 2 })) {
-                var outTensor = L1Loss().call(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.rand(new long[] { 5, 2 }, device: device))
+                using (Tensor target = torch.rand(new long[] { 5, 2 }, device: device)) {
+                    var outTensor = L1Loss().call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestL1LossF()
         {
-            using (Tensor input = torch.rand(new long[] { 5, 2 }))
-            using (Tensor target = torch.rand(new long[] { 5, 2 })) {
-                var outTensor = l1_loss(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.rand(new long[] { 5, 2 }, device: device))
+                using (Tensor target = torch.rand(new long[] { 5, 2 }, device: device)) {
+                    var outTensor = l1_loss(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
@@ -1155,15 +1180,17 @@ namespace TorchSharp
         public void TestBinaryCrossEntropyLoss()
         {
             var m = Sigmoid();
-            using (Tensor input = torch.randn(new long[] { 3 }))
-            using (Tensor target = torch.randn(new long[] { 3 })) {
-                var outTensor = BCELoss().call(m.call(input), target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
+                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                    var outTensor = BCELoss().call(m.call(input), target);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
@@ -1171,129 +1198,260 @@ namespace TorchSharp
         public void TestBinaryCrossEntropyLossF()
         {
             var m = Sigmoid();
-            using (Tensor input = torch.randn(new long[] { 3 }))
-            using (Tensor target = torch.randn(new long[] { 3 })) {
-                var outTensor = binary_cross_entropy(m.call(input), target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
+                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                    var outTensor = binary_cross_entropy(m.call(input), target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestBinaryCrossEntropyLossWithLogits()
         {
-            using (Tensor input = torch.randn(new long[] { 3 }))
-            using (Tensor target = torch.randn(new long[] { 3 })) {
-                var outTensor = BCEWithLogitsLoss().call(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
+                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                    var outTensor = BCEWithLogitsLoss().call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestBinaryCrossEntropyLossWithLogitsF()
         {
-            using (Tensor input = torch.randn(new long[] { 3 }))
-            using (Tensor target = torch.randn(new long[] { 3 })) {
-                var outTensor = binary_cross_entropy_with_logits(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
+                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                    var outTensor = binary_cross_entropy_with_logits(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestKLDivLoss()
         {
-            using (Tensor input = torch.randn(new long[] { 3 }))
-            using (Tensor target = torch.randn(new long[] { 3 })) {
-                var outTensor = KLDivLoss().call(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
+                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                    var outTensor = KLDivLoss().call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestKLDivLossF()
         {
-            using (Tensor input = torch.randn(new long[] { 3 }))
-            using (Tensor target = torch.randn(new long[] { 3 })) {
-                var outTensor = kl_div(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
+                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                    var outTensor = kl_div(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestSmoothL1Loss()
         {
-            using (Tensor input = torch.randn(new long[] { 3 }))
-            using (Tensor target = torch.randn(new long[] { 3 })) {
-                var outTensor = SmoothL1Loss().call(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
+                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                    var outTensor = SmoothL1Loss().call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestSmoothL1LossF()
         {
-            using (Tensor input = torch.randn(new long[] { 3 }))
-            using (Tensor target = torch.randn(new long[] { 3 })) {
-                var outTensor = smooth_l1_loss(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
+                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                    var outTensor = smooth_l1_loss(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestSoftMarginLoss()
         {
-            using (Tensor input = torch.randn(new long[] { 3 }))
-            using (Tensor target = torch.randn(new long[] { 3 })) {
-                var outTensor = SoftMarginLoss().call(input, target);
-                var values = outTensor.data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
+                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                    var outTensor = SoftMarginLoss().call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestSoftMarginLossF()
         {
-            using (Tensor input = torch.randn(new long[] { 3 }))
-            using (Tensor target = torch.randn(new long[] { 3 })) {
-                var outTensor = soft_margin_loss(input, target);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
+                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                    var outTensor = soft_margin_loss(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
+            }
+        }
+
+        [Fact]
+        public void TestGaussianNLLLoss32()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                {
+                    Tensor variance = torch.rand(new long[] { 15, 1 }, requires_grad: true, device: device);
+                    Tensor input = torch.randn(new long[] { 15, 5, 5 }, requires_grad: true, device: device);
+                    Tensor target = torch.randn(new long[] { 15, 5, 5 }, device: device);
+
+                    var outTensor = GaussianNLLLoss().call(input, target, variance);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
+                {
+                    Tensor variance = torch.rand(new long[] { 15, 1 }, requires_grad: true, device: device);
+                    Tensor input = torch.randn(new long[] { 15, 5, 5 }, requires_grad: true, device: device);
+                    Tensor target = torch.randn(new long[] { 15, 5, 5 }, device: device);
+
+                    var outTensor = GaussianNLLLoss().call(input, target, variance);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+
+                    var values = outTensor.data<float>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(float.IsNaN(values[0]))
+                    );
+                }
+            }
+        }
+
+        [Fact]
+        public void TestGaussianNLLLoss64()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor variance = torch.rand(new long[] { 15, 1 }, torch.float64, requires_grad: true, device: device))
+                using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, torch.float64, requires_grad: true, device: device))
+                using (Tensor target = torch.randn(new long[] { 15, 5, 5 }, torch.float64, device: device)) {
+
+                    var outTensor = GaussianNLLLoss().call(input, target, variance);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+
+                    var values = outTensor.data<double>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(double.IsNaN(values[0]))
+                    );
+                }
+                using (Tensor variance = torch.rand(new long[] { 15, 5, 5 }, torch.float64, requires_grad: true, device: device))
+                using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, torch.float64, requires_grad: true, device: device))
+                using (Tensor target = torch.randn(new long[] { 15, 5, 5 }, torch.float64, device: device)) {
+
+                    var outTensor = GaussianNLLLoss().call(input, target, variance);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+
+                    var values = outTensor.data<double>().ToArray();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.Single(values),
+                    () => Assert.False(double.IsNaN(values[0]))
+                    );
+                }
+            }
+        }
+
+        [Fact]
+        public void TestCTCLossWithError()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+
+                int T = 50, C = 20, N = 16, S = 30, S_min = 10;
+
+                using var input = torch.randn(T, N, C).log_softmax(2).detach().requires_grad_().to(device);
+                using var target = torch.randint(low: 1, high: C, size: (N, S), dtype: torch.@long).to(device);
+                using var input_lengths = torch.full(size: N, value: T, dtype: torch.@long).to(device);
+                using var target_lengths = torch.randint(low: S_min, high: S, size: N, dtype: torch.@long).to(device);
+
+                using var ctc_loss = nn.CTCLoss().to(device);
+                using var loss = ctc_loss.call(input, target, input_lengths, target_lengths);
+                Assert.Equal(device.type, loss.device_type);
+                loss.backward();
+
+                var outTensor = loss.cpu();
+
                 var values = outTensor.data<float>().ToArray();
                 Assert.Multiple(
                 () => Assert.Empty(outTensor.shape),
@@ -1304,367 +1462,313 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestGaussianNLLLoss32()
-        {
-            {
-                Tensor variance = torch.rand(new long[] { 15, 1 }, requires_grad: true);
-                Tensor input = torch.randn(new long[] { 15, 5, 5 }, requires_grad: true);
-                Tensor target = torch.randn(new long[] { 15, 5, 5 });
-
-                if (torch.cuda.is_available()) {
-                    input = input.cuda();
-                    target = target.cuda();
-                    variance = variance.cuda();
-                }
-
-                var outTensor = GaussianNLLLoss().call(input, target, variance);
-                outTensor.backward();
-
-                var values = outTensor.cpu().data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
-            }
-            {
-                Tensor variance = torch.rand(new long[] { 15, 1 }, requires_grad: true);
-                Tensor input = torch.randn(new long[] { 15, 5, 5 }, requires_grad: true);
-                Tensor target = torch.randn(new long[] { 15, 5, 5 });
-
-                if (torch.cuda.is_available()) {
-                    input = input.cuda();
-                    target = target.cuda();
-                    variance = variance.cuda();
-                }
-                var outTensor = GaussianNLLLoss().call(input, target, variance);
-                outTensor.backward();
-
-                var values = outTensor.cpu().data<float>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(float.IsNaN(values[0]))
-                );
-            }
-        }
-
-        [Fact]
-        public void TestGaussianNLLLoss64()
-        {
-            using (Tensor variance = torch.rand(new long[] { 15, 1 }, torch.float64, requires_grad: true))
-            using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, torch.float64, requires_grad: true))
-            using (Tensor target = torch.randn(new long[] { 15, 5, 5 }, torch.float64)) {
-
-                var outTensor = GaussianNLLLoss().call(input, target, variance);
-                outTensor.backward();
-
-                var values = outTensor.data<double>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(double.IsNaN(values[0]))
-                );
-            }
-            using (Tensor variance = torch.rand(new long[] { 15, 5, 5 }, torch.float64, requires_grad: true))
-            using (Tensor input = torch.randn(new long[] { 15, 5, 5 }, torch.float64, requires_grad: true))
-            using (Tensor target = torch.randn(new long[] { 15, 5, 5 }, torch.float64)) {
-
-                var outTensor = GaussianNLLLoss().call(input, target, variance);
-                outTensor.backward();
-
-                var values = outTensor.data<double>().ToArray();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.Single(values),
-                () => Assert.False(double.IsNaN(values[0]))
-                );
-            }
-        }
-
-        [Fact]
-        public void TestCTCLossWithError()
-        {
-            var device = cuda.is_available() ? DeviceType.CUDA : DeviceType.CPU;
-
-            int T = 50, C = 20, N = 16, S = 30, S_min = 10;
-
-            using var input = torch.randn(T, N, C).log_softmax(2).detach().requires_grad_().to(device);
-            using var target = torch.randint(low: 1, high: C, size: (N, S), dtype: torch.@long).to(device);
-            using var input_lengths = torch.full(size: N, value: T, dtype: torch.@long).to(device);
-            using var target_lengths = torch.randint(low: S_min, high: S, size: N, dtype: torch.@long).to(device);
-
-            using var ctc_loss = nn.CTCLoss().to(device);
-            using var loss = ctc_loss.call(input, target, input_lengths, target_lengths);
-            loss.backward();
-
-            var outTensor = loss.cpu();
-
-            var values = outTensor.data<float>().ToArray();
-            Assert.Multiple(
-            () => Assert.Empty(outTensor.shape),
-            () => Assert.Single(values),
-            () => Assert.False(float.IsNaN(values[0]))
-            );
-        }
-
-        [Fact]
         public void TestGaussianNLLLossWithError()
         {
-            using (Tensor variance = torch.rand(new long[] { 15, 1 }, requires_grad: true).neg())
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.randn(new long[] { 15, 5 })) {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor variance = torch.rand(new long[] { 15, 1 }, requires_grad: true, device: device).neg())
+                using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.randn(new long[] { 15, 5 }, device: device)) {
 
-                Assert.Throws<ArgumentException>(() => {
-                    var outTensor = GaussianNLLLoss().call(input, target, variance);
-                    outTensor.backward();
-                });
+                    Assert.Throws<ArgumentException>(() => {
+                        var outTensor = GaussianNLLLoss().call(input, target, variance);
+                        Assert.Equal(device.type, outTensor.device_type);
+                        outTensor.backward();
+                    });
 
+                }
             }
         }
 
         [Fact]
         public void TestCosineEmbeddingLoss()
         {
-            using (Tensor input1 = torch.rand(new long[] { 15, 5 }, requires_grad: true).neg())
-            using (Tensor input2 = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.randn(new long[] { 15 }).sign()) {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input1 = torch.rand(new long[] { 15, 5 }, requires_grad: true, device: device).neg())
+                using (Tensor input2 = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.randn(new long[] { 15 }, device: device).sign()) {
 
-                var outTensor = CosineEmbeddingLoss().call(input1, input2, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+                    var outTensor = CosineEmbeddingLoss().call(input1, input2, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestCosineEmbeddingLossF()
         {
-            using (Tensor input1 = torch.rand(new long[] { 15, 5 }, requires_grad: true).neg())
-            using (Tensor input2 = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.randn(new long[] { 15 }).sign()) {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input1 = torch.rand(new long[] { 15, 5 }, requires_grad: true, device: device).neg())
+                using (Tensor input2 = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.randn(new long[] { 15 }, device: device).sign()) {
 
-                var outTensor = cosine_embedding_loss(input1, input2, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+                    var outTensor = cosine_embedding_loss(input1, input2, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestHingeEmbeddingLoss()
         {
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.randn(new long[] { 15, 5 }).sign()) {
-                var outTensor = HingeEmbeddingLoss().call(input, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.randn(new long[] { 15, 5 }, device: device).sign()) {
+                    var outTensor = HingeEmbeddingLoss().call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestHingeEmbeddingLossF()
         {
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.randn(new long[] { 15, 5 }).sign()) {
-                var outTensor = hinge_embedding_loss(input, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.randn(new long[] { 15, 5 }, device: device).sign()) {
+                    var outTensor = hinge_embedding_loss(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestHuberLoss()
         {
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.randn(new long[] { 15, 5 }).sign()) {
-                var outTensor = HuberLoss().call(input, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
-                outTensor = HuberLoss(1.5).call(input, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.randn(new long[] { 15, 5 }, device: device).sign()) {
+                    var outTensor = HuberLoss().call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                        () => Assert.Empty(outTensor.shape),
+                        () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                    outTensor = HuberLoss(1.5).call(input, target);
+                    outTensor.backward();
+                    Assert.Multiple(
+                        () => Assert.Empty(outTensor.shape),
+                        () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestHuberLossF()
         {
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.randn(new long[] { 15, 5 }).sign()) {
-                var outTensor = huber_loss(input, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
-                outTensor = huber_loss(input, target, 1.5);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.randn(new long[] { 15, 5 }, device: device).sign()) {
+                    var outTensor = huber_loss(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                    outTensor = huber_loss(input, target, 1.5);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestMarginRankingLoss()
         {
-            using (Tensor input1 = torch.randn(new long[] { 15 }, requires_grad: true))
-            using (Tensor input2 = torch.randn(new long[] { 15 }, requires_grad: true))
-            using (Tensor target = torch.randn(new long[] { 15 }).sign()) {
-                var outTensor = MarginRankingLoss().call(input1, input2, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input1 = torch.randn(new long[] { 15 }, requires_grad: true, device: device))
+                using (Tensor input2 = torch.randn(new long[] { 15 }, requires_grad: true, device: device))
+                using (Tensor target = torch.randn(new long[] { 15 }, device: device).sign()) {
+                    var outTensor = MarginRankingLoss().call(input1, input2, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestMarginRankingLossF()
         {
-            using (Tensor input1 = torch.randn(new long[] { 15 }, requires_grad: true))
-            using (Tensor input2 = torch.randn(new long[] { 15 }, requires_grad: true))
-            using (Tensor target = torch.randn(new long[] { 15 }).sign()) {
-                var outTensor = margin_ranking_loss(input1, input2, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input1 = torch.randn(new long[] { 15 }, requires_grad: true, device: device))
+                using (Tensor input2 = torch.randn(new long[] { 15 }, requires_grad: true, device: device))
+                using (Tensor target = torch.randn(new long[] { 15 }, device: device).sign()) {
+                    var outTensor = margin_ranking_loss(input1, input2, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestMultilabelMarginLoss()
         {
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.ones(new long[] { 15, 5 }, torch.int64)) {
-                var outTensor = MultiLabelMarginLoss().call(input, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.ones(new long[] { 15, 5 }, torch.int64, device: device)) {
+                    var outTensor = MultiLabelMarginLoss().call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestMultilabelMarginLossF()
         {
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.ones(new long[] { 15, 5 }, torch.int64)) {
-                var outTensor = multi_label_margin_loss(input, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.ones(new long[] { 15, 5 }, torch.int64, device: device)) {
+                    var outTensor = multi_label_margin_loss(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestMultilabelSoftMarginLoss()
         {
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.ones(new long[] { 15, 5 })) {
-                var outTensor = MultiLabelSoftMarginLoss().call(input, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.ones(new long[] { 15, 5 }, torch.int64, device: device)) {
+                    var outTensor = MultiLabelSoftMarginLoss().call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestMultilabelSoftMarginLossF()
         {
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.ones(new long[] { 15, 5 })) {
-                var outTensor = multilabel_soft_margin_loss(input, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.ones(new long[] { 15, 5 }, torch.int64, device: device)) {
+                    var outTensor = multilabel_soft_margin_loss(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestMultiMarginLoss()
         {
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.ones(new long[] { 15 }, torch.int64)) {
-                var outTensor = MultiMarginLoss().call(input, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.ones(new long[] { 15 }, torch.int64, device: device)) {
+                    var outTensor = MultiMarginLoss().call(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestMultiMarginLossF()
         {
-            using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor target = torch.ones(new long[] { 15 }, torch.int64)) {
-                var outTensor = multi_margin_loss(input, target);
-                outTensor.backward();
-                Assert.Multiple(
-                () => Assert.Empty(outTensor.shape),
-                () => Assert.False(float.IsNaN(outTensor.item<float>()))
-                );
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor target = torch.ones(new long[] { 15 }, torch.int64, device: device)) {
+                    var outTensor = multi_margin_loss(input, target);
+                    Assert.Equal(device.type, outTensor.device_type);
+                    outTensor.backward();
+                    Assert.Multiple(
+                    () => Assert.Empty(outTensor.shape),
+                    () => Assert.False(float.IsNaN(outTensor.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestTripleMarginLoss()
         {
-            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true).neg())
-            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true, device: device).neg())
+                using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor negative = torch.randn(new long[] { 15, 5 }, device: device)) {
 
-                var output = TripletMarginLoss();
-                var result = output.call(anchor, positive, negative);
-                Assert.Multiple(
-                () => Assert.Empty(result.shape),
-                () => Assert.False(float.IsNaN(result.item<float>()))
-                );
+                    var output = TripletMarginLoss();
+                    var result = output.call(anchor, positive, negative);
+                    Assert.Equal(device.type, result.device_type);
+                    Assert.Multiple(
+                    () => Assert.Empty(result.shape),
+                    () => Assert.False(float.IsNaN(result.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestTripleMarginLossF()
         {
-            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true).neg())
-            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true, device: device).neg())
+                using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor negative = torch.randn(new long[] { 15, 5 }, device: device)) {
 
-                var result = triplet_margin_loss(anchor, positive, negative);
-                Assert.Multiple(
-                () => Assert.Empty(result.shape),
-                () => Assert.False(float.IsNaN(result.item<float>()))
-                );
+                    var result = triplet_margin_loss(anchor, positive, negative);
+                    Assert.Equal(device.type, result.device_type);
+                    Assert.Multiple(
+                    () => Assert.Empty(result.shape),
+                    () => Assert.False(float.IsNaN(result.item<float>()))
+                    );
+                }
             }
         }
 
@@ -1676,16 +1780,19 @@ namespace TorchSharp
                     return (x - y).abs();
                 };
 
-            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true).neg())
-            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true, device: device).neg())
+                using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor negative = torch.randn(new long[] { 15, 5 }, device: device)) {
 
-                var output = TripletMarginWithDistanceLoss(distance);
-                var result = output.call(anchor, positive, negative);
-                Assert.Multiple(
-                () => Assert.Empty(result.shape),
-                () => Assert.False(float.IsNaN(result.item<float>()))
-                );
+                    var output = TripletMarginWithDistanceLoss(distance);
+                    var result = output.call(anchor, positive, negative);
+                    Assert.Equal(device.type, result.device_type);
+                    Assert.Multiple(
+                    () => Assert.Empty(result.shape),
+                    () => Assert.False(float.IsNaN(result.item<float>()))
+                    );
+                }
             }
         }
 
@@ -1697,46 +1804,55 @@ namespace TorchSharp
                     return (x - y).abs();
                 };
 
-            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true).neg())
-            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true, device: device).neg())
+                using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor negative = torch.randn(new long[] { 15, 5 }, device: device)) {
 
-                var result = triplet_margin_with_distance_loss(anchor, positive, negative, distance);
-                Assert.Multiple(
-                () => Assert.Empty(result.shape),
-                () => Assert.False(float.IsNaN(result.item<float>()))
-                );
+                    var result = triplet_margin_with_distance_loss(anchor, positive, negative, distance);
+                    Assert.Equal(device.type, result.device_type);
+                    Assert.Multiple(
+                    () => Assert.Empty(result.shape),
+                    () => Assert.False(float.IsNaN(result.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestTripleMarginWithDistanceLossNoDistance()
         {
-            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true).neg())
-            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true, device: device).neg())
+                using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor negative = torch.randn(new long[] { 15, 5 }, device: device)) {
 
-                var output = TripletMarginWithDistanceLoss();
-                var result = output.call(anchor, positive, negative);
-                Assert.Multiple(
-                () => Assert.Empty(result.shape),
-                () => Assert.False(float.IsNaN(result.item<float>()))
-                );
+                    var output = TripletMarginWithDistanceLoss();
+                    var result = output.call(anchor, positive, negative);
+                    Assert.Equal(device.type, result.device_type);
+                    Assert.Multiple(
+                    () => Assert.Empty(result.shape),
+                    () => Assert.False(float.IsNaN(result.item<float>()))
+                    );
+                }
             }
         }
 
         [Fact]
         public void TestTripleMarginWithDistanceLossNoDistanceF()
         {
-            using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true).neg())
-            using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true))
-            using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor anchor = torch.rand(new long[] { 15, 5 }, requires_grad: true, device: device).neg())
+                using (Tensor positive = torch.randn(new long[] { 15, 5 }, requires_grad: true, device: device))
+                using (Tensor negative = torch.randn(new long[] { 15, 5 }, device: device)) {
 
-                var result = triplet_margin_with_distance_loss(anchor, positive, negative);
-                Assert.Multiple(
-                () => Assert.Empty(result.shape),
-                () => Assert.False(float.IsNaN(result.item<float>()))
-                );
+                    var result = triplet_margin_with_distance_loss(anchor, positive, negative);
+                    Assert.Equal(device.type, result.device_type);
+                    Assert.Multiple(
+                    () => Assert.Empty(result.shape),
+                    () => Assert.False(float.IsNaN(result.item<float>()))
+                    );
+                }
             }
         }
 
@@ -4092,13 +4208,13 @@ namespace TorchSharp
                 var running_var = torch.square(torch.randn(2, device: device));
                 var y = torch.nn.functional.batch_norm(x, running_mean, running_var);
                 var z = NormalizeTensor(x, torch.unsqueeze(running_mean, 1), torch.unsqueeze(running_var, 1));
-                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
 
                 var weight = torch.randn(2, device: device);
                 var bias = torch.randn(2, device: device);
                 y = torch.nn.functional.batch_norm(x, running_mean, running_var, weight, bias);
                 z = torch.unsqueeze(weight, 1) * z + torch.unsqueeze(bias, 1);
-                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
 
                 y = torch.nn.functional.batch_norm(x, running_mean, running_var, weight, bias, training: true);
                 Assert.Equal(x.shape, y.shape);
@@ -4115,14 +4231,14 @@ namespace TorchSharp
                 var y = torch.nn.functional.group_norm(x, 4);
                 y = y[TensorIndex.Colon, TensorIndex.Slice(3, 6)];
                 var z = NormalizeTensor(x[TensorIndex.Colon, TensorIndex.Slice(3, 6)], new long[] { 1, 2 });
-                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
 
                 var weight = torch.randn(12, device: device);
                 var bias = torch.randn(12, device: device);
                 y = torch.nn.functional.group_norm(x, 4, weight, bias);
                 y = y[TensorIndex.Colon, TensorIndex.Slice(3, 6)];
                 z = weight[TensorIndex.Slice(3, 6), TensorIndex.None] * z + bias[TensorIndex.Slice(3, 6), TensorIndex.None];
-                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
                 Assert.Equal(x.device_type, y.device_type);
                 Assert.Equal(x.device_type, z.device_type);
             }
@@ -4135,18 +4251,18 @@ namespace TorchSharp
                 var x = torch.randn(3, 2, 5, device: device);
                 var y = torch.nn.functional.instance_norm(x);
                 var z = NormalizeTensor(x, new long[] { 2 });
-                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
 
                 var running_mean = torch.randn(2, device: device);
                 var running_var = torch.square(torch.randn(2, device: device));
                 y = torch.nn.functional.instance_norm(x, running_mean, running_var);
-                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
 
                 var weight = torch.randn(2, device: device);
                 var bias = torch.randn(2, device: device);
                 y = torch.nn.functional.instance_norm(x, running_mean, running_var, weight, bias);
                 z = torch.unsqueeze(weight, 1) * z + torch.unsqueeze(bias, 1);
-                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
                 Assert.Equal(x.device_type, y.device_type);
                 Assert.Equal(x.device_type, z.device_type);
             }
@@ -4159,13 +4275,13 @@ namespace TorchSharp
                 var x = torch.randn(3, 5, 12, device: device);
                 var y = torch.nn.functional.layer_norm(x, new long[] { 12 });
                 var z = NormalizeTensor(x, new long[] { 2 });
-                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
 
                 var weight = torch.randn(12, device: device);
                 var bias = torch.randn(12, device: device);
                 y = torch.nn.functional.layer_norm(x, new long[] { 12 }, weight, bias);
                 z = weight * z + bias;
-                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
                 Assert.Equal(x.device_type, y.device_type);
                 Assert.Equal(x.device_type, z.device_type);
             }
@@ -4179,7 +4295,7 @@ namespace TorchSharp
                 var y = torch.nn.functional.local_response_norm(x, 5, alpha: 0.5);
                 y = y[TensorIndex.Colon, 3];
                 var z = x[TensorIndex.Colon, 3] * torch.pow(torch.square(x[TensorIndex.Colon, TensorIndex.Slice(1, 6)]).sum(dim: 1) * 0.5 / 5 + 1, torch.tensor(-0.75f));
-                Assert.InRange(torch.mean(torch.square(z - y)).cpu().item<float>(), 0, 1e-5);
+                Assert.InRange(torch.mean(torch.square(z - y)).item<float>(), 0, 1e-5);
                 Assert.Equal(x.device_type, y.device_type);
                 Assert.Equal(x.device_type, z.device_type);
             }
@@ -4500,8 +4616,8 @@ namespace TorchSharp
                 Assert.Equal(device.type, output.device_type);
                 Assert.Equal(data.shape, output.shape);
 
-                var dataVal = data.cpu().data<float>().ToArray();
-                var outVal = output.cpu().data<float>().ToArray();
+                var dataVal = data.data<float>().ToArray();
+                var outVal = output.data<float>().ToArray();
                 Assert.NotEqual(outVal, dataVal);
             }
         }
@@ -4509,105 +4625,129 @@ namespace TorchSharp
         [Fact]
         public void TestDropoutInPlace()
         {
-            var drop = Dropout(0.75, inplace: true);
-            var data = torch.rand(new long[] { 12, 23, 24 });
-            var output = drop.call(data);
-            Assert.Equal(data.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var drop = Dropout(0.75, inplace: true);
+                var data = torch.rand(new long[] { 12, 23, 24 }, device: device);
+                var output = drop.call(data);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.data<float>().ToArray();
-            var outVal = output.data<float>().ToArray();
-            Assert.Equal(outVal, dataVal);
+                var dataVal = data.data<float>().ToArray();
+                var outVal = output.data<float>().ToArray();
+                Assert.Equal(outVal, dataVal);
+            }
         }
 
         [Fact]
         public void TestDropout1d()
         {
-            var drop = Dropout1d(0.75);
-            var data = torch.rand(new long[] { 12, 23, 24 });
-            var output = drop.call(data);
-            Assert.Equal(data.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var drop = Dropout1d(0.75);
+                var data = torch.rand(new long[] { 12, 23, 24 }, device: device);
+                var output = drop.call(data);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.data<float>().ToArray();
-            var outVal = output.data<float>().ToArray();
-            Assert.NotEqual(dataVal, outVal);
+                var dataVal = data.data<float>().ToArray();
+                var outVal = output.data<float>().ToArray();
+                Assert.NotEqual(dataVal, outVal);
+            }
         }
 
         [Fact]
         public void TestDropout1dInPlace()
         {
-            var drop = Dropout1d(0.75, inplace: true);
-            var data = torch.rand(new long[] { 12, 23, 24 });
-            var output = drop.call(data);
-            Assert.Equal(data.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var drop = Dropout1d(0.75, inplace: true);
+                var data = torch.rand(new long[] { 12, 23, 24 }, device: device);
+                var output = drop.call(data);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.data<float>().ToArray();
-            var outVal = output.data<float>().ToArray();
-            Assert.Equal(outVal, dataVal);
+                var dataVal = data.data<float>().ToArray();
+                var outVal = output.data<float>().ToArray();
+                Assert.Equal(outVal, dataVal);
+            }
         }
 
         [Fact]
         public void TestDropout2d()
         {
-            var drop = Dropout2d(0.75);
-            var data = torch.rand(new long[] { 12, 23, 24, 5 });
-            var output = drop.call(data);
-            Assert.Equal(data.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var drop = Dropout2d(0.75);
+                var data = torch.rand(new long[] { 12, 23, 24, 5 }, device: device);
+                var output = drop.call(data);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.data<float>().ToArray();
-            var outVal = output.data<float>().ToArray();
-            Assert.NotEqual(outVal, dataVal);
+                var dataVal = data.data<float>().ToArray();
+                var outVal = output.data<float>().ToArray();
+                Assert.NotEqual(outVal, dataVal);
+            }
         }
 
         [Fact]
         public void TestDropout2dInPlace()
         {
-            var drop = Dropout2d(0.75, inplace: true);
-            var data = torch.rand(new long[] { 12, 23, 24, 5 });
-            var output = drop.call(data);
-            Assert.Equal(data.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var drop = Dropout2d(0.75, inplace: true);
+                var data = torch.rand(new long[] { 12, 23, 24, 5 }, device: device);
+                var output = drop.call(data);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.data<float>().ToArray();
-            var outVal = output.data<float>().ToArray();
-            Assert.Equal(outVal, dataVal);
+                var dataVal = data.data<float>().ToArray();
+                var outVal = output.data<float>().ToArray();
+                Assert.Equal(outVal, dataVal);
+            }
         }
 
         [Fact]
         public void TestDropout3d()
         {
-            var drop = Dropout3d(0.75);
-            var data = torch.rand(new long[] { 12, 23, 24, 5, 6 });
-            var output = drop.call(data);
-            Assert.Equal(data.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var drop = Dropout3d(0.75);
+                var data = torch.rand(new long[] { 12, 23, 24, 5, 6 }, device: device);
+                var output = drop.call(data);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.data<float>().ToArray();
-            var outVal = output.data<float>().ToArray();
-            Assert.NotEqual(outVal, dataVal);
+                var dataVal = data.data<float>().ToArray();
+                var outVal = output.data<float>().ToArray();
+                Assert.NotEqual(outVal, dataVal);
+            }
         }
 
         [Fact]
         public void TestDropout3dInPlace()
         {
-            var drop = Dropout3d(0.75, inplace: true);
-            var data = torch.rand(new long[] { 12, 23, 24, 5, 6 });
-            var output = drop.call(data);
-            Assert.Equal(data.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var drop = Dropout3d(0.75, inplace: true);
+                var data = torch.rand(new long[] { 12, 23, 24, 5, 6 }, device: device);
+                var output = drop.call(data);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.data<float>().ToArray();
-            var outVal = output.data<float>().ToArray();
-            Assert.Equal(outVal, dataVal);
+                var dataVal = data.data<float>().ToArray();
+                var outVal = output.data<float>().ToArray();
+                Assert.Equal(outVal, dataVal);
+            }
         }
 
         [Fact]
         public void TestAlphaDropout()
         {
-            var drop = AlphaDropout(0.75);
-            var data = torch.rand(new long[] { 12, 23, 24 });
-            var output = drop.call(data);
-            Assert.Equal(data.shape, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var drop = AlphaDropout(0.75);
+                var data = torch.rand(new long[] { 12, 23, 24 }, device: device);
+                var output = drop.call(data);
+                Assert.Equal(device.type, output.device_type);
+                Assert.Equal(data.shape, output.shape);
 
-            var dataVal = data.data<float>().ToArray();
-            var outVal = output.data<float>().ToArray();
-            Assert.NotEqual(outVal, dataVal);
+                var dataVal = data.data<float>().ToArray();
+                var outVal = output.data<float>().ToArray();
+                Assert.NotEqual(outVal, dataVal);
+            }
         }
         #endregion
 
@@ -4625,288 +4765,357 @@ namespace TorchSharp
         [Fact]
         public void TestFlatten()
         {
-            var data = torch.rand(new long[] { 32, 3, 4, 5, 6 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 32, 3, 4, 5, 6 }, device: device);
 
-            using (var flat = Flatten()) {
-                var output = flat.call(data);
-                Assert.Equal(new long[] { 32, 360 }, output.shape);
-            }
+                using (var flat = Flatten()) {
+                    var output = flat.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 360 }, output.shape);
+                }
 
-            using (var flat = Flatten(startDim: 2)) {
-                var output = flat.call(data);
-                Assert.Equal(new long[] { 32, 3, 120 }, output.shape);
-            }
+                using (var flat = Flatten(startDim: 2)) {
+                    var output = flat.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 120 }, output.shape);
+                }
 
-            using (var flat = Flatten(startDim: 0)) {
-                var output = flat.call(data);
-                Assert.Equal(new long[] { 32 * 360 }, output.shape);
+                using (var flat = Flatten(startDim: 0)) {
+                    var output = flat.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32 * 360 }, output.shape);
+                }
             }
         }
 
         [Fact]
         public void TestUnflatten()
         {
-            var input = torch.rand(new long[] { 2, 50 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var input = torch.rand(new long[] { 2, 50 }, device: device);
 
-            var uf = Unflatten(1, new long[] { 2, 5, 5 });
-            var res = uf.call(input);
+                var uf = Unflatten(1, new long[] { 2, 5, 5 });
+                var res = uf.call(input);
+                Assert.Equal(device.type, res.device_type);
 
-            Assert.Equal(4, res.Dimensions);
-            Assert.Equal(new long[] { 2, 2, 5, 5 }, res.shape);
+                Assert.Equal(4, res.Dimensions);
+                Assert.Equal(new long[] { 2, 2, 5, 5 }, res.shape);
+            }
         }
 
         [Fact]
         public void TestCosineSimilarity()
         {
-            using (Tensor input1 = torch.rand(new long[] { 5, 12 }))
-            using (Tensor input2 = torch.randint(12, new long[] { 5, 12 }, torch.int64))
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input1 = torch.rand(new long[] { 5, 12 }, device: device))
+                using (Tensor input2 = torch.randint(12, new long[] { 5, 12 }, torch.int64, device: device))
 
-            using (var module = CosineSimilarity()) {
-                var output = module.call(input1, input2);
-                Assert.Equal(input1.shape[0], output.shape[0]);
+                using (var module = CosineSimilarity()) {
+                    var output = module.call(input1, input2);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(input1.shape[0], output.shape[0]);
+                }
             }
         }
 
         [Fact]
         public void TestPairwiseDistance()
         {
-            using (Tensor input1 = torch.rand(new long[] { 5, 12 }))
-            using (Tensor input2 = torch.randint(12, new long[] { 5, 12 }, torch.int64))
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input1 = torch.rand(new long[] { 5, 12 }, device: device))
+                using (Tensor input2 = torch.randint(12, new long[] { 5, 12 }, torch.int64, device: device))
 
-            using (var module = PairwiseDistance(keep_dim: true)) {
-                var output = module.call(input1, input2);
-                Assert.Equal(input1.shape[0], output.shape[0]);
-                Assert.Equal(1, output.shape[1]);
+                using (var module = PairwiseDistance(keep_dim: true)) {
+                    var output = module.call(input1, input2);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(input1.shape[0], output.shape[0]);
+                    Assert.Equal(1, output.shape[1]);
+                }
             }
         }
 
+        #region Padding
         [Fact]
         public void TestZeroPad2d()
         {
-            var data = torch.rand(new long[] { 32, 3, 4, 4 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 32, 3, 4, 4 }, device: device);
 
-            using (var pad = ZeroPad2d(3)) {
-                var output = pad.call(data);
-                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
-                Assert.Equal(0.0, output[0, 0, 0, 0].ToDouble());
+                using (var pad = ZeroPad2d(3)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                    Assert.Equal(0.0, output[0, 0, 0, 0].ToDouble());
+                }
             }
         }
 
         [Fact]
         public void TestReflectionPad1d()
         {
-            var data = torch.rand(new long[] { 32, 3, 4 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 32, 3, 4 }, device: device);
 
-            using (var pad = ReflectionPad1d(3)) {
-                var output = pad.call(data);
-                Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
-                var values = output.data<float>().ToArray();
-                Assert.Equal(values[6], values[0]);
-                Assert.Equal(values[5], values[1]);
-                Assert.Equal(values[4], values[2]);
-                Assert.Equal(values[5], values[7]);
-                Assert.Equal(values[4], values[8]);
-                Assert.Equal(values[3], values[9]);
+                using (var pad = ReflectionPad1d(3)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[6], values[0]);
+                    Assert.Equal(values[5], values[1]);
+                    Assert.Equal(values[4], values[2]);
+                    Assert.Equal(values[5], values[7]);
+                    Assert.Equal(values[4], values[8]);
+                    Assert.Equal(values[3], values[9]);
+                }
             }
         }
 
         [Fact]
         public void TestReflectionPad2d()
         {
-            var data = torch.rand(new long[] { 32, 3, 4, 4 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 32, 3, 4, 4 }, device: device);
 
-            using (var pad = ReflectionPad2d(3)) {
-                var output = pad.call(data);
-                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
-                var values = output.data<float>().ToArray();
-                Assert.Equal(values[6], values[0]);
-                Assert.Equal(values[5], values[1]);
-                Assert.Equal(values[4], values[2]);
+                using (var pad = ReflectionPad2d(3)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[6], values[0]);
+                    Assert.Equal(values[5], values[1]);
+                    Assert.Equal(values[4], values[2]);
+                }
             }
         }
 
         [Fact]
         public void TestReflectionPad3d()
         {
-            var data = torch.rand(new long[] { 32, 3, 4, 4, 4 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 32, 3, 4, 4, 4 }, device: device);
 
-            using (var pad = ReflectionPad3d(3)) {
-                var output = pad.call(data);
-                Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
-                var values = output.data<float>().ToArray();
-                Assert.Equal(values[6], values[0]);
-                Assert.Equal(values[5], values[1]);
-                Assert.Equal(values[4], values[2]);
+                using (var pad = ReflectionPad3d(3)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[6], values[0]);
+                    Assert.Equal(values[5], values[1]);
+                    Assert.Equal(values[4], values[2]);
+                }
             }
         }
 
         [Fact]
         public void TestReplicationPad1d()
         {
-            var data = torch.rand(new long[] { 32, 3, 4 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 32, 3, 4 }, device: device);
 
-            using (var pad = ReplicationPad1d(3)) {
-                var output = pad.call(data);
-                Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
-                var values = output.data<float>().ToArray();
-                Assert.Equal(values[3], values[0]);
-                Assert.Equal(values[3], values[1]);
-                Assert.Equal(values[3], values[3]);
-                Assert.Equal(values[6], values[7]);
-                Assert.Equal(values[6], values[8]);
-                Assert.Equal(values[6], values[9]);
+                using (var pad = ReplicationPad1d(3)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[3], values[0]);
+                    Assert.Equal(values[3], values[1]);
+                    Assert.Equal(values[3], values[3]);
+                    Assert.Equal(values[6], values[7]);
+                    Assert.Equal(values[6], values[8]);
+                    Assert.Equal(values[6], values[9]);
+                }
             }
         }
 
         [Fact]
         public void TestReplicationPad2d()
         {
-            var data = torch.rand(new long[] { 32, 3, 4, 4 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 32, 3, 4, 4 }, device: device);
 
-            using (var pad = ReplicationPad2d(3)) {
-                var output = pad.call(data);
-                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
-                var values = output.data<float>().ToArray();
-                Assert.Equal(values[3], values[0]);
-                Assert.Equal(values[3], values[1]);
-                Assert.Equal(values[3], values[3]);
+                using (var pad = ReplicationPad2d(3)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[3], values[0]);
+                    Assert.Equal(values[3], values[1]);
+                    Assert.Equal(values[3], values[3]);
+                }
             }
         }
 
         [Fact]
         public void TestReplicationPad3d()
         {
-            var data = torch.rand(new long[] { 32, 3, 4, 4, 4 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 32, 3, 4, 4, 4 }, device: device);
 
-            using (var pad = ReplicationPad3d(3)) {
-                var output = pad.call(data);
-                Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
-                var values = output.data<float>().ToArray();
-                Assert.Equal(values[3], values[0]);
-                Assert.Equal(values[3], values[1]);
-                Assert.Equal(values[3], values[3]);
+                using (var pad = ReplicationPad3d(3)) {
+                    var output = pad.call(data);
+                    Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
+                    Assert.Equal(device.type, output.device_type);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[3], values[0]);
+                    Assert.Equal(values[3], values[1]);
+                    Assert.Equal(values[3], values[3]);
+                }
             }
         }
 
         [Fact]
         public void TestConstantPad1d()
         {
-            var data = torch.rand(new long[] { 32, 3, 4 }, torch.float64);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 32, 3, 4 }, torch.float64, device: device);
 
-            using (var pad = ConstantPad1d(3, Math.PI)) {
-                var output = pad.call(data);
-                Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
-                Assert.Equal(Math.PI, output[0, 0, 0].ToDouble());
+                using (var pad = ConstantPad1d(3, Math.PI)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                    Assert.Equal(Math.PI, output[0, 0, 0].ToDouble());
+                }
             }
         }
 
         [Fact]
         public void TestConstantPad2d()
         {
-            var data = torch.rand(new long[] { 32, 3, 4, 4 }, torch.float64);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 32, 3, 4, 4 }, torch.float64, device: device);
 
-            using (var pad = ConstantPad2d(3, Math.PI)) {
-                var output = pad.call(data);
-                Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
-                Assert.Equal(Math.PI, output[0, 0, 0, 0].ToDouble());
+                using (var pad = ConstantPad2d(3, Math.PI)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                    Assert.Equal(Math.PI, output[0, 0, 0, 0].ToDouble());
+                }
             }
         }
 
         [Fact]
         public void TestConstantPad3d()
         {
-            var data = torch.rand(new long[] { 32, 3, 4, 4, 4 }, torch.float64);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 32, 3, 4, 4, 4 }, torch.float64, device: device);
 
-            using (var pad = ConstantPad3d(3, Math.PI)) {
-                var output = pad.call(data);
-                Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
-                Assert.Equal(Math.PI, output[0, 0, 0, 0, 0].ToDouble());
+                using (var pad = ConstantPad3d(3, Math.PI)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
+                    Assert.Equal(Math.PI, output[0, 0, 0, 0, 0].ToDouble());
+                }
             }
         }
+        #endregion
 
+        #region RNN
         [Fact]
         public void TestRNN1()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 1, 3, 20 }))
-            using (var rnn = RNN(10, 20)) {
-                var (output, hN) = rnn.call(input, h0);
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
+                using (var rnn = RNN(10, 20, device: device)) {
+                    var (output, hN) = rnn.call(input, h0);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
-
         }
 
         [Fact]
         public void TestRNN2()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 2, 3, 20 }))
-            using (var rnn = RNN(10, 20, 2)) {
-                var (output, hN) = rnn.call(input, h0);
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }, device: device))
+                using (var rnn = RNN(10, 20, 2, device: device)) {
+                    var (output, hN) = rnn.call(input, h0);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
-
         }
 
         [Fact]
         public void TestRNN3()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 2, 3, 20 }))
-            using (var rnn = RNN(10, 20, 2)) {
-                var (output, hN) = rnn.call(input);
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }, device: device))
+                using (var rnn = RNN(10, 20, 2, device: device)) {
+                    var (output, hN) = rnn.call(input);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
-
         }
 
         [Fact]
         public void TestRNN4()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 1, 3, 20 }))
-            using (var rnn = RNN(10, 20)) {
-                rnn.flatten_parameters();
-                var (output, hN) = rnn.call(input, h0);
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
+                using (var rnn = RNN(10, 20, device: device)) {
+                    rnn.flatten_parameters();
+                    var (output, hN) = rnn.call(input, h0);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
         }
 
         [Fact]
         public void TestRNN5()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
                    lengths = torch.tensor(new long[] { 5, 5, 5 }))
-            using (var rnn = RNN(10, 20, 2)) {
-                rnn.flatten_parameters();
-                var (output, hN) = rnn.call(input);
-                var packed_input = torch.nn.utils.rnn.pack_padded_sequence(input, lengths);
-                var (packed_output, packed_hN) = rnn.call(packed_input);
-                float mse;
-                mse = torch.mean(torch.square(hN - packed_hN)).item<float>();
-                Assert.InRange(mse, 0, 0.1f);
-                var (unpacked_output, unpacked_output_lengths) = torch.nn.utils.rnn.pad_packed_sequence(packed_output);
-                mse = torch.mean(torch.square(output - unpacked_output)).item<float>();
-                Assert.InRange(mse, 0, 0.1f);
+                using (var rnn = RNN(10, 20, 2, device: device)) {
+                    rnn.flatten_parameters();
+                    var (output, hN) = rnn.call(input);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    var packed_input = torch.nn.utils.rnn.pack_padded_sequence(input, lengths);
+                    var (packed_output, packed_hN) = rnn.call(packed_input);
+                    Assert.Equal(device.type, packed_hN.device_type);
+                    float mse;
+                    mse = torch.mean(torch.square(hN - packed_hN)).item<float>();
+                    Assert.InRange(mse, 0, 0.1f);
+                    var (unpacked_output, unpacked_output_lengths) = torch.nn.utils.rnn.pad_packed_sequence(packed_output);
+                    mse = torch.mean(torch.square(output - unpacked_output)).item<float>();
+                    Assert.InRange(mse, 0, 0.1f);
+                }
             }
         }
 
         [Fact]
         public void TestRNNCell1()
         {
-            var seq = 5;
-            using (Tensor input = torch.randn(new long[] { seq, 3, 10 }),
-                   h0 = torch.randn(new long[] { 3, 20 }))
-            using (var rnn = RNNCell(10, 20)) {
-                var hN = rnn.call(input[0], h0);
-                Assert.Equal(h0.shape, hN.shape);
-                for (int i = 1; i < seq; ++i) {
-                    hN = rnn.call(input[i], hN);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var seq = 5;
+                using (Tensor input = torch.randn(new long[] { seq, 3, 10 }, device: device),
+                       h0 = torch.randn(new long[] { 3, 20 }, device: device))
+                using (var rnn = RNNCell(10, 20, device: device)) {
+                    var hN = rnn.call(input[0], h0);
+                    Assert.Equal(device.type, hN.device_type);
                     Assert.Equal(h0.shape, hN.shape);
+                    for (int i = 1; i < seq; ++i) {
+                        hN = rnn.call(input[i], hN);
+                        Assert.Equal(device.type, hN.device_type);
+                        Assert.Equal(h0.shape, hN.shape);
+                    }
                 }
             }
         }
@@ -4914,150 +5123,188 @@ namespace TorchSharp
         [Fact]
         public void TestRNNCell2()
         {
-            using (Tensor input = torch.randn(new long[] { 3, 10 }),
-                   h0 = torch.randn(new long[] { 3, 20 }))
-            using (var rnn = RNNCell(10, 20, NonLinearities.ReLU)) {
-                var hN = rnn.call(input, h0);
-                Assert.Equal(h0.shape, hN.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 3, 20 }, device: device))
+                using (var rnn = RNNCell(10, 20, NonLinearities.ReLU, device: device)) {
+                    var hN = rnn.call(input, h0);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                }
             }
         }
 
         [Fact]
         public void TestLRNNEditWeightsAndBias()
         {
-            var lin = RNN(10, 20, 2, NonLinearities.ReLU);
-            var bias = torch.randn(new long[] { 100 });
-            var weights = torch.randn(new long[] { 100, 1000 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var lin = RNN(10, 20, 2, NonLinearities.ReLU, device: device);
 
-            var w1 = lin.get_weight_ih(1);
+                var w1 = lin.get_weight_ih(1);
+                Assert.Equal(device.type, w1!.device_type);
 
-            Assert.Equal(2, w1!.shape.Length);
-            Assert.Equal(20, w1!.shape[0]);
-            Assert.Equal(20, w1!.shape[1]);
+                Assert.Equal(2, w1!.shape.Length);
+                Assert.Equal(20, w1!.shape[0]);
+                Assert.Equal(20, w1!.shape[1]);
 
-            var w2 = lin.parameters().ToArray()[0];
+                var w2 = lin.parameters().ToArray()[0];
+                Assert.Equal(device.type, w2.device_type);
 
-            Assert.Equal(2, w2.shape.Length);
-            Assert.Equal(20, w2.shape[0]);
-            Assert.Equal(10, w2.shape[1]);
+                Assert.Equal(2, w2.shape.Length);
+                Assert.Equal(20, w2.shape[0]);
+                Assert.Equal(10, w2.shape[1]);
+            }
         }
 
         [Fact]
         public void TestLRNNCellEditWeightsAndBias()
         {
-            var lin = RNNCell(10, 20, NonLinearities.ReLU);
-            var bias = torch.randn(new long[] { 100 });
-            var weights = torch.randn(new long[] { 100, 1000 });
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var lin = RNNCell(10, 20, NonLinearities.ReLU, device: device);
+                var bias = torch.randn(new long[] { 100 }, device: device);
+                var weights = torch.randn(new long[] { 100, 1000 }, device: device);
 
-            lin.bias_ih = bias.clone().AsParameter();
-            lin.weight_ih = weights.clone().AsParameter();
+                lin.bias_ih = bias.clone().AsParameter();
+                lin.weight_ih = weights.clone().AsParameter();
 
-            var w1 = lin.weight_ih;
-            var b1 = lin.bias_ih;
+                var w1 = lin.weight_ih;
+                var b1 = lin.bias_ih;
 
-            Assert.Equal(w1.shape.Length, weights.shape.Length);
-            Assert.Equal(w1.shape[0], weights.shape[0]);
-            Assert.Equal(w1.shape[1], weights.shape[1]);
+                Assert.Equal(device.type, w1!.device_type);
+                Assert.Equal(device.type, b1!.device_type);
 
-            for (int i = 0; i < 100; i++) {
-                Assert.Equal(b1.data<float>()[i], bias.data<float>()[i]);
-            }
+                Assert.Equal(w1.shape.Length, weights.shape.Length);
+                Assert.Equal(w1.shape[0], weights.shape[0]);
+                Assert.Equal(w1.shape[1], weights.shape[1]);
 
-            var w2 = lin.parameters().ToArray()[0];
-            var b2 = lin.parameters().ToArray()[2];
+                var b1data = b1.data<float>().ToArray();
+                var biasdata = bias.data<float>().ToArray();
+                for (int i = 0; i < 100; i++) {
+                    Assert.Equal(b1data[i], biasdata[i]);
+                }
 
-            Assert.Equal(weights.shape.Length, w2.shape.Length);
-            Assert.Equal(weights.shape[0], w2.shape[0]);
-            Assert.Equal(weights.shape[1], w2.shape[1]);
+                var w2 = lin.parameters().ToArray()[0];
+                var b2 = lin.parameters().ToArray()[2];
 
-            for (int i = 0; i < 100; i++) {
-                Assert.Equal(b2.data<float>()[i], bias.data<float>()[i]);
+                Assert.Equal(device.type, w2!.device_type);
+                Assert.Equal(device.type, b2!.device_type);
+
+                Assert.Equal(weights.shape.Length, w2.shape.Length);
+                Assert.Equal(weights.shape[0], w2.shape[0]);
+                Assert.Equal(weights.shape[1], w2.shape[1]);
+
+                var b2data = b1.data<float>().ToArray();
+
+                for (int i = 0; i < 100; i++) {
+                    Assert.Equal(b2data[i], biasdata[i]);
+                }
             }
         }
 
         [Fact]
         public void TestGRU1()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 1, 3, 20 }))
-            using (var gru = GRU(10, 20)) {
-                var (output, hN) = gru.call(input, h0);
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
+                using (var gru = GRU(10, 20, device: device)) {
+                    var (output, hN) = gru.call(input, h0);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
-
         }
 
         [Fact]
         public void TestGRU2()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 2, 3, 20 }))
-            using (var gru = GRU(10, 20, 2)) {
-                var (output, hN) = gru.call(input, h0);
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }, device: device))
+                using (var gru = GRU(10, 20, 2, device: device)) {
+                    var (output, hN) = gru.call(input, h0);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
-
         }
 
         [Fact]
         public void TestGRU3()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 2, 3, 20 }))
-            using (var gru = GRU(10, 20, 2)) {
-                var (output, hN) = gru.call(input);
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }, device: device))
+                using (var gru = GRU(10, 20, 2, device: device)) {
+                    var (output, hN) = gru.call(input);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
-
         }
 
         [Fact]
         public void TestGRU4()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 2, 3, 20 }))
-            using (var gru = GRU(10, 20, 2)) {
-                gru.flatten_parameters();
-                var (output, hN) = gru.call(input);
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }, device: device))
+                using (var gru = GRU(10, 20, 2, device: device)) {
+                    gru.flatten_parameters();
+                    var (output, hN) = gru.call(input);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
-
         }
 
         [Fact]
         public void TestGRU5()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }).to(torch.float64),
-                   h0 = torch.randn(new long[] { 2, 3, 20 }).to(torch.float64))
-            using (var gru = GRU(10, 20, 2)) {
-                gru.to(torch.float64);
-                gru.flatten_parameters();
-                var (output, hN) = gru.call(input);
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, dtype: torch.float64, device: device).to(torch.float64),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }, dtype: torch.float64, device: device))
+                using (var gru = GRU(10, 20, 2, device: device)) {
+                    gru.to(torch.float64);
+                    gru.flatten_parameters();
+                    var (output, hN) = gru.call(input);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
         }
 
         [Fact]
         public void TestGRU6()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
                    lengths = torch.tensor(new long[] { 5, 5, 5 }))
-            using (var rnn = GRU(10, 20, 2)) {
-                rnn.flatten_parameters();
-                var (output, hN) = rnn.call(input);
-                var packed_input = torch.nn.utils.rnn.pack_padded_sequence(input, lengths);
-                var (packed_output, packed_hN) = rnn.call(packed_input);
-                float mse;
-                mse = torch.mean(torch.square(hN - packed_hN)).item<float>();
-                Assert.InRange(mse, 0, 0.1f);
-                var (unpacked_output, unpacked_output_lengths) = torch.nn.utils.rnn.pad_packed_sequence(packed_output);
-                mse = torch.mean(torch.square(output - unpacked_output)).item<float>();
-                Assert.InRange(mse, 0, 0.1f);
+                using (var rnn = GRU(10, 20, 2, device: device)) {
+                    rnn.flatten_parameters();
+                    var (output, hN) = rnn.call(input);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    var packed_input = torch.nn.utils.rnn.pack_padded_sequence(input, lengths);
+                    var (packed_output, packed_hN) = rnn.call(packed_input);
+                    Assert.Equal(device.type, packed_hN.device_type);
+                    float mse;
+                    mse = torch.mean(torch.square(hN - packed_hN)).item<float>();
+                    Assert.InRange(mse, 0, 0.1f);
+                    var (unpacked_output, unpacked_output_lengths) = torch.nn.utils.rnn.pad_packed_sequence(packed_output);
+                    mse = torch.mean(torch.square(output - unpacked_output)).item<float>();
+                    Assert.InRange(mse, 0, 0.1f);
+                }
             }
         }
 
@@ -5065,131 +5312,165 @@ namespace TorchSharp
         public void TestGRUCell1()
         {
             var seq = 5;
-            using (Tensor input = torch.randn(new long[] { seq, 3, 10 }),
-                   h0 = torch.randn(new long[] { 3, 20 }))
-            using (var rnn = GRUCell(10, 20)) {
-                var hN = rnn.call(input[0], h0);
-                Assert.Equal(h0.shape, hN.shape);
-                for (int i = 1; i < seq; ++i) {
-                    hN = rnn.call(input[i], hN);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { seq, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 3, 20 }, device: device))
+                using (var rnn = GRUCell(10, 20, device: device)) {
+                    var hN = rnn.call(input[0], h0);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    for (int i = 1; i < seq; ++i) {
+                        hN = rnn.call(input[i], hN);
+                        Assert.Equal(device.type, hN.device_type);
+                        Assert.Equal(h0.shape, hN.shape);
+                    }
+                }
+            }        }
+
+        [Fact]
+        public void TestGRUCell2()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 3, 20 }, device: device))
+                using (var rnn = GRUCell(10, 20, bias: false, device: device)) {
+                    var hN = rnn.call(input, h0);
+                    Assert.Equal(device.type, hN.device_type);
                     Assert.Equal(h0.shape, hN.shape);
                 }
             }
         }
 
         [Fact]
-        public void TestGRUCell2()
-        {
-            using (Tensor input = torch.randn(new long[] { 3, 10 }),
-                   h0 = torch.randn(new long[] { 3, 20 }))
-            using (var rnn = GRUCell(10, 20, bias: false)) {
-                var hN = rnn.call(input, h0);
-                Assert.Equal(h0.shape, hN.shape);
-            }
-        }
-
-        [Fact]
         public void TestLSTM1()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 1, 3, 20 }),
-                   c0 = torch.randn(new long[] { 1, 3, 20 }))
-            using (var rnn = LSTM(10, 20)) {
-                var (output, hN, cN) = rnn.call(input, (h0, c0));
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(c0.shape, cN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 1, 3, 20 }, device: device),
+                   c0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
+                using (var rnn = LSTM(10, 20, device: device)) {
+                    var (output, hN, cN) = rnn.call(input, (h0, c0));
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(device.type, cN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(c0.shape, cN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
-
         }
 
         [Fact]
         public void TestLSTM2()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 2, 3, 20 }),
-                   c0 = torch.randn(new long[] { 2, 3, 20 }))
-            using (var rnn = LSTM(10, 20, 2)) {
-                var (output, hN, cN) = rnn.call(input, (h0, c0));
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(c0.shape, cN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }, device: device),
+                   c0 = torch.randn(new long[] { 2, 3, 20 }, device: device))
+                using (var rnn = LSTM(10, 20, 2, device: device)) {
+                    var (output, hN, cN) = rnn.call(input, (h0, c0));
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(device.type, cN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(c0.shape, cN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
-
         }
 
         [Fact]
         public void TestLSTM3()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 2, 3, 20 }),
-                   c0 = torch.randn(new long[] { 2, 3, 20 }))
-            using (var rnn = LSTM(10, 20, 2)) {
-                var (output, hN, cN) = rnn.call(input);
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(c0.shape, cN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }, device: device),
+                   c0 = torch.randn(new long[] { 2, 3, 20 }, device: device))
+                using (var rnn = LSTM(10, 20, 2, device: device)) {
+                    var (output, hN, cN) = rnn.call(input);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(device.type, cN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(c0.shape, cN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
-
         }
 
         [Fact]
         public void TestLSTM4()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
-                   h0 = torch.randn(new long[] { 2, 3, 20 }),
-                   c0 = torch.randn(new long[] { 2, 3, 20 }))
-            using (var rnn = LSTM(10, 20, 2)) {
-                rnn.flatten_parameters();
-                var (output, hN, cN) = rnn.call(input);
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(c0.shape, cN.shape);
-                Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 2, 3, 20 }, device: device),
+                   c0 = torch.randn(new long[] { 2, 3, 20 }, device: device))
+                using (var rnn = LSTM(10, 20, 2, device: device)) {
+                    rnn.flatten_parameters();
+                    var (output, hN, cN) = rnn.call(input);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(device.type, cN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(c0.shape, cN.shape);
+                    Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
+                }
             }
-
         }
 
         [Fact]
         public void TestLSTM5()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
                    lengths = torch.tensor(new long[] { 5, 5, 5 }),
-                   h0 = torch.randn(new long[] { 2, 3, 20 }),
-                   c0 = torch.randn(new long[] { 2, 3, 20 }))
-            using (var rnn = LSTM(10, 20, 2)) {
-                rnn.flatten_parameters();
-                var (output, hN, cN) = rnn.call(input, (h0, c0));
-                var packed_input = torch.nn.utils.rnn.pack_padded_sequence(input, lengths);
-                var (packed_output, packed_hN, packed_cN) = rnn.call(packed_input, (h0, c0));
-                float mse;
-                mse = torch.mean(torch.square(hN - packed_hN)).item<float>();
-                Assert.InRange(mse, 0, 0.1f);
-                mse = torch.mean(torch.square(cN - packed_cN)).item<float>();
-                Assert.InRange(mse, 0, 0.1f);
-                var (unpacked_output, unpacked_output_lengths) = torch.nn.utils.rnn.pad_packed_sequence(packed_output);
-                mse = torch.mean(torch.square(output - unpacked_output)).item<float>();
-                Assert.InRange(mse, 0, 0.1f);
+                   h0 = torch.randn(new long[] { 2, 3, 20 }, device: device),
+                   c0 = torch.randn(new long[] { 2, 3, 20 }, device: device))
+                using (var rnn = LSTM(10, 20, 2, device: device)) {
+                    rnn.flatten_parameters();
+                    var (output, hN, cN) = rnn.call(input, (h0, c0));
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(device.type, cN.device_type);
+                    var packed_input = torch.nn.utils.rnn.pack_padded_sequence(input, lengths);
+                    var (packed_output, packed_hN, packed_cN) = rnn.call(packed_input, (h0, c0));
+                    float mse;
+                    mse = torch.mean(torch.square(hN - packed_hN)).item<float>();
+                    Assert.InRange(mse, 0, 0.1f);
+                    mse = torch.mean(torch.square(cN - packed_cN)).item<float>();
+                    Assert.InRange(mse, 0, 0.1f);
+                    var (unpacked_output, unpacked_output_lengths) = torch.nn.utils.rnn.pad_packed_sequence(packed_output);
+                    mse = torch.mean(torch.square(output - unpacked_output)).item<float>();
+                    Assert.InRange(mse, 0, 0.1f);
+                }
             }
         }
 
         [Fact]
         public void TestLSTM6()
         {
-            using (Tensor input = torch.randn(new long[] { 5, 3, 10 }),
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 5, 3, 10 }, device: device),
                    lengths = torch.tensor(new long[] { 5, 5, 5 }))
-            using (var rnn = LSTM(10, 20, 2)) {
-                rnn.flatten_parameters();
-                var (output, hN, cN) = rnn.call(input);
-                var packed_input = torch.nn.utils.rnn.pack_padded_sequence(input, lengths);
-                var (packed_output, packed_hN, packed_cN) = rnn.call(packed_input);
-                float mse;
-                mse = torch.mean(torch.square(hN - packed_hN)).item<float>();
-                Assert.InRange(mse, 0, 0.1f);
-                mse = torch.mean(torch.square(cN - packed_cN)).item<float>();
-                Assert.InRange(mse, 0, 0.1f);
-                var (unpacked_output, unpacked_output_lengths) = torch.nn.utils.rnn.pad_packed_sequence(packed_output);
-                mse = torch.mean(torch.square(output - unpacked_output)).item<float>();
-                Assert.InRange(mse, 0, 0.1f);
+                using (var rnn = LSTM(10, 20, 2, device: device)) {
+                    rnn.flatten_parameters();
+                    var (output, hN, cN) = rnn.call(input);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(device.type, cN.device_type);
+                    var packed_input = torch.nn.utils.rnn.pack_padded_sequence(input, lengths);
+                    var (packed_output, packed_hN, packed_cN) = rnn.call(packed_input);
+                    Assert.Equal(device.type, packed_hN.device_type);
+                    Assert.Equal(device.type, packed_cN.device_type);
+                    float mse;
+                    mse = torch.mean(torch.square(hN - packed_hN)).item<float>();
+                    Assert.InRange(mse, 0, 0.1f);
+                    mse = torch.mean(torch.square(cN - packed_cN)).item<float>();
+                    Assert.InRange(mse, 0, 0.1f);
+                    var (unpacked_output, unpacked_output_lengths) = torch.nn.utils.rnn.pad_packed_sequence(packed_output);
+                    mse = torch.mean(torch.square(output - unpacked_output)).item<float>();
+                    Assert.InRange(mse, 0, 0.1f);
+                }
             }
         }
 
@@ -5197,65 +5478,85 @@ namespace TorchSharp
         public void TestLSTMCell1()
         {
             var seq = 5;
-            using (Tensor input = torch.randn(new long[] { seq, 3, 10 }),
-                   h0 = torch.randn(new long[] { 3, 20 }),
-                   c0 = torch.randn(new long[] { 3, 20 }))
-            using (var rnn = LSTMCell(10, 20)) {
-                var (hN, cN) = rnn.call(input[0], (h0, c0));
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(c0.shape, cN.shape);
-                for (int i = 1; i < seq; ++i) {
-                    (hN, cN) = rnn.call(input[i], (hN, cN));
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { seq, 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 3, 20 }, device: device),
+                   c0 = torch.randn(new long[] { 3, 20 }, device: device))
+                using (var rnn = LSTMCell(10, 20, device: device)) {
+                    var (hN, cN) = rnn.call(input[0], (h0, c0));
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(device.type, cN.device_type);
                     Assert.Equal(h0.shape, hN.shape);
                     Assert.Equal(c0.shape, cN.shape);
+                    for (int i = 1; i < seq; ++i) {
+                        (hN, cN) = rnn.call(input[i], (hN, cN));
+                        Assert.Equal(device.type, hN.device_type);
+                        Assert.Equal(device.type, cN.device_type);
+                        Assert.Equal(h0.shape, hN.shape);
+                        Assert.Equal(c0.shape, cN.shape);
+                    }
                 }
             }
-
         }
 
         [Fact]
         public void TestLSTMCell2()
         {
-            using (Tensor input = torch.randn(new long[] { 3, 10 }),
-                   h0 = torch.randn(new long[] { 3, 20 }),
-                   c0 = torch.randn(new long[] { 3, 20 }))
-            using (var rnn = LSTMCell(10, 20, bias: false)) {
-                var (hN, cN) = rnn.call(input, (h0, c0));
-                Assert.Equal(h0.shape, hN.shape);
-                Assert.Equal(c0.shape, cN.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 3, 10 }, device: device),
+                   h0 = torch.randn(new long[] { 3, 20 }, device: device),
+                   c0 = torch.randn(new long[] { 3, 20 }, device: device))
+                using (var rnn = LSTMCell(10, 20, bias: false, device: device)) {
+                    var (hN, cN) = rnn.call(input, (h0, c0));
+                    Assert.Equal(device.type, hN.device_type);
+                    Assert.Equal(device.type, cN.device_type);
+                    Assert.Equal(h0.shape, hN.shape);
+                    Assert.Equal(c0.shape, cN.shape);
+                }
             }
-
         }
+        #endregion
 
+        #region Miscellaneous
         [Fact]
         public void TestPixelShuffle()
         {
-            using (Tensor input = torch.randn(new long[] { 8, 9, 4, 4 }))
-            using (var layer = PixelShuffle(3)) {
-                var res = layer.call(input);
-                Assert.Equal(new long[] { 8, 1, 12, 12 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 8, 9, 4, 4 }, device: device))
+                using (var layer = PixelShuffle(3)) {
+                    var res = layer.call(input);
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 8, 1, 12, 12 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestPixelUnshuffle()
         {
-            using (Tensor input = torch.randn(new long[] { 8, 1, 12, 12 }))
-            using (var layer = PixelUnshuffle(3)) {
-                var res = layer.call(input);
-                Assert.Equal(new long[] { 8, 9, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.randn(new long[] { 8, 1, 12, 12 }, device: device))
+                using (var layer = PixelUnshuffle(3)) {
+                    var res = layer.call(input);
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 8, 9, 4, 4 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestVisionPad()
         {
-            using (Tensor p4d = torch.randn(new long[] { 3, 3, 4, 2 })) {
-                using (var res = torchvision.transforms.functional.pad(p4d, new long[] { 1, 1 }, 0.0, PaddingModes.Constant)) {
-                    Assert.Equal(new long[] { 3, 3, 6, 4 }, res.shape);
-                }
-                using (var res = torchvision.transforms.functional.pad(p4d, new long[] { 1, 1, 2, 2 }, 0.0, PaddingModes.Constant)) {
-                    Assert.Equal(new long[] { 3, 3, 7, 5 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor p4d = torch.randn(new long[] { 3, 3, 4, 2 }, device: device)) {
+                    using (var res = torchvision.transforms.functional.pad(p4d, new long[] { 1, 1 }, 0.0, PaddingModes.Constant)) {
+                        Assert.Equal(device.type, res.device_type);
+                        Assert.Equal(new long[] { 3, 3, 6, 4 }, res.shape);
+                    }
+                    using (var res = torchvision.transforms.functional.pad(p4d, new long[] { 1, 1, 2, 2 }, 0.0, PaddingModes.Constant)) {
+                        Assert.Equal(device.type, res.device_type);
+                        Assert.Equal(new long[] { 3, 3, 7, 5 }, res.shape);
+                    }
                 }
             }
         }
@@ -5263,17 +5564,21 @@ namespace TorchSharp
         [Fact]
         public void TestNNPad()
         {
-            {
-                var source = torch.arange(9).reshape(3, 3);
-                var result = torch.nn.functional.pad(input: source, pad: new long[] { 1, 2 }, mode: PaddingModes.Constant, value: 0);
-                Assert.Equal(new long[] { 3, 6 }, result.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                {
+                    var source = torch.arange(9, device: device).reshape(3, 3);
+                    var result = torch.nn.functional.pad(input: source, pad: new long[] { 1, 2 }, mode: PaddingModes.Constant, value: 0);
+                    Assert.Equal(device.type, result.device_type);
+                    Assert.Equal(new long[] { 3, 6 }, result.shape);
 
-                var str = result.ToString(TensorStringStyle.Numpy, newLine: "\n");
-                Assert.Equal("[[0 0 1 2 0 0]\n [0 3 4 5 0 0]\n [0 6 7 8 0 0]]", str);
-            }
-            using (Tensor p4d = torch.randn(new long[] { 3, 3, 4, 2 })) {
-                using (var res = pad(p4d, new long[] { 1, 1, 2, 3 }, PaddingModes.Constant, 0.0)) {
-                    Assert.Equal(new long[] { 3, 3, 9, 4 }, res.shape);
+                    var str = result.ToString(TensorStringStyle.Numpy, newLine: "\n");
+                    Assert.Equal("[[0 0 1 2 0 0]\n [0 3 4 5 0 0]\n [0 6 7 8 0 0]]", str);
+                }
+                using (Tensor p4d = torch.randn(new long[] { 3, 3, 4, 2 }, device: device)) {
+                    using (var res = pad(p4d, new long[] { 1, 1, 2, 3 }, PaddingModes.Constant, 0.0)) {
+                        Assert.Equal(device.type, res.device_type);
+                        Assert.Equal(new long[] { 3, 3, 9, 4 }, res.shape);
+                    }
                 }
             }
         }
@@ -5282,27 +5587,35 @@ namespace TorchSharp
         [Fact]
         public void TestInterpolateDefaults()
         {
-            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
-            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 })) {
-                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
+                using (var res = interpolate(input, scale_factor: new double[] { 2, 2 })) {
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestInterpolateNearest()
         {
-            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
-            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Nearest)) {
-                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
+                using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Nearest)) {
+                    Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestInterpolateBilinear2D()
         {
-            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
-            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Bilinear)) {
-                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
+                using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Bilinear)) {
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+                }
             }
         }
 
@@ -5310,100 +5623,131 @@ namespace TorchSharp
         [Fact]
         public void TestInterpolateArea()
         {
-            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
-            using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Area)) {
-                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
+                using (var res = interpolate(input, scale_factor: new double[] { 2, 2 }, mode: InterpolationMode.Area)) {
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestInterpolateTrilinear()
         {
-            using (Tensor input = torch.arange(1, 9, 1, float32).view(1, 1, 2, 2, 2))
-            using (var res = interpolate(input, scale_factor: new double[] { 2, 2, 2 }, mode: InterpolationMode.Trilinear)) {
-                Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 9, 1, float32, device: device).view(1, 1, 2, 2, 2))
+                using (var res = interpolate(input, scale_factor: new double[] { 2, 2, 2 }, mode: InterpolationMode.Trilinear)) {
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestUpsampleNearest()
         {
-            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
-            using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Nearest)) {
-                var res = layer.call(input);
-                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
+                using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Nearest)) {
+                    var res = layer.call(input);
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestUpsampleLinear()
         {
-            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 4))
-            using (var layer = Upsample(scale_factor: new double[] { 2 }, mode: UpsampleMode.Linear)) {
-                var res = layer.call(input);
-                Assert.Equal(new long[] { 1, 1, 8 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 4))
+                using (var layer = Upsample(scale_factor: new double[] { 2 }, mode: UpsampleMode.Linear)) {
+                    var res = layer.call(input);
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 8 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestUpsampleBilinear()
         {
-            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
-            using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear)) {
-                var res = layer.call(input);
-                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
+                using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear)) {
+                    var res = layer.call(input);
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestUpsampleBilinearAC()
         {
-            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
-            using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear, alignCorners: true)) {
-                var res = layer.call(input);
-                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
+                using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear, alignCorners: true)) {
+                    var res = layer.call(input);
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestUpsampleBicubic()
         {
-            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
-            using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic)) {
-                var res = layer.call(input);
-                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
+                using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic)) {
+                    var res = layer.call(input);
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestUpsampleBicubicAC()
         {
-            using (Tensor input = torch.arange(1, 5, float32).view(1, 1, 2, 2))
-            using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic, alignCorners: true)) {
-                var res = layer.call(input);
-                Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
+                using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic, alignCorners: true)) {
+                    var res = layer.call(input);
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestUpsampleTrilinear()
         {
-            using (Tensor input = torch.arange(1, 9, float32).view(1, 1, 2, 2, 2))
-            using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear)) {
-                var res = layer.call(input);
-                Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 9, float32, device: device).view(1, 1, 2, 2, 2))
+                using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear)) {
+                    var res = layer.call(input);
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
+                }
             }
         }
 
         [Fact]
         public void TestUpsampleTrilinearAC()
         {
-            using (Tensor input = torch.arange(1, 9, float32).view(1, 1, 2, 2, 2))
-            using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear, alignCorners: true)) {
-                var res = layer.call(input);
-                Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                using (Tensor input = torch.arange(1, 9, float32, device: device).view(1, 1, 2, 2, 2))
+                using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear, alignCorners: true)) {
+                    var res = layer.call(input);
+                    Assert.Equal(device.type, res.device_type);
+                    Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
+                }
             }
         }
+        #endregion
 
         [Fact]
         public void TestModulePreHooks()
