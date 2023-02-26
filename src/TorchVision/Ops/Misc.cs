@@ -199,11 +199,11 @@ namespace TorchSharp
 
                 private Tensor _scale(Tensor input)
                 {
-                    var scale = this.avgpool.forward(input);
-                    scale = this.fc1.forward(scale);
-                    scale = this.activation.forward(scale);
-                    scale = this.fc2.forward(scale);
-                    return this.scale_activation.forward(scale);
+                    var scale = this.avgpool.call(input);
+                    scale = this.fc1.call(scale);
+                    scale = this.activation.call(scale);
+                    scale = this.fc2.call(scale);
+                    return this.scale_activation.call(scale);
                 }
 
                 public override Tensor forward(Tensor input)

@@ -6773,7 +6773,7 @@ namespace TorchSharp
         {
             {
                 var input = torch.rand(4, 3, 100, 100);
-                var cropped = torchvision.transforms.RandomResizedCrop(100, 0.1, 0.5).forward(input);
+                var cropped = torchvision.transforms.RandomResizedCrop(100, 0.1, 0.5).call(input);
 
                 Assert.Equal(new long[] { 4, 3, 100, 100 }, cropped.shape);
             }
@@ -6785,7 +6785,7 @@ namespace TorchSharp
         {
             {
                 var input = torch.rand(25, 25);
-                var cropped = torchvision.transforms.CenterCrop(15, 13).forward(input);
+                var cropped = torchvision.transforms.CenterCrop(15, 13).call(input);
 
                 Assert.Equal(new long[] { 15, 13 }, cropped.shape);
                 for (int i = 0; i < 13; i++) {
@@ -6795,7 +6795,7 @@ namespace TorchSharp
             }
             {
                 var input = torch.rand(3, 25, 25);
-                var cropped = torchvision.transforms.CenterCrop(15, 13).forward(input);
+                var cropped = torchvision.transforms.CenterCrop(15, 13).call(input);
 
                 Assert.Equal(new long[] { 3, 15, 13 }, cropped.shape);
                 for (int c = 0; c < 3; c++)
@@ -6806,7 +6806,7 @@ namespace TorchSharp
             }
             {
                 var input = torch.rand(16, 3, 25, 25);
-                var cropped = torchvision.transforms.CenterCrop(15, 13).forward(input);
+                var cropped = torchvision.transforms.CenterCrop(15, 13).call(input);
 
                 Assert.Equal(new long[] { 16, 3, 15, 13 }, cropped.shape);
                 for (int n = 0; n < 16; n++)
@@ -6824,13 +6824,13 @@ namespace TorchSharp
         {
             {
                 var input = torch.rand(16, 3, 25, 25);
-                var resized = torchvision.transforms.Resize(15).forward(input);
+                var resized = torchvision.transforms.Resize(15).call(input);
 
                 Assert.Equal(new long[] { 16, 3, 15, 15 }, resized.shape);
             }
             {
                 var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, int32);
-                var resized = torchvision.transforms.Resize(15).forward(input);
+                var resized = torchvision.transforms.Resize(15).call(input);
 
                 Assert.Equal(new long[] { 16, 3, 15, 15 }, resized.shape);
             }
@@ -6842,13 +6842,13 @@ namespace TorchSharp
         {
             {
                 var input = torch.rand(16, 3, 25, 25);
-                var resized = torchvision.transforms.Resize(50).forward(input);
+                var resized = torchvision.transforms.Resize(50).call(input);
 
                 Assert.Equal(new long[] { 16, 3, 50, 50 }, resized.shape);
             }
             {
                 var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, int32);
-                var resized = torchvision.transforms.Resize(50).forward(input);
+                var resized = torchvision.transforms.Resize(50).call(input);
 
                 Assert.Equal(new long[] { 16, 3, 50, 50 }, resized.shape);
             }
@@ -6860,13 +6860,13 @@ namespace TorchSharp
         {
             {
                 var input = torch.rand(16, 3, 25, 25);
-                var gray = torchvision.transforms.Grayscale().forward(input);
+                var gray = torchvision.transforms.Grayscale().call(input);
 
                 Assert.Equal(new long[] { 16, 1, 25, 25 }, gray.shape);
             }
             {
                 var input = torch.rand(16, 3, 25, 25);
-                var gray = torchvision.transforms.Grayscale(3).forward(input);
+                var gray = torchvision.transforms.Grayscale(3).call(input);
 
                 Assert.Equal(new long[] { 16, 3, 25, 25 }, gray.shape);
                 for (int n = 0; n < 16; n++)
@@ -6886,7 +6886,7 @@ namespace TorchSharp
                 using var input = torch.rand(25);
                 var iData = input.data<float>();
 
-                var poster = torchvision.transforms.Invert().forward(input);
+                var poster = torchvision.transforms.Invert().call(input);
                 var pData = poster.data<float>();
 
                 Assert.Equal(new long[] { 25 }, poster.shape);
@@ -6902,13 +6902,13 @@ namespace TorchSharp
         {
             {
                 using var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8);
-                var poster = torchvision.transforms.Posterize(4).forward(input);
+                var poster = torchvision.transforms.Posterize(4).call(input);
 
                 Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
             {
                 using var input = torch.randint(255, new long[] { 25 }, torch.uint8);
-                var poster = torchvision.transforms.Posterize(4).forward(input);
+                var poster = torchvision.transforms.Posterize(4).call(input);
 
                 Assert.Equal(new long[] { 25 }, poster.shape);
                 Assert.All(poster.data<byte>().ToArray(), b => Assert.Equal(0, b & 0xf));
@@ -6921,13 +6921,13 @@ namespace TorchSharp
         {
             {
                 using var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8);
-                var poster = torchvision.transforms.AdjustSharpness(1.5).forward(input);
+                var poster = torchvision.transforms.AdjustSharpness(1.5).call(input);
 
                 Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
             {
                 using var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8);
-                var poster = torchvision.transforms.AdjustSharpness(0.5).forward(input);
+                var poster = torchvision.transforms.AdjustSharpness(0.5).call(input);
 
                 Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
@@ -6962,7 +6962,7 @@ namespace TorchSharp
         {
             {
                 using var input = torch.rand(16, 3, 25, 50);
-                var poster = torchvision.transforms.Rotate(90).forward(input);
+                var poster = torchvision.transforms.Rotate(90).call(input);
 
                 Assert.Equal(new long[] { 16, 3, 25, 50 }, poster.shape);
             }
@@ -6975,13 +6975,13 @@ namespace TorchSharp
             var eq = torchvision.transforms.Equalize();
             {
                 using var input = torch.randint(0, 256, new long[] { 3, 25, 50 }, dtype: torch.uint8);
-                var poster = eq.forward(input);
+                var poster = eq.call(input);
 
                 Assert.Equal(new long[] { 3, 25, 50 }, poster.shape);
             }
             {
                 using var input = torch.randint(0, 256, new long[] { 16, 3, 25, 50 }, dtype: torch.uint8);
-                var poster = eq.forward(input);
+                var poster = eq.call(input);
 
                 Assert.Equal(new long[] { 16, 3, 25, 50 }, poster.shape);
             }
@@ -6994,7 +6994,7 @@ namespace TorchSharp
             var ac = torchvision.transforms.AutoContrast();
             {
                 using var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8);
-                var poster = ac.forward(input);
+                var poster = ac.call(input);
 
                 Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
@@ -7035,28 +7035,28 @@ namespace TorchSharp
 
             {
                 using var input = torch.randint(255, new long[] { 16, 3, 25, 25 }, torch.uint8);
-                var poster = gb4.forward(input);
+                var poster = gb4.call(input);
 
                 Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
             {
                 using var input = torch.rand(16, 3, 25, 25);
                 // Test even-number kernel size.
-                var poster = gb4.forward(input);
+                var poster = gb4.call(input);
 
                 Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
             {
                 using var input = torch.rand(16, 3, 25, 25);
                 // Test odd-number kernel size.
-                var poster = gb5.forward(input);
+                var poster = gb5.call(input);
 
                 Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
             {
                 using var input = torch.rand(16, 3, 25, 25);
                 var random = torchvision.transforms.Randomize(gb4, 0.5);
-                var poster = random.forward(input);
+                var poster = random.call(input);
 
                 Assert.Equal(new long[] { 16, 3, 25, 25 }, poster.shape);
             }
@@ -7068,7 +7068,7 @@ namespace TorchSharp
         {
             {
                 using var input = torch.rand(25);
-                var poster = torchvision.transforms.Solarize(0.55).forward(input);
+                var poster = torchvision.transforms.Solarize(0.55).call(input);
 
                 Assert.Equal(new long[] { 25 }, poster.shape);
                 Assert.All(poster.data<float>().ToArray(), f => Assert.True(f < 0.55f));
@@ -7093,7 +7093,7 @@ namespace TorchSharp
                 3,  2,  1,
             }).reshape(3, 3);
 
-            var res = torchvision.transforms.HorizontalFlip().forward(input);
+            var res = torchvision.transforms.HorizontalFlip().call(input);
             Assert.Equal(res, expected);
         }
 
@@ -7113,7 +7113,7 @@ namespace TorchSharp
                 1,  1,  1,
             }).reshape(3, 3);
 
-            var res = torchvision.transforms.VerticalFlip().forward(input);
+            var res = torchvision.transforms.VerticalFlip().call(input);
             Assert.Equal(res, expected);
         }
 

@@ -59,7 +59,7 @@ namespace TorchSharp
                 public static Tensor leaky_relu(Tensor input, double negative_slope = 0.01, bool inplace = false)
                 {
                     using (var m = nn.LeakyReLU(negative_slope, inplace)) {
-                        return m.forward(input);
+                        return m.call(input);
                     }
                 }
             }

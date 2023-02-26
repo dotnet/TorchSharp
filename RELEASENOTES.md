@@ -6,6 +6,17 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __API Changes__:
 
+Adding `Module.call()` to all the Module<T...> classes. This wraps `Module.forward()` and allows hooks to be registered. `Module.forward()` is still available, but the most general way to invoke a module's logic is through `call()`.<br/>
+
+__Fixed Bugs__:
+
+#842 How to use register_forward_hook?
+
+
+## NuGet Version 0.99.3
+
+__API Changes__:
+
 Fixing misspelling of 'DetachFromDisposeScope,' deprecating the old spelling.<br/>
 Adding allow_tf32<br/>
 Adding overloads of Module.save() and Module.load() taking a 'Stream' argument.<br/>

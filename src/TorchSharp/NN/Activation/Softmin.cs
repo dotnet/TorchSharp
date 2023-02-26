@@ -57,7 +57,7 @@ namespace TorchSharp
                 public static Tensor softmin(Tensor x, long dim)
                 {
                     using (var m = nn.Softmin(dim)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

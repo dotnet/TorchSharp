@@ -57,7 +57,7 @@ namespace TorchSharp
                 public static Tensor glu(Tensor input, long dim = -1)
                 {
                     using (var m = nn.GLU(dim)) {
-                        return m.forward(input);
+                        return m.call(input);
                     }
                 }
             }

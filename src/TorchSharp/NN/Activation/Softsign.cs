@@ -55,7 +55,7 @@ namespace TorchSharp
                 public static Tensor Softsign(Tensor x)
                 {
                     using (var m = nn.Softsign()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

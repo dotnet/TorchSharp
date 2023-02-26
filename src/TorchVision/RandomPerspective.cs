@@ -17,7 +17,7 @@ namespace TorchSharp
                 this.rnd = new Random();
             }
 
-            public Tensor forward(Tensor img)
+            public Tensor call(Tensor img)
             {
                 if (rnd.NextDouble() <= p) {
                     var _end = img.shape.Length;

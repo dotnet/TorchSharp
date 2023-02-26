@@ -57,7 +57,7 @@ namespace TorchSharp
                 public static Tensor cosine_similarity(Tensor x1, Tensor x2, long dim = 1, double eps = 1e-8)
                 {
                     using (var f = nn.CosineSimilarity(dim, eps)) {
-                        return f.forward(x1, x2);
+                        return f.call(x1, x2);
                     }
                 }
             }

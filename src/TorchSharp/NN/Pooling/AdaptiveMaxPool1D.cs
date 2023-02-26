@@ -60,7 +60,7 @@ namespace TorchSharp
                 public static Tensor adaptive_max_pool1d(Tensor x, long outputSize)
                 {
                     using (var d = nn.AdaptiveMaxPool1d(outputSize)) {
-                        return d.forward(x);
+                        return d.call(x);
                     }
                 }
             }

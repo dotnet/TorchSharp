@@ -18,7 +18,7 @@ namespace TorchSharp
                 this.interpolation = interpolation;
             }
 
-            public torch.Tensor forward(torch.Tensor img)
+            public torch.Tensor call(torch.Tensor img)
             {
                 return transforms.functional.rotate(img, angle, interpolation, expand, center, fill);
             }

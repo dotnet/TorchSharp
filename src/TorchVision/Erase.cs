@@ -19,7 +19,7 @@ namespace TorchSharp
                 this.value = value;
             }
 
-            public Tensor forward(Tensor img)
+            public Tensor call(Tensor img)
             {
                 return transforms.functional.erase(img, top, left, height, width, value, inplace);
             }

@@ -17,7 +17,7 @@ namespace TorchSharp
                 this.hue = hue;
             }
 
-            public Tensor forward(Tensor image)
+            public Tensor call(Tensor image)
             {
                 var randoms = torch.rand(4, ScalarType.Float32).data<float>().ToArray();
                 var b = Adjust(randoms[0], brightness.Item1, brightness.Item2);
@@ -31,7 +31,7 @@ namespace TorchSharp
                     transforms.AdjustSaturation(s),
                     transforms.AdjustHue(h)
                     );
-                return transform.forward(image);
+                return transform.call(image);
             }
 
             internal static float Adjust(float input, float min, float max)

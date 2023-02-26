@@ -55,7 +55,7 @@ namespace TorchSharp
                 public static Tensor SiLU(Tensor x)
                 {
                     using (var m = nn.SiLU()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }
