@@ -2061,7 +2061,7 @@ namespace TorchSharp
             var shape = new long[] { 16, 3, 28 };
             foreach (var device in TestUtils.AvailableDevices(false)) {
                 Tensor t = torch.rand(shape, device: device);
-                var conv = Conv1d(3, 64, 3, device: device);
+                var conv = Conv1d(3, 64, 5, device: device);
                 var output = conv.call(t);
                 Assert.Equal(device.type, output.device_type);
                 Assert.Equal(16, output.shape[0]);
@@ -4594,6 +4594,7 @@ namespace TorchSharp
             using (var V = torch.tensor(v_data, src_seq_len, batch_size, vembed_dim))
             using (var Attn = torch.tensor(attn_data, batch_size, src_seq_len, src_seq_len)) {
 
+                var children = mha.children().ToList();
                 mha.eval();
                 Assert.False(mha.training);
 
@@ -5325,7 +5326,8 @@ namespace TorchSharp
                         Assert.Equal(h0.shape, hN.shape);
                     }
                 }
-            }        }
+            }
+        }
 
         [Fact]
         public void TestGRUCell2()
