@@ -1,12 +1,13 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Collections.Generic;
 using System.Threading;
 using Google.Protobuf;
 using Tensorboard;
+using Typing;
 
 namespace TorchSharp
 {
@@ -197,11 +198,30 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Add text data to summary.
+            /// Add batched image data to summary.
             ///
-            /// Examples::
-            /// add_text("lstm", "This is an lstm", 0)
-            /// add_text("rnn", "This is an rnn", 10)
+            /// https://pytorch.org/docs/stable/tensorboard.html#torch.utils.tensorboard.writer.SummaryWriter.add_image
+            /// </summary>
+            /// <param name="tag"> Data identifier </param>
+            /// <param name="img_tensor"> Image data </param>
+            /// <param name="global_step"> Global step value to record </param>
+            /// <param name="walltime"> Optional override default walltime (time.time()) seconds after epoch of event </param>
+            /// <param name="dataformats"> Image data format specification of the form CHW, HWC, HW, WH, etc. </param>
+            public void add_img(string tag, Union<torch.Tensor, string> img_tensor, int global_step, long? walltime = null, string dataformats = "CHW")
+            {
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
+
+                Summary summary = img_tensor.MatchFunc(
+                    (tensor) => Utils.tensorboard.Summary.image(tag, tensor, dataformats: dataformats),
+                    (path) => Utils.tensorboard.Summary.image(tag, path));
+
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
+                WriteEvent(fileName, evnt);
+            }
+
+            /// <summary>
+            /// Add text data to summary.
             /// 
             /// https://pytorch.org/docs/stable/_modules/torch/utils/tensorboard/writer.html#SummaryWriter.add_text
             /// </summary>
@@ -214,26 +234,9 @@ namespace TorchSharp
                 var fileName = InitDefaultFile();
                 SetWalltime(ref walltime);
 
-                // https://github.com/pytorch/pytorch/blob/master/torch/utils/tensorboard/summary.py#L630-L642
-                Summary text_(string tag, string text)
-                {
-                    // TextPluginData(version=0).SerializeToString()
-                    // output: b''
-                    var pluginData = new SummaryMetadata.Types.PluginData() { PluginName = "text", Content = ByteString.CopyFromUtf8("") };
-                    var smd = new SummaryMetadata() { PluginData = pluginData };
-                    var shapeProto = new TensorShapeProto();
-                    shapeProto.Dim.Add(new TensorShapeProto.Types.Dim() { Size = 1 });
-                    var tensor = new TensorProto() { Dtype = DataType.DtString, TensorShape = shapeProto };
-                    tensor.StringVal.Add(ByteString.CopyFromUtf8(text));
-
-                    var summary = new Summary();
-                    summary.Value.Add(new Summary.Types.Value() { Tag = tag + "/text_summary", Metadata = smd, Tensor = tensor });
-                    return summary;
-                }
-                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = text_(tag, text_string) };
-
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = Utils.tensorboard.Summary.text(tag, text_string) };
                 WriteEvent(fileName, evnt);
-            }   
+            }
 
             private static void InitFile(string fileName)
             {
@@ -263,7 +266,7 @@ namespace TorchSharp
                 uint header_crc = GetMaskedCrc(header);
                 uint footer_crc = GetMaskedCrc(bytes);
 
-                using (var fStream = File.Open(fileName,FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read)) {
+                using (var fStream = File.Open(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read)) {
                     fStream.Seek(0, SeekOrigin.End);
 
                     using (var writers = new BinaryWriter(fStream)) {
