@@ -7,7 +7,6 @@ using System.IO;
 using System.Threading;
 using Google.Protobuf;
 using Tensorboard;
-using Typing;
 
 namespace TorchSharp
 {
@@ -207,15 +206,29 @@ namespace TorchSharp
             /// <param name="global_step"> Global step value to record </param>
             /// <param name="walltime"> Optional override default walltime (time.time()) seconds after epoch of event </param>
             /// <param name="dataformats"> Image data format specification of the form CHW, HWC, HW, WH, etc. </param>
-            public void add_img(string tag, Union<torch.Tensor, string> img_tensor, int global_step, long? walltime = null, string dataformats = "CHW")
+            public void add_img(string tag, torch.Tensor img_tensor, int global_step, long? walltime = null, string dataformats = "CHW")
             {
                 var fileName = InitDefaultFile();
                 SetWalltime(ref walltime);
+                Summary summary = torch.utils.tensorboard.Summary.image(tag, img_tensor, dataformats: dataformats);
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
+                WriteEvent(fileName, evnt);
+            }
 
-                Summary summary = img_tensor.MatchFunc(
-                    (tensor) => Utils.tensorboard.Summary.image(tag, tensor, dataformats: dataformats),
-                    (path) => Utils.tensorboard.Summary.image(tag, path));
-
+            /// <summary>
+            /// Add batched image data to summary.
+            ///
+            /// https://pytorch.org/docs/stable/tensorboard.html#torch.utils.tensorboard.writer.SummaryWriter.add_image
+            /// </summary>
+            /// <param name="tag"> Data identifier </param>
+            /// <param name="file_name"> Image file </param>
+            /// <param name="global_step"> Global step value to record </param>
+            /// <param name="walltime"> Optional override default walltime (time.time()) seconds after epoch of event </param>
+            public void add_img(string tag, string file_name, int global_step, long? walltime = null)
+            {
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
+                Summary summary = torch.utils.tensorboard.Summary.image(tag, file_name);
                 var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
                 WriteEvent(fileName, evnt);
             }
@@ -234,7 +247,7 @@ namespace TorchSharp
                 var fileName = InitDefaultFile();
                 SetWalltime(ref walltime);
 
-                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = Utils.tensorboard.Summary.text(tag, text_string) };
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = torch.utils.tensorboard.Summary.text(tag, text_string) };
                 WriteEvent(fileName, evnt);
             }
 
