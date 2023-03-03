@@ -32,7 +32,7 @@ namespace TorchSharp
                         long h = V.shape[3];
                         long w = V.shape[4];
 
-                        if (V.dtype == ScalarType.Int8)
+                        if (V.dtype == ScalarType.Int8 || V.dtype == ScalarType.Byte)
                             V = V.to_type(ScalarType.Float32) / 255.0;
 
                         bool is_power2(long num)
@@ -91,7 +91,7 @@ namespace TorchSharp
                     /// <returns></returns>
                     public static Tensor convert_to_HWC(Tensor tensor, string input_format)
                     {
-                        Trace.Assert(tensor.shape[0] == input_format.Length, $"size of input tensor and input format are different. tensor shape: ({string.Join(", ", tensor.shape)}), input_format: {input_format}");
+                        Trace.Assert(tensor.shape.Length == input_format.Length, $"size of input tensor and input format are different. tensor shape: ({string.Join(", ", tensor.shape)}), input_format: {input_format}");
                         input_format = input_format.ToUpper();
 
                         if (input_format.Length == 4) {

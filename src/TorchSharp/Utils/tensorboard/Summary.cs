@@ -1,6 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
-using System;
 using System.IO;
 using System.Linq;
 using Google.Protobuf;
@@ -17,7 +16,7 @@ namespace TorchSharp
                 public static partial class Summary
                 {
                     private static int calc_scale_factor(Tensor tensor)
-                        => tensor.dtype == ScalarType.Int8 ? 1 : 255;
+                        => tensor.dtype == ScalarType.Byte || tensor.dtype == ScalarType.Int8 ? 1 : 255;
 
                     /// <summary>
                     /// Outputs a `Summary` protocol buffer with images.
@@ -50,7 +49,7 @@ namespace TorchSharp
                         tensor = utils.convert_to_HWC(tensor, dataformats);
                         int scale_factor = calc_scale_factor(tensor);
                         tensor = tensor.to_type(ScalarType.Float32);
-                        tensor = (tensor * scale_factor).clip(0, 255).to_type(ScalarType.Int8);
+                        tensor = (tensor * scale_factor).clip(0, 255).to_type(ScalarType.Byte);
                         Tensorboard.Summary.Types.Image image = make_image(tensor, rescale);
                         var summary = new Tensorboard.Summary();
                         summary.Value.Add(new Tensorboard.Summary.Types.Value() { Tag = tag, Image = image });
@@ -99,8 +98,7 @@ namespace TorchSharp
                     {
                         using var image = img.Copy();
                         byte[] bmpData = image.Resize(new SKSizeI((int)(image.Width * rescale), (int)(image.Height * rescale)), SKFilterQuality.High).Encode(SKEncodedImageFormat.Png, 100).ToArray();
-                        string base64String = Convert.ToBase64String(bmpData);
-                        return new Tensorboard.Summary.Types.Image() { Height = image.Height, Width = image.Width, Colorspace = 3, EncodedImageString = ByteString.CopyFromUtf8(base64String) };
+                        return new Tensorboard.Summary.Types.Image() { Height = image.Height, Width = image.Width, Colorspace = 3, EncodedImageString = ByteString.CopyFrom(bmpData) };
                     }
 
                     /// <summary>
@@ -115,7 +113,7 @@ namespace TorchSharp
                         tensor = utils.prepare_video(tensor);
                         int scale_factor = calc_scale_factor(tensor);
                         tensor = tensor.to_type(ScalarType.Float32);
-                        tensor = (tensor * scale_factor).clip(0, 255).to_type(ScalarType.Int8);
+                        tensor = (tensor * scale_factor).clip(0, 255).to_type(ScalarType.Byte);
                         Tensorboard.Summary.Types.Image video = make_video(tensor, fps);
                         var summary = new Tensorboard.Summary();
                         summary.Value.Add(new Tensorboard.Summary.Types.Value() { Tag = tag, Image = video });
@@ -143,9 +141,8 @@ namespace TorchSharp
                             bitmap.Dispose();
                         }
                         encoder.Finish();
-                        MemoryStream stream = encoder.Output();
-                        string base64String = Convert.ToBase64String(stream.GetBuffer(), 0, (int)stream.Length);
-                        return new Tensorboard.Summary.Types.Image() { Height = h, Width = w, Colorspace = c, EncodedImageString = ByteString.CopyFromUtf8(base64String) };
+                        Stream stream = encoder.Output();
+                        return new Tensorboard.Summary.Types.Image() { Height = h, Width = w, Colorspace = c, EncodedImageString = ByteString.FromStream(stream) };
                     }
 
                     private static SKBitmap TensorToSKBitmap(Tensor tensor)
@@ -153,9 +150,9 @@ namespace TorchSharp
                         int h = (int)tensor.shape[0];
                         int w = (int)tensor.shape[1];
 
-                        byte[,,] data = tensor.data<byte>().ToNDArray() as byte[,,];
-                        var skBmp = new SKBitmap(w, h);
-                        int pixelSize = 3;
+                        byte[,,] data = tensor.cpu().data<byte>().ToNDArray() as byte[,,];
+                        var skBmp = new SKBitmap(w, h, SKColorType.Rgba8888, SKAlphaType.Opaque);
+                        int pixelSize = (int)tensor.shape[2] + 1;
                         unsafe {
                             byte* pSkBmp = (byte*)skBmp.GetPixels().ToPointer();
                             for (int i = 0; i < h; i++) {
@@ -163,6 +160,7 @@ namespace TorchSharp
                                     pSkBmp[j * pixelSize] = data[i, j, 0];
                                     pSkBmp[j * pixelSize + 1] = data[i, j, 1];
                                     pSkBmp[j * pixelSize + 2] = data[i, j, 2];
+                                    pSkBmp[j * pixelSize + 3] = 255;
                                 }
                                 pSkBmp += skBmp.Info.RowBytes;
                             }
