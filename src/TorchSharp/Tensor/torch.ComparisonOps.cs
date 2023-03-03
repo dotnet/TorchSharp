@@ -1,4 +1,5 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+using System;
 using System.Diagnostics.Contracts;
 
 namespace TorchSharp
@@ -236,6 +237,44 @@ namespace TorchSharp
         [Pure]
         public static (Tensor values, Tensor indices) sort(Tensor input, long dim = -1, bool descending = false, bool stable = false)
             => input.sort(dim, descending, stable);
+
+        // https://pytorch.org/docs/stable/generated/torch.searchsorted.html
+        /// <summary>
+        /// Find the indices from the innermost dimension of sorted_sequence such that, if the corresponding values in values were inserted before the indices,
+        /// when sorted, the order of the corresponding innermost dimension within sorted_sequence would be preserved.
+        /// Return a new tensor with the same size as values.
+        /// If right is false, then the left boundary of sorted_sequence is closed. 
+        /// </summary>
+        /// <param name="sorted_sequence">N-D or 1-D tensor, containing monotonically increasing sequence on the innermost dimension unless sorter is provided, in which case the sequence does not need to be sorted</param>
+        /// <param name="values">N-D tensor or a Scalar containing the search value(s).</param>
+        /// <param name="out_int32">Indicates the output data type. torch.int32 if true, torch.int64 otherwise. Default value is false, i.e. default output data type is torch.int64.</param>
+        /// <param name="right">Indicates the output data type. torch.int32 if true, torch.int64 otherwise. Default value is false, i.e. default output data type is torch.int64.</param>
+        /// <param name="sorter">If provided, a tensor matching the shape of the unsorted sorted_sequence containing a sequence of indices that sort it in the ascending order on the innermost dimension</param>
+        public static Tensor searchsorted(Tensor sorted_sequence, Tensor values, bool out_int32 = false, bool right = false, Tensor sorter = null)
+        {
+            var res = PInvoke.LibTorchSharp.THSTensor_searchsorted_t(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle);
+            if (res == IntPtr.Zero) CheckForErrors();
+            return new Tensor(res);
+        }
+
+        // https://pytorch.org/docs/stable/generated/torch.searchsorted.html
+        /// <summary>
+        /// Find the indices from the innermost dimension of sorted_sequence such that, if the corresponding values in values were inserted before the indices,
+        /// when sorted, the order of the corresponding innermost dimension within sorted_sequence would be preserved.
+        /// Return a new tensor with the same size as values.
+        /// If right is false, then the left boundary of sorted_sequence is closed. 
+        /// </summary>
+        /// <param name="sorted_sequence">N-D or 1-D tensor, containing monotonically increasing sequence on the innermost dimension unless sorter is provided, in which case the sequence does not need to be sorted</param>
+        /// <param name="values">A Scalar containing the search value.</param>
+        /// <param name="out_int32">Indicates the output data type. torch.int32 if true, torch.int64 otherwise. Default value is false, i.e. default output data type is torch.int64.</param>
+        /// <param name="right">Indicates the output data type. torch.int32 if true, torch.int64 otherwise. Default value is false, i.e. default output data type is torch.int64.</param>
+        /// <param name="sorter">If provided, a tensor matching the shape of the unsorted sorted_sequence containing a sequence of indices that sort it in the ascending order on the innermost dimension</param>
+        public static Tensor searchsorted(Tensor sorted_sequence, Scalar values, bool out_int32, bool right, Tensor sorter)
+        {
+            var res = PInvoke.LibTorchSharp.THSTensor_searchsorted_s(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle);
+            if (res == IntPtr.Zero) CheckForErrors();
+            return new Tensor(res);
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.topk
         /// <summary>

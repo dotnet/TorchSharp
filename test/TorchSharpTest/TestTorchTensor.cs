@@ -7748,5 +7748,19 @@ namespace TorchSharp
             Assert.Equal(3, res.shape[1]);
             Assert.Equal(3, res.shape[1]);
         }
+
+        [Fact]
+        public void TestSearchSorted()
+        {
+            var ss = torch.from_array(new long[] { 1, 3, 5, 7, 9, 2, 4, 6, 8, 10 }).reshape(2, -1);
+            var v = torch.from_array(new long[] { 3, 6, 9, 3, 6, 9}).reshape(2, -1);
+            var sorted = torch.searchsorted(ss, v);
+
+            Assert.Equal(new long[] { 1, 3, 4, 1, 2, 4 }, sorted.data<long>().ToArray());
+
+            sorted = torch.searchsorted(ss, v, right:true);
+
+            Assert.Equal(new long[] { 2, 3, 5, 1, 3, 4 }, sorted.data<long>().ToArray());
+        }
     }
 }
