@@ -4,7 +4,6 @@ using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.LibTorchSharp;
 
-#nullable enable
 namespace TorchSharp
 {
     using Modules;
@@ -13,48 +12,55 @@ namespace TorchSharp
     {
         public sealed class Linear : torch.nn.Module<Tensor, Tensor>
         {
-            internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal Linear(long inputSize, long outputSize, bool hasBias = true, Device device = null, ScalarType? dtype = null) : base(nameof(Linear))
             {
-            }
-
-            public new static Linear Load(string modelPath)
-            {
-                var res = Module<Tensor, Tensor>.Load(modelPath);
-                return new Linear(res.handle.DangerousGetHandle(), IntPtr.Zero);
+                weight = torch.empty(outputSize, inputSize, device: device, dtype: dtype).AsParameter();
+                init.kaiming_uniform_(weight, a: Math.Sqrt(5));
+                
+                if (hasBias) {
+                    bias = torch.empty(outputSize, device: device, dtype: dtype).AsParameter();
+                    var (fanIn, _) = init.CalculateFanInAndFanOut(weight);
+                    var bound = fanIn > 0 ? 1 / Math.Sqrt(fanIn) : 0;
+                    init.uniform_(bias, -bound, bound);
+                }
+                //NOTE: it's important not to call 'RegisterComponents' here.
             }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Linear_forward(handle, tensor.Handle);
+                var res = THSNN_functional_linear(tensor.Handle, weight!.Handle, bias is not null ? bias.Handle : IntPtr.Zero);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
 
-            public Parameter? bias {
-                get {
-                    var res = THSNN_Linear_bias(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
-                }
-                set {
-                    THSNN_Linear_set_bias(handle, value?.Handle ?? IntPtr.Zero);
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("bias", value);
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    weight.Dispose();
+                    if (bias is not null) bias.Dispose();
                 }
             }
 
-            public Parameter? weight {
-                get {
-                    var res = THSNN_Linear_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
-                }
+            public Parameter bias {
                 set {
-                    THSNN_Linear_set_weight(handle, value!.Handle);
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("weight", value);
+                    _bias = value;
+                    ConditionallyRegisterParameter("bias", bias);
+                }
+                get => _bias;
+            }
+            private Parameter _bias;
+
+            public Parameter weight {
+                get => _weight;
+                set {
+                    if (value is null) throw new ArgumentNullException("weight");
+                    _weight = value;
+                    ConditionallyRegisterParameter("weight", weight);
                 }
             }
+
+            private Parameter _weight;
+
         }
     }
 
@@ -70,12 +76,9 @@ namespace TorchSharp
             /// <param name="hasBias">If set to false, the layer will not learn an additive bias.</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
-            public static Linear Linear(long inputSize, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null)
+            public static Linear Linear(long inputSize, long outputSize, bool hasBias = true, Device device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_Linear_ctor(inputSize, outputSize, hasBias, out var boxedHandle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-
-                return new Linear(res, boxedHandle).MoveModule<Linear>(device, dtype);
+                return new Linear(inputSize, outputSize, hasBias, device, dtype);
             }
 
             public static partial class functional
@@ -87,7 +90,7 @@ namespace TorchSharp
                 /// <param name="weights">Weights of shape (Hout,Hin) or (Hin)</param>
                 /// <param name="bias">Bias of shape (Hout) or ()</param>
                 /// <returns>A tensor of shape (*,Hout) where '*' is the same as the subshape of the input.</returns>
-                public static Tensor linear(Tensor input, Tensor weights, Tensor? bias = null)
+                public static Tensor linear(Tensor input, Tensor weights, Tensor bias = null)
                 {
                     IntPtr bPtr = bias?.Handle ?? IntPtr.Zero;
                     var res = THSNN_functional_linear(input.Handle, weights.Handle, bPtr);

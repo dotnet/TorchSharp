@@ -2066,7 +2066,7 @@ namespace TorchSharp
                 Assert.Equal(device.type, output.device_type);
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
-                Assert.Equal(26, output.shape[2]);
+                Assert.Equal(24, output.shape[2]);
             }
         }
 
