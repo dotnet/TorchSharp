@@ -1462,7 +1462,7 @@ namespace TorchSharp
                     throw new ArgumentException($"mismatched total size creating a tensor from an array: {prod} vs. {rawArray.LongLength}");
             }
 
-            InitializeDeviceType(DeviceType.CPU);
+            device = InitializeDevice(device);
 
             if (clone) { rawArray = (Array)rawArray.Clone(); }
 
@@ -2604,6 +2604,7 @@ namespace TorchSharp
         /// Creates a <see cref="torch.Tensor">torch tensor</see> from an arbitrary <see cref="Array">array</see>.
         /// </summary>
         /// <param name="rawArray">The arbitrary array to create the tensor from.</param>
+        /// <param name="device">The device where the tensor is to be located. Defaults to 'cpu'.</param>
         /// <returns>A <see cref="torch.Tensor">torch tensor</see></returns>
         /// <remarks>
         /// This function roughly corresponds to torch.from_numpy(). It shares the underlying buffer between the input and output.
@@ -2636,7 +2637,7 @@ namespace TorchSharp
         /// </code>
         /// </example>
         [Pure]
-        public static Tensor from_array(Array rawArray)
+        public static Tensor from_array(Array rawArray, Device? device = null)
         {
             var t = rawArray.GetType().GetElementType();
             if (t is null) throw new InvalidOperationException($"{nameof(rawArray)}.GetType().GetElementType() returned null.");
@@ -2644,9 +2645,19 @@ namespace TorchSharp
 
             var dtype = ToScalarType(t!);
 
-            return from_array(rawArray, dtype, CPU);
+            return from_array(rawArray, dtype, device is null ? CPU : device);
         }
 
+        /// <summary>
+        /// Creates a <see cref="torch.Tensor">torch tensor</see> from an arbitrary <see cref="Array">array</see>.
+        /// </summary>
+        /// <param name="rawArray">The arbitrary array to create the tensor from.</param>
+        /// <param name="dtype">The element type to use in the created tensor. This can be different from the element type of the input.</param>
+        /// <param name="device">The device where the tensor is to be located. Defaults to 'cpu'.</param>
+        /// <param name="requires_grad"></param>
+        /// <param name="names"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         [Pure]
         public static Tensor from_array(Array rawArray, ScalarType? dtype, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
@@ -2686,12 +2697,11 @@ namespace TorchSharp
         /// <param name="count"></param>
         /// <param name="offset"></param>
         /// <param name="requires_grad">Set <value>true</value> if gradients need to be computed for this Tensor; <value>false</value> otherwise.</param>
-        /// <param name="device">The torch device.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="IndexOutOfRangeException"></exception>
         /// <remarks>The returned tensor and buffer share the same memory. Modifications to the tensor will be reflected in the buffer and vice versa.</remarks>
-        public static Tensor frombuffer(Array rawArray, ScalarType dtype, long count = -1, long offset = 0, bool requires_grad = false, Device? device = null)
+        public static Tensor frombuffer(Array rawArray, ScalarType dtype, long count = -1, long offset = 0, bool requires_grad = false)
         {
             InitializeDeviceType(DeviceType.CPU);
 
@@ -2755,9 +2765,7 @@ namespace TorchSharp
 
                 var needsConversion = dtype != origType;
 
-                if (device is not null) {
-                    tensor = needsConversion ? tensor.to(dtype, device) : tensor.to(device);
-                } else if (needsConversion) {
+                if (needsConversion) {
                     tensor = tensor.to_type(dtype);
                 }
                 return tensor;
