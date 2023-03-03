@@ -1,4 +1,8 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+
 using System;
+using System.IO;
+using System.Linq;
 using Google.Protobuf;
 using SkiaSharp;
 
@@ -12,8 +16,8 @@ namespace TorchSharp
             {
                 public static partial class Summary
                 {
-                    private static int calc_scale_factor(torch.Tensor tensor)
-                        => tensor.dtype == torch.ScalarType.Int8 ? 1 : 255;
+                    private static int calc_scale_factor(Tensor tensor)
+                        => tensor.dtype == ScalarType.Int8 ? 1 : 255;
 
                     /// <summary>
                     /// Outputs a `Summary` protocol buffer with images.
@@ -38,21 +42,28 @@ namespace TorchSharp
                     /// a scale factor of either 1 (uint8) or 255 (float32). Out-of-range values
                     /// will be clipped.
                     /// </param>
-                    /// <param name="rescale"></param>
-                    /// <param name="dataformats"></param>
+                    /// <param name="rescale"> Rescale image size </param>
+                    /// <param name="dataformats"> Image data format specification of the form CHW, HWC, HW, WH, etc. </param>
                     /// <returns> A scalar `Tensor` of type `string`. The serialized `Summary` protocol buffer. </returns>
-                    public static Tensorboard.Summary image(string tag, torch.Tensor tensor, double rescale = 1, string dataformats = "NCHW")
+                    public static Tensorboard.Summary image(string tag, Tensor tensor, double rescale = 1, string dataformats = "NCHW")
                     {
-                        tensor = torch.utils.tensorboard.utils.convert_to_HWC(tensor, dataformats);
+                        tensor = utils.convert_to_HWC(tensor, dataformats);
                         int scale_factor = calc_scale_factor(tensor);
-                        tensor = tensor.to_type(torch.ScalarType.Float32);
-                        tensor = (tensor * scale_factor).clip(0, 255).to_type(torch.ScalarType.Int8);
+                        tensor = tensor.to_type(ScalarType.Float32);
+                        tensor = (tensor * scale_factor).clip(0, 255).to_type(ScalarType.Int8);
                         Tensorboard.Summary.Types.Image image = make_image(tensor, rescale);
                         var summary = new Tensorboard.Summary();
                         summary.Value.Add(new Tensorboard.Summary.Types.Value() { Tag = tag, Image = image });
                         return summary;
                     }
 
+                    /// <summary>
+                    /// Outputs a `Summary` protocol buffer with images.
+                    /// </summary>
+                    /// <param name="tag"> A name for the generated node. Will also serve as a series name in TensorBoard. </param>
+                    /// <param name="file_name"> local image filename </param>
+                    /// <param name="rescale"> Rescale image size </param>
+                    /// <returns> A scalar `Tensor` of type `string`. The serialized `Summary` protocol buffer. </returns>
                     public static Tensorboard.Summary image(string tag, string file_name, double rescale = 1)
                     {
                         using var img = SKBitmap.Decode(file_name);
@@ -63,12 +74,81 @@ namespace TorchSharp
                     }
 
                     /// <summary>
+                    /// Convert a tensor representation of an image to Image protobuf
+                    /// 
                     /// https://github.com/pytorch/pytorch/blob/master/torch/utils/tensorboard/summary.py#L481
                     /// </summary>
-                    /// <param name="tensor"></param>
-                    /// <param name="rescale"></param>
+                    /// <param name="tensor"> HWC(0~255) image tensor </param>
+                    /// <param name="rescale"> Rescale image size </param>
                     /// <returns></returns>
-                    public static Tensorboard.Summary.Types.Image make_image(torch.Tensor tensor, double rescale = 1)
+                    public static Tensorboard.Summary.Types.Image make_image(Tensor tensor, double rescale = 1)
+                    {
+                        using SKBitmap skBmp = TensorToSKBitmap(tensor);
+                        return make_image(skBmp, rescale);
+                    }
+
+                    /// <summary>
+                    /// Convert an image to Image protobuf
+                    /// 
+                    /// https://github.com/pytorch/pytorch/blob/master/torch/utils/tensorboard/summary.py#L495
+                    /// </summary>
+                    /// <param name="img"> Image </param>
+                    /// <param name="rescale"> Rescale image size </param>
+                    /// <returns></returns>
+                    public static Tensorboard.Summary.Types.Image make_image(SKBitmap img, double rescale = 1)
+                    {
+                        using var image = img.Copy();
+                        byte[] bmpData = image.Resize(new SKSizeI((int)(image.Width * rescale), (int)(image.Height * rescale)), SKFilterQuality.High).Encode(SKEncodedImageFormat.Png, 100).ToArray();
+                        string base64String = Convert.ToBase64String(bmpData);
+                        return new Tensorboard.Summary.Types.Image() { Height = image.Height, Width = image.Width, Colorspace = 3, EncodedImageString = ByteString.CopyFromUtf8(base64String) };
+                    }
+
+                    /// <summary>
+                    /// https://github.com/pytorch/pytorch/blob/master/torch/utils/tensorboard/summary.py#L509
+                    /// </summary>
+                    /// <param name="tag"> A name for the generated node. Will also serve as a series name in TensorBoard. </param>
+                    /// <param name="tensor"> Video data </param>
+                    /// <param name="fps"> Frames per second </param>
+                    /// <returns></returns>
+                    public static Tensorboard.Summary video(string tag, Tensor tensor, int fps)
+                    {
+                        tensor = utils.prepare_video(tensor);
+                        int scale_factor = calc_scale_factor(tensor);
+                        tensor = tensor.to_type(ScalarType.Float32);
+                        tensor = (tensor * scale_factor).clip(0, 255).to_type(ScalarType.Int8);
+                        Tensorboard.Summary.Types.Image video = make_video(tensor, fps);
+                        var summary = new Tensorboard.Summary();
+                        summary.Value.Add(new Tensorboard.Summary.Types.Value() { Tag = tag, Image = video });
+                        return summary;
+                    }
+
+                    /// <summary>
+                    /// https://github.com/pytorch/pytorch/blob/master/torch/utils/tensorboard/summary.py#L520
+                    /// </summary>
+                    /// <param name="tensor"> Video data </param>
+                    /// <param name="fps"> Frames per second </param>
+                    /// <returns></returns>
+                    public static Tensorboard.Summary.Types.Image make_video(Tensor tensor, int fps)
+                    {
+                        int h = (int)tensor.shape[1];
+                        int w = (int)tensor.shape[2];
+                        int c = (int)tensor.shape[3];
+                        SKBitmap[] bitmaps = tensor.split(1).Select(item => TensorToSKBitmap(item.squeeze())).ToArray();
+                        using GifEncoder.Encoder encoder = new GifEncoder.Encoder();
+                        encoder.Start();
+                        encoder.SetRepeat(0);
+                        encoder.SetFrameRate(fps);
+                        foreach (var bitmap in bitmaps) {
+                            encoder.AddFrame(bitmap);
+                            bitmap.Dispose();
+                        }
+                        encoder.Finish();
+                        MemoryStream stream = encoder.Output();
+                        string base64String = Convert.ToBase64String(stream.GetBuffer(), 0, (int)stream.Length);
+                        return new Tensorboard.Summary.Types.Image() { Height = h, Width = w, Colorspace = c, EncodedImageString = ByteString.CopyFromUtf8(base64String) };
+                    }
+
+                    private static SKBitmap TensorToSKBitmap(Tensor tensor)
                     {
                         int h = (int)tensor.shape[0];
                         int w = (int)tensor.shape[1];
@@ -88,15 +168,7 @@ namespace TorchSharp
                             }
                         }
 
-                        return make_image(skBmp, rescale);
-                    }
-
-                    public static Tensorboard.Summary.Types.Image make_image(SKBitmap img, double rescale = 1)
-                    {
-                        using var image = img.Copy();
-                        byte[] bmpData = image.Resize(new SKSizeI((int)(image.Width * rescale), (int)(image.Height * rescale)), SKFilterQuality.High).Encode(SKEncodedImageFormat.Png, 100).ToArray();
-                        string base64String = Convert.ToBase64String(bmpData);
-                        return new Tensorboard.Summary.Types.Image() { Height = image.Height, Width = image.Width, Colorspace = 3, EncodedImageString = ByteString.CopyFromUtf8(base64String) };
+                        return skBmp;
                     }
 
                     /// <summary>

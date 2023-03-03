@@ -204,7 +204,7 @@ namespace TorchSharp
             /// <param name="tag"> Data identifier </param>
             /// <param name="img_tensor"> Image data </param>
             /// <param name="global_step"> Global step value to record </param>
-            /// <param name="walltime"> Optional override default walltime (time.time()) seconds after epoch of event </param>
+            /// <param name="walltime"> Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds()) </param>
             /// <param name="dataformats"> Image data format specification of the form CHW, HWC, HW, WH, etc. </param>
             public void add_img(string tag, torch.Tensor img_tensor, int global_step, long? walltime = null, string dataformats = "CHW")
             {
@@ -223,12 +223,31 @@ namespace TorchSharp
             /// <param name="tag"> Data identifier </param>
             /// <param name="file_name"> Image file </param>
             /// <param name="global_step"> Global step value to record </param>
-            /// <param name="walltime"> Optional override default walltime (time.time()) seconds after epoch of event </param>
+            /// <param name="walltime"> Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds()) </param>
             public void add_img(string tag, string file_name, int global_step, long? walltime = null)
             {
                 var fileName = InitDefaultFile();
                 SetWalltime(ref walltime);
                 Summary summary = torch.utils.tensorboard.Summary.image(tag, file_name);
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
+                WriteEvent(fileName, evnt);
+            }
+
+            /// <summary>
+            /// Add video data to summary.
+            ///
+            /// https://pytorch.org/docs/stable/tensorboard.html#torch.utils.tensorboard.writer.SummaryWriter.add_video
+            /// </summary>
+            /// <param name="tag"> Data identifier </param>
+            /// <param name="vid_tensor"> Video data </param>
+            /// <param name="global_step"> Global step value to record </param>
+            /// <param name="fps"> Frames per second </param>
+            /// <param name="walltime"> Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds()) </param>
+            public void add_video(string tag, torch.Tensor vid_tensor, int global_step, int fps = 4, long? walltime = null)
+            {
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
+                Summary summary = torch.utils.tensorboard.Summary.video(tag, vid_tensor, fps);
                 var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
                 WriteEvent(fileName, evnt);
             }

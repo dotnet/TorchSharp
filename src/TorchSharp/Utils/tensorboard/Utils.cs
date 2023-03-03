@@ -1,3 +1,5 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -12,6 +14,46 @@ namespace TorchSharp
             {
                 internal static partial class utils
                 {
+                    /// <summary>
+                    /// Converts a 5D tensor [batchsize, time(frame), channel(color), height, width]
+                    /// into 4D tensor with dimension[time(frame), new_width, new_height, channel].
+                    /// A batch of images are spreaded to a grid, which forms a frame.
+                    /// e.g. Video with batchsize 16 will have a 4x4 grid.
+                    ///
+                    /// https://github.com/pytorch/pytorch/blob/master/torch/utils/tensorboard/_utils.py#L110
+                    /// </summary>
+                    /// <param name="V"></param>
+                    /// <returns></returns>
+                    public static Tensor prepare_video(Tensor V)
+                    {
+                        long b = V.shape[0];
+                        long t = V.shape[1];
+                        long c = V.shape[2];
+                        long h = V.shape[3];
+                        long w = V.shape[4];
+
+                        if (V.dtype == ScalarType.Int8)
+                            V = V.to_type(ScalarType.Float32) / 255.0;
+
+                        bool is_power2(long num)
+                            => num != 0 && ((num & (num - 1)) == 0);
+                        int bit_length(long value)
+                            => Convert.ToString(value, 2).Length;
+
+                        if (!is_power2(V.shape[0])) {
+                            int len_addition = Convert.ToInt32(Math.Pow(2, bit_length(V.shape[0])) - V.shape[0]);
+                            V = cat(new Tensor[] { V, zeros(new long[] { len_addition, t, c, h, w }) });
+                        }
+
+                        long n_rows = Convert.ToInt32(Math.Pow(2, (bit_length(V.shape[0]) - 1) / 2));
+                        long n_cols = V.shape[0] / n_rows;
+
+                        V = V.reshape(n_rows, n_cols, t, c, h, w);
+                        V = V.permute(2, 0, 4, 1, 5, 3);
+                        V = V.reshape(t, n_rows * h, n_cols * w, c);
+                        return V;
+                    }
+
                     /// <summary>
                     /// https://github.com/pytorch/pytorch/blob/6c30dc6ceed5542351b3be4f8043b28020f93f3a/torch/utils/tensorboard/_utils.py#L69
                     /// </summary>

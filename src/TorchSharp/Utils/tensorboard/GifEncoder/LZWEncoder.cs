@@ -11,6 +11,13 @@ namespace TorchSharp
             {
                 public static partial class GifEncoder
                 {
+                    /// <summary>
+                    /// Adapted from Jef Poskanzer's Java port by way of J. M. G. Elliott.
+                    /// K Weiner 12/00
+                    ///
+                    /// https://github.com/videlalvaro/gifsockets/blob/master/src/java/LZWEncoder.java
+                    /// https://github.com/avianbc/NGif/blob/master/Components/LZWEncoder.cs
+                    /// </summary>
                     internal class LZWEncoder
                     {
                         private static readonly int EOF = -1;
