@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TestUsesLibTorch>true</TestUsesLibTorch>
-    <!--<TestCuda>true</TestCuda>-->
+    <TestCuda>true</TestCuda>
     <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets. We have to clear that out to set only the targets we support. -->
     <TargetFrameworks></TargetFrameworks>
     <LangVersion>9.0</LangVersion>

@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Google.Protobuf;
@@ -131,17 +132,17 @@ namespace TorchSharp
                         int h = (int)tensor.shape[1];
                         int w = (int)tensor.shape[2];
                         int c = (int)tensor.shape[3];
-                        SKBitmap[] bitmaps = tensor.split(1).Select(item => TensorToSKBitmap(item.squeeze())).ToArray();
                         using GifEncoder.Encoder encoder = new GifEncoder.Encoder();
                         encoder.Start();
                         encoder.SetRepeat(0);
                         encoder.SetFrameRate(fps);
-                        foreach (var bitmap in bitmaps) {
+                        foreach (var t in tensor.split(1)) {
+                            using SKBitmap bitmap = TensorToSKBitmap(t.squeeze());
                             encoder.AddFrame(bitmap);
-                            bitmap.Dispose();
                         }
                         encoder.Finish();
                         Stream stream = encoder.Output();
+                        stream.Position = 0;
                         return new Tensorboard.Summary.Types.Image() { Height = h, Width = w, Colorspace = c, EncodedImageString = ByteString.FromStream(stream) };
                     }
 

@@ -239,7 +239,11 @@ namespace TorchSharp
             /// https://pytorch.org/docs/stable/tensorboard.html#torch.utils.tensorboard.writer.SummaryWriter.add_video
             /// </summary>
             /// <param name="tag"> Data identifier </param>
-            /// <param name="vid_tensor"> Video data </param>
+            /// <param name="vid_tensor">
+            /// Video data
+            ///
+            /// Shape: (N,T,C,H,W). The values should lie in [0, 255] for type uint8 or [0, 1] for type float.
+            /// </param>
             /// <param name="global_step"> Global step value to record </param>
             /// <param name="fps"> Frames per second </param>
             /// <param name="walltime"> Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds()) </param>
