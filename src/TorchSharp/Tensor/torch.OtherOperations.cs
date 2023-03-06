@@ -121,7 +121,7 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.cartesian_prod
         /// <summary>
-        /// Do cartesian product of the given sequence of tensors. 
+        /// Do cartesian product of the given sequence of tensors.
         /// </summary>
         /// <param name="tensors"></param>
         public static Tensor cartesian_prod(IList<Tensor> tensors)
@@ -136,7 +136,7 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.cartesian_prod
         /// <summary>
-        /// Do cartesian product of the given sequence of tensors. 
+        /// Do cartesian product of the given sequence of tensors.
         /// </summary>
         /// <param name="tensors"></param>
         public static Tensor cartesian_prod(params Tensor[] tensors) => cartesian_prod((IList<Tensor>)tensors);
@@ -265,14 +265,14 @@ namespace TorchSharp
         /// <summary>
         /// Creates a tensor whose diagonals of certain 2D planes (specified by dim1 and dim2) are filled by input.
         /// To facilitate creating batched diagonal matrices, the 2D planes formed by the last two dimensions of the returned tensor are chosen by default.
-        /// 
+        ///
         /// The argument offset controls which diagonal to consider:
         ///   If offset is equal to 0, it is the main diagonal.
         ///   If offset is greater than 0, it is above the main diagonal.
         ///   If offset is less than 0, it is below the main diagonal.
-        ///   
+        ///
         /// The size of the new matrix will be calculated to make the specified diagonal of the size of the last input dimension.Note that for offset other than 0,
-        /// 
+        ///
         /// the order of dim1 and dim2 matters.Exchanging them is equivalent to changing the sign of offset.
         /// </summary>
         /// <param name="input">The input tensor.</param>
@@ -640,8 +640,38 @@ namespace TorchSharp
             => throw new NotImplementedException();
 
         // https://pytorch.org/docs/stable/generated/torch.tensordot
-        [Obsolete("not implemented", true)]
-        public static Tensor tensordot(Tensor a, Tensor b, long dims = 2) => throw new NotImplementedException();
+        /// <summary>
+        /// Returns a contraction of <paramref name="a"/> and <paramref name="b"/> over multiple dimensions.
+        /// tensordot implements a generalized matrix product.
+        /// </summary>
+        /// <param name="a">Left tensor to contract</param>
+        /// <param name="b">Right tensor to contract</param>
+        /// <param name="dims">number of dimensions to contract for <paramref name="a"/> and <paramref name="b"/></param>
+        /// <returns>contraction</returns>
+        public static Tensor tensordot(Tensor a, Tensor b, long dims = 2) => a.tensordot(b, dims);
+
+        // https://pytorch.org/docs/stable/generated/torch.tensordot
+        /// <summary>
+        /// Returns a contraction of <paramref name="a"/> and <paramref name="b"/> over multiple dimensions.
+        /// tensordot implements a generalized matrix product.
+        /// </summary>
+        /// <param name="a">Left tensor to contract</param>
+        /// <param name="b">Right tensor to contract</param>
+        /// <param name="dims1">dimensions to contract for <paramref name="a"/></param>
+        /// <param name="dims2">dimensions to contract for <paramref name="b"/></param>
+        /// <returns>contraction</returns>
+        public static Tensor tensordot(Tensor a, Tensor b, long[] dims1, long[] dims2) => a.tensordot(b, dims1, dims2);
+
+        // https://pytorch.org/docs/stable/generated/torch.tensordot
+        /// <summary>
+        /// Returns a contraction of <paramref name="a"/> and <paramref name="b"/> over multiple dimensions.
+        /// tensordot implements a generalized matrix product.
+        /// </summary>
+        /// <param name="a">Left tensor to contract</param>
+        /// <param name="b">Right tensor to contract</param>
+        /// <param name="dims">dimensions to contract for <paramref name="a"/> and <paramref name="b"/> respectively</param>
+        /// <returns>contraction</returns>
+        public static Tensor tensordot(Tensor a, Tensor b, (long, long)[] dims) => a.tensordot(b, dims);
 
         // https://pytorch.org/docs/stable/generated/torch.trace
         /// <summary>
@@ -688,7 +718,7 @@ namespace TorchSharp
         {
             if (!torch.is_integral(dtype))
                 throw new ArgumentException("dtype must be integral.");
-            
+
             if (device == null) {
                 device = torch.CPU;
             }
