@@ -91,6 +91,11 @@ namespace TorchSharp
                     /// </summary>
                     protected virtual IEnumerable<double> get_lr() => _optimizer.ParamGroups.Select(pg => pg.LearningRate);
 
+                    /// <summary>
+                    /// Return last computed learning rate by current scheduler.
+                    /// </summary>
+                    public IEnumerable<double> get_last_lr() => _last_lrs;
+
                     internal Optimizer _optimizer;
                     internal int _last_epoch = -1;
                     internal bool _verbose = false;

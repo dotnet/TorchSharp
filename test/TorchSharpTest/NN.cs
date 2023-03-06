@@ -4848,6 +4848,13 @@ namespace TorchSharp
                     Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
                     Assert.Equal(0.0, output[0, 0, 0, 0].ToDouble());
                 }
+
+                using (var pad = ZeroPad2d((3, 3, 3, 3))) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                    Assert.Equal(0.0, output[0, 0, 0, 0].ToDouble());
+                }
             }
         }
 
@@ -4858,6 +4865,19 @@ namespace TorchSharp
                 var data = torch.rand(new long[] { 32, 3, 4 }, device: device);
 
                 using (var pad = ReflectionPad1d(3)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[6], values[0]);
+                    Assert.Equal(values[5], values[1]);
+                    Assert.Equal(values[4], values[2]);
+                    Assert.Equal(values[5], values[7]);
+                    Assert.Equal(values[4], values[8]);
+                    Assert.Equal(values[3], values[9]);
+                }
+
+                using (var pad = ReflectionPad1d((3, 3))) {
                     var output = pad.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
@@ -4887,6 +4907,16 @@ namespace TorchSharp
                     Assert.Equal(values[5], values[1]);
                     Assert.Equal(values[4], values[2]);
                 }
+
+                using (var pad = ReflectionPad2d((3,3,3,3))) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[6], values[0]);
+                    Assert.Equal(values[5], values[1]);
+                    Assert.Equal(values[4], values[2]);
+                }
             }
         }
 
@@ -4897,6 +4927,16 @@ namespace TorchSharp
                 var data = torch.rand(new long[] { 32, 3, 4, 4, 4 }, device: device);
 
                 using (var pad = ReflectionPad3d(3)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[6], values[0]);
+                    Assert.Equal(values[5], values[1]);
+                    Assert.Equal(values[4], values[2]);
+                }
+
+                using (var pad = ReflectionPad3d((3, 3, 3, 3, 3, 3))) {
                     var output = pad.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
@@ -4926,6 +4966,18 @@ namespace TorchSharp
                     Assert.Equal(values[6], values[8]);
                     Assert.Equal(values[6], values[9]);
                 }
+                using (var pad = ReplicationPad1d((3, 3))) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[3], values[0]);
+                    Assert.Equal(values[3], values[1]);
+                    Assert.Equal(values[3], values[3]);
+                    Assert.Equal(values[6], values[7]);
+                    Assert.Equal(values[6], values[8]);
+                    Assert.Equal(values[6], values[9]);
+                }
             }
         }
 
@@ -4939,6 +4991,15 @@ namespace TorchSharp
                     var output = pad.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[3], values[0]);
+                    Assert.Equal(values[3], values[1]);
+                    Assert.Equal(values[3], values[3]);
+                }
+                using (var pad = ReplicationPad2d((3, 2, 3, 2))) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 9, 9 }, output.shape);
                     var values = output.data<float>().ToArray();
                     Assert.Equal(values[3], values[0]);
                     Assert.Equal(values[3], values[1]);
@@ -4962,6 +5023,15 @@ namespace TorchSharp
                     Assert.Equal(values[3], values[1]);
                     Assert.Equal(values[3], values[3]);
                 }
+                using (var pad = ReplicationPad3d((3, 3, 3, 3, 3, 3))) {
+                    var output = pad.call(data);
+                    Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
+                    Assert.Equal(device.type, output.device_type);
+                    var values = output.data<float>().ToArray();
+                    Assert.Equal(values[3], values[0]);
+                    Assert.Equal(values[3], values[1]);
+                    Assert.Equal(values[3], values[3]);
+                }
             }
         }
 
@@ -4972,6 +5042,13 @@ namespace TorchSharp
                 var data = torch.rand(new long[] { 32, 3, 4 }, torch.float64, device: device);
 
                 using (var pad = ConstantPad1d(3, Math.PI)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
+                    Assert.Equal(Math.PI, output[0, 0, 0].ToDouble());
+                }
+
+                using (var pad = ConstantPad1d((3, 3), Math.PI)) {
                     var output = pad.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32, 3, 10 }, output.shape);
@@ -4992,6 +5069,13 @@ namespace TorchSharp
                     Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
                     Assert.Equal(Math.PI, output[0, 0, 0, 0].ToDouble());
                 }
+
+                using (var pad = ConstantPad2d((3, 3, 3, 3), Math.PI)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);
+                    Assert.Equal(Math.PI, output[0, 0, 0, 0].ToDouble());
+                }
             }
         }
 
@@ -5002,6 +5086,13 @@ namespace TorchSharp
                 var data = torch.rand(new long[] { 32, 3, 4, 4, 4 }, torch.float64, device: device);
 
                 using (var pad = ConstantPad3d(3, Math.PI)) {
+                    var output = pad.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);
+                    Assert.Equal(Math.PI, output[0, 0, 0, 0, 0].ToDouble());
+                }
+
+                using (var pad = ConstantPad3d((3, 3, 3, 3, 3, 3), Math.PI)) {
                     var output = pad.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32, 3, 10, 10, 10 }, output.shape);

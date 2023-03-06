@@ -2,15 +2,20 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.99.3
+## NuGet Version 0.99.4
 
 __API Changes__:
 
 Adding `Module.call()` to all the Module<T...> classes. This wraps `Module.forward()` and allows hooks to be registered. `Module.forward()` is still available, but the most general way to invoke a module's logic is through `call()`.<br/>
+Adding torch.tensordot<br/>
+Adding tuple overloads for all the padding-related modules.<br/>
 
 __Fixed Bugs__:
 
-#842 How to use register_forward_hook?
+#842 How to use register_forward_hook?<br/>
+#940 Missing torch.searchsorted<br/>
+#942 nn.ReplicationPad1d(long[] padding) miss<br/>
+#943 LRScheduler.get_last_lr miss<br/>
 
 
 ## NuGet Version 0.99.3
