@@ -984,6 +984,8 @@ EXPORT_API(Tensor) THSTensor_norm(const Tensor tensor, float p);
 
 EXPORT_API(Tensor) THSTensor_norm_along_dimension(const Tensor tensor, const int64_t dim, const bool keepdim, float p);
 
+EXPORT_API(Tensor) THSLinalg_tensordot(const Tensor input1, const Tensor input2, const int64_t* dims1, const int dims1_length, const int64_t* dims2, const int dims2_length);
+
 EXPORT_API(int64_t) THSTensor_numel(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_ones(const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);

@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Linq;
 using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
@@ -8,6 +9,56 @@ namespace TorchSharp
     {
         public partial class Tensor
         {
+            // https://pytorch.org/docs/stable/generated/torch.tensordot
+            /// <summary>
+            /// Returns a contraction of a and b over multiple dimensions.
+            /// tensordot implements a generalized matrix product.
+            /// </summary>
+            public Tensor tensordot(Tensor b, long[] dims1, long[] dims2)
+            {
+                IntPtr res;
+                unsafe {
+                    fixed (long* pdims1 = dims1, pdims2 = dims2) {
+                        res = THSLinalg_tensordot(Handle, b.Handle,(IntPtr)pdims1, dims1.Length,(IntPtr)pdims2, dims2.Length);
+                    }
+                }
+                if (res == IntPtr.Zero) {
+                    CheckForErrors();
+                }
+                return new Tensor(res);
+            }
+
+            // https://pytorch.org/docs/stable/generated/torch.tensordot
+            /// <summary>
+            /// Returns a contraction of this tensor and <paramref name="b"/> over multiple dimensions.
+            /// tensordot implements a generalized matrix product.
+            /// </summary>
+            /// <param name="b">Right tensor to contract</param>
+            /// <param name="dims">dimensions to contract for this tensor and <paramref name="b"/> respectively</param>
+            /// <returns>contraction</returns>
+            public Tensor tensordot(Tensor b, (long, long)[] dims)
+                => tensordot(b, dims.Select(t => t.Item1).ToArray(), dims.Select(t => t.Item2).ToArray());
+
+            // https://pytorch.org/docs/stable/generated/torch.tensordot
+            /// <summary>
+            /// Returns a contraction of this tensor and <paramref name="b"/> over multiple dimensions.
+            /// tensordot implements a generalized matrix product.
+            /// </summary>
+            /// <param name="b">Right tensor to contract</param>
+            /// <param name="dims">number of dimensions to contract for this tensor and <paramref name="b"/></param>
+            /// <returns>contraction</returns>
+            public Tensor tensordot(Tensor b, long dims = 2)
+            {
+                if (dims < 0) throw new ArgumentOutOfRangeException(nameof(dims), dims, "must be >= 0");
+
+                var list = new long[dims];
+                for (long i = 0; i <= dims; i++) {
+                    list[i] = i;
+                }
+
+                return tensordot(b, list, list);
+            }
+
             /// <summary>
             /// Computes the Cholesky decomposition of a symmetric positive-definite matrix AA or for batches of symmetric positive-definite matrices.
             /// </summary>
