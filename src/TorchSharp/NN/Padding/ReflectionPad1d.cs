@@ -35,13 +35,25 @@ namespace TorchSharp
         public static partial class nn
         {
             /// <summary>
-            /// Pads the input tensor boundaries with zero.
+            /// Pads the input tensor using the reflection of the input boundary.
             /// </summary>
             /// <param name="padding">The size of the padding.</param>
             /// <returns></returns>
             public static ReflectionPad1d ReflectionPad1d(long padding)
             {
                 var handle = THSNN_ReflectionPad1d_ctor(padding, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ReflectionPad1d(handle, boxedHandle);
+            }
+
+            /// <summary>
+            /// Pads the input tensor using the reflection of the input boundary.
+            /// </summary>
+            /// <param name="padding">The size of the padding: (padding_right, padding_left).</param>
+            /// <returns></returns>
+            public static ReflectionPad1d ReflectionPad1d((long, long) padding)
+            {
+                var handle = THSNN_ReflectionPad1d_ctor_tuple(padding.Item1, padding.Item2, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ReflectionPad1d(handle, boxedHandle);
             }
