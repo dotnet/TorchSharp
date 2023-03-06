@@ -14,7 +14,7 @@ namespace TorchSharp
                 this.lambda = lambda;
             }
 
-            public Tensor forward(Tensor img)
+            public Tensor call(Tensor img)
             {
                 return lambda(img);
             }

@@ -59,7 +59,7 @@ namespace TorchSharp
                 public static Tensor softplus(Tensor x, double beta = 1.0, double threshold = 20.0)
                 {
                     using (var m = nn.Softplus(beta, threshold)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

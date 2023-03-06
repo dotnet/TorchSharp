@@ -13,7 +13,7 @@ namespace TorchSharp
             {
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return transforms.functional.invert(input);
             }

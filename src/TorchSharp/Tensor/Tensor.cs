@@ -316,13 +316,11 @@ namespace TorchSharp
             /// </summary>
             public Utils.TensorAccessor<T> data<T>() where T : unmanaged
             {
-                if (device_type != DeviceType.CPU) {
-                    throw new InvalidOperationException("Reading data from non-CPU memory is not supported. Move or copy the tensor to the cpu before reading.");
-                }
-
                 ValidateType(typeof(T));
 
-                return new Utils.TensorAccessor<T>(this);
+                return device_type != DeviceType.CPU
+                    ? new Utils.TensorAccessor<T>(cpu())
+                    : new Utils.TensorAccessor<T>(this);
             }
 
             /// <summary>
@@ -6155,7 +6153,7 @@ namespace TorchSharp
             }
 
             // Specifically added to make F# look good.
-            public static Tensor op_MinusMinusGreater(Tensor t, torch.nn.Module<Tensor, Tensor> m) => m.forward(t);
+            public static Tensor op_MinusMinusGreater(Tensor t, torch.nn.Module<Tensor, Tensor> m) => m.call(t);
 
             public override string ToString() => ToMetadataString();
 

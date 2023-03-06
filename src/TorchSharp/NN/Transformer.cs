@@ -25,7 +25,7 @@ namespace TorchSharp
             /// <param name="tgt_key_padding_mask">The ByteTensor mask for tgt keys per batch (optional).</param>
             /// <param name="memory_key_padding_mask">The ByteTensor mask for memory keys per batch (optional).</param>
             /// <returns></returns>
-            public Tensor forward(Tensor src, Tensor tgt, Tensor src_mask, Tensor tgt_mask = null, Tensor memory_mask = null, Tensor src_key_padding_mask = null, Tensor tgt_key_padding_mask = null, Tensor memory_key_padding_mask = null)
+            public Tensor call(Tensor src, Tensor tgt, Tensor src_mask, Tensor tgt_mask = null, Tensor memory_mask = null, Tensor src_key_padding_mask = null, Tensor tgt_key_padding_mask = null, Tensor memory_key_padding_mask = null)
             {
                 var res = THSNN_Transformer_forward(handle,
                     src.Handle,

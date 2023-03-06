@@ -24,11 +24,11 @@ namespace TorchSharp
                 }
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 var rng = new Random();
                 foreach (var t in transforms.OrderBy(t => rng.NextDouble())) {
-                    input = t.forward(input);
+                    input = t.call(input);
                 }
                 return input;
             }

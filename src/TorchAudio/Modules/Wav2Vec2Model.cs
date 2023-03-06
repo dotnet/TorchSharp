@@ -20,7 +20,7 @@ namespace TorchSharp.Modules
     /// Note:
     /// To build the model, please use one of the factory functions.
     /// </summary>
-    public partial class Wav2Vec2Model : nn.Module
+    public partial class Wav2Vec2Model : nn.Module<Tensor, Tensor?, (Tensor, Tensor?)>
     {
         internal readonly FeatureExtractor feature_extractor;
         internal readonly Encoder encoder;
@@ -78,7 +78,7 @@ namespace TorchSharp.Modules
             int? num_layers = null)
         {
             Tensor x;
-            (x, lengths) = this.feature_extractor.forward(waveforms, lengths);
+            (x, lengths) = this.feature_extractor.call(waveforms, lengths);
             var xs = this.encoder.extract_features(x, lengths, num_layers);
             return (xs, lengths);
         }
@@ -102,17 +102,19 @@ namespace TorchSharp.Modules
         /// is returned.
         /// It indicates the valid length in time axis of the output Tensor.
         /// </returns>
-        public (Tensor, Tensor?) forward(
+        public override (Tensor, Tensor?) forward(
             Tensor waveforms,
             Tensor? lengths = null)
         {
             Tensor x;
-            (x, lengths) = this.feature_extractor.forward(waveforms, lengths);
-            x = this.encoder.forward(x, lengths);
+            (x, lengths) = this.feature_extractor.call(waveforms, lengths);
+            x = this.encoder.call(x, lengths);
             if (this.aux != null) {
-                x = this.aux.forward(x);
+                x = this.aux.call(x);
             }
             return (x, lengths);
         }
+
+        public new (Tensor, Tensor?) call(Tensor waveforms, Tensor? lengths = null) => base.call(waveforms, lengths);
     }
 }

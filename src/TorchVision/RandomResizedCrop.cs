@@ -18,7 +18,7 @@ namespace TorchSharp
                 this.ratioMin = ratioMin;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 var hoffset = input.Dimensions - 2;
                 var iHeight = input.shape[hoffset];
@@ -41,7 +41,7 @@ namespace TorchSharp
                 var top = (int)Math.Floor((iHeight - h) * random.NextDouble());
                 var left = (int)Math.Floor((iWidth - w) * random.NextDouble());
 
-                return new ResizedCrop(top, left, (int)Math.Floor(h), (int)Math.Floor(w), height, width).forward(input);
+                return new ResizedCrop(top, left, (int)Math.Floor(h), (int)Math.Floor(w), height, width).call(input);
             }
 
             private int height, width;

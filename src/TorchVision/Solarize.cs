@@ -14,7 +14,7 @@ namespace TorchSharp
                 this.threshold = threshold;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return transforms.functional.solarize(input, threshold);
             }

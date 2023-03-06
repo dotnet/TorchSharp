@@ -29,13 +29,13 @@ namespace TorchSharp.Examples
             // First, use the transform version.
 
             var transform = torchvision.transforms.Compose(
-                torchvision.transforms.ConvertImageDType(ScalarType.Float32),
+                torchvision.transforms.ConvertImageDtype(ScalarType.Float32),
                 //torchvision.transforms.ColorJitter(.5f, .5f, .5f, .25f),
-                torchvision.transforms.ConvertImageDType(ScalarType.Byte),
+                torchvision.transforms.ConvertImageDtype(ScalarType.Byte),
                 torchvision.transforms.Resize(256, 256)
                 );
 
-            var second = transform.forward(first);
+            var second = transform.call(first);
 
             for (; n < second.shape[0]; n++) {
 

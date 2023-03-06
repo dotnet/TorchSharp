@@ -21,7 +21,7 @@ namespace TorchSharp.Examples
                 torchvision.transforms.HorizontalFlip(),
                 //torchvision.transforms.CenterCrop(256),
                 torchvision.transforms.Rotate(50)
-                ).forward(img);
+                ).call(img);
 
             var out_file = "image_transformed.jpg";
 

@@ -422,9 +422,9 @@ namespace TorchSharp
             public override Tensor forward(Tensor input)
             {
                 using (var _ = NewDisposeScope()) {
-                    input = features.forward(input);
-                    input = avgpool.forward(input).flatten(1);
-                    return classifier.forward(input).MoveToOuterDisposeScope();
+                    input = features.call(input);
+                    input = avgpool.call(input).flatten(1);
+                    return classifier.call(input).MoveToOuterDisposeScope();
                 }
             }
         }

@@ -60,7 +60,7 @@ namespace TorchSharp
                 public static Tensor pixel_unshuffle(Tensor x, long downscaleFactor)
                 {
                     using (var d = nn.PixelUnshuffle(downscaleFactor)) {
-                        return d.forward(x);
+                        return d.call(x);
                     }
                 }
             }

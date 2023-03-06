@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class RNN : torch.nn.Module
+        public sealed class RNN : torch.nn.Module<Tensor, Tensor?, (Tensor, Tensor)>
         {
             internal RNN(IntPtr handle, IntPtr boxedHandle, long hiddenSize, long numLayers, bool batchFirst, bool bidirectional) : base(handle, boxedHandle)
             {
@@ -32,7 +32,7 @@ namespace TorchSharp
             /// <param name="h0">Tensor of shape (num_layers * num_directions, batch, hidden_size)containing the initial hidden state for each element in the batch.
             /// Defaults to 0 if not provided. If the RNN is bidirectional, num_directions should be 2, else it should be 1.</param>
             /// <returns></returns>
-            public (Tensor, Tensor) forward(Tensor input, Tensor? h0 = null)
+            public override (Tensor, Tensor) forward(Tensor input, Tensor? h0)
             {
                 if (h0 is null) {
                     var N = _batch_first ? input.shape[0] : input.shape[1];
@@ -46,6 +46,8 @@ namespace TorchSharp
                 return (new Tensor(res), new Tensor(hN));
             }
 
+            public new (Tensor, Tensor) call(Tensor input, Tensor? h0 = null) => base.call(input, h0);
+
             /// <summary>
             /// Applies a multi-layer Elman RNN with \tanhtanh or \text{ReLU}ReLU non-linearity to an input sequence.
             /// </summary>
@@ -53,7 +55,7 @@ namespace TorchSharp
             /// <param name="h0">Tensor of shape (num_layers * num_directions, batch, hidden_size)containing the initial hidden state for each element in the batch.
             /// Defaults to 0 if not provided. If the RNN is bidirectional, num_directions should be 2, else it should be 1.</param>
             /// <returns></returns>
-            public (torch.nn.utils.rnn.PackedSequence, Tensor) forward(torch.nn.utils.rnn.PackedSequence input, Tensor? h0 = null)
+            public (torch.nn.utils.rnn.PackedSequence, Tensor) call(torch.nn.utils.rnn.PackedSequence input, Tensor? h0 = null)
             {
                 if (h0 is null) {
                     var data = input.data;

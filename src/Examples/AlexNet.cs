@@ -52,11 +52,11 @@ namespace TorchSharp.Examples
 
         public override Tensor forward(Tensor input)
         {
-            var f = features.forward(input);
-            var avg = avgPool.forward(f);
+            var f = features.call(input);
+            var avg = avgPool.call(f);
 
             using (var x = avg.reshape(new long[] { avg.shape[0], 256 * 2 * 2 }))
-                return classifier.forward(x);
+                return classifier.call(x);
         }
 
         protected override void Dispose(bool disposing)

@@ -52,7 +52,7 @@ namespace TorchSharp.Modules
     /// Tacotron2 model based on the implementation from
     /// Nvidia https://github.com/NVIDIA/DeepLearningExamples/.
     /// </summary>
-    public class Tacotron2 : nn.Module
+    public class Tacotron2 : nn.Module<Tensor,Tensor,Tensor,Tensor, (Tensor, Tensor, Tensor, Tensor)>
     {
         public readonly bool mask_padding;
         public readonly int n_mels;
@@ -114,21 +114,21 @@ namespace TorchSharp.Modules
             RegisterComponents();
         }
 
-        public (Tensor, Tensor, Tensor, Tensor) forward(
+        public override (Tensor, Tensor, Tensor, Tensor) forward(
             Tensor tokens,
             Tensor token_lengths,
             Tensor mel_specgram,
             Tensor mel_specgram_lengths)
         {
-            var embedded_inputs = this.embedding.forward(tokens).transpose(1, 2);
+            var embedded_inputs = this.embedding.call(tokens).transpose(1, 2);
 
-            var encoder_outputs = this.encoder.forward(embedded_inputs, token_lengths);
-            var (x, gate_outputs, alignments) = this.decoder.forward(
+            var encoder_outputs = this.encoder.call(embedded_inputs, token_lengths);
+            var (x, gate_outputs, alignments) = this.decoder.call(
                 encoder_outputs, mel_specgram, memory_lengths: token_lengths
             );
             mel_specgram = x;
 
-            var mel_specgram_postnet = this.postnet.forward(mel_specgram);
+            var mel_specgram_postnet = this.postnet.call(mel_specgram);
             mel_specgram_postnet = mel_specgram + mel_specgram_postnet;
 
             if (this.mask_padding) {
@@ -157,11 +157,11 @@ namespace TorchSharp.Modules
                 throw new ArgumentNullException();
             }
 
-            var embedded_inputs = this.embedding.forward(tokens).transpose(1, 2);
-            var encoder_outputs = this.encoder.forward(embedded_inputs, lengths);
+            var embedded_inputs = this.embedding.call(tokens).transpose(1, 2);
+            var encoder_outputs = this.encoder.call(embedded_inputs, lengths);
             var (mel_specgram, mel_specgram_lengths, _, alignments) = this.decoder.infer(encoder_outputs, lengths);
 
-            var mel_outputs_postnet = this.postnet.forward(mel_specgram);
+            var mel_outputs_postnet = this.postnet.call(mel_specgram);
             mel_outputs_postnet = mel_specgram + mel_outputs_postnet;
 
             alignments = alignments.unfold(1, n_batch, n_batch).transpose(0, 2);
@@ -247,15 +247,15 @@ namespace TorchSharp.Modules
             public override Tensor forward(Tensor attention_weights_cat)
             {
                 // (n_batch, attention_n_filter, text_lengths.max())
-                var processed_attention = this.location_conv.forward(attention_weights_cat);
+                var processed_attention = this.location_conv.call(attention_weights_cat);
                 processed_attention = processed_attention.transpose(1, 2);
                 // (n_batch, text_lengths.max(), attention_hidden_dim)
-                processed_attention = this.location_dense.forward(processed_attention);
+                processed_attention = this.location_dense.call(processed_attention);
                 return processed_attention;
             }
         }
 
-        private class Attention : nn.Module
+        private class Attention : nn.Module<Tensor,Tensor,Tensor,Tensor,Tensor, (Tensor, Tensor)>
         {
             private readonly LocationLayer location_layer;
             public readonly Modules.Linear memory_layer;
@@ -286,15 +286,15 @@ namespace TorchSharp.Modules
 
             private Tensor _get_alignment_energies(Tensor query, Tensor processed_memory, Tensor attention_weights_cat)
             {
-                var processed_query = this.query_layer.forward(query.unsqueeze(1));
-                var processed_attention_weights = this.location_layer.forward(attention_weights_cat);
-                var energies = this.v.forward(torch.tanh(processed_query + processed_attention_weights + processed_memory));
+                var processed_query = this.query_layer.call(query.unsqueeze(1));
+                var processed_attention_weights = this.location_layer.call(attention_weights_cat);
+                var energies = this.v.call(torch.tanh(processed_query + processed_attention_weights + processed_memory));
 
                 var alignment = energies.squeeze(2);
                 return alignment;
             }
 
-            public (Tensor, Tensor) forward(
+            public override (Tensor, Tensor) forward(
                 Tensor attention_hidden_state,
                 Tensor memory,
                 Tensor processed_memory,
@@ -334,7 +334,7 @@ namespace TorchSharp.Modules
             public override Tensor forward(Tensor x)
             {
                 foreach (var linear in this.layers) {
-                    x = F.dropout(F.relu(linear.forward(x)), p: 0.5, training: true);
+                    x = F.dropout(F.relu(linear.call(x)), p: 0.5, training: true);
                 }
                 return x;
             }
@@ -381,9 +381,9 @@ namespace TorchSharp.Modules
                 for (int i = 0; i < this.convolutions.Count; i++) {
                     var conv = this.convolutions[i];
                     if (i < this.n_convs - 1) {
-                        x = F.dropout(torch.tanh(conv.forward(x)), 0.5, training: this.training);
+                        x = F.dropout(torch.tanh(conv.call(x)), 0.5, training: this.training);
                     } else {
-                        x = F.dropout(conv.forward(x), 0.5, training: this.training);
+                        x = F.dropout(conv.call(x), 0.5, training: this.training);
                     }
                 }
                 return x;
@@ -432,7 +432,7 @@ namespace TorchSharp.Modules
             public override Tensor forward(Tensor x, Tensor input_lengths)
             {
                 foreach (var conv in this.convolutions) {
-                    x = F.dropout(F.relu(conv.forward(x)), 0.5, training: this.training);
+                    x = F.dropout(F.relu(conv.call(x)), 0.5, training: this.training);
                 }
 
                 x = x.transpose(1, 2);
@@ -440,14 +440,14 @@ namespace TorchSharp.Modules
                 input_lengths = input_lengths.cpu();
                 var packed_x = nn.utils.rnn.pack_padded_sequence(x, input_lengths, batch_first: true);
 
-                var (packed_outputs, _, _) = this.lstm.forward(packed_x);
+                var (packed_outputs, _, _) = this.lstm.call(packed_x);
                 var (outputs, _) = nn.utils.rnn.pad_packed_sequence(packed_outputs, batch_first: true);
 
                 return outputs;
             }
         }
 
-        private class Decoder : nn.Module
+        private class Decoder : nn.Module<Tensor, Tensor, Tensor, (Tensor, Tensor, Tensor)>
         {
             public readonly double attention_dropout;
             private readonly Attention attention_layer;
@@ -546,7 +546,7 @@ namespace TorchSharp.Modules
                 var attention_weights_cum = torch.zeros(n_batch, max_time, dtype: dtype, device: device);
                 var attention_context = torch.zeros(n_batch, this.encoder_embedding_dim, dtype: dtype, device: device);
 
-                var processed_memory = this.attention_layer.memory_layer.forward(memory);
+                var processed_memory = this.attention_layer.memory_layer.call(memory);
 
                 return (
                     attention_hidden,
@@ -605,23 +605,23 @@ namespace TorchSharp.Modules
             {
                 var cell_input = torch.cat(new[] { decoder_input, attention_context }, -1);
 
-                (attention_hidden, attention_cell) = this.attention_rnn.forward(cell_input, (attention_hidden, attention_cell));
+                (attention_hidden, attention_cell) = this.attention_rnn.call(cell_input, (attention_hidden, attention_cell));
                 attention_hidden = F.dropout(attention_hidden, this.attention_dropout, training: this.training);
 
                 var attention_weights_cat = torch.cat(new[] { attention_weights.unsqueeze(1), attention_weights_cum.unsqueeze(1) }, dim: 1);
-                (attention_context, attention_weights) = this.attention_layer.forward(
+                (attention_context, attention_weights) = this.attention_layer.call(
                     attention_hidden, memory, processed_memory, attention_weights_cat, mask);
 
                 attention_weights_cum += attention_weights;
                 decoder_input = torch.cat(new[] { attention_hidden, attention_context }, -1);
 
-                (decoder_hidden, decoder_cell) = this.decoder_rnn.forward(decoder_input, (decoder_hidden, decoder_cell));
+                (decoder_hidden, decoder_cell) = this.decoder_rnn.call(decoder_input, (decoder_hidden, decoder_cell));
                 decoder_hidden = F.dropout(decoder_hidden, this.decoder_dropout, training: this.training);
 
                 var decoder_hidden_attention_context = torch.cat(new[] { decoder_hidden, attention_context }, dim: 1);
-                var decoder_output = this.linear_projection.forward(decoder_hidden_attention_context);
+                var decoder_output = this.linear_projection.call(decoder_hidden_attention_context);
 
-                var gate_prediction = this.gate_layer.forward(decoder_hidden_attention_context);
+                var gate_prediction = this.gate_layer.call(decoder_hidden_attention_context);
 
                 return (
                     decoder_output,
@@ -636,12 +636,12 @@ namespace TorchSharp.Modules
             }
 
             // Decoder forward pass for training.
-            public (Tensor, Tensor, Tensor) forward(Tensor memory, Tensor mel_specgram_truth, Tensor memory_lengths)
+            public override (Tensor, Tensor, Tensor) forward(Tensor memory, Tensor mel_specgram_truth, Tensor memory_lengths)
             {
                 var decoder_input = this._get_initial_frame(memory).unsqueeze(0);
                 var decoder_inputs = this._parse_decoder_inputs(mel_specgram_truth);
                 decoder_inputs = torch.cat(new[] { decoder_input, decoder_inputs }, dim: 0);
-                decoder_inputs = this.prenet.forward(decoder_inputs);
+                decoder_inputs = this.prenet.call(decoder_inputs);
 
                 var mask = _get_mask_from_lengths(memory_lengths);
                 var (
@@ -695,6 +695,8 @@ namespace TorchSharp.Modules
                 return (mel_specgram, gate_outputs, alignments);
             }
 
+            public new (Tensor, Tensor, Tensor) call(Tensor memory, Tensor mel_specgram_truth, Tensor memory_lengths) => base.call(memory, mel_specgram_truth, memory_lengths);
+
             private Tensor _get_go_frame(Tensor memory)
             {
                 var n_batch = memory.size(0);
@@ -733,7 +735,7 @@ namespace TorchSharp.Modules
                 var gate_output_list = new List<Tensor>();
                 var alignment_list = new List<Tensor>();
                 for (long i = 0; i < this.decoder_max_step; i++) {
-                    decoder_input = this.prenet.forward(decoder_input);
+                    decoder_input = this.prenet.call(decoder_input);
                     Tensor mel_specgram, gate_output;
                     (
                         mel_specgram,

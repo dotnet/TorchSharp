@@ -111,7 +111,7 @@ namespace TorchSharp.Modules
             // specgram: (n_batch, n_freq, (n_time - kernel_size + 1) * total_scale)
             // aux: (n_batch, n_output, (n_time - kernel_size + 1) * total_scale)
             Tensor aux;
-            (specgram, aux) = this.upsample.forward(specgram);
+            (specgram, aux) = this.upsample.call(specgram);
             specgram = specgram.transpose(1, 2);
             aux = aux.transpose(1, 2);
 
@@ -125,24 +125,24 @@ namespace TorchSharp.Modules
             var a4 = aux[TensorIndex.Colon, TensorIndex.Colon, TensorIndex.Slice(aux_idx[3], aux_idx[4])];
 
             var x = torch.cat(new Tensor[] { waveform.unsqueeze(-1), specgram, a1 }, dim: -1);
-            x = this.fc.forward(x);
+            x = this.fc.call(x);
             var res = x;
-            (x, _) = this.rnn1.forward(x, h1);
+            (x, _) = this.rnn1.call(x, h1);
 
             x = x + res;
             res = x;
             x = torch.cat(new Tensor[] { x, a2 }, dim: -1);
-            (x, _) = this.rnn2.forward(x, h2);
+            (x, _) = this.rnn2.call(x, h2);
 
             x = x + res;
             x = torch.cat(new Tensor[] { x, a3 }, dim: -1);
-            x = this.fc1.forward(x);
-            x = this.relu1.forward(x);
+            x = this.fc1.call(x);
+            x = this.relu1.call(x);
 
             x = torch.cat(new Tensor[] { x, a4 }, dim: -1);
-            x = this.fc2.forward(x);
-            x = this.relu2.forward(x);
-            x = this.fc3.forward(x);
+            x = this.fc2.call(x);
+            x = this.relu2.call(x);
+            x = this.fc3.call(x);
 
             // bring back channel dimension
             return x.unsqueeze(1);
@@ -161,7 +161,7 @@ namespace TorchSharp.Modules
 
             specgram = torch.nn.functional.pad(specgram, (this._pad, this._pad));
             Tensor aux;
-            (specgram, aux) = this.upsample.forward(specgram);
+            (specgram, aux) = this.upsample.call(specgram);
             if (lengths is not null) {
                 lengths = lengths * this.upsample.total_scale;
             }
@@ -189,21 +189,21 @@ namespace TorchSharp.Modules
                 var a4_t = aux_split[3][TensorIndex.Colon, TensorIndex.Colon, i];
 
                 x = torch.cat(new Tensor[] { x, m_t, a1_t }, dim: 1);
-                x = this.fc.forward(x);
-                (_, h1) = this.rnn1.forward(x.unsqueeze(1), h1);
+                x = this.fc.call(x);
+                (_, h1) = this.rnn1.call(x.unsqueeze(1), h1);
 
                 x = x + h1[0];
                 var inp = torch.cat(new Tensor[] { x, a2_t }, dim: 1);
-                (_, h2) = this.rnn2.forward(inp.unsqueeze(1), h2);
+                (_, h2) = this.rnn2.call(inp.unsqueeze(1), h2);
 
                 x = x + h2[0];
                 x = torch.cat(new Tensor[] { x, a3_t }, dim: 1);
-                x = F.relu(this.fc1.forward(x));
+                x = F.relu(this.fc1.call(x));
 
                 x = torch.cat(new Tensor[] { x, a4_t }, dim: 1);
-                x = F.relu(this.fc2.forward(x));
+                x = F.relu(this.fc2.call(x));
 
-                var logits = this.fc3.forward(x);
+                var logits = this.fc3.call(x);
 
                 var posterior = F.softmax(logits, dim: 1);
 
@@ -234,7 +234,7 @@ namespace TorchSharp.Modules
 
             public override Tensor forward(Tensor specgram)
             {
-                return this.resblock_model.forward(specgram) + specgram;
+                return this.resblock_model.call(specgram) + specgram;
             }
         }
 
@@ -264,7 +264,7 @@ namespace TorchSharp.Modules
 
             public override Tensor forward(Tensor specgram)
             {
-                return this.melresnet_model.forward(specgram);
+                return this.melresnet_model.call(specgram);
             }
         }
 
@@ -286,7 +286,7 @@ namespace TorchSharp.Modules
             }
         }
 
-        internal class UpsampleNetwork : nn.Module
+        internal class UpsampleNetwork : nn.Module<Tensor, (Tensor,Tensor)>
         {
             public readonly long indent;
             public readonly MelResNet resnet;
@@ -325,14 +325,14 @@ namespace TorchSharp.Modules
                 this.RegisterComponents();
             }
 
-            public (Tensor, Tensor) forward(Tensor specgram)
+            public override (Tensor, Tensor) forward(Tensor specgram)
             {
-                var resnet_output = this.resnet.forward(specgram).unsqueeze(1);
-                resnet_output = this.resnet_stretch.forward(resnet_output);
+                var resnet_output = this.resnet.call(specgram).unsqueeze(1);
+                resnet_output = this.resnet_stretch.call(resnet_output);
                 resnet_output = resnet_output.squeeze(1);
 
                 specgram = specgram.unsqueeze(1);
-                var upsampling_output = this.upsample_layers.forward(specgram);
+                var upsampling_output = this.upsample_layers.call(specgram);
                 upsampling_output = upsampling_output.squeeze(1)[TensorIndex.Colon, TensorIndex.Colon, TensorIndex.Slice(this.indent, -this.indent)];
 
                 return (upsampling_output, resnet_output);

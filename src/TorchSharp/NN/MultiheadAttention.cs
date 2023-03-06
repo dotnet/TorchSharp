@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class MultiheadAttention : torch.nn.Module
+        public sealed class MultiheadAttention : torch.nn.Module<Tensor, Tensor, Tensor, Tensor?, bool, Tensor?, Tuple<Tensor,Tensor>>
         {
             internal MultiheadAttention(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
@@ -25,7 +25,7 @@ namespace TorchSharp
             /// <param name="attn_mask">2D or 3D mask that prevents attention to certain positions. A 2D mask will be broadcasted for all the batches while a 3D mask allows to specify a different mask for the entries of each batch</param>
             /// <returns>attn_output, attn_ouput_weights</returns>
 
-            public Tuple<Tensor,Tensor> forward(Tensor query, Tensor key, Tensor value, Tensor? key_padding_mask = null, bool need_weights = true, Tensor? attn_mask = null)
+            public override Tuple<Tensor,Tensor> forward(Tensor query, Tensor key, Tensor value, Tensor? key_padding_mask, bool need_weights, Tensor? attn_mask)
             {
                 THSNN_MultiheadAttention_forward(handle,
                     query.Handle,
@@ -38,6 +38,11 @@ namespace TorchSharp
                     out var res2);
                 if (res1 == IntPtr.Zero || (need_weights && res2 == IntPtr.Zero)) { torch.CheckForErrors(); }
                 return Tuple.Create(new Tensor(res1), new Tensor(res2));
+            }
+
+            public new Tuple<Tensor, Tensor> call(Tensor query, Tensor key, Tensor value, Tensor? key_padding_mask = null, bool need_weights = true, Tensor? attn_mask = null)
+            {
+                return base.call(query, key, value, key_padding_mask, need_weights, attn_mask);
             }
         }
     }

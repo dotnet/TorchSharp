@@ -57,7 +57,7 @@ namespace TorchSharp
                 public static Tensor Softshrink(Tensor x, double lambda = 0.5)
                 {
                     using (var m = nn.Softshrink(lambda)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

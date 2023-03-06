@@ -55,7 +55,7 @@ namespace TorchSharp
                 public static Tensor Mish(Tensor x)
                 {
                     using (var m = nn.Mish()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

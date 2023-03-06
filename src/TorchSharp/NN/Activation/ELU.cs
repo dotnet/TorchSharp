@@ -59,7 +59,7 @@ namespace TorchSharp
                 public static Tensor elu(Tensor x, double alpha, bool inplace = false)
                 {
                     using (var m = nn.ELU(alpha, inplace)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

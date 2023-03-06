@@ -23,10 +23,10 @@ namespace TorchSharp
                 }
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 foreach (var t in transforms) {
-                    input = t.forward(input);
+                    input = t.call(input);
                 }
                 return input;
             }

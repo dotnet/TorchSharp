@@ -50,7 +50,7 @@ let hasCUDA = torch.cuda_is_available() //torch.cuda.is_available()
 let device = if hasCUDA then torch.CUDA else torch.CPU
 
 let loss = torch.nn.CrossEntropyLoss(reduction=Reduction.Mean)
-let criterion x y = loss.forward(x,y)
+let criterion x y = loss.call(x,y)
 
 type PositionalEncoding(dmodel, maxLen) as this =
     inherit Module<torch.Tensor,torch.Tensor>("PositionalEncoding")
@@ -76,7 +76,7 @@ type PositionalEncoding(dmodel, maxLen) as this =
     override _.forward(t) =
         let NULL = System.Nullable<int64>()
         use x = t + pe.[torch.TensorIndex.Slice(NULL, t.shape.[0]), torch.TensorIndex.Slice()]
-        dropout.forward(x)
+        dropout.call(x)
 
 type TransformerModel(ntokens, device:torch.Device) as this =
     inherit Module<torch.Tensor,torch.Tensor,torch.Tensor>("Transformer")
@@ -102,9 +102,9 @@ type TransformerModel(ntokens, device:torch.Device) as this =
             this.``to``(device) |> ignore
 
     override _.forward(t, mask) =
-        let src = pos_encoder.forward(encoder.forward(t) * sqrEmSz)
-        let enc = transformer_encoder.forward(src, mask)
-        decoder.forward(enc)
+        let src = pos_encoder.call(encoder.call(t) * sqrEmSz)
+        let enc = transformer_encoder.call(src, mask)
+        decoder.call(enc)
 
     member _.GenerateSquareSubsequentMask(size:int64) =
         use mask = torch.ones([|size;size|]).eq(torch.tensor(1.0f)).triu().transpose(0L,1L)
@@ -161,7 +161,7 @@ let train epoch (model:TransformerModel) (optimizer:Optimizer) (trainData:torch.
 
             optimizer.zero_grad()
 
-            let output = model.forward(data, src_mask)
+            let output = model.call(data, src_mask)
             let loss = criterion (output.view(-1L, ntokens)) targets
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5) |> ignore
@@ -204,7 +204,7 @@ let evaluate (model:TransformerModel) (evalData:torch.Tensor) ntokens =
             if data.shape.[0] <> bptt then
                 src_mask <- model.GenerateSquareSubsequentMask(data.shape.[0])
 
-            let output = model.forward(data, src_mask)
+            let output = model.call(data, src_mask)
             let loss = criterion (output.view(-1L, ntokens)) targets
             total_loss <- total_loss + (float32 data.shape.[0]) * loss.cpu().item<float32>()
         end

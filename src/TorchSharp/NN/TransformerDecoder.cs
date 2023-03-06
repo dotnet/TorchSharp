@@ -9,7 +9,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class TransformerDecoder : torch.nn.Module<Tensor, Tensor, Tensor>
+        public sealed class TransformerDecoder : torch.nn.Module<Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor>
         {
             internal TransformerDecoder(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
@@ -23,7 +23,7 @@ namespace TorchSharp
             /// <param name="tgt_key_padding_mask">The mask for the tgt keys per batch (optional).</param>
             /// <param name="memory_key_padding_mask">The mask for the memory keys per batch (optional).</param>
             /// <returns></returns>
-            public Tensor forward(Tensor tgt, Tensor memory, Tensor tgt_mask, Tensor memory_mask = null, Tensor tgt_key_padding_mask = null, Tensor memory_key_padding_mask = null)
+            public override Tensor forward(Tensor tgt, Tensor memory, Tensor tgt_mask, Tensor memory_mask = null, Tensor tgt_key_padding_mask = null, Tensor memory_key_padding_mask = null)
             {
                 var res = THSNN_TransformerDecoder_forward(handle,
                     tgt.Handle,
@@ -35,23 +35,19 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+            public new Tensor call(Tensor tgt, Tensor memory, Tensor tgt_mask, Tensor memory_mask = null, Tensor tgt_key_padding_mask = null, Tensor memory_key_padding_mask = null)
+            {
+                return base.call(tgt, memory, tgt_mask, memory_mask, tgt_key_padding_mask, memory_key_padding_mask);
+            }
 
             /// <summary>
             /// Pass the inputs (and mask) through the decoder layers in turn.
             /// </summary>
             /// <param name="tgt">The sequence to the decoder layer (required).</param>
             /// <param name="memory">The sequence from the last layer of the encoder (required).</param>
-            public override Tensor forward(Tensor tgt, Tensor memory)
+            public Tensor call(Tensor tgt, Tensor memory)
             {
-                var res = THSNN_TransformerDecoder_forward(handle,
-                    tgt.Handle,
-                    memory.Handle,
-                    IntPtr.Zero,
-                    IntPtr.Zero,
-                    IntPtr.Zero,
-                    IntPtr.Zero);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return base.call(tgt, memory, null, null, null, null);
             }
         }
     }

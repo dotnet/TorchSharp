@@ -15,7 +15,7 @@ namespace TorchSharp
                 this.maxSize = maxSize;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return transforms.functional.resize(input, height, width, maxSize);
             }

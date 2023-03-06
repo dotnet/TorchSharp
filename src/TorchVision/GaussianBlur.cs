@@ -19,7 +19,7 @@ namespace TorchSharp
                 this.kernelSize = kernelSize.ToArray();
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return transforms.functional.gaussian_blur(input, kernelSize, new float[] { sigma });
             }

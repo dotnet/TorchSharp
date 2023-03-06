@@ -21,7 +21,7 @@ namespace TorchSharp
                 this.fill = fill;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return transforms.functional.perspective(input, startpoints, endpoints, interpolation, fill);
             }

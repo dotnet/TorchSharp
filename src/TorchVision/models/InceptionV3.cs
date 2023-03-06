@@ -198,50 +198,50 @@ namespace TorchSharp
                     }
 
                     // N x 3 x 299 x 299
-                    x = Conv2d_1a_3x3.forward(x);
+                    x = Conv2d_1a_3x3.call(x);
                     // N x 32 x 149 x 149
-                    x = Conv2d_2a_3x3.forward(x);
+                    x = Conv2d_2a_3x3.call(x);
                     // N x 32 x 147 x 147
-                    x = Conv2d_2b_3x3.forward(x);
+                    x = Conv2d_2b_3x3.call(x);
                     // N x 64 x 147 x 147
-                    x = maxpool1.forward(x);
+                    x = maxpool1.call(x);
                     // N x 64 x 73 x 73
-                    x = Conv2d_3b_1x1.forward(x);
+                    x = Conv2d_3b_1x1.call(x);
                     // N x 80 x 73 x 73
-                    x = Conv2d_4a_3x3.forward(x);
+                    x = Conv2d_4a_3x3.call(x);
                     // N x 192 x 71 x 71
-                    x = maxpool2.forward(x);
+                    x = maxpool2.call(x);
                     // N x 192 x 35 x 35
-                    x = Mixed_5b.forward(x);
+                    x = Mixed_5b.call(x);
                     // N x 256 x 35 x 35
-                    x = Mixed_5c.forward(x);
+                    x = Mixed_5c.call(x);
                     // N x 288 x 35 x 35
-                    x = Mixed_5d.forward(x);
+                    x = Mixed_5d.call(x);
                     // N x 288 x 35 x 35
-                    x = Mixed_6a.forward(x);
+                    x = Mixed_6a.call(x);
                     // N x 768 x 17 x 17
-                    x = Mixed_6b.forward(x);
+                    x = Mixed_6b.call(x);
                     // N x 768 x 17 x 17
-                    x = Mixed_6c.forward(x);
+                    x = Mixed_6c.call(x);
                     // N x 768 x 17 x 17
-                    x = Mixed_6d.forward(x);
+                    x = Mixed_6d.call(x);
                     // N x 768 x 17 x 17
-                    x = Mixed_6e.forward(x);
+                    x = Mixed_6e.call(x);
                     // N x 768 x 17 x 17
-                    x = Mixed_7a.forward(x);
+                    x = Mixed_7a.call(x);
                     // N x 1280 x 8 x 8
-                    x = Mixed_7b.forward(x);
+                    x = Mixed_7b.call(x);
                     // N x 2048 x 8 x 8
-                    x = Mixed_7c.forward(x);
+                    x = Mixed_7c.call(x);
                     // N x 2048 x 8 x 8
                     // Adaptive average pooling
-                    x = avgpool.forward(x);
+                    x = avgpool.call(x);
                     // N x 2048 x 1 x 1
-                    x = dropout.forward(x);
+                    x = dropout.call(x);
                     // N x 2048 x 1 x 1
                     x = torch.flatten(x, 1);
                     // N x 2048
-                    x = fc.forward(x);
+                    x = fc.call(x);
                     // N x num_classes
 
                     return x.MoveToOuterDisposeScope();
@@ -265,17 +265,17 @@ namespace TorchSharp
 
                 public override Tensor forward(Tensor x)
                 {
-                    var branch1x1_ = branch1x1.forward(x);
+                    var branch1x1_ = branch1x1.call(x);
 
-                    var branch5x5 = branch5x5_1.forward(x);
-                    branch5x5 = branch5x5_2.forward(branch5x5);
+                    var branch5x5 = branch5x5_1.call(x);
+                    branch5x5 = branch5x5_2.call(branch5x5);
 
-                    var branch3x3dbl = branch3x3dbl_1.forward(x);
-                    branch3x3dbl = branch3x3dbl_2.forward(branch3x3dbl);
-                    branch3x3dbl = branch3x3dbl_3.forward(branch3x3dbl);
+                    var branch3x3dbl = branch3x3dbl_1.call(x);
+                    branch3x3dbl = branch3x3dbl_2.call(branch3x3dbl);
+                    branch3x3dbl = branch3x3dbl_3.call(branch3x3dbl);
 
                     var branch_pool_ = functional.avg_pool2d(x, kernelSize: 3, stride: 1, padding: 1);
-                    branch_pool_ = branch_pool.forward(branch_pool_);
+                    branch_pool_ = branch_pool.call(branch_pool_);
 
                     var outputs = new [] { branch1x1_, branch5x5, branch3x3dbl, branch_pool_ };
                     return torch.cat(outputs, 1);
@@ -306,11 +306,11 @@ namespace TorchSharp
                 public override Tensor forward(Tensor x)
                 {
 
-                    var branch3x3_ = branch3x3.forward(x);
+                    var branch3x3_ = branch3x3.call(x);
 
-                    var branch3x3dbl = branch3x3dbl_1.forward(x);
-                    branch3x3dbl = branch3x3dbl_2.forward(branch3x3dbl);
-                    branch3x3dbl = branch3x3dbl_3.forward(branch3x3dbl);
+                    var branch3x3dbl = branch3x3dbl_1.call(x);
+                    branch3x3dbl = branch3x3dbl_2.call(branch3x3dbl);
+                    branch3x3dbl = branch3x3dbl_3.call(branch3x3dbl);
 
                     var branch_pool = functional.max_pool2d(x, kernelSize: 3, stride: 2);
 
@@ -361,20 +361,20 @@ namespace TorchSharp
                 public override Tensor forward(Tensor x)
                 {
 
-                    var branch1x1_ = branch1x1.forward(x);
+                    var branch1x1_ = branch1x1.call(x);
 
-                    var branch7x7 = branch7x7_1.forward(x);
-                    branch7x7 = branch7x7_2.forward(branch7x7);
-                    branch7x7 = branch7x7_3.forward(branch7x7);
+                    var branch7x7 = branch7x7_1.call(x);
+                    branch7x7 = branch7x7_2.call(branch7x7);
+                    branch7x7 = branch7x7_3.call(branch7x7);
 
-                    var branch7x7dbl = branch7x7dbl_1.forward(x);
-                    branch7x7dbl = branch7x7dbl_2.forward(branch7x7dbl);
-                    branch7x7dbl = branch7x7dbl_3.forward(branch7x7dbl);
-                    branch7x7dbl = branch7x7dbl_4.forward(branch7x7dbl);
-                    branch7x7dbl = branch7x7dbl_5.forward(branch7x7dbl);
+                    var branch7x7dbl = branch7x7dbl_1.call(x);
+                    branch7x7dbl = branch7x7dbl_2.call(branch7x7dbl);
+                    branch7x7dbl = branch7x7dbl_3.call(branch7x7dbl);
+                    branch7x7dbl = branch7x7dbl_4.call(branch7x7dbl);
+                    branch7x7dbl = branch7x7dbl_5.call(branch7x7dbl);
 
                     var branch_pool_ = functional.avg_pool2d(x, kernelSize: 3, stride: 1, padding: 1);
-                    branch_pool_ = branch_pool.forward(branch_pool_);
+                    branch_pool_ = branch_pool.call(branch_pool_);
 
                     var outputs = new[] { branch1x1_, branch7x7, branch7x7dbl, branch_pool_ };
                     return torch.cat(outputs, 1);
@@ -405,13 +405,13 @@ namespace TorchSharp
 
                 public override Tensor forward(Tensor x)
                 {
-                    var branch3x3 = branch3x3_1.forward(x);
-                    branch3x3 = branch3x3_2.forward(branch3x3);
+                    var branch3x3 = branch3x3_1.call(x);
+                    branch3x3 = branch3x3_2.call(branch3x3);
 
-                    var branch7x7x3 = branch7x7x3_1.forward(x);
-                    branch7x7x3 = branch7x7x3_2.forward(branch7x7x3);
-                    branch7x7x3 = branch7x7x3_3.forward(branch7x7x3);
-                    branch7x7x3 = branch7x7x3_4.forward(branch7x7x3);
+                    var branch7x7x3 = branch7x7x3_1.call(x);
+                    branch7x7x3 = branch7x7x3_2.call(branch7x7x3);
+                    branch7x7x3 = branch7x7x3_3.call(branch7x7x3);
+                    branch7x7x3 = branch7x7x3_4.call(branch7x7x3);
 
                     var branch_pool = functional.max_pool2d(x, kernelSize: 3, stride: 2);
                     var outputs = new[] { branch3x3, branch7x7x3, branch_pool };
@@ -455,17 +455,17 @@ namespace TorchSharp
                 public override Tensor forward(Tensor x)
                 {
 
-                    var branch1x1_ = branch1x1.forward(x);
+                    var branch1x1_ = branch1x1.call(x);
 
-                    var branch3x3 = branch3x3_1.forward(x);
-                    branch3x3 = torch.cat(new[] { branch3x3_2a.forward(branch3x3), branch3x3_2b.forward(branch3x3)}, 1);
+                    var branch3x3 = branch3x3_1.call(x);
+                    branch3x3 = torch.cat(new[] { branch3x3_2a.call(branch3x3), branch3x3_2b.call(branch3x3)}, 1);
 
-                    var branch3x3dbl = branch3x3dbl_1.forward(x);
-                    branch3x3dbl = branch3x3dbl_2.forward(branch3x3dbl);
-                    branch3x3dbl = torch.cat(new[] { branch3x3dbl_3a.forward(branch3x3dbl), branch3x3dbl_3b.forward(branch3x3dbl) }, 1);
+                    var branch3x3dbl = branch3x3dbl_1.call(x);
+                    branch3x3dbl = branch3x3dbl_2.call(branch3x3dbl);
+                    branch3x3dbl = torch.cat(new[] { branch3x3dbl_3a.call(branch3x3dbl), branch3x3dbl_3b.call(branch3x3dbl) }, 1);
 
                     var branch_pool_ = functional.avg_pool2d(x, kernelSize: 3, stride: 1, padding: 1);
-                    branch_pool_ = branch_pool.forward(branch_pool_);
+                    branch_pool_ = branch_pool.call(branch_pool_);
 
                     var outputs = new[] { branch1x1_, branch3x3, branch3x3dbl, branch_pool_ };
 
@@ -494,16 +494,16 @@ namespace TorchSharp
                     // N x 768 x 17 x 17
                     x = functional.avg_pool2d(x, kernelSize: 5, stride: 3);
                     // N x 768 x 5 x 5
-                    x = conv0.forward(x);
+                    x = conv0.call(x);
                     // N x 128 x 5 x 5
-                    x = conv1.forward(x);
+                    x = conv1.call(x);
                     // N x 768 x 1 x 1
                     // Adaptive average pooling
                     x = functional.adaptive_avg_pool2d(x, (1, 1));
                     // N x 768 x 1 x 1
                     x = x.flatten(1);
                     // N x 768
-                    x = fc.forward(x);
+                    x = fc.call(x);
                     // N x 1000
 
                     return x;
