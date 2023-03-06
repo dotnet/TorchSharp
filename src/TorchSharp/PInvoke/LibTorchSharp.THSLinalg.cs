@@ -153,5 +153,7 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_lu_solve(IntPtr B, IntPtr LU, IntPtr pivots, [MarshalAs(UnmanagedType.U1)] bool left, [MarshalAs(UnmanagedType.U1)] bool adjoint, IntPtr output);
 
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSLinalg_tensordot(IntPtr input1, IntPtr input2, IntPtr dims1, int dims1_length, IntPtr dims2, int dims2_length);
     }
 }
