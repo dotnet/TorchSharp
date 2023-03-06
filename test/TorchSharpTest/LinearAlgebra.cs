@@ -1,12 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using System.Globalization;
 using Xunit;
-using Xunit.Sdk;
 using static TorchSharp.torch;
 
 #nullable enable
@@ -18,17 +14,35 @@ namespace TorchSharp
 #endif // NET472_OR_GREATER
     public class LinearAlgebra
     {
+        [Fact]
+        [TestOf(nameof(tensordot))]
+        public void TestTensorDot()
+        {
+            var a = arange(60).reshape(3, 4, 5);
+            var b = arange(24).reshape(4, 3, 2);
+            var res = tensordot(a, b, new []{ 1L, 0L }, new []{ 0L, 1L });
 
+            var expected = from_array(new long[,]
+            {
+                {4400, 4730},
+                {4532, 4874},
+                {4664, 5018},
+                {4796, 5162},
+                {4928, 5306}
+            });
+
+            Assert.True(allclose(res, expected));
+        }
 
         [Fact]
-        [TestOf(nameof(torch.lu))]
+        [TestOf(nameof(lu))]
         public void TestLUSolve()
         {
-            var A = torch.randn(2, 3, 3);
-            var b = torch.randn(2, 3, 1);
+            var A = randn(2, 3, 3);
+            var b = randn(2, 3, 1);
 
             {
-                var (A_LU, pivots, infos) = torch.lu(A);
+                var (A_LU, pivots, infos) = lu(A);
 
                 Assert.NotNull(A_LU);
                 Assert.NotNull(pivots);
@@ -37,15 +51,15 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 2, 3, 3 }, A_LU.shape);
                 Assert.Equal(new long[] { 2, 3 }, pivots.shape);
 
-                var x = torch.lu_solve(b, A_LU, pivots);
+                var x = lu_solve(b, A_LU, pivots);
                 Assert.Equal(new long[] { 2, 3, 1 }, x.shape);
 
-                var y = torch.norm(torch.bmm(A, x) - b);
+                var y = norm(bmm(A, x) - b);
                 Assert.Empty(y.shape);
             }
 
             {
-                var (A_LU, pivots, infos) = torch.lu(A, get_infos: true);
+                var (A_LU, pivots, infos) = lu(A, get_infos: true);
 
                 Assert.NotNull(A_LU);
                 Assert.NotNull(pivots);
@@ -55,28 +69,28 @@ namespace TorchSharp
                 Assert.Equal(new long[] { 2, 3 }, pivots.shape);
                 Assert.Equal(new long[] { 2 }, infos.shape);
 
-                var x = torch.lu_solve(b, A_LU, pivots);
+                var x = lu_solve(b, A_LU, pivots);
                 Assert.Equal(new long[] { 2, 3, 1 }, x.shape);
 
-                var y = torch.norm(torch.bmm(A, x) - b);
+                var y = norm(bmm(A, x) - b);
                 Assert.Empty(y.shape);
             }
         }
 
         [Fact]
-        [TestOf(nameof(torch.lu_unpack))]
+        [TestOf(nameof(lu_unpack))]
         public void TestLUUnpack()
         {
-            var A = torch.randn(2, 3, 3);
+            var A = randn(2, 3, 3);
 
             {
-                var (A_LU, pivots, infos) = torch.lu(A);
+                var (A_LU, pivots, infos) = lu(A);
 
                 Assert.NotNull(A_LU);
                 Assert.NotNull(pivots);
                 Assert.Null(infos);
 
-                var (P, A_L, A_U) = torch.lu_unpack(A_LU, pivots);
+                var (P, A_L, A_U) = lu_unpack(A_LU, pivots);
 
                 Assert.NotNull(P);
                 Assert.NotNull(A_L);
@@ -92,7 +106,7 @@ namespace TorchSharp
         [TestOf(nameof(Tensor.mul))]
         public void TestMul()
         {
-            var x = torch.ones(new long[] { 100, 100 });
+            var x = ones(new long[] { 100, 100 });
 
             var y = x.mul(0.5f.ToScalar());
 
@@ -109,8 +123,8 @@ namespace TorchSharp
         void TestMmGen(Device device)
         {
             {
-                var x1 = torch.ones(new long[] { 1, 2 }, device: device);
-                var x2 = torch.ones(new long[] { 2, 1 }, device: device);
+                var x1 = ones(new long[] { 1, 2 }, device: device);
+                var x2 = ones(new long[] { 2, 1 }, device: device);
 
                 var y = x1.mm(x2).to(DeviceType.CPU);
 
@@ -120,8 +134,8 @@ namespace TorchSharp
             }
             //System.Runtime.InteropServices.ExternalException : addmm for CUDA tensors only supports floating - point types.Try converting the tensors with.float() at C:\w\b\windows\pytorch\aten\src\THC / generic / THCTensorMathBlas.cu:453
             if (device.type == DeviceType.CPU) {
-                var x1 = torch.ones(new long[] { 1, 2 }, int64, device: device);
-                var x2 = torch.ones(new long[] { 2, 1 }, int64, device: device);
+                var x1 = ones(new long[] { 1, 2 }, int64, device: device);
+                var x2 = ones(new long[] { 2, 1 }, int64, device: device);
 
                 var y = x1.mm(x2).to(DeviceType.CPU);
 
@@ -132,26 +146,26 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(torch.CPU))]
+        [TestOf(nameof(CPU))]
         public void TestMmCpu()
         {
-            TestMmGen(torch.CPU);
+            TestMmGen(CPU);
         }
 
         [Fact]
-        [TestOf(nameof(torch.CUDA))]
+        [TestOf(nameof(CUDA))]
         public void TestMmCuda()
         {
-            if (torch.cuda.is_available()) {
-                TestMmGen(torch.CUDA);
+            if (cuda.is_available()) {
+                TestMmGen(CUDA);
             }
         }
 
         void TestMVGen(Device device)
         {
             {
-                var mat1 = torch.ones(new long[] { 4, 3 }, device: device);
-                var vec1 = torch.ones(new long[] { 3 }, device: device);
+                var mat1 = ones(new long[] { 4, 3 }, device: device);
+                var vec1 = ones(new long[] { 3 }, device: device);
 
                 var y = mat1.mv(vec1).to(DeviceType.CPU);
 
@@ -162,9 +176,9 @@ namespace TorchSharp
         void TestAddMVGen(Device device)
         {
             {
-                var x1 = torch.ones(new long[] { 4 }, device: device);
-                var mat1 = torch.ones(new long[] { 4, 3 }, device: device);
-                var vec1 = torch.ones(new long[] { 3 }, device: device);
+                var x1 = ones(new long[] { 4 }, device: device);
+                var mat1 = ones(new long[] { 4, 3 }, device: device);
+                var vec1 = ones(new long[] { 3 }, device: device);
 
                 var y = x1.addmv(mat1, vec1).to(DeviceType.CPU);
 
@@ -173,42 +187,42 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(torch.CPU))]
+        [TestOf(nameof(CPU))]
         public void TestMVCpu()
         {
-            TestMVGen(torch.CPU);
+            TestMVGen(CPU);
         }
 
         [Fact]
-        [TestOf(nameof(torch.CUDA))]
+        [TestOf(nameof(CUDA))]
         public void TestMVCuda()
         {
-            if (torch.cuda.is_available()) {
-                TestMVGen(torch.CUDA);
+            if (cuda.is_available()) {
+                TestMVGen(CUDA);
             }
         }
 
         [Fact]
         public void TestAddMVCpu()
         {
-            TestAddMVGen(torch.CPU);
+            TestAddMVGen(CPU);
         }
 
         [Fact]
-        [TestOf(nameof(torch.CUDA))]
+        [TestOf(nameof(CUDA))]
         public void TestAddMVCuda()
         {
-            if (torch.cuda.is_available()) {
-                TestAddMVGen(torch.CUDA);
+            if (cuda.is_available()) {
+                TestAddMVGen(CUDA);
             }
         }
 
         void TestAddRGen(Device device)
         {
             {
-                var x1 = torch.ones(new long[] { 4, 3 }, device: device);
-                var vec1 = torch.ones(new long[] { 4 }, device: device);
-                var vec2 = torch.ones(new long[] { 3 }, device: device);
+                var x1 = ones(new long[] { 4, 3 }, device: device);
+                var vec1 = ones(new long[] { 4 }, device: device);
+                var vec2 = ones(new long[] { 3 }, device: device);
 
                 var y = x1.addr(vec1, vec2).to(DeviceType.CPU);
 
@@ -217,22 +231,20 @@ namespace TorchSharp
         }
 
         [Fact]
-        [TestOf(nameof(torch.CPU))]
+        [TestOf(nameof(CPU))]
         public void TestAddRCpu()
         {
-            TestAddRGen(torch.CPU);
+            TestAddRGen(CPU);
         }
 
         [Fact]
-        [TestOf(nameof(torch.CUDA))]
+        [TestOf(nameof(CUDA))]
         public void TestAddRCuda()
         {
-            if (torch.cuda.is_available()) {
-                TestAddRGen(torch.CUDA);
+            if (cuda.is_available()) {
+                TestAddRGen(CUDA);
             }
         }
-
-
 
         [Fact]
         [TestOf(nameof(Tensor.vdot))]
@@ -240,8 +252,8 @@ namespace TorchSharp
         {
             var a = new float[] { 1.0f, 2.0f, 3.0f };
             var b = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = torch.tensor(a.Zip(b).Select(x => x.First * x.Second).Sum());
-            var res = torch.tensor(a).vdot(torch.tensor(b));
+            var expected = tensor(a.Zip(b).Select(x => x.First * x.Second).Sum());
+            var res = tensor(a).vdot(tensor(b));
             Assert.True(res.allclose(expected));
         }
 
@@ -249,37 +261,37 @@ namespace TorchSharp
         [TestOf(nameof(Tensor.vander))]
         public void VanderTest()
         {
-            var x = torch.tensor(new int[] { 1, 2, 3, 5 });
+            var x = tensor(new int[] { 1, 2, 3, 5 });
             {
                 var res = x.vander();
-                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 8, 4, 2, 1, 27, 9, 3, 1, 125, 25, 5, 1 }, 4, 4);
+                var expected = tensor(new long[] { 1, 1, 1, 1, 8, 4, 2, 1, 27, 9, 3, 1, 125, 25, 5, 1 }, 4, 4);
                 Assert.Equal(expected, res);
             }
             {
                 var res = x.vander(3);
-                var expected = torch.tensor(new long[] { 1, 1, 1, 4, 2, 1, 9, 3, 1, 25, 5, 1 }, 4, 3);
+                var expected = tensor(new long[] { 1, 1, 1, 4, 2, 1, 9, 3, 1, 25, 5, 1 }, 4, 3);
                 Assert.Equal(expected, res);
             }
             {
                 var res = x.vander(3, true);
-                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 2, 4, 1, 3, 9, 1, 5, 25 }, 4, 3);
+                var expected = tensor(new long[] { 1, 1, 1, 1, 2, 4, 1, 3, 9, 1, 5, 25 }, 4, 3);
                 Assert.Equal(expected, res);
             }
         }
 
         [Fact]
-        [TestOf(nameof(torch.linalg.vander))]
+        [TestOf(nameof(linalg.vander))]
         public void LinalgVanderTest()
         {
-            var x = torch.tensor(new int[] { 1, 2, 3, 5 });
+            var x = tensor(new int[] { 1, 2, 3, 5 });
             {
-                var res = torch.linalg.vander(x);
-                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 1, 2, 4, 8, 1, 3, 9, 27, 1, 5, 25, 125 }, 4, 4);
+                var res = linalg.vander(x);
+                var expected = tensor(new long[] { 1, 1, 1, 1, 1, 2, 4, 8, 1, 3, 9, 27, 1, 5, 25, 125 }, 4, 4);
                 Assert.Equal(expected, res);
             }
             {
-                var res = torch.linalg.vander(x, 3);
-                var expected = torch.tensor(new long[] { 1, 1, 1, 1, 2, 4, 1, 3, 9, 1, 5, 25 }, 4, 3);
+                var res = linalg.vander(x, 3);
+                var expected = tensor(new long[] { 1, 1, 1, 1, 2, 4, 1, 3, 9, 1, 5, 25 }, 4, 3);
                 Assert.Equal(expected, res);
             }
         }
@@ -288,7 +300,7 @@ namespace TorchSharp
         [TestOf(nameof(linalg.cholesky))]
         public void CholeskyTest()
         {
-            var a = torch.randn(new long[] { 3, 2, 2 }, float64);
+            var a = randn(new long[] { 3, 2, 2 }, float64);
             a = a.matmul(a.swapdims(-2, -1));   // Worked this in to get it tested. Alias for 'transpose'
             var l = linalg.cholesky(a);
 
@@ -299,7 +311,7 @@ namespace TorchSharp
         [TestOf(nameof(linalg.cholesky_ex))]
         public void CholeskyExTest()
         {
-            var a = torch.randn(new long[] { 3, 2, 2 }, float64);
+            var a = randn(new long[] { 3, 2, 2 }, float64);
             a = a.matmul(a.swapdims(-2, -1));   // Worked this in to get it tested. Alias for 'transpose'
             var (l, info) = linalg.cholesky_ex(a);
 
@@ -310,7 +322,7 @@ namespace TorchSharp
         [TestOf(nameof(linalg.inv))]
         public void InvTest()
         {
-            var a = torch.randn(new long[] { 3, 2, 2 }, float64);
+            var a = randn(new long[] { 3, 2, 2 }, float64);
             var l = linalg.inv(a);
 
             Assert.Equal(a.shape, l.shape);
@@ -320,7 +332,7 @@ namespace TorchSharp
         [TestOf(nameof(linalg.inv_ex))]
         public void InvExTest()
         {
-            var a = torch.randn(new long[] { 3, 2, 2 }, float64);
+            var a = randn(new long[] { 3, 2, 2 }, float64);
             var (l, info) = linalg.inv_ex(a);
 
             Assert.Equal(a.shape, l.shape);
@@ -331,7 +343,7 @@ namespace TorchSharp
         public void CondTestF64()
         {
             {
-                var a = torch.randn(new long[] { 3, 3, 3 }, float64);
+                var a = randn(new long[] { 3, 3, 3 }, float64);
                 // The following mostly checks that the runtime interop doesn't blow up.
                 _ = linalg.cond(a);
                 _ = linalg.cond(a, "fro");
@@ -350,7 +362,7 @@ namespace TorchSharp
         public void CondTestCF64()
         {
             {
-                var a = torch.randn(new long[] { 3, 3, 3 }, complex128);
+                var a = randn(new long[] { 3, 3, 3 }, complex128);
                 // The following mostly checks that the runtime interop doesn't blow up.
                 _ = linalg.cond(a);
                 _ = linalg.cond(a, "fro");
@@ -368,7 +380,7 @@ namespace TorchSharp
         [TestOf(nameof(linalg.qr))]
         public void QRTest()
         {
-            var a = torch.randn(new long[] { 4, 25, 25 });
+            var a = randn(new long[] { 4, 25, 25 });
 
             var l = linalg.qr(a);
 
@@ -380,9 +392,9 @@ namespace TorchSharp
         [TestOf(nameof(linalg.solve))]
         public void SolveTest()
         {
-            var A = torch.randn(3, 3);
-            var b = torch.randn(3);
-            var x = torch.linalg.solve(A, b);
+            var A = randn(3, 3);
+            var b = randn(3);
+            var x = linalg.solve(A, b);
             Assert.True(A.matmul(x).allclose(b, rtol: 1e-03, atol: 1e-06));
         }
 
@@ -390,7 +402,7 @@ namespace TorchSharp
         [TestOf(nameof(linalg.svd))]
         public void SVDTest()
         {
-            var a = torch.randn(new long[] { 4, 25, 15 });
+            var a = randn(new long[] { 4, 25, 15 });
 
             var l = linalg.svd(a);
 
@@ -410,22 +422,22 @@ namespace TorchSharp
         [TestOf(nameof(linalg.svdvals))]
         public void SVDValsTest()
         {
-            var a = torch.tensor(new double[] { -1.3490, -0.1723, 0.7730,
+            var a = tensor(new double[] { -1.3490, -0.1723, 0.7730,
                 -1.6118, -0.3385, -0.6490,
                  0.0908, 2.0704, 0.5647,
                 -0.6451, 0.1911, 0.7353,
                  0.5247, 0.5160, 0.5110}, 5, 3);
 
             var l = linalg.svdvals(a);
-            Assert.True(l.allclose(torch.tensor(new double[] { 2.5138929972840613, 2.1086555338402455, 1.1064930672223237 }), rtol: 1e-04, atol: 1e-07));
+            Assert.True(l.allclose(tensor(new double[] { 2.5138929972840613, 2.1086555338402455, 1.1064930672223237 }), rtol: 1e-04, atol: 1e-07));
         }
 
         [Fact]
         [TestOf(nameof(linalg.lstsq))]
         public void LSTSQTest()
         {
-            var a = torch.randn(new long[] { 4, 25, 15 });
-            var b = torch.randn(new long[] { 4, 25, 10 });
+            var a = randn(new long[] { 4, 25, 15 });
+            var b = randn(new long[] { 4, 25, 10 });
 
             var l = linalg.lstsq(a, b);
 
@@ -440,8 +452,8 @@ namespace TorchSharp
         [TestOf(nameof(linalg.lu))]
         public void LUTest()
         {
-            var A = torch.randn(2, 3, 3);
-            var A_factor = torch.linalg.lu(A);
+            var A = randn(2, 3, 3);
+            var A_factor = linalg.lu(A);
             // For right now, pretty much just checking that it's not blowing up.
             Assert.Multiple(
                 () => Assert.NotNull(A_factor.P),
@@ -454,8 +466,8 @@ namespace TorchSharp
         [TestOf(nameof(linalg.lu_factor))]
         public void LUFactorTest()
         {
-            var A = torch.randn(2, 3, 3);
-            var A_factor = torch.linalg.lu_factor(A);
+            var A = randn(2, 3, 3);
+            var A_factor = linalg.lu_factor(A);
             // For right now, pretty much just checking that it's not blowing up.
             Assert.Multiple(
                 () => Assert.NotNull(A_factor.LU),
@@ -467,8 +479,8 @@ namespace TorchSharp
         [TestOf(nameof(linalg.ldl_factor))]
         public void LDLFactorTest()
         {
-            var A = torch.randn(2, 3, 3);
-            var A_factor = torch.linalg.ldl_factor(A);
+            var A = randn(2, 3, 3);
+            var A_factor = linalg.ldl_factor(A);
             // For right now, pretty much just checking that it's not blowing up.
             Assert.Multiple(
                 () => Assert.NotNull(A_factor.LU),
@@ -480,8 +492,8 @@ namespace TorchSharp
         [TestOf(nameof(linalg.ldl_factor))]
         public void LDLFactorExTest()
         {
-            var A = torch.randn(2, 3, 3);
-            var A_factor = torch.linalg.ldl_factor_ex(A);
+            var A = randn(2, 3, 3);
+            var A_factor = linalg.ldl_factor_ex(A);
             // For right now, pretty much just checking that it's not blowing up.
             Assert.Multiple(
                 () => Assert.NotNull(A_factor.LU),
@@ -494,7 +506,7 @@ namespace TorchSharp
         [TestOf(nameof(Tensor.matrix_power))]
         public void MatrixPowerTest()
         {
-            var a = torch.randn(new long[] { 25, 25 });
+            var a = randn(new long[] { 25, 25 });
             var b = a.matrix_power(3);
             Assert.Equal(new long[] { 25, 25 }, b.shape);
         }
@@ -503,22 +515,22 @@ namespace TorchSharp
         [TestOf(nameof(Tensor.matrix_exp))]
         public void MatrixExpTest1()
         {
-            var a = torch.randn(new long[] { 25, 25 });
+            var a = randn(new long[] { 25, 25 });
             var b = a.matrix_exp();
             Assert.Equal(new long[] { 25, 25 }, b.shape);
 
-            var c = torch.matrix_exp(a);
+            var c = matrix_exp(a);
             Assert.Equal(new long[] { 25, 25 }, c.shape);
         }
 
         [Fact]
-        [TestOf(nameof(torch.matrix_exp))]
+        [TestOf(nameof(matrix_exp))]
         public void MatrixExpTest2()
         {
-            var a = torch.randn(new long[] { 16, 25, 25 });
+            var a = randn(new long[] { 16, 25, 25 });
             var b = a.matrix_exp();
             Assert.Equal(new long[] { 16, 25, 25 }, b.shape);
-            var c = torch.matrix_exp(a);
+            var c = matrix_exp(a);
             Assert.Equal(new long[] { 16, 25, 25 }, c.shape);
         }
 
@@ -526,24 +538,24 @@ namespace TorchSharp
         [TestOf(nameof(linalg.matrix_rank))]
         public void MatrixRankTest()
         {
-            var mr1 = torch.linalg.matrix_rank(torch.randn(4, 3, 2));
+            var mr1 = linalg.matrix_rank(randn(4, 3, 2));
             Assert.Equal(new long[] { 4 }, mr1.shape);
 
-            var mr2 = torch.linalg.matrix_rank(torch.randn(2, 4, 3, 2));
+            var mr2 = linalg.matrix_rank(randn(2, 4, 3, 2));
             Assert.Equal(new long[] { 2, 4 }, mr2.shape);
 
             // Really just testing that it doesn't blow up in interop for the following lines:
 
-            mr2 = torch.linalg.matrix_rank(torch.randn(2, 4, 3, 2), atol: 1.0);
+            mr2 = linalg.matrix_rank(randn(2, 4, 3, 2), atol: 1.0);
             Assert.Equal(new long[] { 2, 4 }, mr2.shape);
 
-            mr2 = torch.linalg.matrix_rank(torch.randn(2, 4, 3, 2), atol: 1.0, rtol: 0.0);
+            mr2 = linalg.matrix_rank(randn(2, 4, 3, 2), atol: 1.0, rtol: 0.0);
             Assert.Equal(new long[] { 2, 4 }, mr2.shape);
 
-            mr2 = torch.linalg.matrix_rank(torch.randn(2, 4, 3, 2), atol: torch.tensor(1.0));
+            mr2 = linalg.matrix_rank(randn(2, 4, 3, 2), atol: tensor(1.0));
             Assert.Equal(new long[] { 2, 4 }, mr2.shape);
 
-            mr2 = torch.linalg.matrix_rank(torch.randn(2, 4, 3, 2), atol: torch.tensor(1.0), rtol: torch.tensor(0.0));
+            mr2 = linalg.matrix_rank(randn(2, 4, 3, 2), atol: tensor(1.0), rtol: tensor(0.0));
             Assert.Equal(new long[] { 2, 4 }, mr2.shape);
         }
 
@@ -551,10 +563,10 @@ namespace TorchSharp
         [TestOf(nameof(linalg.multi_dot))]
         public void MultiDotTest()
         {
-            var a = torch.randn(new long[] { 25, 25 });
-            var b = torch.randn(new long[] { 25, 25 });
-            var c = torch.randn(new long[] { 25, 25 });
-            var d = torch.linalg.multi_dot(new Tensor[] { a, b, c });
+            var a = randn(new long[] { 25, 25 });
+            var b = randn(new long[] { 25, 25 });
+            var c = randn(new long[] { 25, 25 });
+            var d = linalg.multi_dot(new Tensor[] { a, b, c });
             Assert.Equal(new long[] { 25, 25 }, d.shape);
         }
 
@@ -563,19 +575,19 @@ namespace TorchSharp
         public void DeterminantTest()
         {
             {
-                var a = torch.tensor(
+                var a = tensor(
                     new float[] { 0.9478f, 0.9158f, -1.1295f,
                                   0.9701f, 0.7346f, -1.8044f,
                                  -0.2337f, 0.0557f, 0.6929f }, 3, 3);
                 var l = linalg.det(a);
-                Assert.True(l.allclose(torch.tensor(0.09335048f)));
+                Assert.True(l.allclose(tensor(0.09335048f)));
             }
             {
-                var a = torch.tensor(
+                var a = tensor(
                     new float[] { 0.9254f, -0.6213f, -0.5787f, 1.6843f, 0.3242f, -0.9665f,
                                   0.4539f, -0.0887f, 1.1336f, -0.4025f, -0.7089f, 0.9032f }, 3, 2, 2);
                 var l = linalg.det(a);
-                Assert.True(l.allclose(torch.tensor(new float[] { 1.19910491f, 0.4099378f, 0.7385352f })));
+                Assert.True(l.allclose(tensor(new float[] { 1.19910491f, 0.4099378f, 0.7385352f })));
             }
         }
 
@@ -584,7 +596,7 @@ namespace TorchSharp
         public void MatrixNormTest()
         {
             {
-                var a = torch.arange(9, float32).view(3, 3);
+                var a = arange(9, float32).view(3, 3);
 
                 var b = linalg.matrix_norm(a);
                 var c = linalg.matrix_norm(a, ord: -1);
@@ -599,7 +611,7 @@ namespace TorchSharp
         public void VectorNormTest()
         {
             {
-                var a = torch.tensor(
+                var a = tensor(
                     new float[] { -4.0f, -3.0f, -2.0f, -1.0f, 0, 1.0f, 2.0f, 3.0f, 4.0f });
 
                 var b = linalg.vector_norm(a, ord: 3.5);
@@ -614,21 +626,21 @@ namespace TorchSharp
         [TestOf(nameof(linalg.pinv))]
         public void PinvTest()
         {
-            var mr1 = torch.linalg.pinv(torch.randn(4, 3, 5));
+            var mr1 = linalg.pinv(randn(4, 3, 5));
             Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
 
             // Really just testing that it doesn't blow up in interop for the following lines:
 
-            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: 1.0);
+            mr1 = linalg.pinv(randn(4, 3, 5), atol: 1.0);
             Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
 
-            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: 1.0, rtol: 0.0);
+            mr1 = linalg.pinv(randn(4, 3, 5), atol: 1.0, rtol: 0.0);
             Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
 
-            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: torch.tensor(1.0));
+            mr1 = linalg.pinv(randn(4, 3, 5), atol: tensor(1.0));
             Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
 
-            mr1 = torch.linalg.pinv(torch.randn(4, 3, 5), atol: torch.tensor(1.0), rtol: torch.tensor(0.0));
+            mr1 = linalg.pinv(randn(4, 3, 5), atol: tensor(1.0), rtol: tensor(0.0));
             Assert.Equal(new long[] { 4, 5, 3 }, mr1.shape);
         }
 
@@ -637,10 +649,10 @@ namespace TorchSharp
         public void EigTest32()
         {
             {
-                var a = torch.tensor(
+                var a = tensor(
                     new float[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
 
-                var expected = torch.tensor(
+                var expected = tensor(
                     new (float, float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
 
                 {
@@ -656,9 +668,9 @@ namespace TorchSharp
         public void EighvalsTest32()
         {
             {
-                var a = torch.tensor(
+                var a = tensor(
                     new float[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
-                var expected = torch.tensor(
+                var expected = tensor(
                     new (float, float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
                 var l = linalg.eigvals(a);
                 Assert.True(l.allclose(expected));
@@ -671,9 +683,9 @@ namespace TorchSharp
         {
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                var a = torch.tensor(
+                var a = tensor(
                     new double[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
-                var expected = torch.tensor(
+                var expected = tensor(
                     new System.Numerics.Complex[] { new System.Numerics.Complex(3.44288778f, 0.0f), new System.Numerics.Complex(2.17609453f, 0.0f), new System.Numerics.Complex(-2.128083f, 0.0f) });
                 var l = linalg.eigvals(a);
                 Assert.True(l.allclose(expected));
@@ -686,10 +698,10 @@ namespace TorchSharp
         {
             // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                var a = torch.tensor(
+                var a = tensor(
                     new float[] {  2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f,
                                   -2.7457f, -1.7517f, 1.7166f,  2.2207f, 2.2207f, -2.0898f }, 3, 2, 2);
-                var expected = torch.tensor(
+                var expected = tensor(
                     new float[] { 2.5797f, 3.46290016f, -4.16046524f, 1.37806475f, -3.11126733f, 2.73806715f }, 3, 2);
                 var l = linalg.eigvalsh(a);
                 Assert.True(l.allclose(expected));
@@ -701,10 +713,10 @@ namespace TorchSharp
         public void EighvalshTest64()
         {
             {
-                var a = torch.tensor(
+                var a = tensor(
                     new double[] {  2.8050, -0.3850, -0.3850, 3.2376, -1.0307, -2.7457,
                                   -2.7457, -1.7517, 1.7166,  2.2207, 2.2207, -2.0898 }, 3, 2, 2);
-                var expected = torch.tensor(
+                var expected = tensor(
                     new double[] { 2.5797, 3.46290016, -4.16046524, 1.37806475, -3.11126733, 2.73806715 }, 3, 2);
                 var l = linalg.eigvalsh(a);
                 Assert.True(l.allclose(expected));
@@ -716,36 +728,36 @@ namespace TorchSharp
         public void LinalgNormTest()
         {
             {
-                var a = torch.tensor(
+                var a = tensor(
                     new float[] { -4.0f, -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f, 4.0f });
                 var b = a.reshape(3, 3);
 
-                Assert.True(linalg.norm(a).allclose(torch.tensor(7.7460f)));
-                Assert.True(linalg.norm(b).allclose(torch.tensor(7.7460f)));
-                Assert.True(linalg.norm(b, "fro").allclose(torch.tensor(7.7460f)));
+                Assert.True(linalg.norm(a).allclose(tensor(7.7460f)));
+                Assert.True(linalg.norm(b).allclose(tensor(7.7460f)));
+                Assert.True(linalg.norm(b, "fro").allclose(tensor(7.7460f)));
 
-                Assert.True(linalg.norm(a, float.PositiveInfinity).allclose(torch.tensor(4.0f)));
-                Assert.True(linalg.norm(b, float.PositiveInfinity).allclose(torch.tensor(9.0f)));
-                Assert.True(linalg.norm(a, float.NegativeInfinity).allclose(torch.tensor(0.0f)));
-                Assert.True(linalg.norm(b, float.NegativeInfinity).allclose(torch.tensor(2.0f)));
+                Assert.True(linalg.norm(a, float.PositiveInfinity).allclose(tensor(4.0f)));
+                Assert.True(linalg.norm(b, float.PositiveInfinity).allclose(tensor(9.0f)));
+                Assert.True(linalg.norm(a, float.NegativeInfinity).allclose(tensor(0.0f)));
+                Assert.True(linalg.norm(b, float.NegativeInfinity).allclose(tensor(2.0f)));
 
-                Assert.True(linalg.norm(a, 1).allclose(torch.tensor(20.0f)));
-                Assert.True(linalg.norm(b, 1).allclose(torch.tensor(7.0f)));
-                Assert.True(linalg.norm(a, -1).allclose(torch.tensor(0.0f)));
-                Assert.True(linalg.norm(b, -1).allclose(torch.tensor(6.0f)));
+                Assert.True(linalg.norm(a, 1).allclose(tensor(20.0f)));
+                Assert.True(linalg.norm(b, 1).allclose(tensor(7.0f)));
+                Assert.True(linalg.norm(a, -1).allclose(tensor(0.0f)));
+                Assert.True(linalg.norm(b, -1).allclose(tensor(6.0f)));
 
-                Assert.True(linalg.norm(a, 2).allclose(torch.tensor(7.7460f)));
-                Assert.True(linalg.norm(b, 2).allclose(torch.tensor(7.3485f)));
-                Assert.True(linalg.norm(a, 3).allclose(torch.tensor(5.8480f)));
-                Assert.True(linalg.norm(a, -2).allclose(torch.tensor(0.0f)));
-                Assert.True(linalg.norm(a, -3).allclose(torch.tensor(0.0f)));
+                Assert.True(linalg.norm(a, 2).allclose(tensor(7.7460f)));
+                Assert.True(linalg.norm(b, 2).allclose(tensor(7.3485f)));
+                Assert.True(linalg.norm(a, 3).allclose(tensor(5.8480f)));
+                Assert.True(linalg.norm(a, -2).allclose(tensor(0.0f)));
+                Assert.True(linalg.norm(a, -3).allclose(tensor(0.0f)));
             }
         }
 
         [Fact]
         public void TestTrilIndex()
         {
-            var a = torch.tril_indices(3, 3);
+            var a = tril_indices(3, 3);
             var expected = new long[] { 0, 1, 1, 2, 2, 2, 0, 0, 1, 0, 1, 2 };
             Assert.Equal(expected, a.data<long>().ToArray());
         }
@@ -753,7 +765,7 @@ namespace TorchSharp
         [Fact]
         public void TestTriuIndex()
         {
-            var a = torch.triu_indices(3, 3);
+            var a = triu_indices(3, 3);
             var expected = new long[] { 0, 0, 0, 1, 1, 2, 0, 1, 2, 1, 2, 2 };
             Assert.Equal(expected, a.data<long>().ToArray());
         }
