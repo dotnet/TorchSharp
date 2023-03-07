@@ -94,42 +94,6 @@ EXPORT_API(Tensor)   THSNN_LPPool1d_forward(const NNModule module, const Tensor 
 EXPORT_API(NNModule) THSNN_LPPool2d_ctor(double norm_type, const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, bool ceil_mode, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_LPPool2d_forward(const NNModule module, const Tensor tensor);
 
-// Padding
-
-EXPORT_API(NNModule) THSNN_ZeroPad2d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_ZeroPad2d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_ZeroPad2d_forward(const NNModule module, const Tensor tensor);
-
-EXPORT_API(NNModule) THSNN_ConstantPad1d_ctor(const double value, const int64_t padding, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_ConstantPad1d_ctor_tuple(const double value, const int64_t padding_left, const int64_t padding_right, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_ConstantPad1d_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_ConstantPad2d_ctor(const double value, const int64_t padding, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_ConstantPad2d_ctor_tuple(const double value, const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_ConstantPad2d_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_ConstantPad3d_ctor(const double value, const int64_t padding, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_ConstantPad3d_ctor_tuple(const double value, const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, const int64_t padding_front, const int64_t padding_back, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_ConstantPad3d_forward(const NNModule module, const Tensor tensor);
-
-EXPORT_API(NNModule) THSNN_ReplicationPad1d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_ReplicationPad1d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_ReplicationPad1d_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_ReplicationPad2d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_ReplicationPad2d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_ReplicationPad2d_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_ReplicationPad3d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_ReplicationPad3d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, const int64_t padding_front, const int64_t padding_back, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_ReplicationPad3d_forward(const NNModule module, const Tensor tensor);
-
-EXPORT_API(NNModule) THSNN_ReflectionPad1d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_ReflectionPad1d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_ReflectionPad1d_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_ReflectionPad2d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_ReflectionPad2d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_ReflectionPad2d_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_ReflectionPad3d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule);
-EXPORT_API(NNModule) THSNN_ReflectionPad3d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, const int64_t padding_front, const int64_t padding_back, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_ReflectionPad3d_forward(const NNModule module, const Tensor tensor);
-
 // Convolution
 
 EXPORT_API(NNModule) THSNN_Conv1d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias, NNAnyModule* outAsAnyModule);
@@ -322,12 +286,6 @@ EXPORT_API(Tensor) THSNN_feature_alpha_dropout(const Tensor input, const double 
 
 EXPORT_API(NNModule) THSNN_Identity_ctor(NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Identity_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(NNModule) THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, const bool with_bias, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_Linear_forward(const NNModule module, const Tensor tensor);
-EXPORT_API(Tensor)   THSNN_Linear_bias(const NNModule module);
-EXPORT_API(void)     THSNN_Linear_set_bias(const NNModule module, const Tensor tensor);
-EXPORT_API(Tensor)   THSNN_Linear_weight(const NNModule module);
-EXPORT_API(void)     THSNN_Linear_set_weight(const NNModule module, const Tensor tensor);
 
 EXPORT_API(Tensor) THSNN_functional_linear(const Tensor input, const Tensor weights, const Tensor bias);
 EXPORT_API(Tensor) THSNN_functional_bilinear(const Tensor input1, const Tensor input2, const Tensor weights, const Tensor bias);

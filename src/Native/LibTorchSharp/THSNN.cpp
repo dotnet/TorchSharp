@@ -16,40 +16,6 @@ Tensor THSNN_Identity_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::Identity>()->forward(*tensor));
 }
 
-NNModule THSNN_Linear_ctor(const int64_t input_size, const int64_t output_size, const bool bias,
-    NNAnyModule* outAsAnyModule)
-{
-    CATCH_RETURN_NNModule(
-        auto opts = torch::nn::LinearOptions(input_size, output_size).bias(bias);
-        res = create_module<torch::nn::LinearImpl>(opts, outAsAnyModule);
-    );
-}
-
-Tensor THSNN_Linear_forward(const NNModule module, const Tensor tensor)
-{
-    CATCH_TENSOR((*module)->as<torch::nn::Linear>()->forward(*tensor));
-}
-
-Tensor THSNN_Linear_bias(const NNModule module)
-{
-    return get_bias<torch::nn::Linear>(module);
-}
-
-void THSNN_Linear_set_bias(const NNModule module, const Tensor bias)
-{
-    set_bias<torch::nn::Linear>(module, bias);
-}
-
-Tensor THSNN_Linear_weight(const NNModule module)
-{
-    return get_weight<torch::nn::Linear>(module);
-}
-
-void THSNN_Linear_set_weight(const NNModule module, const Tensor weight)
-{
-    set_weight<torch::nn::Linear>(module, weight);
-}
-
 Tensor THSNN_functional_linear(const Tensor input, const Tensor weights, const Tensor bias)
 {
     CATCH_TENSOR(bias == nullptr ?
