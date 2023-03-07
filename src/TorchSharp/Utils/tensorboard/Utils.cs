@@ -42,7 +42,7 @@ namespace TorchSharp
 
                         if (!is_power2(V.shape[0])) {
                             int len_addition = Convert.ToInt32(Math.Pow(2, bit_length(V.shape[0])) - V.shape[0]);
-                            V = cat(new Tensor[] { V, zeros(new long[] { len_addition, t, c, h, w }) });
+                            V = cat(new Tensor[] { V, zeros(new long[] { len_addition, t, c, h, w }, device: V.device) });
                         }
 
                         long n_rows = Convert.ToInt32(Math.Pow(2, (bit_length(V.shape[0]) - 1) / 2));

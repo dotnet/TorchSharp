@@ -1,8 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
-
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Google.Protobuf;
 using SkiaSharp;
 
@@ -95,11 +92,11 @@ namespace TorchSharp
                     /// <param name="img"> Image </param>
                     /// <param name="rescale"> Rescale image size </param>
                     /// <returns></returns>
-                    public static Tensorboard.Summary.Types.Image make_image(SKBitmap img, double rescale = 1)
+                    internal static Tensorboard.Summary.Types.Image make_image(SKBitmap img, double rescale = 1)
                     {
                         using var image = img.Copy();
                         byte[] bmpData = image.Resize(new SKSizeI((int)(image.Width * rescale), (int)(image.Height * rescale)), SKFilterQuality.High).Encode(SKEncodedImageFormat.Png, 100).ToArray();
-                        return new Tensorboard.Summary.Types.Image() { Height = image.Height, Width = image.Width, Colorspace = 3, EncodedImageString = ByteString.CopyFrom(bmpData) };
+                        return new Tensorboard.Summary.Types.Image() { Height = image.Height, Width = image.Width, Colorspace = 4, EncodedImageString = ByteString.CopyFrom(bmpData) };
                     }
 
                     /// <summary>
@@ -131,7 +128,6 @@ namespace TorchSharp
                     {
                         int h = (int)tensor.shape[1];
                         int w = (int)tensor.shape[2];
-                        int c = (int)tensor.shape[3];
                         using GifEncoder.Encoder encoder = new GifEncoder.Encoder();
                         encoder.Start();
                         encoder.SetRepeat(0);
@@ -143,13 +139,14 @@ namespace TorchSharp
                         encoder.Finish();
                         Stream stream = encoder.Output();
                         stream.Position = 0;
-                        return new Tensorboard.Summary.Types.Image() { Height = h, Width = w, Colorspace = c, EncodedImageString = ByteString.FromStream(stream) };
+                        return new Tensorboard.Summary.Types.Image() { Height = h, Width = w, Colorspace = 4, EncodedImageString = ByteString.FromStream(stream) };
                     }
 
                     private static SKBitmap TensorToSKBitmap(Tensor tensor)
                     {
                         int h = (int)tensor.shape[0];
                         int w = (int)tensor.shape[1];
+                        int c = (int)tensor.shape[2];
 
                         byte[,,] data = tensor.cpu().data<byte>().ToNDArray() as byte[,,];
                         var skBmp = new SKBitmap(w, h, SKColorType.Rgba8888, SKAlphaType.Opaque);
@@ -161,7 +158,7 @@ namespace TorchSharp
                                     pSkBmp[j * pixelSize] = data[i, j, 0];
                                     pSkBmp[j * pixelSize + 1] = data[i, j, 1];
                                     pSkBmp[j * pixelSize + 2] = data[i, j, 2];
-                                    pSkBmp[j * pixelSize + 3] = 255;
+                                    pSkBmp[j * pixelSize + 3] = c == 4 ? data[i, j, 3] : (byte)255;
                                 }
                                 pSkBmp += skBmp.Info.RowBytes;
                             }
