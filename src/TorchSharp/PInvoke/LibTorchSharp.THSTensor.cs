@@ -2072,5 +2072,10 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_adaptive_avg_pool3d_backward_out(IntPtr gradInput, IntPtr gradOutput, IntPtr originalInput);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_searchsorted_t(IntPtr sorted_sequence, IntPtr values, bool out_int32, bool right, IntPtr sorter);
+[DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_searchsorted_s(IntPtr sorted_sequence, IntPtr values, bool out_int32, bool right, IntPtr sorter);
     }
 }

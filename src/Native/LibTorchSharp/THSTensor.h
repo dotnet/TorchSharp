@@ -1185,6 +1185,9 @@ EXPORT_API(Tensor) THSTensor_slice_scatter(const Tensor tensor, const Tensor sou
 EXPORT_API(Tensor) THSTensor_scatter_add(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 EXPORT_API(Tensor) THSTensor_scatter_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 
+EXPORT_API(Tensor) THSTensor_searchsorted_t(const Tensor sorted_sequence, const Tensor values, const bool out_int32, const bool right, const Tensor sorter);
+EXPORT_API(Tensor) THSTensor_searchsorted_s(const Tensor sorted_sequence, const Scalar values, const bool out_int32, const bool right, const Tensor sorter);
+
 EXPORT_API(Tensor) THSTensor_set_(Tensor tensor, const Tensor source);
 
 EXPORT_API(Tensor) THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad);

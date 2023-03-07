@@ -45,6 +45,18 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ReplicationPad3d(handle, boxedHandle);
             }
+
+            /// <summary>
+            /// Pads the input tensor using replication of the input boundary.
+            /// </summary>
+            /// <param name="padding">The size of the padding: (padding_left, padding_right, padding_top, padding_bottom, padding_front, padding_back).</param>
+            /// <returns></returns>
+            public static ReplicationPad3d ReplicationPad3d((long, long, long, long, long, long) padding)
+            {
+                var handle = THSNN_ReplicationPad3d_ctor_tuple(padding.Item1, padding.Item2, padding.Item3, padding.Item4, padding.Item5, padding.Item6, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ReplicationPad3d(handle, boxedHandle);
+            }
         }
     }
 }
