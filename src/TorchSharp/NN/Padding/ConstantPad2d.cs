@@ -35,7 +35,7 @@ namespace TorchSharp
         public static partial class nn
         {
             /// <summary>
-            /// Pads the input tensor using replication of the input boundary.
+            /// Pads the input tensor boundaries with a constant value.
             /// </summary>
             /// <param name="padding">The size of the padding.</param>
             /// <param name="value"></param>
@@ -43,6 +43,19 @@ namespace TorchSharp
             public static ConstantPad2d ConstantPad2d(long padding, double value)
             {
                 var handle = THSNN_ConstantPad2d_ctor(value, padding, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ConstantPad2d(handle, boxedHandle);
+            }
+
+            /// <summary>
+            /// Pads the input tensor boundaries with a constant value.
+            /// </summary>
+            /// <param name="padding">The size of the padding:  (padding_left, padding_right, padding_top, padding_bottom)</param>
+            /// <param name="value"></param>
+            /// <returns></returns>
+            public static ConstantPad2d ConstantPad2d((long, long, long, long) padding, double value)
+            {
+                var handle = THSNN_ConstantPad2d_ctor_tuple(value, padding.Item1, padding.Item2, padding.Item3, padding.Item4, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ConstantPad2d(handle, boxedHandle);
             }

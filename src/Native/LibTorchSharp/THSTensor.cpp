@@ -1999,6 +1999,22 @@ void THSTensor_where_list(
     )
 }
 
+Tensor THSTensor_searchsorted_t(const Tensor sorted_sequence, const Tensor values, const bool out_int32, const bool right, const Tensor sorter)
+{    
+    CATCH_TENSOR(
+        sorter == nullptr
+        ? torch::searchsorted(*sorted_sequence, *values, out_int32, right)
+        : torch::searchsorted(*sorted_sequence, *values, out_int32, right, c10::nullopt, *sorter));
+}
+
+Tensor THSTensor_searchsorted_s(const Tensor sorted_sequence, const Scalar values, const bool out_int32, const bool right, const Tensor sorter)
+{
+    CATCH_TENSOR(
+        sorter == nullptr
+        ? torch::searchsorted(*sorted_sequence, *values, out_int32, right)
+        : torch::searchsorted(*sorted_sequence, *values, out_int32, right, c10::nullopt, *sorter));
+}
+
 bool THSTensor_has_names(Tensor tensor)
 {
     CATCH(
