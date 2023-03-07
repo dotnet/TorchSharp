@@ -110,6 +110,45 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Conv1d(res, boxedHandle).MoveModule<Conv1d>(device, dtype);
             }
+
+            public static partial class functional
+            {
+                /// <summary>
+                /// Applies a 1D convolution over an input signal composed of several input planes.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="weight"></param>
+                /// <param name="bias"></param>
+                /// <param name="stride"></param>
+                /// <param name="padding"></param>
+                /// <param name="dilation"></param>
+                /// <param name="groups"></param>
+                /// <returns></returns>
+                public static Tensor conv1d(Tensor input, Tensor weight, Tensor? bias = null,
+                    long? stride = null,
+                    long? padding = null,
+                    long? dilation = null,
+                    long groups = 1)
+                {
+                    var strides = new long[] { stride ?? 1 };
+                    var paddingArray = new long[] { padding ?? 0 };
+                    var dilationArray = new long[] { dilation ?? 1 };
+                    var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
+                    unsafe {
+                        fixed (long* pstrides = strides, ppadding = paddingArray, pdilation = dilationArray) {
+                            var res =
+                                THSTensor_conv1d(input.Handle, weight.Handle, biasHandle,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, paddingArray.Length,
+                                    (IntPtr)pdilation, dilationArray.Length,
+                                    groups);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+
+            }
         }
     }
 }

@@ -44,6 +44,29 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new AdaptiveAvgPool1d(handle, boxedHandle);
             }
+
+            public static partial class functional
+            {
+
+                /// <summary>
+                /// Applies a 1D adaptive average pooling over an input signal composed of several input planes.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="output_size"></param>
+                /// <returns></returns>
+                public static Tensor adaptive_avg_pool1d(Tensor input, long output_size)
+                {
+                    var outputSizes = new long[] { output_size };
+                    unsafe {
+                        fixed (long* poutputSize = outputSizes) {
+                            var res =
+                                THSTensor_adaptive_avg_pool1d(input.Handle, (IntPtr)poutputSize, outputSizes.Length);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+            }
         }
     }
 }

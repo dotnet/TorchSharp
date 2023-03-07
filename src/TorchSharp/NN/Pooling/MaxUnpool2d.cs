@@ -85,6 +85,28 @@ namespace TorchSharp
                     }
                 }
             }
+
+            public static partial class functional
+            {
+                /// <summary>
+                /// Computes a partial inverse of MaxPool2d.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="indices"></param>
+                /// <param name="outputSize"></param>
+                /// <returns></returns>
+                public static Tensor max_unpool2d(Tensor input, Tensor indices, long[] outputSize)
+                {
+                    unsafe {
+                        fixed (long* poutputSize = outputSize) {
+                            var res = THSTensor_maxunpool2d(input.Handle, indices.Handle,
+                                (IntPtr)poutputSize, outputSize.Length);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+            }
         }
     }
 }
