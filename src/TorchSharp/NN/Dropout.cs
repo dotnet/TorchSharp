@@ -12,9 +12,13 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a dropout module.
         /// </summary>
-        public sealed class Dropout : torch.nn.Module<Tensor, Tensor>
+        public sealed class Dropout : ParamLessModule<Tensor, Tensor>
         {
-            internal Dropout(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal Dropout(double p = 0.5, bool inplace = false) : base(nameof(Dropout))
+            {
+                this._p = p;
+                this._inplace = inplace;
+            }
 
             /// <summary>
             /// Forward pass.
@@ -23,18 +27,11 @@ namespace TorchSharp
             /// <returns></returns>
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Dropout_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return nn.functional.dropout(tensor, _p, training, _inplace);
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
-
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
-
-            protected internal override nn.Module _to(ScalarType dtype) => this;
+            double _p = 0.5;
+            bool _inplace = false;
         }
     }
 
@@ -51,9 +48,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static Dropout Dropout(double p = 0.5, bool inplace = false)
             {
-                var handle = THSNN_Dropout_ctor(p, inplace, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Dropout(handle, boxedHandle);
+                return new Dropout(p, inplace);
             }
 
             public static partial class functional

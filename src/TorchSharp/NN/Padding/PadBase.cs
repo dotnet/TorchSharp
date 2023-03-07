@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent the base of all padding-related modules.
         /// </summary>
-        public class PadBase : nn.Module<Tensor, Tensor>
+        public class PadBase : ParamLessModule<Tensor, Tensor>
         {
             protected PadBase(string name, PaddingModes mode, double value, params long[] padding) : base(name)
             {
@@ -30,14 +30,6 @@ namespace TorchSharp
             {
                 return nn.functional.pad(input, _padding, _paddingMode, _value);
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
-
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
-
-            protected internal override nn.Module _to(ScalarType dtype) => this;
 
             private PaddingModes _paddingMode;
             private long[] _padding;

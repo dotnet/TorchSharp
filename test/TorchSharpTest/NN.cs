@@ -325,6 +325,8 @@ namespace TorchSharp
                 var input = torch.randn(new long[] { 1, 1000 }, device: device);
                 var output = lin.call(input);
 
+                output[0, 511] = 10; // When we modify the copy, the original should be altered, too.
+
                 Assert.Equal(device.type, output.device_type);
                 Assert.Equal(input.data<float>(), output.data<float>());
             }
@@ -4775,13 +4777,13 @@ namespace TorchSharp
                     Assert.Equal(new long[] { 32, 360 }, output.shape);
                 }
 
-                using (var flat = Flatten(startDim: 2)) {
+                using (var flat = Flatten(start_dim: 2)) {
                     var output = flat.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32, 3, 120 }, output.shape);
                 }
 
-                using (var flat = Flatten(startDim: 0)) {
+                using (var flat = Flatten(start_dim: 0)) {
                     var output = flat.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32 * 360 }, output.shape);

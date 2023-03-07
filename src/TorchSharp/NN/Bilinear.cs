@@ -13,46 +13,57 @@ namespace TorchSharp
     {
         public sealed class Bilinear : Module<Tensor, Tensor, Tensor>
         {
-            internal Bilinear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            public new static Bilinear Load(string modelPath)
+            internal Bilinear(long in1_features, long in2_features, long out_features, bool hasBias = true, Device? device = null, ScalarType? dtype = null) : base(nameof(Bilinear))
             {
-                var res = Module<Tensor, Tensor>.Load(modelPath);
-                return new Bilinear(res.handle.DangerousGetHandle(), IntPtr.Zero);
+                weight = torch.empty(out_features, in1_features, in2_features, device: device, dtype: dtype).AsParameter();
+                var bound = 1 / Math.Sqrt(weight!.shape[1]);
+
+                init.uniform_(_weight, -bound, bound);
+
+                if (hasBias) {
+                    bias = torch.empty(out_features, device: device, dtype: dtype).AsParameter();
+                    var (fanIn, _) = init.CalculateFanInAndFanOut(weight);
+                    init.uniform_(_bias, -bound, bound);
+                }
+                //NOTE: it's important not to call 'RegisterComponents' here.
             }
 
             public override Tensor forward(Tensor input1, Tensor input2)
             {
-                var res = THSNN_Bilinear_forward(handle, input1.Handle, input2.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.bilinear(input1, input2, _weight!, _bias);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    _weight?.Dispose();
+                    _bias?.Dispose();
+                }
             }
 
             public Parameter? bias {
-                get {
-                    var res = THSNN_Bilinear_bias(handle);
-                    if (res == IntPtr.Zero) { CheckForErrors(); }
-                    return ((res == IntPtr.Zero) ? null : new Parameter(res));
-                }
+                get => _bias;
                 set {
-                    THSNN_Bilinear_set_bias(handle, value?.Handle ?? IntPtr.Zero);
-                    CheckForErrors();
-                    ConditionallyRegisterParameter("bias", value);
+                    _bias?.Dispose();
+                    _bias = value?.DetachFromDisposeScope() as Parameter;
+                    ConditionallyRegisterParameter(nameof(bias), _bias);
+                }
+            }
+            private Parameter? _bias;
+
+            public Parameter weight {
+                get => _weight!;
+                set {
+                    if (value is null) throw new ArgumentNullException(nameof(weight));
+                    if (value.Handle != _weight?.Handle) {
+                        _weight?.Dispose();
+                        _weight = (value.DetachFromDisposeScope() as Parameter)!;
+                        ConditionallyRegisterParameter(nameof(weight), _weight);
+                    }
                 }
             }
 
-            public Parameter? weight {
-                get {
-                    var res = THSNN_Bilinear_weight(handle);
-                    if (res == IntPtr.Zero) { CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
-                }
-                set {
-                    THSNN_Bilinear_set_weight(handle, value?.Handle ?? IntPtr.Zero);
-                    CheckForErrors();
-                    ConditionallyRegisterParameter("weight", value);
-                }
-            }
+            private Parameter? _weight;
         }
     }
 
@@ -64,19 +75,16 @@ namespace TorchSharp
             /// <summary>
             /// Applies a bilinear transformation to the incoming data
             /// </summary>
-            /// <param name="in1Features">size of each first input sample</param>
-            /// <param name="in2Features">size of each second input sample</param>
-            /// <param name="outputSize">size of each output sample</param>
+            /// <param name="in1_features">size of each first input sample</param>
+            /// <param name="in2_features">size of each second input sample</param>
+            /// <param name="out_features">size of each output sample</param>
             /// <param name="hasBias">If set to false, the layer will not learn an additive bias</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            public static Bilinear Bilinear(long in1Features, long in2Features, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null)
+            public static Bilinear Bilinear(long in1_features, long in2_features, long out_features, bool hasBias = true, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_Bilinear_ctor(in1Features, in2Features, outputSize, hasBias, out var boxedHandle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-
-                return new Bilinear(res, boxedHandle).MoveModule<Bilinear>(device, dtype);
+                return new Bilinear(in1_features, in2_features, out_features, hasBias, device, dtype);
             }
 
             public static partial class functional
@@ -92,10 +100,7 @@ namespace TorchSharp
                 /// <remarks>The '*' sub-shape must be the same among the two inputs.</remarks>
                 public static Tensor bilinear(Tensor input1, Tensor input2, Tensor weight, Tensor? bias = null)
                 {
-                    IntPtr bPtr = bias?.Handle ?? IntPtr.Zero;
-                    var res = THSNN_functional_bilinear(input1.Handle, input2.Handle, weight.Handle, bPtr);
-                    if (res == IntPtr.Zero) { CheckForErrors(); }
-                    return new Tensor(res);
+                    return torch.nn.functional.bilinear(input1, input2, weight, bias);
                 }
             }
         }
