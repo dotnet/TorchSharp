@@ -318,6 +318,9 @@ EXPORT_API(Tensor) THSNN_alpha_dropout(const Tensor input, const double p, bool 
 
 EXPORT_API(Tensor) THSNN_feature_alpha_dropout(const Tensor input, const double p, bool training, bool inplace);
 
+EXPORT_API(Tensor) THSNN_fold(const Tensor input, const int64_t out1, const int64_t out2, const int64_t kernel1, const int64_t kernel2, const int64_t stride1, const int64_t stride2, const int64_t pad1, const int64_t pad2, const int64_t dil1, const int64_t dil2);
+EXPORT_API(Tensor) THSNN_unfold(const Tensor input, const int64_t kernel1, const int64_t kernel2, const int64_t stride1, const int64_t stride2, const int64_t pad1, const int64_t pad2, const int64_t dil1, const int64_t dil2);
+
 // Linear
 
 EXPORT_API(NNModule) THSNN_Identity_ctor(NNAnyModule* outAsAnyModule);
