@@ -66,6 +66,42 @@ namespace TorchSharp
                     }
                 }
             }
+
+            public static partial class functional
+            {
+
+                /// <summary>
+                /// Applies a 1D average pooling over an input signal composed of several input planes.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="kernelSize"></param>
+                /// <param name="stride"></param>
+                /// <param name="padding"></param>
+                /// <param name="ceil_mode"></param>
+                /// <param name="count_include_pad"></param>
+                /// <returns></returns>
+                public static Tensor avg_pool1d(Tensor input, long kernelSize, long? stride = null,
+                    long? padding = null, bool ceil_mode = false, bool count_include_pad = true)
+                {
+                    var kernelSizes = new long[] { kernelSize };
+                    var strides = new long[] { stride ?? 1 };
+                    var paddings = new long[] { padding ?? 0 };
+                    unsafe {
+                        fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
+                            var res =
+                                THSTensor_avg_pool1d(input.Handle,
+                                    (IntPtr)pkernelSize, kernelSizes.Length,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, paddings.Length,
+                                    ceil_mode,
+                                    count_include_pad);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+
+            }
         }
     }
 }

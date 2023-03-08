@@ -1268,3 +1268,27 @@ PackedSequence THSNN_pack_sequence(const Tensor* sequences, int sequences_len, b
                 toTensors<at::Tensor>((torch::Tensor**)sequences, sequences_len),
                 enforce_sorted)));
 }
+
+Tensor THSNN_fold(const Tensor input, const int64_t out1, const int64_t out2, const int64_t kernel1, const int64_t kernel2, const int64_t stride1, const int64_t stride2, const int64_t pad1, const int64_t pad2, const int64_t dil1, const int64_t dil2)
+{
+    auto opts =
+        torch::nn::functional::FoldFuncOptions({ out1, out2 }, {kernel1, kernel2})
+        .dilation({dil1, dil2})
+        .padding({pad1, pad2})
+        .stride({ stride1, stride2 });
+
+    CATCH_TENSOR(torch::nn::functional::fold(*input, opts));
+}
+
+
+
+Tensor THSNN_unfold(const Tensor input, const int64_t kernel1, const int64_t kernel2, const int64_t stride1, const int64_t stride2, const int64_t pad1, const int64_t pad2, const int64_t dil1, const int64_t dil2)
+{
+    auto opts =
+        torch::nn::functional::UnfoldFuncOptions({ kernel1, kernel2 })
+        .dilation({ dil1, dil2 })
+        .padding({ pad1, pad2 })
+        .stride({ stride1, stride2 });
+
+    CATCH_TENSOR(torch::nn::functional::unfold(*input, opts));
+}
