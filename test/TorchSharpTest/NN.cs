@@ -4804,6 +4804,44 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestFold()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.rand(new long[] { 1, 3 * 2 * 2, 12 }, device: device);
+
+                using (var flat = Fold((4,5), (2,2))) {
+                    var output = flat.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 1, 3, 4, 5}, output.shape);
+                }
+                {
+                    var output = functional.fold(data, (4, 5), (2, 2));
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 1, 3, 4, 5 }, output.shape);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestUnfold()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var data = torch.randn(2, 5, 3, 4, device: device);
+
+                using (var flat = Unfold(kernel_size: (2, 3))) {
+                    var output = flat.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 2, 30, 4 }, output.shape);
+                }
+                {
+                    var output = functional.unfold(data, kernel_size: (2, 3));
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(new long[] { 2, 30, 4 }, output.shape);
+                }
+            }
+        }
+
+        [Fact]
         public void TestCosineSimilarity()
         {
             foreach (var device in TestUtils.AvailableDevices()) {

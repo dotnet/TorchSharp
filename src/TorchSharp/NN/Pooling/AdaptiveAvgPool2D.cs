@@ -73,6 +73,56 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new AdaptiveAvgPool2d(handle, boxedHandle);
             }
+
+            public static partial class functional
+            {
+                /// <summary>
+                /// Applies a 2D adaptive average pooling over an input signal composed of several input planes.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="output_size"></param>
+                /// <returns></returns>
+                public static Tensor adaptive_avg_pool2d(Tensor input, long[] output_size)
+                {
+                    unsafe {
+                        fixed (long* poutputSize = output_size) {
+                            var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, output_size.Length);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+
+                /// <summary>
+                /// Applies a 2D adaptive average pooling over an input signal composed of several input planes.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="output_size"></param>
+                /// <returns></returns>
+                public static unsafe Tensor adaptive_avg_pool2d(Tensor input, (long, long) output_size)
+                {
+                    long* poutputSize = stackalloc long[2] { output_size.Item1, output_size.Item2 };
+
+                    var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+
+                /// <summary>
+                /// Applies a 2D adaptive average pooling over an input signal composed of several input planes.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="output_size"></param>
+                /// <returns></returns>
+                public static unsafe Tensor adaptive_avg_pool2d(Tensor input, long output_size)
+                {
+                    long* poutputSize = stackalloc long[2] { output_size, output_size };
+
+                    var res = THSTensor_adaptive_avg_pool2d(input.Handle, (IntPtr)poutputSize, 2);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+            }
         }
     }
 }

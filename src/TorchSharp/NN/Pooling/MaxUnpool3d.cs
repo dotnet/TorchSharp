@@ -85,6 +85,31 @@ namespace TorchSharp
                     }
                 }
             }
+            public static partial class functional
+            {
+                /// <summary>
+                /// Computes a partial inverse of MaxPool3d.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="indices"></param>
+                /// <param name="outputSize"></param>
+                /// <param name="strides"></param>
+                /// <param name="padding"></param>
+                /// <returns></returns>
+                public static Tensor max_unpool3d(Tensor input, Tensor indices, long[] outputSize, long[] strides, long[] padding)
+                {
+                    unsafe {
+                        fixed (long* poutputSize = outputSize, pstrides = strides, ppadding = padding) {
+                            var res = THSTensor_maxunpool3d(input.Handle, indices.Handle,
+                                (IntPtr)poutputSize, outputSize.Length,
+                                (IntPtr)pstrides, strides.Length,
+                                (IntPtr)ppadding, padding.Length);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+            }
         }
     }
 }
