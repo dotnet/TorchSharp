@@ -6,8 +6,9 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __API Changes__:
 
-Adding `Module.call()` to all the Module<T...> classes. This wraps `Module.forward()` and allows hooks to be registered. `Module.forward()` is still available, but the most general way to invoke a module's logic is through `call()`.<br/>
 Adding torch.tensordot<br/>
+Adding torch.nn.Fold and Unfold modules.<br/>
+Adding `Module.call()` to all the Module<T...> classes. This wraps `Module.forward()` and allows hooks to be registered. `Module.forward()` is still available, but the most general way to invoke a module's logic is through `call()`.<br/>
 Adding tuple overloads for all the padding-related modules.<br/>
 
 __Fixed Bugs__:
