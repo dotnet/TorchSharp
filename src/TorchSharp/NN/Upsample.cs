@@ -57,6 +57,144 @@ namespace TorchSharp
                         return d.call(x);
                     }
                 }
+
+
+                /// <summary>
+                /// Upsamples the input, using nearest neighbours’ pixel values.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="outputSize"></param>
+                /// <param name="scaleFactor"></param>
+                /// <returns></returns>
+                public static Tensor upsample_nearest1d(Tensor input, long? outputSize, double? scaleFactor)
+                {
+                    var outputSizes = outputSize.HasValue ? new long[] { outputSize.Value } : null;
+                    var outputSizesLength = outputSize.HasValue ? 1 : 0;
+                    var scaleFactors = scaleFactor.HasValue ? new double[] { scaleFactor.Value } : null;
+                    var scaleFactorsLength = scaleFactor.HasValue ? 1 : 0;
+                    unsafe {
+                        fixed (long* poutputSizes = outputSizes) {
+                            fixed (double* pscaleFactors = scaleFactors) {
+                                var res =
+                                    THSTensor_upsample_nearest1d(input.Handle,
+                                        (IntPtr)poutputSizes, outputSizesLength,
+                                        (IntPtr)pscaleFactors, scaleFactorsLength);
+                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                                return new Tensor(res);
+                            }
+                        }
+                    }
+                }
+
+                public static Tensor upsample_nearest1d_backward(Tensor grad_output, long? outputSize, long inputSize, double? scaleFactor)
+                {
+                    var outputSizes = outputSize.HasValue ? new long[] { outputSize.Value } : null;
+                    var outputSizesLength = outputSize.HasValue ? 1 : 0;
+                    var inputSizes = new long[] { inputSize };
+                    var scaleFactors = scaleFactor.HasValue ? new double[] { scaleFactor.Value } : null;
+                    var scaleFactorsLength = scaleFactor.HasValue ? 1 : 0;
+                    unsafe {
+                        fixed (long* poutputSizes = outputSizes, pinputSizes = inputSizes) {
+                            fixed (double* pscaleFactors = scaleFactors) {
+                                var res =
+                                    THSTensor_upsample_nearest1d_backward(grad_output.Handle,
+                                        (IntPtr)poutputSizes, outputSizesLength,
+                                        (IntPtr)pinputSizes, inputSizes.Length,
+                                        (IntPtr)pscaleFactors, scaleFactorsLength);
+                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                                return new Tensor(res);
+                            }
+                        }
+                    }
+                }
+
+                /// <summary>
+                /// Upsamples the input, using nearest neighbours’ pixel values.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="outputSizes"></param>
+                /// <param name="scaleFactors"></param>
+                /// <returns></returns>
+                public static Tensor upsample_nearest2d(Tensor input, long[]? outputSizes = null, double[]? scaleFactors = null)
+                {
+                    var outputSizesLength = outputSizes == null ? 0 : outputSizes.Length;
+                    var scaleFactorsLength = scaleFactors == null ? 0 : scaleFactors.Length;
+                    unsafe {
+                        fixed (long* poutputSizes = outputSizes) {
+                            fixed (double* pscaleFactors = scaleFactors) {
+                                var res =
+                                    THSTensor_upsample_nearest2d(input.Handle,
+                                        (IntPtr)poutputSizes, outputSizesLength,
+                                        (IntPtr)pscaleFactors, scaleFactorsLength);
+                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                                return new Tensor(res);
+                            }
+                        }
+                    }
+                }
+
+                public static Tensor upsample_nearest2d_backward(Tensor grad_output, long[] inputSizes, long[]? outputSizes = null, double[]? scaleFactors = null)
+                {
+                    var outputSizesLength = outputSizes == null ? 0 : outputSizes.Length;
+                    var scaleFactorsLength = scaleFactors == null ? 0 : scaleFactors.Length;
+                    unsafe {
+                        fixed (long* poutputSizes = outputSizes, pinputSizes = inputSizes) {
+                            fixed (double* pscaleFactors = scaleFactors) {
+                                var res =
+                                    THSTensor_upsample_nearest2d_backward(grad_output.Handle,
+                                        (IntPtr)poutputSizes, outputSizesLength,
+                                        (IntPtr)pinputSizes, inputSizes.Length,
+                                        (IntPtr)pscaleFactors, scaleFactorsLength);
+                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                                return new Tensor(res);
+                            }
+                        }
+                    }
+                }
+
+                public static Tensor upsample_nearest3d_backward(Tensor grad_output, long[] inputSizes, long[]? outputSizes = null, double[]? scaleFactors = null)
+                {
+                    var outputSizesLength = outputSizes == null ? 0 : outputSizes.Length;
+                    var scaleFactorsLength = scaleFactors == null ? 0 : scaleFactors.Length;
+                    unsafe {
+                        fixed (long* poutputSizes = outputSizes, pinputSizes = inputSizes) {
+                            fixed (double* pscaleFactors = scaleFactors) {
+                                var res =
+                                    THSTensor_upsample_nearest3d_backward(grad_output.Handle,
+                                        (IntPtr)poutputSizes, outputSizesLength,
+                                        (IntPtr)pinputSizes, inputSizes.Length,
+                                        (IntPtr)pscaleFactors, scaleFactorsLength);
+                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                                return new Tensor(res);
+                            }
+                        }
+                    }
+                }
+
+                /// <summary>
+                /// Upsamples the input, using nearest neighbours’ pixel values.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="outputSizes"></param>
+                /// <param name="scaleFactors"></param>
+                /// <returns></returns>
+                public static Tensor upsample_nearest3d(Tensor input, long[]? outputSizes = null, double[]? scaleFactors = null)
+                {
+                    var outputSizesLength = outputSizes == null ? 0 : outputSizes.Length;
+                    var scaleFactorsLength = scaleFactors == null ? 0 : scaleFactors.Length;
+                    unsafe {
+                        fixed (long* poutputSizes = outputSizes) {
+                            fixed (double* pscaleFactors = scaleFactors) {
+                                var res =
+                                    THSTensor_upsample_nearest3d(input.Handle,
+                                        (IntPtr)poutputSizes, outputSizesLength,
+                                        (IntPtr)pscaleFactors, scaleFactorsLength);
+                                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                                return new Tensor(res);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

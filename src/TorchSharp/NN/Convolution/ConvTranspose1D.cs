@@ -74,6 +74,49 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ConvTranspose1d(res, boxedHandle).MoveModule<ConvTranspose1d>(device, dtype);
             }
+
+            public static partial class functional
+            {
+                /// <summary>
+                /// Applies a 1D transposed convolution operator over an input signal composed of several input planes, sometimes also called “deconvolution”.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="weight"></param>
+                /// <param name="bias"></param>
+                /// <param name="stride"></param>
+                /// <param name="padding"></param>
+                /// <param name="outputPadding"></param>
+                /// <param name="dilation"></param>
+                /// <param name="groups"></param>
+                /// <returns></returns>
+                public static Tensor conv_transpose1d(Tensor input, Tensor weight, Tensor? bias = null,
+                    long? stride = null,
+                    long? padding = null,
+                    long? outputPadding = null,
+                    long? dilation = null,
+                    long groups = 1)
+                {
+                    var strides = new long[] { stride ?? 1 };
+                    var paddings = new long[] { padding ?? 0 };
+                    var outputPaddings = new long[] { outputPadding ?? 0 };
+                    var dilations = new long[] { dilation ?? 1 };
+                    var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
+                    unsafe {
+                        fixed (long* pstrides = strides, ppadding = paddings, poutputPadding = outputPaddings, pdilation = dilations) {
+                            var res =
+                                THSTensor_conv_transpose1d(input.Handle, weight.Handle, biasHandle,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, paddings.Length,
+                                    (IntPtr)poutputPadding, outputPaddings.Length,
+                                    (IntPtr)pdilation, dilations.Length,
+                                    groups);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+
+            }
         }
     }
 }
