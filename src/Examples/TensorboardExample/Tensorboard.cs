@@ -2,6 +2,10 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SkiaSharp;
 using static TorchSharp.torch;
 
@@ -9,8 +13,10 @@ namespace TorchSharp.Examples.TensorboardExample
 {
     public static class Tensorboard
     {
-        internal static void Main(string[] args)
+        private static string imagePath = "TensorboardExample/Images";
+        internal static async Task Main(string[] args)
         {
+            await DownloadExampleData("https://agirls.aottercdn.com/media/0d532b3f-0196-466a-96e1-7c6db56d0142.gif");
             var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
             var writer = torch.utils.tensorboard.SummaryWriter("tensorboard");
             Console.WriteLine($"Running Tensorboard on {device.type}");
@@ -31,7 +37,7 @@ namespace TorchSharp.Examples.TensorboardExample
 
         private static void AddImageUsePath(Modules.SummaryWriter writer)
         {
-            string[] imagesPath = Directory.GetFiles("TensorboardExample/Images");
+            string[] imagesPath = Directory.GetFiles(imagePath);
             for (int i = 0; i < imagesPath.Length; i++) {
                 writer.add_img("AddImageUsePath", imagesPath[i], i);
             }
@@ -39,7 +45,7 @@ namespace TorchSharp.Examples.TensorboardExample
 
         private static void AddImageUseTensor(Modules.SummaryWriter writer, Device device)
         {
-            SKBitmap[] images = Directory.GetFiles("TensorboardExample/Images").Select(item => SKBitmap.Decode(item)).ToArray();
+            SKBitmap[] images = Directory.GetFiles(imagePath).Select(item => SKBitmap.Decode(item)).ToArray();
             using var d = NewDisposeScope();
             for (int i = 0; i < images.Length; i++) {
                 Tensor tensor = SKBitmapToTensor(images[i], device);
@@ -50,7 +56,7 @@ namespace TorchSharp.Examples.TensorboardExample
 
         private static void AddVideo(Modules.SummaryWriter writer, Device device)
         {
-            SKBitmap[] images = Directory.GetFiles("TensorboardExample/Images").Select(item => SKBitmap.Decode(item)).ToArray();
+            SKBitmap[] images = Directory.GetFiles(imagePath).Select(item => SKBitmap.Decode(item)).ToArray();
             using var d = NewDisposeScope();
             Tensor tensor = stack(images.Select(item => SKBitmapToTensor(item, device)).ToArray());
             tensor = stack(new Tensor[] { tensor, tensor, tensor, tensor, tensor, tensor, tensor, tensor, tensor, tensor });
@@ -87,6 +93,23 @@ namespace TorchSharp.Examples.TensorboardExample
             //}
 
             return tensor(hwcData, ScalarType.Byte, device);
+        }
+
+        private static async Task DownloadExampleData(string url)
+        {
+            if (Directory.Exists(imagePath))
+                Directory.Delete(imagePath, true);
+            Directory.CreateDirectory(imagePath);
+            using var client = new HttpClient();
+
+            using HttpResponseMessage message = await client.GetAsync(url);
+            using Stream stream = await message.Content.ReadAsStreamAsync();
+            using var animatedImage = Image.Load<Rgba32>(stream);
+            for (int i = 0; i < animatedImage.Frames.Count; i++) {
+                string pngFilename = Path.Combine(imagePath, $"frame_{i}.png");
+                using var pngImage = animatedImage.Frames.CloneFrame(i);
+                pngImage.SaveAsPng(pngFilename);
+            }
         }
     }
 }

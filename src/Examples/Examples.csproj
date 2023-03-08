@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Net.Http" Version="2.2.29" Condition="'$(TargetFramework)' == 'net472'" />
     <PackageReference Include="SharpZipLib" Version="1.4.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
@@ -34,39 +35,6 @@
     <ProjectReference Include="..\TorchAudio\TorchAudio.csproj" />
     <ProjectReference Include="..\TorchSharp\TorchSharp.csproj" />
     <ProjectReference Include="..\TorchVision\TorchVision.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="TensorboardExample\Images\dd7bc686703f4166aac314395b2df4008tB05g8uJ00R9Ei8-0.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TensorboardExample\Images\dd7bc686703f4166aac314395b2df4008tB05g8uJ00R9Ei8-1.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TensorboardExample\Images\dd7bc686703f4166aac314395b2df4008tB05g8uJ00R9Ei8-2.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TensorboardExample\Images\dd7bc686703f4166aac314395b2df4008tB05g8uJ00R9Ei8-3.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TensorboardExample\Images\dd7bc686703f4166aac314395b2df4008tB05g8uJ00R9Ei8-4.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TensorboardExample\Images\dd7bc686703f4166aac314395b2df4008tB05g8uJ00R9Ei8-5.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TensorboardExample\Images\dd7bc686703f4166aac314395b2df4008tB05g8uJ00R9Ei8-6.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TensorboardExample\Images\dd7bc686703f4166aac314395b2df4008tB05g8uJ00R9Ei8-7.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TensorboardExample\Images\dd7bc686703f4166aac314395b2df4008tB05g8uJ00R9Ei8-8.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TensorboardExample\Images\dd7bc686703f4166aac314395b2df4008tB05g8uJ00R9Ei8-9.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 
