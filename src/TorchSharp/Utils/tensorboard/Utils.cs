@@ -63,7 +63,7 @@ namespace TorchSharp
                     public static Tensor make_grid(Tensor I, long ncols = 8)
                     {
                         if (I.shape[1] == 1)
-                            I = cat(new Tensor[] { I, I, I }, 1);
+                            I = I.expand(-1, 3);
                         Trace.Assert(I.ndim == 4 && I.shape[1] == 3);
                         long nimg = I.shape[0];
                         long H = I.shape[2];
@@ -105,14 +105,14 @@ namespace TorchSharp
                             long[] index = "HWC".Select(c => Convert.ToInt64(input_format.IndexOf(c))).ToArray();
                             Tensor tensor_HWC = tensor.permute(index);
                             if (tensor_HWC.shape[2] == 1)
-                                tensor_HWC = cat(new Tensor[] { tensor_HWC, tensor_HWC, tensor_HWC }, 2);
+                                tensor_HWC = tensor_HWC.expand(-1, -1, 3);
                             return tensor_HWC;
                         }
 
                         if (input_format.Length == 2) {
                             long[] index = "HW".Select(c => Convert.ToInt64(input_format.IndexOf(c))).ToArray();
                             tensor = tensor.permute(index);
-                            tensor = stack(new Tensor[] { tensor, tensor, tensor }, 2);
+                            tensor = tensor.unsqueeze(-1).expand(-1, -1, 3);
                             return tensor;
                         }
 
