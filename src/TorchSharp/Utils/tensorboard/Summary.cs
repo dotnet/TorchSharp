@@ -150,7 +150,7 @@ namespace TorchSharp
 
                         byte[,,] data = tensor.cpu().data<byte>().ToNDArray() as byte[,,];
                         var skBmp = new SKBitmap(w, h, SKColorType.Rgba8888, SKAlphaType.Opaque);
-                        int pixelSize = (int)tensor.shape[2] + 1;
+                        int pixelSize = 4;
                         unsafe {
                             byte* pSkBmp = (byte*)skBmp.GetPixels().ToPointer();
                             for (int i = 0; i < h; i++) {

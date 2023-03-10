@@ -16,7 +16,7 @@ namespace TorchSharp.Examples
             //ImageTransforms.Main(args);
             //SpeechCommands.Main(args);
             //IOReadWrite.Main(args);
-            await TensorboardExample.Tensorboard.Main(args);
+            await Tensorboard.Main(args);
         }
     }
 }

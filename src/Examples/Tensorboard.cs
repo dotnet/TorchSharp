@@ -9,7 +9,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SkiaSharp;
 using static TorchSharp.torch;
 
-namespace TorchSharp.Examples.TensorboardExample
+namespace TorchSharp.Examples
 {
     public static class Tensorboard
     {
@@ -17,8 +17,8 @@ namespace TorchSharp.Examples.TensorboardExample
         internal static async Task Main(string[] args)
         {
             await DownloadExampleData("https://agirls.aottercdn.com/media/0d532b3f-0196-466a-96e1-7c6db56d0142.gif");
-            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
-            var writer = torch.utils.tensorboard.SummaryWriter("tensorboard");
+            var device = cuda.is_available() ? CUDA : CPU;
+            var writer = utils.tensorboard.SummaryWriter("tensorboard");
             Console.WriteLine($"Running Tensorboard on {device.type}");
             AddText(writer);
             AddImageUsePath(writer);
@@ -37,18 +37,18 @@ namespace TorchSharp.Examples.TensorboardExample
 
         private static void AddImageUsePath(Modules.SummaryWriter writer)
         {
-            string[] imagesPath = Directory.GetFiles(imagePath);
-            for (int i = 0; i < imagesPath.Length; i++) {
+            var imagesPath = Directory.GetFiles(imagePath);
+            for (var i = 0; i < imagesPath.Length; i++) {
                 writer.add_img("AddImageUsePath", imagesPath[i], i);
             }
         }
 
         private static void AddImageUseTensor(Modules.SummaryWriter writer, Device device)
         {
-            SKBitmap[] images = Directory.GetFiles(imagePath).Select(item => SKBitmap.Decode(item)).ToArray();
+            var images = Directory.GetFiles(imagePath).Select(item => SKBitmap.Decode(item)).ToArray();
             using var d = NewDisposeScope();
-            for (int i = 0; i < images.Length; i++) {
-                Tensor tensor = SKBitmapToTensor(images[i], device);
+            for (var i = 0; i < images.Length; i++) {
+                var tensor = SKBitmapToTensor(images[i], device);
                 writer.add_img("AddImageUseTensor", tensor, i, dataformats: "CHW");
                 images[i].Dispose();
             }
@@ -56,9 +56,9 @@ namespace TorchSharp.Examples.TensorboardExample
 
         private static void AddVideo(Modules.SummaryWriter writer, Device device)
         {
-            SKBitmap[] images = Directory.GetFiles(imagePath).Select(item => SKBitmap.Decode(item)).ToArray();
+            var images = Directory.GetFiles(imagePath).Select(item => SKBitmap.Decode(item)).ToArray();
             using var d = NewDisposeScope();
-            Tensor tensor = stack(images.Select(item => SKBitmapToTensor(item, device)).ToArray());
+            var tensor = stack(images.Select(item => SKBitmapToTensor(item, device)).ToArray());
             tensor = stack(new Tensor[] { tensor, tensor, tensor, tensor, tensor, tensor, tensor, tensor, tensor, tensor });
             foreach (var image in images)
                 image.Dispose();
@@ -69,28 +69,18 @@ namespace TorchSharp.Examples.TensorboardExample
 
         private static Tensor SKBitmapToTensor(SKBitmap skBitmap, Device device)
         {
-            int width = skBitmap.Width;
-            int height = skBitmap.Height;
-            byte[,,] hwcData = new byte[3, height, width];
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    SKColor color = skBitmap.GetPixel(x, y);
+            var width = skBitmap.Width;
+            var height = skBitmap.Height;
+            var hwcData = new byte[4, height, width];
+            for (var y = 0; y < height; y++) {
+                for (var x = 0; x < width; x++) {
+                    var color = skBitmap.GetPixel(x, y);
                     hwcData[0, y, x] = color.Red;
                     hwcData[1, y, x] = color.Green;
                     hwcData[2, y, x] = color.Blue;
+                    hwcData[3, y, x] = color.Alpha;
                 }
             }
-
-            //byte[,,] hwcData = new byte[4, height, width];
-            //for (int y = 0; y < height; y++) {
-            //    for (int x = 0; x < width; x++) {
-            //        SKColor color = skBitmap.GetPixel(x, y);
-            //        hwcData[0, y, x] = color.Red;
-            //        hwcData[1, y, x] = color.Green;
-            //        hwcData[2, y, x] = color.Blue;
-            //        hwcData[3, y, x] = color.Alpha;
-            //    }
-            //}
 
             return tensor(hwcData, ScalarType.Byte, device);
         }
@@ -102,11 +92,11 @@ namespace TorchSharp.Examples.TensorboardExample
             Directory.CreateDirectory(imagePath);
             using var client = new HttpClient();
 
-            using HttpResponseMessage message = await client.GetAsync(url);
-            using Stream stream = await message.Content.ReadAsStreamAsync();
+            using var message = await client.GetAsync(url);
+            using var stream = await message.Content.ReadAsStreamAsync();
             using var animatedImage = Image.Load<Rgba32>(stream);
-            for (int i = 0; i < animatedImage.Frames.Count; i++) {
-                string pngFilename = Path.Combine(imagePath, $"frame_{i}.png");
+            for (var i = 0; i < animatedImage.Frames.Count; i++) {
+                var pngFilename = Path.Combine(imagePath, $"frame_{i}.png");
                 using var pngImage = animatedImage.Frames.CloneFrame(i);
                 pngImage.SaveAsPng(pngFilename);
             }
