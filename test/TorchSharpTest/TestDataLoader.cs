@@ -34,6 +34,21 @@ namespace TorchSharp
             Assert.Equal(d["index"], torch.tensor(0L));
         }
 
+        [Fact]
+        public void TensorDatasetTest()
+        {
+            var x = torch.randn(4, 12);
+            var y = torch.randn(4, 16);
+            using var dataset = torch.utils.data.TensorDataset(x, y);
+            Assert.Equal(2, dataset.Count);
+
+            var d = dataset.GetTensor(0);
+
+            Assert.Equal(2, d.Count);
+            Assert.Equal(x[0], d[0]);
+            Assert.Equal(y[0], d[1]);
+        }
+
         // Cannot assert index because ConcurrentBag append tensors randomly
         [Fact]
         public void DataLoaderTest1()
