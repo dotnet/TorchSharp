@@ -75,6 +75,24 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        public void DataLoaderTest3()
+        {
+            using var dataset = new TestDataset();
+            {
+                using var dataloader = new torch.utils.data.DataLoader(dataset, 3, false, torch.CPU);
+                Assert.Equal(4, dataloader.Count);
+            }
+            {
+                using var dataloader = new torch.utils.data.DataLoader(dataset, 3, false, torch.CPU, drop_last: true);
+                Assert.Equal(3, dataloader.Count);
+            }
+            {
+                using var dataloader = new torch.utils.data.DataLoader(dataset, 2, false, torch.CPU, drop_last: true);
+                Assert.Equal(5, dataloader.Count);
+            }
+        }
+
         private const int stressBatchSize = 32;
 
         private class LargeTestDataset : torch.utils.data.Dataset
