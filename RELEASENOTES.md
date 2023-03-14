@@ -17,6 +17,7 @@ __Fixed Bugs__:
 #940 Missing torch.searchsorted<br/>
 #942 nn.ReplicationPad1d(long[] padding) miss<br/>
 #943 LRScheduler.get_last_lr miss<br/>
+#951 DataLoader constructor missing drop_last parameter<br/>
 #953 TensorDataset is missing<br/>
 
 ## NuGet Version 0.99.3
