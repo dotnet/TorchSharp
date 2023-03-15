@@ -2071,8 +2071,12 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_searchsorted_t(IntPtr sorted_sequence, IntPtr values, bool out_int32, bool right, IntPtr sorter);
+
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_searchsorted_s(IntPtr sorted_sequence, IntPtr values, bool out_int32, bool right, IntPtr sorter);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_fake_quantize_per_channel_affine_cachemask(IntPtr tensor, IntPtr scale, IntPtr zero_point, long axis, long quant_min, long quant_max, out IntPtr mask);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_histogram_t(IntPtr input, IntPtr bins, IntPtr weight, bool density, out IntPtr r_bin_edges);

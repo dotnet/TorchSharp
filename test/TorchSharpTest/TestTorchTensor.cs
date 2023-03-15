@@ -7787,6 +7787,23 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.fake_quantize_per_channel_affine))]
+        public void TestFakeQuantizePerChannelAffine()
+        {
+            var x = torch.from_array(new double[][][] {
+                { { -0.2525d, -0.0466d }, { 0.3491d, -0.2168d } }, { { -0.5906d, 1.6258d }, { 0.6444d, -0.0542d } }
+            });
+            var scales = torch.from_array(new double[] { 0.0475, 0.0486 });
+            var zero_points = torch.zeros(2).to(torch.int32);
+            var result = torch.fake_quantize_per_channel_affine(x, scales, zero_points, 1, 0, 255);
+            var expected = torch.from_array(new double[][][] {
+                { { 0.0000d, 0.0000d }, {0.3405d, 0.0000d} }, { {0.0000d, 1.6134d}, {0.6323d, 0.0000d } }
+            });
+
+            Assert.True(result.allclose(expected));
+        }
+
+        [Fact]
         public void TestHistogramOptimBinNums()
         {
             // https://github.com/numpy/numpy/blob/b50568d9e758b489c2a3c409ef4e57b67820f090/numpy/lib/tests/test_histograms.py#L412

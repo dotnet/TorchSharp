@@ -741,9 +741,9 @@ namespace TorchSharp
         /// <param name="quant_min">lower bound of the quantized domain</param>
         /// <param name="quant_max">upper bound of the quantized domain</param>
         /// <returns>A newly fake_quantized per channel torch.float32 tensor</returns>
-        [Pure, Obsolete("not implemented", true)]
+        [Pure]
         public static Tensor fake_quantize_per_channel_affine(Tensor input, Tensor scale, Tensor zero_point, int axis, long quant_min, long quant_max)
-            => throw new NotImplementedException();
+            => input.fake_quantize_per_channel_affine(scale, zero_point, axis, quant_min, quant_max);
 
         // https://pytorch.org/docs/stable/generated/torch.fake_quantize_per_tensor_affine
         /// <summary>
