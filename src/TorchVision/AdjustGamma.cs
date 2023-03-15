@@ -1,4 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+#nullable enable
 using System;
 using static TorchSharp.torch;
 
@@ -19,16 +20,16 @@ namespace TorchSharp
             public Tensor call(Tensor img)
             {
                 var dtype = img.dtype;
-                if (!torch.is_floating_point(img))
-                    img = transforms.ConvertImageDtype(torch.float32).call(img);
+                if (!is_floating_point(img))
+                    img = transforms.ConvertImageDtype(float32).call(img);
 
                 img = (gain * img.pow(gamma)).clamp(0, 1);
 
-                return transforms.ConvertImageDtype(dtype).call(img); ;
+                return transforms.ConvertImageDtype(dtype).call(img);
             }
 
-            private double gamma;
-            private double gain;
+            private readonly double gamma;
+            private readonly double gain;
         }
 
         public static partial class transforms
@@ -44,10 +45,7 @@ namespace TorchSharp
             /// </param>
             /// <param name="gain">The constant multiplier in the gamma correction equation.</param>
             /// <returns></returns>
-            static public ITransform AdjustGamma(double gamma, double gain = 1.0)
-            {
-                return new AdjustGamma(gamma);
-            }
+            public static ITransform AdjustGamma(double gamma, double gain = 1.0) => new AdjustGamma(gamma, gain);
         }
     }
 }
