@@ -139,7 +139,7 @@ namespace TorchSharp
             var optimizer = torch.optim.Adam(seq.parameters(), learning_rate);
             var (beta1, beta2) = optimizer.Betas;
             Assert.Equal(0.9, beta1);
-            Assert.Equal(0.99, beta2);
+            Assert.Equal(0.999, beta2);
 
             optimizer.Betas = (0.85, 0.975);
 
@@ -390,7 +390,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            LossIsClose(94.941f, loss);
+            LossIsClose(94.69524f, loss);
         }
 
         /// <summary>
@@ -480,7 +480,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            LossIsClose(197.63f, loss);
+            LossIsClose(197.873f, loss);
         }
 
 

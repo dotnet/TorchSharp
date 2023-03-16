@@ -29,7 +29,7 @@ namespace TorchSharp
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
             /// <param name="maximize"></param>
             /// <returns></returns>
-            public static AdamW AdamW(IEnumerable<Parameter> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
+            public static AdamW AdamW(IEnumerable<Parameter> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
                 return new AdamW(parameters, lr, beta1, beta2, eps, weight_decay, amsgrad, maximize);
             }
@@ -49,7 +49,7 @@ namespace TorchSharp
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
             /// <param name="maximize"></param>
             /// <returns></returns>
-            public static AdamW AdamW(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
+            public static AdamW AdamW(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
                 return new AdamW(parameters.Select(np => np.parameter), lr, beta1, beta2, eps, weight_decay, amsgrad, maximize);
             }
@@ -69,7 +69,7 @@ namespace TorchSharp
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
             /// <param name="maximize"></param>
             /// <returns></returns>
-            public static AdamW AdamW(IEnumerable<AdamW.ParamGroup> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
+            public static AdamW AdamW(IEnumerable<AdamW.ParamGroup> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
                 return new AdamW(parameters, lr, beta1, beta2, eps, weight_decay, amsgrad, maximize);
             }
