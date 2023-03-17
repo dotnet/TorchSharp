@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,8 +30,12 @@ namespace TorchSharp
                     /// <param name="device">device for output tensor</param>
                     /// <param name="shuffler">Shuffler for dataloader</param>
                     /// <param name="num_worker">Count of worker</param>
-                    public DataLoader(Dataset dataset, int batchSize, IEnumerable<long> shuffler, Device device = null, int num_worker = 1)
-                        : base(dataset, batchSize, Collate, shuffler, device, num_worker)
+                    /// <param name="drop_last">
+                    /// Set to true to drop the last incomplete batch, if the dataset size is not divisible by the batch size.
+                    /// If alse and the size of dataset is not divisible by the batch size, then the last batch will be smaller.
+                    /// </param>
+                    public DataLoader(Dataset dataset, int batchSize, IEnumerable<long> shuffler, Device device = null, int num_worker = 1, bool drop_last = false)
+                        : base(dataset, batchSize, Collate, shuffler, device, num_worker, drop_last)
                     {
                     }
 
@@ -43,8 +48,12 @@ namespace TorchSharp
                     /// <param name="device">device for output tensor</param>
                     /// <param name="seed">Seed for generating shuffle</param>
                     /// <param name="num_worker">Count of worker</param>
-                    public DataLoader(Dataset dataset, int batchSize, bool shuffle = false, Device device = null, int? seed = null, int num_worker = 1)
-                        : base(dataset, batchSize, Collate, shuffle, device, seed, num_worker)
+                    /// <param name="drop_last">
+                    /// Set to true to drop the last incomplete batch, if the dataset size is not divisible by the batch size.
+                    /// If alse and the size of dataset is not divisible by the batch size, then the last batch will be smaller.
+                    /// </param>
+                    public DataLoader(Dataset dataset, int batchSize, bool shuffle = false, Device device = null, int? seed = null, int num_worker = 1, bool drop_last = false)
+                        : base(dataset, batchSize, Collate, shuffle, device, seed, num_worker, drop_last)
                     {
                     }
 
@@ -69,6 +78,7 @@ namespace TorchSharp
                     private Dataset<T> dataset;
                     private int batchSize;
                     private bool shuffle;
+                    private bool drop_last;
                     private Device device;
                     private IEnumerable<long> shuffler;
                     private int num_worker;
@@ -83,11 +93,16 @@ namespace TorchSharp
                     /// <param name="device">device for output tensor</param>
                     /// <param name="shuffler">Shuffler for dataloader</param>
                     /// <param name="num_worker">Count of worker</param>
-                    public DataLoader(Dataset<T> dataset, int batchSize, Func<IEnumerable<T>, torch.Device, S> collate_fn, IEnumerable<long> shuffler, Device device = null, int num_worker = 1)
+                    /// <param name="drop_last">
+                    /// Set to true to drop the last incomplete batch, if the dataset size is not divisible by the batch size.
+                    /// If alse and the size of dataset is not divisible by the batch size, then the last batch will be smaller.
+                    /// </param>
+                    public DataLoader(Dataset<T> dataset, int batchSize, Func<IEnumerable<T>, torch.Device, S> collate_fn, IEnumerable<long> shuffler, Device device = null, int num_worker = 1, bool drop_last = false)
                     {
                         this.dataset = dataset;
                         this.batchSize = batchSize;
                         this.shuffle = true;
+                        this.drop_last = drop_last;
                         this.device = device ?? CPU;
                         this.shuffler = shuffler;
                         this.num_worker = num_worker;
@@ -104,11 +119,16 @@ namespace TorchSharp
                     /// <param name="device">device for output tensor</param>
                     /// <param name="seed">Seed for generating shuffle</param>
                     /// <param name="num_worker">Count of worker</param>
-                    public DataLoader(Dataset<T> dataset, int batchSize, Func<IEnumerable<T>, torch.Device, S> collate_fn, bool shuffle = false, Device device = null, int? seed = null, int num_worker = 1)
+                    /// <param name="drop_last">
+                    /// Set to true to drop the last incomplete batch, if the dataset size is not divisible by the batch size.
+                    /// If alse and the size of dataset is not divisible by the batch size, then the last batch will be smaller.
+                    /// </param>
+                    public DataLoader(Dataset<T> dataset, int batchSize, Func<IEnumerable<T>, torch.Device, S> collate_fn, bool shuffle = false, Device device = null, int? seed = null, int num_worker = 1, bool drop_last = false)
                     {
                         this.dataset = dataset;
                         this.batchSize = batchSize;
                         this.shuffle = shuffle;
+                        this.drop_last = drop_last;
                         this.device = device ?? CPU;
                         this.shuffler = seed is null ? new FisherYatesShuffler(dataset.Count) : new FisherYatesShuffler(dataset.Count, seed);
                         this.num_worker = num_worker;
@@ -127,7 +147,7 @@ namespace TorchSharp
                     /// <summary>
                     /// Size of batch
                     /// </summary>
-                    public long Count => (dataset.Count - 1) / batchSize + 1;
+                    public long Count => drop_last ? (dataset.Count / batchSize) : ((dataset.Count - 1) / batchSize + 1);
 
                     private class DataLoaderEnumerator : IEnumerator<S>
                     {
