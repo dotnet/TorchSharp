@@ -2075,7 +2075,16 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_searchsorted_t(IntPtr sorted_sequence, IntPtr values, bool out_int32, bool right, IntPtr sorter);
-[DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_searchsorted_s(IntPtr sorted_sequence, IntPtr values, bool out_int32, bool right, IntPtr sorter);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_histogram_t(IntPtr input, IntPtr bins, IntPtr weight, bool density, out IntPtr r_bin_edges);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_histogram_i(IntPtr input, long bins, IntPtr range, int length, IntPtr weight, bool density, out IntPtr r_bin_edges);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_histogram_out_t(IntPtr input, IntPtr bins, IntPtr weight, bool density, out IntPtr hist, out IntPtr bin_edges, out IntPtr r_bin_edges);
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_histogram_out_i(IntPtr input, long bins, IntPtr range, int length, IntPtr weight, bool density, out IntPtr hist, out IntPtr bin_edges, out IntPtr r_bin_edges);
     }
 }
