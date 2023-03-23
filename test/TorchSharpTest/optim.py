@@ -62,6 +62,20 @@ f = open("rmsprop1.dat", "wb")
 exportsd.save_rmsprop(optim, f)
 f.close()
 
+# Rprop
+
+optim = torch.optim.Rprop(lin1.parameters(), lr=0.001, etas=(0.35, 1.5), step_sizes=(1e-5, 5))
+optim.add_param_group({'params': lin2.parameters(), 'lr': 0.01, 'etas': (0.45, 1.5), 'step_sizes': (1e-5, 5), 'maximize': True})
+
+output = seq(input).sum()
+output.backward()
+
+optim.step()
+
+f = open("rprop1.dat", "wb")
+exportsd.save_rprop(optim, f)
+f.close()
+
 # Adam
 
 optim = torch.optim.Adam(lin1.parameters(), lr=0.001, betas=(0.8, 0.9))
@@ -88,4 +102,73 @@ optim.step()
 
 f = open("adamw1.dat", "wb")
 exportsd.save_adamw(optim, f)
+f.close()
+
+# NAdam
+
+optim = torch.optim.NAdam(lin1.parameters(), lr=0.001, betas=(0.8, 0.9))
+optim.add_param_group({'params': lin2.parameters(), 'lr': 0.01, 'betas' : (0.7, 0.79), 'weight_decay': 0.3})
+
+output = seq(input).sum()
+output.backward()
+
+optim.step()
+
+f = open("nadam1.dat", "wb")
+exportsd.save_nadam(optim, f)
+f.close()
+
+# RAdam
+
+optim = torch.optim.RAdam(lin1.parameters(), lr=0.001, betas=(0.8, 0.9))
+optim.add_param_group({'params': lin2.parameters(), 'lr': 0.01, 'betas' : (0.7, 0.79), 'weight_decay': 0.3})
+
+output = seq(input).sum()
+output.backward()
+
+optim.step()
+
+f = open("radam1.dat", "wb")
+exportsd.save_radam(optim, f)
+f.close()
+
+# Adamax
+
+optim = torch.optim.Adamax(lin1.parameters(), lr=0.001, betas=(0.8, 0.9))
+optim.add_param_group({'params': lin2.parameters(), 'lr': 0.01, 'betas' : (0.7, 0.79), 'weight_decay' : 0.3})
+
+output = seq(input).sum()
+output.backward()
+
+optim.step()
+
+f = open("adamax1.dat", "wb")
+exportsd.save_adamax(optim, f)
+f.close()
+
+# Adadelta
+
+optim = torch.optim.Adadelta(lin1.parameters(), lr=0.001, rho=0.85, weight_decay=0.3)
+optim.add_param_group({'params': lin2.parameters(), 'lr': 0.01, 'rho' : 0.79, 'maximize': True})
+
+output = seq(input).sum()
+output.backward()
+
+optim.step()
+
+f = open("adadelta1.dat", "wb")
+exportsd.save_adadelta(optim, f)
+f.close()
+
+# Adagrad
+
+optim = torch.optim.Adagrad(lin1.parameters(), lr=0.001, lr_decay=0.85, weight_decay=0.3)
+
+output = seq(input).sum()
+output.backward()
+
+optim.step()
+
+f = open("adagrad1.dat", "wb")
+exportsd.save_adagrad(optim, f)
 f.close()

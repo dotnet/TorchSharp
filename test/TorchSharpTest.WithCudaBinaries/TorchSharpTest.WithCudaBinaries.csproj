@@ -66,13 +66,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\TorchSharpTest\adadelta1.dat" Link="adadelta1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\adagrad1.dat" Link="adagrad1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\TorchSharpTest\asgd1.dat" Link="asgd1.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="..\TorchSharpTest\adam1.dat" Link="adam1.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\TorchSharpTest\nadam1.dat" Link="nadam1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\radam1.dat" Link="radam1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\TorchSharpTest\adamw1.dat" Link="adamw1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\adamax1.dat" Link="adamax1.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="..\TorchSharpTest\exported.method.dat" Link="exported.method.dat">
@@ -91,6 +106,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="..\TorchSharpTest\rmsprop1.dat" Link="rmsprop1.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\rprop1.dat" Link="rprop1.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="..\TorchSharpTest\tuple_out.dat" Link="tuple_out.dat">

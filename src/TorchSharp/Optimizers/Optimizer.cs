@@ -286,7 +286,9 @@ namespace TorchSharp
             public void load_state_dict(System.IO.BinaryReader reader)
             {
                 var optName = reader.ReadString();
-                if (optName != this.GetType().Name) throw new InvalidDataException($"The saved optimizer state data is not for a {this.GetType().Name} optimizer.");
+                if (optName != this.GetType().Name) {
+                    throw new InvalidDataException($"Mismatched optimizer type: expected '{this.GetType().Name}', but found '{optName}' in the loaded stream.");
+                }
 
                 // First, figure out how many entries.
                 var options = reader.Decode();

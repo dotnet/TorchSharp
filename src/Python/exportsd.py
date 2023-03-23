@@ -143,6 +143,40 @@ def save_asgd(optim, stream):
             stream.write(floats.tobytes())
             _write_tensor(st['ax'], stream)
 
+def save_rprop(optim, stream):
+
+    sd = optim.state_dict()
+
+    _write_optim_name('Rprop', stream)
+
+    _write_encoded_int64(len(optim.param_groups), stream)
+    _write_encoded_int64(len(optim.state), stream)
+
+    # Write options
+
+    for pg in optim.param_groups:
+        floats = np.empty(2,dtype=np.float64)
+        floats[0] = pg['lr']        
+        floats[1] = pg['lr']
+        stream.write(floats.tobytes())
+        _write_bool(pg['maximize'], stream)
+        floats = np.empty(4,dtype=np.float64)
+        etaminus, etaplus = pg['etas']
+        min_step, max_step = pg['step_sizes']
+        floats[0] = etaminus
+        floats[1] = etaplus
+        floats[2] = min_step
+        floats[3] = max_step
+        stream.write(floats.tobytes())
+
+    # Write state
+    for group in optim.param_groups:
+        for p in group['params']:
+            st = optim.state[p]
+            _write_int64(st["step"], stream)
+            _write_tensor(st['prev'], stream)
+            _write_tensor(st['step_size'], stream)
+
 def save_rmsprop(optim, stream):
 
     sd = optim.state_dict()
@@ -242,3 +276,154 @@ def save_adamw(optim, stream):
             _write_tensor(st['exp_avg'], stream)
             _write_tensor(st['exp_avg_sq'], stream)
             _write_conditional_state_tensor('max_exp_avg_sq', st, stream)
+
+def save_nadam(optim, stream):
+
+    sd = optim.state_dict()
+
+    _write_optim_name('NAdam', stream)
+
+    _write_encoded_int64(len(optim.param_groups), stream)
+    _write_encoded_int64(len(optim.state), stream)
+
+    # Write options
+
+    for pg in optim.param_groups:
+        floats = np.empty(7,dtype=np.float64)
+        floats[0] = pg['lr']        
+        floats[1] = pg['lr']
+        beta1, beta2 = pg['betas']
+        floats[2] = beta1
+        floats[3] = beta2
+        floats[4] = pg['eps']
+        floats[5] = pg['weight_decay']
+        floats[6] = pg['momentum_decay']
+        stream.write(floats.tobytes())
+
+    # Write state
+    for group in optim.param_groups:
+        for p in group['params']:
+            st = optim.state[p]
+            _write_int64(int(st["step"].item()), stream)
+            floats = np.empty(1,dtype=np.float64)
+            floats[0] = float(st["mu_product"].item())       
+            stream.write(floats.tobytes())
+            _write_tensor(st['exp_avg'], stream)
+            _write_tensor(st['exp_avg_sq'], stream)
+
+def save_radam(optim, stream):
+
+    sd = optim.state_dict()
+
+    _write_optim_name('RAdam', stream)
+
+    _write_encoded_int64(len(optim.param_groups), stream)
+    _write_encoded_int64(len(optim.state), stream)
+
+    # Write options
+
+    for pg in optim.param_groups:
+        floats = np.empty(6,dtype=np.float64)
+        floats[0] = pg['lr']        
+        floats[1] = pg['lr']
+        beta1, beta2 = pg['betas']
+        floats[2] = beta1
+        floats[3] = beta2
+        floats[4] = pg['eps']
+        floats[5] = pg['weight_decay']
+        stream.write(floats.tobytes())
+
+    # Write state
+    for group in optim.param_groups:
+        for p in group['params']:
+            st = optim.state[p]
+            _write_int64(int(st["step"].item()), stream)
+            _write_tensor(st['exp_avg'], stream)
+            _write_tensor(st['exp_avg_sq'], stream)
+
+def save_adamax(optim, stream):
+
+    sd = optim.state_dict()
+
+    _write_optim_name('Adamax', stream)
+
+    _write_encoded_int64(len(optim.param_groups), stream)
+    _write_encoded_int64(len(optim.state), stream)
+
+    # Write options
+
+    for pg in optim.param_groups:
+        floats = np.empty(6,dtype=np.float64)
+        floats[0] = pg['lr']        
+        floats[1] = pg['lr']
+        beta1, beta2 = pg['betas']
+        floats[2] = beta1
+        floats[3] = beta2
+        floats[4] = pg['eps']
+        floats[5] = pg['weight_decay']
+        stream.write(floats.tobytes())
+
+    # Write state
+    for group in optim.param_groups:
+        for p in group['params']:
+            st = optim.state[p]
+            _write_int64(int(st["step"].item()), stream)
+            _write_tensor(st['exp_avg'], stream)
+            _write_tensor(st['exp_inf'], stream)
+
+def save_adadelta(optim, stream):
+
+    sd = optim.state_dict()
+
+    _write_optim_name('Adadelta', stream)
+
+    _write_encoded_int64(len(optim.param_groups), stream)
+    _write_encoded_int64(len(optim.state), stream)
+
+    # Write options
+
+    for pg in optim.param_groups:
+        floats = np.empty(5,dtype=np.float64)
+        floats[0] = pg['lr']        
+        floats[1] = pg['lr']
+        floats[2] = pg['rho']
+        floats[3] = pg['eps']
+        floats[4] = pg['weight_decay']
+        stream.write(floats.tobytes())
+        _write_bool(pg['maximize'], stream)
+
+    # Write state
+    for group in optim.param_groups:
+        for p in group['params']:
+            st = optim.state[p]
+            _write_int64(st["step"], stream)
+            _write_tensor(st['square_avg'], stream)
+            _write_tensor(st['acc_delta'], stream)
+
+def save_adagrad(optim, stream):
+
+    sd = optim.state_dict()
+
+    _write_optim_name('Adagrad', stream)
+
+    _write_encoded_int64(len(optim.param_groups), stream)
+    _write_encoded_int64(len(optim.state), stream)
+
+    # Write options
+
+    for pg in optim.param_groups:
+        floats = np.empty(6,dtype=np.float64)
+        floats[0] = pg['lr']        
+        floats[1] = pg['lr']
+        floats[2] = pg['lr_decay']
+        floats[3] = pg['initial_accumulator_value']
+        floats[4] = pg['eps']
+        floats[5] = pg['weight_decay']
+        stream.write(floats.tobytes())
+
+    # Write state
+    for group in optim.param_groups:
+        for p in group['params']:
+            st = optim.state[p]
+            _write_int64(int(st["step"].item()), stream)
+            _write_tensor(st['sum'], stream)
