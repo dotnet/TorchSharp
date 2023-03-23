@@ -452,7 +452,7 @@ namespace TorchSharp
 
             protected OptimizerOptions _defaults;
 
-            protected Dictionary<IntPtr, OptimizerState> _state = new Dictionary<IntPtr, OptimizerState>();
+            protected Utils.OrderedDict<IntPtr, OptimizerState> _state = new Utils.OrderedDict<IntPtr, OptimizerState>();
         }
 
         /// <summary>
@@ -532,6 +532,29 @@ namespace TorchSharp
             /// </summary>
             /// <param name="device">The device to move all state to.</param>
             public virtual void to(Device device) { }
+
+            protected static void LoadConditionalStateTensor(BinaryReader reader, ref Tensor result)
+            {
+                var hasTensor = reader.ReadBoolean();
+
+                if (hasTensor) {
+                    TensorExtensionMethods.Load(ref result, reader);
+                } else {
+                    if (result is not null)
+                        result.Dispose();
+                    result = null;
+                }
+            }
+
+            protected static void SaveConditionalStateTensor(BinaryWriter writer, Tensor tensor)
+            {
+                if (tensor is not null) {
+                    writer.Write(true);
+                    tensor.Save(writer);
+                } else {
+                    writer.Write(false);
+                }
+            }
         }
 
         /// <summary>

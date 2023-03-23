@@ -200,7 +200,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    ((State)kvp.Value).Dispose();
+                    ((State)kvp.Item2).Dispose();
                 }
             }
 
@@ -244,10 +244,7 @@ namespace TorchSharp
                     exp_avg_sq.Load(reader);
                     var hasMax = reader.ReadBoolean();
                     if (hasMax) {
-                        if (max_exp_avg_sq is null) {
-                            max_exp_avg_sq = torch.zeros_like(exp_avg_sq);
-                        }
-                        max_exp_avg_sq.Load(reader);
+                        TensorExtensionMethods.Load(ref max_exp_avg_sq, reader);
                     }
                     else {
                         if (max_exp_avg_sq is not null)
