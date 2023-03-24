@@ -20,8 +20,8 @@ __Fixed Bugs__:
 
 #842 How to use register_forward_hook?<br/>
 #940 Missing torch.searchsorted<br/>
-#942 nn.ReplicationPad1d(long[] padding) miss<br/>
-#943 LRScheduler.get_last_lr miss<br/>
+#942 nn.ReplicationPad1d(long[] padding) missing<br/>
+#943 LRScheduler.get_last_lr missing<br/>
 #951 DataLoader constructor missing drop_last parameter<br/>
 #953 TensorDataset is missing<br/>
 #962 Seed passed to torch.random.manual_seed(seed) is unused<br/>
