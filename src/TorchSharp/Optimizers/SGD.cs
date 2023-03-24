@@ -202,7 +202,7 @@ namespace TorchSharp
 
                 public void Dispose()
                 {
-                    momentum_buffer.Dispose();
+                    momentum_buffer?.Dispose();
                 }
 
                 /// <summary>

@@ -215,9 +215,9 @@ namespace TorchSharp
 
                 public void Dispose()
                 {
-                    momentum_buffer.Dispose();
+                    momentum_buffer?.Dispose();
                     square_avg.Dispose();
-                    grad_avg.Dispose();
+                    grad_avg?.Dispose();
                 }
 
                 /// <summary>
@@ -227,8 +227,8 @@ namespace TorchSharp
                 public override void to(Device device)
                 {
                     square_avg.to(device);
-                    momentum_buffer.to(device);
-                    grad_avg.to(device);
+                    momentum_buffer?.to(device);
+                    grad_avg?.to(device);
                 }
 
                 /// <summary>

@@ -215,9 +215,7 @@ namespace TorchSharp
                 {
                     exp_avg.Dispose();
                     exp_avg_sq.Dispose();
-                    if (max_exp_avg_sq is not null) {
-                        max_exp_avg_sq.Dispose();
-                    }
+                    max_exp_avg_sq?.Dispose();
                 }
 
                 /// <summary>
@@ -228,9 +226,7 @@ namespace TorchSharp
                 {
                     exp_avg.to(device);
                     exp_avg_sq.to(device);
-                    if (max_exp_avg_sq is not null) {
-                        max_exp_avg_sq.to(device);
-                    }
+                    max_exp_avg_sq?.to(device);
                 }
 
                 /// <summary>
@@ -245,10 +241,8 @@ namespace TorchSharp
                     var hasMax = reader.ReadBoolean();
                     if (hasMax) {
                         TensorExtensionMethods.Load(ref max_exp_avg_sq, reader);
-                    }
-                    else {
-                        if (max_exp_avg_sq is not null)
-                            max_exp_avg_sq.Dispose();
+                    } else {
+                        max_exp_avg_sq?.Dispose();
                         max_exp_avg_sq = null;
                     }
                 }
@@ -265,8 +259,7 @@ namespace TorchSharp
                     if (max_exp_avg_sq is not null) {
                         writer.Write(true);
                         max_exp_avg_sq.Save(writer);
-                    }
-                    else {
+                    } else {
                         writer.Write(false);
                     }
                 }
