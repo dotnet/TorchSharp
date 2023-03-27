@@ -100,7 +100,10 @@ namespace TorchSharp
                 /// <remarks>The '*' sub-shape must be the same among the two inputs.</remarks>
                 public static Tensor bilinear(Tensor input1, Tensor input2, Tensor weight, Tensor? bias = null)
                 {
-                    return torch.nn.functional.bilinear(input1, input2, weight, bias);
+                    IntPtr bPtr = bias?.Handle ?? IntPtr.Zero;
+                    var res = THSNN_functional_bilinear(input1.Handle, input2.Handle, weight.Handle, bPtr);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
                 }
             }
         }
