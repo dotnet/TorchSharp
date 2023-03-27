@@ -38,9 +38,9 @@ namespace TorchSharp.Utils
         public (TKey, TValue) this[int index] {
             get => _list[index];
             set {
-                var name = value.Item1;
+                var key = value.Item1;
                 _list[index] = value;
-                _dict[name] = value.Item2;
+                _dict[key] = value.Item2;
             }
         }
 
@@ -57,7 +57,12 @@ namespace TorchSharp.Utils
             set {
                 _dict[key] = value;
                 var idx = _list.FindIndex(kv => kv.Item1.Equals(key));
-                _list[idx] = (key,value);
+                if (idx >= 0) {
+                    _list[idx] = (key, value);
+                }
+                else {
+                    _list.Add((key, value));
+                }
             }
         }
 

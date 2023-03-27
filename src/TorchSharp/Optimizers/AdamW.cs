@@ -198,7 +198,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    ((State)kvp.Value).Dispose();
+                    ((State)kvp.Item2).Dispose();
                 }
             }
 
@@ -213,9 +213,7 @@ namespace TorchSharp
                 {
                     exp_avg.Dispose();
                     exp_avg_sq.Dispose();
-                    if (max_exp_avg_sq is not null) {
-                        max_exp_avg_sq.Dispose();
-                    }
+                    max_exp_avg_sq?.Dispose();
                 }
 
                 /// <summary>
@@ -226,9 +224,7 @@ namespace TorchSharp
                 {
                     exp_avg.to(device);
                     exp_avg_sq.to(device);
-                    if (max_exp_avg_sq is not null) {
-                        max_exp_avg_sq.to(device);
-                    }
+                    max_exp_avg_sq?.to(device);
                 }
 
                 /// <summary>
@@ -247,8 +243,7 @@ namespace TorchSharp
                         }
                         max_exp_avg_sq.Load(reader);
                     } else {
-                        if (max_exp_avg_sq is not null)
-                            max_exp_avg_sq.Dispose();
+                        max_exp_avg_sq?.Dispose();
                         max_exp_avg_sq = null;
                     }
                 }
