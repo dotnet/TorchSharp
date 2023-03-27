@@ -200,7 +200,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    ((State)kvp.Value).Dispose();
+                    ((State)kvp.Item2).Dispose();
                 }
             }
 
@@ -215,9 +215,7 @@ namespace TorchSharp
                 {
                     exp_avg.Dispose();
                     exp_avg_sq.Dispose();
-                    if (max_exp_avg_sq is not null) {
-                        max_exp_avg_sq.Dispose();
-                    }
+                    max_exp_avg_sq?.Dispose();
                 }
 
                 /// <summary>
@@ -228,9 +226,7 @@ namespace TorchSharp
                 {
                     exp_avg.to(device);
                     exp_avg_sq.to(device);
-                    if (max_exp_avg_sq is not null) {
-                        max_exp_avg_sq.to(device);
-                    }
+                    max_exp_avg_sq?.to(device);
                 }
 
                 /// <summary>
@@ -244,14 +240,9 @@ namespace TorchSharp
                     exp_avg_sq.Load(reader);
                     var hasMax = reader.ReadBoolean();
                     if (hasMax) {
-                        if (max_exp_avg_sq is null) {
-                            max_exp_avg_sq = torch.zeros_like(exp_avg_sq);
-                        }
-                        max_exp_avg_sq.Load(reader);
-                    }
-                    else {
-                        if (max_exp_avg_sq is not null)
-                            max_exp_avg_sq.Dispose();
+                        TensorExtensionMethods.Load(ref max_exp_avg_sq, reader);
+                    } else {
+                        max_exp_avg_sq?.Dispose();
                         max_exp_avg_sq = null;
                     }
                 }
@@ -268,8 +259,7 @@ namespace TorchSharp
                     if (max_exp_avg_sq is not null) {
                         writer.Write(true);
                         max_exp_avg_sq.Save(writer);
-                    }
-                    else {
+                    } else {
                         writer.Write(false);
                     }
                 }
