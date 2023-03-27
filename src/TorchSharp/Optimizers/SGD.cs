@@ -188,7 +188,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    var st = (State)kvp.Value;
+                    var st = (State)kvp.Item2;
                     if (st.momentum_buffer is not null) {
                         st.momentum_buffer.Dispose();
                     }
@@ -202,7 +202,7 @@ namespace TorchSharp
 
                 public void Dispose()
                 {
-                    momentum_buffer.Dispose();
+                    momentum_buffer?.Dispose();
                 }
 
                 /// <summary>
@@ -221,24 +221,7 @@ namespace TorchSharp
                 /// <param name="reader">A binary reader connected to a stream open for reading.</param>
                 public override void LoadStateDict(BinaryReader reader)
                 {
-                    var hasMomentumBuffer = reader.ReadBoolean();
-                    if (hasMomentumBuffer) {
-                        var ndim = reader.ReadInt32();
-                        var shape = new long[ndim];
-
-                        for (int i = 0; i < ndim; i++)
-                            shape[i] = reader.ReadInt64();
-
-                        if (momentum_buffer is null) {
-                            momentum_buffer = torch.empty(shape).DetachFromDisposeScope();
-                        }
-                        momentum_buffer.Load(reader);
-                    }
-                    else {
-                        if (momentum_buffer is not null)
-                            momentum_buffer.Dispose();
-                        momentum_buffer = null;
-                    }
+                    LoadConditionalStateTensor(reader, ref momentum_buffer);
                 }
 
                 /// <summary>
@@ -247,15 +230,7 @@ namespace TorchSharp
                 /// <param name="writer">A binary writer connected to a stream open for writing.</param>
                 public override void SaveStateDict(BinaryWriter writer)
                 {
-                    if (momentum_buffer is not null) {
-                        writer.Write(true);
-                        writer.Write(momentum_buffer.shape.Length);
-                        for (int i = 0; i < momentum_buffer.shape.Length; i++)
-                            writer.Write(momentum_buffer.shape[i]);
-                        momentum_buffer.Save(writer);
-                    } else {
-                        writer.Write(false);
-                    }
+                    SaveConditionalStateTensor(writer, momentum_buffer);
                 }
 
                 /// <summary>
@@ -311,7 +286,7 @@ namespace TorchSharp
 
                 foreach (var p in param_group.Parameters) {
                     var state = new State();
-                    _state[p.Handle] = state;
+                    _state.Add((p.Handle,state));
                     state.momentum_buffer = null;
                 }
             }

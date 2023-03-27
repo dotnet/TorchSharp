@@ -23,7 +23,9 @@
     <Compile Include="..\TorchSharpTest\LinearAlgebra.cs" Link="LinearAlgebra.cs" />
     <Compile Include="..\TorchSharpTest\NN.cs" Link="NN.cs" />
     <Compile Include="..\TorchSharpTest\PointwiseTensorMath.cs" Link="PointwiseTensorMath.cs" />
-    <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs" />
+    <Compile Include="..\TorchSharpTest\TestDataLoader.cs" Link="TestDataLoader.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="..\TorchSharpTest\TestDistributions.cs" Link="TestDistributions.cs" />
     <Compile Include="..\TorchSharpTest\TestJIT.cs" Link="TestJIT.cs" />
     <Compile Include="..\TorchSharpTest\TestLoadSave.cs" Link="TestLoadSave.cs" />
@@ -42,7 +44,7 @@
 
   <ItemGroup>
     <Content Include="..\TorchSharpTest\bug510.dat" Link="bug510.dat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
@@ -56,7 +58,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\TorchSharpTest\scripted.script.dat" Link="scripted.script.dat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="..\TorchSharpTest\vslogo.jpg" Link="vslogo.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -64,6 +66,30 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\TorchSharpTest\adadelta1.dat" Link="adadelta1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\adagrad1.dat" Link="adagrad1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\asgd1.dat" Link="asgd1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\adam1.dat" Link="adam1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\nadam1.dat" Link="nadam1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\radam1.dat" Link="radam1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\adamw1.dat" Link="adamw1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\adamax1.dat" Link="adamax1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="..\TorchSharpTest\exported.method.dat" Link="exported.method.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -76,6 +102,15 @@
     <None Include="..\TorchSharpTest\list_out.dat" Link="list_out.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="..\TorchSharpTest\sgd1.dat" Link="sgd1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\rmsprop1.dat" Link="rmsprop1.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\TorchSharpTest\rprop1.dat" Link="rprop1.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="..\TorchSharpTest\tuple_out.dat" Link="tuple_out.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
