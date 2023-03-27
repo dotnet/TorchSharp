@@ -596,7 +596,9 @@ namespace TorchSharp
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
 
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Parameter(x))).ToArray();
+                    var result = ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Parameter(x))).ToArray();
+                    foreach (var str in strArray) THSTorch_free_string(str);
+                    return result;
                 }
 
                 protected virtual (string name, Tensor buffer)[] _named_buffers()
@@ -608,7 +610,9 @@ namespace TorchSharp
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
 
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
+                    var result = ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
+                    foreach (var str in strArray) THSTorch_free_string(str);
+                    return result;
                 }
 
                 /// <summary>
@@ -849,8 +853,10 @@ namespace TorchSharp
 
                 public virtual string GetName()
                 {
-                    var res = THSNN_Module_name(handle);
+                    var ptr = THSNN_Module_name(handle);
                     CheckForErrors();
+                    var res = Marshal.PtrToStringAnsi(ptr);
+                    THSTorch_free_string(ptr);
                     return res;
                 }
 

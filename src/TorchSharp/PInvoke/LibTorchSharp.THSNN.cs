@@ -13,8 +13,7 @@ namespace TorchSharp.PInvoke
             [MarshalAs(UnmanagedType.LPStr)] string location);
 
         [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.LPStr)]
-        internal static extern string THSNN_Module_name(torch.nn.Module.HType module);
+        internal static extern IntPtr THSNN_Module_name(torch.nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_custom_module(

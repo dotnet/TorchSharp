@@ -36,7 +36,9 @@ namespace TorchSharp
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
 
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new TorchSharp.Modules.Parameter(x))).ToArray();
+                    var result = ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new TorchSharp.Modules.Parameter(x))).ToArray();
+                    foreach (var str in strArray) THSTorch_free_string(str);
+                    return result;
                 }
 
                 protected override (string name, Tensor buffer)[] _named_buffers()
@@ -48,7 +50,9 @@ namespace TorchSharp
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
 
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
+                    var result = ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
+                    foreach (var str in strArray) THSTorch_free_string(str);
+                    return result;
                 }
 
                 /// <summary>
@@ -64,7 +68,9 @@ namespace TorchSharp
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
 
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new ScriptModule(x) as nn.Module)).Where(m => !string.IsNullOrEmpty(m.Item1));
+                    var result = ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new ScriptModule(x) as nn.Module)).Where(m => !string.IsNullOrEmpty(m.Item1));
+                    foreach (var str in strArray) THSTorch_free_string(str);
+                    return result;
                 }
 
                 /// <summary>
@@ -80,7 +86,9 @@ namespace TorchSharp
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
 
-                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new ScriptModule(x) as nn.Module));
+                    var result = ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new ScriptModule(x) as nn.Module));
+                    foreach (var str in strArray) THSTorch_free_string(str);
+                    return result;
                 }
 
                 public int GetNumberOfInputs()
