@@ -67,17 +67,30 @@ namespace TorchSharp
             // This tests that the default generator can be disposed, but will keep on going,
             long a, b, c;
             lock (_lock) {
-                using (var gen = random.manual_seed(4711)) {
-                    a = gen.initial_seed();
+                using (var g = Generator.Default) {
+                    a = g.initial_seed();
                 }
-                using (var gen = Generator.Default) {
-                    b = gen.initial_seed();
+                using (var g = Generator.Default) {
+                    b = g.initial_seed();
+                    Assert.Equal(a, b);
                 }
-                Assert.Equal(a, b);
-                using (var gen = random.manual_seed(17)) {
-                    c = gen.initial_seed();
+
+                using var gen = random.manual_seed(4711);
+                a = gen.initial_seed();
+                Assert.Equal(4711, a);
+
+                using (var g = new torch.Generator()) {
+                    b = g.initial_seed();
+                    Assert.NotEqual(a, b);
                 }
-                Assert.Equal(a, c);
+                using (var g = Generator.Default) {
+                    b = g.initial_seed();
+                    Assert.Equal(a, b);
+                }
+                using var gen1 = random.manual_seed(17);
+                c = gen.initial_seed();
+                Assert.Equal(17, c);
+                Assert.NotEqual(a, c);
 
                 var x = rand(new long[] { 10, 10, 10 });
                 Assert.Equal(new long[] { 10, 10, 10 }, x.shape);

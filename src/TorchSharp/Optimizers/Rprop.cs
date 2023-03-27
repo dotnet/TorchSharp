@@ -183,7 +183,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    ((State)kvp.Value).Dispose();
+                    ((State)kvp.Item2).Dispose();
                 }
             }
             /// <summary>
@@ -350,8 +350,8 @@ namespace TorchSharp
 
                 public ParamGroup(IEnumerable<Parameter> parameters, Options options) : base(parameters, options) { }
 
-                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
-                    : base(parameters, new Rprop.Options { LearningRate = lr, etaminus = etaminus, etaplus = etaplus, min_step = min_step, max_step = max_step })
+                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50, bool maximize = false)
+                    : base(parameters, new Rprop.Options { LearningRate = lr, etaminus = etaminus, etaplus = etaplus, min_step = min_step, max_step = max_step, maximize = maximize })
                 {
                 }
             }
