@@ -69,7 +69,7 @@ namespace TorchSharp
                     var strArray = sa.Array;
 
                     var result = ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new ScriptModule(x) as nn.Module)).Where(m => !string.IsNullOrEmpty(m.Item1));
-                    //foreach (var str in strArray) THSTorch_free_string(str);
+                    foreach (var str in strArray) THSTorch_free_string(str);
                     return result;
                 }
 
