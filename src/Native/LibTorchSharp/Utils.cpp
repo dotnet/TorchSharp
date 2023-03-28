@@ -20,4 +20,3 @@ const char * make_sharable_string(const std::string str)
     result[n] = '\0';
     return result;
 }
-

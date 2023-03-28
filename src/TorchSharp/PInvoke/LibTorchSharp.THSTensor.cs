@@ -198,10 +198,6 @@ namespace TorchSharp.PInvoke
             IntPtr scaleFactors, int scaleFactorsLength);
 
         [DllImport("LibTorchSharp")]
-        [return: MarshalAs(UnmanagedType.LPStr)]
-        internal static extern string THSTensor_device_str(IntPtr handle);
-
-        [DllImport("LibTorchSharp")]
         internal static extern void THSTensor_dispose(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
