@@ -482,7 +482,6 @@ namespace TorchSharp
         /// </summary>
         public static bool cuda_is_available() => torch.cuda.is_available();
 
-        //[Conditional("DEBUG")]
         public static void CheckForErrors()
         {
             var error = THSTorch_get_and_reset_last_err();
