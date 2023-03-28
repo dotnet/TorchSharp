@@ -8,9 +8,6 @@ namespace TorchSharp.PInvoke
     internal static partial class LibTorchSharp
     {
         [DllImport("LibTorchSharp")]
-        internal static extern void THSTorch_free_string(IntPtr strPtr);
-
-        [DllImport("LibTorchSharp")]
         [return: MarshalAs(UnmanagedType.U1)]
         internal static extern bool THSTorch_scalar_to_bool(IntPtr handle);
 

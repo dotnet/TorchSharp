@@ -84,9 +84,6 @@ inline Tensor ResultTensor(const at::Tensor & res)
 // Utility method used to built sharable strings.
 const char * make_sharable_string(const std::string str);
 
-// Utility method used to built sharable strings.
-void free_sharable_string(char* str);
-
 // Method concerting arrays of tensor pointers into arrays of tensors.
 template<class T>
 std::vector<T> toTensors(torch::Tensor ** tensorPtrs, const int length)

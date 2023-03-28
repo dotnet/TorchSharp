@@ -6,10 +6,8 @@
 #if _WINDOWS
 #include <combaseapi.h>
 #define TP_CoTaskMemAlloc(t) CoTaskMemAlloc(t)
-#define TP_CoTaskMemFree(t) CoTaskMemFree((LPVOID)t)
 #else
 #define TP_CoTaskMemAlloc(t) malloc(t)
-#define TP_CoTaskMemFree(t) free(t)
 #endif
 
 thread_local char * torch_last_err = NULL;
@@ -21,9 +19,4 @@ const char * make_sharable_string(const std::string str)
     strncpy(result, str.c_str(), n);
     result[n] = '\0';
     return result;
-}
-
-void free_sharable_string(char* str)
-{
-    TP_CoTaskMemFree(str);
 }

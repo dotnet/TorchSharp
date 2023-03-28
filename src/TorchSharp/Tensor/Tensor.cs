@@ -864,7 +864,6 @@ namespace TorchSharp
                     }
 
                     _names = strArray.Select(str => { var s = Marshal.PtrToStringAnsi(str)!; return s == "*" ? null : s; }).ToArray();
-                    foreach (var str in strArray) LibTorchSharp.THSTorch_free_string(str);
                     return _names!;
                 }
             }

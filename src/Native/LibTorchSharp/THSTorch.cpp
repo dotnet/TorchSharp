@@ -4,11 +4,6 @@
 #include "torch/torch.h"
 #include "torch/cuda.h"
 
-void THSTorch_free_string(char* str)
-{
-    free_sharable_string(str);
-}
-
 void THSTorch_manual_seed(const int64_t seed)
 {
     torch::manual_seed(seed);
