@@ -271,3 +271,4 @@ packages/
 /src/Native/out/build/x64-Debug
 *.code-workspace
 /.idea
+/test/TorchSharpTest/exportsd.py

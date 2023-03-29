@@ -7762,5 +7762,28 @@ namespace TorchSharp
 
             Assert.Equal(new long[] { 2, 3, 5, 1, 3, 4 }, sorted.data<long>().ToArray());
         }
+
+        [Fact]
+        public void TestHistogram()
+        {
+            // https://pytorch.org/docs/stable/generated/torch.histogram.html
+            (torch.Tensor hist, torch.Tensor bin_edges) = torch.histogram(torch.tensor(new double[] { 1, 2, 1 }), 4, (0, 3), torch.tensor(new double[] { 1, 2, 4 }));
+            Assert.True(hist.allclose(torch.tensor(new double[] { 0, 5, 2, 0 }), 0.001));
+            Assert.True(bin_edges.allclose(torch.tensor(new double[] { 0, 0.75, 1.5, 2.25, 3 }), 0.001));
+            (hist, bin_edges) = torch.histogram(torch.tensor(new double[] { 1, 2, 1 }), 4, (0, 3), torch.tensor(new double[] { 1, 2, 4 }), true);
+            Assert.True(hist.allclose(torch.tensor(new double[] { 0, 0.9524, 0.3810, 0 }), 0.001));
+            Assert.True(bin_edges.allclose(torch.tensor(new double[] { 0, 0.75, 1.5, 2.25, 3 }), 0.001));
+
+            // https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
+            (hist, bin_edges) = torch.histogram(torch.tensor(new double[] { 1, 2, 1 }), torch.tensor(new double[] { 0, 1, 2, 3 }));
+            Assert.True(hist.allclose(torch.tensor(new double[] { 0, 2, 1 }), 0.001));
+            Assert.True(bin_edges.allclose(torch.tensor(new double[] { 0, 1, 2, 3 }), 0.001));
+            (hist, bin_edges) = torch.histogram(torch.arange(4, dtype: ScalarType.Float64), torch.arange(5, dtype: ScalarType.Float64), density: true);
+            Assert.True(hist.allclose(torch.tensor(new double[] { 0.25, 0.25, 0.25, 0.25 }), 0.001));
+            Assert.True(bin_edges.allclose(torch.tensor(new double[] { 0, 1, 2, 3, 4 }), 0.001));
+            (hist, bin_edges) = torch.histogram(torch.tensor(new double[,] { { 1, 2, 1 }, { 1, 0, 1 } }), torch.tensor(new double[] { 0, 1, 2, 3 }));
+            Assert.True(hist.allclose(torch.tensor(new double[] { 1, 4, 1 }), 0.001));
+            Assert.True(bin_edges.allclose(torch.tensor(new double[] { 0, 1, 2, 3 }), 0.001));
+        }
     }
 }
