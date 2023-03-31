@@ -11,7 +11,9 @@ void THSTorch_manual_seed(const int64_t seed)
 
 Generator THSGenerator_manual_seed(const int64_t seed)
 {
-    return THSGenerator_default_generator();
+    auto gen = at::globalContext().defaultGenerator(at::DeviceType::CPU);
+    gen.set_current_seed(seed);
+    return new at::Generator(gen.getIntrusivePtr());
 }
 
 void THSCuda_manual_seed(const int64_t seed)
