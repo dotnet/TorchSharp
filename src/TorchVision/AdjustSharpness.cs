@@ -15,7 +15,7 @@ namespace TorchSharp
                 this.sharpness = sharpness;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return transforms.functional.adjust_sharpness(input, sharpness);
             }

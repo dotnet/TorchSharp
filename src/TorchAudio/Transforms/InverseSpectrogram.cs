@@ -1,8 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
+
 using static TorchSharp.torch;
 using static TorchSharp.torchaudio;
 
@@ -70,10 +67,10 @@ namespace TorchSharp.Transforms
 
         public override Tensor forward(Tensor input)
         {
-            return forward(input, null);
+            return call(input, null);
         }
 
-        public Tensor forward(Tensor input, long? length = null)
+        public Tensor call(Tensor input, long? length = null)
         {
             return torchaudio.functional.inverse_spectrogram(
                 spectrogram: input,

@@ -5,31 +5,16 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Diagnostics.Contracts;
+using static TorchSharp.PInvoke.LibTorchSharp;
+using System.Text;
 
 namespace TorchSharp
 {
+    using Utils;
+
     public static partial class torch
     {
-        /// <summary>
-        /// Get the current default floating point torch.dtype.
-        /// </summary>
-        /// <returns></returns>
-        public static ScalarType get_default_dtype() => default_dtype;
-
-        /// <summary>
-        /// Sets the default floating point dtype to d. This dtype is:
-        /// 1. The inferred dtype for python floats in torch.tensor().
-        /// 2. Used to infer dtype for python complex numbers.
-        ///    The default complex dtype is set to torch.complex128 if default floating point dtype is torch.float64, otherwise it’s set to torch.complex64
-        ///    The default floating point dtype is initially torch.float32.
-        /// </summary>
-        /// <param name="dtype"></param>
-        public static void set_default_dtype(ScalarType dtype) { default_dtype = dtype; }
-
-        // arange()
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_arange(IntPtr start, IntPtr stop, IntPtr step, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requireGrad);
-
         /// <summary>
         /// Creates 1-D tensor of size [(stop - start) / step] with values from interval [start, stop) and
         /// common difference step, starting from start
@@ -44,9 +29,9 @@ namespace TorchSharp
         /// Otherwise, the dtype is inferred to be torch.int64.</param>
         /// <param name="device"></param>
         /// <param name="requires_grad"> If autograd should record operations on the returned tensor. Default: false.</param>
-        public static Tensor arange(Scalar start, Scalar stop, Scalar step, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor arange(Scalar start, Scalar stop, Scalar step, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
 
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
@@ -69,7 +54,7 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_arange(start.Handle, stop.Handle, step.Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
         }
 
@@ -77,7 +62,7 @@ namespace TorchSharp
         /// Creates 1-D tensor of size [(stop - start) / step] with values from interval [start, stop) and
 		/// common difference step, starting from start
         /// </summary>
-        public static Tensor arange(Scalar start, Scalar stop, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor arange(Scalar start, Scalar stop, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
             return arange(start, stop, 1, dtype, device, requires_grad);
         }
@@ -85,14 +70,14 @@ namespace TorchSharp
         /// <summary>
         /// Creates 1-D tensor of size [(stop - 0)] with values from interval [0, stop), starting from 0
         /// </summary>
-        public static Tensor arange(Scalar stop, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor arange(Scalar stop, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
             return arange(0, stop, 1, dtype, device, requires_grad);
         }
 
         // as_tensor()
 
-        public static Tensor as_tensor(Tensor data, torch.ScalarType? dtype = null, torch.Device? device = null)
+        public static Tensor as_tensor(Tensor data, ScalarType? dtype = null, Device? device = null)
         {
             if (dtype != null && device != null && (data.dtype != dtype || data.device != device)) {
                 return data.to(dtype.Value, device).requires_grad_(data.requires_grad);
@@ -105,9 +90,14 @@ namespace TorchSharp
             }
         }
 
-        public static Tensor as_tensor(IList<bool> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        public static Tensor as_tensor(IList<bool> rawArray, ScalarType? dtype = null, Device? device = null)
         {
             return torch.from_array(rawArray.ToArray(), dtype, device);
+        }
+
+        public static Tensor as_tensor(bool[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
         }
 
         public static Tensor as_tensor(IList<byte> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
@@ -115,9 +105,19 @@ namespace TorchSharp
             return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
+        public static Tensor as_tensor(byte[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
+        }
+
         public static Tensor as_tensor(IList<sbyte> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
             return torch.from_array(rawArray.ToArray(), dtype, device);
+        }
+
+        public static Tensor as_tensor(sbyte[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
         }
 
         public static Tensor as_tensor(IList<short> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
@@ -125,9 +125,19 @@ namespace TorchSharp
             return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
+        public static Tensor as_tensor(short[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
+        }
+
         public static Tensor as_tensor(IList<int> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
             return torch.from_array(rawArray.ToArray(), dtype, device);
+        }
+
+        public static Tensor as_tensor(int[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
         }
 
         public static Tensor as_tensor(IList<long> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
@@ -135,9 +145,19 @@ namespace TorchSharp
             return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
+        public static Tensor as_tensor(long[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
+        }
+
         public static Tensor as_tensor(IList<float> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
             return torch.from_array(rawArray.ToArray(), dtype, device);
+        }
+
+        public static Tensor as_tensor(float[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
         }
 
         public static Tensor as_tensor(IList<double> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
@@ -145,9 +165,19 @@ namespace TorchSharp
             return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
+        public static Tensor as_tensor(double[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
+        }
+
         public static Tensor as_tensor(IList<(float, float)> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
             return torch.from_array(rawArray.ToArray(), dtype, device);
+        }
+
+        public static Tensor as_tensor((float, float)[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
+        {
+            return torch.from_array(rawArray, dtype, device);
         }
 
         public static Tensor as_tensor(IList<System.Numerics.Complex> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
@@ -155,40 +185,18 @@ namespace TorchSharp
             return torch.from_array(rawArray.ToArray(), dtype, device);
         }
 
-        // randperm()
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randperm(IntPtr generator, long n, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requireGrad);
-
-        /// <summary>
-        /// Creates 1-D tensor of size [n] with a random permutation of [0, n).
-        /// </summary>
-        public static Tensor randperm(long n, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null)
+        public static Tensor as_tensor(System.Numerics.Complex[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null)
         {
-            device = torch.InitializeDevice(device);
-            dtype = dtype.HasValue ? dtype : ScalarType.Int64;
-
-            var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle;
-
-            var handle = THSTensor_randperm(genHandle, n, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                handle = THSTensor_randperm(genHandle, n, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            }
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new Tensor(handle);
+            return torch.from_array(rawArray, dtype, device);
         }
 
 
-        // zeros()
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_zeros(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requireGrad);
 
-        static private Tensor _zeros(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+
+        private static Tensor _zeros(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 dtype = get_default_dtype();
@@ -208,7 +216,7 @@ namespace TorchSharp
                         handle = THSTensor_zeros((IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
 
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
 
                     var result = new Tensor(handle);
 
@@ -223,81 +231,81 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with zeros
+        /// Create a new tensor filled with zeros
         /// </summary>
-        public static Tensor zeros(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor zeros(long[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _zeros(size, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new tensor filled with zeros
+        /// Create a new tensor filled with zeros
         /// </summary>
-        public static Tensor zeros(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor zeros(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _zeros(size, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with zeros
+        /// Create a new 1-D tensor filled with zeros
         /// </summary>
-        public static Tensor zeros(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor zeros(long size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _zeros(stackalloc long[] { size }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with zeros
+        /// Create a new 2-D tensor filled with zeros
         /// </summary>
-        public static Tensor zeros(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor zeros(long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _zeros(stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with zeros
+        /// Create a new 3-D tensor filled with zeros
         /// </summary>
-        public static Tensor zeros(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor zeros(long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _zeros(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with zeros
+        /// Create a new 4-D tensor filled with zeros
         /// </summary>
-        public static Tensor zeros(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor zeros(long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _zeros(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with zeros
+        /// Create a new 1-D tensor filled with zeros
         /// </summary>
-        public static Tensor zeros(int size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor zeros(int size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _zeros(stackalloc long[] { size }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with zeros
+        /// Create a new 2-D tensor filled with zeros
         /// </summary>
-        public static Tensor zeros(int rows, int columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor zeros(int rows, int columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _zeros(stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with zeros
+        /// Create a new 3-D tensor filled with zeros
         /// </summary>
-        public static Tensor zeros(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor zeros(int dim0, int dim1, int dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _zeros(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with zeros
+        /// Create a new 4-D tensor filled with zeros
         /// </summary>
-        public static Tensor zeros(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor zeros(int dim0, int dim1, int dim2, int dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _zeros(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
@@ -305,20 +313,15 @@ namespace TorchSharp
         /// <summary>
         /// Returns a tensor filled with the scalar value 0, with the same size as input.
         /// </summary>
-        public static Tensor zeros_like(Tensor input, ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null) => input.zeros_like(dtype, device, requires_grad);
+        public static Tensor zeros_like(Tensor input, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null) => input.zeros_like(dtype, device, requires_grad);
 
-
-        // ones()
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_ones(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
         /// <summary>
-        ///  Create a new tensor filled with ones
+        /// Create a new tensor filled with ones
         /// </summary>
-        static private Tensor _ones(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        private static Tensor _ones(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 dtype = get_default_dtype();
@@ -332,7 +335,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_ones((IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var result = new Tensor(handle);
 
                     if (names != null && names.Length > 0) {
@@ -346,81 +349,81 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with ones
+        /// Create a new tensor filled with ones
         /// </summary>
-        public static Tensor ones(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor ones(long[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _ones(size, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new tensor filled with ones
+        /// Create a new tensor filled with ones
         /// </summary>
-        public static Tensor ones(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor ones(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _ones(size, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with ones
+        /// Create a new 1-D tensor filled with ones
         /// </summary>
-        public static Tensor ones(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor ones(long size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _ones(stackalloc long[] { size }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with ones
+        /// Create a new 2-D tensor filled with ones
         /// </summary>
-        public static Tensor ones(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor ones(long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _ones(stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with ones
+        /// Create a new 3-D tensor filled with ones
         /// </summary>
-        public static Tensor ones(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor ones(long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _ones(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with ones
+        /// Create a new 4-D tensor filled with ones
         /// </summary>
-        public static Tensor ones(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor ones(long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _ones(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with ones
+        /// Create a new 1-D tensor filled with ones
         /// </summary>
-        public static Tensor ones(int size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor ones(int size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _ones(stackalloc long[] { size }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with ones
+        /// Create a new 2-D tensor filled with ones
         /// </summary>
-        public static Tensor ones(int rows, int columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor ones(int rows, int columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _ones(stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with ones
+        /// Create a new 3-D tensor filled with ones
         /// </summary>
-        public static Tensor ones(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor ones(int dim0, int dim1, int dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _ones(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with ones
+        /// Create a new 4-D tensor filled with ones
         /// </summary>
-        public static Tensor ones(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor ones(int dim0, int dim1, int dim2, int dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _ones(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
@@ -428,20 +431,15 @@ namespace TorchSharp
         /// <summary>
         /// Returns a tensor filled with the scalar value 1, with the same size as input.
         /// </summary>
-        public static Tensor ones_like(Tensor input, ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null) => input.ones_like(dtype, device, requires_grad);
+        public static Tensor ones_like(Tensor input, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null) => input.ones_like(dtype, device, requires_grad);
 
-
-        // empty()
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty(IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
         /// <summary>
-        ///  Create a new tensor filled with empty
+        /// Create a new tensor filled with empty
         /// </summary>
-        private static Tensor _empty(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        private static Tensor _empty(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 dtype = get_default_dtype();
@@ -455,7 +453,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var result = new Tensor(handle);
 
                     if (names != null && names.Length > 0) {
@@ -469,81 +467,81 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with empty
+        /// Create a new tensor filled with empty
         /// </summary>
-        public static Tensor empty(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor empty(long[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _empty(size, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new tensor filled with empty
+        /// Create a new tensor filled with empty
         /// </summary>
-        public static Tensor empty(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor empty(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _empty(size, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with empty
+        /// Create a new 1-D tensor filled with empty
         /// </summary>
-        public static Tensor empty(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor empty(long size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _empty(stackalloc long[] { size }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with empty
+        /// Create a new 2-D tensor filled with empty
         /// </summary>
-        public static Tensor empty(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor empty(long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _empty(stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with empty
+        /// Create a new 3-D tensor filled with empty
         /// </summary>
-        public static Tensor empty(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor empty(long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _empty(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with empty
+        /// Create a new 4-D tensor filled with empty
         /// </summary>
-        public static Tensor empty(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor empty(long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _empty(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with empty
+        /// Create a new 1-D tensor filled with empty
         /// </summary>
-        public static Tensor empty(int size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor empty(int size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _empty(stackalloc long[] { size }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with empty
+        /// Create a new 2-D tensor filled with empty
         /// </summary>
-        public static Tensor empty(int rows, int columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor empty(int rows, int columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _empty(stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with empty
+        /// Create a new 3-D tensor filled with empty
         /// </summary>
-        public static Tensor empty(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor empty(int dim0, int dim1, int dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _empty(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with empty
+        /// Create a new 4-D tensor filled with empty
         /// </summary>
-        public static Tensor empty(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor empty(int dim0, int dim1, int dim2, int dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _empty(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
@@ -551,18 +549,15 @@ namespace TorchSharp
         /// <summary>
         /// Returns a tensor filled with uninitialized data, with the same size as input.
         /// </summary>
-        public static Tensor empty_like(Tensor input, ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null) => input.empty_like(dtype, device, requires_grad);
+        public static Tensor empty_like(Tensor input, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null) => input.empty_like(dtype, device, requires_grad);
 
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_empty_strided(IntPtr psizes, int sz_length, IntPtr pstrides, int str_length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
         /// <summary>
-        ///  Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
+        /// Returns a tensor filled with uninitialized data. The shape and strides of the tensor is defined by the variable argument size and stride respectively.
         /// </summary>
-        public static Tensor empty_strided(long[] size, long[] strides, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor empty_strided(long[] size, long[] strides, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 dtype = get_default_dtype();
@@ -576,7 +571,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_empty_strided((IntPtr)psizes, size.Length, (IntPtr)pstrides, strides.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var result = new Tensor(handle);
 
                     if (names != null && names.Length > 0) {
@@ -589,15 +584,12 @@ namespace TorchSharp
             }
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_full(IntPtr psizes, int length, IntPtr value, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
         /// <summary>
-        ///  Create a new tensor filled with a given value
+        /// Create a new tensor filled with a given value
         /// </summary>
-        private static Tensor _full(ReadOnlySpan<long> size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        private static Tensor _full(ReadOnlySpan<long> size, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 if (value.Type.IsIntegral()) {
@@ -615,7 +607,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_full((IntPtr)psizes, size.Length, value.Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var result = new Tensor(handle);
 
                     if (names != null && names.Length > 0) {
@@ -629,81 +621,81 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with a given value
+        /// Create a new tensor filled with a given value
         /// </summary>
-        public static Tensor full(long[] size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor full(long[] size, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _full(size, value, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new tensor filled with a given value
+        /// Create a new tensor filled with a given value
         /// </summary>
-        public static Tensor full(ReadOnlySpan<long> size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor full(ReadOnlySpan<long> size, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _full(size, value, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with given value
+        /// Create a new 1-D tensor filled with given value
         /// </summary>
-        public static Tensor full(long size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor full(long size, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _full(stackalloc long[] { size }, value, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with given value
+        /// Create a new 2-D tensor filled with given value
         /// </summary>
-        public static Tensor full(long rows, long columns, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor full(long rows, long columns, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _full(stackalloc long[] { rows, columns }, value, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with given value
+        /// Create a new 3-D tensor filled with given value
         /// </summary>
-        public static Tensor full(long dim0, long dim1, long dim2, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor full(long dim0, long dim1, long dim2, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _full(stackalloc long[] { dim0, dim1, dim2 }, value, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with given value
+        /// Create a new 4-D tensor filled with given value
         /// </summary>
-        public static Tensor full(long dim0, long dim1, long dim2, long dim3, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor full(long dim0, long dim1, long dim2, long dim3, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _full(stackalloc long[] { dim0, dim1, dim2, dim3 }, value, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with given value
+        /// Create a new 1-D tensor filled with given value
         /// </summary>
-        public static Tensor full(int size, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor full(int size, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _full(stackalloc long[] { size }, value, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with given value
+        /// Create a new 2-D tensor filled with given value
         /// </summary>
-        public static Tensor full(int rows, int columns, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor full(int rows, int columns, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _full(stackalloc long[] { rows, columns }, value, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with given value
+        /// Create a new 3-D tensor filled with given value
         /// </summary>
-        public static Tensor full(int dim0, int dim1, int dim2, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor full(int dim0, int dim1, int dim2, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _full(stackalloc long[] { dim0, dim1, dim2 }, value, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with given value
+        /// Create a new 4-D tensor filled with given value
         /// </summary>
-        public static Tensor full(int dim0, int dim1, int dim2, int dim3, Scalar value, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor full(int dim0, int dim1, int dim2, int dim3, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _full(stackalloc long[] { dim0, dim1, dim2, dim3 }, value, dtype, device, requires_grad, names: names);
         }
@@ -711,18 +703,14 @@ namespace TorchSharp
         /// <summary>
         /// Returns a tensor with the same size as input filled with 'value.'
         /// </summary>
-        public static Tensor full_like(Tensor input, Scalar value, ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null) => input.full_like(value, dtype, device, requires_grad);
-
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_eye(long rows, long columns, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
+        public static Tensor full_like(Tensor input, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null) => input.full_like(value, dtype, device, requires_grad);
 
         /// <summary>
-        ///  Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
+        /// Create a 2-D tensor with ones on the diagonal and zeros elsewhere.
         /// </summary>
-        public static Tensor eye(long rows, long columns = -1L, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor eye(long rows, long columns = -1L, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 dtype = get_default_dtype();
@@ -736,7 +724,7 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_eye(rows, columns, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             var result = new Tensor(handle);
 
             if (names != null && names.Length > 0) {
@@ -748,11 +736,8 @@ namespace TorchSharp
         }
 
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randint(IntPtr generator, long low, long high, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -762,11 +747,11 @@ namespace TorchSharp
         /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
         /// <param name="generator">An optional random number genertor object.</param>
         /// <param name="names">Names of the dimensions of the tensor.</param>
-        public static Tensor randint(long low, long high, Size size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randint(long low, long high, Size size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             var shape = size.Shape;
 
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 dtype = ScalarType.Int64;
@@ -794,7 +779,7 @@ namespace TorchSharp
                             GC.WaitForPendingFinalizers();
                             handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, shape.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                         }
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                        if (handle == IntPtr.Zero) { CheckForErrors(); }
                         result = new Tensor(handle);
                     }
                 }
@@ -809,7 +794,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
         /// <param name="size">The shape of the output tensor.</param>
@@ -818,7 +803,7 @@ namespace TorchSharp
         /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
         /// <param name="generator">An optional random number genertor object.</param>
         /// <param name="names">Names of the dimensions of the tensor.</param>
-        public static Tensor randint(long high, Size size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randint(long high, Size size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return randint(0, high, size, dtype, device, requires_grad, generator, names);
         }
@@ -826,7 +811,7 @@ namespace TorchSharp
         // Note: Once F# implicit conversion support is broadly available, all the following overloads will be redundant.
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
         /// <param name="size">The shape of the output tensor.</param>
@@ -835,13 +820,13 @@ namespace TorchSharp
         /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
         /// <param name="generator">An optional random number genertor object.</param>
         /// <param name="names">Names of the dimensions of the tensor.</param>
-        public static Tensor randint(long high, long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randint(long high, long[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return randint(0, high, new Size(size), dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -851,15 +836,17 @@ namespace TorchSharp
         /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
         /// <param name="generator">An optional random number genertor object.</param>
         /// <param name="names">Names of the dimensions of the tensor.</param>
-        /// <remarks>The array-size and 'int' overloads are necessary for F#, which doesn't implicitly convert types.
-        ///          Once implicit conversion support is broadly available, some of these overloads can be removed.</remarks>
-        public static Tensor randint(long low, long high, long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        /// <remarks>
+        /// The array-size and 'int' overloads are necessary for F#, which doesn't implicitly convert types.
+        /// Once implicit conversion support is broadly available, some of these overloads can be removed.
+        /// </remarks>
+        public static Tensor randint(long low, long high, long[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return randint(low, high, new Size(size), dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -869,15 +856,17 @@ namespace TorchSharp
         /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
         /// <param name="generator">An optional random number genertor object.</param>
         /// <param name="names">Names of the dimensions of the tensor.</param>
-        /// <remarks>The array-size and 'int' overloads are necessary for F#, which doesn't implicitly convert types.
-        ///          Once implicit conversion support is broadly available, some of these overloads can be removed.</remarks>
-        public static Tensor randint(int low, int high, int[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        /// <remarks>
+        /// The array-size and 'int' overloads are necessary for F#, which doesn't implicitly convert types.
+        /// Once implicit conversion support is broadly available, some of these overloads can be removed.
+        /// </remarks>
+        public static Tensor randint(int low, int high, int[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return randint(low, high, new Size(size), dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
         /// <param name="size">The shape of the output tensor.</param>
@@ -886,13 +875,13 @@ namespace TorchSharp
         /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
         /// <param name="generator">An optional random number genertor object.</param>
         /// <param name="names">Names of the dimensions of the tensor.</param>
-        public static Tensor randint(int high, int[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randint(int high, int[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return randint(0, high, new Size(size), dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 32-bit complex tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// Create a new 32-bit complex tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
         /// <param name="genHandle"></param>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
@@ -901,7 +890,7 @@ namespace TorchSharp
         /// <param name="device">The desired device of returned tensor.</param>
         /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
         /// <param name="names">Names of the dimensions of the tensor.</param>
-        static private Tensor randint_c32(IntPtr genHandle, long low, long high, long[] size, torch.Device device, bool requires_grad, string[]? names)
+        private static Tensor randint_c32(IntPtr genHandle, long low, long high, long[] size, Device device, bool requires_grad, string[]? names)
         {
             var sz = new List<long>();
             sz.AddRange(size);
@@ -921,22 +910,22 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float32, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
 
                     var cmplx = THSTensor_view_as_complex(handle);
                     if (cmplx == IntPtr.Zero)
-                        torch.CheckForErrors();
+                        CheckForErrors();
 
                     //
                     // view_as_complex() creates a view, but we want an independent tensor, so we have to create one and then copy the view's data into it.
                     //
                     var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat32, (int)device.type, device.index, requires_grad);
                     if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
+                        CheckForErrors();
 
                     res = THSTensor_copy_(res, cmplx, false);
                     if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
+                        CheckForErrors();
 
                     THSTensor_dispose(handle);
                     THSTensor_dispose(cmplx);
@@ -954,7 +943,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new 64-bit complex tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// Create a new 64-bit complex tensor filled with random integer values taken from a uniform distribution in [0, max).
         /// </summary>
         /// <param name="genHandle"></param>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
@@ -963,7 +952,7 @@ namespace TorchSharp
         /// <param name="device">The desired device of returned tensor.</param>
         /// <param name="requires_grad">If autograd should record operations on the returned tensor.</param>
         /// <param name="names">Names of the dimensions of the tensor.</param>
-        static private Tensor randint_c64(IntPtr genHandle, long low, long high, long[] size, torch.Device device, bool requires_grad, string[]? names)
+        private static Tensor randint_c64(IntPtr genHandle, long low, long high, long[] size, Device device, bool requires_grad, string[]? names)
         {
             var sz = new List<long>();
             sz.AddRange(size);
@@ -983,22 +972,22 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randint(genHandle, low, high, (IntPtr)psizes, size2.Length, (sbyte)ScalarType.Float64, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
 
                     var cmplx = THSTensor_view_as_complex(handle);
                     if (cmplx == IntPtr.Zero)
-                        torch.CheckForErrors();
+                        CheckForErrors();
 
                     //
                     // view_as_complex() creates a view, but we want an independent tensor, so we have to create one and then copy the view's data into it.
                     //
                     var res = THSTensor_empty((IntPtr)psizes, size.Length, (sbyte)ScalarType.ComplexFloat64, (int)device.type, device.index, requires_grad);
                     if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
+                        CheckForErrors();
 
                     res = THSTensor_copy_(res, cmplx, false);
                     if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
+                        CheckForErrors();
 
                     THSTensor_dispose(handle);
                     THSTensor_dispose(cmplx);
@@ -1013,21 +1002,6 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Returns a tensor of random numbers drawn from separate normal distributions whose mean and standard deviation are given.
-        /// </summary>
-        /// <param name="mean">The tensor of per-element means</param>
-        /// <param name="std">The tensor of per-element standard deviations</param>
-        /// <param name="generator">An optional random number generator</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        public static Tensor normal(Tensor mean, Tensor std, torch.Generator? generator = null)
-        {
-            if (std.device_type != mean.device_type || (std.device_type == DeviceType.CUDA && std.device_index != mean.device_index))
-                throw new ArgumentException("The 'means' and 'stddev' tensors must be located on the same device.");
-            return randn(mean.shape, generator: generator, device: std.device) * std + mean;
-        }
-
-        /// <summary>
         /// Similar to the function above, but the means and standard deviations are shared among all drawn elements. The resulting tensor has size given by size.
         /// </summary>
         /// <param name="mean">The mean for all distributions</param>
@@ -1039,20 +1013,20 @@ namespace TorchSharp
         /// <param name="generator">An optional random number generator</param>
         /// <param name="names">Names of the dimensions of the tensor.</param>
         /// <returns></returns>
-        public static Tensor normal(double mean, double std, ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor normal(double mean, double std, ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return randn(size, dtype: dtype, device: device, requires_grad: requires_grad, generator: generator) * std + mean;
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        private static Tensor _rand(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        private static Tensor _rand(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             if (dtype.HasValue && torch.is_integral(dtype.Value))
                 throw new ArgumentException($"torch.rand() was passed a bad dtype: {dtype}. It must be floating point or complex.", "dtype");
 
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 dtype = get_default_dtype();
@@ -1068,7 +1042,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_rand(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var result = new Tensor(handle);
                     if (names != null && names.Length > 0) {
                         result.rename_(names);
@@ -1079,94 +1053,94 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        public static Tensor rand(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor rand(long[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _rand(size, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// Create a new tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        public static Tensor rand(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor rand(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _rand(size, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// Create a new 1-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        public static Tensor rand(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor rand(long size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _rand(stackalloc long[] { size }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// Create a new 2-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        public static Tensor rand(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor rand(long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _rand(stackalloc long[] { rows, columns }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// Create a new 3-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        public static Tensor rand(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor rand(long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _rand(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        public static Tensor rand(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor rand(long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _rand(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// Create a new 1-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        public static Tensor rand(int size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor rand(int size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _rand(stackalloc long[] { size }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// Create a new 2-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        public static Tensor rand(int rows, int columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor rand(int rows, int columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _rand(stackalloc long[] { rows, columns }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// Create a new 3-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        public static Tensor rand(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor rand(int dim0, int dim1, int dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _rand(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
+        /// Create a new 4-D tensor filled with random values taken from a uniform distribution in [0, 1).
         /// </summary>
-        public static Tensor rand(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor rand(int dim0, int dim1, int dim2, int dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _rand(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
-        /// </summary>        
-        private static Tensor _randn(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        /// Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        private static Tensor _randn(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             if (dtype.HasValue && torch.is_integral(dtype.Value))
                 throw new ArgumentException($"torch.randn() was passed a bad dtype: {dtype}. It must be floating point or complex.", "dtype");
 
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 dtype = get_default_dtype();
@@ -1182,7 +1156,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_randn(genHandle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var result = new Tensor(handle);
                     if (names != null && names.Length > 0) {
                         result.rename_(names);
@@ -1193,81 +1167,81 @@ namespace TorchSharp
         }
 
         /// <summary>
-        ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
-        /// </summary>        
-        public static Tensor randn(long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
-        {
-            return _randn(size, dtype, device, requires_grad, generator, names);
-        }
-
-        /// <summary>
-        ///  Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
-        /// </summary>        
-        public static Tensor randn(ReadOnlySpan<long> size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
-        {
-            return _randn(size, dtype, device, requires_grad, generator, names);
-        }
-
-        /// <summary>
-        ///  Create a new 1-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        public static Tensor randn(long size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randn(long[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
+        {
+            return _randn(size, dtype, device, requires_grad, generator, names);
+        }
+
+        /// <summary>
+        /// Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        public static Tensor randn(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
+        {
+            return _randn(size, dtype, device, requires_grad, generator, names);
+        }
+
+        /// <summary>
+        /// Create a new 1-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        public static Tensor randn(long size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _randn(stackalloc long[] { size }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// Create a new 2-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        public static Tensor randn(long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randn(long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _randn(stackalloc long[] { rows, columns }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// Create a new 3-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        public static Tensor randn(long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randn(long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _randn(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        public static Tensor randn(long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randn(long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _randn(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 1-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// Create a new 1-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        public static Tensor randn(int size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randn(int size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _randn(stackalloc long[] { size }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 2-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// Create a new 2-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        public static Tensor randn(int rows, int columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randn(int rows, int columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _randn(stackalloc long[] { rows, columns }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 3-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// Create a new 3-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        public static Tensor randn(int dim0, int dim1, int dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randn(int dim0, int dim1, int dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _randn(stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, generator, names);
         }
 
         /// <summary>
-        ///  Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
+        /// Create a new 4-D tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
-        public static Tensor randn(int dim0, int dim1, int dim2, int dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, torch.Generator? generator = null, string[]? names = null)
+        public static Tensor randn(int dim0, int dim1, int dim2, int dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _randn(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, generator, names);
         }
@@ -1275,74 +1249,70 @@ namespace TorchSharp
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(bool scalar, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor(bool scalar, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newBoolScalar(scalar, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             var tensor = new Tensor(handle);
-            if (device is not null) {
-                tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-            } else if (dtype.HasValue) {
-                tensor = tensor.to_type(dtype.Value);
-            }
+            tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             return tensor;
         }
 
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(byte scalar, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor(byte scalar, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newByteScalar(scalar, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
         }
 
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(sbyte scalar, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor(sbyte scalar, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newInt8Scalar(scalar, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
         }
 
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(short scalar, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor(short scalar, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newInt16Scalar(scalar, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
         }
 
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(int scalar, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor(int scalar, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newInt32Scalar(scalar, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
         }
 
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(long scalar, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor(long scalar, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newInt64Scalar(scalar, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             var tensor = new Tensor(handle);
-            if (device is not null) {
+            if (device is { }) {
                 tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             } else if (dtype.HasValue) {
                 tensor = tensor.to_type(dtype.Value);
@@ -1353,41 +1323,37 @@ namespace TorchSharp
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(float scalar, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor(float scalar, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newFloat32Scalar(scalar, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
         }
 
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(double scalar, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor(double scalar, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newFloat64Scalar(scalar, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             var tensor = new Tensor(handle);
-            if (device is not null) {
-                tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-            } else if (dtype.HasValue) {
-                tensor = tensor.to_type(dtype.Value);
-            }
+            tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             return tensor;
         }
 
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(float real, float imaginary, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor(float real, float imaginary, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newComplexFloat32Scalar(real, imaginary, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             var tensor = new Tensor(handle);
-            if (device is not null) {
+            if (device is { }) {
                 tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             } else if (dtype.HasValue) {
                 tensor = tensor.to_type(dtype.Value);
@@ -1398,13 +1364,13 @@ namespace TorchSharp
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor((float Real, float Imaginary) scalar, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor((float Real, float Imaginary) scalar, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newComplexFloat32Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             var tensor = new Tensor(handle);
-            if (device is not null) {
+            if (device is { }) {
                 tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             } else if (dtype.HasValue) {
                 tensor = tensor.to_type(dtype.Value);
@@ -1415,13 +1381,13 @@ namespace TorchSharp
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor((double Real, double Imaginary) scalar, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor((double Real, double Imaginary) scalar, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newComplexFloat64Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             var tensor = new Tensor(handle);
-            if (device is not null) {
+            if (device is { }) {
                 tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             } else if (dtype.HasValue) {
                 tensor = tensor.to_type(dtype.Value);
@@ -1432,13 +1398,13 @@ namespace TorchSharp
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(double real, double imaginary, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor(double real, double imaginary, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newComplexFloat64Scalar(real, imaginary, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             var tensor = new Tensor(handle);
-            if (device is not null) {
+            if (device is { }) {
                 tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             } else if (dtype.HasValue) {
                 tensor = tensor.to_type(dtype.Value);
@@ -1449,17 +1415,13 @@ namespace TorchSharp
         /// <summary>
         /// Create a scalar tensor from a single value
         /// </summary>
-        public static Tensor tensor(System.Numerics.Complex scalar, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor tensor(System.Numerics.Complex scalar, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             var handle = THSTensor_newComplexFloat64Scalar(scalar.Real, scalar.Imaginary, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             var tensor = new Tensor(handle);
-            if (device is not null) {
-                tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
-            } else if (dtype.HasValue) {
-                tensor = tensor.to_type(dtype.Value);
-            }
+            tensor = dtype.HasValue ? tensor.to(dtype.Value, device) : tensor.to(device);
             return tensor;
         }
 
@@ -1467,7 +1429,7 @@ namespace TorchSharp
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        public static Tensor tensor(IList<bool> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor tensor(IList<bool> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Bool, dtype, device, requires_grad, false, names);
         }
@@ -1475,13 +1437,13 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(bool[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(bool[] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.Bool, dtype, device, requires_grad, names: names);
         }
 
-        public static Tensor tensor(bool[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor tensor(bool[] rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Bool, dtype, device, requires_grad, names: names);
         }
@@ -1500,15 +1462,15 @@ namespace TorchSharp
                     throw new ArgumentException($"mismatched total size creating a tensor from an array: {prod} vs. {rawArray.LongLength}");
             }
 
-            torch.InitializeDeviceType(DeviceType.CPU);
+            device = InitializeDevice(device);
 
             if (clone) { rawArray = (Array)rawArray.Clone(); }
 
             var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
             var dataArrayAddr = dataHandle.AddrOfPinnedObject();
             var gchp = GCHandle.ToIntPtr(dataHandle);
-            GCHandleDeleter deleter = null!;
-            deleter = new GCHandleDeleter((IntPtr ptr) => {
+            TorchSharp.PInvoke.GCHandleDeleter deleter = null!;
+            deleter = new TorchSharp.PInvoke.GCHandleDeleter((IntPtr ptr) => {
                 GCHandle.FromIntPtr(gchp).Free();
                 deleters.TryRemove(deleter, out deleter!);
             });
@@ -1524,7 +1486,7 @@ namespace TorchSharp
                         handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, requires_grad);
                     }
 
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var tensor = new Tensor(handle);
 
                     var needsConversion = dtype.HasValue && dtype.Value != (ScalarType)origType;
@@ -1546,8 +1508,8 @@ namespace TorchSharp
         /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<bool> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<bool> rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { (long)rawArray.Count }, dtype, device, requires_grad, names: names);
         }
@@ -1555,11 +1517,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have rows * columns elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have rows * columns elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<bool> rawArray, long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<bool> rawArray, long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
@@ -1567,11 +1530,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<bool> rawArray, long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<bool> rawArray, long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
@@ -1579,19 +1543,20 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2*dim3 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<bool> rawArray, long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<bool> rawArray, long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
         /// <summary>
         /// Create a two-dimensional tensor from a two-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(bool[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(bool[,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.Bool, dtype, device, requires_grad, names: names);
         }
@@ -1599,8 +1564,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a three-dimensional tensor from a three-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(bool[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(bool[,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.Bool, dtype, device, requires_grad, names: names);
         }
@@ -1608,19 +1573,18 @@ namespace TorchSharp
         /// <summary>
         /// Create a four-dimensional tensor from a four-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(bool[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(bool[,,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.Bool, dtype, device, requires_grad, names: names);
         }
-
 
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<byte> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<byte> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Byte, dtype, device, requires_grad, false, names);
         }
@@ -1628,8 +1592,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(byte[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(byte[] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.Byte, dtype, device, requires_grad, names: names);
         }
@@ -1637,8 +1601,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the array passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(byte[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(byte[] rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Byte, dtype, device, requires_grad, names: names);
         }
@@ -1647,8 +1611,8 @@ namespace TorchSharp
         /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<byte> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<byte> rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { (long)rawArray.Count }, dtype, device, requires_grad, names: names);
         }
@@ -1656,11 +1620,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have rows * columns elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have rows * columns elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<byte> rawArray, long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<byte> rawArray, long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
@@ -1668,11 +1633,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<byte> rawArray, long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<byte> rawArray, long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
@@ -1680,11 +1646,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2*dim3 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<byte> rawArray, long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<byte> rawArray, long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
@@ -1692,8 +1659,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a two-dimensional tensor from a two-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(byte[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(byte[,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.Byte, dtype, device, requires_grad, names: names);
         }
@@ -1701,8 +1668,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a three-dimensional tensor from a three-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(byte[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(byte[,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.Byte, dtype, device, requires_grad, names: names);
         }
@@ -1710,8 +1677,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a four-dimensional tensor from a four-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(byte[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(byte[,,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.Byte, dtype, device, requires_grad, names: names);
         }
@@ -1721,8 +1688,8 @@ namespace TorchSharp
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<sbyte> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<sbyte> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Int8, dtype, device, requires_grad, false, names);
         }
@@ -1730,8 +1697,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(sbyte[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(sbyte[] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.Int8, dtype, device, requires_grad, names: names);
         }
@@ -1739,8 +1706,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(sbyte[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(sbyte[] rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Int8, dtype, device, requires_grad, names: names);
         }
@@ -1749,8 +1716,8 @@ namespace TorchSharp
         /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<sbyte> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<sbyte> rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { (long)rawArray.Count }, dtype, device, requires_grad, names: names);
         }
@@ -1758,11 +1725,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have rows * columns elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have rows * columns elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<sbyte> rawArray, long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<sbyte> rawArray, long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
@@ -1770,11 +1738,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<sbyte> rawArray, long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<sbyte> rawArray, long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
@@ -1782,11 +1751,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2*dim3 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<sbyte> rawArray, long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<sbyte> rawArray, long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
@@ -1794,8 +1764,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a two-dimensional tensor from a two-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(sbyte[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(sbyte[,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.Int8, dtype, device, requires_grad, names: names);
         }
@@ -1803,8 +1773,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a three-dimensional tensor from a three-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(sbyte[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(sbyte[,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.Int8, dtype, device, requires_grad, names: names);
         }
@@ -1812,8 +1782,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a four-dimensional tensor from a four-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(sbyte[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(sbyte[,,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.Int8, dtype, device, requires_grad, names: names);
         }
@@ -1823,8 +1793,8 @@ namespace TorchSharp
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<short> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<short> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Int16, dtype, device, requires_grad, false, names);
         }
@@ -1832,8 +1802,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(short[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(short[] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.Int16, dtype, device, requires_grad, names: names);
         }
@@ -1841,8 +1811,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(short[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(short[] rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Int16, dtype, device, requires_grad, names: names);
         }
@@ -1851,8 +1821,8 @@ namespace TorchSharp
         /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<short> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<short> rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { (long)rawArray.Count }, dtype, device, requires_grad, names: names);
         }
@@ -1860,11 +1830,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have rows * columns elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have rows * columns elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<short> rawArray, long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<short> rawArray, long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
@@ -1872,11 +1843,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<short> rawArray, long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<short> rawArray, long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
@@ -1884,11 +1856,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2*dim3 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<short> rawArray, long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<short> rawArray, long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
@@ -1896,8 +1869,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a two-dimensional tensor from a two-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(short[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(short[,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.Int16, dtype, device, requires_grad, names: names);
         }
@@ -1905,8 +1878,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a three-dimensional tensor from a three-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(short[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(short[,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.Int16, dtype, device, requires_grad, names: names);
         }
@@ -1914,8 +1887,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a four-dimensional tensor from a four-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(short[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(short[,,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.Int16, dtype, device, requires_grad, names: names);
         }
@@ -1924,8 +1897,8 @@ namespace TorchSharp
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<int> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<int> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Int32, dtype, device, requires_grad, false, names);
         }
@@ -1933,8 +1906,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(int[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(int[] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.Int32, dtype, device, requires_grad, names: names);
         }
@@ -1942,8 +1915,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(int[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(int[] rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Int32, dtype, device, requires_grad, names: names);
         }
@@ -1952,8 +1925,8 @@ namespace TorchSharp
         /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<int> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<int> rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { (long)rawArray.Count }, dtype, device, requires_grad, names: names);
         }
@@ -1961,11 +1934,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have rows * columns elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have rows * columns elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<int> rawArray, long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<int> rawArray, long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
@@ -1973,11 +1947,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<int> rawArray, long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<int> rawArray, long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
@@ -1985,11 +1960,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2*dim3 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(int[] rawArray, long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(int[] rawArray, long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
@@ -1997,8 +1973,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a two-dimensional tensor from a two-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(int[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(int[,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.Int32, dtype, device, requires_grad, names: names);
         }
@@ -2006,8 +1982,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a three-dimensional tensor from a three-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(int[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(int[,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.Int32, dtype, device, requires_grad, names: names);
         }
@@ -2015,8 +1991,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a four-dimensional tensor from a four-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(int[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(int[,,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.Int32, dtype, device, requires_grad, names: names);
         }
@@ -2024,8 +2000,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<long> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<long> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_i64(rawArray.ToArray(), dimensions, dtype, device, requires_grad, false, names);
         }
@@ -2033,8 +2009,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(long[] dataArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(long[] dataArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_i64(dataArray, stackalloc long[] { dataArray.LongLength }, dtype, device, requires_grad, names: names);
         }
@@ -2042,13 +2018,13 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(long[] dataArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(long[] dataArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_i64(dataArray, dimensions, dtype, device, requires_grad, names: names);
         }
 
-        [System.Diagnostics.Contracts.Pure]
+        [Pure]
         private static Tensor _tensor_i64(Array rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype, Device? device, bool requires_grad, bool clone = false, string[]? names = null) =>
             _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Int64, dtype, device, requires_grad, names: names);
 
@@ -2056,8 +2032,8 @@ namespace TorchSharp
         /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<long> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<long> rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { (long)rawArray.Count }, dtype, device, requires_grad, names: names);
         }
@@ -2065,11 +2041,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have rows * columns elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have rows * columns elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<long> rawArray, long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<long> rawArray, long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
@@ -2077,11 +2054,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<long> rawArray, long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<long> rawArray, long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
@@ -2089,11 +2067,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2*dim3 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<long> rawArray, long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<long> rawArray, long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
@@ -2101,8 +2080,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a two-dimensional tensor from a two-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(long[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(long[,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_i64(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, dtype, device, requires_grad, names: names);
         }
@@ -2110,8 +2089,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a three-dimensional tensor from a three-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(long[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(long[,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_i64(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, dtype, device, requires_grad, names: names);
         }
@@ -2119,8 +2098,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a four-dimensional tensor from a four-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(long[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(long[,,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_i64(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, dtype, device, requires_grad, names: names);
         }
@@ -2129,8 +2108,8 @@ namespace TorchSharp
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<float> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<float> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray.ToArray(), dimensions, (sbyte)ScalarType.Float32, dtype, device, requires_grad, false, names);
         }
@@ -2138,8 +2117,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(float[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(float[] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.Float32, dtype, device, requires_grad, names: names);
         }
@@ -2147,8 +2126,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(float[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(float[] rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Float32, dtype, device, requires_grad, names: names);
         }
@@ -2157,8 +2136,8 @@ namespace TorchSharp
         /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<float> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<float> rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { (long)rawArray.Count }, dtype, device, requires_grad, names: names);
         }
@@ -2166,11 +2145,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have rows * columns elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have rows * columns elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<float> rawArray, long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<float> rawArray, long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
@@ -2178,11 +2158,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<float> rawArray, long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<float> rawArray, long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
@@ -2190,11 +2171,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2*dim3 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<float> rawArray, long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<float> rawArray, long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
@@ -2202,8 +2184,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a two-dimensional tensor from a two-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(float[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(float[,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.Float32, dtype, device, requires_grad, names: names);
         }
@@ -2211,8 +2193,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a three-dimensional tensor from a three-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(float[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(float[,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.Float32, dtype, device, requires_grad, names: names);
         }
@@ -2220,8 +2202,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a four-dimensional tensor from a four-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(float[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(float[,,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.Float32, dtype, device, requires_grad, names: names);
         }
@@ -2231,8 +2213,8 @@ namespace TorchSharp
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<double> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<double> rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray.ToArray(), stackalloc long[] { rawArray.Count }, (sbyte)ScalarType.Float64, dtype: dtype, device: device, requires_grad: requires_grad, false, names);
         }
@@ -2240,8 +2222,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(double[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(double[] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.Float64, dtype, device, requires_grad, names: names);
         }
@@ -2249,8 +2231,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(double[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(double[] rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.Float64, dtype, device, requires_grad, names: names);
         }
@@ -2258,11 +2240,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have rows * columns elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have rows * columns elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<double> rawArray, long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<double> rawArray, long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray.ToArray(), stackalloc long[] { rows, columns }, (sbyte)ScalarType.Float64, dtype, device, requires_grad, names: names);
         }
@@ -2270,11 +2253,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<double> rawArray, long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<double> rawArray, long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray.ToArray(), stackalloc long[] { dim0, dim1, dim2 }, (sbyte)ScalarType.Float64, dtype, device, requires_grad, names: names);
         }
@@ -2283,10 +2267,10 @@ namespace TorchSharp
         /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// The input array must have dim0*dim1*dim2*dim3 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<double> rawArray, long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<double> rawArray, long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray.ToArray(), stackalloc long[] { dim0, dim1, dim2, dim3 }, (sbyte)ScalarType.Float64, dtype, device, requires_grad, names: names);
         }
@@ -2294,8 +2278,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a two-dimensional tensor from a two-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(double[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(double[,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.Float64, dtype, device, requires_grad, names: names);
         }
@@ -2303,8 +2287,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a three-dimensional tensor from a three-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(double[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(double[,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.Float64, dtype, device, requires_grad, names: names);
         }
@@ -2312,8 +2296,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a four-dimensional tensor from a four-dimensional array of values.from
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(double[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(double[,,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.Float64, dtype, device, requires_grad, names: names);
         }
@@ -2322,8 +2306,8 @@ namespace TorchSharp
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<(float Real, float Imaginary)> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<(float Real, float Imaginary)> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray.ToArray(), dimensions, dtype, device, requires_grad, names: names);
         }
@@ -2331,8 +2315,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor((float Real, float Imaginary)[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor((float Real, float Imaginary)[] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             var dataArray = new float[rawArray.Length * 2];
             for (var i = 0; i < rawArray.Length; i++) {
@@ -2346,8 +2330,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor((float Real, float Imaginary)[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor((float Real, float Imaginary)[] rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             var dataArray = new float[rawArray.Length * 2];
             for (var i = 0; i < rawArray.Length; i++) {
@@ -2362,8 +2346,8 @@ namespace TorchSharp
         /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<(float Real, float Imaginary)> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<(float Real, float Imaginary)> rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { (long)rawArray.Count }, dtype, device, requires_grad, names: names);
         }
@@ -2371,11 +2355,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have rows * columns elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have rows * columns elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<(float Real, float Imaginary)> rawArray, long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<(float Real, float Imaginary)> rawArray, long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
@@ -2383,11 +2368,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<(float Real, float Imaginary)> rawArray, long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<(float Real, float Imaginary)> rawArray, long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
@@ -2395,11 +2381,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2*dim3 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<(float Real, float Imaginary)> rawArray, long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<(float Real, float Imaginary)> rawArray, long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
@@ -2407,8 +2394,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a two-dimensional tensor from a two-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor((float Real, float Imaginary)[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor((float Real, float Imaginary)[,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             var dataArray = new float[rawArray.GetLongLength(0), rawArray.GetLongLength(1) * 2];
             for (var i = 0; i < rawArray.GetLongLength(0); i++) {
@@ -2424,8 +2411,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a three-dimensional tensor from a three-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor((float Real, float Imaginary)[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor((float Real, float Imaginary)[,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             var dataArray = new float[rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) * 2];
             for (var i = 0; i < rawArray.GetLongLength(0); i++) {
@@ -2443,8 +2430,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a four-dimensional tensor from a four-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor((float Real, float Imaginary)[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor((float Real, float Imaginary)[,,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             var dataArray = new float[rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) * 2];
             for (var i = 0; i < rawArray.GetLongLength(0); i++) {
@@ -2461,13 +2448,12 @@ namespace TorchSharp
             return _tensor_generic(dataArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.ComplexFloat32, dtype, device, requires_grad, names: names);
         }
 
-
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<System.Numerics.Complex> rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<System.Numerics.Complex> rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray.ToArray(), dimensions, dtype, device, requires_grad, names: names);
         }
@@ -2475,8 +2461,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(System.Numerics.Complex[] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(System.Numerics.Complex[] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.LongLength }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requires_grad, names: names);
         }
@@ -2484,8 +2470,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, shaping it based on the shape passed in.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(System.Numerics.Complex[] rawArray, ReadOnlySpan<long> dimensions, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(System.Numerics.Complex[] rawArray, ReadOnlySpan<long> dimensions, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, dimensions, (sbyte)ScalarType.ComplexFloat64, dtype, device, requires_grad, names: names);
         }
@@ -2494,8 +2480,8 @@ namespace TorchSharp
         /// Create a 1-D tensor from an array of values, shaping it based on the input array.
         /// </summary>
         /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.</remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<System.Numerics.Complex> rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<System.Numerics.Complex> rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { (long)rawArray.Count }, dtype, device, requires_grad, names: names);
         }
@@ -2503,11 +2489,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a two-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have rows * columns elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have rows * columns elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<System.Numerics.Complex> rawArray, long rows, long columns, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<System.Numerics.Complex> rawArray, long rows, long columns, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { rows, columns }, dtype, device, requires_grad, names: names);
         }
@@ -2515,11 +2502,12 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a three-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2 elements.
         /// </remarks>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(IList<System.Numerics.Complex> rawArray, long dim0, long dim1, long dim2, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(IList<System.Numerics.Complex> rawArray, long dim0, long dim1, long dim2, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2 }, dtype, device, requires_grad, names: names);
         }
@@ -2527,10 +2515,11 @@ namespace TorchSharp
         /// <summary>
         /// Create a tensor from an array of values, organizing it as a four-dimensional tensor.
         /// </summary>
-        /// <remarks>The Torch runtime does not take ownership of the data, so there is no device argument.
-        ///          The input array must have dim0*dim1*dim2*dim3 elements.
+        /// <remarks>
+        /// The Torch runtime does not take ownership of the data, so there is no device argument.
+        /// The input array must have dim0*dim1*dim2*dim3 elements.
         /// </remarks>
-        public static Tensor tensor(IList<System.Numerics.Complex> rawArray, long dim0, long dim1, long dim2, long dim3, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor tensor(IList<System.Numerics.Complex> rawArray, long dim0, long dim1, long dim2, long dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return tensor(rawArray, stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, names: names);
         }
@@ -2538,8 +2527,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a two-dimensional tensor from a two-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(System.Numerics.Complex[,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(System.Numerics.Complex[,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requires_grad, names: names);
         }
@@ -2547,8 +2536,8 @@ namespace TorchSharp
         /// <summary>
         /// Create a three-dimensional tensor from a three-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(System.Numerics.Complex[,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(System.Numerics.Complex[,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requires_grad, names: names);
         }
@@ -2556,16 +2545,66 @@ namespace TorchSharp
         /// <summary>
         /// Create a four-dimensional tensor from a four-dimensional array of values.
         /// </summary>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor tensor(System.Numerics.Complex[,,,] rawArray, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        [Pure]
+        public static Tensor tensor(System.Numerics.Complex[,,,] rawArray, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             return _tensor_generic(rawArray, stackalloc long[] { rawArray.GetLongLength(0), rawArray.GetLongLength(1), rawArray.GetLongLength(2), rawArray.GetLongLength(3) }, (sbyte)ScalarType.ComplexFloat64, dtype, device, requires_grad, names: names);
         }
 
         /// <summary>
+        /// Cast a tensor to a Boolean tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a Boolean tensor; otherwise, a new tensor.</returns>
+        public static Tensor BoolTensor(Tensor t) => t.to(ScalarType.Bool);
+
+        /// <summary>
+        /// Cast a tensor to a byte tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a byte tensor; otherwise, a new tensor.</returns>
+        public static Tensor ByteTensor(Tensor t) => t.to(ScalarType.Byte);
+
+        /// <summary>
+        /// Cast a tensor to a 16-bit integer tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a 16-bit integer tensor; otherwise, a new tensor.</returns>
+        public static Tensor ShortTensor(Tensor t) => t.to(ScalarType.Int16);
+
+        /// <summary>
+        /// Cast a tensor to a 32-bit integer tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a 32-bit integer tensor; otherwise, a new tensor.</returns>
+        public static Tensor IntTensor(Tensor t) => t.to(ScalarType.Int32);
+
+        /// <summary>
+        /// Cast a tensor to a 64-bit integer tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a 64-bit integer tensor; otherwise, a new tensor.</returns>
+        public static Tensor LongTensor(Tensor t) => t.to(ScalarType.Int64);
+
+        /// <summary>
+        /// Cast a tensor to a 32-bit floating point tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a 32-bit floating point; otherwise, a new tensor.</returns>
+        public static Tensor FloatTensor(Tensor t) => t.to(ScalarType.Float32);
+
+        /// <summary>
+        /// Cast a tensor to a 64-bit floating point tensor.
+        /// </summary>
+        /// <param name="t">The input tensor</param>
+        /// <returns>'this' if the tensor is already a 64-bit floating point tensor; otherwise, a new tensor.</returns>
+        public static Tensor DoubleTensor(Tensor t) => t.to(ScalarType.Float64);
+
+        /// <summary>
         /// Creates a <see cref="torch.Tensor">torch tensor</see> from an arbitrary <see cref="Array">array</see>.
         /// </summary>
         /// <param name="rawArray">The arbitrary array to create the tensor from.</param>
+        /// <param name="device">The device where the tensor is to be located. Defaults to 'cpu'.</param>
         /// <returns>A <see cref="torch.Tensor">torch tensor</see></returns>
         /// <remarks>
         /// This function roughly corresponds to torch.from_numpy(). It shares the underlying buffer between the input and output.
@@ -2584,45 +2623,55 @@ namespace TorchSharp
         /// Tensor from array of rank 1
         /// <code>
         /// var array = new double[] { { 1, 2, 3, 4, 5, 6, 7, 8 } };
-        /// var tensor = torch.from_array(rawArray: array, dtype: torch.ScalarType.Float64, device: torch.Device.CPU, requires_grad: false);
+        /// var tensor = torch.from_array(rawArray: array, dtype: ScalarType.Float64, device: Device.CPU, requires_grad: false);
         /// </code>
         /// Tensor from array of rank 2
         /// <code>
         /// var array = new double[,] { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } };
-        /// var tensor = torch.from_array(rawArray: array, dtype: torch.ScalarType.Float64, device: torch.Device.CPU, requires_grad: false);
+        /// var tensor = torch.from_array(rawArray: array, dtype: ScalarType.Float64, device: Device.CPU, requires_grad: false);
         /// </code>
         /// Tensor from array of rank 3
         /// <code>
         /// var array = new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } };
-        /// var tensor = torch.from_array(rawArray: array, dtype: torch.ScalarType.Float64, device: torch.Device.CPU, requires_grad: false);
+        /// var tensor = torch.from_array(rawArray: array, dtype: ScalarType.Float64, device: Device.CPU, requires_grad: false);
         /// </code>
         /// </example>
-        [System.Diagnostics.Contracts.Pure]
-        public static Tensor from_array(Array rawArray)
+        [Pure]
+        public static Tensor from_array(Array rawArray, Device? device = null)
         {
             var t = rawArray.GetType().GetElementType();
-            if (t == typeof((float, float)))
-                throw new NotImplementedException("from_array() for (float,float) elements.");
+            if (t is null) throw new InvalidOperationException($"{nameof(rawArray)}.GetType().GetElementType() returned null.");
+            if (t == typeof((float, float))) throw new NotImplementedException("from_array() for (float,float) elements.");
 
             var dtype = ToScalarType(t!);
 
-            return from_array(rawArray, dtype, CPU, false);
+            return from_array(rawArray, dtype, device is null ? CPU : device);
         }
 
-        [System.Diagnostics.Contracts.Pure]
-        internal static Tensor from_array(Array rawArray, ScalarType? dtype, Device? device = null, bool requires_grad = false, string[]? names = null)
+        /// <summary>
+        /// Creates a <see cref="torch.Tensor">torch tensor</see> from an arbitrary <see cref="Array">array</see>.
+        /// </summary>
+        /// <param name="rawArray">The arbitrary array to create the tensor from.</param>
+        /// <param name="dtype">The element type to use in the created tensor. This can be different from the element type of the input.</param>
+        /// <param name="device">The device where the tensor is to be located. Defaults to 'cpu'.</param>
+        /// <param name="requires_grad"></param>
+        /// <param name="names"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        [Pure]
+        public static Tensor from_array(Array rawArray, ScalarType? dtype, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             // enumerates over all dimensions of the arbitrary array
             // and returns the length of the dimension
-            [System.Diagnostics.Contracts.Pure]
-            static IEnumerable<long> GetShape(Array arr)
+            [Pure]
+            static long[] GetShape(Array arr)
             {
-                for (var dim = 0; dim < arr.Rank; dim++) {
-                    var dimLength = arr.GetLength(dim);
-                    yield return dimLength;
-                }
+                var shape = new long[arr.Rank];
+                for (var dim = 0; dim < arr.Rank; dim++)
+                    shape[dim] = arr.GetLength(dim);
+                return shape;
             }
-            var shape = GetShape(rawArray).ToArray();
+            var shape = GetShape(rawArray);
 
             var t = rawArray.GetType().GetElementType();
             if (t is null) throw new InvalidOperationException($"{nameof(rawArray)}.GetType().GetElementType() returned null.");
@@ -2640,7 +2689,7 @@ namespace TorchSharp
 
         /// <summary>
         /// Creates a 1-dimensional Tensor from an array of n dimensions.
-        /// 
+        ///
         /// Skips the first offset bytes in the buffer, and interprets the rest of the raw bytes as a 1-dimensional tensor of type dtype with count elements.
         /// </summary>
         /// <param name="rawArray">The input array</param>
@@ -2648,14 +2697,13 @@ namespace TorchSharp
         /// <param name="count"></param>
         /// <param name="offset"></param>
         /// <param name="requires_grad">Set <value>true</value> if gradients need to be computed for this Tensor; <value>false</value> otherwise.</param>
-        /// <param name="device">The torch device.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="IndexOutOfRangeException"></exception>
         /// <remarks>The returned tensor and buffer share the same memory. Modifications to the tensor will be reflected in the buffer and vice versa.</remarks>
-        public static Tensor frombuffer(Array rawArray, ScalarType dtype, long count = -1, long offset = 0, bool requires_grad = false, Device? device = null)
+        public static Tensor frombuffer(Array rawArray, ScalarType dtype, long count = -1, long offset = 0, bool requires_grad = false)
         {
-            torch.InitializeDeviceType(DeviceType.CPU);
+            InitializeDeviceType(DeviceType.CPU);
 
             var lLength = rawArray.LongLength;
 
@@ -2696,8 +2744,8 @@ namespace TorchSharp
             var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
             var dataArrayAddr = dataHandle.AddrOfPinnedObject();
             var gchp = GCHandle.ToIntPtr(dataHandle);
-            GCHandleDeleter deleter = null!;
-            deleter = new GCHandleDeleter((IntPtr ptr) => {
+            TorchSharp.PInvoke.GCHandleDeleter deleter = null!;
+            deleter = new TorchSharp.PInvoke.GCHandleDeleter((IntPtr ptr) => {
                 GCHandle.FromIntPtr(gchp).Free();
                 deleters.TryRemove(deleter, out deleter!);
             });
@@ -2712,29 +2760,24 @@ namespace TorchSharp
                     handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, requires_grad);
                 }
 
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                if (handle == IntPtr.Zero) { CheckForErrors(); }
                 var tensor = new Tensor(handle);
 
                 var needsConversion = dtype != origType;
 
-                if (device is not null) {
-                    tensor = needsConversion ? tensor.to(dtype, device) : tensor.to(device);
-                } else if (needsConversion) {
+                if (needsConversion) {
                     tensor = tensor.to_type(dtype);
                 }
                 return tensor;
             }
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
         /// <summary>
         /// Create a sparse tensor by indexing into an existing dense tensor.
         /// </summary>
-        public static Tensor sparse(Tensor indices, Tensor values, long[] size, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false, string[]? names = null)
+        public static Tensor sparse(Tensor indices, Tensor values, long[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 dtype = values.dtype;
@@ -2748,7 +2791,7 @@ namespace TorchSharp
                         GC.WaitForPendingFinalizers();
                         handle = THSTensor_sparse(indices.Handle, values.Handle, (IntPtr)psizes, size.Length, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                     }
-                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var tensor = new Tensor(handle);
                     if (names != null && names.Length > 0) {
                         tensor.rename_(names);
@@ -2759,13 +2802,13 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// onstructs a complex tensor with its real part equal to real and its imaginary part equal to imag.
+        /// Constructs a complex tensor with its real part equal to real and its imaginary part equal to imag.
         /// </summary>
         public static Tensor complex(Tensor real, Tensor imag)
         {
             var res = THSTensor_complex(real.Handle, imag.Handle);
             if (res == IntPtr.Zero)
-                torch.CheckForErrors();
+                CheckForErrors();
             return new Tensor(res);
         }
 
@@ -2776,19 +2819,29 @@ namespace TorchSharp
         {
             var res = THSTensor_polar(abs.Handle, angle.Handle);
             if (res == IntPtr.Zero)
-                torch.CheckForErrors();
+                CheckForErrors();
             return new Tensor(res);
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_linspace(double start, double end, long steps, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
+        public static Tensor from_file(string filename, bool? shared = null, long? size = 0, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
+        {
+            device = InitializeDevice(device);
+            if (!dtype.HasValue) {
+                // Determine the element type dynamically.
+                dtype = get_default_dtype();
+            }
+
+            var handle = THSTensor_from_file(StringEncoder.GetNullTerminatedUTF8ByteArray(filename), (sbyte)(!shared.HasValue ? -1 : shared.Value ? 1 : 0), size.HasValue ? size.Value : -1, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
+            return new Tensor(handle);
+        }
 
         /// <summary>
-        ///  Create a one-dimensional tensor of size steps whose values are evenly spaced from start to end, inclusive.
+        /// Create a one-dimensional tensor of size steps whose values are evenly spaced from start to end, inclusive.
         /// </summary>
-        public static Tensor linspace(double start, double end, long steps, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor linspace(double start, double end, long steps, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 dtype = get_default_dtype();
@@ -2800,19 +2853,16 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_linspace(start, end, steps, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_logspace(double start, double end, long steps, double @base, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
         /// <summary>
-        ///  Creates a one-dimensional tensor of size steps whose values are evenly spaced from base^start to base^end, inclusive, on a logarithmic scale with base 'base.'
+        /// Creates a one-dimensional tensor of size steps whose values are evenly spaced from base^start to base^end, inclusive, on a logarithmic scale with base 'base.'
         /// </summary>
-        public static Tensor logspace(double start, double end, long steps, double @base = 10, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
+        public static Tensor logspace(double start, double end, long steps, double @base = 10, ScalarType? dtype = null, Device? device = null, bool requires_grad = false)
         {
-            device = torch.InitializeDevice(device);
+            device = InitializeDevice(device);
             if (!dtype.HasValue) {
                 // Determine the element type dynamically.
                 dtype = get_default_dtype();
@@ -2824,132 +2874,7 @@ namespace TorchSharp
                 GC.WaitForPendingFinalizers();
                 handle = THSTensor_logspace(start, end, steps, @base, (sbyte)dtype, (int)device.type, device.index, requires_grad);
             }
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new Tensor(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_bartlett_window(long len, [MarshalAs(UnmanagedType.U1)] bool periodic, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        /// <summary>
-        /// Bartlett window function.
-        /// </summary>
-        public static Tensor bartlett_window(long len, bool periodic = true, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
-        {
-            device = torch.InitializeDevice(device);
-            if (!dtype.HasValue) {
-                // Determine the element type dynamically.
-                dtype = get_default_dtype();
-            }
-            if (!dtype.Value.IsFloatingPoint()) throw new ArgumentException("Only floating point types are supported.");
-
-            var handle = THSTensor_bartlett_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                handle = THSTensor_bartlett_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            }
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new Tensor(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_blackman_window(long len, [MarshalAs(UnmanagedType.U1)] bool periodic, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        /// <summary>
-        /// Blackman window function.
-        /// </summary>
-        public static Tensor blackman_window(long len, bool periodic = true, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
-        {
-            device = torch.InitializeDevice(device);
-            if (!dtype.HasValue) {
-                // Determine the element type dynamically.
-                dtype = get_default_dtype();
-            }
-            if (!dtype.Value.IsFloatingPoint()) throw new ArgumentException("Only floating point types are supported.");
-
-            var handle = THSTensor_blackman_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                handle = THSTensor_blackman_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            }
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new Tensor(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_hamming_window(long len, [MarshalAs(UnmanagedType.U1)] bool periodic, double alpha, double beta, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        /// <summary>
-        /// Hamming window function.
-        /// </summary>
-        public static Tensor hamming_window(long len, bool periodic = true, float alpha = 0.54f, float beta = 0.46f, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
-        {
-            device = torch.InitializeDevice(device);
-            if (!dtype.HasValue) {
-                // Determine the element type dynamically.
-                dtype = get_default_dtype();
-            }
-            if (!dtype.Value.IsFloatingPoint()) throw new ArgumentException("Only floating point types are supported.");
-
-            var handle = THSTensor_hamming_window(len, periodic, alpha, beta, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                handle = THSTensor_hamming_window(len, periodic, alpha, beta, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            }
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new Tensor(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_hann_window(long len, [MarshalAs(UnmanagedType.U1)] bool periodic, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        /// <summary>
-        /// Hann window function.
-        /// </summary>
-        public static Tensor hann_window(long len, bool periodic = true, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
-        {
-            device = torch.InitializeDevice(device);
-            if (!dtype.HasValue) {
-                // Determine the element type dynamically.
-                dtype = get_default_dtype();
-            }
-            if (!dtype.Value.IsFloatingPoint()) throw new ArgumentException("Only floating point types are supported.");
-
-            var handle = THSTensor_hann_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                handle = THSTensor_hann_window(len, periodic, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            }
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-            return new Tensor(handle);
-        }
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_kaiser_window(long len, [MarshalAs(UnmanagedType.U1)] bool periodic, double beta, sbyte scalar_type, int device_type, int device_index, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        /// <summary>
-        /// Computes the Kaiser window with window length window_length and shape parameter beta.
-        /// </summary>
-        public static Tensor kaiser_window(long len, bool periodic = true, float beta = 12.0f, torch.ScalarType? dtype = null, torch.Device? device = null, bool requires_grad = false)
-        {
-            device = torch.InitializeDevice(device);
-            if (!dtype.HasValue) {
-                // Determine the element type dynamically.
-                dtype = get_default_dtype();
-            }
-            if (!dtype.Value.IsFloatingPoint()) throw new ArgumentException("Only floating point types are supported.");
-
-            var handle = THSTensor_kaiser_window(len, periodic, beta, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            if (handle == IntPtr.Zero) {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                handle = THSTensor_kaiser_window(len, periodic, beta, (sbyte)dtype, (int)device.type, device.index, requires_grad);
-            }
-            if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+            if (handle == IntPtr.Zero) { CheckForErrors(); }
             return new Tensor(handle);
         }
 
@@ -2977,75 +2902,12 @@ namespace TorchSharp
             }
         }
 
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newBoolScalar([MarshalAs(UnmanagedType.U1)] bool scalar, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newByteScalar(byte scalar, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newInt8Scalar(sbyte scalar, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newInt16Scalar(short scalar, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newInt32Scalar(int scalar, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newInt64Scalar(long scalar, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newFloat16Scalar(float scalar, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newFloat32Scalar(float scalar, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newFloat64Scalar(double scalar, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newComplexFloat32Scalar(float real, float imaginary, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newComplexFloat64Scalar(double real, double imaginary, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_frombuffer(IntPtr rawArray, GCHandleDeleter deleter, long count, long offset, sbyte type, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, IntPtr dimensions, int numDimensions, sbyte type, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_newInt64(IntPtr rawArray, GCHandleDeleter deleter, IntPtr dimensions, int numDimensions, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_view_as_complex(IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_copy_(IntPtr handle, IntPtr source, [MarshalAs(UnmanagedType.U1)] bool non_blocking);
-
-        [DllImport("LibTorchSharp")]
-        extern static void THSTensor_dispose(IntPtr handle);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_rand(IntPtr generator, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_randn(IntPtr generator, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_complex(IntPtr real, IntPtr imag);
-
-        [DllImport("LibTorchSharp")]
-        extern static IntPtr THSTensor_polar(IntPtr abs, IntPtr angle);
-
-        static private ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters;
-        static private ScalarType default_dtype = ScalarType.Float32;
+        private static ConcurrentDictionary<TorchSharp.PInvoke.GCHandleDeleter, TorchSharp.PInvoke.GCHandleDeleter> deleters;
+        private static ScalarType default_dtype = ScalarType.Float32;
 
         static torch()
         {
-            deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
+            deleters = new ConcurrentDictionary<TorchSharp.PInvoke.GCHandleDeleter, TorchSharp.PInvoke.GCHandleDeleter>();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace TorchSharp
                 this.width = width;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return input.crop(top, left, height, width);
             }

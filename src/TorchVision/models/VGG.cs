@@ -1,12 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
-using System;
+
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Net;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
-using static TorchSharp.torch.utils.data;
 
 namespace TorchSharp
 {
@@ -426,9 +422,9 @@ namespace TorchSharp
             public override Tensor forward(Tensor input)
             {
                 using (var _ = NewDisposeScope()) {
-                    input = features.forward(input);
-                    input = avgpool.forward(input).flatten(1);
-                    return classifier.forward(input).MoveToOuterDisposeScope();
+                    input = features.call(input);
+                    input = avgpool.call(input).flatten(1);
+                    return classifier.call(input).MoveToOuterDisposeScope();
                 }
             }
         }

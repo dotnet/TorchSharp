@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -14,21 +14,12 @@ namespace TorchSharp
         {
             internal Embedding(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Embedding_forward(torch.nn.Module.HType module, IntPtr tensor);
-
             public override Tensor forward(Tensor input)
             {
                 var res = THSNN_Embedding_forward(handle, input.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Embedding_weight(torch.nn.Module.HType module);
-
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_Embedding_set_weight(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? weight {
                 get {
@@ -49,9 +40,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Embedding_ctor(long num_embeddings, long embedding_dims, long padding_idx, bool hasPI, double max_norm, bool hasMN, double norm_type, bool scale_grad_by_freq, bool sparse, out IntPtr pBoxedModule);
-
             /// <summary>
             /// A simple lookup table that stores embeddings of a fixed dictionary and size.
             /// This module is often used to store word embeddings and retrieve them using indices. The input to the module is a list of indices, and the output is the corresponding word embeddings.
@@ -67,7 +55,7 @@ namespace TorchSharp
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
             /// <remarks>Keep in mind that only a limited number of optimizers support sparse gradients: currently it’s optim.SGD (CUDA and CPU), optim.SparseAdam (CUDA and CPU) and optim.Adagrad (CPU)</remarks>
-            static public Embedding Embedding(long num_embeddings, long embedding_dims, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false, Device? device = null, ScalarType? dtype = null)
+            public static Embedding Embedding(long num_embeddings, long embedding_dims, long? padding_idx = null, double? max_norm = null, double norm_type = 2.0, bool scale_grad_by_freq = false, bool sparse = false, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Embedding_ctor(num_embeddings, embedding_dims,
                     padding_idx.HasValue ? padding_idx.Value : -1, padding_idx.HasValue,
@@ -76,11 +64,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Embedding(res, boxedHandle).MoveModule<Embedding>(device,dtype);
             }
-
-
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Embedding_from_pretrained(IntPtr embeddings, bool freeze, long padding_idx, bool hasPI, double max_norm, bool hasMN, double norm_type, bool scale_grad_by_freq, bool sparse, out IntPtr pBoxedModule);
 
             /// <summary>
             /// A simple lookup table that stores embeddings of a fixed dictionary and size.
@@ -105,7 +88,6 @@ namespace TorchSharp
                     norm_type, scale_grad_by_freq, sparse, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Embedding(res, boxedHandle).MoveModule<Embedding>(device, dtype);
-
             }
         }
     }

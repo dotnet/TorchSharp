@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets. We have to clear that out to set only the targets we support. -->
+    <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets.
+    We have to clear that out to set only the targets we support. -->
     <TargetFrameworks></TargetFrameworks>
-    <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net5.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net6.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">net472;$(TargetFrameworks)</TargetFrameworks>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net5.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net6.0</TargetFrameworks>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <IsPackable>false</IsPackable>
     <PlatformTarget>x64</PlatformTarget>
@@ -16,12 +17,50 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="adam1.dat" />
+    <None Remove="adamw1.dat" />
+    <None Remove="asgd1.dat" />
     <None Remove="bug510.dat" />
+    <None Remove="rmsprop1.dat" />
+    <None Remove="sgd1.dat" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="adadelta1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="adagrad1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="adam1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="adamw1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="nadam1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="radam1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="adamax1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="asgd1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="bug510.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="rmsprop1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="rprop1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sgd1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
@@ -71,17 +110,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="3.2.0" Condition="'$(TargetFramework)' != 'net472'" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+    <PackageReference Include="System.Numerics.Tensors" Version="7.0.0-rtm.22518.5" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.5" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
     <PackageReference Update="xunit" Version="2.4.2" />
-    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
-
 
   <PropertyGroup Condition="'$(Coverage)' == 'true'">
       <CollectCoverage>true</CollectCoverage>

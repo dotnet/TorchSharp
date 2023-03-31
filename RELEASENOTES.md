@@ -2,6 +2,140 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.99.4
+
+__Breaking Changes__:
+
+There were some changes to the binary format storing optimizer state. This means that any such state generated before updating to this version is invalid and will likely result in a runtime error.
+
+__API Changes__:
+
+Adding torch.tensordot<br/>
+Adding torch.nn.Fold and Unfold modules.<br/>
+Adding `Module.call()` to all the Module<T...> classes. This wraps `Module.forward()` and allows hooks to be registered. `Module.forward()` is still available, but the most general way to invoke a module's logic is through `call()`.<br/>
+Adding tuple overloads for all the padding-related modules.<br/>
+Adding support for exporting optimizer state from PyTorch and loading it in TorchSharp<br/>
+
+__Fixed Bugs__:
+
+#842 How to use register_forward_hook?<br/>
+#940 Missing torch.searchsorted<br/>
+#942 nn.ReplicationPad1d(long[] padding) missing<br/>
+#943 LRScheduler.get_last_lr missing<br/>
+#951 DataLoader constructor missing drop_last parameter<br/>
+#953 TensorDataset is missing<br/>
+#962 Seed passed to torch.random.manual_seed(seed) is unused<br/>
+#949 Passing optimizer state dictionary from PyTorch to TorchSharp<br/>
+
+## NuGet Version 0.99.3
+
+__API Changes__:
+
+Fixing misspelling of 'DetachFromDisposeScope,' deprecating the old spelling.<br/>
+Adding allow_tf32<br/>
+Adding overloads of Module.save() and Module.load() taking a 'Stream' argument.<br/>
+Adding torch.softmax() and Tensor.softmax() as aliases for torch.special.softmax()<br/>
+Adding torch.from_file()<br/>
+Adding a number of missing pointwise Tensor operations.<br/>
+Adding select_scatter, diagonal_scatter, and slice_scatter<br/>
+Adding torch.set_printoptions<br/>
+Adding torch.cartesian_prod, combinations, and cov.<br/>
+Adding torch.cdist, diag_embed, rot90, triu_indices, tril_indices<br/>
+
+__Fixed Bugs__:
+
+#913 conv = nn.Conv2d(c1, 1, 1, bias=False).requires_grad_(False)<br/>
+#910 nn.Module.modules is missing<br/>
+#912 nn.Module save and state_ dict method error<br/>
+
+## NuGet Version 0.99.2
+
+__API Changes__:
+
+Adding 'maximize' argument to the Adadelta optimizer<br/>
+Adding linalg.ldl_factor and linalg.ldl_solve<br/>
+Adding a couple of missing APIs (see #872)<br/>
+Adding SoftplusTransform<br/>
+Support indexing and slicing of Sequential<br/>
+Adding ToNDArray() to TensorAccessor<br/>
+
+__Fixed Bugs__:
+
+#870 nn.AvgPool2d(kernel_size=3, stride=2, padding=1) torchsharp not support padding<br/>
+#872 Tensor.masked_fill_(mask, value) missing<br/>
+#877 duplicate module parameters called named_parameters() while load model by cuda<br/>
+#888 THSTensor_meshgrid throws exception<br/>
+
+## NuGet Version 0.99.1
+
+__Breaking Changes__:
+
+The options to the ASGD, Rprop, and RMSprop optimizers have been changed to add a 'maximize' flag. This means that saved state dictionaries for these optimizers will not carry over.
+
+The return type of Sequential.append() has changed from 'void' to 'Sequential.' This breaks binary compatibility, but not source compat.
+
+__API Changes__:
+
+Added a number of 1.13 APIs under `torch.special`<br/>
+Added a `maximize` flag to the ASGD, Rprop and RMSprop optimizers.<br/>
+Added PolynomialLR scheduler<br/>
+The return type of Sequential.append() has changed from 'void' to 'Sequential.'<br/>
+Added 1-dimensional array overloads for `torch.as_tensor()`<br/>
+
+__Fixed Bugs__:
+
+#836 Categorical seems to be miscalculated<br/>
+#838 New Bernoulli get "Object reference not set to an instance of an object."<br/>
+#845 registered buffers are being ignored in move model to device<br/>
+#851 tensor.ToString(TorchSharp.TensorStringStyle.Numpy)<br/>
+#852 The content returned by torch.nn.Sequential.append() is inconsistent with the official<br/>
+
+## NuGet Version 0.99.0
+
+This is an upgrade to libtorch 1.13. It also moves the underlying CUDA support to 11.7 from 11.3, which means that all the libtorch-cuda-* packages have been renamed.
+
+__Breaking Changes__:
+
+See API Changes.<br/>
+
+__API Changes__:
+
+Removed Tensor.lstsq, paralleling PyTorch. Use torch.linalg.lstsq, instead. This is a breaking change.<br/>
+Added 'left' Boolean argument to `torch.linalg.solve()`<br/>
+
+## NuGet Version 0.98.3
+
+__Fixed Bugs__:
+
+MultiStepLR scheduler was not computing the next LR correctly.<br/>
+Fixed incorrect version in package reference.<br/>
+Added missing package references to TorchVision manifest.<br/>
+
+## NuGet Version 0.98.2
+
+__Breaking Changes__:
+
+The .NET 5.0 is no longer supported. Instead, .NET 6.0 is the minimum version. .NET FX 4.7.2 and higher are still supported.
+
+__API Changes__:
+
+Support 'null' as input and output to/from TorchScript.<br/>
+Added support for label smoothing in CrossEntropyLoss.<br/>
+Added torchaudio.transforms.MelSpectrogram().<br/>
+Adding squeeze_()<br/>
+Adding older-style tensor factories -- IntTensor, FloatTensor, etc.<br/>
+
+__Fixed Bugs__:
+
+#783 Download progress bar missing<br/>
+#787 torch.where(condition) → tuple of LongTensor function missing<br/>
+#799 TorchSharp.csproj refers Skia<br/>
+
+__Source Code Cleanup__:
+
+Moved P/Invoke declarations into dedicated class.<br/>
+Added C# language version to all .csproj files.<br/>
+
 ## NuGet Version 0.98.1
 
 __Breaking Changes:__

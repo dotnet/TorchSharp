@@ -1,6 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -31,7 +31,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Class wrapping PyTorch's module object reference.
                 /// </summary>
-                internal protected sealed class HType : SafeHandle
+                protected internal sealed class HType : SafeHandle
                 {
                     public HType(IntPtr preexistingHandle, bool ownsHandle, Action<HType> dispose = null)
                         : base(IntPtr.Zero, ownsHandle)
@@ -46,9 +46,6 @@ namespace TorchSharp
                     internal HType() : base(IntPtr.Zero, true)
                     {
                     }
-
-                    [DllImport("LibTorchSharp")]
-                    private static extern void THSNN_Module_dispose(HType handle);
 
                     protected override bool ReleaseHandle()
                     {
@@ -144,21 +141,12 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern void THSNN_Module_to_device_dtype(HType module, sbyte dtype, long deviceType, long deviceIndex);
-
-                [DllImport("LibTorchSharp")]
-                static extern void THSNN_Module_to_device(HType module, long deviceType, long deviceIndex);
-
-                [DllImport("LibTorchSharp")]
-                static extern void THSNN_Module_to_dtype(HType module, sbyte dtype);
-
                 /// <summary>
                 /// Moves and converts the parameters and buffers.
                 /// </summary>
                 /// <param name="device">The target device.</param>
                 /// <param name="dtype">The target element type.</param>
-                internal protected virtual Module _to(Device device, ScalarType dtype)
+                protected internal virtual Module _to(Device device, ScalarType dtype)
                 {
                     if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
 
@@ -177,14 +165,17 @@ namespace TorchSharp
                 {
                     foreach (var (_, sm) in named_children()) sm._to(device, dtype);
 
+                    var alreadyHandled = new HashSet<IntPtr>();
+
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
                         var fieldName = field.Name;
                         var value = field.GetValue(this);
 
                         switch (value) {
-                        // This test must come before the Tensor test
+                        // This order in which these cases are arranged is significant.
                         case Parameter param when dtype == param.dtype && device.type == param.device_type && device.index == param.device_index:
+                            alreadyHandled.Add(param.handle);
                             continue;
 
                         case Parameter param: {
@@ -193,6 +184,7 @@ namespace TorchSharp
                                 var p = new Parameter(t, param.requires_grad);
                                 field.SetValue(this, p);
                                 ConditionallyRegisterParameter(fieldName, p);
+                                alreadyHandled.Add(p.handle);
                                 break;
                             }
 
@@ -200,9 +192,26 @@ namespace TorchSharp
                                 var t = tensor.to(dtype, device);
                                 field.SetValue(this, t);
                                 ConditionallyRegisterBuffer(fieldName, t);
+                                alreadyHandled.Add(t.handle);
                                 break;
                             }
+
+                        case Tensor tensor:
+                            alreadyHandled.Add(tensor.handle);
+                            break;
                         }
+                    }
+
+                    foreach (var (name, param) in named_parameters(false).ToList()) {
+                        if (alreadyHandled.Contains(param.handle)) continue;
+                        var t = param.to(dtype, device);
+                        ConditionallyRegisterParameter(name, t);
+                    }
+
+                    foreach (var (name, buffer) in named_buffers(false).ToList()) {
+                        if (alreadyHandled.Contains(buffer.handle)) continue;
+                        var t = buffer.to(dtype, device);
+                        ConditionallyRegisterBuffer(name, t);
                     }
 
                     _deviceType = device.type;
@@ -218,7 +227,7 @@ namespace TorchSharp
                 /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
                 /// <param name="deviceIndex">The optional device index.</param>
                 /// <returns></returns>
-                internal protected virtual Module _to(DeviceType deviceType, int deviceIndex = -1)
+                protected internal virtual Module _to(DeviceType deviceType, int deviceIndex = -1)
                 {
                     if (deviceType != DeviceType.CUDA) deviceIndex = -1;
 
@@ -242,14 +251,17 @@ namespace TorchSharp
                 {
                     foreach (var (_, sm) in named_children()) sm._to(deviceType, deviceIndex);
 
+                    var alreadyHandled = new HashSet<IntPtr>();
+
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
                         var fieldName = field.Name;
                         var value = field.GetValue(this);
 
                         switch (value) {
-                        // This test must come before the Tensor test
+                        // This order in which these cases are arranged is significant.
                         case Parameter param when deviceType == param.device_type && deviceIndex == param.device_index:
+                            alreadyHandled.Add(param.handle);
                             continue;
 
                         case Parameter param: {
@@ -258,6 +270,7 @@ namespace TorchSharp
                                 var p = new Parameter(t, param.requires_grad);
                                 field.SetValue(this, p);
                                 ConditionallyRegisterParameter(fieldName, p);
+                                alreadyHandled.Add(p.handle);
                                 break;
                             }
 
@@ -265,9 +278,26 @@ namespace TorchSharp
                                 var t = tensor.to(deviceType, deviceIndex);
                                 field.SetValue(this, t);
                                 ConditionallyRegisterBuffer(fieldName, t);
+                                alreadyHandled.Add(t.handle);
                                 break;
                             }
+
+                        case Tensor tensor:
+                            alreadyHandled.Add(tensor.handle);
+                            break;
                         }
+                    }
+
+                    foreach (var (name, param) in named_parameters(false).ToList()) {
+                        if (alreadyHandled.Contains(param.handle)) continue;
+                        var t = param.to(deviceType, deviceIndex);
+                        ConditionallyRegisterParameter(name, t);
+                    }
+
+                    foreach (var (name, buffer) in named_buffers(false).ToList()) {
+                        if (alreadyHandled.Contains(buffer.handle)) continue;
+                        var t = buffer.to(deviceType, deviceIndex);
+                        ConditionallyRegisterBuffer(name, t);
                     }
 
                     _deviceType = deviceType;
@@ -281,7 +311,7 @@ namespace TorchSharp
                 /// Convert the parameters and buffers.
                 /// </summary>
                 /// <returns></returns>
-                internal protected virtual Module _to(ScalarType dtype)
+                protected internal virtual Module _to(ScalarType dtype)
                 {
                     THSNN_Module_to_dtype(handle, (sbyte)dtype);
                     CheckForErrors();
@@ -294,14 +324,18 @@ namespace TorchSharp
                 protected void _toEpilog(ScalarType dtype)
                 {
                     foreach (var (_, sm) in named_children()) sm._to(dtype);
+
+                    var alreadyHandled = new HashSet<IntPtr>();
+
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
                         var fieldName = field.Name;
                         var value = field.GetValue(this);
 
                         switch (value) {
-                        // This test must come before the Tensor test
+                        // This order in which these cases are arranged is significant.
                         case Parameter param when dtype == param.dtype:
+                            alreadyHandled.Add(param.handle);
                             continue;
 
                         case Parameter param: {
@@ -310,19 +344,34 @@ namespace TorchSharp
                                 var p = new Parameter(t, param.requires_grad);
                                 field.SetValue(this, p);
                                 ConditionallyRegisterParameter(fieldName, p);
+                                alreadyHandled.Add(p.handle);
                                 break;
                             }
 
                         case Tensor tensor when dtype == tensor.dtype:
+                            alreadyHandled.Add(tensor.handle);
                             continue;
 
                         case Tensor tensor: {
                                 var t = tensor.to(dtype);
                                 field.SetValue(this, t);
                                 ConditionallyRegisterBuffer(fieldName, t);
+                                alreadyHandled.Add(t.handle);
                                 break;
                             }
                         }
+                    }
+
+                    foreach (var (name, param) in named_parameters(false).ToList()) {
+                        if (alreadyHandled.Contains(param.handle)) continue;
+                        var t = param.to(dtype);
+                        ConditionallyRegisterParameter(name, t);
+                    }
+
+                    foreach (var (name, buffer) in named_buffers(false).ToList()) {
+                        if (alreadyHandled.Contains(buffer.handle)) continue;
+                        var t = buffer.to(dtype);
+                        ConditionallyRegisterBuffer(name, t);
                     }
                 }
 
@@ -351,9 +400,6 @@ namespace TorchSharp
                     return this;
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern IntPtr THSNN_Module_load([MarshalAs(UnmanagedType.LPStr)] string location);
-
                 public static Module Load(string filename)
                 {
                     if (!System.IO.File.Exists(filename))
@@ -364,16 +410,8 @@ namespace TorchSharp
                     return new Module(handle, IntPtr.Zero);
                 }
 
-                [DllImport("LibTorchSharp")]
-                static extern void THSNN_Module_save(
-                    HType handle,
-                    [MarshalAs(UnmanagedType.LPStr)] string location);
-
                 public virtual void Save(string modelPath)
                     => THSNN_Module_save(handle, modelPath);
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_train(HType module, bool on);
 
                 /// <summary>
                 /// Sets the module in training mode.
@@ -388,9 +426,6 @@ namespace TorchSharp
                     foreach (var (_, m) in named_children()) { m.train(train); }
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_eval(HType module);
-
                 /// <summary>
                 /// Sets the module in evaluation mode.
                 /// </summary>
@@ -402,9 +437,6 @@ namespace TorchSharp
                     train(false);
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern bool THSNN_Module_is_training(HType module);
-
                 /// <summary>
                 /// Check whether the module is set to training or evaluation mode.
                 /// </summary>
@@ -415,9 +447,6 @@ namespace TorchSharp
                         return res;
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_zero_grad(HType module);
 
                 public virtual void zero_grad()
                 {
@@ -446,6 +475,11 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Returns an enumerable of buffers.
+                /// </summary>
+                public virtual IEnumerable<Tensor> buffers(bool recurse = true) => named_buffers(recurse).Select(np => np.buffer);
+
+                /// <summary>
                 /// Returns an enumerable of immediate children modules, yielding both the name of the module as well as the module itself.
                 /// </summary>
                 /// <returns>(string, Module) – Tuple containing a name and child module</returns>
@@ -467,6 +501,16 @@ namespace TorchSharp
                         }
                     }
                 }
+
+                /// <summary>
+                /// Returns an enumerable of modules.
+                /// </summary>
+                public virtual IEnumerable<Module> modules() => named_modules().Select(np => np.module);
+
+                /// <summary>
+                /// Returns an enumerable of immediate modules.
+                /// </summary>
+                public virtual IEnumerable<Module> children() => named_children().Select(np => np.module);
 
                 /// <summary>
                 /// Returns a dictionary containing a whole state of the module.
@@ -543,9 +587,6 @@ namespace TorchSharp
                     return (missing, unexpected);
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_get_named_parameters(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
-
                 protected virtual (string name, Parameter parameter)[] _named_parameters()
                 {
                     using var pa = new PinnedArray<IntPtr>();
@@ -557,9 +598,6 @@ namespace TorchSharp
 
                     return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Parameter(x))).ToArray();
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_get_named_buffers(HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
                 protected virtual (string name, Tensor buffer)[] _named_buffers()
                 {
@@ -597,9 +635,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Module_get_parameters(HType module, AllocatePinnedArray allocator, bool recurse);
 
                 protected virtual Parameter[] _parameters(bool recurse = true)
                 {
@@ -736,10 +771,24 @@ namespace TorchSharp
                 }
 
                 /// <summary>
+                /// Alias for register_module()
+                /// </summary>
+                /// <param name="name">
+                /// name of the child module.
+                /// The child module can be accessed from this module using the given name
+                /// </param>
+                /// <param name="module">child module to be added to the module.</param>
+                /// <exception cref="ArgumentException"></exception>
+                /// <exception cref="InvalidOperationException"></exception>
+                public void add_module(string name, Module module)
+                    => register_module(name, module);
+
+                /// <summary>
                 /// Register a submodule.
                 /// </summary>
                 /// <param name="name">Name of the submodule.</param>
                 /// <param name="submodule">The module to register.</param>
+                /// <exception cref="ArgumentException"></exception>
                 /// <exception cref="InvalidOperationException"></exception>
                 public virtual void register_module(string name, Module submodule)
                 {
@@ -748,6 +797,12 @@ namespace TorchSharp
                             _internal_submodules.Remove(name);
                         }
                     } else {
+                        if (name.Contains(".")) {
+                            throw new ArgumentException($"module name can't contain \".\", got: {name}");
+                        }
+                        if (string.IsNullOrEmpty(name)) {
+                            throw new ArgumentException("module name can't be empty string \"\"");
+                        }
                         if (_internal_submodules.ContainsKey(name)) {
                             throw new InvalidOperationException($"Sub-module {name} is already registered.");
                         }
@@ -792,10 +847,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                private static extern string THSNN_Module_name(HType module);
-
                 public virtual string GetName()
                 {
                     var res = THSNN_Module_name(handle);
@@ -835,7 +886,19 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// 
+                /// Save the parameters and buffers of the module to a disk location.
+                /// </summary>
+                /// <param name="stream">A writable stream instance.</param>
+                /// <param name="skip">A list of keys not to consider when saving the weights.</param>
+                /// <returns></returns>
+                public Module save(System.IO.Stream stream, IList<string> skip = null)
+                {
+                    using var writer = new System.IO.BinaryWriter(stream);
+                    return save(writer, skip);
+                }
+
+                /// <summary>
+                ///
                 /// </summary>
                 /// <param name="writer">A binary writer instance.</param>
                 /// <param name="skip">A list of keys not to consider when saving the weights.</param>
@@ -868,7 +931,7 @@ namespace TorchSharp
                 /// If false, will load the parameters and buffers that it finds in the saved file,
                 /// leaving everything else alone.
                 /// </param>
-                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>              
+                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
                 /// Using a skip list only prevents tensors in the target module from being modified, it
@@ -880,18 +943,9 @@ namespace TorchSharp
                     if (!System.IO.File.Exists(location))
                         throw new System.IO.FileNotFoundException(location);
 
-                    var dt = _deviceType;
-                    var di = _deviceIndex;
-
-                    this.cpu();
-
-                    try {
-                        using var stream = System.IO.File.OpenRead(location);
-                        using var reader = new System.IO.BinaryReader(stream);
-                        load(reader, strict, skip);
-                    } finally {
-                        _to(dt, di);
-                    }
+                    using var stream = System.IO.File.OpenRead(location);
+                    using var reader = new System.IO.BinaryReader(stream);
+                    load(reader, strict, skip);
 
                     return this;
                 }
@@ -916,26 +970,57 @@ namespace TorchSharp
                 {
                     skip ??= Array.Empty<string>();
 
-                    var sd = state_dict();
+                    var dt = _deviceType;
+                    var di = _deviceIndex;
 
-                    // First, figure out how many entries.
-                    var streamEntries = reader.Decode();
+                    if (dt != DeviceType.CPU) this.cpu();
 
-                    if (streamEntries != sd.Count && strict)
-                        throw new ArgumentException($"Mismatched state_dict sizes: expected {sd.Count}, but found {streamEntries} entries.");
+                    try {
+                        var sd = state_dict();
 
-                    for (int i = 0; i < streamEntries; ++i) {
-                        var key = reader.ReadString();
-                        var found = sd.ContainsKey(key);
-                        if (!found && strict)
-                            throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
+                        // First, figure out how many entries.
+                        var streamEntries = reader.Decode();
 
-                        if (found) {
-                            sd[key].Load(reader, skip: skip.Contains(key));
+                        if (streamEntries != sd.Count && strict)
+                            throw new ArgumentException($"Mismatched state_dict sizes: expected {sd.Count}, but found {streamEntries} entries.");
+
+                        for (int i = 0; i < streamEntries; ++i) {
+                            var key = reader.ReadString();
+                            var found = sd.ContainsKey(key);
+                            if (!found && strict)
+                                throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
+
+                            if (found) {
+                                sd[key].Load(reader, skip: skip.Contains(key));
+                            }
                         }
+                    } finally {
+                        if (dt != DeviceType.CPU) _to(dt, di);
                     }
 
                     return this;
+                }
+
+                /// <summary>
+                /// Load the parameters and buffers
+                /// </summary>
+                /// <param name="stream">A readable stream instance.</param>
+                /// <param name="strict">
+                /// If true, will only load a module if it exactly corresponds to the current module's state.
+                /// If false, will load the parameters and buffers that it finds in the saved file,
+                /// leaving everything else alone.
+                /// </param>
+                /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <returns>The module, with parameters and buffers loaded.</returns>
+                /// <remarks>
+                /// Using a skip list only prevents tensors in the target module from being modified, it
+                /// does not alter any logic related to checking for matching tensor element types or entries.
+                /// It may be necessary to also pass 'strict=false' to avoid exceptions.
+                /// </remarks>
+                public Module load(System.IO.Stream stream, bool strict = true, IList<string> skip = null)
+                {
+                    using var reader = new System.IO.BinaryReader(stream);
+                    return load(reader, strict, skip);
                 }
 
                 /// <summary>
@@ -951,14 +1036,6 @@ namespace TorchSharp
                     return model.load(path);
                 }
 
-                private delegate IntPtr ForwardFunctionC(IntPtr tensor);
-
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSNN_custom_module(
-                    [MarshalAs(UnmanagedType.LPStr)] string name,
-                    ForwardFunctionC forward,
-                    out IntPtr pBoxedModule);
-
                 /// <summary>
                 /// Constructor for custom modules, i.e. those defined outside of TorchSharp.
                 /// </summary>
@@ -970,7 +1047,7 @@ namespace TorchSharp
                     IntPtr ForwardNative(IntPtr t)
                     {
                         var input = new Tensor(t);
-                        var output = ((nn.Module<Tensor, Tensor>)this).forward(input);
+                        var output = ((nn.Module<Tensor, Tensor>)this).call(input);
 
                         // handles must live on - we don't own them, but
                         // the managed objects should go away.
@@ -1039,6 +1116,8 @@ namespace TorchSharp
                        (dtype.HasValue ? (T)module._to(dtype.Value) : module);
                 }
 
+                protected void ClearModules() { _internal_submodules.clear(); }
+
                 private bool _areComponentsRegistered;
 
                 protected Utils.OrderedDict<string, Module> _internal_submodules = new Utils.OrderedDict<string, Module>();
@@ -1063,9 +1142,6 @@ namespace TorchSharp
                     internal HType() : base(IntPtr.Zero, true)
                     {
                     }
-
-                    [DllImport("LibTorchSharp")]
-                    private static extern void THSNN_AnyModule_dispose(HType handle);
 
                     protected override bool ReleaseHandle()
                     {
@@ -1119,7 +1195,7 @@ namespace TorchSharp
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public interface IModule<T, TResult>
             {
-                public abstract TResult forward(T input1);
+                public TResult call(T input1);
             }
 
             /// <summary>
@@ -1130,7 +1206,7 @@ namespace TorchSharp
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public interface IModule<T1, T2, TResult>
             {
-                public abstract TResult forward(T1 input1, T2 input2);
+                public abstract TResult call(T1 input1, T2 input2);
             }
 
             /// <summary>
@@ -1142,7 +1218,7 @@ namespace TorchSharp
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public interface IModule<T1, T2, T3, TResult>
             {
-                public abstract TResult forward(T1 input1, T2 input2, T3 input3);
+                public abstract TResult call(T1 input1, T2 input2, T3 input3);
             }
 
             /// <summary>
@@ -1155,21 +1231,136 @@ namespace TorchSharp
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
             public interface IModule<T1, T2, T3, T4, TResult>
             {
-                public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);
+                public abstract TResult call(T1 input1, T2 input2, T3 input3, T4 input4);
             }
 
+            /// <summary>
+            /// Interface for concrete modules with a forward() that takes five arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T5">The fifth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
+            public interface IModule<T1, T2, T3, T4, T5, TResult>
+            {
+                public abstract TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5);
+            }
+
+            /// <summary>
+            /// Interface for concrete modules with a forward() that takes six arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T5">The fifth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T6">The sixth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
+            public interface IModule<T1, T2, T3, T4, T5, T6, TResult>
+            {
+                public abstract TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6);
+            }
+
+            /// <summary>
+            /// Represents a module that accepts 'hook' to the module logic.
+            /// </summary>
+            public class HookableModule<TPreHook,TPostHook> : Module
+            {
+                protected HookableModule(string name) : base(name) { }
+
+                protected HookableModule(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+                internal HookableModule(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                public HookRemover register_forward_hook(TPostHook hook)
+                {
+                    var key = Guid.NewGuid().ToString();
+                    post_hooks.Add(key, hook);
+                    return new HookRemover(this, key);
+                }
+
+                public HookRemover register_forward_pre_hook(TPreHook hook)
+                {
+                    var key = Guid.NewGuid().ToString();
+                    pre_hooks.Add(key, hook);
+                    return new HookRemover(this, key);
+                }
+
+                private void remove(string key)
+                {
+                    if (pre_hooks.ContainsKey(key)) pre_hooks.Remove(key);
+                    if (post_hooks.ContainsKey(key)) post_hooks.Remove(key);
+                }
+
+                protected Dictionary<string, TPreHook> pre_hooks = new Dictionary<string, TPreHook>();
+                protected Dictionary<string, TPostHook> post_hooks = new Dictionary<string, TPostHook>();
+
+                /// <summary>
+                /// Used to remove a specific hook, following the PyTorch API design.
+                /// </summary>
+                /// <remarks>The name and namespace of this class is not the same as in PyTorch, but serves the same purpose.</remarks>
+                public class HookRemover
+                {
+                    public HookRemover(HookableModule<TPreHook, TPostHook> module, string key)
+                    {
+                        this.module = module;
+                        this.key = key;
+                    }
+
+                    public void remove()
+                    {
+                        module.remove(key);
+                    }
+
+                    private HookableModule<TPreHook, TPostHook> module;
+                    private string key;
+                }
+            }
 
             /// <summary>
             /// Base class for concrete modules with a forward() that takes a single argument.
             /// </summary>
             /// <typeparam name="T">The argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T, TResult> : Module, IModule<T, TResult>
+            public abstract class Module<T, TResult> : HookableModule<Func<Module<T,TResult>, T, T>, Func<Module<T, TResult>, T, TResult, TResult>>, IModule<T, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
-                public abstract TResult forward(T input1);
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
+                public abstract TResult forward(T input);
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
+                public TResult call(T input)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input);
+                        if (modified is not null)
+                            input = modified;
+                    }
+
+                    var result = forward(input);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
             }
 
             /// <summary>
@@ -1178,12 +1369,46 @@ namespace TorchSharp
             /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
             /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T1, T2, TResult> : Module, IModule<T1, T2, TResult>
+            public abstract class Module<T1, T2, TResult> : HookableModule<Func<Module<T1, T2, TResult>, T1, T2, (T1, T2)?>, Func<Module<T1, T2, TResult>, T1, T2, TResult, TResult>>, IModule<T1, T2, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
                 public abstract TResult forward(T1 input1, T2 input2);
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
+                public TResult call(T1 input1, T2 input2)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                        }
+                    }
+
+                    var result = forward(input1,  input2);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
             }
 
             /// <summary>
@@ -1193,12 +1418,47 @@ namespace TorchSharp
             /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
             /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T1, T2, T3, TResult> : Module, IModule<T1, T2, T3, TResult>
+            public abstract class Module<T1, T2, T3, TResult> : HookableModule<Func<Module<T1, T2, T3, TResult>, T1, T2, T3, (T1, T2, T3)?>, Func<Module<T1, T2, T3, TResult>, T1, T2, T3, TResult, TResult>>, IModule<T1, T2, T3, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
                 public abstract TResult forward(T1 input1, T2 input2, T3 input3);
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
+                public TResult call(T1 input1, T2 input2, T3 input3)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                            input3 = modified.Value.Item3;
+                        }
+                    }
+
+                    var result = forward(input1, input2, input3);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
             }
 
             /// <summary>
@@ -1209,12 +1469,158 @@ namespace TorchSharp
             /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
             /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
             /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
-            public abstract class Module<T1, T2, T3, T4, TResult> : Module, IModule<T1, T2, T3, T4, TResult>
+            public abstract class Module<T1, T2, T3, T4, TResult> : HookableModule<Func<Module<T1, T2, T3, T4, TResult>, T1, T2, T3, T4, (T1, T2, T3, T4)?>, Func<Module<T1, T2, T3, T4, TResult>, T1, T2, T3, T4, TResult, TResult>>, IModule<T1, T2, T3, T4, TResult>
             {
                 protected Module(string name) : base(name) { }
                 protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
                 internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
                 public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4);
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
+                public TResult call(T1 input1, T2 input2, T3 input3, T4 input4)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                            input3 = modified.Value.Item3;
+                            input4 = modified.Value.Item4;
+                        }
+                    }
+
+                    var result = forward(input1, input2, input3, input4);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
+            }
+
+            /// <summary>
+            /// Base class for concrete modules with a forward() that takes five arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T5">The fifth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
+            public abstract class Module<T1, T2, T3, T4, T5,TResult> : HookableModule<Func<Module<T1, T2, T3, T4, T5, TResult>, T1, T2, T3, T4, T5, (T1, T2, T3, T4, T5)?>, Func<Module<T1, T2, T3, T4, T5, TResult>, T1, T2, T3, T4, T5, TResult, TResult>>, IModule<T1, T2, T3, T4, T5, TResult>
+            {
+                protected Module(string name) : base(name) { }
+                protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+                internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
+                public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5);
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
+                public TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4, input5);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                            input3 = modified.Value.Item3;
+                            input4 = modified.Value.Item4;
+                            input5 = modified.Value.Item5;
+                        }
+                    }
+
+                    var result = forward(input1, input2, input3, input4, input5);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4, input5, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
+            }
+
+            /// <summary>
+            /// Base class for concrete modules with a forward() that takes six arguments.
+            /// </summary>
+            /// <typeparam name="T1">The first argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T2">The second argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T3">The third argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T4">The fourth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T5">The fifth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="T6">The sixth argument type of the module's forward() function.</typeparam>
+            /// <typeparam name="TResult">The return type of the module's forward() function.</typeparam>
+            public abstract class Module<T1, T2, T3, T4, T5, T6, TResult> : HookableModule<Func<Module<T1, T2, T3, T4, T5, T6, TResult>, T1, T2, T3, T4, T5, T6, (T1, T2, T3, T4, T5, T6)?>, Func<Module<T1, T2, T3, T4, T5, T6, TResult>, T1, T2, T3, T4, T5, T6, TResult, TResult>>, IModule<T1, T2, T3, T4, T5, T6, TResult>
+            {
+                protected Module(string name) : base(name) { }
+                protected Module(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+                internal Module(HType handle, IntPtr? boxedHandle) : base(handle, boxedHandle) { }
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`forward` will not invoke any registered hooks for the module.</remarks>
+                public abstract TResult forward(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6);
+
+                /// <summary>
+                /// Invoke the logic of the module.
+                /// </summary>
+                /// <remarks>`call` will invoke any registered hooks for the module.</remarks>
+                public TResult call(T1 input1, T2 input2, T3 input3, T4 input4, T5 input5, T6 input6)
+                {
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4, input5, input6);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                            input3 = modified.Value.Item3;
+                            input4 = modified.Value.Item4;
+                            input5 = modified.Value.Item5;
+                            input6 = modified.Value.Item6;
+                        }
+                    }
+
+                    var result = forward(input1, input2, input3, input4, input5, input6);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, input3, input4, input5, input6, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
+                }
             }
         }
     }
@@ -1299,4 +1705,6 @@ namespace TorchSharp
         /// <param name="deviceIndex">If specified, all parameters will be copied to that device</param>
         public static T cuda<T>(this T module, int deviceIndex = -1) where T : torch.nn.Module => (T)module._to(DeviceType.CUDA, deviceIndex);
     }
+
+    internal delegate IntPtr ForwardFunctionC(IntPtr tensor);
 }

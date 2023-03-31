@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -14,20 +14,12 @@ namespace TorchSharp
         {
             internal ConvTranspose1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_ConvTranspose1d_forward(torch.nn.Module.HType module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_ConvTranspose1d_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_ConvTranspose1d_bias(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_ConvTranspose1d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? bias {
                 get {
@@ -41,11 +33,6 @@ namespace TorchSharp
                     ConditionallyRegisterParameter("bias", value);
                 }
             }
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_ConvTranspose1d_weight(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_ConvTranspose1d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
             public Parameter? weight {
                 get {
                     var res = THSNN_ConvTranspose1d_weight(handle);
@@ -65,9 +52,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_ConvTranspose1d_ctor(long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long outputPadding, long dilation, long paddingMode, long groups, bool bias, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 1D convolution over an input signal composed of several input planes.
             /// </summary>
@@ -84,11 +68,54 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns>Tensor of shape (N,C_out,L_out)</returns>
-            static public ConvTranspose1d ConvTranspose1d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long outputPadding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static ConvTranspose1d ConvTranspose1d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long outputPadding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_ConvTranspose1d_ctor(inputChannel, outputChannel, kernelSize, stride, padding, outputPadding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ConvTranspose1d(res, boxedHandle).MoveModule<ConvTranspose1d>(device, dtype);
+            }
+
+            public static partial class functional
+            {
+                /// <summary>
+                /// Applies a 1D transposed convolution operator over an input signal composed of several input planes, sometimes also called “deconvolution”.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="weight"></param>
+                /// <param name="bias"></param>
+                /// <param name="stride"></param>
+                /// <param name="padding"></param>
+                /// <param name="outputPadding"></param>
+                /// <param name="dilation"></param>
+                /// <param name="groups"></param>
+                /// <returns></returns>
+                public static Tensor conv_transpose1d(Tensor input, Tensor weight, Tensor? bias = null,
+                    long? stride = null,
+                    long? padding = null,
+                    long? outputPadding = null,
+                    long? dilation = null,
+                    long groups = 1)
+                {
+                    var strides = new long[] { stride ?? 1 };
+                    var paddings = new long[] { padding ?? 0 };
+                    var outputPaddings = new long[] { outputPadding ?? 0 };
+                    var dilations = new long[] { dilation ?? 1 };
+                    var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
+                    unsafe {
+                        fixed (long* pstrides = strides, ppadding = paddings, poutputPadding = outputPaddings, pdilation = dilations) {
+                            var res =
+                                THSTensor_conv_transpose1d(input.Handle, weight.Handle, biasHandle,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, paddings.Length,
+                                    (IntPtr)poutputPadding, outputPaddings.Length,
+                                    (IntPtr)pdilation, dilations.Length,
+                                    groups);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+
             }
         }
     }

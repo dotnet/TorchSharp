@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -14,20 +14,12 @@ namespace TorchSharp
         {
             internal ConvTranspose2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_ConvTranspose2d_forward(torch.nn.Module.HType module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_ConvTranspose2d_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_ConvTranspose2d_bias(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_ConvTranspose2d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? bias {
                 get {
@@ -41,11 +33,6 @@ namespace TorchSharp
                     ConditionallyRegisterParameter("bias", value);
                 }
             }
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_ConvTranspose2d_weight(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_ConvTranspose2d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
             public Parameter? weight
                 {
                 get {
@@ -66,9 +53,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_ConvTranspose2d_ctor(long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long outputPadding, long dilation, long paddingMode, long groups, bool bias, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 1D convolution over an input signal composed of several input planes.
             /// </summary>
@@ -85,11 +69,54 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns>Tensor of shape (N,C_out,L_out)</returns>
-            static public ConvTranspose2d ConvTranspose2d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long outputPadding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static ConvTranspose2d ConvTranspose2d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long outputPadding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_ConvTranspose2d_ctor(inputChannel, outputChannel, kernelSize, stride, padding, outputPadding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ConvTranspose2d(res, boxedHandle).MoveModule<ConvTranspose2d>(device, dtype);
+            }
+
+            public static partial class functional
+            {
+                /// <summary>
+                /// Applies a 2D transposed convolution operator over an input image composed of several input planes, sometimes also called “deconvolution”.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="weight"></param>
+                /// <param name="bias"></param>
+                /// <param name="strides"></param>
+                /// <param name="padding"></param>
+                /// <param name="outputPadding"></param>
+                /// <param name="dilation"></param>
+                /// <param name="groups"></param>
+                /// <returns></returns>
+                public static Tensor conv_transpose2d(Tensor input, Tensor weight, Tensor? bias = null,
+                    long[]? strides = null,
+                    long[]? padding = null,
+                    long[]? outputPadding = null,
+                    long[]? dilation = null,
+                    long groups = 1)
+                {
+                    strides = (strides == null) ? new long[] { 1, 1 } : strides;
+                    padding = (padding == null) ? new long[] { 0, 0 } : padding;
+                    outputPadding = (outputPadding == null) ? new long[] { 0, 0 } : outputPadding;
+                    dilation = (dilation == null) ? new long[] { 1, 1 } : dilation;
+                    var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
+                    unsafe {
+                        fixed (long* pstrides = strides, ppadding = padding, poutputPadding = outputPadding, pdilation = dilation) {
+                            var res =
+                                THSTensor_conv_transpose2d(input.Handle, weight.Handle, biasHandle,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, padding.Length,
+                                    (IntPtr)poutputPadding, outputPadding.Length,
+                                    (IntPtr)pdilation, dilation.Length,
+                                    groups);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+
             }
         }
     }

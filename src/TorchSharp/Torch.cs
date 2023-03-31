@@ -1,4 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,25 +8,27 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using TorchSharp.PInvoke;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_1_11_0_1
-        const string libtorchPackageVersion = "1.11.0.1";
+#if LIBTORCH_1_13_0_1
+        const string libtorchPackageVersion = "1.13.0.1";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
-#if CUDA_11_3
-        const string cudaVersion = "11.3";
+#if CUDA_11_7
+        const string cudaVersion = "11.7";
 #else
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetDllDirectory(string lpPathName);
+        internal static extern bool SetDllDirectory(string lpPathName);
 
         static string nativeRid =>
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "win-x64" :
@@ -77,11 +80,13 @@ namespace TorchSharp
 
         private static void LoadNativeBackend(bool useCudaBackend, out StringBuilder trace)
         {
+            if (!System.Environment.Is64BitProcess) {
+                throw new NotSupportedException("TorchSharp only supports 64-bit processes.");
+            }
 
             var alreadyLoaded = useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded;
-            trace = null;
+            trace = new StringBuilder();
             if (!alreadyLoaded) {
-                trace = new StringBuilder();
                 bool ok;
 
                 trace.AppendLine($"");
@@ -97,8 +102,8 @@ namespace TorchSharp
                     if (isWindows) {
                         trace.AppendLine($"    Try loading Windows cuda native components");
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
-                        // requests a load of another through dynamic linking techniques.  
-                        // 
+                        // requests a load of another through dynamic linking techniques.
+                        //
                         TryLoadNativeLibraryByName("cudnn_adv_infer64_8", typeof(torch).Assembly, trace);
                         TryLoadNativeLibraryByName("cudnn_adv_train64_8", typeof(torch).Assembly, trace);
                         TryLoadNativeLibraryByName("cudnn_cnn_infer64_8", typeof(torch).Assembly, trace);
@@ -140,18 +145,18 @@ namespace TorchSharp
                     // So we shadow copy the DLLs into the TorchSharp package, make a copy of the native DLL and continue
                     // with the dynamic load
                     //
-                    // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\net5.0\TorchSharp.dll
+                    // Assumed to be in ...\packages\torchsharp\0.3.0-local-debug-20200918\lib\net6.0\TorchSharp.dll
                     //
                     // TODO: on linux make these copies link not shadow-copy
                     var torchsharpLoc = Path.GetDirectoryName(typeof(torch).Assembly.Location);
-                    var packagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc, "..", "..", "..", ".."));
-                    var torchsharpHome = Path.GetFullPath(Path.Combine(torchsharpLoc, "..", ".."));
+                    var packagesDir = Path.GetFullPath(Path.Combine(torchsharpLoc!, "..", "..", "..", ".."));
+                    var torchsharpHome = Path.GetFullPath(Path.Combine(torchsharpLoc!, "..", ".."));
 
                     trace.AppendLine($"    torchsharpLoc = {torchsharpLoc}");
                     trace.AppendLine($"    packagesDir = {packagesDir}");
                     trace.AppendLine($"    torchsharpHome = {torchsharpHome}");
 
-                    if (torchsharpLoc.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(packagesDir) && Directory.Exists(torchsharpHome)) {
+                    if (torchsharpLoc!.Contains("torchsharp") && torchsharpLoc.Contains("lib") && Directory.Exists(packagesDir) && Directory.Exists(torchsharpHome)) {
 
                         var torchSharpVersion = Path.GetFileName(torchsharpHome); // really GetDirectoryName
 
@@ -270,10 +275,10 @@ namespace TorchSharp
                 var result = cuda.CallTorchCudaIsAvailable();
                 if (!result)
                     throw new InvalidOperationException($"Torch device type {deviceType} did not initialise on the current machine. Trace from LoadNativeBackend:\n{trace}");
-            } 
+            }
         }
 
-        public static Device InitializeDevice(torch.Device device)
+        public static Device InitializeDevice(Device? device)
         {
             if (device == null)
                 device = torch.CPU;
@@ -283,8 +288,15 @@ namespace TorchSharp
 
         public static partial class random
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSGenerator_manual_seed(long seed);
+            /// <summary>
+            /// Sets the seed for generating random numbers to a non-deterministic random number. Returns a 64 bit number used to seed the RNG.
+            /// </summary>
+            public static long seed() => Generator.Default.seed();
+
+            /// <summary>
+            /// Returns the initial seed for generating random numbers.
+            /// </summary>
+            public static long initial_seed() => Generator.Default.initial_seed();
 
             /// <summary>
             /// Sets the seed for generating random numbers. Returns a torch.Generator object.
@@ -299,24 +311,29 @@ namespace TorchSharp
                     CheckForErrors();
                 return new Generator(res);
             }
+
+            /// <summary>
+            /// Returns the random number generator state as a torch.ByteTensor.
+            /// </summary>
+            /// <returns></returns>
+            public static Tensor get_rng_state()
+            {
+                return Generator.Default.get_state();
+            }
+            /// <summary>
+            /// Sets the random number generator state.
+            /// </summary>
+            /// <param name="new_state">The desired state</param>
+            public static void set_rng_state(Tensor new_state)
+            {
+                Generator.Default.set_state(new_state);
+            }
         }
 
         public static partial class nn
         {
             public static partial class utils
             {
-                [DllImport("LibTorchSharp")]
-                extern static double THSTensor_clip_grad_norm_(IntPtr tensors, int len, double max_norm, double norm_type);
-
-                [DllImport("LibTorchSharp")]
-                extern static void THSTensor_clip_grad_value_(IntPtr tensors, int len, double clip_value);
-
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSTensor_parameters_to_vector(IntPtr tensors, int len);
-
-                [DllImport("LibTorchSharp")]
-                extern static void THSTensor_vector_to_parameters(IntPtr vec, IntPtr tensors, int len);
-
                 /// <summary>
                 /// Clips gradient norm of an iterable of parameters.
                 /// The norm is computed over all gradients together, as if they were concatenated into a single vector.
@@ -387,8 +404,6 @@ namespace TorchSharp
 
         public static partial class cuda
         {
-            [DllImport("LibTorchSharp")]
-            private static extern bool THSTorchCuda_is_available();
 
             /// This must be a separate method to the failure to bind DllImport THSTorchCuda_is_available
             /// is not raised as early as a DllImportException
@@ -408,9 +423,6 @@ namespace TorchSharp
                 return CallTorchCudaIsAvailable();
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern bool THSTorchCuda_cudnn_is_available();
-
             /// <summary>
             /// Returns a bool indicating if CUDNN is currently available.
             /// </summary>
@@ -419,9 +431,6 @@ namespace TorchSharp
                 TryInitializeDeviceType(DeviceType.CUDA);
                 return THSTorchCuda_cudnn_is_available();
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern int THSTorchCuda_device_count();
 
             /// <summary>
             /// Returns the number of GPUs available.
@@ -432,9 +441,6 @@ namespace TorchSharp
                 TryInitializeDeviceType(DeviceType.CUDA);
                 return THSTorchCuda_device_count();
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern void THSCuda_manual_seed(long seed);
 
             /// <summary>
             /// Sets the seed for generating random numbers for the current GPU.
@@ -447,9 +453,6 @@ namespace TorchSharp
                 THSCuda_manual_seed(seed);
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern void THSCuda_manual_seed_all(long seed);
-
             /// <summary>
             /// Sets the seed for generating random numbers on all GPUs.
             /// It’s safe to call this function if CUDA is not available; in that case, it is silently ignored.
@@ -460,9 +463,6 @@ namespace TorchSharp
                 TryInitializeDeviceType(DeviceType.CUDA);
                 THSCuda_manual_seed_all(seed);
             }
-
-            [DllImport("LibTorchSharp")]
-            private static extern void THSCuda_synchronize(long device_index);
 
             /// <summary>
             /// Waits for all kernels in all streams on a CUDA device to complete.
@@ -481,10 +481,6 @@ namespace TorchSharp
         /// </summary>
         public static bool cuda_is_available() => torch.cuda.is_available();
 
-        [DllImport("LibTorchSharp")]
-        private static extern IntPtr THSTorch_get_and_reset_last_err();
-
-        //[Conditional("DEBUG")]
         public static void CheckForErrors()
         {
             var error = THSTorch_get_and_reset_last_err();
@@ -492,6 +488,80 @@ namespace TorchSharp
             if (error != IntPtr.Zero)
             {
                 throw new ExternalException(Marshal.PtrToStringAnsi(error));
+            }
+        }
+
+        public static partial class backends
+        {
+            public static partial class cuda
+            {
+                public static partial class matmul
+                {
+                    public static bool allow_tf32 {
+                        get {
+                            var result = LibTorchSharp.THSBackend_cublas_get_allow_tf32();
+                            CheckForErrors();
+                            return result;
+                        }
+                        set {
+                            LibTorchSharp.THSBackend_cublas_set_allow_tf32(value);
+                            CheckForErrors();
+                        }
+                    }
+
+                    public static bool allow_fp16_reduced_precision_reduction {
+                        get {
+                            var result = LibTorchSharp.THSBackend_cuda_get_allow_fp16_reduced_precision_reduction();
+                            CheckForErrors();
+                            return result;
+                        }
+                        set {
+                            LibTorchSharp.THSBackend_cuda_set_allow_fp16_reduced_precision_reduction(value);
+                            CheckForErrors();
+                        }
+                    }
+                }
+
+                public static bool flash_sdp_enabled()
+                {
+                    var result = LibTorchSharp.THSBackend_cuda_get_enable_flash_sdp();
+                    CheckForErrors();
+                    return result;
+                }
+
+                public static void enable_flash_sdp(bool enable)
+                {
+                    LibTorchSharp.THSBackend_cuda_set_enable_flash_sdp(enable);
+                    CheckForErrors();
+                }
+
+                public static bool math_sdp_enabled()
+                {
+                    var result = LibTorchSharp.THSBackend_cuda_get_enable_math_sdp();
+                    CheckForErrors();
+                    return result;
+                }
+
+                public static void enable_math_sdp(bool enable)
+                {
+                    LibTorchSharp.THSBackend_cuda_set_enable_math_sdp(enable);
+                    CheckForErrors();
+                }
+            }
+
+            public static partial class cudnn
+            {
+                public static bool allow_tf32 {
+                    get {
+                        var result = LibTorchSharp.THSBackend_cudnn_get_allow_tf32();
+                        CheckForErrors();
+                        return result;
+                    }
+                    set {
+                        LibTorchSharp.THSBackend_cudnn_set_allow_tf32(value);
+                        CheckForErrors();
+                    }
+                }
             }
         }
     }

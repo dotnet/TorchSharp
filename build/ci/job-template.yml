@@ -8,6 +8,7 @@ parameters:
 
 jobs:
   - job: ${{ parameters.name }}
+    condition: ne(variables['build.sourcebranchname'], 'main')
     variables:
       _prepScript: ${{ parameters.prepScript }}
       _testScript: ${{ parameters.testScript }}
@@ -28,6 +29,12 @@ jobs:
           _configuration: Release
           _config_short: R
     steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk'
+      inputs:
+        packageType: sdk
+        version: 6.0.402
+        installationPath: $(Agent.ToolsDirectory)/dotnet
     - script: $(_prepScript)
       displayName: Install build dependencies
     - script: $(_buildScript) $(_configuration)  

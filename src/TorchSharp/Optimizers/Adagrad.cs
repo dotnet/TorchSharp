@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static TorchSharp.torch;
-using static TorchSharp.torch.optim;
 
 namespace TorchSharp
 {
@@ -178,7 +177,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    ((State)kvp.Value).Dispose();
+                    ((State)kvp.Item2).Dispose();
                 }
             }
 
@@ -277,7 +276,7 @@ namespace TorchSharp
                     var init_value = torch.is_complex(p.dtype)
                         ? (Scalar)new System.Numerics.Complex((param_group.Options as Options).initial_accumulator_value.Value, (param_group.Options as Options).initial_accumulator_value.Value)
                         : (Scalar)(param_group.Options as Options).initial_accumulator_value.Value;
-                    state.sum = torch.full_like(p, init_value).DetatchFromDisposeScope();
+                    state.sum = torch.full_like(p, init_value).DetachFromDisposeScope();
                 }
             }
 

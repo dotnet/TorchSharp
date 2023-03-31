@@ -60,7 +60,16 @@ namespace TorchSharp.Examples
 
         public override Tensor forward(Tensor input)
         {
-            return layers.forward(input);
+            return layers.call(input);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                layers.Dispose();
+                ClearModules();
+            }
+            base.Dispose(disposing);
         }
     }
 }

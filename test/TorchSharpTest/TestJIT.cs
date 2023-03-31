@@ -5,7 +5,6 @@ using System.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using Xunit;
-using System.Security.Cryptography;
 
 #nullable enable
 
@@ -16,8 +15,6 @@ namespace TorchSharp
 #endif // NET472_OR_GREATER
     public class TestJIT
     {
-
-
         [Fact]
         public void TestLoadJIT_Func()
         {
@@ -30,7 +27,7 @@ namespace TorchSharp
             var kids = m.named_children().ToArray();
             Assert.Empty(kids);
 
-            var t = m.forward(torch.ones(10), torch.ones(10));
+            var t = m.call(torch.ones(10), torch.ones(10));
 
             Assert.Equal(new long[] { 10 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
@@ -42,7 +39,7 @@ namespace TorchSharp
         {
             // One linear layer followed by ReLU.
             using var m = torch.jit.load<Tensor, Tensor>(@"linrelu.script.dat");
-            var t = m.forward(torch.ones(10));
+            var t = m.call(torch.ones(10));
 
             Assert.Equal(new long[] { 6 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
@@ -63,7 +60,7 @@ namespace TorchSharp
                 torch.jit.save(m1, location);
                 using var m2 = torch.jit.load<Tensor, Tensor>(location);
 
-                var t = m2.forward(torch.ones(10));
+                var t = m2.call(torch.ones(10));
 
                 Assert.Equal(new long[] { 6 }, t.shape);
                 Assert.Equal(torch.float32, t.dtype);
@@ -79,7 +76,7 @@ namespace TorchSharp
         {
             // One linear layer followed by ReLU.
             using var m = torch.jit.load<Tensor, Tensor>(@"scripted.script.dat");
-            var t = m.forward(torch.ones(6));
+            var t = m.call(torch.ones(6));
 
             Assert.Equal(new long[] { 6 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
@@ -98,13 +95,13 @@ namespace TorchSharp
             var kids = m.named_children().ToArray();
             Assert.Equal(2, kids.Length);
 
-            var t = m.forward(torch.ones(1000));
+            var t = m.call(torch.ones(1000));
 
             Assert.Equal(new long[] { 10 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
             Assert.True(torch.tensor(new float[] { 0.564213157f, -0.04519982f, -0.005117342f, 0.395530462f, -0.3780813f, -0.004734449f, -0.3221216f, -0.289159119f, 0.268511474f, 0.180702567f }).allclose(t));
 
-            Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => m.forward(torch.ones(100)));
+            Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => m.call(torch.ones(100)));
         }
 
         [Fact]
@@ -127,7 +124,7 @@ namespace TorchSharp
                     foreach (var p in params0)
                         Assert.Equal(DeviceType.CUDA, p.device_type);
 
-                    var t = m.forward(torch.ones(10).cuda()).cpu();
+                    var t = m.call(torch.ones(10).cuda()).cpu();
 
                     Assert.Equal(new long[] { 6 }, t.shape);
                     Assert.Equal(torch.float32, t.dtype);
@@ -140,7 +137,7 @@ namespace TorchSharp
                     foreach (var p in params0)
                         Assert.Equal(DeviceType.CUDA, p.device_type);
 
-                    var t = m.forward(torch.ones(10).cuda()).cpu();
+                    var t = m.call(torch.ones(10).cuda()).cpu();
 
                     Assert.Equal(new long[] { 6 }, t.shape);
                     Assert.Equal(torch.float32, t.dtype);
@@ -159,7 +156,7 @@ namespace TorchSharp
 
             var x = torch.rand(3, 4);
             var y = torch.rand(3, 4);
-            var output = m.forward(x, y);
+            var output = m.call(x, y);
 
             Assert.Multiple(
             () => Assert.Equal(x.shape, output.Item1.shape),
@@ -179,7 +176,7 @@ namespace TorchSharp
 
             var x = torch.rand(3, 4);
             var y = torch.rand(3, 4);
-            Assert.Throws<InvalidCastException>(() => m.forward(x, y));
+            Assert.Throws<InvalidCastException>(() => m.call(x, y));
         }
 
         [Fact]
@@ -192,7 +189,7 @@ namespace TorchSharp
 
             var x = torch.rand(3, 4);
             var y = torch.rand(3, 4);
-            var output = m.forward(x, y);
+            var output = m.call(x, y);
 
             Assert.Multiple(
             () => Assert.Equal(x.shape, output[0].shape),
@@ -212,7 +209,7 @@ namespace TorchSharp
 
             var x = torch.rand(3, 4);
             var y = torch.rand(3, 4);
-            Assert.Throws<InvalidCastException>(() => m.forward(x, y));
+            Assert.Throws<InvalidCastException>(() => m.call(x, y));
         }
 
 
@@ -238,7 +235,7 @@ namespace TorchSharp
 
             var x = torch.rand(3, 4);
             var y = torch.rand(3, 4);
-            var output = m.forward(x, y);
+            var output = m.call(x, y);
 
             Assert.Multiple(
             () => Assert.Equal(x.shape, output.Item1.shape),
@@ -268,7 +265,7 @@ namespace TorchSharp
 
             public override (Tensor, Tensor) forward(Tensor input1, Tensor input2)
             {
-                return m.forward(input1, input2);
+                return m.call(input1, input2);
             }
 
             public Tensor predict(Tensor input)
@@ -285,7 +282,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestJITCompile()
+        public void TestJITCompile_1()
         {
             string script = @"
   def relu_script(a, b):
@@ -324,6 +321,43 @@ namespace TorchSharp
                 () => Assert.Equal(4, ss.Item1.ToInt32()),
                 () => Assert.Equal(2, ss.Item2.ToInt32())
             );
+        }
+
+
+
+        [Fact]
+        public void TestJITCompile_2()
+        {
+            string script = @"
+  def none_script(a: Any, b: Any):
+    return a
+  def none_tuple(a: Any, b: Any):
+    return (a, None)
+";
+
+            using var cu = torch.jit.compile(script);
+
+            Assert.NotNull(cu);
+
+            var x = torch.randn(3, 4);
+            var y = torch.randn(3, 4);
+
+            var z = cu.invoke("none_script", null, null);
+            Assert.Null(z);
+            z = cu.invoke("none_script", null, y);
+            Assert.Null(z);
+            z = cu.invoke("none_script", x, null);
+            Assert.NotNull(z);
+
+            var zArr = cu.invoke<object[]>("none_tuple", null, null);
+            Assert.NotNull(zArr);
+            Assert.Null(zArr[0]);
+            Assert.Null(zArr[1]);
+
+            zArr = cu.invoke<object[]>("none_tuple", x, null);
+            Assert.NotNull(z);
+            Assert.NotNull(zArr[0]);
+            Assert.Null(zArr[1]);
         }
     }
 }

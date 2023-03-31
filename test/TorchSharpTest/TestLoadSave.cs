@@ -5,13 +5,7 @@ using System.Linq;
 using TorchSharp.Modules;
 using static TorchSharp.torch.nn;
 using Xunit;
-using Google.Protobuf;
-using Tensorboard;
-using static TorchSharp.torch.utils.tensorboard;
-using ICSharpCode.SharpZipLib;
 using System.Collections.Generic;
-using Google.Protobuf.WellKnownTypes;
-using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 #nullable enable
 
@@ -133,6 +127,33 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSaveLoadConv2DStream()
+        {
+            var location = "TestSaveLoadConv2D.ts";
+            if (File.Exists(location)) File.Delete(location);
+            try {
+                using var conv = Conv2d(100, 10, 5);
+                var params0 = conv.parameters();
+
+                using (var stream = System.IO.File.OpenWrite(location)) {
+                    conv.save(stream);
+                }
+
+                using var loaded = Conv2d(100, 10, 5);
+
+                using (var stream = System.IO.File.OpenRead(location)) {
+                    loaded.load(stream);
+                }
+                var params1 = loaded.parameters();
+
+                Assert.Equal(params0, params1);
+
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
+        }
+
+        [Fact]
         public void TestSaveLoadSequential()
         {
             var location = "TestSaveLoadSequential.ts";
@@ -143,6 +164,29 @@ namespace TorchSharp
                 conv.save(location);
                 using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
                 loaded.load(location);
+                var params1 = loaded.parameters();
+
+                Assert.Equal(params0, params1);
+            } finally {
+                if (File.Exists(location)) File.Delete(location);
+            }
+        }
+
+        [Fact]
+        public void TestSaveLoadSequentialStream()
+        {
+            var location = "TestSaveLoadSequential.ts";
+            if (File.Exists(location)) File.Delete(location);
+            try {
+                using var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+                var params0 = conv.parameters();
+                using (var stream = System.IO.File.OpenWrite(location)) {
+                    conv.save(stream);
+                }
+                using var loaded = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
+                using (var stream = System.IO.File.OpenRead(location)) {
+                    loaded.load(stream);
+                }
                 var params1 = loaded.parameters();
 
                 Assert.Equal(params0, params1);
@@ -690,8 +734,8 @@ namespace TorchSharp
 
             var loss = torch.nn.MSELoss(Reduction.Sum);
 
-            using var eval = seq.forward(x);
-            var output = loss.forward(eval, y);
+            using var eval = seq.call(x);
+            var output = loss.call(eval, y);
 
             var l = output.ToSingle();
 
@@ -760,8 +804,8 @@ namespace TorchSharp
 
             var loss = torch.nn.MSELoss(Reduction.Sum);
 
-            using var eval = seq.forward(x);
-            var output = loss.forward(eval, y);
+            using var eval = seq.call(x);
+            var output = loss.call(eval, y);
 
             var l = output.ToSingle();
 
@@ -1932,6 +1976,574 @@ namespace TorchSharp
             } finally {
                 File.Delete(location);
             }
+        }
+
+        [Fact]
+        public void TestLoadingSGDStateFromPython()
+        {
+            var lin = torch.nn.Linear(10, 10);
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.SGD(lin.parameters(), learning_rate);
+
+            optimizer.load_state_dict("sgd1.dat");
+
+            var sd = optimizer.state_dict();
+
+            Assert.Single(sd.Options);
+            Assert.Equal(2, sd.State.Count);
+
+            foreach (var opts in sd.Options) {
+                var options = opts as Modules.SGD.Options;
+                Assert.Equal(0.1, options!.momentum);
+                Assert.NotEqual(learning_rate, options!.LearningRate);
+            }
+
+            foreach (var st in sd.State) {
+                var state = st as Modules.SGD.State;
+                Assert.NotNull(state!.momentum_buffer);
+            }
+        }
+
+        [Fact]
+        public void TestLoadingASGDStateFromPython()
+        {
+            var lin = torch.nn.Linear(10, 10);
+
+            double learning_rate = 0.004f;
+            var optimizer = torch.optim.ASGD(lin.parameters(), learning_rate);
+
+            optimizer.load_state_dict("asgd1.dat");
+
+            var sd = optimizer.state_dict();
+
+            Assert.Single(sd.Options);
+            Assert.Equal(2, sd.State.Count);
+
+            foreach (var opts in sd.Options) {
+                var options = opts as Modules.ASGD.Options;
+                Assert.Equal(0.65, options!.alpha);
+                Assert.Equal(1e-3, options!.lambd);
+                Assert.Equal(1e5, options!.t0);
+                Assert.NotEqual(learning_rate, options!.LearningRate);
+            }
+
+            foreach (var st in sd.State) {
+                var state = st as Modules.ASGD.State;
+                Assert.Equal(1, state!.step);
+                Assert.NotNull(state!.ax);
+            }
+        }
+
+        [Fact]
+        public void TestLoadingRMSpropStateFromPython()
+        {
+            var lin1 = torch.nn.Linear(10, 10);
+            var lin2 = torch.nn.Linear(10, 10);
+
+            var seq = Sequential(("lin1", lin1), ("lin2", lin2));
+
+            var pgs = new RMSProp.ParamGroup[] {
+                new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
+                new (lin2.parameters(), lr: 0.00003, centered: false, momentum: 0.25)
+            };
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.RMSProp(pgs, learning_rate);
+
+            optimizer.load_state_dict("rmsprop1.dat");
+
+            var sd = optimizer.state_dict();
+
+            Assert.Equal(2, sd.Options.Count);
+            Assert.Equal(4, sd.State.Count);
+
+            var options = sd.Options[0] as Modules.RMSProp.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.1, options!.momentum),
+                () => Assert.Equal(0.001, options!.LearningRate),
+                () => Assert.False(options!.centered)
+            );
+
+            options = sd.Options[1] as Modules.RMSProp.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0, options!.momentum),
+                () => Assert.Equal(0.01, options!.LearningRate),
+                () => Assert.True(options!.centered)
+            );
+
+            var state = sd.State[0] as Modules.RMSProp.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.square_avg),
+                () => Assert.NotNull(state!.momentum_buffer),
+                () => Assert.Null(state!.grad_avg)
+            );
+
+            state = sd.State[1] as Modules.RMSProp.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.square_avg),
+                () => Assert.NotNull(state!.momentum_buffer),
+                () => Assert.Null(state!.grad_avg)
+            );
+
+            state = sd.State[2] as Modules.RMSProp.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.square_avg),
+                () => Assert.Null(state!.momentum_buffer),
+                () => Assert.NotNull(state!.grad_avg)
+            );
+
+            state = sd.State[3] as Modules.RMSProp.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.square_avg),
+                () => Assert.Null(state!.momentum_buffer),
+                () => Assert.NotNull(state!.grad_avg)
+            );
+        }
+
+        [Fact]
+        public void TestLoadingRpropStateFromPython()
+        {
+            var lin1 = torch.nn.Linear(10, 10);
+            var lin2 = torch.nn.Linear(10, 10);
+
+            var seq = Sequential(("lin1", lin1), ("lin2", lin2));
+
+            var pgs = new Rprop.ParamGroup[] {
+                new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
+                new (lin2.parameters(), lr: 0.00003, maximize: false)
+            };
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.Rprop(pgs, learning_rate);
+
+            optimizer.load_state_dict("rprop1.dat");
+
+            var sd = optimizer.state_dict();
+
+            Assert.Equal(2, sd.Options.Count);
+            Assert.Equal(4, sd.State.Count);
+
+            var options = sd.Options[0] as Modules.Rprop.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.35, options!.etaminus),
+                () => Assert.Equal(1.5, options!.etaplus),
+                () => Assert.Equal(1e-5, options!.min_step),
+                () => Assert.Equal(5, options!.max_step),
+                () => Assert.Equal(0.001, options!.LearningRate),
+                () => Assert.False(options!.maximize)
+            );
+
+            options = sd.Options[1] as Modules.Rprop.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.45, options!.etaminus),
+                () => Assert.Equal(1.5, options!.etaplus),
+                () => Assert.Equal(1e-5, options!.min_step),
+                () => Assert.Equal(5, options!.max_step),
+                () => Assert.Equal(0.01, options!.LearningRate),
+                () => Assert.True(options!.maximize)
+            );
+
+            foreach (var st in sd.State) {
+                var state = sd.State[0] as Modules.Rprop.State;
+                Assert.Multiple(
+                    () => Assert.Equal(1, state!.step),
+                    () => Assert.NotNull(state!.prev),
+                    () => Assert.NotNull(state!.step_size)
+                );
+            }
+        }
+
+        [Fact]
+        public void TestLoadingAdamStateFromPython()
+        {
+            var lin1 = torch.nn.Linear(10, 10);
+            var lin2 = torch.nn.Linear(10, 10);
+
+            var seq = Sequential(("lin1", lin1), ("lin2", lin2));
+
+            var pgs = new Adam.ParamGroup[] {
+                new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
+                new (lin2.parameters(), lr: 0.00003, amsgrad: false, beta1: 0.25)
+            };
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.Adam(pgs, learning_rate);
+
+            optimizer.load_state_dict("adam1.dat");
+
+            var sd = optimizer.state_dict();
+
+            Assert.Equal(2, sd.Options.Count);
+            Assert.Equal(4, sd.State.Count);
+
+            var options = sd.Options[0] as Modules.Adam.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.8, options!.beta1),
+                () => Assert.Equal(0.9, options!.beta2),
+                () => Assert.Equal(0.001, options!.LearningRate),
+                () => Assert.False(options!.amsgrad)
+            );
+
+            options = sd.Options[1] as Modules.Adam.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.7, options!.beta1),
+                () => Assert.Equal(0.79, options!.beta2),
+                () => Assert.Equal(0.01, options!.LearningRate),
+                () => Assert.True(options!.amsgrad)
+            );
+
+            var state = sd.State[0] as Modules.Adam.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_avg_sq),
+                () => Assert.Null(state!.max_exp_avg_sq)
+            );
+
+            state = sd.State[1] as Modules.Adam.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_avg_sq),
+                () => Assert.Null(state!.max_exp_avg_sq)
+            );
+
+            state = sd.State[2] as Modules.Adam.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_avg_sq),
+                () => Assert.NotNull(state!.max_exp_avg_sq)
+            );
+
+            state = sd.State[3] as Modules.Adam.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_avg_sq),
+                () => Assert.NotNull(state!.max_exp_avg_sq)
+            );
+        }
+
+        [Fact]
+        public void TestLoadingAdamWStateFromPython()
+        {
+            var lin1 = torch.nn.Linear(10, 10);
+            var lin2 = torch.nn.Linear(10, 10);
+
+            var seq = Sequential(("lin1", lin1), ("lin2", lin2));
+
+            var pgs = new AdamW.ParamGroup[] {
+                new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
+                new (lin2.parameters(), lr: 0.00003, amsgrad: false, beta1: 0.25)
+            };
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.AdamW(pgs, learning_rate);
+
+            optimizer.load_state_dict("adamw1.dat");
+
+            var sd = optimizer.state_dict();
+
+            Assert.Equal(2, sd.Options.Count);
+            Assert.Equal(4, sd.State.Count);
+
+            var options = sd.Options[0] as Modules.AdamW.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.8, options!.beta1),
+                () => Assert.Equal(0.9, options!.beta2),
+                () => Assert.Equal(0.001, options!.LearningRate),
+                () => Assert.False(options!.amsgrad)
+            );
+
+            options = sd.Options[1] as Modules.AdamW.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.7, options!.beta1),
+                () => Assert.Equal(0.79, options!.beta2),
+                () => Assert.Equal(0.01, options!.LearningRate),
+                () => Assert.True(options!.amsgrad)
+            );
+
+            var state = sd.State[0] as Modules.AdamW.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_avg_sq),
+                () => Assert.Null(state!.max_exp_avg_sq)
+            );
+
+            state = sd.State[1] as Modules.AdamW.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_avg_sq),
+                () => Assert.Null(state!.max_exp_avg_sq)
+            );
+
+            state = sd.State[2] as Modules.AdamW.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_avg_sq),
+                () => Assert.NotNull(state!.max_exp_avg_sq)
+            );
+
+            state = sd.State[3] as Modules.AdamW.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_avg_sq),
+                () => Assert.NotNull(state!.max_exp_avg_sq)
+            );
+        }
+
+        [Fact]
+        public void TestLoadingNAdamStateFromPython()
+        {
+            var lin1 = torch.nn.Linear(10, 10);
+            var lin2 = torch.nn.Linear(10, 10);
+
+            var seq = Sequential(("lin1", lin1), ("lin2", lin2));
+
+            var pgs = new NAdam.ParamGroup[] {
+                new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
+                new (lin2.parameters(), lr: 0.00003, beta1: 0.25, weight_decay: 0.1)
+            };
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.NAdam(pgs, learning_rate);
+
+            optimizer.load_state_dict("nadam1.dat");
+
+            var sd = optimizer.state_dict();
+
+            Assert.Equal(2, sd.Options.Count);
+            Assert.Equal(4, sd.State.Count);
+
+            var options = sd.Options[0] as Modules.NAdam.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.8, options!.beta1),
+                () => Assert.Equal(0.9, options!.beta2),
+                () => Assert.Equal(0.001, options!.LearningRate),
+                () => Assert.Equal(0, options!.weight_decay)
+            );
+
+            options = sd.Options[1] as Modules.NAdam.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.7, options!.beta1),
+                () => Assert.Equal(0.79, options!.beta2),
+                () => Assert.Equal(0.01, options!.LearningRate),
+                () => Assert.Equal(0.3, options!.weight_decay)
+            );
+
+            foreach (var st in sd.State) {
+                var state = st as Modules.NAdam.State;
+                Assert.Multiple(
+                    () => Assert.Equal(1, state!.step),
+                    () => Assert.NotNull(state!.exp_avg),
+                    () => Assert.NotNull(state!.exp_avg_sq)
+                );
+            }
+        }
+
+        [Fact]
+        public void TestLoadingRAdamStateFromPython()
+        {
+            var lin1 = torch.nn.Linear(10, 10);
+            var lin2 = torch.nn.Linear(10, 10);
+
+            var seq = Sequential(("lin1", lin1), ("lin2", lin2));
+
+            var pgs = new RAdam.ParamGroup[] {
+                new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
+                new (lin2.parameters(), lr: 0.00003, beta1: 0.25)
+            };
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.RAdam(pgs, learning_rate);
+
+            optimizer.load_state_dict("radam1.dat");
+
+            var sd = optimizer.state_dict();
+
+            var options = sd.Options[0] as Modules.RAdam.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.8, options!.beta1),
+                () => Assert.Equal(0.9, options!.beta2),
+                () => Assert.Equal(0.001, options!.LearningRate),
+                () => Assert.Equal(0, options!.weight_decay)
+            );
+
+            options = sd.Options[1] as Modules.RAdam.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.7, options!.beta1),
+                () => Assert.Equal(0.79, options!.beta2),
+                () => Assert.Equal(0.01, options!.LearningRate),
+                () => Assert.Equal(0.3, options!.weight_decay)
+            );
+
+            foreach (var st in sd.State) {
+                var state = st as Modules.RAdam.State;
+                Assert.Multiple(
+                    () => Assert.Equal(1, state!.step),
+                    () => Assert.NotNull(state!.exp_avg),
+                    () => Assert.NotNull(state!.exp_avg_sq)
+                );
+            }
+        }
+
+        [Fact]
+        public void TestLoadingAdadeltaStateFromPython()
+        {
+            var lin1 = torch.nn.Linear(10, 10);
+            var lin2 = torch.nn.Linear(10, 10);
+
+            var seq = Sequential(("lin1", lin1), ("lin2", lin2));
+
+            var pgs = new Adadelta.ParamGroup[] {
+                new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
+                new (lin2.parameters(), lr: 0.00003, maximize: false, rho: 0.25)
+            };
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.Adadelta(pgs, learning_rate);
+
+            optimizer.load_state_dict("adadelta1.dat");
+
+            var sd = optimizer.state_dict();
+
+            Assert.Equal(2, sd.Options.Count);
+            Assert.Equal(4, sd.State.Count);
+
+            var options = sd.Options[0] as Modules.Adadelta.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.85, options!.rho),
+                () => Assert.Equal(0.3, options!.weight_decay),
+                () => Assert.Equal(0.001, options!.LearningRate),
+                () => Assert.False(options!.maximize)
+            );
+
+            options = sd.Options[1] as Modules.Adadelta.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.79, options!.rho),
+                () => Assert.Equal(0.3, options!.weight_decay),
+                () => Assert.Equal(0.01, options!.LearningRate),
+                () => Assert.True(options!.maximize)
+            );
+
+            foreach (var st in sd.State) {
+                var state = st as Modules.Adadelta.State;
+                Assert.Multiple(
+                    () => Assert.Equal(1, state!.step),
+                    () => Assert.NotNull(state!.square_avg),
+                    () => Assert.NotNull(state!.acc_delta)
+               );
+            }
+        }
+
+        [Fact]
+        public void TestLoadingAdagradStateFromPython()
+        {
+            var lin = torch.nn.Linear(10, 10);
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.Adagrad(lin.parameters(), learning_rate);
+
+            optimizer.load_state_dict("adagrad1.dat");
+
+            var sd = optimizer.state_dict();
+
+            Assert.Single(sd.Options);
+            Assert.Equal(2, sd.State.Count);
+
+            foreach (var opts in sd.Options) {
+                var options = opts as Modules.Adagrad.Options;
+                Assert.Equal(0.85, options!.lr_decay);
+                Assert.Equal(0.3, options!.weight_decay);
+                Assert.NotEqual(learning_rate, options!.LearningRate);
+            }
+
+            foreach (var st in sd.State) {
+                var state = st as Modules.Adagrad.State;
+                Assert.Equal(1, state!.step);
+                Assert.NotNull(state!.sum);
+            }
+        }
+
+        [Fact]
+        public void TestLoadingAdamaxStateFromPython()
+        {
+            var lin1 = torch.nn.Linear(10, 10);
+            var lin2 = torch.nn.Linear(10, 10);
+
+            var seq = Sequential(("lin1", lin1), ("lin2", lin2));
+
+            var pgs = new Adamax.ParamGroup[] {
+                new () { Parameters = lin1.parameters(), Options = new() { LearningRate = 0.00005 } },
+                new (lin2.parameters(), lr: 0.00003, weight_decay: 0.25, beta1: 0.25)
+            };
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.Adamax(pgs, learning_rate);
+
+            optimizer.load_state_dict("adamax1.dat");
+
+            var sd = optimizer.state_dict();
+
+            Assert.Equal(2, sd.Options.Count);
+            Assert.Equal(4, sd.State.Count);
+
+            var options = sd.Options[0] as Modules.Adamax.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.8, options!.beta1),
+                () => Assert.Equal(0.9, options!.beta2),
+                () => Assert.Equal(0.001, options!.LearningRate),
+                () => Assert.Equal(0, options!.weight_decay)
+            );
+
+            options = sd.Options[1] as Modules.Adamax.Options;
+            Assert.Multiple(
+                () => Assert.Equal(0.7, options!.beta1),
+                () => Assert.Equal(0.79, options!.beta2),
+                () => Assert.Equal(0.01, options!.LearningRate),
+                () => Assert.Equal(0.3, options!.weight_decay)
+            );
+
+            var state = sd.State[0] as Modules.Adamax.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_inf)
+            );
+
+            state = sd.State[1] as Modules.Adamax.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_inf)
+            );
+
+            state = sd.State[2] as Modules.Adamax.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_inf)
+            );
+
+            state = sd.State[3] as Modules.Adamax.State;
+            Assert.Multiple(
+                () => Assert.Equal(1, state!.step),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_avg),
+                () => Assert.NotNull(state!.exp_inf)
+            );
         }
     }
 }

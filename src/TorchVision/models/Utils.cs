@@ -27,8 +27,6 @@
 
 using System;
 
-using static TorchSharp.torch;
-
 namespace TorchSharp
 {
     public static partial class torchvision

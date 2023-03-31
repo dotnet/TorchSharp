@@ -66,6 +66,12 @@ Tensor THSTensor_any_along_dimension(const Tensor tensor, const int64_t dim, boo
 {
     CATCH_TENSOR(tensor->any(dim, keepdim));
 }
+
+Tensor THSTensor_adjoint(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->adjoint());
+}
+
 Tensor THSTensor_argmax(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->argmax());
@@ -84,6 +90,11 @@ Tensor THSTensor_argmin(const Tensor tensor)
 Tensor THSTensor_argmin_along_dimension(const Tensor tensor, const int64_t dim, bool keepdim)
 {
     CATCH_TENSOR(tensor->argmin(dim, keepdim));
+}
+
+Tensor THSTensor_argwhere(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->argwhere());
 }
 
 Tensor THSTensor_atleast_1d(const Tensor tensor)
@@ -157,6 +168,11 @@ Tensor THSTensor_parameters_to_vector(const Tensor* tensors, const int length)
 void THSTensor_vector_to_parameters(const Tensor vec, const Tensor* tensors, const int length)
 {
     CATCH(torch::nn::utils::vector_to_parameters(*vec, toTensors<at::Tensor>((torch::Tensor**)tensors, length)););
+}
+
+Tensor THSTensor_cartesian_prod(const Tensor* tensors, const int length)
+{
+    CATCH_TENSOR(torch::cartesian_prod(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
 double THSTensor_clip_grad_norm_(const Tensor* tensors, const int length, const double max_norm, const double norm_type)
@@ -258,6 +274,11 @@ Tensor THSTensor_clone(const Tensor tensor)
     CATCH_TENSOR(tensor->clone());
 }
 
+Tensor THSTensor_combinations(const Tensor tensor, const int r, const bool with_replacement)
+{
+    CATCH_TENSOR(torch::combinations(*tensor, r, with_replacement));
+}
+
 Tensor THSTensor_copy_(const Tensor input, const Tensor other, const bool non_blocking)
 {
     CATCH_TENSOR(input->copy_(*other, non_blocking));
@@ -285,6 +306,13 @@ int THSTensor_is_contiguous(const Tensor tensor)
     return result;
 }
 
+int64_t THSTensor_is_nonzero(const Tensor tensor)
+{
+    bool result = false;
+    CATCH(result = tensor->is_nonzero();)
+    return result;
+}
+
 Tensor THSTensor_copysign(const Tensor input, const Tensor other)
 {
     CATCH_TENSOR(input->copysign(*other));
@@ -295,11 +323,11 @@ Tensor THSTensor_corrcoef(const Tensor tensor)
     CATCH_TENSOR(tensor->corrcoef());
 }
 
-Tensor THSTensor_cov(const Tensor input, int64_t correction, const Tensor fweights, const Tensor aweights)
+bool THSTensor_is_cpu(const Tensor tensor)
 {
-    c10::optional<at::Tensor> fw = (fweights == nullptr) ? c10::optional<at::Tensor>() : *fweights;
-    c10::optional<at::Tensor> aw = (aweights == nullptr) ? c10::optional<at::Tensor>() : *aweights;
-    CATCH_TENSOR(input->cov(correction, fw, aw));
+    bool result = true;
+    CATCH(result = tensor->is_cpu(););
+    return result;
 }
 
 Tensor THSTensor_cpu(const Tensor tensor)
@@ -395,6 +423,11 @@ int THSTensor_device_type(const Tensor tensor)
     return (int)device.type();
 }
 
+Tensor THSTensor_diag_embed(const Tensor tensor, const int64_t offset, const int64_t dim1, const int64_t dim2)
+{
+    CATCH_TENSOR(tensor->diag_embed(offset, dim1, dim2));
+}
+
 Tensor THSTensor_diff(const Tensor tensor, const int64_t n, const int64_t dim, const Tensor prepend, const Tensor append)
 {
     c10::optional<at::Tensor> prep = prepend != nullptr ? *prepend : c10::optional<at::Tensor>(c10::nullopt);
@@ -464,6 +497,11 @@ Tensor THSTensor_repeat_interleave_int64(const Tensor tensor, const int64_t repe
     auto _dim = dim == INT64_MIN ? c10::optional<int64_t>() : c10::optional<int64_t>(dim);
     auto _output_size = output_size == INT64_MIN ? c10::optional<int64_t>() : c10::optional<int64_t>(output_size);
     CATCH_TENSOR(tensor->repeat_interleave(repeats, _dim, _output_size));
+}
+
+int THSTensor_result_type(const Tensor left, const Tensor right)
+{
+    CATCH_RETURN_RES(int, -1, res = (int)torch::result_type(*left, *right));
 }
 
 Tensor THSTensor_movedim(const Tensor tensor, const int64_t* src, const int src_len, const int64_t* dst, const int dst_len)
@@ -1063,6 +1101,11 @@ Tensor THSTensor_outer(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->outer(*right));
 }
 
+Tensor THSTensor_ormqr(const Tensor input, const Tensor tau, const Tensor other, bool left, bool transpose)
+{
+    CATCH_TENSOR(torch::ormqr(*input, *tau, *other, left, transpose));
+}
+
 Tensor THSTensor_mH(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->mH());
@@ -1154,6 +1197,11 @@ Tensor THSTensor_reshape(const Tensor tensor, const int64_t* shape, const int le
     CATCH_TENSOR(tensor->reshape(at::ArrayRef<int64_t>(shape, length)));
 }
 
+Tensor THSTensor_rot90(const Tensor tensor, const int64_t k, const int64_t dim1, const int64_t dim2)
+{
+    CATCH_TENSOR(tensor->rot90(k, { dim1, dim2 }));
+}
+
 Tensor THSTensor_roll(const Tensor tensor, const int64_t* shifts, const int shLength, const int64_t* dims, const int dimLength)
 {
     CATCH_TENSOR(
@@ -1185,6 +1233,36 @@ Tensor THSTensor_scatter_(
     const Tensor source)
 {
     CATCH_TENSOR(tensor->scatter_(dim, *index, *source));
+}
+
+Tensor THSTensor_select_scatter(
+    const Tensor tensor,
+    const Tensor source,
+    const int64_t dim,
+    const int64_t index)
+{
+    CATCH_TENSOR(torch::select_scatter(*tensor, *source, dim, index));
+}
+
+Tensor THSTensor_diagonal_scatter(
+    const Tensor tensor,
+    const Tensor source,
+    const int64_t offset,
+    const int64_t dim1,
+    const int64_t dim2)
+{
+    CATCH_TENSOR(torch::diagonal_scatter(*tensor, *source, offset, dim1, dim2));
+}
+
+Tensor THSTensor_slice_scatter(
+    const Tensor tensor,
+    const Tensor source,
+    const int64_t dim,
+    const int64_t *start,
+    const int64_t *end,
+    const int64_t step)
+{
+    CATCH_TENSOR(torch::slice_scatter(*tensor, *source, dim, start == nullptr ? c10::optional<int64_t>() : c10::optional<int64_t>(*start), end == nullptr ? c10::optional<int64_t>() : c10::optional<int64_t>(*end), step));
 }
 
 Tensor THSTensor_scatter_add(
@@ -1506,6 +1584,16 @@ Tensor THSTensor_squeeze(Tensor tensor, int64_t dim)
     CATCH_TENSOR(tensor->squeeze(dim));
 }
 
+Tensor THSTensor_squeeze_no_dim_(Tensor tensor)
+{
+    CATCH_TENSOR(tensor->squeeze_());
+}
+
+Tensor THSTensor_squeeze_(Tensor tensor, int64_t dim)
+{
+    CATCH_TENSOR(tensor->squeeze_(dim));
+}
+
 int64_t THSTensor_stride(const Tensor tensor, const int64_t dim)
 {
     CATCH_RETURN(int64_t, 0, tensor->stride(dim));
@@ -1578,16 +1666,15 @@ Tensor THSTensor_row_stack(const Tensor* tensors, const int length)
     CATCH_TENSOR(torch::row_stack(toTensors<at::Tensor>((torch::Tensor**)tensors, length)));
 }
 
-void THSTensor_meshgrid(const Tensor* tensors, const int64_t length, const char* indexing, Tensor* (*allocator)(size_t length))
+void THSTensor_meshgrid(const Tensor* tensors, const int length, const char* indexing, Tensor* (*allocator)(size_t length))
 {
     std::string str = indexing;
-    at::TensorList tList = toTensors<at::Tensor>((torch::Tensor**)tensors, length);
     CATCH(
-        auto res = torch::meshgrid(tList, indexing);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        auto res = torch::meshgrid(toTensors<at::Tensor>((torch::Tensor**)tensors, length), indexing);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 
@@ -1746,6 +1833,23 @@ Tensor THSTensor_tril(const Tensor tensor, const int64_t diagonal)
     CATCH_TENSOR(tensor->tril(diagonal));
 }
 
+Tensor THSTensor_tril_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index));
+    CATCH_TENSOR(torch::tril_indices(row, col, offset, options));
+}
+
+Tensor THSTensor_triu_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index)
+{
+    auto options = at::TensorOptions()
+        .dtype(at::ScalarType(scalar_type))
+        .device(c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index));
+    CATCH_TENSOR(torch::triu_indices(row, col, offset, options));
+}
+
+
 Tensor THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2)
 {
     CATCH_TENSOR(tensor->transpose(dim1, dim2));
@@ -1880,6 +1984,81 @@ Tensor THSTensor_vander(const Tensor tensor, const int64_t N, const bool increas
 Tensor THSTensor_where(const Tensor condition, const Tensor x, const Tensor y)
 {
     CATCH_TENSOR(x->where(*condition, *y))
+}
+
+void THSTensor_where_list(
+    const Tensor condition,
+    Tensor* (*allocator)(size_t length))
+{
+    CATCH(
+        auto res = at::_ops::where::call(*condition);
+    const size_t sz = res.size();
+    Tensor * result = allocator(sz);
+    for (size_t i = 0; i < sz; i++)
+        result[i] = new torch::Tensor(res[i]);
+    )
+}
+
+Tensor THSTensor_searchsorted_t(const Tensor sorted_sequence, const Tensor values, const bool out_int32, const bool right, const Tensor sorter)
+{    
+    CATCH_TENSOR(
+        sorter == nullptr
+        ? torch::searchsorted(*sorted_sequence, *values, out_int32, right)
+        : torch::searchsorted(*sorted_sequence, *values, out_int32, right, c10::nullopt, *sorter));
+}
+
+Tensor THSTensor_searchsorted_s(const Tensor sorted_sequence, const Scalar values, const bool out_int32, const bool right, const Tensor sorter)
+{
+    CATCH_TENSOR(
+        sorter == nullptr
+        ? torch::searchsorted(*sorted_sequence, *values, out_int32, right)
+        : torch::searchsorted(*sorted_sequence, *values, out_int32, right, c10::nullopt, *sorter));
+}
+
+Tensor THSTensor_histogram_t(const Tensor input, const Tensor bins, const Tensor weight, const bool density, Tensor* r_bin_edges)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+
+    c10::optional<at::Tensor> weight_ = weight == nullptr ? c10::optional<at::Tensor>(c10::nullopt) : *weight;
+
+    CATCH(res = torch::histogram(*input, *bins, weight_, density););
+    *r_bin_edges = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_histogram_i(const Tensor input, const int64_t bins, const double* range, const int length, const Tensor weight, const bool density, Tensor* r_bin_edges)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+
+    auto range_ = range == nullptr ? c10::optional<at::ArrayRef<double>>() : c10::optional<at::ArrayRef<double>>(at::ArrayRef<double>(range, length));
+    c10::optional<at::Tensor> weight_ = weight == nullptr ? c10::optional<at::Tensor>(c10::nullopt) : *weight;
+
+    CATCH(res = torch::histogram(*input, bins, range_, weight_, density););
+    *r_bin_edges = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_histogram_out_t(const Tensor input, const Tensor bins, const Tensor weight, const bool density, Tensor* hist, Tensor* bin_edges, Tensor* r_bin_edges)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+
+    c10::optional<at::Tensor> weight_ = weight == nullptr ? c10::optional<at::Tensor>(c10::nullopt) : *weight;
+
+    CATCH(res = torch::histogram_outf(*input, *bins, weight_, density, **hist, **bin_edges););
+    *r_bin_edges = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_histogram_out_i(const Tensor input, const int64_t bins, const double* range, const int length, const Tensor weight, const bool density, Tensor* hist, Tensor* bin_edges, Tensor* r_bin_edges)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+
+    auto range_ = range == nullptr ? c10::optional<at::ArrayRef<double>>() : c10::optional<at::ArrayRef<double>>(at::ArrayRef<double>(range, length));
+    c10::optional<at::Tensor> weight_ = weight == nullptr ? c10::optional<at::Tensor>(c10::nullopt) : *weight;
+
+    CATCH(res = torch::histogram_outf(*input, bins, range_, weight_, density, **hist, **bin_edges););
+    *r_bin_edges = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
 }
 
 bool THSTensor_has_names(Tensor tensor)

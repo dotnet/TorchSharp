@@ -1,10 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
-using static TorchSharp.torch.distributions.constraints;
 using static TorchSharp.torch.nn;
-using static TorchSharp.torch.nn.functional;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 
@@ -396,10 +394,13 @@ namespace TorchSharp
                 /// Note that ignore_index is only applicable when the target contains class indices.
                 /// </param>
                 /// <param name="reduction">Specifies the reduction to apply to the output</param>
+                /// <param name="label_smoothing">A float in [0.0, 1.0].
+                /// Specifies the amount of smoothing when computing the loss, where 0.0 means no smoothing.
+                /// The targets become a mixture of the original ground truth and a uniform distribution.</param>
                 /// <returns></returns>
-                public static Tensor cross_entropy(Tensor input, Tensor target, Tensor? weight = null, long ignore_index = -100, Reduction reduction = Reduction.Mean)
+                public static Tensor cross_entropy(Tensor input, Tensor target, Tensor? weight = null, long ignore_index = -100, Reduction reduction = Reduction.Mean, double label_smoothing = 0.0)
                 {
-                    var res = THSNN_cross_entropy(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ignore_index, true, (long)reduction);
+                    var res = THSNN_cross_entropy(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ignore_index, true, (long)reduction, label_smoothing);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -422,7 +423,7 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// 
+                ///
                 /// </summary>
                 /// <param name="input1">(N,D) or (D), where N is the batch size and D is the embedding dimension.</param>
                 /// <param name="input2">Same shape as input1</param>
@@ -604,7 +605,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor gaussian_nll_loss(Tensor input, Tensor target, Tensor variance, bool full = false, float eps = 1e-6f, Reduction reduction = Reduction.Mean)
                 {
-                    return new Modules.GaussianNLLLoss(full, eps, reduction).forward(input, target, variance);
+                    return new Modules.GaussianNLLLoss(full, eps, reduction).call(input, target, variance);
                 }
 
                 /// <summary>
@@ -716,73 +717,7 @@ namespace TorchSharp
                     var res = THSNN_triplet_margin_with_distance_loss(anchor.Handle, positive.Handle, negative.Handle, func, margin, swap, (long)reduction);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
-
                 }
-
-                [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-                public delegate IntPtr DistanceFunctionNative(IntPtr x, IntPtr y);
-
-                #region External functions
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_cross_entropy(IntPtr srct, IntPtr trgt, IntPtr wgt, long ignore_index, bool hasII, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_binary_cross_entropy(IntPtr srct, IntPtr trgt, IntPtr wgt, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_binary_cross_entropy_with_logits(IntPtr srct, IntPtr trgt, IntPtr wgt, long reduction, IntPtr posWeights);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_cosine_embedding_loss(IntPtr input1, IntPtr input2, IntPtr trgt, double margin, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_ctc_loss(IntPtr log_probs, IntPtr targets, IntPtr input_lengths, IntPtr target_lengths, long blank, bool zero_infinity, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_hinge_embedding_loss(IntPtr input, IntPtr trgt, double margin, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_huber_loss(IntPtr input, IntPtr trgt, double delta, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_margin_ranking_loss(IntPtr input1, IntPtr input2, IntPtr target, double margin, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_multilabel_margin_loss(IntPtr input, IntPtr target, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_multilabel_soft_margin_loss(IntPtr input, IntPtr target, IntPtr weight, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_multi_margin_loss(IntPtr input, IntPtr target, long p, double margin, IntPtr weight, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_mse_loss(IntPtr srct, IntPtr trgt, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_l1_loss(IntPtr srct, IntPtr trgt, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_nll_loss(IntPtr srct, IntPtr trgt, IntPtr wgt, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_poisson_loss(IntPtr srct, IntPtr trgt, bool logInput, bool full, float eps, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_kl_div_loss(IntPtr input, IntPtr target, long reduction, bool logTarget);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_smooth_l1_loss(IntPtr srct, IntPtr trgt, long reduction, double beta);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_soft_margin_loss(IntPtr srct, IntPtr trgt, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_triplet_margin_loss(IntPtr anchor, IntPtr positive, IntPtr negative, double margin, long p, double eps, bool swap, long reduction);
-
-                [DllImport("LibTorchSharp")]
-                internal static extern IntPtr THSNN_triplet_margin_with_distance_loss(IntPtr anchor, IntPtr positive, IntPtr negative, DistanceFunctionNative? distance_function, double margin, bool swap, long reduction);
-                #endregion
             }
 
             public enum Reduction : long
@@ -796,24 +731,24 @@ namespace TorchSharp
 
     namespace Modules
     {
-        using static torch.nn.functional;
-
         public sealed class CrossEntropyLoss : WeightedLoss<Tensor, Tensor, Tensor>
         {
-            public CrossEntropyLoss(Tensor? weight = null, long? ignore_index = null, Reduction reduction = Reduction.Mean) : base(weight, reduction)
+            public CrossEntropyLoss(Tensor? weight = null, long? ignore_index = null, Reduction reduction = Reduction.Mean, double label_smoothing = 0.0) : base(weight, reduction)
             {
                 this.ignore_index = ignore_index;
+                this.label_smoothing = label_smoothing;
             }
 
             public override Tensor forward(Tensor input, Tensor target)
             {
                 var ii = ignore_index.HasValue ? ignore_index.Value : -100;
-                var res = THSNN_cross_entropy(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ii, ignore_index.HasValue, (long)reduction);
+                var res = THSNN_cross_entropy(input.Handle, target.Handle, weight?.Handle ?? IntPtr.Zero, ii, ignore_index.HasValue, (long)reduction, label_smoothing);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
 
             public long? ignore_index { get; }
+            public double label_smoothing { get; }
         }
 
         public sealed class BCELoss : WeightedLoss<Tensor, Tensor, Tensor>

@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -10,9 +10,6 @@ namespace TorchSharp
         {
             public static partial class functional
             {
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSNN_batch_norm(IntPtr input, IntPtr running_mean, IntPtr running_var, IntPtr weight, IntPtr bias, bool training, double momentum, double eps);
-
                 /// <summary>
                 /// Applies Batch Normalization for each channel across a batch of data.
                 /// </summary>
@@ -31,9 +28,6 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
 
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSNN_group_norm(IntPtr input, long num_groups, IntPtr weight, IntPtr bias, double eps);
-
                 /// <summary>
                 /// Applies Group Normalization for last certain number of dimensions.
                 /// </summary>
@@ -49,9 +43,6 @@ namespace TorchSharp
                         torch.CheckForErrors();
                     return new Tensor(res);
                 }
-
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSNN_instance_norm(IntPtr input, IntPtr running_mean, IntPtr running_var, IntPtr weight, IntPtr bias, bool use_input_stats, double momentum, double eps);
 
                 /// <summary>
                 /// Applies Instance Normalization for each channel in each data sample in a batch.
@@ -70,9 +61,6 @@ namespace TorchSharp
                         torch.CheckForErrors();
                     return new Tensor(res);
                 }
-
-                [DllImport("LibTorchSharp")]
-                extern static unsafe IntPtr THSNN_layer_norm(IntPtr input, long* normalized_shape, long normalized_shape_len, IntPtr weight, IntPtr bias, double eps);
 
                 /// <summary>
                 /// Applies Layer Normalization for last certain number of dimensions.
@@ -95,9 +83,6 @@ namespace TorchSharp
                         torch.CheckForErrors();
                     return new Tensor(res);
                 }
-
-                [DllImport("LibTorchSharp")]
-                extern static IntPtr THSNN_local_response_norm(IntPtr input, long size, double alpha, double beta, double k);
 
                 /// <summary>
                 /// Applies Local Normalization.

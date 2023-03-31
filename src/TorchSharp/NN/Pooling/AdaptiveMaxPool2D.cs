@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_AdaptiveMaxPool2d_forward(IntPtr module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_AdaptiveMaxPool2d_forward(handle.DangerousGetHandle(), tensor.Handle);
@@ -34,9 +31,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_AdaptiveMaxPool2d_ctor(IntPtr psizes, int length, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 2D adaptive max pooling over an input signal composed of several input planes.
             /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.
@@ -44,7 +38,7 @@ namespace TorchSharp
             /// <param name="outputSize">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
             /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.</param>
             /// <returns></returns>
-            static public AdaptiveMaxPool2d AdaptiveMaxPool2d(long[] outputSize)
+            public static AdaptiveMaxPool2d AdaptiveMaxPool2d(long[] outputSize)
             {
                 unsafe {
                     fixed (long* pkernelSize = outputSize) {
@@ -65,10 +59,10 @@ namespace TorchSharp
                 /// <param name="outputSize">Applies a 2D adaptive max pooling over an input signal composed of several input planes.
                 /// The output is of size H x W, for any input size.The number of output features is equal to the number of input planes.</param>
                 /// <returns></returns>
-                static public Tensor adaptive_max_pool2d(Tensor x, long[] outputSize)
+                public static Tensor adaptive_max_pool2d(Tensor x, long[] outputSize)
                 {
                     using (var d = nn.AdaptiveMaxPool2d(outputSize)) {
-                        return d.forward(x);
+                        return d.call(x);
                     }
                 }
             }

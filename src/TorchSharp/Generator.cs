@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 
@@ -83,9 +83,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static long THSGenerator_initial_seed(IntPtr handle);
-
             /// <summary>
             /// Returns the initial seed for generating random numbers.
             /// </summary>
@@ -94,24 +91,6 @@ namespace TorchSharp
             {
                 return THSGenerator_initial_seed(Handle);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSGenerator_get_rng_state(IntPtr handle);
-
-            [DllImport("LibTorchSharp")]
-            extern static void THSGenerator_set_rng_state(IntPtr handle, IntPtr tensor);
-
-            [DllImport("LibTorchSharp")]
-            extern static void THSGenerator_gen_manual_seed(IntPtr handle, long seed);
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSGenerator_new(ulong seed, long device_type, long device_index);
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSGenerator_default_generator();
-
-            [DllImport("LibTorchSharp")]
-            extern static void THSGenerator_dispose(IntPtr handle);
 
             #region Dispose() support
             protected virtual void Dispose(bool disposing)

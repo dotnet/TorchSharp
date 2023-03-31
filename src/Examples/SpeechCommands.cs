@@ -10,7 +10,6 @@ using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 using static TorchSharp.torch.utils.data;
-using static TorchSharp.torchaudio;
 using static TorchSharp.torchaudio.datasets;
 
 namespace TorchSharp.Examples
@@ -137,10 +136,10 @@ namespace TorchSharp.Examples
 
                 model.train();
                 foreach (var batch in dataLoader) {
-                    var audio = transform.forward(batch.audio);
+                    var audio = transform.call(batch.audio);
                     var target = batch.label;
-                    var output = model.forward(batch.audio).squeeze();
-                    var loss = criteria.forward(output, target);
+                    var output = model.call(batch.audio).squeeze();
+                    var loss = criteria.call(output, target);
                     optimizer.zero_grad();
                     loss.backward();
                     optimizer.step();
@@ -172,10 +171,10 @@ namespace TorchSharp.Examples
             using (var d = torch.NewDisposeScope()) {
 
                 foreach (var batch in dataLoader) {
-                    var audio = transform.forward(batch.audio);
+                    var audio = transform.call(batch.audio);
                     var target = batch.label;
-                    var output = model.forward(batch.audio).squeeze();
-                    var loss = criteria.forward(output, target);
+                    var output = model.call(batch.audio).squeeze();
+                    var loss = criteria.call(output, target);
                     testLoss += loss.ToSingle();
 
                     var pred = output.argmax(1);
@@ -254,22 +253,43 @@ namespace TorchSharp.Examples
             public override Tensor forward(Tensor input)
             {
                 var x = input;
-                x = conv1.forward(x);
-                x = relu(bn1.forward(x));
-                x = pool1.forward(x);
-                x = conv2.forward(x);
-                x = relu(bn2.forward(x));
-                x = pool2.forward(x);
-                x = conv3.forward(x);
-                x = relu(bn3.forward(x));
-                x = pool3.forward(x);
-                x = conv4.forward(x);
-                x = relu(bn4.forward(x));
-                x = pool4.forward(x);
+                x = conv1.call(x);
+                x = relu(bn1.call(x));
+                x = pool1.call(x);
+                x = conv2.call(x);
+                x = relu(bn2.call(x));
+                x = pool2.call(x);
+                x = conv3.call(x);
+                x = relu(bn3.call(x));
+                x = pool3.call(x);
+                x = conv4.call(x);
+                x = relu(bn4.call(x));
+                x = pool4.call(x);
                 x = avg_pool1d(x, x.shape[x.dim() - 1]);
                 x = x.permute(0, 2, 1);
-                x = fc1.forward(x);
+                x = fc1.call(x);
                 return log_softmax(x, dim: 2);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    pool1.Dispose();
+                    pool2.Dispose();
+                    pool3.Dispose();
+                    pool4.Dispose();
+                    conv1.Dispose();
+                    conv2.Dispose();
+                    conv3.Dispose();
+                    conv4.Dispose();
+                    bn1.Dispose();
+                    bn2.Dispose();
+                    bn3.Dispose();
+                    bn4.Dispose();
+                    fc1.Dispose();
+                    ClearModules();
+                }
+                base.Dispose(disposing);
             }
         }
     }

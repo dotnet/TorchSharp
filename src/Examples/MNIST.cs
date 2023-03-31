@@ -4,7 +4,6 @@ using System.Diagnostics;
 using static TorchSharp.torch;
 
 using static TorchSharp.torch.nn;
-using static TorchSharp.torch.nn.functional;
 using static TorchSharp.torch.utils.data;
 
 namespace TorchSharp.Examples
@@ -50,7 +49,7 @@ namespace TorchSharp.Examples
                 _testBatchSize *= 4;
             }
 
-            var model = new Model("model", device);
+            using var model = new Model("model", device);
 
             var normImage = torchvision.transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 });
 
@@ -127,6 +126,8 @@ namespace TorchSharp.Examples
 
             public override Tensor forward(Tensor input)
             {
+                // All these modules are private to the model and won't have hooks,
+                // so we can use 'forward' instead of 'call'
                 var l11 = conv1.forward(input);
                 var l12 = relu1.forward(l11);
 
@@ -144,6 +145,26 @@ namespace TorchSharp.Examples
                 var l41 = fc2.forward(l33);
 
                 return logsm.forward(l41);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    conv1.Dispose();
+                    conv2.Dispose();
+                    fc1.Dispose();
+                    fc2.Dispose();
+                    pool1.Dispose();
+                    relu1.Dispose();
+                    relu2.Dispose();
+                    relu3.Dispose();
+                    dropout1.Dispose();
+                    dropout2.Dispose();
+                    flatten.Dispose();
+                    logsm.Dispose();
+                    ClearModules();
+                }
+                base.Dispose(disposing);
             }
         }
 
@@ -169,8 +190,8 @@ namespace TorchSharp.Examples
                     optimizer.zero_grad();
 
                     var target = data["label"];
-                    var prediction = model.forward(data["data"]);
-                    var output = loss.forward(prediction, target);
+                    var prediction = model.call(data["data"]);
+                    var output = loss.call(prediction, target);
 
                     output.backward();
 
@@ -203,8 +224,8 @@ namespace TorchSharp.Examples
             using (var d = torch.NewDisposeScope()) {
 
                 foreach (var data in dataLoader) {
-                    var prediction = model.forward(data["data"]);
-                    var output = loss.forward(prediction, data["label"]);
+                    var prediction = model.call(data["data"]);
+                    var output = loss.call(prediction, data["label"]);
                     testLoss += output.ToSingle();
 
                     var pred = prediction.argmax(1);

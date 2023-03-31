@@ -26,10 +26,10 @@ namespace TorchSharp
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            /// <returns></returns>
-            public static ASGD ASGD(IEnumerable<Parameter> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public static ASGD ASGD(IEnumerable<Parameter> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0, bool maximize = false)
             {
-                return new Modules.ASGD(parameters, lr, lambd, alpha, t0, weight_decay);
+                return new Modules.ASGD(parameters, lr, lambd, alpha, t0, weight_decay, maximize);
             }
 
             /// <summary>
@@ -44,10 +44,10 @@ namespace TorchSharp
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            /// <returns></returns>
-            public static ASGD ASGD(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public static ASGD ASGD(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0, bool maximize = false)
             {
-                return new Modules.ASGD(parameters.Select(np => np.parameter), lr, lambd, alpha, t0, weight_decay);
+                return new Modules.ASGD(parameters.Select(np => np.parameter), lr, lambd, alpha, t0, weight_decay, maximize);
             }
 
             /// <summary>
@@ -62,10 +62,10 @@ namespace TorchSharp
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            /// <returns></returns>
-            public static ASGD ASGD(IEnumerable<ParamGroup<ASGD.Options>> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public static ASGD ASGD(IEnumerable<ParamGroup<ASGD.Options>> parameters, double lr = 1e-3, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0, bool maximize = false)
             {
-                return new Modules.ASGD(parameters, lr, lambd, alpha, t0, weight_decay);
+                return new Modules.ASGD(parameters, lr, lambd, alpha, t0, weight_decay, maximize);
             }
         }
     }
@@ -85,9 +85,9 @@ namespace TorchSharp
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
-            /// <returns></returns>
-            public ASGD(IEnumerable<Parameter> parameters, double lr = 0.01, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
-                : this(new ParamGroup[] { new() { Parameters = parameters } }, lr, lambd, alpha, t0, weight_decay)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public ASGD(IEnumerable<Parameter> parameters, double lr = 0.01, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0, bool maximize = false)
+                : this(new ParamGroup[] { new() { Parameters = parameters } }, lr, lambd, alpha, t0, weight_decay, maximize)
             {
             }
 
@@ -102,14 +102,16 @@ namespace TorchSharp
             /// <param name="alpha">Power for eta update (default: 0.75)</param>
             /// <param name="t0">Point at which to start averaging (default: 1e6)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
             /// <returns></returns>
-            public ASGD(IEnumerable<ParamGroup<Options>> parameters, double lr = 0.01, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0)
+            public ASGD(IEnumerable<ParamGroup<Options>> parameters, double lr = 0.01, double lambd = 1e-4, double alpha = 0.75, double t0 = 1e6, double weight_decay = 0, bool maximize = false)
             {
                 if (lr < 0.0) throw new ArgumentException($"Invalid learning rate: {lr}");
 
                 var options = new Options {
                     LearningRate = lr,
                     InitialLearningRate = lr,
+                    maximize = maximize,
                     lambd = lambd,
                     alpha = alpha,
                     t0 = t0,
@@ -134,6 +136,7 @@ namespace TorchSharp
                 return _step<ParamGroup>(group => {
 
                     var options = group.Options as Options;
+                    var maximize = options.maximize.Value;
                     var lambd = options.lambd.Value;
                     var alpha = options.alpha.Value;
                     var weight_decay = options.weight_decay.Value;
@@ -147,6 +150,8 @@ namespace TorchSharp
                         if (grad is null) continue;
 
                         if (grad.is_sparse) throw new ArgumentException("ASGD does not support sparse gradients");
+
+                        if (maximize) grad = -grad;
 
                         var state = (State)_state[param.handle];
 
@@ -175,7 +180,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    ((State)kvp.Value).Dispose();
+                    ((State)kvp.Item2).Dispose();
                 }
                 _state.Clear();
             }
@@ -266,6 +271,7 @@ namespace TorchSharp
                 var opt = param_group.Options as Options;
 
                 // Make sure all the options are set.
+                if (!opt.maximize.HasValue) opt.maximize = def.maximize;
                 if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
                 if (!opt.lambd.HasValue) opt.lambd = def.lambd;
                 if (!opt.alpha.HasValue) opt.alpha = def.alpha;
@@ -282,12 +288,13 @@ namespace TorchSharp
                     state.step = 0;
                     state.eta = param_group.LearningRate;
                     state.mu = 1;
-                    state.ax = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.ax = torch.zeros_like(p).DetachFromDisposeScope();
                 }
             }
 
             public class Options : OptimizerOptions
             {
+                public bool? maximize;
                 public double? lambd;
                 public double? alpha;
                 public double? weight_decay;
@@ -301,6 +308,7 @@ namespace TorchSharp
                 {
                     base.LoadStateDict(source);
                     var opts = source as Options;
+                    maximize = opts.maximize;
                     lambd = opts.lambd;
                     alpha = opts.alpha;
                     weight_decay = opts.weight_decay;
@@ -314,6 +322,7 @@ namespace TorchSharp
                 public override void LoadStateDict(BinaryReader reader)
                 {
                     base.LoadStateDict(reader);
+                    maximize = reader.ReadBoolean();
                     lambd = reader.ReadDouble();
                     alpha = reader.ReadDouble();
                     weight_decay = reader.ReadDouble();
@@ -327,6 +336,7 @@ namespace TorchSharp
                 public override void SaveStateDict(BinaryWriter writer)
                 {
                     base.SaveStateDict(writer);
+                    writer.Write(maximize.Value);
                     writer.Write(lambd.Value);
                     writer.Write(alpha.Value);
                     writer.Write(weight_decay.Value);

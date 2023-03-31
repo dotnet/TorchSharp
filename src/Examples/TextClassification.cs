@@ -7,7 +7,6 @@ using System.Diagnostics;
 
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
-using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp.Examples
 {
@@ -125,9 +124,9 @@ namespace TorchSharp.Examples
 
                 optimizer.zero_grad();
 
-                using (var predicted_labels = model.forward(texts, offsets)) {
+                using (var predicted_labels = model.call(texts, offsets)) {
 
-                    var loss = criterion.forward(predicted_labels, labels);
+                    var loss = criterion.call(predicted_labels, labels);
                     loss.backward();
                     torch.nn.utils.clip_grad_norm_(model.parameters().ToArray(), 0.5);
                     optimizer.step();
@@ -154,8 +153,8 @@ namespace TorchSharp.Examples
 
             foreach (var (labels, texts, offsets) in test_data) {
 
-                using (var predicted_labels = model.forward(texts, offsets)) {
-                    var loss = criterion.forward(predicted_labels, labels);
+                using (var predicted_labels = model.call(texts, offsets)) {
+                    var loss = criterion.call(predicted_labels, labels);
 
                     total_acc += (predicted_labels.argmax(1) == labels).sum().to(torch.CPU).item<long>();
                     total_count += labels.size(0);
@@ -194,9 +193,19 @@ namespace TorchSharp.Examples
             throw new NotImplementedException();
         }
 
-        public Tensor forward(Tensor input, Tensor offsets)
+        public Tensor call(Tensor input, Tensor offsets)
         {
-            return fc.forward(embedding.forward(input, offsets));
+            return fc.call(embedding.call(input, offsets));
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                embedding.Dispose();
+                fc.Dispose();
+                ClearModules();
+            }
+            base.Dispose(disposing);
         }
     }
 }

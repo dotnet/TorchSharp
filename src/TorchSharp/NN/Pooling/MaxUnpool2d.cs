@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_MaxUnpool2d_forward(torch.nn.Module.HType module, IntPtr tensor, IntPtr indices, IntPtr outSize, int outputSizeLength);
-
             public override Tensor forward(Tensor tensor, Tensor indices, long[] output_size = null)
             {
                 unsafe {
@@ -31,6 +28,11 @@ namespace TorchSharp
                     }
                 }
             }
+
+            public new Tensor call(Tensor tensor, Tensor indices, long[] output_size = null)
+            {
+                return base.call(tensor, indices, output_size);
+            }
         }
     }
 
@@ -38,9 +40,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_MaxUnpool2d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr pPadding, int paddingLength, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 2D max pooling over an input signal composed of several input planes.
             /// </summary>
@@ -48,7 +47,7 @@ namespace TorchSharp
             /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <returns></returns>
-            static public MaxUnpool2d MaxUnpool2d(long kernelSize, long? stride = null, long? padding = null)
+            public static MaxUnpool2d MaxUnpool2d(long kernelSize, long? stride = null, long? padding = null)
             {
                 var pStride = stride.HasValue ? new long[] { stride.Value, stride.Value } : null;
                 var pPadding = padding.HasValue ? new long[] { padding.Value, padding.Value } : null;
@@ -62,7 +61,7 @@ namespace TorchSharp
             /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <returns></returns>
-            static public MaxUnpool2d MaxUnpool2d((long, long) kernelSize, (long, long)? stride = null, (long, long)? padding = null)
+            public static MaxUnpool2d MaxUnpool2d((long, long) kernelSize, (long, long)? stride = null, (long, long)? padding = null)
             {
                 var pStride = stride.HasValue ? new long[] { stride.Value.Item1, stride.Value.Item2 } : null;
                 var pPadding = padding.HasValue ? new long[] { padding.Value.Item1, padding.Value.Item2 } : null;
@@ -76,13 +75,35 @@ namespace TorchSharp
             /// <param name="strides">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <returns></returns>
-            static public MaxUnpool2d MaxUnpool2d(long[] kernelSize, long[] strides = null, long[] padding = null)
+            public static MaxUnpool2d MaxUnpool2d(long[] kernelSize, long[] strides = null, long[] padding = null)
             {
                 unsafe {
                     fixed (long* pkernelSize = kernelSize, pstrides = strides, pPadding = padding) {
                         var handle = THSNN_MaxUnpool2d_ctor((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), (IntPtr)pPadding, (padding == null ? 0 : padding.Length), out var boxedHandle);
                         if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                         return new MaxUnpool2d(handle, boxedHandle);
+                    }
+                }
+            }
+
+            public static partial class functional
+            {
+                /// <summary>
+                /// Computes a partial inverse of MaxPool2d.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="indices"></param>
+                /// <param name="outputSize"></param>
+                /// <returns></returns>
+                public static Tensor max_unpool2d(Tensor input, Tensor indices, long[] outputSize)
+                {
+                    unsafe {
+                        fixed (long* poutputSize = outputSize) {
+                            var res = THSTensor_maxunpool2d(input.Handle, indices.Handle,
+                                (IntPtr)poutputSize, outputSize.Length);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
                     }
                 }
             }

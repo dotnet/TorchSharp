@@ -27,9 +27,9 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
-            /// <param name="maximize"></param>
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
             /// <returns></returns>
-            public static Adam Adam(IEnumerable<Parameter> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
+            public static Adam Adam(IEnumerable<Parameter> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
                 return new Adam(parameters, lr, beta1, beta2, eps, weight_decay, amsgrad, maximize);
             }
@@ -47,9 +47,9 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
-            /// <param name="maximize"></param>
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
             /// <returns></returns>
-            public static Adam Adam(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
+            public static Adam Adam(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
                 return new Adam(parameters.Select(np => np.parameter), lr, beta1, beta2, eps, weight_decay, amsgrad, maximize);
             }
@@ -67,9 +67,9 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability (default: 1e-8)</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="amsgrad">Whether to use the AMSGrad variant of this algorithm. (default: False)</param>
-            /// <param name="maximize"></param>
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing</param>
             /// <returns></returns>
-            public static Adam Adam(IEnumerable<Adam.ParamGroup> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.99, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
+            public static Adam Adam(IEnumerable<Adam.ParamGroup> parameters, double lr = 1e-3, double beta1 = 0.9, double beta2 = 0.999, double eps = 1e-8, double weight_decay = 0, bool amsgrad = false, bool maximize = false)
             {
                 return new Adam(parameters, lr, beta1, beta2, eps, weight_decay, amsgrad, maximize);
             }
@@ -183,7 +183,7 @@ namespace TorchSharp
                         Tensor denom = null;
                         if (amsgrad) {
                             var t0 = state.max_exp_avg_sq;
-                            state.max_exp_avg_sq = torch.maximum(t0, state.exp_avg_sq).DetatchFromDisposeScope();
+                            state.max_exp_avg_sq = torch.maximum(t0, state.exp_avg_sq).DetachFromDisposeScope();
                             t0.Dispose();
                             denom = (state.max_exp_avg_sq.sqrt() / Math.Sqrt(bias_correction2)).add_(eps);
                         } else {
@@ -200,7 +200,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    ((State)kvp.Value).Dispose();
+                    ((State)kvp.Item2).Dispose();
                 }
             }
 
@@ -215,9 +215,7 @@ namespace TorchSharp
                 {
                     exp_avg.Dispose();
                     exp_avg_sq.Dispose();
-                    if (max_exp_avg_sq is not null) {
-                        max_exp_avg_sq.Dispose();
-                    }
+                    max_exp_avg_sq?.Dispose();
                 }
 
                 /// <summary>
@@ -228,9 +226,7 @@ namespace TorchSharp
                 {
                     exp_avg.to(device);
                     exp_avg_sq.to(device);
-                    if (max_exp_avg_sq is not null) {
-                        max_exp_avg_sq.to(device);
-                    }
+                    max_exp_avg_sq?.to(device);
                 }
 
                 /// <summary>
@@ -244,14 +240,9 @@ namespace TorchSharp
                     exp_avg_sq.Load(reader);
                     var hasMax = reader.ReadBoolean();
                     if (hasMax) {
-                        if (max_exp_avg_sq is null) {
-                            max_exp_avg_sq = torch.zeros_like(exp_avg_sq);
-                        }
-                        max_exp_avg_sq.Load(reader);
-                    }
-                    else {
-                        if (max_exp_avg_sq is not null)
-                            max_exp_avg_sq.Dispose();
+                        TensorExtensionMethods.Load(ref max_exp_avg_sq, reader);
+                    } else {
+                        max_exp_avg_sq?.Dispose();
                         max_exp_avg_sq = null;
                     }
                 }
@@ -268,8 +259,7 @@ namespace TorchSharp
                     if (max_exp_avg_sq is not null) {
                         writer.Write(true);
                         max_exp_avg_sq.Save(writer);
-                    }
-                    else {
+                    } else {
                         writer.Write(false);
                     }
                 }
@@ -334,10 +324,10 @@ namespace TorchSharp
                     var state = new State();
                     _state[p.Handle] = state;
                     state.step = 0;
-                    state.exp_avg = torch.zeros_like(p).DetatchFromDisposeScope();
-                    state.exp_avg_sq = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.exp_avg = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.exp_avg_sq = torch.zeros_like(p).DetachFromDisposeScope();
                     if (opt.amsgrad.Value) {
-                        state.max_exp_avg_sq = torch.zeros_like(p).DetatchFromDisposeScope();
+                        state.max_exp_avg_sq = torch.zeros_like(p).DetachFromDisposeScope();
                     }
                 }
             }

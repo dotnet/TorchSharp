@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static TorchSharp.torch.nn;
-using static TorchSharp.torch.nn.functional;
 using Xunit;
 
 using static TorchSharp.torch;
@@ -42,12 +41,12 @@ namespace TorchSharp
             float learning_rate = 0.00004f;
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss.forward(eval, y);
+                var eval = seq.call(x);
+                var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -86,12 +85,12 @@ namespace TorchSharp
             float learning_rate = 0.00004f;
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                var eval = seq.forward(x);
-                var output = loss.forward(eval, y);
+                var eval = seq.call(x);
+                var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -140,7 +139,7 @@ namespace TorchSharp
             var optimizer = torch.optim.Adam(seq.parameters(), learning_rate);
             var (beta1, beta2) = optimizer.Betas;
             Assert.Equal(0.9, beta1);
-            Assert.Equal(0.99, beta2);
+            Assert.Equal(0.999, beta2);
 
             optimizer.Betas = (0.85, 0.975);
 
@@ -150,13 +149,13 @@ namespace TorchSharp
         }
 
 
-        private static void CreateDataAndLabels(Generator gen, out Tensor data, out Tensor labels, int batchSize = 64, int inputSize = 1000, int categories = 10)
+        internal static void CreateDataAndLabels(Generator gen, out Tensor data, out Tensor labels, int batchSize = 64, int inputSize = 1000, int categories = 10)
         {
             data = torch.rand(new long[] { 64, inputSize }, generator: gen);
             labels = torch.rand(new long[] { 64, categories }, generator: gen);
         }
 
-        private static void CreateLinearLayers(Generator gen, out Linear linear1, out Linear linear2, int inputSize = 1000, int categories = 10, int hiddenSize = 100)
+        internal static void CreateLinearLayers(Generator gen, out Linear linear1, out Linear linear2, int inputSize = 1000, int categories = 10, int hiddenSize = 100)
         {
             linear1 = Linear(inputSize, hiddenSize);
             linear2 = Linear(hiddenSize, categories);
@@ -186,16 +185,36 @@ namespace TorchSharp
             }
         }
 
-        private static float TrainLoop(IModule<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer)
-        {
-            var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+        /// <summary>
+        /// Used to test optimizers created with 'maximize: true'
+        /// </summary>
+        class NegateLoss : Loss<Tensor, Tensor, Tensor>
+        {
+            internal NegateLoss(Loss<Tensor, Tensor, Tensor> base_loss)
+            {
+                this.base_loss = base_loss;
+            }
+
+            public override Tensor forward(Tensor input1, Tensor input2)
+            {
+                return base_loss.call(input1, input2).neg();
+            }
+
+            private Loss<Tensor, Tensor, Tensor> base_loss;
+        }
+
+        private static float TrainLoop(IModule<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer, bool maximize = false)
+        {
+            Loss<Tensor, Tensor, Tensor> loss = MSELoss(Reduction.Sum);
+            if (maximize) loss = new NegateLoss(loss);
+
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss.forward(eval, y);
+                using var eval = seq.call(x);
+                using var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -207,25 +226,30 @@ namespace TorchSharp
                 optimizer.step();
             }
 
-            // After 10 iterations, the final loss should always be less than the initial loss.
-            Assert.True(finalLoss < initialLoss);
+            // After 10 iterations, the final criterion value should always be better than the initial value.
+            if (maximize) {
+                Assert.True(finalLoss > initialLoss);
+            } else {
+                Assert.True(finalLoss < initialLoss);
+            }
 
             return finalLoss;
         }
 
-        private static float TrainLoop(IModule<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true, int iters = 10)
+        private static float TrainLoop(IModule<Tensor, Tensor> seq, Tensor x, Tensor y, optim.Optimizer optimizer, optim.lr_scheduler.LRScheduler scheduler, bool check_lr = true, int iters = 10, bool maximize = false)
         {
-            var loss = MSELoss(Reduction.Sum);
+            Loss<Tensor, Tensor, Tensor> loss = MSELoss(Reduction.Sum);
+            if (maximize) loss = new NegateLoss(loss);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             var pgFirst = optimizer.ParamGroups.First();
             var lastLR = pgFirst.LearningRate;
 
             for (int i = 0; i < iters; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss.forward(eval, y);
+                using var eval = seq.call(x);
+                using var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -245,8 +269,12 @@ namespace TorchSharp
                 }
             }
 
-            // After 10 iterations, the final loss should always be less than the initial loss.
-            Assert.True(finalLoss < initialLoss);
+            // After 10 iterations, the final criterion value should always be better than the initial value.
+            if (maximize) {
+                Assert.True(finalLoss > initialLoss);
+            } else {
+                Assert.True(finalLoss < initialLoss);
+            }
 
             return finalLoss;
         }
@@ -277,6 +305,22 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer);
 
             LossIsClose(53.3606f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdamMax()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Adam(seq.parameters(), maximize:true);
+
+            var loss = TrainLoop(seq, x, y, optimizer, maximize:true);
+
+            LossIsClose(53.3606f, -loss);
         }
 
         [Fact]
@@ -346,7 +390,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            LossIsClose(94.941f, loss);
+            LossIsClose(94.69524f, loss);
         }
 
         /// <summary>
@@ -436,7 +480,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            LossIsClose(197.63f, loss);
+            LossIsClose(197.873f, loss);
         }
 
 
@@ -550,6 +594,23 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer);
 
             LossIsClose(74.754f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingAdadeltaMax()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 1.0f;
+            var optimizer = torch.optim.Adadelta(seq.parameters(), learning_rate, maximize:true);
+
+            var loss = TrainLoop(seq, x, y, optimizer, maximize: true);
+
+            LossIsClose(74.754f, -loss);
         }
 
         [Fact]
@@ -993,6 +1054,22 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestTrainingASGDMax()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.ASGD(seq.parameters(), maximize:true);
+
+            var loss = TrainLoop(seq, x, y, optimizer, maximize:true);
+
+            LossIsClose(57.748f, -loss);
+        }
+
+        [Fact]
         public void TestTrainingASGDLambda()
         {
             var gen = new Generator(4711);
@@ -1096,6 +1173,23 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer);
 
             LossIsClose(229.68f, loss);
+        }
+
+
+        [Fact]
+        public void TestTrainingRpropMax()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            var optimizer = torch.optim.Rprop(seq.parameters(), maximize: true);
+
+            var loss = TrainLoop(seq, x, y, optimizer, maximize:true);
+
+            LossIsClose(229.68f, -loss);
         }
 
         [Fact]
@@ -1209,6 +1303,23 @@ namespace TorchSharp
             var loss = TrainLoop(seq, x, y, optimizer);
 
             LossIsClose(156.339f, loss);
+        }
+
+        [Fact]
+        public void TestTrainingRMSAlphaMax()
+        {
+            var gen = new Generator(4711);
+            CreateLinearLayers(gen, out var lin1, out var lin2);
+            CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.00004f;
+            var optimizer = torch.optim.RMSProp(seq.parameters(), learning_rate, alpha: 0.75, maximize:true);
+
+            var loss = TrainLoop(seq, x, y, optimizer, maximize:true);
+
+            LossIsClose(156.339f, -loss);
         }
 
         [Fact]
@@ -1516,14 +1627,14 @@ namespace TorchSharp
 
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             double lastLR = learning_rate;
 
             for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss.forward(eval, y);
+                using var eval = seq.call(x);
+                using var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -1544,7 +1655,7 @@ namespace TorchSharp
 
             Assert.True(finalLoss < initialLoss);
 
-            LossIsClose(69.423f, finalLoss);
+            LossIsClose(64.019f, finalLoss);
         }
 
         [Fact]
@@ -1562,14 +1673,14 @@ namespace TorchSharp
 
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             double lastLR = learning_rate;
 
             for (int i = 0; i < 10; i++) {
-                using var eval = seq.forward(x);
-                using var output = loss.forward(eval, y);
+                using var eval = seq.call(x);
+                using var output = loss.call(eval, y);
                 var lossVal = output.ToSingle();
 
                 finalLoss = lossVal;
@@ -1642,14 +1753,14 @@ namespace TorchSharp
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate);
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             for (int i = 0; i < 10; i++) {
 
                 Func<Tensor> closure = () => {
-                    using var eval = seq.forward(x);
-                    var output = loss.forward(eval, y);
+                    using var eval = seq.call(x);
+                    var output = loss.call(eval, y);
 
                     finalLoss = output.ToSingle();
 
@@ -1694,7 +1805,7 @@ namespace TorchSharp
             var optimizer = torch.optim.LBFGS(seq.parameters(), learning_rate, max_iter: 15, max_eval: 15);
             var loss = MSELoss(Reduction.Sum);
 
-            float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+            float initialLoss = loss.call(seq.call(x), y).ToSingle();
             float finalLoss = float.MaxValue;
 
             Assert.Throws<ArgumentNullException>(() => optimizer.step(null));
@@ -1702,8 +1813,8 @@ namespace TorchSharp
             for (int i = 0; i < 10; i++) {
 
                 Func<Tensor> closure = () => {
-                    using var eval = seq.forward(x);
-                    var output = loss.forward(eval, y);
+                    using var eval = seq.call(x);
+                    var output = loss.call(eval, y);
 
                     finalLoss = output.ToSingle();
 
@@ -1791,12 +1902,12 @@ namespace TorchSharp
                     using (Tensor x = torch.randn(new long[] { 64, 3, 28, 28 }, device: (Device)device),
                            y = torch.randn(new long[] { 64, 10 }, device: (Device)device)) {
 
-                        float initialLoss = loss.forward(seq.forward(x), y).ToSingle();
+                        float initialLoss = loss.call(seq.call(x), y).ToSingle();
                         float finalLoss = float.MaxValue;
 
                         for (int i = 0; i < 10; i++) {
-                            var eval = seq.forward(x);
-                            var output = loss.forward(eval, y);
+                            var eval = seq.call(x);
+                            var output = loss.call(eval, y);
                             var lossVal = output.ToSingle();
 
                             finalLoss = lossVal;

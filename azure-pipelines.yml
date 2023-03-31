@@ -28,7 +28,7 @@ jobs:
     name: Ubuntu_x64
     # This reports the GLIB_ and GLIBCXX_ dependencies on the system which ends up getting baked into
     # the generated libTorchSharp.so (and partly determines which Linux systems that binary will
-    # be usable on), then installs clang-6.0 (LibTorch likes this for building C++ 14), then installs .NET 5.0
+    # be usable on), then installs clang-6.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
     prepScript:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
@@ -36,7 +36,7 @@ jobs:
         sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
         wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-5.0 &&
+        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-6.0 &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test /p:SkipCuda=true --blame -c
@@ -69,7 +69,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test --blame /p:SkipCuda=true --blame -c
     pool:
-      vmImage: 'macos-latest'
+      vmImage: 'macos-11'
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
@@ -98,9 +98,17 @@ jobs:
         sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
         wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-5.0 &&
+        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-6.0 &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     displayName: Install dependencies
+
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCpuPackages=true
+    condition: eq(variables['BuildLibTorchPackages'], 'true')
+    displayName: Download libtorch native binaries
+
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-11.7/libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
+    condition: eq(variables['BuildLibTorchPackages'], 'true')
+    displayName: Download libtorch native CUDA binaries
 
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build linux
@@ -126,7 +134,25 @@ jobs:
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
     vmImage: 'windows-2019'
+
   steps:
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      packageType: sdk
+      version: 6.0.402
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCpuPackages=true
+    condition: eq(variables['BuildLibTorchPackages'], 'true')
+    displayName: Download libtorch native binaries
+
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-11.7/libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCudaPackages=true
+    condition: eq(variables['BuildLibTorchPackages'], 'true')
+    displayName: Download libtorch native CUDA binaries
+
+
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build Windows
 
@@ -150,8 +176,11 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'macos-latest'
+    vmImage: 'macos-11'
   steps:
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /t:Build /p:IncludeLibTorchCpuPackages=true
+    displayName: Download libtorch native binaries
+
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
     displayName: Build mac
 
@@ -380,7 +409,7 @@ jobs:
         sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
         wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-5.0 &&
+        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-6.0 &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     displayName: Install dependencies
 
@@ -577,7 +606,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp.*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -604,7 +633,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/TorchSharp-*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -614,7 +643,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -624,7 +653,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -634,7 +663,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/libtorch-cpu*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
     continueOnError: true
 
@@ -679,7 +708,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -690,7 +719,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -701,7 +730,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -712,7 +741,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -723,7 +752,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*win*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -766,7 +795,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -777,7 +806,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -788,7 +817,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true
@@ -799,7 +828,7 @@ jobs:
     inputs:
       command: push
       packagesToPush:  '$(Pipeline.Workspace)/**/*cuda*linux*.nupkg'
-      publishVstsFeed: 'TorchSharp/SignedPackages'
+      publishVstsFeed: 'TorchSharp/TestPackages'
       allowPackageConflicts: true
       # often fails - try but ignore the error until we sort it out
     continueOnError: true

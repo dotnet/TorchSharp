@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
     using System.IO;
-    using Google.Protobuf.WellKnownTypes;
     using Modules;
     using TorchSharp.Utils;
 
@@ -37,9 +37,6 @@ namespace TorchSharp
                     internal HType() : base(IntPtr.Zero, true)
                     {
                     }
-
-                    [DllImport("LibTorchSharp")]
-                    private static extern void THSNN_Optimizer_dispose(HType handle);
 
                     protected override bool ReleaseHandle()
                     {
@@ -93,9 +90,6 @@ namespace TorchSharp
                     }
                 }
 
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Optimizer_zero_grad(HType module);
-
                 /// <summary>
                 /// Sets the gradients of all parameters to zero.
                 /// </summary>
@@ -119,9 +113,6 @@ namespace TorchSharp
                 }
 
 
-                [DllImport("LibTorchSharp")]
-                private static extern IntPtr THSNN_Optimizer_step(HType module, LossClosure closure);
-
                 /// <summary>
                 /// Performs a single optimization step (parameter update).
                 /// </summary>
@@ -140,9 +131,6 @@ namespace TorchSharp
 
                     return (res == IntPtr.Zero) ? null : new Tensor(res);
                 }
-
-                [DllImport("LibTorchSharp")]
-                private static extern void THSNN_Optimizer_getParameters(HType module, AllocatePinnedArray allocator);
 
                 /// <summary>
                 /// Get the parameters that the optimizer is handling.
@@ -298,7 +286,9 @@ namespace TorchSharp
             public void load_state_dict(System.IO.BinaryReader reader)
             {
                 var optName = reader.ReadString();
-                if (optName != this.GetType().Name) throw new InvalidDataException($"The saved optimizer state data is not for a {this.GetType().Name} optimizer.");
+                if (optName != this.GetType().Name) {
+                    throw new InvalidDataException($"Mismatched optimizer type: expected '{this.GetType().Name}', but found '{optName}' in the loaded stream.");
+                }
 
                 // First, figure out how many entries.
                 var options = reader.Decode();
@@ -464,7 +454,7 @@ namespace TorchSharp
 
             protected OptimizerOptions _defaults;
 
-            protected Dictionary<IntPtr, OptimizerState> _state = new Dictionary<IntPtr, OptimizerState>();
+            protected Utils.OrderedDict<IntPtr, OptimizerState> _state = new Utils.OrderedDict<IntPtr, OptimizerState>();
         }
 
         /// <summary>
@@ -544,6 +534,29 @@ namespace TorchSharp
             /// </summary>
             /// <param name="device">The device to move all state to.</param>
             public virtual void to(Device device) { }
+
+            protected static void LoadConditionalStateTensor(BinaryReader reader, ref Tensor result)
+            {
+                var hasTensor = reader.ReadBoolean();
+
+                if (hasTensor) {
+                    TensorExtensionMethods.Load(ref result, reader);
+                } else {
+                    if (result is not null)
+                        result.Dispose();
+                    result = null;
+                }
+            }
+
+            protected static void SaveConditionalStateTensor(BinaryWriter writer, Tensor tensor)
+            {
+                if (tensor is not null) {
+                    writer.Write(true);
+                    tensor.Save(writer);
+                } else {
+                    writer.Write(false);
+                }
+            }
         }
 
         /// <summary>

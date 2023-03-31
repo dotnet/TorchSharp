@@ -23,7 +23,7 @@ let run (argv : string[]) =
 
     let transform = torchvision.transforms.Compose(HorizontalFlip(), Rotate(50f), Resize(256, 256))
 
-    let transformed = transform.forward(img)
+    let transformed = transform.call(img)
 
     let tfile = Path.Combine(dir, fname + "-transformed.png")
 

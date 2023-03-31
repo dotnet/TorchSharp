@@ -13,6 +13,9 @@ using Xunit;
 using static TorchSharp.torch;
 using static TorchSharp.torchvision.models;
 
+
+using System.Numerics;
+
 #nullable enable
 
 namespace TorchSharp
@@ -78,7 +81,7 @@ namespace TorchSharp
             );
 
             using var @in = torch.tensor(3);
-            using var @out = net.forward(@in);
+            using var @out = net.call(@in);
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
@@ -98,7 +101,7 @@ namespace TorchSharp
             using (Tensor negative = torch.randn(new long[] { 15, 5 })) {
 
                 var output = nn.TripletMarginWithDistanceLoss(distance);
-                using (var result = output.forward(anchor, positive, negative)) { }
+                using (var result = output.call(anchor, positive, negative)) { }
             }
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -123,8 +126,8 @@ namespace TorchSharp
             var loss = nn.MSELoss(Reduction.Sum);
 
             Func<Tensor> closure = () => {
-                using var eval = seq.forward(x);
-                var output = loss.forward(eval, y);
+                using var eval = seq.call(x);
+                var output = loss.call(eval, y);
 
                 var l = output.ToSingle();
 
@@ -153,7 +156,7 @@ namespace TorchSharp
             using var @in = torch.tensor(3);
 
             for (var i = 0; i < 1000; i++) {
-                using var @out = net.forward(@in);
+                using var @out = net.call(@in);
             }
         }
 
@@ -194,7 +197,7 @@ namespace TorchSharp
                 for (var i = 0; i < 100; i++) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    t = seq.forward(t);
+                    t = seq.call(t);
                 }
             }
 
@@ -452,7 +455,7 @@ namespace TorchSharp
 
             var c2 = torch.nn.Conv2d(3, 16, kernelSize: (1, 7), stride: (1, 1), padding: (0, 3));
             var Win = torch.rand(16, 3, 8, 8);
-            var s = c2.forward(Win).shape;
+            var s = c2.call(Win).shape;
             Assert.Equal(new long[] { 16, 16, 8, 8 }, s);
         }
 
@@ -463,16 +466,16 @@ namespace TorchSharp
 
             using (var pool = BatchNorm1d(28)) {
                 pool.eval();
-                pool.forward(torch.ones(1, 28));
+                pool.call(torch.ones(1, 28));
             }
             using (var pool = BatchNorm1d(28))
             using (var seq = Sequential(pool)) {
                 seq.eval();
-                seq.forward(torch.ones(1, 28));
+                seq.call(torch.ones(1, 28));
             }
             using (var seq = new Module500()) {
                 seq.eval();
-                seq.forward(torch.ones(1, 28));
+                seq.call(torch.ones(1, 28));
             }
         }
 
@@ -482,7 +485,7 @@ namespace TorchSharp
 
             public Module500() : base(nameof(TestModule)) { RegisterComponents(); }
 
-            public override torch.Tensor forward(torch.Tensor t) => bn1.forward(t);
+            public override torch.Tensor forward(torch.Tensor t) => bn1.call(t);
         }
 
         [Fact]
@@ -491,7 +494,7 @@ namespace TorchSharp
             using var _ = NewDisposeScope();
 
             var model = new Module510(1, 32);
-            model.forward(torch.randn(16, 1, 32));
+            model.call(torch.randn(16, 1, 32));
 
             var w0 = model.get_parameter("stack.0.weight").clone();
             var w1 = model.get_parameter("stack.1.weight").clone();
@@ -541,7 +544,7 @@ namespace TorchSharp
 
             public override torch.Tensor forward(torch.Tensor t)
             {
-                return this.stack.forward(t);
+                return this.stack.call(t);
             }
         }
 
@@ -560,9 +563,9 @@ namespace TorchSharp
                 var x = torch.ones(5, 3).cuda();
                 var y = torch.ones(5, 4).cuda();
 
-                var z = model.forward(x);
+                var z = model.call(x);
                 var lossFunc = torch.nn.CrossEntropyLoss();
-                var loss = lossFunc.forward(y, z);
+                var loss = lossFunc.call(y, z);
                 loss.backward();
                 optimizer.step();
 
@@ -633,7 +636,7 @@ namespace TorchSharp
 
             public override torch.Tensor forward(torch.Tensor t)
             {
-                return this.seq.forward(t);
+                return this.seq.call(t);
             }
         }
 
@@ -674,7 +677,7 @@ namespace TorchSharp
 
             public override torch.Tensor forward(torch.Tensor t)
             {
-                return this.seq.forward(t);
+                return this.seq.call(t);
             }
         }
 
@@ -687,7 +690,7 @@ namespace TorchSharp
                    h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
             using (var gru = GRU(10, 20)) {
                 gru.to(device);
-                var (output, hN) = gru.forward(input);
+                var (output, hN) = gru.call(input);
                 Assert.Equal(h0.shape, hN.shape);
                 Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
             }
@@ -702,7 +705,7 @@ namespace TorchSharp
                    h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
             using (var lstm = LSTM(10, 20)) {
                 lstm.to(device);
-                var (output, hN, hX) = lstm.forward(input);
+                var (output, hN, hX) = lstm.call(input);
                 Assert.Equal(h0.shape, hN.shape);
                 Assert.Equal(h0.shape, hX.shape);
                 Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
@@ -718,7 +721,7 @@ namespace TorchSharp
                h0 = torch.randn(new long[] { 1, 3, 20 }, device: device))
             using (var rnn = RNN(10, 20)) {
                 rnn.to(device);
-                var (output, hN) = rnn.forward(input);
+                var (output, hN) = rnn.call(input);
                 Assert.Equal(h0.shape, hN.shape);
                 Assert.Equal(new long[] { input.shape[0], input.shape[1], 20 }, output.shape);
             }
@@ -785,7 +788,351 @@ namespace TorchSharp
             var x = torch.zeros(1, 3, 64, 160);
 
             // This should not blow up.
-            var tmp = bone.forward(x);
+            var tmp = bone.call(x);
+        }
+
+        [Fact]
+        [TestOf(nameof(Modules.Categorical.probs))]
+        public void ValidateBug836()
+        {
+            int nSamples = Convert.ToInt32(5e3);
+            random.manual_seed(1);
+            Tensor actionLogits = ones(nSamples, 2);
+            Modules.Categorical distribution = new(logits: actionLogits);
+            Tensor actions = distribution.sample();
+            Tensor entropy = distribution.entropy();
+            Tensor log_prob = distribution.log_prob(actions);
+            var eMean = entropy.mean().ToSingle();
+            var lMean = log_prob.mean().ToSingle();
+
+            Assert.Equal(0.693147, eMean, 0.0001);
+            Assert.Equal(-0.693147, lMean, 0.0001);
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.distributions.Bernoulli))]
+        public void ValidateBug838()
+        {
+            int nSamples = Convert.ToInt32(5e6);
+            random.manual_seed(1);
+            Tensor actionLogits = rand(nSamples, 2);
+            // This should not blow up.
+            var distribution = distributions.Bernoulli(logits: actionLogits);
+        }
+
+        [Fact]
+        public void ValidateMultiStepLR()
+        {
+            var gen = new Generator(4711);
+            TestTraining.CreateLinearLayers(gen, out var lin1, out var lin2);
+            TestTraining.CreateDataAndLabels(gen, out var x, out var y);
+
+            var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+            double learning_rate = 0.1;
+            var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+            var scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, new int[] { 3, 5, 7 }, 0.9);
+
+            optimizer.zero_grad();
+            optimizer.step();
+            scheduler.step(1);
+            Assert.Equal(0.1, optimizer.ParamGroups.First().LearningRate);
+            scheduler.step(2);
+            Assert.Equal(0.1, optimizer.ParamGroups.First().LearningRate);
+            scheduler.step(3);
+            Assert.Equal(0.09, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(4);
+            Assert.Equal(0.09, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(5);
+            Assert.Equal(0.09 * 0.9, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(6);
+            scheduler.step(7);
+            Assert.Equal(0.09 * 0.9 * 0.9, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(8);
+            Assert.Equal(0.09 * 0.9 * 0.9, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(9);
+            Assert.Equal(0.09 * 0.9 * 0.9, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            scheduler.step(10);
+            Assert.Equal(0.09 * 0.9 * 0.9, optimizer.ParamGroups.First().LearningRate, 0.00001);
+        }
+
+
+
+        [Fact]
+        public void ValidatePolynomialLR()
+        {
+            {
+                // Linear decay
+                var gen = new Generator(4711);
+                TestTraining.CreateLinearLayers(gen, out var lin1, out var lin2);
+                TestTraining.CreateDataAndLabels(gen, out var x, out var y);
+
+                var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+                double learning_rate = 0.1;
+                var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+                var scheduler = torch.optim.lr_scheduler.PolynomialLR(optimizer, 10, 1);
+
+                optimizer.zero_grad();
+                optimizer.step();
+                scheduler.step(1);
+                Assert.Equal(0.09, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(2);
+                Assert.Equal(0.08, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(3);
+                Assert.Equal(0.07, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(4);
+                Assert.Equal(0.06, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(5);
+                Assert.Equal(0.05, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(6);
+                scheduler.step(7);
+                Assert.Equal(0.03, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(8);
+                Assert.Equal(0.02, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(9);
+                Assert.Equal(0.01, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(10);
+                Assert.Equal(0.0, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            }
+            {
+                // Squared decay
+                var gen = new Generator(4711);
+                TestTraining.CreateLinearLayers(gen, out var lin1, out var lin2);
+                TestTraining.CreateDataAndLabels(gen, out var x, out var y);
+
+                var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("lin2", lin2));
+
+                double learning_rate = 0.1;
+                var optimizer = torch.optim.SGD(seq.parameters(), learning_rate);
+                var scheduler = torch.optim.lr_scheduler.PolynomialLR(optimizer, 10, 2);
+
+                optimizer.zero_grad();
+                optimizer.step();
+                scheduler.step(1);
+                Assert.Equal(0.081, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(2);
+                Assert.Equal(0.064, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(3);
+                Assert.Equal(0.049, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(4);
+                Assert.Equal(0.036, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(5);
+                Assert.Equal(0.025, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(6);
+                scheduler.step(7);
+                Assert.Equal(0.009, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(8);
+                Assert.Equal(0.004, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(9);
+                Assert.Equal(0.001, optimizer.ParamGroups.First().LearningRate, 0.00001);
+                scheduler.step(10);
+                Assert.Equal(0.0, optimizer.ParamGroups.First().LearningRate, 0.00001);
+            }
+        }
+
+
+        [Fact]
+        public void Validate845()
+        {
+            var module1 = new Module845(10, 10);
+            var module2 = new Module845(10, 10);
+            var module3 = new Module845(10, 10);
+
+            var dev = torch.cuda.is_available() ? CUDA : CPU;
+
+            module1.to(dev);
+            module1.validate(float32, dev.type);
+
+            module2.to(dev, float64);
+            module2.validate(float64, dev.type);
+
+            module3.to(float64);
+            module3.validate(float64, CPU.type);
+        }
+
+        internal class Module845 : Module<Tensor, Tensor>
+        {
+            private Module<Tensor, Tensor> seq;
+
+            public Module845(int in_channels, int out_channels) : base(String.Empty)
+            {
+                seq = Sequential(Conv2d(1, 32, 3),
+                     ReLU(),
+                     Flatten(),
+                     LogSoftmax(1)
+                );
+
+                register_buffer("test", torch.ones(10, 10));
+                RegisterComponents();
+            }
+
+            public override torch.Tensor forward(torch.Tensor t)
+            {
+                return this.seq.call(t);
+            }
+
+            public void validate(ScalarType expected, DeviceType devType)
+            {
+                foreach (var (name, buffer) in named_buffers()) {
+                    Assert.Equal(expected, buffer.dtype);
+                    Assert.Equal(devType, buffer.device_type);
+                }
+            }
+        }
+
+        [Fact]
+        public void Validate851()
+        {
+            var a = torch.tensor(new long[] { 100, 200, 300, 400 }, new long[] { 1, 4 });
+            a.print();
+            var str = a.ToString(TorchSharp.TensorStringStyle.Numpy);
+            Assert.Equal("[[100 200 300 400]]", str);
+        }
+
+        [Fact]
+        public void Validate852()
+        {
+            float[] a = new float[12];
+            var x = torch.as_tensor(a);
+        }
+
+        [Fact]
+        public void Validate877()
+        {
+            if (torch.cuda.is_available()) {
+                var device = torch.CUDA;
+                torch.TryInitializeDeviceType(device.type);
+                var train = new GitBlockTest("test", device);
+
+                var p0 = train.named_parameters().Select(p => p.name).ToArray();
+
+                train.to(device);
+
+                int named_parameters_1 = train.named_parameters().Count();
+                train.to(torch.CUDA);
+                int named_parameters_2 = train.named_parameters().Count();
+
+                Assert.Equal(named_parameters_1, named_parameters_2);
+            }
+        }
+
+
+        class GitTestCnn : Module<Tensor, Tensor>
+        {
+            private readonly TorchSharp.Modules.Sequential layers0;
+
+            public GitTestCnn(string name, Device? device = null) : base(name)
+            {
+                var modules = new List<(string, Module<Tensor, Tensor>)>();
+                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernelSize: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), paddingMode: PaddingModes.Replicate, bias: false)));
+                layers0 = Sequential(modules);
+
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor t)
+            {
+                var t1 = layers0.call(t).squeeze_(3);
+                return t1;
+            }
+        }
+
+        class GitTestGru : Module<Tensor, Tensor>
+        {
+            private TorchSharp.Modules.GRU layers1;
+            private TorchSharp.Modules.GRU layers2;
+            private Tensor init_h0;
+            private Tensor init_h1;
+
+            public GitTestGru(string name, Device? device = null) : base(name)
+            {
+                layers1 = nn.GRU(1, 4, batchFirst: true);
+                layers2 = nn.GRU(4, 4, batchFirst: true);
+
+                var state_size = new long[] { 1, 1, 4 };
+                init_h0 = torch.nn.Parameter(torch.zeros(state_size, device: device));
+                init_h1 = torch.nn.Parameter(torch.zeros(state_size, device: device));
+
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                var (rnn_output, states_h0) = layers1.call(input, init_h0);
+                init_h0 = states_h0.detach_();
+                var (_, states_h1) = layers2.call(rnn_output, init_h1);
+                init_h1 = states_h1.detach_();
+                var x2 = states_h1[-1];
+                return x2;
+            }
+        }
+
+        class GitBlockTest : Module<Tensor, Tensor>
+        {
+            private readonly Module<Tensor, Tensor> sequence_layers;
+
+            public GitBlockTest(string name, Device? device = null) : base(name)
+            {
+                var modules = nn.ModuleDict<Module<Tensor, Tensor>>();
+                modules.Add(("cnn-1", new GitTestCnn("GitTest", device)));
+                modules.Add(("rnn-2", new GitTestGru("GitTestGru", device)));
+                sequence_layers = Sequential(modules.values());
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                var t0 = sequence_layers.call(input);
+                return t0;
+            }
+        }
+
+
+        [Fact]
+        public void Validate912()
+        {
+            var test = new Test_912(2);
+            Dictionary<string, Tensor> sd = test.state_dict(); // No layer2.modules keyword
+            Assert.Contains(sd.Keys, k => k.StartsWith("layer2.modules"));
+        }
+
+        public class Test_912 : nn.Module
+        {
+            public nn.Module layer;
+            public nn.Module layer2;
+
+            public Test_912(int layernum) : base("Test_912")
+            {
+                layer = nn.Linear(16, 2);
+                layer2 = new Test2_912((from l in Enumerable.Range(0, layernum)
+                                    select new Test3_912()).ToArray(),
+                                    (from l in Enumerable.Range(0, layernum)
+                                     select new Test3_912()).ToArray());
+                this.RegisterComponents();
+            }
+        }
+        public class Test2_912 : nn.Module
+        {
+            public new Modules.ModuleList<Test3_912> modules;
+            public Modules.ModuleList<nn.Module> modules2;
+            public nn.Module layer;
+            public Test2_912(Test3_912[] ms, nn.Module[] ms2) : base("Test2_912")
+            {
+                layer = nn.Linear(16, 2);
+                modules = nn.ModuleList(ms);
+                modules2 = nn.ModuleList(ms2);
+                this.RegisterComponents();
+            }
+        }
+        public class Test3_912 : nn.Module
+        {
+            public nn.Module layer;
+            public Test3_912() : base("Test3_912")
+            {
+                layer = nn.Linear(16, 2);
+                this.RegisterComponents();
+            }
         }
     }
 }

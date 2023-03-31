@@ -23,10 +23,10 @@ namespace TorchSharp
                 }
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 using (var chance = torch.randint(transforms.Length, new long[] { 1 }, ScalarType.Int32))
-                    return transforms[chance.item<int>()].forward(input);
+                    return transforms[chance.item<int>()].call(input);
             }
 
             private ITransform[] transforms;

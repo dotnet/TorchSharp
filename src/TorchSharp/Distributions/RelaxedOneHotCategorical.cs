@@ -4,7 +4,6 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
-    using System.Linq;
     using Modules;
     using static torch.distributions;
 

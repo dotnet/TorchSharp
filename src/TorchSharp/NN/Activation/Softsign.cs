@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -15,9 +15,6 @@ namespace TorchSharp
         public sealed class Softsign : torch.nn.Module<Tensor, Tensor>
         {
             internal Softsign(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Softsign_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
@@ -37,14 +34,11 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Softsign_ctor(out IntPtr pBoxedModule);
-
             /// <summary>
             /// Softsign
             /// </summary>
             /// <returns></returns>
-            static public Softsign Softsign()
+            public static Softsign Softsign()
             {
                 var handle = THSNN_Softsign_ctor(out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -58,10 +52,10 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="x">The input tensor</param>
                 /// <returns></returns>
-                static public Tensor Softsign(Tensor x)
+                public static Tensor Softsign(Tensor x)
                 {
                     using (var m = nn.Softsign()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

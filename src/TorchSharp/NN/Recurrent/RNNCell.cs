@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
-
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -18,14 +17,11 @@ namespace TorchSharp
             {
             }
 
-            public new static RNNCell Load(String modelPath)
+            public new static RNNCell Load(string modelPath)
             {
                 var res = Module<Tensor, Tensor>.Load(modelPath);
                 return new RNNCell(res.handle.DangerousGetHandle(), IntPtr.Zero);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNNCell_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0);
 
             /// <summary>
             /// Apply the RNN cell to an input tensor.
@@ -39,15 +35,6 @@ namespace TorchSharp
                 if (hN == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(hN);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNNCell_bias_ih(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_RNNCell_set_bias_ih(torch.nn.Module.HType module, IntPtr tensor);
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNNCell_bias_hh(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_RNNCell_set_bias_hh(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? bias_ih {
                 get {
@@ -76,15 +63,6 @@ namespace TorchSharp
 
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNNCell_weight_ih(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_RNNCell_set_weight_ih(torch.nn.Module.HType module, IntPtr tensor);
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNNCell_weight_hh(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_RNNCell_set_weight_hh(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? weight_ih {
                 get {
@@ -118,9 +96,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_RNNCell_ctor(long input_size, long hidden_size, long nonlinearity, bool bias, out IntPtr pBoxedModule);
-
             /// <summary>
             /// An Elman RNN cell with tanh or ReLU non-linearity.
             /// </summary>
@@ -131,7 +106,7 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public RNNCell RNNCell(long inputSize, long hiddenSize, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static RNNCell RNNCell(long inputSize, long hiddenSize, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_RNNCell_ctor(inputSize, hiddenSize, (long)nonLinearity, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

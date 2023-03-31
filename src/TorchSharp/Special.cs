@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -8,8 +8,405 @@ namespace TorchSharp
     {
         public static class special
         {
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_entr(IntPtr tensor);
+            /// <summary>
+            /// Airy function.
+            /// </summary>
+            /// <param name="input">Input tensor</param>
+            /// <param name="out">Optional output tensor, will be modified if present.</param>
+            /// <returns></returns>
+            public static Tensor airy_ai(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_airy_ai(input.Handle) :
+                    THSSpecial_airy_ai_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Bessel function of the first kind of order 0.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
+            public static Tensor bessel_j0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_bessel_j0(input.Handle) :
+                    THSSpecial_bessel_j0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Bessel function of the first kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
+            public static Tensor bessel_j1(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_bessel_j1(input.Handle) :
+                    THSSpecial_bessel_j1_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Bessel function of the second kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
+            public static Tensor bessel_y0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_bessel_y0(input.Handle) :
+                    THSSpecial_bessel_y0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Bessel function of the second kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
+            public static Tensor bessel_y1(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_bessel_y1(input.Handle) :
+                    THSSpecial_bessel_y1_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Modified Bessel function of the first kind of order 0.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
+            public static Tensor modified_bessel_i0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_modified_bessel_i0(input.Handle) :
+                    THSSpecial_modified_bessel_i0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Modified Bessel function of the first kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
+            public static Tensor modified_bessel_i1(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_modified_bessel_i1(input.Handle) :
+                    THSSpecial_modified_bessel_i1_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Modified Bessel function of the second kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
+            public static Tensor modified_bessel_k0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_modified_bessel_k0(input.Handle) :
+                    THSSpecial_modified_bessel_k0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Modified Bessel function of the second kind of order 1.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
+            public static Tensor modified_bessel_k1(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_modified_bessel_k1(input.Handle) :
+                    THSSpecial_modified_bessel_k1_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Scaled modified Bessel function of the second kind of order 0
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
+            public static Tensor scaled_modified_bessel_k0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_scaled_modified_bessel_k0(input.Handle) :
+                    THSSpecial_scaled_modified_bessel_k0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Scaled modified Bessel function of the second kind of order 1
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
+            public static Tensor scaled_modified_bessel_k1(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_scaled_modified_bessel_k1(input.Handle) :
+                    THSSpecial_scaled_modified_bessel_k1_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Bessel function of the first kind of order 0.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="out">An optional output tensor, which will be modified if present.</param>
+            public static Tensor spherical_bessel_j0(Tensor input, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_spherical_bessel_j0(input.Handle) :
+                    THSSpecial_spherical_bessel_j0_out(input.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the first kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor chebyshev_polynomial_t(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_chebyshev_polynomial_t(x.Handle, n.Handle) :
+                    THSSpecial_chebyshev_polynomial_t_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the second kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor chebyshev_polynomial_u(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_chebyshev_polynomial_u(x.Handle, n.Handle) :
+                    THSSpecial_chebyshev_polynomial_u_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the third kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor chebyshev_polynomial_v(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_chebyshev_polynomial_v(x.Handle, n.Handle) :
+                    THSSpecial_chebyshev_polynomial_v_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the fourth kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor chebyshev_polynomial_w(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_chebyshev_polynomial_w(x.Handle, n.Handle) :
+                    THSSpecial_chebyshev_polynomial_w_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the first kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor shifted_chebyshev_polynomial_t(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_shifted_chebyshev_polynomial_t(x.Handle, n.Handle) :
+                    THSSpecial_shifted_chebyshev_polynomial_t_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the second kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor shifted_chebyshev_polynomial_u(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_shifted_chebyshev_polynomial_u(x.Handle, n.Handle) :
+                    THSSpecial_shifted_chebyshev_polynomial_u_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the third kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor shifted_chebyshev_polynomial_v(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_shifted_chebyshev_polynomial_v(x.Handle, n.Handle) :
+                    THSSpecial_shifted_chebyshev_polynomial_v_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the Chebyshev polynomial of the fourth kind.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor shifted_chebyshev_polynomial_w(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_shifted_chebyshev_polynomial_w(x.Handle, n.Handle) :
+                    THSSpecial_shifted_chebyshev_polynomial_w_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Probabilist's Hermite polynomials.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Hermite_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor hermite_polynomial_h(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_hermite_polynomial_h(x.Handle, n.Handle) :
+                    THSSpecial_hermite_polynomial_h_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Physicists's Hermite polynomials.
+            ///
+            /// See: https://en.wikipedia.org/wiki/Hermite_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor hermite_polynomial_he(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_hermite_polynomial_he(x.Handle, n.Handle) :
+                    THSSpecial_hermite_polynomial_he_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Laguerre polynomials
+            /// 
+            /// See: https://en.wikipedia.org/wiki/Laguerre_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            /// <returns></returns>
+            public static Tensor laguerre_polynomial_l(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_laguerre_polynomial_l(x.Handle, n.Handle) :
+                    THSSpecial_laguerre_polynomial_l_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Legendre polynomials
+            /// 
+            /// https://en.wikipedia.org/wiki/Legendre_polynomials
+            /// </summary>
+            /// <param name="x">The input tensor.</param>
+            /// <param name="n">n</param>
+            /// <param name="out">An optional output tensor.</param>
+            public static Tensor legendre_polynomial_p(Tensor x, Tensor n, Tensor @out = null)
+            {
+                var res = @out is null ?
+                    THSSpecial_legendre_polynomial_p(x.Handle, n.Handle) :
+                    THSSpecial_legendre_polynomial_p_out(x.Handle, n.Handle, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
 
             /// <summary>
             /// Computes the entropy on input, elementwise.
@@ -24,9 +421,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_erf(IntPtr tensor);
-
             /// <summary>
             /// Computes the error function of input.
             /// </summary>
@@ -39,9 +433,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_erfc(IntPtr tensor);
 
             /// <summary>
             /// Computes the complementary error function of input.
@@ -56,9 +447,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_erfcx(IntPtr tensor);
-
             /// <summary>
             /// Computes the scaled complementary error function of input.
             /// </summary>
@@ -71,9 +459,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_erfinv(IntPtr tensor);
 
             /// <summary>
             /// Computes the inverse error function of input.
@@ -88,9 +473,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_expit(IntPtr tensor);
-
             /// <summary>
             /// Computes the expit (also known as the logistic sigmoid function) of the elements of input.
             /// </summary>
@@ -103,9 +485,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_expm1(IntPtr tensor);
 
             /// <summary>
             /// Computes the exponential of the elements minus 1 of input.
@@ -120,9 +499,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_exp2(IntPtr tensor);
-
             /// <summary>
             /// Computes the base two exponential function of input.
             /// </summary>
@@ -136,9 +512,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_gammaln(IntPtr tensor);
-
             /// <summary>
             /// Computes the natural logarithm of the absolute value of the gamma function on input.
             /// </summary>
@@ -151,9 +524,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_gammainc(IntPtr tensor, IntPtr other);
 
             /// <summary>
             /// Computes the regularized lower incomplete gamma function.
@@ -169,9 +539,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_gammaincc(IntPtr tensor, IntPtr other);
-
             /// <summary>
             /// Computes the regularized upper incomplete gamma function.
             /// </summary>
@@ -185,9 +552,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_polygamma(long n, IntPtr tensor);
 
             /// <summary>
             /// Computes the n-th derivative of the digamma function on input.
@@ -203,9 +567,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_multigammaln(IntPtr tensor, long p);
-
             /// <summary>
             /// Computes the multivariate log-gamma function with dimension pp element-wise.
             /// </summary>
@@ -219,9 +580,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_digamma(IntPtr tensor);
 
             /// <summary>
             /// Computes the logarithmic derivative of the gamma function on input.
@@ -242,9 +600,6 @@ namespace TorchSharp
             /// <param name="input">The second non-negative input tensor</param>
             public static Tensor psi(Tensor input) => digamma(input);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_i0(IntPtr tensor);
-
             /// <summary>
             /// Computes the zeroth order modified Bessel function of the first kind for each element of input.
             /// </summary>
@@ -257,9 +612,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_i0e(IntPtr tensor);
 
             /// <summary>
             /// Computes the exponentially scaled zeroth order modified Bessel function of the first kind (as defined below) for each element of input.
@@ -274,9 +626,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_i1(IntPtr tensor);
-
             /// <summary>
             /// Computes the first order modified Bessel function of the first kind for each element of input.
             /// </summary>
@@ -289,9 +638,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_i1e(IntPtr tensor);
 
             /// <summary>
             /// Computes the exponentially scaled first order modified Bessel function of the first kind (as defined below) for each element of input.
@@ -306,9 +652,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_logit(IntPtr tensor);
-
             /// <summary>
             /// Returns a new tensor with the logit of the elements of input.
             /// </summary>
@@ -322,9 +665,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_log_softmax(IntPtr tensor, long dim, sbyte scalar_type);
-
             /// <summary>
             /// Returns a new tensor with the logit of the elements of input.
             /// </summary>
@@ -332,7 +672,7 @@ namespace TorchSharp
             /// <param name="dim">A dimension along which log_softmax will be computed.</param>
             /// <param name="dtype">The desired data type of returned tensor.</param>
             /// <returns></returns>
-            public static Tensor log_softmax(Tensor input, int dim, ScalarType? dtype = null)
+            public static Tensor log_softmax(Tensor input, long dim, ScalarType? dtype = null)
             {
                 var dt = dtype.HasValue ? dtype.Value : input.dtype;
                 var res = THSSpecial_log_softmax(input.Handle, dim, (sbyte)dt);
@@ -340,9 +680,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_ndtr(IntPtr tensor);
 
             /// <summary>
             /// Computes the area under the standard Gaussian probability density function, integrated from minus infinity to input, elementwise.
@@ -357,9 +694,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_ndtri(IntPtr tensor);
-
             /// <summary>
             /// Computes the argument, x, for which the area under the Gaussian probability density function (integrated from minus infinity to x) is equal to input, elementwise.
             /// </summary>
@@ -372,9 +706,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_sinc(IntPtr tensor);
 
             /// <summary>
             /// Computes the normalized sinc of input.
@@ -401,8 +732,21 @@ namespace TorchSharp
             /// <returns></returns>
             public static Tensor sigmoid_(Tensor input) => input.sigmoid_();
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_xlog1py(IntPtr tensor, IntPtr other);
+            /// <summary>
+            /// Computes the softmax function for the input tensor.
+            /// </summary>
+            /// <param name="input">The input tensor</param>
+            /// <param name="dim">A dimension along which softmax will be computed.</param>
+            /// <param name="dtype">The desired data type of returned tensor.</param>
+            /// <returns></returns>
+            public static Tensor softmax(Tensor input, long dim, ScalarType? dtype = null)
+            {
+                var dt = dtype.HasValue ? dtype.Value : input.dtype;
+                var res = THSSpecial_softmax(input.Handle, dim, (sbyte)dt);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
 
             /// <summary>
             /// Computes input * log1p(other). Similar to SciPy’s scipy.special.xlog1py.
@@ -417,9 +761,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSSpecial_zeta(IntPtr tensor, IntPtr other);
 
             /// <summary>
             /// Computes the Hurwitz zeta function, elementwise.

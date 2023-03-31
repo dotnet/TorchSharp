@@ -136,7 +136,7 @@ namespace TorchSharp
             /// <remarks>
             /// ModuleList can be indexed like a regular list, but modules it contains are properly registered, and will be visible by all Module methods.
             /// </remarks>
-            public static ModuleList<T> ModuleList<T>(params T[] modules) where T : Module => new ModuleList<T>();
+            public static ModuleList<T> ModuleList<T>(params T[] modules) where T : Module => new ModuleList<T>(modules);
         }
     }
 }

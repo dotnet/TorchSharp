@@ -1,8 +1,6 @@
 using System;
 using Xunit;
 
-using TorchSharp;
-
 namespace TorchSharp
 {
     public class TestTorchAudio
@@ -71,7 +69,7 @@ namespace TorchSharp
         {
             var transform = torchaudio.transforms.Spectrogram();
             var waveform = make_waveform();
-            var spectrogram = transform.forward(waveform);
+            var spectrogram = transform.call(waveform);
             var expected = torchaudio.functional.spectrogram(
                 waveform: waveform,
                 pad: 0,
@@ -98,7 +96,7 @@ namespace TorchSharp
                 win_length: 400,
                 power: null,
                 normalized: false);
-            var waveform = transform.forward(spectrogram);
+            var waveform = transform.call(spectrogram);
             var expected = torchaudio.functional.inverse_spectrogram(
                 spectrogram: spectrogram,
                 length: null,
@@ -110,6 +108,22 @@ namespace TorchSharp
                 normalized: false);
             var mse = torch.mean(torch.square(waveform - expected)).item<float>();
             Assert.InRange(mse, 0f, 1e-10f);
+        }
+
+        [Fact]
+        public void TransformsMelSpectrogram()
+        {
+            var mel_spectrogram = torchaudio.transforms.MelSpectrogram(
+                n_fft: 1024, n_mels: 80, hop_length: 400);
+            var inverse_mel_scale = torchaudio.transforms.InverseMelScale(
+                mel_spectrogram.n_fft / 2 + 1,
+                n_mels: mel_spectrogram.n_mels, max_iter: 10);
+            var waveform = make_waveform();
+            var mel_spec = mel_spectrogram.call(waveform);
+            long expected_length = waveform.shape[1] / mel_spectrogram.hop_length + 1;
+            Assert.Equal(new long[] { 1, mel_spectrogram.n_mels, expected_length }, mel_spec.shape);
+            var spec = inverse_mel_scale.call(mel_spec);
+            Assert.Equal(new long[] { 1, mel_spectrogram.n_fft / 2 + 1, expected_length }, spec.shape);
         }
 
         [Fact]
@@ -183,8 +197,8 @@ namespace TorchSharp
                 length: null,
                 rand_init: true);
             var waveform = make_waveform();
-            var specgram = transform.forward(waveform);
-            var recovered_waveform = inverse_transform.forward(specgram);
+            var specgram = transform.call(waveform);
+            var recovered_waveform = inverse_transform.call(specgram);
 
             Assert.Equal(new long[] { 1, 80320 }, recovered_waveform.shape);
         }
@@ -282,7 +296,7 @@ namespace TorchSharp
         {
             var waveform = make_waveform();
             var transform = torchaudio.transforms.Resample(16000, 8000, device: waveform.device, dtype: waveform.dtype);
-            var resampled_waveform = transform.forward(waveform);
+            var resampled_waveform = transform.call(waveform);
             var x = waveform.reshape(1, -1, 2).mean(dimensions: new long[] { -1 });
             var y = resampled_waveform;
             var mse = torch.mean(torch.square(x - y)).item<float>();

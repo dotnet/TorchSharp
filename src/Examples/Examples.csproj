@@ -6,9 +6,10 @@
     <TestCuda>true</TestCuda>
     <!-- The Directory.Build.props initialize TargetFrameworks to multiple targets. We have to clear that out to set only the targets we support. -->
     <TargetFrameworks></TargetFrameworks>
-    <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net5.0</TargetFrameworks>
+    <LangVersion>9.0</LangVersion>
+    <TargetFrameworks Condition="'$(SkipNetCoreBuild)' != 'true'">net6.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' And '$(SkipNetFxBuild)' != 'true'">net472;$(TargetFrameworks)</TargetFrameworks>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net5.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net6.0</TargetFrameworks>
     <TestUsesLibTorch>true</TestUsesLibTorch>
     <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
     <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
@@ -23,9 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpZipLib" Version="1.3.3" />
+    <PackageReference Include="SharpZipLib" Version="1.4.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
   </ItemGroup>
 
   <ItemGroup>

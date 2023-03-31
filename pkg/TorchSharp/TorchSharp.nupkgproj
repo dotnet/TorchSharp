@@ -6,11 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\net5.0\$(MSBuildProjectName).props" />
-    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\net5.0\$(MSBuildProjectName).targets" />
+    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\net6.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\net6.0\$(MSBuildProjectName).targets" />
     <Content Include="$(RepoRoot)\LICENSE.txt" Pack="true" PackagePath="" />
-    <PackageReference Include="Google.Protobuf" Version="3.21.5" />
-    <PackageReference Include="SharpZipLib" Version="1.3.3" />
+    <PackageReference Include="Google.Protobuf" Version="3.21.9" />
     <PackageReference Include="System.Memory" Version="4.5.3" />
   </ItemGroup>
 </Project>

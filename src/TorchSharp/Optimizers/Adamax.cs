@@ -184,7 +184,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    ((State)kvp.Value).Dispose();
+                    ((State)kvp.Item2).Dispose();
                 }
             }
 
@@ -285,8 +285,8 @@ namespace TorchSharp
                     var state = new State();
                     _state[p.Handle] = state;
                     state.step = 0;
-                    state.exp_avg = torch.zeros_like(p).DetatchFromDisposeScope();
-                    state.exp_inf = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.exp_avg = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.exp_inf = torch.zeros_like(p).DetachFromDisposeScope();
                 }
             }
 

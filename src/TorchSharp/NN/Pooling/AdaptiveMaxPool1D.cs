@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_AdaptiveMaxPool1d_forward(IntPtr module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_AdaptiveMaxPool1d_forward(handle.DangerousGetHandle(), tensor.Handle);
@@ -34,16 +31,13 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_AdaptiveMaxPool1d_ctor(IntPtr psizes, int length, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 1D adaptive max pooling over an input signal composed of several input planes.
             /// The output size is H, for any input size.The number of output features is equal to the number of input planes.
             /// </summary>
             /// <param name="outputSize">The target output size H.</param>
             /// <returns></returns>
-            static public AdaptiveMaxPool1d AdaptiveMaxPool1d(long outputSize)
+            public static AdaptiveMaxPool1d AdaptiveMaxPool1d(long outputSize)
             {
                 unsafe {
                     fixed (long* pkernelSize = new long[] { outputSize }) {
@@ -63,10 +57,10 @@ namespace TorchSharp
                 /// <param name="x"></param>
                 /// <param name="outputSize">The target output size H.</param>
                 /// <returns></returns>
-                static public Tensor adaptive_max_pool1d(Tensor x, long outputSize)
+                public static Tensor adaptive_max_pool1d(Tensor x, long outputSize)
                 {
                     using (var d = nn.AdaptiveMaxPool1d(outputSize)) {
-                        return d.forward(x);
+                        return d.call(x);
                     }
                 }
             }

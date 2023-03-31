@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_LocalResponseNorm_forward(IntPtr module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for LocalResponseNorm argument: {tensor.Dimensions}");
@@ -35,13 +32,10 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_LocalResponseNorm_ctor(long size, double alpha, double beta, double k, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies local response normalization over an input signal composed of several input planes, where channels occupy the second dimension. Applies normalization across channels.
             /// </summary>
-            static public LocalResponseNorm LocalResponseNorm(long size, double alpha = 0.0001, double beta = 0.75, double k = 1.0)
+            public static LocalResponseNorm LocalResponseNorm(long size, double alpha = 0.0001, double beta = 0.75, double k = 1.0)
             {
                 unsafe {
                     var handle = THSNN_LocalResponseNorm_ctor(size, alpha, beta, k, out var boxedHandle);

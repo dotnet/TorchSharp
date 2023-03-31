@@ -35,10 +35,60 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        /// Set options for printing.
+        /// </summary>
+        /// <param name="precision">Number of digits of precision for floating point output.</param>
+        /// <param name="linewidth">The number of characters per line for the purpose of inserting line breaks (default = 100).</param>
+        /// <param name="newLine">The string to use to represent new-lines. Starts out as 'Environment.NewLine'</param>
+        /// <param name="sci_mode">Enable scientific notation.</param>
+        public static void set_printoptions(
+            int precision,
+            int? linewidth = null,
+            string? newLine = null,
+            bool sci_mode = false)
+        {
+            torch.floatFormat = sci_mode ? $"E{precision}" : $"F{precision}";
+            if (newLine is not null)
+                torch.newLine = newLine;
+            if (linewidth.HasValue)
+                torch.lineWidth = linewidth.Value;
+        }
+
+        /// <summary>
+        /// Set options for printing.
+        /// </summary>
+        /// <param name="style">The default string formatting style used by ToString(), print(), and str()</param>
+        /// <param name="floatFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
+        /// <param name="linewidth">The number of characters per line for the purpose of inserting line breaks (default = 100).</param>
+        /// <param name="newLine">The string to use to represent new-lines. Starts out as 'Environment.NewLine'</param>
+        public static void set_printoptions(
+            TensorStringStyle? style = null,
+            string? floatFormat = null,
+            int? linewidth = null,
+            string? newLine = null)
+        {
+            if (style.HasValue)
+                torch._style = style.Value;
+            if (floatFormat is not null)
+                torch.floatFormat = floatFormat;
+            if (newLine is not null)
+                torch.newLine = newLine;
+            if (linewidth.HasValue)
+                torch.lineWidth = linewidth.Value;
+        }
+
         public const TensorStringStyle julia = TensorStringStyle.Julia;
         public const TensorStringStyle numpy = TensorStringStyle.Numpy;
 
         private static TensorStringStyle _style = TensorStringStyle.Julia;
+
+        internal static string floatFormat = "g5";
+        internal static string newLine = Environment.NewLine;
+        internal static int lineWidth = 100;
     }
 
     /// <summary>
@@ -60,7 +110,10 @@ namespace TorchSharp
         /// Get a string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
-        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="fltFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
@@ -74,7 +127,7 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string str(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
+        public static string str(this Tensor tensor, string? fltFormat = null, int? width = null, string? newLine = "\n", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
         {
             return tensor.ToString(style, fltFormat, width, cultureInfo, newLine);
         }
@@ -83,7 +136,10 @@ namespace TorchSharp
         /// Get a Julia-style string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
-        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="fltFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
@@ -95,7 +151,7 @@ namespace TorchSharp
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string jlstr(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
+        public static string jlstr(this Tensor tensor, string? fltFormat = null, int? width = null, string? newLine = "\n", CultureInfo? cultureInfo = null)
         {
             return tensor.ToString(TensorStringStyle.Julia, fltFormat, width, cultureInfo, newLine);
         }
@@ -122,7 +178,10 @@ namespace TorchSharp
         /// Get a numpy-style string representation of the tensor.
         /// </summary>
         /// <param name="tensor">The input tensor.</param>
-        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="fltFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
@@ -144,7 +203,10 @@ namespace TorchSharp
         /// interactive notebook use, primarily.
         /// </summary>
         /// <param name="t">The input tensor.</param>
-        /// <param name="fltFormat">The format string to use for floating point values.</param>
+        /// <param name="fltFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
         /// <param name="width">The width of each line of the output string.</param>
         /// <param name="newLine">The newline string to use, defaults to system default.</param>
         /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
@@ -166,6 +228,14 @@ namespace TorchSharp
         internal static bool IsIntegral(this Tensor tensor)
         {
             return IsIntegral(tensor.dtype);
+        }
+
+        public static ReadOnlySpan<int> IntShape(this Tensor tensor)
+        {
+            var shape = tensor.shape;
+            var int_shape = new int[shape.Length];
+            for (var i = 0; i < shape.Length; ++i) int_shape[i] = (int)shape[i];
+            return int_shape;
         }
 
         /// <summary>
@@ -238,7 +308,7 @@ namespace TorchSharp
             bool copied = false;
 
             if (tensor.device_type != DeviceType.CPU) {
-                tensor = tensor.to(torch.CPU);
+                tensor = tensor.to(CPU);
                 copied = true;
             }
 
@@ -301,7 +371,51 @@ namespace TorchSharp
 
             if (!skip) {
                 var device = tensor.device;
-                if (device.type != DeviceType.CPU) tensor.to(torch.CPU);
+                if (device.type != DeviceType.CPU) tensor.to(CPU);
+                tensor.bytes = bytes;
+                tensor.to(device);
+            }
+        }
+
+        public static void Load(ref Tensor tensor, System.IO.BinaryReader reader, bool skip = false)
+        {
+            // First, read the type
+            var type = (ScalarType)reader.Decode();
+
+            // Then, the shape
+            var shLen = reader.Decode();
+            long[] loadedShape = new long[shLen];
+
+            long totalSize = 1;
+            for (int i = 0; i < shLen; ++i) {
+                loadedShape[i] = reader.Decode();
+                totalSize *= loadedShape[i];
+            }
+
+            //
+            // TODO: Fix this so that you can read large tensors. Right now, they are limited to 2GB
+            //
+            if (totalSize > int.MaxValue)
+                throw new NotImplementedException("Loading tensors larger than 2GB");
+
+            if (tensor is null) {
+                // If the tensor doesn't exist, initialize by zeros unless
+                // it's going to be loaded from the stream.
+                tensor = skip
+                    ? torch.zeros(loadedShape, dtype: type)
+                    : torch.empty(loadedShape, dtype: type);
+            }
+            else if (!skip && !loadedShape.SequenceEqual(tensor.shape)) {
+                // We only care about this if the bytes will be written to the tensor.
+                throw new ArgumentException("Mismatched tensor shape while loading. Make sure that the model you are loading into is exactly the same as the origin.");
+            }
+
+            // This needs to be done even if the tensor is skipped, since we have to advance the input stream.
+            var bytes = reader.ReadBytes((int)(totalSize * tensor.ElementSize));
+
+            if (!skip) {
+                var device = tensor.device;
+                if (device.type != DeviceType.CPU) tensor.to(CPU);
                 tensor.bytes = bytes;
                 tensor.to(device);
             }
@@ -320,37 +434,25 @@ namespace TorchSharp
         {
             var array = doCopy ? (T[])rawArray.Clone() : rawArray;
 
-            switch (true) {
-            case bool _ when typeof(T) == typeof(byte): {
-                    return torch.tensor((array as byte[])!, dimensions, requires_grad: requires_grad); ;
-                }
-            case bool _ when typeof(T) == typeof(sbyte): {
-                    return torch.tensor((array as sbyte[])!, dimensions, requires_grad: requires_grad); ;
-                }
-            case bool _ when typeof(T) == typeof(short): {
-                    return torch.tensor((array as short[])!, dimensions, requires_grad: requires_grad); ;
-                }
-            case bool _ when typeof(T) == typeof(int): {
-                    return torch.tensor((array as int[])!, dimensions, requires_grad: requires_grad);
-                }
-            case bool _ when typeof(T) == typeof(long): {
-                    return torch.tensor((array as long[])!, dimensions, requires_grad: requires_grad);
-                }
-            case bool _ when typeof(T) == typeof(double): {
-                    return torch.tensor((array as double[])!, dimensions, requires_grad: requires_grad);
-                }
-            case bool _ when typeof(T) == typeof(float): {
-                    return torch.tensor((array as float[])!, dimensions, requires_grad: requires_grad);
-                }
-            case bool _ when typeof(T) == typeof(bool): {
-                    return torch.tensor((array as bool[])!, dimensions, requires_grad: requires_grad);
-                }
-            //case bool _ when typeof(T) == typeof(System.Numerics.Complex):
-            //    {
-            //        return ComplexFloat64Tensor.from(array as System.Numerics.Complex[], dimensions, requires_grad);
-            //    }
-            default: throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
-            }
+            return true switch {
+                true when typeof(T) == typeof(byte) => tensor((array as byte[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(sbyte) => tensor((array as sbyte[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(short) => tensor((array as short[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(int) => tensor((array as int[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(long) => tensor((array as long[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(double) => tensor((array as double[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(float) => tensor((array as float[])!, dimensions,
+                    requires_grad: requires_grad),
+                true when typeof(T) == typeof(bool) => tensor((array as bool[])!, dimensions,
+                    requires_grad: requires_grad),
+                _ => throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.")
+            };
         }
 
         /// <summary>
@@ -361,26 +463,26 @@ namespace TorchSharp
         /// <param name="device">The device to place the tensor on.</param>
         /// <param name="requires_grad">If true, the tensor must track its gradients.</param>
         /// <returns></returns>
-        public static Tensor ToTensor<T>(this T scalar, torch.Device? device = null, bool requires_grad = false) where T : struct
+        public static Tensor ToTensor<T>(this T scalar, Device? device = null, bool requires_grad = false) where T : struct
         {
             if (requires_grad && typeof(T) != typeof(float) && typeof(T) != typeof(double)) {
                 throw new ArgumentException(nameof(requires_grad), "Only floating point types support gradients.");
             }
 
             if (typeof(T) == typeof(byte))
-                return torch.tensor((byte)(object)scalar, uint8, device, requires_grad);
+                return tensor((byte)(object)scalar, uint8, device, requires_grad);
             if (typeof(T) == typeof(sbyte))
-                return torch.tensor((sbyte)(object)scalar, int8, device, requires_grad);
+                return tensor((sbyte)(object)scalar, int8, device, requires_grad);
             if (typeof(T) == typeof(short))
-                return torch.tensor((short)(object)scalar, int16, device, requires_grad);
+                return tensor((short)(object)scalar, int16, device, requires_grad);
             if (typeof(T) == typeof(int))
-                return torch.tensor((int)(object)scalar, int32, device, requires_grad);
+                return tensor((int)(object)scalar, int32, device, requires_grad);
             if (typeof(T) == typeof(long))
-                return torch.tensor((long)(object)scalar, int64, device, requires_grad);
+                return tensor((long)(object)scalar, int64, device, requires_grad);
             if (typeof(T) == typeof(float))
-                return torch.tensor((float)(object)scalar, float32, device, requires_grad);
+                return tensor((float)(object)scalar, float32, device, requires_grad);
             if (typeof(T) == typeof(double))
-                return torch.tensor((double)(object)scalar, float64, device, requires_grad);
+                return tensor((double)(object)scalar, float64, device, requires_grad);
             throw new NotImplementedException($"Creating tensor of type {typeof(T)} is not supported.");
         }
 

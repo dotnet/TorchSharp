@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -10,7 +10,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class RNN : torch.nn.Module
+        public sealed class RNN : torch.nn.Module<Tensor, Tensor?, (Tensor, Tensor)>
         {
             internal RNN(IntPtr handle, IntPtr boxedHandle, long hiddenSize, long numLayers, bool batchFirst, bool bidirectional) : base(handle, boxedHandle)
             {
@@ -25,9 +25,6 @@ namespace TorchSharp
             private bool _bidirectional;
             private bool _batch_first;
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNN_forward(torch.nn.Module.HType module, IntPtr input, IntPtr h_0, out IntPtr h_n);
-
             /// <summary>
             /// Applies a multi-layer Elman RNN with \tanhtanh or \text{ReLU}ReLU non-linearity to an input sequence.
             /// </summary>
@@ -35,7 +32,7 @@ namespace TorchSharp
             /// <param name="h0">Tensor of shape (num_layers * num_directions, batch, hidden_size)containing the initial hidden state for each element in the batch.
             /// Defaults to 0 if not provided. If the RNN is bidirectional, num_directions should be 2, else it should be 1.</param>
             /// <returns></returns>
-            public (Tensor, Tensor) forward(Tensor input, Tensor? h0 = null)
+            public override (Tensor, Tensor) forward(Tensor input, Tensor? h0)
             {
                 if (h0 is null) {
                     var N = _batch_first ? input.shape[0] : input.shape[1];
@@ -49,8 +46,7 @@ namespace TorchSharp
                 return (new Tensor(res), new Tensor(hN));
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static torch.nn.utils.rnn.PackedSequence.HType THSNN_RNN_forward_with_packed_input(torch.nn.Module.HType module, torch.nn.utils.rnn.PackedSequence.HType input, IntPtr h_0, out IntPtr h_n);
+            public new (Tensor, Tensor) call(Tensor input, Tensor? h0 = null) => base.call(input, h0);
 
             /// <summary>
             /// Applies a multi-layer Elman RNN with \tanhtanh or \text{ReLU}ReLU non-linearity to an input sequence.
@@ -59,7 +55,7 @@ namespace TorchSharp
             /// <param name="h0">Tensor of shape (num_layers * num_directions, batch, hidden_size)containing the initial hidden state for each element in the batch.
             /// Defaults to 0 if not provided. If the RNN is bidirectional, num_directions should be 2, else it should be 1.</param>
             /// <returns></returns>
-            public (torch.nn.utils.rnn.PackedSequence, Tensor) forward(torch.nn.utils.rnn.PackedSequence input, Tensor? h0 = null)
+            public (torch.nn.utils.rnn.PackedSequence, Tensor) call(torch.nn.utils.rnn.PackedSequence input, Tensor? h0 = null)
             {
                 if (h0 is null) {
                     var data = input.data;
@@ -75,19 +71,11 @@ namespace TorchSharp
                 return (new torch.nn.utils.rnn.PackedSequence(res), new Tensor(hN));
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_RNN_flatten_parameters(torch.nn.Module.HType module);
-
             public void flatten_parameters()
             {
                 THSNN_RNN_flatten_parameters(handle);
                 torch.CheckForErrors();
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNN_bias_ih(torch.nn.Module.HType module, long idx);
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNN_bias_hh(torch.nn.Module.HType module, long idx);
 
             public Parameter? get_bias_ih(long idx)
             {
@@ -105,11 +93,6 @@ namespace TorchSharp
 
 #if false   // Disabled until we can figure out how to set the native code parameters.
 
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_RNN_set_bias_ih(torch.nn.Module.HType module, IntPtr tensor, long idx);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_RNN_set_bias_hh(torch.nn.Module.HType module, IntPtr tensor, long idx);
-
             public void set_bias_ih(Tensor? value, long idx)
             {
                 THSNN_RNN_set_bias_ih(handle, (value is null ? IntPtr.Zero : value.Handle), idx);
@@ -124,11 +107,6 @@ namespace TorchSharp
                 ConditionallyRegisterParameter($"bias_hh_l{idx}", value);
             }
 #endif
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNN_weight_ih(torch.nn.Module.HType module, long idx);
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_RNN_weight_hh(torch.nn.Module.HType module, long idx);
 
             public Parameter? get_weight_ih(long idx)
             {
@@ -145,10 +123,6 @@ namespace TorchSharp
             }
 
 #if false   // Disabled until we can figure out how to set the native code parameters.
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_RNN_set_weight_ih(torch.nn.Module.HType module, IntPtr tensor, long idx);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_RNN_set_weight_hh(torch.nn.Module.HType module, IntPtr tensor, long idx);
             public void set_weight_ih(Tensor? value, long idx)
             {
                 THSNN_RNN_set_weight_ih(handle, (value is null ? IntPtr.Zero : value.Handle), idx);
@@ -176,9 +150,6 @@ namespace TorchSharp
                 Tanh = 1
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_RNN_ctor(long input_size, long hidden_size, long num_layers, long nonlinearity, bool bias, bool batchFirst, double dropout, bool bidirectional, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Creates an Elman RNN module with tanh or ReLU non-linearity.
             /// </summary>
@@ -193,7 +164,7 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public RNN RNN(long inputSize, long hiddenSize, long numLayers = 1, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false, Device? device = null, ScalarType? dtype = null)
+            public static RNN RNN(long inputSize, long hiddenSize, long numLayers = 1, NonLinearities nonLinearity = nn.NonLinearities.Tanh, bool bias = true, bool batchFirst = false, double dropout = 0.0, bool bidirectional = false, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_RNN_ctor(inputSize, hiddenSize, numLayers, (long)nonLinearity, bias, batchFirst, dropout, bidirectional, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

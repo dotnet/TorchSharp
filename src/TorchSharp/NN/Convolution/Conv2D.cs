@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -14,20 +14,12 @@ namespace TorchSharp
         {
             internal Conv2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Conv2d_forward(torch.nn.Module.HType module, IntPtr tensor);
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Conv2d_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Conv2d_bias(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_Conv2d_set_bias(torch.nn.Module.HType module, IntPtr tensor);
 
             public Parameter? bias {
                 get {
@@ -41,11 +33,6 @@ namespace TorchSharp
                     ConditionallyRegisterParameter("bias", value);
                 }
             }
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Conv2d_weight(torch.nn.Module.HType module);
-            [DllImport("LibTorchSharp")]
-            extern static void THSNN_Conv2d_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
             public Parameter? weight {
                 get {
                     var res = THSNN_Conv2d_weight(handle);
@@ -65,12 +52,6 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Conv2d_ctor(long inputChannel, long outputChannel, long kernelSize, long stride, long padding, long dilation, long paddingMode, long groups, bool bias, out IntPtr pBoxedModule);
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Conv2d_ctor_1(long inputChannel, long outputChannel, long kernelSizeX, long kernelSizeY, long strideX, long strideY, long paddingX, long paddingY, long dilationX, long dilationY, long paddingMode, long groups, bool bias, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies a 2D convolution over an input signal composed of several input planes
             /// </summary>
@@ -86,7 +67,7 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public Conv2d Conv2d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv2d Conv2d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Conv2d_ctor(inputChannel, outputChannel, kernelSize, stride, padding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -108,7 +89,7 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public Conv2d Conv2d(long inputChannel, long outputChannel, (long, long) kernelSize, (long, long)? stride = null, (long, long)? padding = null, (long, long)? dilation = null, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv2d Conv2d(long inputChannel, long outputChannel, (long, long) kernelSize, (long, long)? stride = null, (long, long)? padding = null, (long, long)? dilation = null, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 if (stride == null) stride = (1, 1);
                 if (padding == null) padding = (0, 0);
@@ -134,7 +115,7 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public Conv2d Conv2d(long inputChannel, long outputChannel, long kernelSize, Padding padding, long stride = 1, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv2d Conv2d(long inputChannel, long outputChannel, long kernelSize, Padding padding, long stride = 1, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 var res = THSNN_Conv2d_ctor(inputChannel, outputChannel, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -156,7 +137,7 @@ namespace TorchSharp
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            static public Conv2d Conv2d(long inputChannel, long outputChannel, (long, long) kernelSize, Padding padding, (long, long)? stride = null, (long, long)? dilation = null, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv2d Conv2d(long inputChannel, long outputChannel, (long, long) kernelSize, Padding padding, (long, long)? stride = null, (long, long)? dilation = null, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
                 if (stride == null) stride = (1, 1);
                 if (dilation == null) dilation = (1, 1);
@@ -164,6 +145,45 @@ namespace TorchSharp
                 var res = THSNN_Conv2d_ctor_1(inputChannel, outputChannel, kernelSize.Item1, kernelSize.Item2, stride.Value.Item1, stride.Value.Item2, padding == Padding.Valid ? 0 : -1, 0, dilation.Value.Item1, dilation.Value.Item2, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Conv2d(res, boxedHandle).MoveModule<Conv2d>(device, dtype);
+            }
+
+            public static partial class functional
+            {
+                /// <summary>
+                /// Applies a 2D convolution over an input image composed of several input planes.
+                /// </summary>
+                /// <param name="input">The input tensor.</param>
+                /// <param name="weight"></param>
+                /// <param name="bias"></param>
+                /// <param name="strides"></param>
+                /// <param name="padding"></param>
+                /// <param name="dilation"></param>
+                /// <param name="groups"></param>
+                /// <returns></returns>
+                public static Tensor conv2d(Tensor input, Tensor weight, Tensor? bias = null,
+                    long[]? strides = null,
+                    long[]? padding = null,
+                    long[]? dilation = null,
+                    long groups = 1)
+                {
+                    strides = (strides == null) ? new long[] { 1 } : strides;
+                    padding = (padding == null) ? new long[] { 0 } : padding;
+                    dilation = (dilation == null) ? new long[] { 1 } : dilation;
+                    var biasHandle = (bias is null ? IntPtr.Zero : bias.Handle);
+                    unsafe {
+                        fixed (long* pstrides = strides, ppadding = padding, pdilation = dilation) {
+                            var res =
+                                THSTensor_conv2d(input.Handle, weight.Handle, biasHandle,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, padding.Length,
+                                    (IntPtr)pdilation, dilation.Length,
+                                    groups);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
+                }
+
             }
         }
     }

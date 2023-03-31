@@ -37,6 +37,7 @@ if(WIN32)
     add_compile_options(/wd4273) # warnings from pytorch
     add_compile_options(/wd4067) # warnings from pytorch
     add_compile_options(/wd4624) # warnings from pytorch
+    add_compile_options(/wd4805) # warnings from pytorch
 
     add_compile_options(/Oi) # enable intrinsics
     add_compile_options(/Oy-) # disable suppressing of the creation of frame pointers on the call stack for quicker function calls

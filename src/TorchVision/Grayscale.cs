@@ -15,7 +15,7 @@ namespace TorchSharp
                 this.outputChannels = outputChannels;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return transforms.functional.rgb_to_grayscale(input, outputChannels);
             }

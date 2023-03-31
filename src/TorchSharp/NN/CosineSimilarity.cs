@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -18,9 +18,6 @@ namespace TorchSharp
             {
             }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_CosineSimilarity_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
-
             public override Tensor forward(Tensor input1, Tensor input2)
             {
                 var res = THSNN_CosineSimilarity_forward(handle, input1.Handle, input2.Handle);
@@ -34,16 +31,13 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_CosineSimilarity_ctor(long dim, double eps, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Returns cosine similarity between x1 and x2, computed along dim. Inputs must have same shape.
             /// </summary>
             /// <param name="dim">Dimension where cosine similarity is computed. Default: 1</param>
             /// <param name="eps">Small value to avoid division by zero. Default: 1e-8</param>
             /// <returns></returns>
-            static public CosineSimilarity CosineSimilarity(long dim = 1, double eps = 1e-8)
+            public static CosineSimilarity CosineSimilarity(long dim = 1, double eps = 1e-8)
             {
                 var handle = THSNN_CosineSimilarity_ctor(dim, eps, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -60,10 +54,10 @@ namespace TorchSharp
                 /// <param name="dim">Dimension where cosine similarity is computed. Default: 1</param>
                 /// <param name="eps">Small value to avoid division by zero. Default: 1e-8</param>
                 /// <returns></returns>
-                static public Tensor cosine_similarity(Tensor x1, Tensor x2, long dim = 1, double eps = 1e-8)
+                public static Tensor cosine_similarity(Tensor x1, Tensor x2, long dim = 1, double eps = 1e-8)
                 {
                     using (var f = nn.CosineSimilarity(dim, eps)) {
-                        return f.forward(x1, x2);
+                        return f.call(x1, x2);
                     }
                 }
             }

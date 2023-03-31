@@ -2,17 +2,20 @@
 <br/>
 [![Build Status](https://dotnet.visualstudio.com/TorchSharp/_apis/build/status/dotnet.TorchSharp?branchName=main)](https://dotnet.visualstudio.com/TorchSharp/_build/latest?definitionId=174&branchName=main)
 <br/>
-[![TorchSharp](https://img.shields.io/nuget/vpre/TorchSharp.svg?cacheSeconds=3600&label=TorchSharp%20nuget)](https://www.nuget.org/packages/TorchSharp)
+[![TorchSharp](https://img.shields.io/nuget/vpre/TorchSharp.svg?cacheSeconds=3600&label=TorchSharp%20nuget)](https://www.nuget.org/packages/TorchSharp)<br/>
+[![TorchAudio](https://img.shields.io/nuget/vpre/TorchAudio.svg?cacheSeconds=3600&label=TorchAudio%20nuget)](https://www.nuget.org/packages/TorchAudio)<br/>
+[![TorchVision](https://img.shields.io/nuget/vpre/TorchVision.svg?cacheSeconds=3600&label=TorchVision%20nuget)](https://www.nuget.org/packages/TorchVision)<br/>
 [![TorchSharp-cpu](https://img.shields.io/nuget/vpre/TorchSharp-cpu.svg?cacheSeconds=3600&label=TorchSharp-cpu%20nuget)](https://www.nuget.org/packages/TorchSharp-cpu)
 [![TorchSharp-cuda-windows](https://img.shields.io/nuget/vpre/TorchSharp-cuda-windows.svg?cacheSeconds=3600&label=TorchSharp-cuda-windows%20nuget)](https://www.nuget.org/packages/TorchSharp-cuda-windows)
-[![TorchSharp-cuda-linux](https://img.shields.io/nuget/vpre/TorchSharp-cuda-linux.svg?cacheSeconds=3600&label=TorchSharp-cuda-linux%20nuget)](https://www.nuget.org/packages/TorchSharp-cuda-linux)
-<br/>
+[![TorchSharp-cuda-linux](https://img.shields.io/nuget/vpre/TorchSharp-cuda-linux.svg?cacheSeconds=3600&label=TorchSharp-cuda-linux%20nuget)](https://www.nuget.org/packages/TorchSharp-cuda-linux)<br/>
 <br/>
 Please check the [Release Notes](RELEASENOTES.md) file for news on what's been updated in each new release.
 
 __TorchSharp is now in the .NET Foundation!__
 
-If you are using TorchSharp from NuGet, you should be using a version >= 0.95.1 of TorchSharp, and >= 1.10.0.1 of the libtorch-xxx redistributable packages. We recommend using one of the 'bundled' packages: TorchSharp-cpu, TorchSharp-cuda-windows, or TorchSharp-cuda-linux. They will pull in the right libtorch backends.
+If you are using TorchSharp from NuGet, you should be using a version >= 0.98.3 of TorchSharp, and >= 1.12.0 of the libtorch-xxx redistributable packages. We recommend using one of the 'bundled' packages: TorchSharp-cpu, TorchSharp-cuda-windows, or TorchSharp-cuda-linux. They will pull in the right libtorch backends.
+
+__NOTE:__ At this moment, VS versions 17.4.X will not build the TorchSharp native code library. Use 17.3.X until further notice. See: https://github.com/dotnet/TorchSharp/issues/858 for more information and workarounds.
 
 __NOTE:__ Please do __not__ use 0.95.0 -- the package was released to NuGet in error, and without its many dependencies.
 
@@ -51,11 +54,10 @@ var x = torch.randn(64, 1000);
 var y = torch.randn(64, 10);
 
 var optimizer = torch.optim.Adam(seq.parameters());
-var loss = functional.mse_loss(Reduction.Sum);
 
 for (int i = 0; i < 10; i++) {
     var eval = seq.forward(x);
-    var output = loss(eval, y);
+    var output = functional.mse_loss(eval, y, Reduction.Sum);
 
     optimizer.zero_grad();
 
@@ -107,12 +109,12 @@ To use TorchSharp, you also need one of the LibTorch backend packages: https://w
 
 * `libtorch-cpu` (CPU, references all three, larger download but simpler)
 
-* `libtorch-cuda-11.3-linux-x64` (CPU/CUDA 11.3, Linux)
+* `libtorch-cuda-11.7-linux-x64` (CPU/CUDA 11.3, Linux)
 
-  > NOTE: Due to the presence of very large native binaries, using the `libtorch-cuda-11.3-linux-x64` package requires
+  > NOTE: Due to the presence of very large native binaries, using the `libtorch-cuda-11.7-linux-x64` package requires
   > .NET 6, e.g. .NET SDK version `6.0.100-preview.5.21302.13` or greater.
 
-* `libtorch-cuda-11.3-win-x64` (CPU/CUDA 11.3, Windows)
+* `libtorch-cuda-11.7-win-x64` (CPU/CUDA 11.3, Windows)
 
 Alternatively you can access the libtorch native binaries via direct reference to existing local native
 binaries of LibTorch installed through other means (for example, by installing [PyTorch](https://pytorch.org/) using a Python package manager). You will have to add an explicit load of the relevant native library, for example:

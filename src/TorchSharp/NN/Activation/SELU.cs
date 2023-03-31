@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -15,9 +15,6 @@ namespace TorchSharp
         public sealed class SELU : torch.nn.Module<Tensor, Tensor>
         {
             internal SELU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_SELU_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
@@ -37,15 +34,12 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_SELU_ctor([MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Scaled Exponential Linear Unit
             /// </summary>
             /// <param name="inplace">Do the operation in-place. Default: False</param>
             /// <returns></returns>
-            static public SELU SELU(bool inplace = false)
+            public static SELU SELU(bool inplace = false)
             {
                 var handle = THSNN_SELU_ctor(inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -60,10 +54,10 @@ namespace TorchSharp
                 /// <param name="x">The input tensor</param>
                 /// <param name="inplace">Do the operation in-place. Default: False</param>
                 /// <returns></returns>
-                static public Tensor selu(Tensor x, bool inplace = false)
+                public static Tensor selu(Tensor x, bool inplace = false)
                 {
                     using (var m = nn.SELU(inplace)) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

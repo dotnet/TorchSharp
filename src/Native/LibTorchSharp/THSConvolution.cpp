@@ -5,13 +5,18 @@
 
 
 
-NNModule THSNN_AvgPool1d_ctor(const int64_t* kernelSize, const int64_t* stride,
+NNModule THSNN_AvgPool1d_ctor(const int64_t* kernelSize, const int64_t* stride, const int64_t* padding,
+    bool ceil_mode, bool count_include_pad, int64_t divisor_override,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::AvgPool1dOptions(at::ArrayRef<int64_t>(kernelSize, 1));
+        auto opts = torch::nn::AvgPool1dOptions(at::ArrayRef<int64_t>(kernelSize, 1)).ceil_mode(ceil_mode).count_include_pad(count_include_pad);
         if (stride)
             opts = opts.stride(at::ArrayRef<int64_t>(stride, 1));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, 1));
+        if (divisor_override > 0)
+            opts = opts.divisor_override(divisor_override);
         res = create_module<torch::nn::AvgPool1dImpl>(opts, outAsAnyModule);
     );
 }
@@ -21,13 +26,18 @@ Tensor THSNN_AvgPool1d_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::AvgPool1d>()->forward(*tensor));
 }
 
-NNModule THSNN_AvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength,
+NNModule THSNN_AvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const int64_t* padding, const int paddingLength,
+    bool ceil_mode, bool count_include_pad, int64_t divisor_override,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::AvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        auto opts = torch::nn::AvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength)).ceil_mode(ceil_mode).count_include_pad(count_include_pad);
         if (stride)
             opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, paddingLength));
+        if (divisor_override > 0)
+            opts = opts.divisor_override(divisor_override);
         res = create_module<torch::nn::AvgPool2dImpl>(opts, outAsAnyModule);
     );
 }
@@ -37,13 +47,18 @@ Tensor THSNN_AvgPool2d_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::AvgPool2d>()->forward(*tensor));
 }
 
-NNModule THSNN_AvgPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength,
+NNModule THSNN_AvgPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const int64_t* padding, const int paddingLength,
+    bool ceil_mode, bool count_include_pad, int64_t divisor_override,
     NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
-        auto opts = torch::nn::AvgPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        auto opts = torch::nn::AvgPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength)).ceil_mode(ceil_mode).count_include_pad(count_include_pad);
         if (stride)
             opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, paddingLength));
+        if (divisor_override > 0)
+            opts = opts.divisor_override(divisor_override);
         res = create_module<torch::nn::AvgPool3dImpl>(opts, outAsAnyModule);
     );
 }
@@ -401,6 +416,14 @@ NNModule THSNN_ZeroPad2d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule
     );
 }
 
+NNModule THSNN_ZeroPad2d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ZeroPad2dOptions({ padding_left, padding_right, padding_top, padding_bottom });
+    res = create_module<torch::nn::ZeroPad2dImpl>(opts, outAsAnyModule);
+    );
+}
+
 Tensor   THSNN_ZeroPad2d_forward(const NNModule module, const Tensor tensor)
 {
     CATCH_TENSOR((*module)->as<torch::nn::ZeroPad2d>()->forward(*tensor));
@@ -445,6 +468,30 @@ Tensor   THSNN_ConstantPad3d_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::ConstantPad3d>()->forward(*tensor));
 }
 
+NNModule THSNN_ConstantPad1d_ctor_tuple(const double value, const int64_t padding_left, const int64_t padding_right, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ConstantPad1dOptions({ padding_left, padding_right }, value);
+    res = create_module<torch::nn::ConstantPad1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+NNModule THSNN_ConstantPad2d_ctor_tuple(const double value, const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ConstantPad2dOptions({ padding_left, padding_right, padding_top, padding_bottom }, value);
+    res = create_module<torch::nn::ConstantPad2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+NNModule THSNN_ConstantPad3d_ctor_tuple(const double value, const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, const int64_t padding_front, const int64_t padding_back, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ConstantPad3dOptions({ padding_left, padding_right, padding_top, padding_bottom, padding_front, padding_back }, value);
+    res = create_module<torch::nn::ConstantPad3dImpl>(opts, outAsAnyModule);
+    );
+}
+
 NNModule THSNN_ReplicationPad1d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
@@ -479,9 +526,34 @@ NNModule THSNN_ReplicationPad3d_ctor(const int64_t padding, NNAnyModule* outAsAn
     );
 }
 
+
 Tensor   THSNN_ReplicationPad3d_forward(const NNModule module, const Tensor tensor)
 {
     CATCH_TENSOR((*module)->as<torch::nn::ReplicationPad3d>()->forward(*tensor));
+}
+
+NNModule THSNN_ReplicationPad1d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReplicationPad1dOptions({ padding_left, padding_right });
+    res = create_module<torch::nn::ReplicationPad1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+NNModule THSNN_ReplicationPad2d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReplicationPad2dOptions({ padding_left, padding_right, padding_top, padding_bottom });
+    res = create_module<torch::nn::ReplicationPad2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+NNModule THSNN_ReplicationPad3d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, const int64_t padding_front, const int64_t padding_back, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReplicationPad3dOptions({ padding_left, padding_right, padding_top, padding_bottom, padding_front, padding_back });
+    res = create_module<torch::nn::ReplicationPad3dImpl>(opts, outAsAnyModule);
+    );
 }
 
 NNModule THSNN_ReflectionPad1d_ctor(const int64_t padding, NNAnyModule* outAsAnyModule)
@@ -523,6 +595,29 @@ Tensor   THSNN_ReflectionPad3d_forward(const NNModule module, const Tensor tenso
     CATCH_TENSOR((*module)->as<torch::nn::ReflectionPad3d>()->forward(*tensor));
 }
 
+NNModule THSNN_ReflectionPad1d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReflectionPad1dOptions({ padding_left, padding_right });
+    res = create_module<torch::nn::ReflectionPad1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+NNModule THSNN_ReflectionPad2d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReflectionPad2dOptions({ padding_left, padding_right, padding_top, padding_bottom });
+    res = create_module<torch::nn::ReflectionPad2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+NNModule THSNN_ReflectionPad3d_ctor_tuple(const int64_t padding_left, const int64_t padding_right, const int64_t padding_top, const int64_t padding_bottom, const int64_t padding_front, const int64_t padding_back, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ReflectionPad3dOptions({ padding_left, padding_right, padding_top, padding_bottom, padding_front, padding_back });
+    res = create_module<torch::nn::ReflectionPad3dImpl>(opts, outAsAnyModule);
+    );
+}
 
 
 template<typename T>

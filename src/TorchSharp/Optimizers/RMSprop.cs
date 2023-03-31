@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using static TorchSharp.torch;
 
+
 namespace TorchSharp
 {
+    using System.Data;
     using System.IO;
     using Modules;
 
@@ -27,10 +29,10 @@ namespace TorchSharp
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="momentum">Momentum factor (default: 0)</param>
             /// <param name="centered">if true, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
-            /// <returns></returns>
-            public static RMSProp RMSProp(IEnumerable<Parameter> parameters, double lr = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public static RMSProp RMSProp(IEnumerable<Parameter> parameters, double lr = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false, bool maximize = false)
             {
-                return new RMSProp(parameters, lr, alpha, eps, weight_decay, momentum, centered);
+                return new RMSProp(parameters, lr, alpha, eps, weight_decay, momentum, centered, maximize);
             }
 
             /// <summary>
@@ -46,10 +48,10 @@ namespace TorchSharp
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="momentum">Momentum factor (default: 0)</param>
             /// <param name="centered">if true, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
-            /// <returns></returns>
-            public static RMSProp RMSProp(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public static RMSProp RMSProp(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false, bool maximize = false)
             {
-                return new RMSProp(parameters.Select(np => np.parameter), lr, alpha, eps, weight_decay, momentum, centered);
+                return new RMSProp(parameters.Select(np => np.parameter), lr, alpha, eps, weight_decay, momentum, centered, maximize);
             }
 
             /// <summary>
@@ -65,10 +67,10 @@ namespace TorchSharp
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="momentum">Momentum factor (default: 0)</param>
             /// <param name="centered">if true, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
-            /// <returns></returns>
-            public static RMSProp RMSProp(IEnumerable<RMSProp.ParamGroup> parameters, double lr = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public static RMSProp RMSProp(IEnumerable<RMSProp.ParamGroup> parameters, double lr = 0.01, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0, bool centered = false, bool maximize = false)
             {
-                return new RMSProp(parameters, lr, alpha, eps, weight_decay, momentum, centered);
+                return new RMSProp(parameters, lr, alpha, eps, weight_decay, momentum, centered, maximize);
             }
         }
     }
@@ -92,9 +94,9 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="centered">if ``True``, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
-            /// <returns></returns>
-            public RMSProp(IEnumerable<Parameter> parameters, double lr = 1e-3, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0.0, bool centered = false)
-                : this(new ParamGroup[] { new ParamGroup { Parameters = parameters } }, lr, alpha, eps, weight_decay, momentum, centered)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public RMSProp(IEnumerable<Parameter> parameters, double lr = 1e-3, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0.0, bool centered = false, bool maximize = false)
+                : this(new ParamGroup[] { new ParamGroup { Parameters = parameters } }, lr, alpha, eps, weight_decay, momentum, centered, maximize)
             {
             }
 
@@ -110,8 +112,8 @@ namespace TorchSharp
             /// <param name="eps">Term added to the denominator to improve numerical stability</param>
             /// <param name="weight_decay">Weight decay (L2 penalty) (default: 0)</param>
             /// <param name="centered">if ``True``, compute the centered RMSProp, the gradient is normalized by an estimation of its variance</param>
-            /// <returns></returns>
-            public RMSProp(IEnumerable<ParamGroup> parameters, double lr = 1e-3, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0.0, bool centered = false)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public RMSProp(IEnumerable<ParamGroup> parameters, double lr = 1e-3, double alpha = 0.99, double eps = 1e-8, double weight_decay = 0, double momentum = 0.0, bool centered = false, bool maximize = false)
             {
                 if (lr < 0) throw new ArgumentException($"Invalid learning rate: {lr}");
                 if (eps < 0) throw new ArgumentException($"Invalid ε: {eps}");
@@ -122,6 +124,7 @@ namespace TorchSharp
                 var options = new Options {
                     LearningRate = lr,
                     InitialLearningRate = lr,
+                    maximize = maximize,
                     eps = eps,
                     alpha = alpha,
                     momentum = momentum,
@@ -147,6 +150,7 @@ namespace TorchSharp
                 return _step<ParamGroup>(group => {
 
                     var options = group.Options as Options;
+                    var maximize = options.maximize.Value;
                     var momentum = options.momentum.Value;
                     var alpha = options.alpha.Value;
                     var weight_decay = options.weight_decay.Value;
@@ -161,6 +165,8 @@ namespace TorchSharp
                         var grad = param.grad();
 
                         if (grad is null) continue;
+
+                        if (maximize) grad = -grad;
 
                         state.step += 1;
 
@@ -195,7 +201,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    ((State)kvp.Value).Dispose();
+                    ((State)kvp.Item2).Dispose();
                 }
                 _state.Clear();
             }
@@ -209,9 +215,9 @@ namespace TorchSharp
 
                 public void Dispose()
                 {
-                    momentum_buffer.Dispose();
+                    momentum_buffer?.Dispose();
                     square_avg.Dispose();
-                    grad_avg.Dispose();
+                    grad_avg?.Dispose();
                 }
 
                 /// <summary>
@@ -221,8 +227,8 @@ namespace TorchSharp
                 public override void to(Device device)
                 {
                     square_avg.to(device);
-                    momentum_buffer.to(device);
-                    grad_avg.to(device);
+                    momentum_buffer?.to(device);
+                    grad_avg?.to(device);
                 }
 
                 /// <summary>
@@ -233,8 +239,8 @@ namespace TorchSharp
                 {
                     step = reader.ReadInt64();
                     square_avg.Load(reader);
-                    momentum_buffer.Load(reader);
-                    grad_avg.Load(reader);
+                    LoadConditionalStateTensor(reader, ref momentum_buffer);
+                    LoadConditionalStateTensor(reader, ref grad_avg);
                 }
                 /// <summary>
                 /// Save the optimizer parameter state to a stream.
@@ -244,8 +250,8 @@ namespace TorchSharp
                 {
                     writer.Write(this.step);
                     square_avg.Save(writer);
-                    momentum_buffer.Save(writer);
-                    grad_avg.Save(writer);
+                    SaveConditionalStateTensor(writer, momentum_buffer);
+                    SaveConditionalStateTensor(writer, grad_avg);
                 }
 
                 /// <summary>
@@ -295,6 +301,7 @@ namespace TorchSharp
                 var opt = param_group.Options as Options;
 
                 // Make sure all the options are set.
+                if (!opt.maximize.HasValue) opt.maximize = def.maximize;
                 if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
                 if (!opt.momentum.HasValue) opt.momentum = def.momentum;
                 if (!opt.eps.HasValue) opt.eps = def.eps;
@@ -309,13 +316,14 @@ namespace TorchSharp
                 foreach (var p in param_group.Parameters) {
                     var state = new State();
                     _state[p.Handle] = state;
-                    state.square_avg = torch.zeros_like(p).DetatchFromDisposeScope();
-                    state.grad_avg = torch.zeros_like(p).DetatchFromDisposeScope();
-                    state.momentum_buffer = torch.zeros_like(p).DetatchFromDisposeScope();
+                    state.square_avg = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.grad_avg = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.momentum_buffer = torch.zeros_like(p).DetachFromDisposeScope();
                 }
             }
             public class Options : Modules.OptimizerOptions
             {
+                public bool? maximize;
                 public double? momentum;
                 public double? alpha;
                 public double? eps;
@@ -330,6 +338,7 @@ namespace TorchSharp
                 {
                     base.LoadStateDict(source);
                     var opts = source as Options;
+                    maximize = opts.maximize;
                     momentum = opts.momentum;
                     alpha = opts.alpha;
                     weight_decay = opts.weight_decay;
@@ -344,6 +353,7 @@ namespace TorchSharp
                 public override void LoadStateDict(BinaryReader reader)
                 {
                     base.LoadStateDict(reader);
+                    maximize = reader.ReadBoolean();
                     momentum = reader.ReadDouble();
                     alpha = reader.ReadDouble();
                     eps = reader.ReadDouble();
@@ -358,6 +368,7 @@ namespace TorchSharp
                 public override void SaveStateDict(BinaryWriter writer)
                 {
                     base.SaveStateDict(writer);
+                    writer.Write(maximize.Value);
                     writer.Write(momentum.Value);
                     writer.Write(alpha.Value);
                     writer.Write(eps.Value);

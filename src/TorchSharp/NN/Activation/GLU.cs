@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -15,9 +15,6 @@ namespace TorchSharp
         public sealed class GLU : torch.nn.Module<Tensor, Tensor>
         {
             internal GLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_GLU_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
@@ -37,15 +34,12 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_GLU_ctor(long dim, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Gated Linear Unit
             /// </summary>
             /// <param name="dim">the dimension on which to split the input. Default: -1</param>
             /// <returns></returns>
-            static public GLU GLU(long dim = -1)
+            public static GLU GLU(long dim = -1)
             {
                 var handle = THSNN_GLU_ctor(dim, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -60,10 +54,10 @@ namespace TorchSharp
                 /// <param name="input">The input tensor</param>
                 /// <param name="dim">the dimension on which to split the input. Default: -1</param>
                 /// <returns></returns>
-                static public Tensor glu(Tensor input, long dim = -1)
+                public static Tensor glu(Tensor input, long dim = -1)
                 {
                     using (var m = nn.GLU(dim)) {
-                        return m.forward(input);
+                        return m.call(input);
                     }
                 }
             }

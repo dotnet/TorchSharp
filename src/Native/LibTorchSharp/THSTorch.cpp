@@ -11,8 +11,9 @@ void THSTorch_manual_seed(const int64_t seed)
 
 Generator THSGenerator_manual_seed(const int64_t seed)
 {
-    torch::manual_seed(seed);
-    return THSGenerator_default_generator();
+    auto gen = at::globalContext().defaultGenerator(at::DeviceType::CPU);
+    gen.set_current_seed(seed);
+    return new at::Generator(gen.getIntrusivePtr());
 }
 
 void THSCuda_manual_seed(const int64_t seed)
@@ -25,6 +26,65 @@ void THSCuda_manual_seed_all(const int64_t seed)
     CATCH(torch::cuda::manual_seed_all(seed);)
 }
 
+bool THSBackend_cublas_get_allow_tf32()
+{
+    auto result = false;
+    CATCH(result = at::globalContext().allowTF32CuBLAS(););
+    return result;
+}
+
+void THSBackend_cublas_set_allow_tf32(const bool flag)
+{
+    CATCH(at::globalContext().setAllowTF32CuBLAS(flag););
+}
+
+bool THSBackend_cudnn_get_allow_tf32()
+{
+    auto result = false;
+    CATCH(result = at::globalContext().allowTF32CuDNN(););
+    return result;
+}
+
+void THSBackend_cudnn_set_allow_tf32(const bool flag)
+{
+    CATCH(at::globalContext().setAllowTF32CuDNN(flag););
+}
+
+bool THSBackend_cuda_get_allow_fp16_reduced_precision_reduction()
+{
+    auto result = false;
+    CATCH(result = at::globalContext().allowFP16ReductionCuBLAS(););
+    return result;
+}
+
+void THSBackend_cuda_set_allow_fp16_reduced_precision_reduction(const bool flag)
+{
+    CATCH(at::globalContext().setAllowFP16ReductionCuBLAS(flag););
+}
+
+bool THSBackend_cuda_get_enable_flash_sdp()
+{
+    auto result = false;
+    CATCH(result = at::globalContext().userEnabledFlashSDP(););
+    return result;
+}
+
+void THSBackend_cuda_set_enable_flash_sdp(const bool flag)
+{
+    CATCH(at::globalContext().setSDPUseFlash(flag););
+}
+
+bool THSBackend_cuda_get_enable_math_sdp()
+{
+    auto result = false;
+    CATCH(result = at::globalContext().userEnabledMathSDP(););
+    return result;
+}
+
+void THSBackend_cuda_set_enable_math_sdp(const bool flag)
+{
+    CATCH(at::globalContext().setSDPUseMath(flag););
+}
 
 void THSGenerator_gen_manual_seed(const Generator generator, const int64_t seed)
 {
@@ -92,6 +152,37 @@ const char * THSTorch_get_and_reset_last_err()
     torch_last_err = nullptr;
     return tmp;
 }
+
+int THSTorch_get_num_threads()
+{
+    CATCH_RETURN_RES(int, -1, res = torch::get_num_threads());
+}
+
+void THSTorch_set_num_threads(const int threads)
+{
+    torch::set_num_threads(threads);
+}
+
+int THSTorch_get_num_interop_threads()
+{
+    CATCH_RETURN_RES(int, -1, res = torch::get_num_interop_threads());
+}
+
+void THSTorch_set_num_interop_threads(const int threads)
+{
+    torch::set_num_interop_threads(threads);
+}
+
+int THSTorch_can_cast(const int type1, const int type2)
+{
+    CATCH_RETURN_RES(int, -1, res = (int)torch::can_cast((c10::ScalarType)type1, (c10::ScalarType)type2));
+}
+
+int THSTorch_promote_types(const int type1, const int type2)
+{
+    CATCH_RETURN_RES(int, -1, res = (int)torch::promote_types((c10::ScalarType)type1, (c10::ScalarType)type2));
+}
+
 
 Scalar THSTorch_int8_to_scalar(int8_t value)
 {
@@ -217,14 +308,6 @@ int8_t THSTorch_scalar_type(Scalar value)
 void THSTorch_dispose_scalar(Scalar scalar)
 {
     delete scalar;
-}
-
-Tensor THSTorch_lstsq(const Tensor input, const Tensor A, Tensor* qr)
-{
-    std::tuple<at::Tensor, at::Tensor> res;
-    CATCH(res = torch::lstsq(*input, *A);)
-    *qr = ResultTensor(std::get<1>(res));
-    return ResultTensor(std::get<0>(res));
 }
 
 double THSSpecial_erf_scalar(const double x)

@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 #nullable enable
 namespace TorchSharp
@@ -11,12 +11,6 @@ namespace TorchSharp
     {
         public static class linalg
         {
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_cholesky(IntPtr tensor);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_cholesky_ex(IntPtr tensor, bool check_errors, out IntPtr pInfo);
-
             /// <summary>
             /// Computes the Cholesky decomposition of a complex Hermitian or real symmetric positive-definite matrix.
             /// </summary>
@@ -47,15 +41,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return (new Tensor(res), new Tensor(pInfo));
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_cond_int(IntPtr tensor, int p);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_cond_float(IntPtr tensor, double p);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_cond_str(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string p);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_cond_none(IntPtr tensor);
 
             public static Tensor cond(Tensor input, int p)
             {
@@ -104,9 +89,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_cross(IntPtr input, IntPtr other, long dim);
-
             /// <summary>
             /// Returns the cross product of vectors in dimension dim of input and other.
             /// input and other must have the same size, and the size of their dim dimension should be 3.
@@ -117,9 +99,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_det(IntPtr tensor);
 
             /// <summary>
             /// Computes the determinant of a square matrix.
@@ -132,9 +111,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_slogdet(IntPtr tensor, out IntPtr pLogabsdet);
 
             /// <summary>
             /// Computes the sign and natural logarithm of the absolute value of the determinant of a square matrix.
@@ -168,9 +144,6 @@ namespace TorchSharp
             /// </remarks>
             public static Tensor diagonal(Tensor input, int offset = 0, int dim1 = -2, int dim2 = -1) => input.diagonal(offset, dim1, dim2);
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_eig(IntPtr tensor, out IntPtr pEigenvectors);
-
             /// <summary>
             /// Computes the eigenvalue decomposition of a square matrix if it exists.
             /// </summary>
@@ -183,9 +156,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return (new Tensor(res), new Tensor(vectors));
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_eigh(IntPtr tensor, byte UPLO, out IntPtr pEigenvectors);
 
             /// <summary>
             /// Computes the eigenvalue decomposition of a complex Hermitian or real symmetric matrix.
@@ -201,9 +171,6 @@ namespace TorchSharp
                 return (new Tensor(res), new Tensor(vectors));
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_eigvals(IntPtr tensor);
-
             /// <summary>
             /// Computes the eigenvalues of a square matrix.
             /// </summary>
@@ -216,9 +183,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_eigvalsh(IntPtr tensor, byte UPLO);
 
             /// <summary>
             /// Computes the eigenvalues of a complex Hermitian or real symmetric matrix.
@@ -234,8 +198,18 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_inv(IntPtr tensor);
+            /// <summary>
+            /// Computes the first n columns of a product of Householder matrices.
+            /// </summary>
+            /// <param name="A">tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="tau">tensor of shape (*, k) where * is zero or more batch dimensions.</param>
+            public static Tensor householder_product(Tensor A, Tensor tau)
+            {
+                var res = THSLinalg_householder_product(A.Handle, tau.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
 
             /// <summary>
             /// Computes the inverse of a square matrix if it exists.
@@ -250,9 +224,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_inv_ex(IntPtr tensor, bool check_errors, out IntPtr pInfo);
 
             /// <summary>
             /// Computes the inverse of a square matrix if it is invertible.
@@ -274,11 +245,6 @@ namespace TorchSharp
                 return (new Tensor(res), new Tensor(pInfo));
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_lstsq_none(IntPtr tensor, IntPtr other, out IntPtr pResiduals, out IntPtr pRank, out IntPtr pSingularValues);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_lstsq_rcond(IntPtr tensor, IntPtr other, double rcond, out IntPtr pResiduals, out IntPtr pRank, out IntPtr pSingularValues);
-
             /// <summary>
             /// Computes a solution to the least squares problem of a system of linear equations.
             /// </summary>
@@ -293,14 +259,25 @@ namespace TorchSharp
                 return (new Tensor(solution), new Tensor(residuals), new Tensor(rank), new Tensor(singularValues));
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_lu_factor(IntPtr tensor, bool pivot, out IntPtr pPivots);
+            /// <summary>
+            /// Computes the LU decomposition with partial pivoting of a matrix.
+            /// </summary>
+            /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="pivot">Controls whether to compute the LU decomposition with partial pivoting or no pivoting</param>
+            /// <returns></returns>
+            public static (Tensor P, Tensor L, Tensor U) lu(Tensor input, bool pivot = true)
+            {
+                var solution = THSLinalg_lu(input.Handle, pivot, out var pL, out var pU);
+                if (solution == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(solution), new Tensor(pL), new Tensor(pU));
+            }
 
             /// <summary>
             /// Computes a compact representation of the LU factorization with partial pivoting of a matrix.
             /// </summary>
-            /// <param name="input"></param>
-            /// <param name="pivot"></param>
+            /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="pivot">Controls whether to compute the LU decomposition with partial pivoting or no pivoting</param>
             /// <returns></returns>
             public static (Tensor LU, Tensor? Pivots) lu_factor(Tensor input, bool pivot = true)
             {
@@ -308,6 +285,51 @@ namespace TorchSharp
                 if (solution == IntPtr.Zero)
                     torch.CheckForErrors();
                 return (new Tensor(solution), pivots == IntPtr.Zero ? null : new Tensor(pivots));
+            }
+
+            /// <summary>
+            /// Computes a compact representation of the LU factorization with partial pivoting of a matrix.
+            /// </summary>
+            /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="hermitian">Controls whether to consider the input to be Hermitian or symmetric. For real-valued matrices, this switch has no effect.</param>
+            /// <returns></returns>
+            public static (Tensor LU, Tensor? Pivots) ldl_factor(Tensor input, bool hermitian = true)
+            {
+                var solution = THSLinalg_ldl_factor(input.Handle, hermitian, out var pivots);
+                if (solution == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(solution), pivots == IntPtr.Zero ? null : new Tensor(pivots));
+            }
+
+            /// <summary>
+            /// Computes a compact representation of the LU factorization with partial pivoting of a matrix.
+            /// </summary>
+            /// <param name="input">Tensor of shape (*, m, n) where * is zero or more batch dimensions.</param>
+            /// <param name="hermitian">Controls whether to consider the input to be Hermitian or symmetric. For real-valued matrices, this switch has no effect.</param>
+            /// <param name="check_errors">Controls whether to check the content of info and raise an error if it is non-zero.</param>
+            /// <returns></returns>
+            public static (Tensor LU, Tensor? Pivots, Tensor? Info) ldl_factor_ex(Tensor input, bool hermitian = true, bool check_errors = false)
+            {
+                var solution = THSLinalg_ldl_factor_ex(input.Handle, hermitian, check_errors, out var pivots, out var info);
+                if (solution == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(solution), pivots == IntPtr.Zero ? null : new Tensor(pivots), info == IntPtr.Zero ? null : new Tensor(info));
+            }
+
+            /// <summary>
+            /// Computes the solution of a system of linear equations using the LDL factorization.
+            /// </summary>
+            /// <param name="LD">the n times n matrix or the batch of such matrices of size (*, n, n) where * is one or more batch dimensions</param>
+            /// <param name="pivots">the pivots corresponding to the LDL factorization of LD</param>
+            /// <param name="B">Right-hand side tensor of shape (*, n, k)</param>
+            /// <param name="hermitian">Whether to consider the decomposed matrix to be Hermitian or symmetric. For real-valued matrices, this switch has no effect</param>
+            /// <returns></returns>
+            public static Tensor ldl_solve(Tensor LD, Tensor pivots, Tensor B, bool hermitian = false)
+            {
+                var res = THSLinalg_ldl_solve(LD.Handle, pivots.Handle, B.Handle, hermitian);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
             }
 
             /// <summary>
@@ -327,10 +349,7 @@ namespace TorchSharp
             /// <summary>
             /// Computes the matrix exponential of a square matrix or of each square matrix in a batch.
             /// </summary>
-            public static Tensor matrix_exp(Tensor input) => input.matrix_exp(); 
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_matrix_norm_fronuc(IntPtr tensor, byte fronuc, IntPtr dim, int dim_length, bool keepdim);
+            public static Tensor matrix_exp(Tensor input) => input.matrix_exp();
 
             /// <summary>
             /// Computes a matrix norm.
@@ -353,9 +372,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_matrix_norm(IntPtr tensor, IntPtr ord, IntPtr dim, int dim_length, bool keepdim);
-
             /// <summary>
             /// Computes a matrix norm.
             /// </summary>
@@ -376,12 +392,6 @@ namespace TorchSharp
                     }
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_matrix_rank(IntPtr tensor, double atol, bool has_atol, double rtol, bool has_rtol, bool hermitian);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_matrix_rank_tensor(IntPtr tensor, IntPtr atol, IntPtr rtol, bool hermitian);
 
             /// <summary>
             /// Computes the numerical rank of a matrix.
@@ -419,9 +429,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSLinalg_multi_dot(IntPtr tensor, int len);
-
             /// <summary>
             /// Efficiently multiplies two or more matrices by reordering the multiplications so that the fewest arithmetic operations are performed.
             /// </summary>
@@ -444,16 +451,6 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_norm_str(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string p, IntPtr dim, int dim_length, bool keepdim);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_norm_float(IntPtr tensor, double p, IntPtr dim, int dim_length, bool keepdim);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_norm_int(IntPtr tensor, int p, IntPtr dim, int dim_length, bool keepdim);
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_norm_opt(IntPtr tensor, IntPtr dim, int dim_length, bool keepdim);
-
 
             /// <summary>
             /// Computes a vector or matrix norm.
@@ -531,12 +528,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_pinv(IntPtr tensor, double atol, bool has_atol, double rtol, bool has_rtol, bool hermitian);
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_pinv_tensor(IntPtr tensor, IntPtr atol, IntPtr rtol, bool hermitian);
-
             /// <summary>
             /// Computes the numerical rank of a matrix.
             /// The matrix rank is computed as the number of singular values(or eigenvalues in absolute value when hermitian = True) that are greater than the specified tol threshold.
@@ -580,9 +571,6 @@ namespace TorchSharp
                 R = 2
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_qr(IntPtr tensor, byte mode, out IntPtr pR);
-
             /// <summary>
             /// Computes the QR decomposition of a matrix.
             /// </summary>
@@ -597,25 +585,36 @@ namespace TorchSharp
                 return (new Tensor(Q), new Tensor(R));
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_solve(IntPtr tensor, IntPtr other);
-
             /// <summary>
             /// Computes the solution of a square system of linear equations with a unique solution.
             /// </summary>
             /// <param name="input">Tensor of shape (*, n, n) where * is zero or more batch dimensions.</param>
             /// <param name="other">Right-hand side tensor of shape (*, n) or (*, n, k) or (n,) or (n, k)</param>
+            /// <param name="left">whether to solve the system AX = B or XA = B.</param>
             /// <returns></returns>
-            public static Tensor solve(Tensor input, Tensor other)
+            public static Tensor solve(Tensor input, Tensor other, bool left = true)
             {
-                var res = THSLinalg_solve(input.Handle, other.Handle);
+                var res = THSLinalg_solve(input.Handle, other.Handle, left);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_svd(IntPtr tensor, bool fullMatrices, out IntPtr pS, out IntPtr pVh);
+            /// <summary>
+            /// Computes the solution of a square system of linear equations with a unique solution.
+            /// </summary>
+            /// <param name="input">Ttensor of shape (*, n, n) where * is zero or more batch dimensions.</param>
+            /// <param name="other">Right-hand side tensor of shape (*, n) or (*, n, k) or (n,) or (n, k)</param>
+            /// <param name="left">whether to solve the system AX = B or XA = B.</param>
+            /// <param name="check_errors">controls whether to check the content of infos and raise an error if it is non-zero</param>
+            /// <returns></returns>
+            public static (Tensor result, Tensor info) solve_ex(Tensor input, Tensor other, bool left = true, bool check_errors = false)
+            {
+                var res = THSLinalg_solve_ex(input.Handle, other.Handle, left, check_errors, out var infos);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return (new Tensor(res), new Tensor(infos));
+            }
 
             /// <summary>
             /// Computes the singular value decomposition (SVD) of a matrix.
@@ -631,9 +630,6 @@ namespace TorchSharp
                 return (new Tensor(U), new Tensor(S), new Tensor(Vh));
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_svdvals(IntPtr tensor);
-
             /// <summary>
             /// Computes the singular values of a matrix.
             /// </summary>
@@ -646,9 +642,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_tensorinv(IntPtr tensor, long ind);
 
             /// <summary>
             /// Computes the multiplicative inverse of torch.tensordot().
@@ -663,9 +656,6 @@ namespace TorchSharp
                     torch.CheckForErrors();
                 return new Tensor(res);
             }
-
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_tensorsolve(IntPtr tensor, IntPtr other, IntPtr dim, int dim_length);
 
             /// <summary>
             /// Computes the solution X to the system torch.tensordot(A, X) = B.
@@ -685,9 +675,6 @@ namespace TorchSharp
                 }
             }
 
-            [DllImport("LibTorchSharp")]
-            static extern IntPtr THSLinalg_vector_norm(IntPtr tensor, IntPtr ord, IntPtr dim, int dim_length, bool keepdim);
-
             /// <summary>
             /// Computes a vector norm.
             /// </summary>
@@ -705,6 +692,55 @@ namespace TorchSharp
                         return new Tensor(res);
                     }
                 }
+            }
+
+            /// <summary>
+            /// Generates a Vandermonde matrix.
+            /// </summary>
+            /// <param name="input">tensor of shape (*, n) where * is zero or more batch dimensions consisting of vectors.</param>
+            /// <param name="N">Number of columns in the output. Default: x.size(-1)</param>
+            public static Tensor vander(Tensor input, long? N = null)
+            {
+                if (!N.HasValue) {
+                    N = input.shape[input.ndim - 1];
+                }
+                var res = THSLinalg_vander(input.Handle, N.Value);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the dot product of two batches of vectors along a dimension.
+            /// </summary>
+            /// <param name="x">First batch of vectors.</param>
+            /// <param name="y">Second batch of vectors</param>
+            /// <param name="dim">Dimension along which to compute the dot product.</param>
+            /// <param name="out">Optional output tensor.</param>
+            public static Tensor vecdot(Tensor x, Tensor y, long dim = -1, Tensor? @out = null)
+            {
+                var res = THSLinalg_vecdot(x.Handle, y.Handle, dim, @out is null ? IntPtr.Zero : @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the solution of a square system of linear equations with a unique solution given an LU decomposition.
+            /// </summary>
+            /// <param name="LU">Tensor of shape (*, n, n) (or (*, k, k) if left= True) where * is zero or more batch dimensions as returned by lu_factor().</param>
+            /// <param name="pivots">Tensor of shape (*, n) (or (*, k) if left= True) where * is zero or more batch dimensions as returned by lu_factor().</param>
+            /// <param name="B">Right-hand side tensor of shape (*, n, k).</param>
+            /// <param name="left">Whether to solve the system AX=B or XA = B. Default: True.</param>
+            /// <param name="adjoint">Whether to solve the adjoint system.</param>
+            /// <param name="out">Optional output tensor.</param>
+            /// <returns></returns>
+            public static Tensor lu_solve(Tensor LU, Tensor pivots, Tensor B, bool left = true, bool adjoint = false, Tensor? @out = null)
+            {
+                var res = THSLinalg_lu_solve(B.Handle, LU.Handle, pivots.Handle, left, adjoint, @out is null ? IntPtr.Zero : @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
             }
         }
     }

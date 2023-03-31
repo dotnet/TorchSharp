@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -9,7 +9,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class TransformerEncoder : torch.nn.Module<Tensor, Tensor>, torch.nn.IModule<Tensor,Tensor,Tensor>
+        public sealed class TransformerEncoder : torch.nn.Module<Tensor, Tensor ,Tensor, Tensor>, torch.nn.IModule<Tensor,Tensor, Tensor>, torch.nn.IModule<Tensor, Tensor>
         {
             public enum Activations
             {
@@ -19,9 +19,6 @@ namespace TorchSharp
 
             internal TransformerEncoder(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_TransformerEncoder_forward(torch.nn.Module.HType module, IntPtr src, IntPtr src_mask, IntPtr src_key_padding_mask);
-
             /// <summary>
             /// Pass the input through the encoder layers in turn.
             /// </summary>
@@ -29,7 +26,7 @@ namespace TorchSharp
             /// <param name="src_mask">The additive mask for the src sequence (optional).</param>
             /// <param name="src_key_padding_mask">The ByteTensor mask for src keys per batch (optional).</param>
             /// <returns></returns>
-            public Tensor forward(Tensor src, Tensor src_mask, Tensor src_key_padding_mask)
+            public override Tensor forward(Tensor src, Tensor src_mask, Tensor src_key_padding_mask)
             {
                 var res = THSNN_TransformerEncoder_forward(handle,
                     src.Handle,
@@ -45,14 +42,9 @@ namespace TorchSharp
             /// <param name="src">The sequence to the encoder (required).</param>
             /// <param name="src_mask">The additive mask for the src sequence (optional).</param>
             /// <returns></returns>
-            public Tensor forward(Tensor src, Tensor src_mask)
+            public Tensor call(Tensor src, Tensor src_mask)
             {
-                var res = THSNN_TransformerEncoder_forward(handle,
-                    src.Handle,
-                    src_mask?.Handle ?? IntPtr.Zero,
-                    IntPtr.Zero);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return base.call(src, src_mask, null);
             }
 
             /// <summary>
@@ -60,14 +52,9 @@ namespace TorchSharp
             /// </summary>
             /// <param name="src">The sequence to the encoder (required).</param>
             /// <returns></returns>
-            public override Tensor forward(Tensor src)
+            public Tensor call(Tensor src)
             {
-                var res = THSNN_TransformerEncoder_forward(handle,
-                    src.Handle,
-                    IntPtr.Zero,
-                    IntPtr.Zero);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return base.call(src, null, null);
             }
         }
     }
@@ -76,16 +63,13 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_TransformerEncoder_ctor(torch.nn.Module.HType encoder_layer, long num_layers, out IntPtr pBoxedModule);
-
             /// <summary>
             /// TransformerEncoder is a stack of N encoder layers
             /// </summary>
             /// <param name="encoder_layer">An instance of the TransformerEncoderLayer class (required).</param>
             /// <param name="num_layers">The number of sub-encoder-layers in the encoder (required).</param>
             /// <returns></returns>
-            static public TransformerEncoder TransformerEncoder(TransformerEncoderLayer encoder_layer, long num_layers)
+            public static TransformerEncoder TransformerEncoder(TransformerEncoderLayer encoder_layer, long num_layers)
             {
                 var res = THSNN_TransformerEncoder_ctor(encoder_layer.handle, num_layers, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }

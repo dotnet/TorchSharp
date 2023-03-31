@@ -26,10 +26,10 @@ namespace TorchSharp
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
-            /// <returns></returns>
-            public static Rprop Rprop(IEnumerable<Parameter> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public static Rprop Rprop(IEnumerable<Parameter> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50, bool maximize = false)
             {
-                return new Rprop(parameters, lr, etaminus, etaplus, min_step, max_step);
+                return new Rprop(parameters, lr, etaminus, etaplus, min_step, max_step, maximize);
             }
 
             /// <summary>
@@ -44,10 +44,10 @@ namespace TorchSharp
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
-            /// <returns></returns>
-            public static Rprop Rprop(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public static Rprop Rprop(IEnumerable<(string name, Parameter parameter)> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50, bool maximize = false)
             {
-                return new Rprop(parameters.Select(np => np.parameter), lr, etaminus, etaplus, min_step, max_step);
+                return new Rprop(parameters.Select(np => np.parameter), lr, etaminus, etaplus, min_step, max_step, maximize);
             }
 
             /// <summary>
@@ -62,10 +62,10 @@ namespace TorchSharp
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
-            /// <returns></returns>
-            public static Rprop Rprop(IEnumerable<Rprop.ParamGroup> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public static Rprop Rprop(IEnumerable<Rprop.ParamGroup> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50, bool maximize = false)
             {
-                return new Rprop(parameters, lr, etaminus, etaplus, min_step, max_step);
+                return new Rprop(parameters, lr, etaminus, etaplus, min_step, max_step, maximize);
             }
         }
     }
@@ -85,9 +85,9 @@ namespace TorchSharp
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
-            /// <returns></returns>
-            public Rprop(IEnumerable<Parameter> parameters, double lr = 0.01, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
-                : this(new ParamGroup[] { new() { Parameters = parameters } }, lr, etaminus, etaplus, min_step, max_step)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public Rprop(IEnumerable<Parameter> parameters, double lr = 0.01, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50, bool maximize = false)
+                : this(new ParamGroup[] { new() { Parameters = parameters } }, lr, etaminus, etaplus, min_step, max_step, maximize)
             {
             }
 
@@ -102,14 +102,15 @@ namespace TorchSharp
             /// <param name="etaplus">Multiplicative decrease factor.</param>
             /// <param name="min_step">Minimum allowed step size.</param>
             /// <param name="max_step">Maximum allowed step size.</param>
-            /// <returns></returns>
-            public Rprop(IEnumerable<ParamGroup> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
+            /// <param name="maximize">Maximize the params based on the objective, instead of minimizing.</param>
+            public Rprop(IEnumerable<ParamGroup> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50, bool maximize = false)
             {
                 if (lr < 0.0) throw new ArgumentException($"Invalid learning rate: {lr}");
 
                 var options = new Options {
                     LearningRate = lr,
                     InitialLearningRate = lr,
+                    maximize = maximize,
                     etaminus = etaminus,
                     etaplus = etaplus,
                     min_step = min_step,
@@ -134,6 +135,7 @@ namespace TorchSharp
                 return _step<ParamGroup>(group => {
 
                     var options = group.Options as Options;
+                    var maximize = options.maximize.Value;
                     var etaminus = options.etaminus.Value;
                     var etaplus = options.etaplus.Value;
                     var min_step = options.min_step.Value;
@@ -147,6 +149,8 @@ namespace TorchSharp
                         if (grad is null) continue;
 
                         if (grad.is_sparse) throw new ArgumentException("Rprop does not support sparse gradients");
+
+                        if (maximize) grad = -grad;
 
                         var state = (State)_state[param.handle];
 
@@ -179,7 +183,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    ((State)kvp.Value).Dispose();
+                    ((State)kvp.Item2).Dispose();
                 }
             }
             /// <summary>
@@ -197,6 +201,7 @@ namespace TorchSharp
                 var opt = param_group.Options as Options;
 
                 // Make sure all the options are set.
+                if (!opt.maximize.HasValue) opt.maximize = def.maximize;
                 if (!opt.LearningRate.HasValue) opt.LearningRate = def.LearningRate;
                 if (!opt.etaminus.HasValue) opt.etaminus = def.etaminus;
                 if (!opt.etaplus.HasValue) opt.etaplus = def.etaplus;
@@ -211,8 +216,8 @@ namespace TorchSharp
                     var state = new State();
                     _state[p.Handle] = state;
                     state.step = 0;
-                    state.prev = torch.zeros_like(p).DetatchFromDisposeScope();
-                    state.step_size = p.new_empty(p.shape).fill_(opt.LearningRate).DetatchFromDisposeScope();
+                    state.prev = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.step_size = p.new_empty(p.shape).fill_(opt.LearningRate).DetachFromDisposeScope();
                 }
             }
 
@@ -289,6 +294,7 @@ namespace TorchSharp
 
             public class Options : OptimizerOptions
             {
+                public bool? maximize;
                 public double? etaminus;
                 public double? etaplus;
                 public double? min_step;
@@ -301,6 +307,7 @@ namespace TorchSharp
                 public override void SaveStateDict(BinaryWriter writer)
                 {
                     base.SaveStateDict(writer);
+                    writer.Write(maximize.Value);
                     writer.Write(etaminus.Value);
                     writer.Write(etaplus.Value);
                     writer.Write(min_step.Value);
@@ -314,6 +321,7 @@ namespace TorchSharp
                 public override void LoadStateDict(BinaryReader reader)
                 {
                     base.LoadStateDict(reader);
+                    maximize = reader.ReadBoolean();
                     etaminus = reader.ReadDouble();
                     etaplus = reader.ReadDouble();
                     min_step = reader.ReadDouble();
@@ -328,6 +336,7 @@ namespace TorchSharp
                 {
                     base.LoadStateDict(source);
                     var opts = source as Options;
+                    maximize = opts.maximize;
                     etaminus = opts.etaminus;
                     etaplus = opts.etaplus;
                     min_step = opts.min_step;
@@ -341,8 +350,8 @@ namespace TorchSharp
 
                 public ParamGroup(IEnumerable<Parameter> parameters, Options options) : base(parameters, options) { }
 
-                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50)
-                    : base(parameters, new Rprop.Options { LearningRate = lr, etaminus = etaminus, etaplus = etaplus, min_step = min_step, max_step = max_step })
+                public ParamGroup(IEnumerable<Parameter> parameters, double lr = 1e-2, double etaminus = 0.5, double etaplus = 1.2, double min_step = 1e-6, double max_step = 50, bool maximize = false)
+                    : base(parameters, new Rprop.Options { LearningRate = lr, etaminus = etaminus, etaplus = etaplus, min_step = min_step, max_step = max_step, maximize = maximize })
                 {
                 }
             }

@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
     <MajorVersion>0</MajorVersion>
-    <MinorVersion>98</MinorVersion>
-    <PatchVersion>1</PatchVersion>
+    <MinorVersion>99</MinorVersion>
+    <PatchVersion>4</PatchVersion>
   </PropertyGroup>
 
 </Project>

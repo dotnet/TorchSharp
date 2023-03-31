@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -15,9 +15,6 @@ namespace TorchSharp
         public sealed class ReflectionPad3d : torch.nn.Module<Tensor, Tensor>
         {
             internal ReflectionPad3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_ReflectionPad3d_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             /// <summary>
             /// Forward pass.
@@ -37,17 +34,26 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_ReflectionPad3d_ctor(long padding, out IntPtr pBoxedModule);
-
             /// <summary>
             /// Pads the input tensor using the reflection of the input boundary.
             /// </summary>
             /// <param name="padding">The size of the padding.</param>
             /// <returns></returns>
-            static public ReflectionPad3d ReflectionPad3d(long padding)
+            public static ReflectionPad3d ReflectionPad3d(long padding)
             {
                 var handle = THSNN_ReflectionPad3d_ctor(padding, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ReflectionPad3d(handle, boxedHandle);
+            }
+
+            /// <summary>
+            /// Pads the input tensor using reflection of the input boundary.
+            /// </summary>
+            /// <param name="padding">The size of the padding: (padding_left, padding_right, padding_top, padding_bottom, padding_front, padding_back).</param>
+            /// <returns></returns>
+            public static ReflectionPad3d ReflectionPad3d((long, long, long, long, long, long) padding)
+            {
+                var handle = THSNN_ReflectionPad3d_ctor_tuple(padding.Item1, padding.Item2, padding.Item3, padding.Item4, padding.Item5, padding.Item6, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ReflectionPad3d(handle, boxedHandle);
             }

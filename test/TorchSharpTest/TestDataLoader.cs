@@ -34,6 +34,21 @@ namespace TorchSharp
             Assert.Equal(d["index"], torch.tensor(0L));
         }
 
+        [Fact]
+        public void TensorDatasetTest()
+        {
+            var x = torch.randn(4, 12);
+            var y = torch.randn(4, 16);
+            using var dataset = torch.utils.data.TensorDataset(x, y);
+            Assert.Equal(2, dataset.Count);
+
+            var d = dataset.GetTensor(0);
+
+            Assert.Equal(2, d.Count);
+            Assert.Equal(x[0], d[0]);
+            Assert.Equal(y[0], d[1]);
+        }
+
         // Cannot assert index because ConcurrentBag append tensors randomly
         [Fact]
         public void DataLoaderTest1()
@@ -57,6 +72,24 @@ namespace TorchSharp
                 foreach (var x in dataloader) {
                 Assert.Equal(x["data"], torch.tensor(new[]{1, 1}, new[]{2L}));
                 Assert.Equal(x["index"], torch.tensor(new[]{idx++, idx++}, new[]{2L}));
+            }
+        }
+
+        [Fact]
+        public void DataLoaderTest3()
+        {
+            using var dataset = new TestDataset();
+            {
+                using var dataloader = new torch.utils.data.DataLoader(dataset, 3, false, torch.CPU);
+                Assert.Equal(4, dataloader.Count);
+            }
+            {
+                using var dataloader = new torch.utils.data.DataLoader(dataset, 3, false, torch.CPU, drop_last: true);
+                Assert.Equal(3, dataloader.Count);
+            }
+            {
+                using var dataloader = new torch.utils.data.DataLoader(dataset, 2, false, torch.CPU, drop_last: true);
+                Assert.Equal(5, dataloader.Count);
             }
         }
 

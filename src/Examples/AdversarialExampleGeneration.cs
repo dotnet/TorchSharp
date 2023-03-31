@@ -1,9 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.IO;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn.functional;
 using static TorchSharp.torch.utils.data;
 
 namespace TorchSharp.Examples
@@ -129,15 +127,15 @@ namespace TorchSharp.Examples
                     var label = dat["label"];
                     data.requires_grad = true;
 
-                    using (var output = model.forward(data))
-                    using (var loss = criterion.forward(output, label)) {
+                    using (var output = model.call(data))
+                    using (var loss = criterion.call(output, label)) {
 
                         model.zero_grad();
                         loss.backward();
 
                         var perturbed = Attack(data, ε, data.grad());
 
-                        using (var final = model.forward(perturbed)) {
+                        using (var final = model.call(perturbed)) {
 
                             correct += final.argmax(1).eq(label).sum().ToInt32();
                         }

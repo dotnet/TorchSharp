@@ -46,7 +46,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Redist", "Redist", "{D8C60CD8-8429-45F2-A755-47B6CD10FDF8}"
 	ProjectSection(SolutionItems) = preProject
 		src\Redist\libtorch-cpu\libtorch-cpu.proj = src\Redist\libtorch-cpu\libtorch-cpu.proj
-		src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj = src\Redist\libtorch-cuda-11.3\libtorch-cuda-11.3.proj
+		src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj = src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native-Release", "Native-Release", "{4DB9E84D-324C-408F-87A6-246E86205540}"
@@ -66,12 +66,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		azure-pipelines.yml = azure-pipelines.yml
 		build\BranchInfo.props = build\BranchInfo.props
 		DEVGUIDE.md = DEVGUIDE.md
+		README.md = README.md
 		RELEASENOTES.md = RELEASENOTES.md
+		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TorchVision", "src\TorchVision\TorchVision.csproj", "{DCF01EE5-6431-4115-85E0-1FC4C3DE86A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorchAudio", "src\TorchAudio\TorchAudio.csproj", "{B3AAC8E8-9CA4-4B01-96CF-206AE7327DDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TorchAudio", "src\TorchAudio\TorchAudio.csproj", "{B3AAC8E8-9CA4-4B01-96CF-206AE7327DDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

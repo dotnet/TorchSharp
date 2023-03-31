@@ -1,17 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.IO;
-using System.Runtime.InteropServices;
-
-using TorchSharp;
-
-using static TorchSharp.torch;
-
-using SkiaSharp;
 
 namespace TorchSharp.Examples
 {
@@ -34,7 +21,7 @@ namespace TorchSharp.Examples
                 torchvision.transforms.HorizontalFlip(),
                 //torchvision.transforms.CenterCrop(256),
                 torchvision.transforms.Rotate(50)
-                ).forward(img);
+                ).call(img);
 
             var out_file = "image_transformed.jpg";
 

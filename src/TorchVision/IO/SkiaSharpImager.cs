@@ -2,12 +2,9 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
-
 using SkiaSharp;
 using static TorchSharp.torch;
-using static TorchSharp.TensorExtensionMethods;
+using static TorchSharp.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -23,7 +20,6 @@ namespace TorchSharp
                     this.quality = quality;
                 }
                 private int quality;
-
 
                 public override Tensor DecodeImage(byte[] bytes, ImageReadMode mode = ImageReadMode.UNCHANGED)
                 {
@@ -79,7 +75,6 @@ namespace TorchSharp
                     result.Encode(stream, skiaFormat, this.quality);
                     stream.Flush();
                 }
-
 
                 public override byte[] EncodeImage(Tensor image, ImageFormat format)
                 {
@@ -147,7 +142,6 @@ namespace TorchSharp
                     return result.MoveToOuterDisposeScope();
                 }
 
-
                 private SKEncodedImageFormat TranslateImageFormat(ImageFormat format)
                 {
                     switch (format) {
@@ -164,15 +158,6 @@ namespace TorchSharp
                     }
                     throw new NotSupportedException($"SkiaSharp does not support encoding images in the '{format}' format.");
                 }
-
-                [DllImport("LibTorchSharp")]
-                static extern void THSVision_BRGA_RGB(IntPtr inputBytes, IntPtr redBytes, IntPtr greenBytes, IntPtr blueBytes, long inputChannelCount, long imageSize);
-
-                [DllImport("LibTorchSharp")]
-                static extern void THSVision_BRGA_RGBA(IntPtr inputBytes, IntPtr redBytes, IntPtr greenBytes, IntPtr blueBytes, IntPtr alphaBytes, long inputChannelCount, long imageSize);
-
-                [DllImport("LibTorchSharp")]
-                static extern void THSVision_RGB_BRGA(IntPtr inputBytes, IntPtr outBytes, long inputChannelCount, long imageSize);
             }
         }
     }

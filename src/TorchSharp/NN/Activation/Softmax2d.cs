@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
 using static TorchSharp.torch;
+using static TorchSharp.PInvoke.LibTorchSharp;
 
 namespace TorchSharp
 {
@@ -15,9 +15,6 @@ namespace TorchSharp
         public sealed class Softmax2d : torch.nn.Module<Tensor, Tensor>
         {
             internal Softmax2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_Softmax2d_forward(torch.nn.Module.HType module, IntPtr tensor);
 
             public override Tensor forward(Tensor tensor)
             {
@@ -36,14 +33,11 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            extern static IntPtr THSNN_Softmax2d_ctor(out IntPtr pBoxedModule);
-
             /// <summary>
             /// Applies Softmax over features to each spatial location
             /// </summary>
             /// <returns></returns>
-            static public Softmax2d Softmax2d()
+            public static Softmax2d Softmax2d()
             {
                 var handle = THSNN_Softmax2d_ctor(out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
@@ -57,10 +51,10 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="x">The input tensor</param>
                 /// <returns></returns>
-                static public Tensor softmax2d(Tensor x)
+                public static Tensor softmax2d(Tensor x)
                 {
                     using (var m = nn.Softmax2d()) {
-                        return m.forward(x);
+                        return m.call(x);
                     }
                 }
             }

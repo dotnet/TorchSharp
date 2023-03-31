@@ -16,15 +16,15 @@ namespace TorchSharp
                 this.gain = gain;
             }
 
-            public Tensor forward(Tensor img)
+            public Tensor call(Tensor img)
             {
                 var dtype = img.dtype;
                 if (!torch.is_floating_point(img))
-                    img = transforms.ConvertImageDType(torch.float32).forward(img);
+                    img = transforms.ConvertImageDtype(torch.float32).call(img);
 
                 img = (gain * img.pow(gamma)).clamp(0, 1);
 
-                return transforms.ConvertImageDType(dtype).forward(img); ;
+                return transforms.ConvertImageDtype(dtype).call(img); ;
             }
 
             private double gamma;
@@ -35,7 +35,7 @@ namespace TorchSharp
         {
             /// <summary>
             /// Perform gamma correction on an image.
-            /// 
+            ///
             /// See: https://en.wikipedia.org/wiki/Gamma_correction
             /// </summary>
             /// <param name="gamma">

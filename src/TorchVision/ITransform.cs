@@ -6,9 +6,12 @@ namespace TorchSharp
 {
     public static partial class torchvision
     {
-        public interface ITransform
+        /// <summary>
+        /// This is essentially an alias. We're keeping it because it was
+        /// introduced and thus leaving it in will avoid a breaking change.
+        /// </summary>
+        public interface ITransform : nn.IModule<Tensor, Tensor>
         {
-            Tensor forward(Tensor input);
         }
     }
 }

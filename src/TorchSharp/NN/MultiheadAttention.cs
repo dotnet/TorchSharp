@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See License.txt in the project root for license information.
 using System;
-using System.Runtime.InteropServices;
+using static TorchSharp.PInvoke.LibTorchSharp;
 using static TorchSharp.torch;
 
 #nullable enable
@@ -10,12 +10,10 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class MultiheadAttention : torch.nn.Module
+        public sealed class MultiheadAttention : torch.nn.Module<Tensor, Tensor, Tensor, Tensor?, bool, Tensor?, Tuple<Tensor,Tensor>>
         {
             internal MultiheadAttention(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            [DllImport("LibTorchSharp")]
-            private static extern void THSNN_MultiheadAttention_forward(torch.nn.Module.HType module, IntPtr query, IntPtr key, IntPtr value, IntPtr key_padding_mask, bool need_weights, IntPtr attn_mask, out IntPtr res1, out IntPtr res2);
             /// <summary>
             /// Applies the MultiheadAttention function element-wise.
             /// </summary>
@@ -27,7 +25,7 @@ namespace TorchSharp
             /// <param name="attn_mask">2D or 3D mask that prevents attention to certain positions. A 2D mask will be broadcasted for all the batches while a 3D mask allows to specify a different mask for the entries of each batch</param>
             /// <returns>attn_output, attn_ouput_weights</returns>
 
-            public Tuple<Tensor,Tensor> forward(Tensor query, Tensor key, Tensor value, Tensor? key_padding_mask = null, bool need_weights = true, Tensor? attn_mask = null)
+            public override Tuple<Tensor,Tensor> forward(Tensor query, Tensor key, Tensor value, Tensor? key_padding_mask, bool need_weights, Tensor? attn_mask)
             {
                 THSNN_MultiheadAttention_forward(handle,
                     query.Handle,
@@ -41,6 +39,11 @@ namespace TorchSharp
                 if (res1 == IntPtr.Zero || (need_weights && res2 == IntPtr.Zero)) { torch.CheckForErrors(); }
                 return Tuple.Create(new Tensor(res1), new Tensor(res2));
             }
+
+            public new Tuple<Tensor, Tensor> call(Tensor query, Tensor key, Tensor value, Tensor? key_padding_mask = null, bool need_weights = true, Tensor? attn_mask = null)
+            {
+                return base.call(query, key, value, key_padding_mask, need_weights, attn_mask);
+            }
         }
     }
 
@@ -48,11 +51,8 @@ namespace TorchSharp
     {
         public static partial class nn
         {
-            [DllImport("LibTorchSharp")]
-            private static extern IntPtr THSNN_MultiheadAttention_ctor(long embeded_dim, long num_heads, double dropout, bool bias, bool add_bias_kv, bool add_zero_attn, long kdim, long vdim, out IntPtr pBoxedModule);
-
             /// <summary>
-            /// Allows the model to jointly attend to information from different representation subspaces (based on the paper “Attention Is All You Need”). 
+            /// Allows the model to jointly attend to information from different representation subspaces (based on the paper “Attention Is All You Need”).
             /// </summary>
             /// <param name="embedded_dim">total dimension of the model</param>
             /// <param name="num_heads">parallel attention heads</param>
@@ -63,7 +63,7 @@ namespace TorchSharp
             /// <param name="kdim">total number of features in key</param>
             /// <param name="vdim">total number of features in value</param>
             /// <returns></returns>
-            static public MultiheadAttention MultiheadAttention(long embedded_dim, long num_heads, double dropout = 0.0, bool bias = true, bool add_bias_kv = false, bool add_zero_attn = false, long? kdim=null, long? vdim=null)
+            public static MultiheadAttention MultiheadAttention(long embedded_dim, long num_heads, double dropout = 0.0, bool bias = true, bool add_bias_kv = false, bool add_zero_attn = false, long? kdim=null, long? vdim=null)
             {
                 var _kdim = kdim.HasValue ? kdim.Value : embedded_dim;
                 var _vdim = vdim.HasValue ? vdim.Value : embedded_dim;

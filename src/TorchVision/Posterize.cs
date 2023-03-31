@@ -14,7 +14,7 @@ namespace TorchSharp
                 this.bits = bits;
             }
 
-            public Tensor forward(Tensor input)
+            public Tensor call(Tensor input)
             {
                 return transforms.functional.posterize(input, bits);
             }
