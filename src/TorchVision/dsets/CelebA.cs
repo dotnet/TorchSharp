@@ -2,16 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using TorchSharp.Datasets;
+using System.Security.Cryptography;
 using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
+using static TorchSharp.torch.utils.data;
 using static TorchSharp.torchvision.datasets.utils;
 
 #nullable enable
 namespace TorchSharp
 {
-    namespace Datasets
+    namespace Modules
     {
-        public sealed class CelebA<TInput, TTarget> : torchvision.datasets.VisionDataset<(TInput, TTarget), Tensor, string[], TInput, TTarget>
+        internal sealed class CelebA : Dataset
         {
             private static readonly (string, string, string)[] file_list = new (string, string, string)[] {
                 // File ID                                      MD5 Hash                            Filename
@@ -27,22 +29,47 @@ namespace TorchSharp
             };
 
             private const string base_folder = "celeba";
+            private readonly string root;
+            private readonly string split;
+            private readonly string target_type;
+            private readonly IModule<Tensor, Tensor>? transform;
+            private readonly IModule<Tensor, Tensor>? target_transform;
 
             internal CelebA(
                 string root,
                 string split,
                 string target_type,
-                Func<Tensor, string[], (TInput, TTarget)> transforms) : base(root, transforms)
+                IModule<Tensor, Tensor>? transform,
+                IModule<Tensor, Tensor>? target_transform)
             {
+                this.root = root;
+                this.split = split;
+                this.target_type = target_type;
+                this.transform = transform;
+                this.target_transform = target_transform;
             }
 
             public override long Count => 100;
 
-            public override (TInput, TTarget) GetTensor(long index)
+            /// <summary>
+            /// Get tensor according to index
+            /// </summary>
+            /// <param name="index">Index for tensor</param>
+            /// <returns>Tensors of index. DataLoader will catenate these tensors as batchSize * 784 for image, batchSize * 1 for label</returns>
+            public override Dictionary<string, Tensor> GetTensor(long index)
             {
                 Tensor input = torch.zeros(10, 10);
-                string[] target = { "", "" };
-                return this.transforms(input, target);
+                Tensor target = torch.zeros(10, 10);
+                if (this.transform is not null) {
+                    input = this.transform.call(input);
+                }
+                if (this.target_transform is not null) {
+                    target = this.target_transform.call(target);
+                }
+                return new Dictionary<string, Tensor> {
+                    { "input", input },
+                    { "target", target }
+                };
             }
 
             public void Download()
@@ -58,10 +85,21 @@ namespace TorchSharp
 
                 extract_archive(Path.Combine(this.root, base_folder, "img_align_celeba.zip"));
             }
-
+                
             private bool _check_integrity()
             {
-                throw new NotImplementedException();
+                foreach (var (_, md5, filename) in file_list) {
+                    var fpath = Path.Combine(this.root, base_folder, filename);
+                    var ext = Path.GetExtension(filename);
+                    // Allow original archive to be deleted (zip and 7z)
+                    // Only need the extracted images
+                    if (ext != "zip" && ext != ".7z" && !check_integrity(fpath, md5)) {
+                        return false;
+                    }
+                }
+
+                // Should check a hash of the images
+                return Directory.Exists(Path.Combine(this.root, base_folder, "img_align_celeba"));
             }
         }
     }
@@ -70,44 +108,24 @@ namespace TorchSharp
     {
         public static partial class datasets
         {
-            public static (TInput, TTarget) no_transform<TInput, TTarget>(TInput input, TTarget target)
-            {
-                return (input, target);
-            }
-
-            public static CelebA<TInput, TTarget> CelebA<TInput, TTarget>(
+            public static Dataset CelebA(
                 string root,
-                Func<Tensor, string[], (TInput, TTarget)> transforms,
+                IModule<Tensor, Tensor>? transform = null,
+                IModule<Tensor, Tensor>? target_transform = null,
                 string split = "train",
                 string target_type = "attr",
                 bool download = false)
             {
-                if (transforms == null) {
-                    throw new ArgumentNullException();
-                }
-                var dataset = new CelebA<TInput, TTarget>(
+                var dataset = new Modules.CelebA(
                     root,
                     split,
                     target_type,
-                    transforms);
+                    transform,
+                    target_transform);
                 if (download) {
                     dataset.Download();
                 }
                 return dataset;
-            }
-
-            public static CelebA<Tensor, string[]> CelebA(
-                string root,
-                string split = "train",
-                string target_type = "attr",
-                bool download = false)
-            {
-                return CelebA<Tensor, string[]>(
-                    root,
-                    no_transform,
-                    split,
-                    target_type,
-                    download);
             }
         }
     }
