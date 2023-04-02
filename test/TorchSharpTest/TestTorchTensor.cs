@@ -1,10 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using System.Globalization;
 using Xunit;
 using Xunit.Sdk;
 using static TorchSharp.torch;
@@ -7753,12 +7753,12 @@ namespace TorchSharp
         public void TestSearchSorted()
         {
             var ss = torch.from_array(new long[] { 1, 3, 5, 7, 9, 2, 4, 6, 8, 10 }).reshape(2, -1);
-            var v = torch.from_array(new long[] { 3, 6, 9, 3, 6, 9}).reshape(2, -1);
+            var v = torch.from_array(new long[] { 3, 6, 9, 3, 6, 9 }).reshape(2, -1);
             var sorted = torch.searchsorted(ss, v);
 
             Assert.Equal(new long[] { 1, 3, 4, 1, 2, 4 }, sorted.data<long>().ToArray());
 
-            sorted = torch.searchsorted(ss, v, right:true);
+            sorted = torch.searchsorted(ss, v, right: true);
 
             Assert.Equal(new long[] { 2, 3, 5, 1, 3, 4 }, sorted.data<long>().ToArray());
         }
@@ -7784,6 +7784,138 @@ namespace TorchSharp
             (hist, bin_edges) = torch.histogram(torch.tensor(new double[,] { { 1, 2, 1 }, { 1, 0, 1 } }), torch.tensor(new double[] { 0, 1, 2, 3 }));
             Assert.True(hist.allclose(torch.tensor(new double[] { 1, 4, 1 }), 0.001));
             Assert.True(bin_edges.allclose(torch.tensor(new double[] { 0, 1, 2, 3 }), 0.001));
+        }
+
+        [Fact]
+        public void TestHistogramOptimBinNums()
+        {
+            // test_empty
+            foreach (HistogramBinSelector estimator in (HistogramBinSelector[])Enum.GetValues(typeof(HistogramBinSelector))) {
+                (Tensor a, Tensor b) = torch.histogram(torch.empty(0, ScalarType.Int32), bins: estimator);
+                Assert.True(a.allclose(torch.tensor(new int[] { 0 }), 0.001));
+                Assert.True(b.allclose(torch.tensor(new double[] { 0, 1 }), 0.001));
+            }
+
+            // test_simple
+            Dictionary<int, Dictionary<HistogramBinSelector, int>> basic_test = new()
+            {
+                { 50, new() {
+                    { HistogramBinSelector.Scott, 4 }, { HistogramBinSelector.Rice, 8 }, { HistogramBinSelector.Sturges, 7 },
+                    { HistogramBinSelector.Doane, 8 }, { HistogramBinSelector.Sqrt, 8 }, { HistogramBinSelector.Stone, 2 }
+                } },
+                { 500, new() {
+                    { HistogramBinSelector.Scott, 8 }, { HistogramBinSelector.Rice, 16 }, { HistogramBinSelector.Sturges, 10 },
+                    { HistogramBinSelector.Doane, 12 }, { HistogramBinSelector.Sqrt, 23 }, { HistogramBinSelector.Stone, 9 }
+                } },
+                { 5000, new() {
+                    { HistogramBinSelector.Scott, 17 }, { HistogramBinSelector.Rice, 35 }, { HistogramBinSelector.Sturges, 14 },
+                    { HistogramBinSelector.Doane, 17 }, { HistogramBinSelector.Sqrt, 71 }, { HistogramBinSelector.Stone, 20 }
+                } },
+            };
+            foreach ((int testlen, Dictionary<HistogramBinSelector, int> expectedResults) in basic_test.Select(item => (item.Key, item.Value))) {
+                Tensor x1 = linspace(-10, -1, testlen / 5 * 2);
+                Tensor x2 = linspace(1, 10, testlen / 5 * 3);
+                Tensor x = concatenate(new Tensor[] { x1, x2 });
+                foreach ((HistogramBinSelector estimator, int numbins) in expectedResults.Select(item => (item.Key, item.Value))) {
+                    (Tensor a, Tensor b) = torch.histogram(x, bins: estimator);
+                    Assert.Equal(numbins, a.shape[0]);
+                }
+            }
+
+            // test_small
+            Dictionary<int, Dictionary<HistogramBinSelector, int>> small_dat = new()
+            {
+                { 1, new() {
+                    { HistogramBinSelector.Scott, 1 }, { HistogramBinSelector.Rice, 1 }, { HistogramBinSelector.Sturges, 1 },
+                    { HistogramBinSelector.Doane, 1 }, { HistogramBinSelector.Sqrt, 1 }, { HistogramBinSelector.Stone, 1 }
+                } },
+                { 2, new() {
+                    { HistogramBinSelector.Scott, 1 }, { HistogramBinSelector.Rice, 3 }, { HistogramBinSelector.Sturges, 2 },
+                    { HistogramBinSelector.Doane, 1 }, { HistogramBinSelector.Sqrt, 2 }, { HistogramBinSelector.Stone, 1 }
+                } },
+                { 3, new() {
+                    /*{ HistogramBinSelector.Scott, 2 },*/ { HistogramBinSelector.Rice, 3 }, { HistogramBinSelector.Sturges, 3 },
+                    { HistogramBinSelector.Doane, 3 }, { HistogramBinSelector.Sqrt, 2 }, { HistogramBinSelector.Stone, 1 }
+                } },
+            };
+            foreach ((int testlen, Dictionary<HistogramBinSelector, int> expectedResults) in small_dat.Select(item => (item.Key, item.Value))) {
+                Tensor testdat = arange(testlen);
+                foreach ((HistogramBinSelector estimator, int expbins) in expectedResults.Select(item => (item.Key, item.Value))) {
+                    (Tensor a, Tensor b) = torch.histogram(testdat, bins: estimator);
+                    Assert.Equal(expbins, a.shape[0]);
+                }
+            }
+
+            // test_novariance
+            Tensor novar_dataset = ones(100);
+            Dictionary<HistogramBinSelector, int> novar_resultdict = new() {
+                { HistogramBinSelector.Scott, 1 }, { HistogramBinSelector.Rice, 1 }, { HistogramBinSelector.Sturges, 1 },
+                { HistogramBinSelector.Doane, 1 }, { HistogramBinSelector.Sqrt, 1 }, { HistogramBinSelector.Stone, 1 }
+            };
+            foreach ((HistogramBinSelector estimator, int numbins) in novar_resultdict.Select(item => (item.Key, item.Value))) {
+                (Tensor a, Tensor b) = torch.histogram(novar_dataset, bins: estimator);
+                Assert.Equal(numbins, a.shape[0]);
+            }
+
+            // test_outlier
+            Tensor xcenter = linspace(-10, 10, 50);
+            Tensor outlier_dataset = hstack(linspace(-110, -100, 5), xcenter);
+
+            Dictionary<HistogramBinSelector, int> outlier_resultdict = new() { { HistogramBinSelector.Scott, 5 }, { HistogramBinSelector.Doane, 11 }, { HistogramBinSelector.Stone, 6 } };
+            foreach ((HistogramBinSelector estimator, int numbins) in outlier_resultdict.Select(item => (item.Key, item.Value))) {
+                (Tensor a, Tensor b) = torch.histogram(outlier_dataset, bins: estimator);
+                Assert.Equal(numbins, a.shape[0]);
+            }
+
+            // test_scott_vs_stone
+            //Tensor nbins_ratio(int seed, int size)
+            //{
+            //    manual_seed(seed);
+            //    Tensor x = randn(size) * 2 + 0;
+            //    Tensor a = histogram(x, HistogramBinSelector.Stone).hist.shape[0];
+            //    Tensor b = histogram(x, HistogramBinSelector.Scott).hist.shape[0];
+            //    return a / (a + b);
+            //}
+
+            //double[] m_size = new double[] { 10, 22, 46, 100 };
+            //List<Tensor> lls = new();
+
+            //for (int seed = 0; seed < 10; seed++) {
+            //    List<Tensor> temp = new();
+            //    foreach (double size in m_size) {
+            //        temp.Add(nbins_ratio(seed, (int)size));
+            //    }
+            //    lls.Add(torch.stack(temp));
+            //}
+
+            //Tensor ll = torch.stack(lls);
+            //Tensor avg = abs(mean(ll, new long[] { 0 }) - 0.5);
+            //Assert.True(avg.allclose(torch.tensor(new float[] { 0.15f, 0.09f, 0.08f, 0.03f }), 0.01));
+
+            // test_simple_range
+            basic_test = new()
+            {
+                { 50, new() {
+                    /*{ HistogramBinSelector.Scott, 8 },*/ { HistogramBinSelector.Rice, 15 }, { HistogramBinSelector.Sturges, 14 }, { HistogramBinSelector.Stone, 8 }
+                } },
+                { 500, new() {
+                    { HistogramBinSelector.Scott, 16 }, { HistogramBinSelector.Rice, 32 }, { HistogramBinSelector.Sturges, 20 }, { HistogramBinSelector.Stone, 80 }
+                } },
+                { 5000, new() {
+                    { HistogramBinSelector.Scott, 33 }, { HistogramBinSelector.Rice, 69 }, { HistogramBinSelector.Sturges, 27 }, { HistogramBinSelector.Stone, 80 }
+                } },
+            };
+
+            foreach ((int testlen, Dictionary<HistogramBinSelector, int> expectedResults) in basic_test.Select(item => (item.Key, item.Value))) {
+                Tensor x1 = linspace(-10, -1, testlen / 5 * 2);
+                Tensor x2 = linspace(1, 10, testlen / 5 * 3);
+                Tensor x3 = linspace(-100, -50, testlen);
+                Tensor x = concatenate(new Tensor[] { x1, x2, x3 });
+                foreach ((HistogramBinSelector estimator, int numbins) in expectedResults.Select(item => (item.Key, item.Value))) {
+                    (Tensor a, Tensor b) = torch.histogram(x, bins: estimator, range: (-20, 20));
+                    Assert.Equal(numbins, a.shape[0]);
+                }
+            }
         }
     }
 }

@@ -288,7 +288,7 @@ namespace TorchSharp
         /// <param name="range"> Defines the range of the bins. </param>
         /// <param name="density"> If False, the result will contain the count (or total weight) in each bin. If True, the result is the value of the probability density function over the bins, normalized such that the integral over the range of the bins is 1. </param>
         /// <returns></returns>
-        public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, HistogramBinSelector bins, (double min, double max)? range, bool density = false)
+        public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, HistogramBinSelector bins, (double min, double max)? range = null, bool density = false)
             => Utils.Histogram.histogram(input, bins, range, density);
 
         // https://pytorch.org/docs/stable/generated/torch.histogram.html

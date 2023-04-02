@@ -9,7 +9,7 @@ namespace TorchSharp.Utils
     {
         public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, HistogramBinSelector bins, (double min, double max)? range, bool density = false)
         {
-            input = RavelAndCheckWeights(input);
+            input = RavelAndCheckWeights(input.cpu());
             (Tensor bin_edges, (double, double, int) uniform_bins) = GetBinEdges(input, bins, range);
             ScalarType ntype = ScalarType.Int32;
             int block = 65536;
@@ -20,15 +20,15 @@ namespace TorchSharp.Utils
             Tensor norm = n_equal_bins / subtract(last_edge, first_edge);
 
             for (int i = 0; i < input.shape[0]; i += block) {
-                Tensor tmp_a = input[i, TensorIndex.Colon, i + block];
+                Tensor tmp_a = input[TensorIndex.Slice(i, i + block)];
                 Tensor keep = (tmp_a >= first_edge);
                 keep &= (tmp_a <= last_edge);
-                if (keep.sum().item<int>() != tmp_a.numel())
+                if (keep.sum().item<long>() != tmp_a.numel())
                     tmp_a = tmp_a.masked_select(keep);
 
                 tmp_a = tmp_a.to_type(bin_edges.dtype);
                 Tensor f_indices = subtract(tmp_a, first_edge) * norm;
-                Tensor indices = f_indices.to_type(ScalarType.Int32);
+                Tensor indices = f_indices.to_type(ScalarType.Int64);
                 indices[indices == n_equal_bins] -= 1;
 
                 Tensor decrement = tmp_a < bin_edges[indices];
@@ -58,7 +58,7 @@ namespace TorchSharp.Utils
             if (range is not null) {
                 Tensor keep = (a >= first_edge);
                 keep &= (a <= last_edge);
-                if (keep.sum().item<int>() != a.numel())
+                if (keep.sum().item<long>() != a.numel())
                     a = a.masked_select(keep);
             }
 
@@ -66,6 +66,8 @@ namespace TorchSharp.Utils
             if (a.numel() == 0)
                 n_equal_bins = 1;
             else {
+                if (a.dtype != ScalarType.Float64)
+                    a = a.to_type(ScalarType.Float64);
                 Tensor width = histBinSelectors[bins](a, range);
                 if ((width > 0).item<bool>())
                     n_equal_bins = ceil(subtract(last_edge, first_edge) / width).to_type(ScalarType.Int32).item<int>();
@@ -127,9 +129,7 @@ namespace TorchSharp.Utils
             = new Dictionary<HistogramBinSelector, Func<Tensor, (double min, double max)?, Tensor>>()
             {
                 { HistogramBinSelector.Stone, HistBinStone },
-                { HistogramBinSelector.Auto, HistBinAuto },
                 { HistogramBinSelector.Doane, HistBinDoane },
-                { HistogramBinSelector.Fd, HistBinFd },
                 { HistogramBinSelector.Rice, HistBinRice },
                 { HistogramBinSelector.Scott, HistBinScott },
                 { HistogramBinSelector.Sqrt, HistBinSqrt },
@@ -164,7 +164,7 @@ namespace TorchSharp.Utils
         /// <param name="_"></param>
         /// <returns> An estimate of the optimal bin width for the given data. </returns>
         private static Tensor HistBinSturges(Tensor x, (double min, double max)? _)
-            => Ptp(x) / (log(x.numel()) + 1);
+            => Ptp(x) / (log2(x.numel()) + 1);
 
         /// <summary>
         /// Rice histogram bin estimator.
@@ -196,7 +196,7 @@ namespace TorchSharp.Utils
         /// <param name="_"></param>
         /// <returns> An estimate of the optimal bin width for the given data. </returns>
         private static Tensor HistBinScott(Tensor x, (double min, double max)? _)
-            => pow(24.0 * pow(Math.PI, 0.5) / x.numel(), 1.0 / 3.0) * std(x);
+            => Math.Pow(24.0 * Math.Pow(Math.PI, 0.5) / x.numel(), 1.0 / 3.0) * std(x, false);
 
         /// <summary>
         /// Histogram bin estimator based on minimizing the estimated integrated squared error (ISE).
@@ -267,64 +267,6 @@ namespace TorchSharp.Utils
                 }
             }
             return 0.0;
-        }
-
-        /// <summary>
-        /// The Freedman-Diaconis histogram bin estimator.
-        ///
-        /// The Freedman-Diaconis rule uses interquartile range (IQR) to
-        /// estimate binwidth. It is considered a variation of the Scott rule
-        /// with more robustness as the IQR is less affected by outliers than
-        /// the standard deviation. However, the IQR depends on fewer points
-        /// than the standard deviation, so it is less accurate, especially for
-        /// long tailed distributions.
-        ///
-        /// If the IQR is 0, this function returns 0 for the bin width.
-        /// Binwidth is inversely proportional to the cube root of data size
-        /// (asymptotically optimal).
-        /// </summary>
-        /// <param name="x"> Input data that is to be histogrammed, trimmed to range. May not be empty. </param>
-        /// <param name="_"></param>
-        /// <returns> An estimate of the optimal bin width for the given data. </returns>
-        private static Tensor HistBinFd(Tensor x, (double min, double max)? _)
-        {
-            static Tensor Percentile(Tensor x)
-            {
-                Tensor sorted_x = sort(x.view(-1)).values;
-                Tensor p = tensor(new[] { 75, 25 });
-                Tensor indices = (p / 100.0 * (sorted_x.shape[0] - 1)).@long();
-                Tensor result = sorted_x[indices];
-
-                return result.view(p.shape);
-            }
-
-            Tensor result = Percentile(x);
-            Tensor iqr = subtract(result[0], result[1]);
-            return 2.0 * iqr * pow(x.numel(), (-1.0 / 3.0));
-        }
-
-        /// <summary>
-        /// Histogram bin estimator that uses the minimum width of the
-        /// Freedman-Diaconis and Sturges estimators if the FD bin width is non-zero.
-        /// If the bin width from the FD estimator is 0, the Sturges estimator is used.
-        /// 
-        /// The FD estimator is usually the most robust method, but its width
-        /// estimate tends to be too large for small `x` and bad for data with limited
-        /// variance.The Sturges estimator is quite good for small 1000 datasets
-        /// and is the default in the R language.This method gives good off-the-shelf
-        /// behaviour.
-        /// </summary>
-        /// <param name="x"> Input data that is to be histogrammed, trimmed to range. May not be empty. </param>
-        /// <param name="range"> The lower and upper range of the bins. </param>
-        /// <returns> An estimate of the optimal bin width for the given data. </returns>
-        private static Tensor HistBinAuto(Tensor x, (double min, double max)? range)
-        {
-            Tensor fd_bw = HistBinFd(x, range);
-            Tensor sturges_bw = HistBinSturges(x, range);
-            if ((fd_bw > 0).item<bool>())
-                return fd_bw.gt(sturges_bw).item<bool>() ? sturges_bw : fd_bw;
-            else
-                return sturges_bw;
         }
         #endregion
 
