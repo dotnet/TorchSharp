@@ -1,3 +1,5 @@
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,6 +7,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp.Utils
 {
+    // https://github.com/numpy/numpy/blob/v1.24.0/numpy/lib/histograms.py
     internal static class Histogram
     {
         public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, HistogramBinSelector bins, (double min, double max)? range, bool density = false)
