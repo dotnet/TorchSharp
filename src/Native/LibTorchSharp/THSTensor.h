@@ -1145,7 +1145,7 @@ EXPORT_API(Tensor) THSTensor_sqrt(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_sqrt_(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_std(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_std(const Tensor tensor, const bool unbiased);
 
 EXPORT_API(Tensor) THSTensor_std_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim);
 
