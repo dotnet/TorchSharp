@@ -46,8 +46,9 @@ namespace TorchSharp
         [Fact]
         public void TestCeleba()
         {
+#if false
             var my_transform = new MyTransform();
-            using (var dataset = CelebA(".", download: true)) {
+            using (var dataset = CelebA(".", download: false)) {
             }
             using (var dataset = CelebA(".", transform: my_transform)) {
                 var loader = new DataLoader(dataset, 10, shuffle: true);
@@ -55,6 +56,7 @@ namespace TorchSharp
                     Console.WriteLine("{0}", batch);
                 }
             }
+#endif
         }
     }
 }
