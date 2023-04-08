@@ -6,6 +6,7 @@ using static TorchSharp.torchvision.datasets;
 using Xunit;
 using System.Collections.Generic;
 using System;
+using System.IO;
 
 namespace TorchSharp
 {
@@ -21,6 +22,24 @@ namespace TorchSharp
             public override Tensor forward(Tensor input)
             {
                 return input + 1;
+            }
+        }
+
+        [Fact]
+        public void TestGDriveDownload()
+        {
+            string file_id = "dummy_file_id";
+            string filepath = Path.GetTempFileName();
+            string root = Path.GetDirectoryName(filepath);
+            string filename = Path.GetFileName(filepath);
+            File.WriteAllText(filepath, "test");
+            try {
+                string md5 = "098f6bcd4621d373cade4e832627b4f6";
+                // This should not download file from GDrive and exit without exception.
+                torchvision.datasets.utils.download_file_from_google_drive(
+                    file_id, root, filename: filename, md5: md5);
+            } finally {
+                File.Delete(filepath);
             }
         }
 
