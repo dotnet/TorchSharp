@@ -2201,6 +2201,13 @@ Tensor THSTensor_unflatten_names(Tensor tensor, const char** names, const int64_
     return nullptr;
 }
 
+Tensor THSTensor_fake_quantize_per_channel_affine(Tensor tensor, Tensor scale, Tensor zero_point, int64_t axis, int64_t quant_min, int64_t quant_max)
+{
+    at::Tensor res;
+    CATCH(res = at::fake_quantize_per_channel_affine(*tensor, *scale, *zero_point, axis, quant_min, quant_max);)
+    return ResultTensor(res);
+}
+
 Tensor THSTensor_fake_quantize_per_channel_affine_cachemask(Tensor tensor, Tensor scale, Tensor zero_point, int64_t axis, int64_t quant_min, int64_t quant_max, Tensor* mask)
 {
     std::tuple<at::Tensor, at::Tensor> res;

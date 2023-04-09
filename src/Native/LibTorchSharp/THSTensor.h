@@ -1716,4 +1716,5 @@ EXPORT_API(Tensor) THSTensor_istft(const Tensor x, int64_t n_fft, int64_t hop_le
 
 // Pointwise Ops
 
+EXPORT_API(Tensor) THSTensor_fake_quantize_per_channel_affine(const Tensor tensor, const Tensor scale, const Tensor zero_point, int64_t axis, int64_t quant_min, int64_t quant_max);
 EXPORT_API(Tensor) THSTensor_fake_quantize_per_channel_affine_cachemask(const Tensor tensor, const Tensor scale, const Tensor zero_point, int64_t axis, int64_t quant_min, int64_t quant_max, Tensor* mask);
