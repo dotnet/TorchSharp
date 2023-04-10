@@ -1678,9 +1678,9 @@ void THSTensor_meshgrid(const Tensor* tensors, const int length, const char* ind
     )
 }
 
-Tensor THSTensor_std(const Tensor tensor)
+Tensor THSTensor_std(const Tensor tensor, const bool unbiased)
 {
-    CATCH_TENSOR(tensor->std());
+    CATCH_TENSOR(tensor->std(unbiased));
 }
 
 Tensor THSTensor_std_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim)

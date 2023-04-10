@@ -1134,5 +1134,14 @@ namespace TorchSharp
                 this.RegisterComponents();
             }
         }
+
+        [Fact]
+        public void Validate971()
+        {
+            var t = torch.tensor(new double[] { 0, 1, 2 });
+            var std_dev = t.std(false).item<double>();
+
+            Assert.Equal(0.8165, std_dev, 0.0001);
+        }
     }
 }
