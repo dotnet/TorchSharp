@@ -276,6 +276,21 @@ namespace TorchSharp
             return new Tensor(res);
         }
 
+        /// https://github.com/numpy/numpy/blob/v1.24.0/numpy/lib/histograms.py#L679
+        /// <summary>
+        /// Computes a histogram of the values in a tensor.
+        /// bins can be an integer or a 1D tensor.
+        /// If bins is an int, it specifies the number of equal-width bins. By default, the lower and upper range of the bins is determined by the minimum and maximum elements of the input tensor. The range argument can be provided to specify a range for the bins.
+        /// If bins is a 1D tensor, it specifies the sequence of bin edges including the rightmost edge. It should contain at least 2 elements and its elements should be increasing.
+        /// </summary>
+        /// <param name="input"> the input tensor. </param>
+        /// <param name="bins"> int or 1D Tensor. If int, defines the number of equal-width bins. If tensor, defines the sequence of bin edges including the rightmost edge. </param>
+        /// <param name="range"> Defines the range of the bins. </param>
+        /// <param name="density"> If False, the result will contain the count (or total weight) in each bin. If True, the result is the value of the probability density function over the bins, normalized such that the integral over the range of the bins is 1. </param>
+        /// <returns></returns>
+        public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, HistogramBinSelector bins, (double min, double max)? range = null, bool density = false)
+            => Utils.Histogram.histogram(input, bins, range, density);
+
         // https://pytorch.org/docs/stable/generated/torch.histogram.html
         /// <summary>
         /// Computes a histogram of the values in a tensor.
@@ -305,7 +320,7 @@ namespace TorchSharp
         /// </summary>
         /// <param name="input"> the input tensor. </param>
         /// <param name="bins"> int or 1D Tensor. If int, defines the number of equal-width bins. If tensor, defines the sequence of bin edges including the rightmost edge. </param>
-        /// /// <param name="range"> Defines the range of the bins. </param>
+        /// <param name="range"> Defines the range of the bins. </param>
         /// <param name="weight"> If provided, weight should have the same shape as input. Each value in input contributes its associated weight towards its bin’s result. </param>
         /// <param name="density"> If False, the result will contain the count (or total weight) in each bin. If True, the result is the value of the probability density function over the bins, normalized such that the integral over the range of the bins is 1. </param>
         /// <returns></returns>

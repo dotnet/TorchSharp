@@ -26,6 +26,7 @@ __Fixed Bugs__:
 #953 TensorDataset is missing<br/>
 #962 Seed passed to torch.random.manual_seed(seed) is unused<br/>
 #949 Passing optimizer state dictionary from PyTorch to TorchSharp<br/>
+#971 std results are inconsistent<br/>
 
 ## NuGet Version 0.99.3
 
