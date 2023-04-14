@@ -197,6 +197,46 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Add histogram to summary.
+            ///
+            /// https://pytorch.org/docs/stable/_modules/torch/utils/tensorboard/writer.html#SummaryWriter.add_histogram
+            /// </summary>
+            /// <param name="tag"> Data identifier </param>
+            /// <param name="values"> Values to build histogram </param>
+            /// <param name="global_step"> Global step value to record </param>
+            /// <param name="bins"> This determines how the bins are made </param>
+            /// <param name="walltime"> Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds()) </param>
+            /// <param name="max_bins"></param>
+            public void add_histogram(string tag,
+                torch.Tensor values,
+                int global_step,
+                Utils.tensorboard.Enums.HistogramBinSelector bins = Utils.tensorboard.Enums.HistogramBinSelector.Tensorflow,
+                long? walltime = null,
+                long? max_bins = null)
+            {
+                static torch.Tensor default_bins()
+                {
+                    double v = 1e-12;
+                    var buckets = new List<double>();
+                    var neg_buckets = new List<double>();
+                    while (v < 1e20) {
+                        buckets.Add(v);
+                        neg_buckets.Add(-v);
+                        v *= 1.1;
+                    }
+                    return torch.tensor(neg_buckets)[torch.TensorIndex.Slice(step: -1)] + torch.tensor(new int[] { 0 }) + torch.tensor(buckets);
+                }
+
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
+                Summary summary = bins == Utils.tensorboard.Enums.HistogramBinSelector.Tensorflow ?
+                    torch.utils.tensorboard.Summary.histogram(tag, values, default_bins(), max_bins) :
+                    torch.utils.tensorboard.Summary.histogram(tag, values, (HistogramBinSelector)(byte)bins, max_bins);
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
+                WriteEvent(fileName, evnt);
+            }
+
+            /// <summary>
             /// Add batched image data to summary.
             ///
             /// https://pytorch.org/docs/stable/tensorboard.html#torch.utils.tensorboard.writer.SummaryWriter.add_image

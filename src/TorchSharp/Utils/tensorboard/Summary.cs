@@ -1,4 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+using System;
 using System.IO;
 using Google.Protobuf;
 using SkiaSharp;
@@ -15,6 +16,133 @@ namespace TorchSharp
                 {
                     private static int calc_scale_factor(Tensor tensor)
                         => tensor.dtype == ScalarType.Byte || tensor.dtype == ScalarType.Int8 ? 1 : 255;
+
+                    /// <summary>
+                    /// Outputs a `Summary` protocol buffer with a histogram.
+                    /// The generated
+                    /// [`Summary`](https://www.tensorflow.org/code/tensorflow/core/framework/summary.proto)
+                    /// has one summary value containing a histogram for `values`.
+                    /// This op reports an `InvalidArgument` error if any value is not finite.
+                    ///
+                    /// https://github.com/pytorch/pytorch/blob/1.7/torch/utils/tensorboard/summary.py#L283
+                    /// </summary>
+                    /// <param name="name"> A name for the generated node. Will also serve as a series name in TensorBoard. </param>
+                    /// <param name="values"> A real numeric `Tensor`. Any shape. Values to use to build the histogram. </param>
+                    /// <param name="bins"></param>
+                    /// <param name="max_bins"></param>
+                    /// <returns> A scalar `Tensor` of type `string`. The serialized `Summary` protocol buffer. </returns>
+                    public static Tensorboard.Summary histogram(string name, Tensor values, Tensor bins, long? max_bins = null)
+                    {
+                        Tensorboard.HistogramProto hist = make_histogram(values, bins, max_bins);
+                        var summary = new Tensorboard.Summary();
+                        summary.Value.Add(new Tensorboard.Summary.Types.Value() { Tag = name, Histo = hist });
+                        return summary;
+                    }
+
+                    /// <summary>
+                    /// Outputs a `Summary` protocol buffer with a histogram.
+                    /// The generated
+                    /// [`Summary`](https://www.tensorflow.org/code/tensorflow/core/framework/summary.proto)
+                    /// has one summary value containing a histogram for `values`.
+                    /// This op reports an `InvalidArgument` error if any value is not finite.
+                    ///
+                    /// https://github.com/pytorch/pytorch/blob/1.7/torch/utils/tensorboard/summary.py#L283
+                    /// </summary>
+                    /// <param name="name"> A name for the generated node. Will also serve as a series name in TensorBoard. </param>
+                    /// <param name="values"> A real numeric `Tensor`. Any shape. Values to use to build the histogram. </param>
+                    /// <param name="bins"></param>
+                    /// <param name="max_bins"></param>
+                    /// <returns> A scalar `Tensor` of type `string`. The serialized `Summary` protocol buffer. </returns>
+                    public static Tensorboard.Summary histogram(string name, Tensor values, HistogramBinSelector bins, long? max_bins = null)
+                    {
+                        Tensorboard.HistogramProto hist = make_histogram(values, bins, max_bins);
+                        var summary = new Tensorboard.Summary();
+                        summary.Value.Add(new Tensorboard.Summary.Types.Value() { Tag = name, Histo = hist });
+                        return summary;
+                    }
+
+                    /// <summary>
+                    /// Convert values into a histogram proto using logic from histogram.cc.
+                    ///
+                    /// https://github.com/pytorch/pytorch/blob/1.7/torch/utils/tensorboard/summary.py#L304
+                    /// </summary>
+                    /// <param name="values"></param>
+                    /// <param name="bins"></param>
+                    /// <param name="max_bins"></param>
+                    /// <returns></returns>
+                    /// <exception cref="ArgumentException"></exception>
+                    public static Tensorboard.HistogramProto make_histogram(Tensor values, Tensor bins, long? max_bins = null)
+                    {
+                        if (values.numel() == 0)
+                            throw new ArgumentException("The input has no element.");
+                        if (values.dtype != ScalarType.Float64)
+                            values = values.to_type(ScalarType.Float64);
+                        values = values.reshape(-1);
+                        (Tensor counts, Tensor limits) = torch.histogram(values, bins);
+                        return make_histogram(values, counts, limits, max_bins);
+                    }
+
+                    /// <summary>
+                    /// Convert values into a histogram proto using logic from histogram.cc.
+                    ///
+                    /// https://github.com/pytorch/pytorch/blob/1.7/torch/utils/tensorboard/summary.py#L304
+                    /// </summary>
+                    /// <param name="values"></param>
+                    /// <param name="bins"></param>
+                    /// <param name="max_bins"></param>
+                    /// <returns></returns>
+                    /// <exception cref="ArgumentException"></exception>
+                    public static Tensorboard.HistogramProto make_histogram(Tensor values, HistogramBinSelector bins, long? max_bins = null)
+                    {
+                        if (values.numel() == 0)
+                            throw new ArgumentException("The input has no element.");
+                        if (values.dtype != ScalarType.Float64)
+                            values = values.to_type(ScalarType.Float64);
+                        values = values.reshape(-1);
+                        (Tensor counts, Tensor limits) = torch.histogram(values, bins);
+                        return make_histogram(values, counts, limits, max_bins);
+                    }
+
+                    private static Tensorboard.HistogramProto make_histogram(Tensor values, Tensor counts, Tensor limits, long? max_bins = null)
+                    {
+                        long num_bins = counts.shape[0];
+                        if (max_bins != null && num_bins > max_bins) {
+                            long subsampling = num_bins / max_bins.Value;
+                            long subsampling_remainder = num_bins % subsampling;
+                            if (subsampling_remainder != 0)
+                                counts = nn.functional.pad(counts, (0, subsampling - subsampling_remainder), PaddingModes.Constant, 0);
+                            counts = counts.reshape(-1, subsampling).sum(1);
+                            Tensor new_limits = empty(new long[] { counts.numel() + 1 }, limits.dtype);
+                            new_limits[TensorIndex.Slice(null, -1)] = limits[TensorIndex.Slice(null, -1, subsampling)];
+                            new_limits[-1] = limits[-1];
+                            limits = new_limits;
+                        }
+
+                        Tensor cum_counts = cumsum(greater(counts, 0), 0);
+                        Tensor search_value = empty(2, cum_counts.dtype);
+                        search_value[0] = 0;
+                        search_value[1] = cum_counts[-1] - 1;
+                        Tensor search_result = searchsorted(cum_counts, search_value, right: true);
+                        long start = search_result[0][0].item<long>();
+                        long end = search_result[1][0].item<long>() + 1;
+                        counts = start > 0 ? counts[TensorIndex.Slice(start - 1, end)] : concatenate(new Tensor[] { tensor(new[] { 0 }), counts[TensorIndex.Slice(stop: end)] });
+                        limits = limits[TensorIndex.Slice(start, end + 1)];
+
+                        if (counts.numel() == 0 || limits.numel() == 0)
+                            throw new ArgumentException("The histogram is empty, please file a bug report.");
+
+                        Tensor sum_sq = values.dot(values);
+                        Tensorboard.HistogramProto histogramProto = new Tensorboard.HistogramProto() {
+                            Min = values.min().item<double>(),
+                            Max = values.max().item<double>(),
+                            Num = values.shape[0],
+                            Sum = values.sum().item<double>(),
+                            SumSquares = sum_sq.item<double>(),
+                        };
+                        histogramProto.BucketLimit.AddRange(limits.data<double>().ToArray());
+                        histogramProto.Bucket.AddRange(counts.data<double>().ToArray());
+                        return histogramProto;
+                    }
 
                     /// <summary>
                     /// Outputs a `Summary` protocol buffer with images.
