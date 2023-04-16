@@ -1,15 +1,31 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+using ICSharpCode.SharpZipLib.GZip;
+using ICSharpCode.SharpZipLib.Tar;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.NetworkInformation;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using Tensorboard;
+using static Tensorboard.CostGraphDef.Types;
+
+// A number of implementation details in this file have been translated from the Python version of torchvision,
+// largely located in the files found in this folder:
+//
+// https://github.com/pytorch/vision/blob/b78d98bb152ffb9c0c0f5365f59f475c70b1784e/torchvision/datasets/utils.py
+// The origin has the following copyright notice and license:
+//
+// https://github.com/pytorch/audio/blob/main/LICENSE
+//
 
 #nullable enable
 namespace TorchSharp
@@ -209,11 +225,6 @@ namespace TorchSharp
                     }
                 }
 
-                internal static string extract_archive(string from_path, string? to_path = null, bool remove_finished = false)
-                {
-                    throw new NotImplementedException();
-                }
-
                 private static string _ReadAllTextAsync(string path, CancellationToken cancellationToken = default)
                 {
                     var memory = new MemoryStream();
@@ -221,6 +232,81 @@ namespace TorchSharp
                         stream.CopyTo(memory);
                     }
                     return Encoding.ASCII.GetString(memory.GetBuffer());
+                }
+
+                internal static void _extract_tar(string from_path, string to_path)
+                {
+                    using (var fileStream = File.OpenRead(from_path)) {
+                        using (var inputStream = new GZipInputStream(fileStream)) {
+                            using (TarArchive tarArchive = TarArchive.CreateInputTarArchive(inputStream, Encoding.UTF8)) {
+                                tarArchive.ExtractContents(to_path);
+                            }
+                        }
+                    }
+                }
+
+                internal static void _extract_zip(string from_path, string to_path)
+                {
+                    using (var fileStream = File.OpenRead(from_path)) {
+                        using (ZipArchive zipArchive = new ZipArchive(fileStream)) {
+                            zipArchive.ExtractToDirectory(to_path);
+                        }
+                    }
+                }
+
+                internal static string extract_archive(string from_path, string? to_path = null, bool remove_finished = false)
+                {
+                    if (to_path is null) {
+                        to_path = Path.GetDirectoryName(from_path);
+                        if (to_path is null) {
+                            throw new InvalidDataException();
+                        }
+                    }
+
+                    if (Path.GetExtension(from_path) != "zip") {
+                        _extract_zip(from_path, to_path);
+                    }
+                    if (from_path.EndsWith(".tar.gz")) {
+                        _extract_tar(from_path, to_path);
+                    } else {
+                        throw new ArgumentException();
+                    }
+
+                    if (remove_finished) {
+                        File.Delete(from_path);
+                    }
+
+                    return to_path;
+                }
+
+                private static string iterable_to_str(IList<string> iterable)
+                {
+                    return "'" + string.Join("', '", iterable) + "'";
+                }
+
+                internal static string verify_str_arg(
+                    string value,
+                    string? arg = null,
+                    IList<string>? valid_values = null,
+                    string? custom_msg = null)
+                {
+                    if (valid_values is null) {
+                        return value;
+                    }
+
+                    if (!valid_values.Contains(value)) {
+                        string msg;
+                        if (custom_msg is not null) {
+                            msg = custom_msg;
+                        } else {
+                            msg = string.Format(
+                                "Unknown value '{0}' for argument {1}. Valid values are {2}.",
+                                value, arg, iterable_to_str(valid_values));
+                        }
+                        throw new ArgumentException(msg);
+                    }
+
+                    return value;
                 }
             }
         }

@@ -2,11 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
+using System.Linq;
+using System.Net.Http;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.utils.data;
 using static TorchSharp.torchvision.datasets.utils;
+
+// A number of implementation details in this file have been translated from the Python version of torchvision,
+// largely located in the files found in this folder:
+//
+// https://github.com/pytorch/vision/blob/b78d98bb152ffb9c0c0f5365f59f475c70b1784e/torchvision/datasets/celeba.py
+//
+// The origin has the following copyright notice and license:
+//
+// https://github.com/pytorch/audio/blob/main/LICENSE
+//
 
 #nullable enable
 namespace TorchSharp
@@ -51,6 +62,56 @@ namespace TorchSharp
 
             public override long Count => 100;
 
+            internal void _load()
+            {
+                if (!this._check_integrity()) {
+                    throw new InvalidDataException("Dataset not found or corrupted. You can use download=True to download it");
+                }
+
+                var split_map = new Dictionary<string, int?> {
+                    { "train", 0 },
+                    { "valid", 1 },
+                    { "test", 2 },
+                    { "all", null },
+                };
+
+                var split_ = split_map[verify_str_arg(split.ToLower(), "split", new string[] { "train", "valid", "test", "all" })];
+                var splits = this._load_csv("list_eval_partition.txt");
+                var identity = this._load_csv("identity_CelebA.txt");
+                var bbox = this._load_csv("list_bbox_celeba.txt", header: 1);
+                var landmarks_align = this._load_csv("list_landmarks_align_celeba.txt", header: 1);
+                var attr = this._load_csv("list_attr_celeba.txt", header: 1);
+                // TODO:
+                throw new NotImplementedException();
+            }
+
+            private object? _load_csv(string filename, int? header = null)
+            {
+                IList<string[]> data = (
+                    File.ReadAllLines(Path.Combine(this.root, base_folder, filename))
+                    .Select(line => line.TrimStart().Split(' '))).ToList();
+
+                string[]? headers;
+                if (header is not null) {
+                    headers = data[(int)header];
+                    data = data.Skip((int)header).ToList();
+                } else {
+                    headers = null;
+                }
+
+                var indices = data.Select(row => row[0]).ToArray();
+
+                data = data.Select(row => row.AsSpan(1).ToArray()).ToList();
+                var data_int = new int[data.Count, data[0].Length];
+                for (int i = 0; i < data_int.GetLength(0); i++) {
+                    for (int j = 0; j < data_int.GetLength(1); j++) {
+                        int result = int.TryParse(data[i][j], out result) ? result : 0;
+                        data_int[i, j] = result;
+                    }
+                }
+                return new CSV(headers, indices, torch.tensor(data_int));
+            }
+
             /// <summary>
             /// Get tensor according to index
             /// </summary>
@@ -72,20 +133,6 @@ namespace TorchSharp
                 };
             }
 
-            public void Download()
-            {
-                if (this._check_integrity()) {
-                    Console.WriteLine("Files already downloaded and verified");
-                    return;
-                }
-
-                foreach (var (file_id, md5, filename) in file_list) {
-                    download_file_from_google_drive(file_id, Path.Combine(this.root, base_folder), filename, md5);
-                }
-
-                extract_archive(Path.Combine(this.root, base_folder, "img_align_celeba.zip"));
-            }
-                
             private bool _check_integrity()
             {
                 foreach (var (_, md5, filename) in file_list) {
@@ -100,6 +147,33 @@ namespace TorchSharp
 
                 // Should check a hash of the images
                 return Directory.Exists(Path.Combine(this.root, base_folder, "img_align_celeba"));
+            }
+
+            public void download()
+            {
+                if (this._check_integrity()) {
+                    Console.WriteLine("Files already downloaded and verified");
+                    return;
+                }
+
+                foreach (var (file_id, md5, filename) in file_list) {
+                    download_file_from_google_drive(file_id, Path.Combine(this.root, base_folder), filename, md5);
+                }
+
+                extract_archive(Path.Combine(this.root, base_folder, "img_align_celeba.zip"));
+            }
+
+            private struct CSV
+            {
+                public string[]? header;
+                public string[] index;
+                public torch.Tensor data;
+                public CSV(string[]? header, string[] index, torch.Tensor data)
+                {
+                    this.header = header;
+                    this.index = index;
+                    this.data = data;
+                }
             }
         }
     }
@@ -123,8 +197,9 @@ namespace TorchSharp
                     transform,
                     target_transform);
                 if (download) {
-                    dataset.Download();
+                    dataset.download();
                 }
+                dataset._load();
                 return dataset;
             }
         }
