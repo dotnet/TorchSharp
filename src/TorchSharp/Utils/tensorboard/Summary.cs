@@ -33,6 +33,8 @@ namespace TorchSharp
                     /// <returns> A scalar `Tensor` of type `string`. The serialized `Summary` protocol buffer. </returns>
                     public static Tensorboard.Summary histogram(string name, Tensor values, Tensor bins, long? max_bins = null)
                     {
+                        if (values.device.type != DeviceType.CPU)
+                            values = values.cpu();
                         Tensorboard.HistogramProto hist = make_histogram(values, bins, max_bins);
                         var summary = new Tensorboard.Summary();
                         summary.Value.Add(new Tensorboard.Summary.Types.Value() { Tag = name, Histo = hist });
@@ -123,8 +125,8 @@ namespace TorchSharp
                         search_value[0] = 0;
                         search_value[1] = cum_counts[-1] - 1;
                         Tensor search_result = searchsorted(cum_counts, search_value, right: true);
-                        long start = search_result[0][0].item<long>();
-                        long end = search_result[1][0].item<long>() + 1;
+                        long start = search_result[0].item<long>();
+                        long end = search_result[1].item<long>() + 1;
                         counts = start > 0 ? counts[TensorIndex.Slice(start - 1, end)] : concatenate(new Tensor[] { tensor(new[] { 0 }), counts[TensorIndex.Slice(stop: end)] });
                         limits = limits[TensorIndex.Slice(start, end + 1)];
 

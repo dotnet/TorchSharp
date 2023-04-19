@@ -224,7 +224,10 @@ namespace TorchSharp
                         neg_buckets.Add(-v);
                         v *= 1.1;
                     }
-                    return torch.tensor(neg_buckets)[torch.TensorIndex.Slice(step: -1)] + torch.tensor(new int[] { 0 }) + torch.tensor(buckets);
+                    neg_buckets.Reverse();
+                    var result = new List<double>();
+                    result.AddRange(neg_buckets); result.Add(0); result.AddRange(buckets);
+                    return torch.tensor(result);
                 }
 
                 var fileName = InitDefaultFile();

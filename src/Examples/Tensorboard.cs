@@ -24,6 +24,15 @@ namespace TorchSharp.Examples
             AddImageUsePath(writer);
             AddImageUseTensor(writer, device);
             AddVideo(writer, device);
+            AddHistogram(writer, device);
+        }
+
+        private static void AddHistogram(Modules.SummaryWriter writer, Device device)
+        {
+            for (int i = 0; i < 10; i++) {
+                Tensor x = randn(1000, device: device);
+                writer.add_histogram("AddHistogram", x + i, i);
+            }
         }
 
         private static void AddText(Modules.SummaryWriter writer)
