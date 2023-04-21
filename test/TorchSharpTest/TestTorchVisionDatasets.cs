@@ -46,17 +46,25 @@ namespace TorchSharp
         [Fact]
         public void TestCeleba()
         {
-#if false
-            var my_transform = new MyTransform();
-            using (var dataset = CelebA(".", download: false)) {
-            }
-            using (var dataset = CelebA(".", transform: my_transform)) {
-                var loader = new DataLoader(dataset, 10, shuffle: true);
-                foreach (var batch in loader) {
-                    Console.WriteLine("{0}", batch);
+            // There's no data so it throws an exception.
+            Assert.Throws<InvalidDataException>(() => {
+                using (var dataset = CelebA(".", download: false)) {
                 }
-            }
-#endif
+            });
+        }
+
+        [Fact]
+        public void TestCelebaWithTransform()
+        {
+            // There's no data so it throws an exception.
+            Assert.Throws<InvalidDataException>(() => {
+                var my_transform = new MyTransform();
+                using (var dataset = CelebA(".", transform: my_transform)) {
+                    var loader = new DataLoader(dataset, 10, shuffle: true);
+                    foreach (var batch in loader) {
+                    }
+                }
+            });
         }
     }
 }

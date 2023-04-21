@@ -42,14 +42,20 @@ namespace TorchSharp
             private const string base_folder = "celeba";
             private readonly string root;
             private readonly string split;
-            private readonly string target_type;
+            private readonly string[] target_type;
             private readonly IModule<Tensor, Tensor>? transform;
             private readonly IModule<Tensor, Tensor>? target_transform;
+            private string[]? filename;
+            private Tensor? identity;
+            private Tensor? bbox;
+            private Tensor? landmarks_align;
+            private Tensor? attr;
+            private string[]? attr_names;
 
             internal CelebA(
                 string root,
                 string split,
-                string target_type,
+                string[] target_type,
                 IModule<Tensor, Tensor>? transform,
                 IModule<Tensor, Tensor>? target_transform)
             {
@@ -60,7 +66,7 @@ namespace TorchSharp
                 this.target_transform = target_transform;
             }
 
-            public override long Count => 100;
+            public override long Count => this.attr is null ? 0 : this.attr.shape[0];
 
             internal void _load()
             {
@@ -81,20 +87,44 @@ namespace TorchSharp
                 var bbox = this._load_csv("list_bbox_celeba.txt", header: 1);
                 var landmarks_align = this._load_csv("list_landmarks_align_celeba.txt", header: 1);
                 var attr = this._load_csv("list_attr_celeba.txt", header: 1);
-                // TODO:
-                throw new NotImplementedException();
+
+                if (split_ is null) {
+                    this.filename = splits.index;
+
+                    this.identity = identity.data;
+                    this.bbox = bbox.data;
+                    this.landmarks_align = landmarks_align.data;
+                    this.attr = attr.data;
+                } else {
+                    var mask = (splits.data == split_).squeeze();
+
+                    var x = torch.squeeze(torch.nonzero(mask), dim: null);
+                    var y = new List<string>();
+                    for (int i = 0; i < x.shape[0]; i++) {
+                        y.Add(splits.index[x[i].item<long>()]);
+                    }
+                    this.filename = y.ToArray();
+
+                    this.identity = identity.data[mask];
+                    this.bbox = bbox.data[mask];
+                    this.landmarks_align = landmarks_align.data[mask];
+                    this.attr = attr.data[mask];
+                }
+                // map from {-1, 1} to {0, 1}
+                this.attr = torch.div(this.attr + 1, 2, rounding_mode: RoundingMode.floor);
+                this.attr_names = attr.header;
             }
 
-            private object? _load_csv(string filename, int? header = null)
+            private CSV _load_csv(string filename, int? header = null)
             {
                 IList<string[]> data = (
                     File.ReadAllLines(Path.Combine(this.root, base_folder, filename))
-                    .Select(line => line.TrimStart().Split(' '))).ToList();
+                    .Select(line => line.TrimStart().Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))).ToList();
 
                 string[]? headers;
                 if (header is not null) {
                     headers = data[(int)header];
-                    data = data.Skip((int)header).ToList();
+                    data = data.Skip((int)header + 1).ToList();
                 } else {
                     headers = null;
                 }
@@ -105,6 +135,9 @@ namespace TorchSharp
                 var data_int = new int[data.Count, data[0].Length];
                 for (int i = 0; i < data_int.GetLength(0); i++) {
                     for (int j = 0; j < data_int.GetLength(1); j++) {
+                        if (data[i].Length != data_int.GetLength(1)) {
+                            throw new Exception();
+                        }
                         int result = int.TryParse(data[i][j], out result) ? result : 0;
                         data_int[i, j] = result;
                     }
@@ -119,17 +152,38 @@ namespace TorchSharp
             /// <returns>Tensors of index. DataLoader will catenate these tensors as batchSize * 784 for image, batchSize * 1 for label</returns>
             public override Dictionary<string, Tensor> GetTensor(long index)
             {
-                Tensor input = torch.zeros(10, 10);
-                Tensor target = torch.zeros(10, 10);
+                // X = PIL.Image.open(os.path.join(self.root, self.base_folder, "img_align_celeba", self.filename[index]))
+                Tensor X = torch.zeros(10, 10);
+
+                var target = new List<Tensor>();
+                foreach (var t in this.target_type) {
+                    if (t == "attr") {
+                        if (this.attr is null) throw new InvalidDataException();
+                        target.Add(this.attr[index, TensorIndex.Colon]);
+                    } else if (t == "identity") {
+                        if (this.identity is null) throw new InvalidDataException();
+                        target.Add(this.identity[index, 0]);
+                    } else if (t == "bbox") {
+                        if (this.bbox is null) throw new InvalidDataException();
+                        target.Add(this.bbox[index, TensorIndex.Colon]);
+                    } else if (t == "landmarks") {
+                        if (this.landmarks_align is null) throw new InvalidDataException();
+                        target.Add(this.landmarks_align[index, TensorIndex.Colon]);
+                    } else {
+                        // TODO: refactor with utils.verify_str_arg
+                        throw new InvalidDataException($"Target type \"{t}\" is not recognized.");
+                    }
+                }
+
                 if (this.transform is not null) {
-                    input = this.transform.call(input);
+                    X = this.transform.call(X);
                 }
                 if (this.target_transform is not null) {
-                    target = this.target_transform.call(target);
+                    target[0] = this.target_transform.call(target[0]);
                 }
                 return new Dictionary<string, Tensor> {
-                    { "input", input },
-                    { "target", target }
+                    { "input", X },
+                    { "target", target[0] }
                 };
             }
 
@@ -187,9 +241,12 @@ namespace TorchSharp
                 IModule<Tensor, Tensor>? transform = null,
                 IModule<Tensor, Tensor>? target_transform = null,
                 string split = "train",
-                string target_type = "attr",
+                string[]? target_type = null,
                 bool download = false)
             {
+                if (target_type == null) {
+                    target_type = new string[] { "attr" };
+                }
                 var dataset = new Modules.CelebA(
                     root,
                     split,
