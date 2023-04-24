@@ -2,16 +2,31 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.99.3
+## NuGet Version 0.99.4
+
+__Breaking Changes__:
+
+There were some changes to the binary format storing optimizer state. This means that any such state generated before updating to this version is invalid and will likely result in a runtime error.
 
 __API Changes__:
 
+Adding torch.tensordot<br/>
+Adding torch.nn.Fold and Unfold modules.<br/>
 Adding `Module.call()` to all the Module<T...> classes. This wraps `Module.forward()` and allows hooks to be registered. `Module.forward()` is still available, but the most general way to invoke a module's logic is through `call()`.<br/>
+Adding tuple overloads for all the padding-related modules.<br/>
+Adding support for exporting optimizer state from PyTorch and loading it in TorchSharp<br/>
 
 __Fixed Bugs__:
 
-#842 How to use register_forward_hook?
-
+#842 How to use register_forward_hook?<br/>
+#940 Missing torch.searchsorted<br/>
+#942 nn.ReplicationPad1d(long[] padding) missing<br/>
+#943 LRScheduler.get_last_lr missing<br/>
+#951 DataLoader constructor missing drop_last parameter<br/>
+#953 TensorDataset is missing<br/>
+#962 Seed passed to torch.random.manual_seed(seed) is unused<br/>
+#949 Passing optimizer state dictionary from PyTorch to TorchSharp<br/>
+#971 std results are inconsistent<br/>
 
 ## NuGet Version 0.99.3
 

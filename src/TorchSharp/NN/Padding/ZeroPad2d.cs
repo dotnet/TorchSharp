@@ -45,6 +45,18 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ZeroPad2d(handle, boxedHandle);
             }
+
+            /// <summary>
+            /// Pads the input tensor boundaring with zero
+            /// </summary>
+            /// <param name="padding">The size of the padding: (padding_left, padding_right, padding_top, padding_bottom).</param>
+            /// <returns></returns>
+            public static ZeroPad2d ZeroPad2d((long, long, long, long) padding)
+            {
+                var handle = THSNN_ZeroPad2d_ctor_tuple(padding.Item1, padding.Item2, padding.Item3, padding.Item4, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ZeroPad2d(handle, boxedHandle);
+            }
         }
     }
 }

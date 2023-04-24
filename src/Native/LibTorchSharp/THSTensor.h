@@ -984,6 +984,8 @@ EXPORT_API(Tensor) THSTensor_norm(const Tensor tensor, float p);
 
 EXPORT_API(Tensor) THSTensor_norm_along_dimension(const Tensor tensor, const int64_t dim, const bool keepdim, float p);
 
+EXPORT_API(Tensor) THSLinalg_tensordot(const Tensor input1, const Tensor input2, const int64_t* dims1, const int dims1_length, const int64_t* dims2, const int dims2_length);
+
 EXPORT_API(int64_t) THSTensor_numel(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_ones(const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
@@ -1143,7 +1145,7 @@ EXPORT_API(Tensor) THSTensor_sqrt(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_sqrt_(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_std(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_std(const Tensor tensor, const bool unbiased);
 
 EXPORT_API(Tensor) THSTensor_std_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim);
 
@@ -1182,6 +1184,14 @@ EXPORT_API(Tensor) THSTensor_slice_scatter(const Tensor tensor, const Tensor sou
 
 EXPORT_API(Tensor) THSTensor_scatter_add(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 EXPORT_API(Tensor) THSTensor_scatter_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
+
+EXPORT_API(Tensor) THSTensor_searchsorted_t(const Tensor sorted_sequence, const Tensor values, const bool out_int32, const bool right, const Tensor sorter);
+EXPORT_API(Tensor) THSTensor_searchsorted_s(const Tensor sorted_sequence, const Scalar values, const bool out_int32, const bool right, const Tensor sorter);
+
+EXPORT_API(Tensor) THSTensor_histogram_t(const Tensor input, const Tensor bins, const Tensor weight, const bool density, Tensor* r_bin_edges);
+EXPORT_API(Tensor) THSTensor_histogram_i(const Tensor input, const int64_t bins, const double* range, const int length, const Tensor weight, const bool density, Tensor* r_bin_edges);
+EXPORT_API(Tensor) THSTensor_histogram_out_t(const Tensor input, const Tensor bins, const Tensor weight, const bool density, Tensor* hist, Tensor* bin_edges, Tensor* r_bin_edges);
+EXPORT_API(Tensor) THSTensor_histogram_out_i(const Tensor input, const int64_t bins, const double* range, const int length, const Tensor weight, const bool density, Tensor* hist, Tensor* bin_edges, Tensor* r_bin_edges);
 
 EXPORT_API(Tensor) THSTensor_set_(Tensor tensor, const Tensor source);
 

@@ -45,6 +45,18 @@ namespace TorchSharp
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ReflectionPad2d(handle, boxedHandle);
             }
+
+            /// <summary>
+            /// Pads the input tensor using reflection of the input boundary.
+            /// </summary>
+            /// <param name="padding">The size of the padding: (padding_left, padding_right, padding_top, padding_bottom).</param>
+            /// <returns></returns>
+            public static ReflectionPad2d ReflectionPad2d((long, long, long, long) padding)
+            {
+                var handle = THSNN_ReflectionPad2d_ctor_tuple(padding.Item1, padding.Item2, padding.Item3, padding.Item4, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new ReflectionPad2d(handle, boxedHandle);
+            }
         }
     }
 }

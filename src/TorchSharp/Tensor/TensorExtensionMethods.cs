@@ -230,7 +230,8 @@ namespace TorchSharp
             return IsIntegral(tensor.dtype);
         }
 
-        public static ReadOnlySpan<int> IntShape(this Tensor tensor) {
+        public static ReadOnlySpan<int> IntShape(this Tensor tensor)
+        {
             var shape = tensor.shape;
             var int_shape = new int[shape.Length];
             for (var i = 0; i < shape.Length; ++i) int_shape[i] = (int)shape[i];
@@ -364,6 +365,50 @@ namespace TorchSharp
             //
             if (totalSize > int.MaxValue)
                 throw new NotImplementedException("Loading tensors larger than 2GB");
+
+            // This needs to be done even if the tensor is skipped, since we have to advance the input stream.
+            var bytes = reader.ReadBytes((int)(totalSize * tensor.ElementSize));
+
+            if (!skip) {
+                var device = tensor.device;
+                if (device.type != DeviceType.CPU) tensor.to(CPU);
+                tensor.bytes = bytes;
+                tensor.to(device);
+            }
+        }
+
+        public static void Load(ref Tensor tensor, System.IO.BinaryReader reader, bool skip = false)
+        {
+            // First, read the type
+            var type = (ScalarType)reader.Decode();
+
+            // Then, the shape
+            var shLen = reader.Decode();
+            long[] loadedShape = new long[shLen];
+
+            long totalSize = 1;
+            for (int i = 0; i < shLen; ++i) {
+                loadedShape[i] = reader.Decode();
+                totalSize *= loadedShape[i];
+            }
+
+            //
+            // TODO: Fix this so that you can read large tensors. Right now, they are limited to 2GB
+            //
+            if (totalSize > int.MaxValue)
+                throw new NotImplementedException("Loading tensors larger than 2GB");
+
+            if (tensor is null) {
+                // If the tensor doesn't exist, initialize by zeros unless
+                // it's going to be loaded from the stream.
+                tensor = skip
+                    ? torch.zeros(loadedShape, dtype: type)
+                    : torch.empty(loadedShape, dtype: type);
+            }
+            else if (!skip && !loadedShape.SequenceEqual(tensor.shape)) {
+                // We only care about this if the bytes will be written to the tensor.
+                throw new ArgumentException("Mismatched tensor shape while loading. Make sure that the model you are loading into is exactly the same as the origin.");
+            }
 
             // This needs to be done even if the tensor is skipped, since we have to advance the input stream.
             var bytes = reader.ReadBytes((int)(totalSize * tensor.ElementSize));

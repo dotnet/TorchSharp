@@ -1,4 +1,5 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+using System;
 using System.Diagnostics.Contracts;
 
 namespace TorchSharp
@@ -236,6 +237,210 @@ namespace TorchSharp
         [Pure]
         public static (Tensor values, Tensor indices) sort(Tensor input, long dim = -1, bool descending = false, bool stable = false)
             => input.sort(dim, descending, stable);
+
+        // https://pytorch.org/docs/stable/generated/torch.searchsorted.html
+        /// <summary>
+        /// Find the indices from the innermost dimension of sorted_sequence such that, if the corresponding values in values were inserted before the indices,
+        /// when sorted, the order of the corresponding innermost dimension within sorted_sequence would be preserved.
+        /// Return a new tensor with the same size as values.
+        /// If right is false, then the left boundary of sorted_sequence is closed. 
+        /// </summary>
+        /// <param name="sorted_sequence">N-D or 1-D tensor, containing monotonically increasing sequence on the innermost dimension unless sorter is provided, in which case the sequence does not need to be sorted</param>
+        /// <param name="values">N-D tensor or a Scalar containing the search value(s).</param>
+        /// <param name="out_int32">Indicates the output data type. torch.int32 if true, torch.int64 otherwise. Default value is false, i.e. default output data type is torch.int64.</param>
+        /// <param name="right">Indicates the output data type. torch.int32 if true, torch.int64 otherwise. Default value is false, i.e. default output data type is torch.int64.</param>
+        /// <param name="sorter">If provided, a tensor matching the shape of the unsorted sorted_sequence containing a sequence of indices that sort it in the ascending order on the innermost dimension</param>
+        public static Tensor searchsorted(Tensor sorted_sequence, Tensor values, bool out_int32 = false, bool right = false, Tensor sorter = null)
+        {
+            var res = PInvoke.LibTorchSharp.THSTensor_searchsorted_t(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle);
+            if (res == IntPtr.Zero) CheckForErrors();
+            return new Tensor(res);
+        }
+
+        // https://pytorch.org/docs/stable/generated/torch.searchsorted.html
+        /// <summary>
+        /// Find the indices from the innermost dimension of sorted_sequence such that, if the corresponding values in values were inserted before the indices,
+        /// when sorted, the order of the corresponding innermost dimension within sorted_sequence would be preserved.
+        /// Return a new tensor with the same size as values.
+        /// If right is false, then the left boundary of sorted_sequence is closed. 
+        /// </summary>
+        /// <param name="sorted_sequence">N-D or 1-D tensor, containing monotonically increasing sequence on the innermost dimension unless sorter is provided, in which case the sequence does not need to be sorted</param>
+        /// <param name="values">A Scalar containing the search value.</param>
+        /// <param name="out_int32">Indicates the output data type. torch.int32 if true, torch.int64 otherwise. Default value is false, i.e. default output data type is torch.int64.</param>
+        /// <param name="right">Indicates the output data type. torch.int32 if true, torch.int64 otherwise. Default value is false, i.e. default output data type is torch.int64.</param>
+        /// <param name="sorter">If provided, a tensor matching the shape of the unsorted sorted_sequence containing a sequence of indices that sort it in the ascending order on the innermost dimension</param>
+        public static Tensor searchsorted(Tensor sorted_sequence, Scalar values, bool out_int32, bool right, Tensor sorter)
+        {
+            var res = PInvoke.LibTorchSharp.THSTensor_searchsorted_s(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle);
+            if (res == IntPtr.Zero) CheckForErrors();
+            return new Tensor(res);
+        }
+
+        /// https://github.com/numpy/numpy/blob/v1.24.0/numpy/lib/histograms.py#L679
+        /// <summary>
+        /// Computes a histogram of the values in a tensor.
+        /// bins can be an integer or a 1D tensor.
+        /// If bins is an int, it specifies the number of equal-width bins. By default, the lower and upper range of the bins is determined by the minimum and maximum elements of the input tensor. The range argument can be provided to specify a range for the bins.
+        /// If bins is a 1D tensor, it specifies the sequence of bin edges including the rightmost edge. It should contain at least 2 elements and its elements should be increasing.
+        /// </summary>
+        /// <param name="input"> the input tensor. </param>
+        /// <param name="bins"> int or 1D Tensor. If int, defines the number of equal-width bins. If tensor, defines the sequence of bin edges including the rightmost edge. </param>
+        /// <param name="range"> Defines the range of the bins. </param>
+        /// <param name="density"> If False, the result will contain the count (or total weight) in each bin. If True, the result is the value of the probability density function over the bins, normalized such that the integral over the range of the bins is 1. </param>
+        /// <returns></returns>
+        public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, HistogramBinSelector bins, (double min, double max)? range = null, bool density = false)
+            => Utils.Histogram.histogram(input, bins, range, density);
+
+        // https://pytorch.org/docs/stable/generated/torch.histogram.html
+        /// <summary>
+        /// Computes a histogram of the values in a tensor.
+        /// bins can be an integer or a 1D tensor.
+        /// If bins is an int, it specifies the number of equal-width bins. By default, the lower and upper range of the bins is determined by the minimum and maximum elements of the input tensor. The range argument can be provided to specify a range for the bins.
+        /// If bins is a 1D tensor, it specifies the sequence of bin edges including the rightmost edge. It should contain at least 2 elements and its elements should be increasing.
+        /// </summary>
+        /// <param name="input"> the input tensor. </param>
+        /// <param name="bins"> int or 1D Tensor. If int, defines the number of equal-width bins. If tensor, defines the sequence of bin edges including the rightmost edge. </param>
+        /// <param name="weight"> If provided, weight should have the same shape as input. Each value in input contributes its associated weight towards its bin’s result. </param>
+        /// <param name="density"> If False, the result will contain the count (or total weight) in each bin. If True, the result is the value of the probability density function over the bins, normalized such that the integral over the range of the bins is 1. </param>
+        /// <returns></returns>
+        public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, Tensor bins, Tensor weight = null, bool density = false)
+        {
+            var res = PInvoke.LibTorchSharp.THSTensor_histogram_t(input.Handle, bins.Handle, weight is null ? IntPtr.Zero : weight.Handle, density, out var r_bin_edges);
+            if (res == IntPtr.Zero) CheckForErrors();
+            if (r_bin_edges == IntPtr.Zero) CheckForErrors();
+            return (new Tensor(res), new Tensor(r_bin_edges));
+        }
+
+        // https://pytorch.org/docs/stable/generated/torch.histogram.html
+        /// <summary>
+        /// Computes a histogram of the values in a tensor.
+        /// bins can be an integer or a 1D tensor.
+        /// If bins is an int, it specifies the number of equal-width bins. By default, the lower and upper range of the bins is determined by the minimum and maximum elements of the input tensor. The range argument can be provided to specify a range for the bins.
+        /// If bins is a 1D tensor, it specifies the sequence of bin edges including the rightmost edge. It should contain at least 2 elements and its elements should be increasing.
+        /// </summary>
+        /// <param name="input"> the input tensor. </param>
+        /// <param name="bins"> int or 1D Tensor. If int, defines the number of equal-width bins. If tensor, defines the sequence of bin edges including the rightmost edge. </param>
+        /// <param name="range"> Defines the range of the bins. </param>
+        /// <param name="weight"> If provided, weight should have the same shape as input. Each value in input contributes its associated weight towards its bin’s result. </param>
+        /// <param name="density"> If False, the result will contain the count (or total weight) in each bin. If True, the result is the value of the probability density function over the bins, normalized such that the integral over the range of the bins is 1. </param>
+        /// <returns></returns>
+        public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, long bins, (double min, double max)? range = null, Tensor weight = null, bool density = false)
+        {
+            double[] _range = Array.Empty<double>();
+            if (range is not null)
+                _range = new double[] { range.Value.min, range.Value.max };
+            unsafe {
+                fixed (double* prange = _range) {
+                    var res = _range == Array.Empty<double>()
+                        ? PInvoke.LibTorchSharp.THSTensor_histogram_i(input.Handle, bins, IntPtr.Zero, 0, weight is null ? IntPtr.Zero : weight.Handle, density, out var r_bin_edges)
+                        : PInvoke.LibTorchSharp.THSTensor_histogram_i(input.Handle, bins, (IntPtr)prange, _range.Length, weight is null ? IntPtr.Zero : weight.Handle, density, out r_bin_edges);
+                    if (res == IntPtr.Zero) CheckForErrors();
+                    if (r_bin_edges == IntPtr.Zero) CheckForErrors();
+                    return (new Tensor(res), new Tensor(r_bin_edges));
+                }
+            }
+        }
+
+        // https://pytorch.org/docs/stable/generated/torch.histogram.html
+        /// <summary>
+        /// Computes a histogram of the values in a tensor.
+        /// bins can be an integer or a 1D tensor.
+        /// If bins is an int, it specifies the number of equal-width bins. By default, the lower and upper range of the bins is determined by the minimum and maximum elements of the input tensor. The range argument can be provided to specify a range for the bins.
+        /// If bins is a 1D tensor, it specifies the sequence of bin edges including the rightmost edge. It should contain at least 2 elements and its elements should be increasing.
+        /// </summary>
+        /// <param name="input"> the input tensor. </param>
+        /// <param name="bins"> int or 1D Tensor. If int, defines the number of equal-width bins. If tensor, defines the sequence of bin edges including the rightmost edge. </param>
+        /// <param name="out_tensor"> the output tensor. (tuple, optional): The result tuple of two output tensors (hist, bin_edges). </param>
+        /// <returns></returns>
+        public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, Tensor bins, out (Tensor hist, Tensor bin_edges) out_tensor)
+            => histogram(input, bins, null, false, out out_tensor);
+
+        // https://pytorch.org/docs/stable/generated/torch.histogram.html
+        /// <summary>
+        /// Computes a histogram of the values in a tensor.
+        /// bins can be an integer or a 1D tensor.
+        /// If bins is an int, it specifies the number of equal-width bins. By default, the lower and upper range of the bins is determined by the minimum and maximum elements of the input tensor. The range argument can be provided to specify a range for the bins.
+        /// If bins is a 1D tensor, it specifies the sequence of bin edges including the rightmost edge. It should contain at least 2 elements and its elements should be increasing.
+        /// </summary>
+        /// <param name="input"> the input tensor. </param>
+        /// <param name="bins"> int or 1D Tensor. If int, defines the number of equal-width bins. If tensor, defines the sequence of bin edges including the rightmost edge. </param>
+        /// <param name="weight"> If provided, weight should have the same shape as input. Each value in input contributes its associated weight towards its bin’s result. </param>
+        /// <param name="density"> If False, the result will contain the count (or total weight) in each bin. If True, the result is the value of the probability density function over the bins, normalized such that the integral over the range of the bins is 1. </param>
+        /// <param name="out_tensor"> the output tensor. (tuple, optional): The result tuple of two output tensors (hist, bin_edges). </param>
+        /// <returns></returns>
+        public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, Tensor bins, Tensor weight, bool density, out (Tensor hist, Tensor bin_edges) out_tensor)
+        {
+            var res = PInvoke.LibTorchSharp.THSTensor_histogram_out_t(input.Handle, bins.Handle, weight is null ? IntPtr.Zero : weight.Handle, density, out var hist, out var bin_edges, out var r_bin_edges);
+            if (res == IntPtr.Zero) CheckForErrors();
+            if (hist == IntPtr.Zero) CheckForErrors();
+            if (bin_edges == IntPtr.Zero) CheckForErrors();
+            if (r_bin_edges == IntPtr.Zero) CheckForErrors();
+            out_tensor = (new Tensor(hist), new Tensor(bin_edges));
+            return (new Tensor(res), new Tensor(r_bin_edges));
+        }
+
+        // https://pytorch.org/docs/stable/generated/torch.histogram.html
+        /// <summary>
+        /// Computes a histogram of the values in a tensor.
+        /// bins can be an integer or a 1D tensor.
+        /// If bins is an int, it specifies the number of equal-width bins. By default, the lower and upper range of the bins is determined by the minimum and maximum elements of the input tensor. The range argument can be provided to specify a range for the bins.
+        /// If bins is a 1D tensor, it specifies the sequence of bin edges including the rightmost edge. It should contain at least 2 elements and its elements should be increasing.
+        /// </summary>
+        /// <param name="input"> the input tensor. </param>
+        /// <param name="bins"> int or 1D Tensor. If int, defines the number of equal-width bins. If tensor, defines the sequence of bin edges including the rightmost edge. </param>
+        /// <param name="out_tensor"> the output tensor. (tuple, optional): The result tuple of two output tensors (hist, bin_edges). </param>
+        /// <returns></returns>
+        public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, long bins, out (Tensor hist, Tensor bin_edges) out_tensor)
+            => histogram(input, bins, null, null, false, out out_tensor);
+
+        // https://pytorch.org/docs/stable/generated/torch.histogram.html
+        /// <summary>
+        /// Computes a histogram of the values in a tensor.
+        /// bins can be an integer or a 1D tensor.
+        /// If bins is an int, it specifies the number of equal-width bins. By default, the lower and upper range of the bins is determined by the minimum and maximum elements of the input tensor. The range argument can be provided to specify a range for the bins.
+        /// If bins is a 1D tensor, it specifies the sequence of bin edges including the rightmost edge. It should contain at least 2 elements and its elements should be increasing.
+        /// </summary>
+        /// <param name="input"> the input tensor. </param>
+        /// <param name="bins"> int or 1D Tensor. If int, defines the number of equal-width bins. If tensor, defines the sequence of bin edges including the rightmost edge. </param>
+        /// <param name="range"> Defines the range of the bins. </param>
+        /// <param name="out_tensor"> the output tensor. (tuple, optional): The result tuple of two output tensors (hist, bin_edges). </param>
+        /// <returns></returns>
+        public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, long bins, (double min, double max)? range, out (Tensor hist, Tensor bin_edges) out_tensor)
+            => histogram(input, bins, range, null, false, out out_tensor);
+
+        // https://pytorch.org/docs/stable/generated/torch.histogram.html
+        /// <summary>
+        /// Computes a histogram of the values in a tensor.
+        /// bins can be an integer or a 1D tensor.
+        /// If bins is an int, it specifies the number of equal-width bins. By default, the lower and upper range of the bins is determined by the minimum and maximum elements of the input tensor. The range argument can be provided to specify a range for the bins.
+        /// If bins is a 1D tensor, it specifies the sequence of bin edges including the rightmost edge. It should contain at least 2 elements and its elements should be increasing.
+        /// </summary>
+        /// <param name="input"> the input tensor. </param>
+        /// <param name="bins"> int or 1D Tensor. If int, defines the number of equal-width bins. If tensor, defines the sequence of bin edges including the rightmost edge. </param>
+        /// <param name="range"> Defines the range of the bins. </param>
+        /// <param name="weight"> If provided, weight should have the same shape as input. Each value in input contributes its associated weight towards its bin’s result. </param>
+        /// <param name="density"> If False, the result will contain the count (or total weight) in each bin. If True, the result is the value of the probability density function over the bins, normalized such that the integral over the range of the bins is 1. </param>
+        /// <param name="out_tensor"> the output tensor. (tuple, optional): The result tuple of two output tensors (hist, bin_edges). </param>
+        /// <returns></returns>
+        public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, long bins, (double min, double max)? range, Tensor weight, bool density, out (Tensor hist, Tensor bin_edges) out_tensor)
+        {
+            double[] _range = Array.Empty<double>();
+            if (range is not null)
+                _range = new double[] { range.Value.min, range.Value.max };
+            unsafe {
+                fixed (double* prange = _range) {
+                    var res = _range == Array.Empty<double>()
+                        ? PInvoke.LibTorchSharp.THSTensor_histogram_out_i(input.Handle, bins, IntPtr.Zero, 0, weight is null ? IntPtr.Zero : weight.Handle, density, out var hist, out var bin_edges, out var r_bin_edges)
+                        : PInvoke.LibTorchSharp.THSTensor_histogram_out_i(input.Handle, bins, (IntPtr)prange, _range.Length, weight is null ? IntPtr.Zero : weight.Handle, density, out hist, out bin_edges, out r_bin_edges);
+                    if (res == IntPtr.Zero) CheckForErrors();
+                    if (hist == IntPtr.Zero) CheckForErrors();
+                    if (bin_edges == IntPtr.Zero) CheckForErrors();
+                    if (r_bin_edges == IntPtr.Zero) CheckForErrors();
+                    out_tensor = (new Tensor(hist), new Tensor(bin_edges));
+                    return (new Tensor(res), new Tensor(r_bin_edges));
+                }
+            }
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.topk
         /// <summary>

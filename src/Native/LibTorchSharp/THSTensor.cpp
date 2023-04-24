@@ -1678,9 +1678,9 @@ void THSTensor_meshgrid(const Tensor* tensors, const int length, const char* ind
     )
 }
 
-Tensor THSTensor_std(const Tensor tensor)
+Tensor THSTensor_std(const Tensor tensor, const bool unbiased)
 {
-    CATCH_TENSOR(tensor->std());
+    CATCH_TENSOR(tensor->std(unbiased));
 }
 
 Tensor THSTensor_std_along_dimensions(const Tensor tensor, const int64_t* dimensions, int length, bool unbiased, bool keepdim)
@@ -1997,6 +1997,68 @@ void THSTensor_where_list(
     for (size_t i = 0; i < sz; i++)
         result[i] = new torch::Tensor(res[i]);
     )
+}
+
+Tensor THSTensor_searchsorted_t(const Tensor sorted_sequence, const Tensor values, const bool out_int32, const bool right, const Tensor sorter)
+{    
+    CATCH_TENSOR(
+        sorter == nullptr
+        ? torch::searchsorted(*sorted_sequence, *values, out_int32, right)
+        : torch::searchsorted(*sorted_sequence, *values, out_int32, right, c10::nullopt, *sorter));
+}
+
+Tensor THSTensor_searchsorted_s(const Tensor sorted_sequence, const Scalar values, const bool out_int32, const bool right, const Tensor sorter)
+{
+    CATCH_TENSOR(
+        sorter == nullptr
+        ? torch::searchsorted(*sorted_sequence, *values, out_int32, right)
+        : torch::searchsorted(*sorted_sequence, *values, out_int32, right, c10::nullopt, *sorter));
+}
+
+Tensor THSTensor_histogram_t(const Tensor input, const Tensor bins, const Tensor weight, const bool density, Tensor* r_bin_edges)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+
+    c10::optional<at::Tensor> weight_ = weight == nullptr ? c10::optional<at::Tensor>(c10::nullopt) : *weight;
+
+    CATCH(res = torch::histogram(*input, *bins, weight_, density););
+    *r_bin_edges = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_histogram_i(const Tensor input, const int64_t bins, const double* range, const int length, const Tensor weight, const bool density, Tensor* r_bin_edges)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+
+    auto range_ = range == nullptr ? c10::optional<at::ArrayRef<double>>() : c10::optional<at::ArrayRef<double>>(at::ArrayRef<double>(range, length));
+    c10::optional<at::Tensor> weight_ = weight == nullptr ? c10::optional<at::Tensor>(c10::nullopt) : *weight;
+
+    CATCH(res = torch::histogram(*input, bins, range_, weight_, density););
+    *r_bin_edges = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_histogram_out_t(const Tensor input, const Tensor bins, const Tensor weight, const bool density, Tensor* hist, Tensor* bin_edges, Tensor* r_bin_edges)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+
+    c10::optional<at::Tensor> weight_ = weight == nullptr ? c10::optional<at::Tensor>(c10::nullopt) : *weight;
+
+    CATCH(res = torch::histogram_outf(*input, *bins, weight_, density, **hist, **bin_edges););
+    *r_bin_edges = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+Tensor THSTensor_histogram_out_i(const Tensor input, const int64_t bins, const double* range, const int length, const Tensor weight, const bool density, Tensor* hist, Tensor* bin_edges, Tensor* r_bin_edges)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+
+    auto range_ = range == nullptr ? c10::optional<at::ArrayRef<double>>() : c10::optional<at::ArrayRef<double>>(at::ArrayRef<double>(range, length));
+    c10::optional<at::Tensor> weight_ = weight == nullptr ? c10::optional<at::Tensor>(c10::nullopt) : *weight;
+
+    CATCH(res = torch::histogram_outf(*input, bins, range_, weight_, density, **hist, **bin_edges););
+    *r_bin_edges = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
 }
 
 bool THSTensor_has_names(Tensor tensor)

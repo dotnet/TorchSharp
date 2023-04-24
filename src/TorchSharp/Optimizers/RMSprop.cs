@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using static TorchSharp.torch;
 
+
 namespace TorchSharp
 {
+    using System.Data;
     using System.IO;
     using Modules;
 
@@ -199,7 +201,7 @@ namespace TorchSharp
             {
                 base.Dispose(disposing);
                 foreach (var kvp in _state) {
-                    ((State)kvp.Value).Dispose();
+                    ((State)kvp.Item2).Dispose();
                 }
                 _state.Clear();
             }
@@ -213,9 +215,9 @@ namespace TorchSharp
 
                 public void Dispose()
                 {
-                    momentum_buffer.Dispose();
+                    momentum_buffer?.Dispose();
                     square_avg.Dispose();
-                    grad_avg.Dispose();
+                    grad_avg?.Dispose();
                 }
 
                 /// <summary>
@@ -225,8 +227,8 @@ namespace TorchSharp
                 public override void to(Device device)
                 {
                     square_avg.to(device);
-                    momentum_buffer.to(device);
-                    grad_avg.to(device);
+                    momentum_buffer?.to(device);
+                    grad_avg?.to(device);
                 }
 
                 /// <summary>
@@ -237,8 +239,8 @@ namespace TorchSharp
                 {
                     step = reader.ReadInt64();
                     square_avg.Load(reader);
-                    momentum_buffer.Load(reader);
-                    grad_avg.Load(reader);
+                    LoadConditionalStateTensor(reader, ref momentum_buffer);
+                    LoadConditionalStateTensor(reader, ref grad_avg);
                 }
                 /// <summary>
                 /// Save the optimizer parameter state to a stream.
@@ -248,8 +250,8 @@ namespace TorchSharp
                 {
                     writer.Write(this.step);
                     square_avg.Save(writer);
-                    momentum_buffer.Save(writer);
-                    grad_avg.Save(writer);
+                    SaveConditionalStateTensor(writer, momentum_buffer);
+                    SaveConditionalStateTensor(writer, grad_avg);
                 }
 
                 /// <summary>
