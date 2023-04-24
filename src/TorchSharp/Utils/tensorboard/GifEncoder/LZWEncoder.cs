@@ -15,8 +15,7 @@ namespace TorchSharp
                     /// Adapted from Jef Poskanzer's Java port by way of J. M. G. Elliott.
                     /// K Weiner 12/00
                     ///
-                    /// https://github.com/videlalvaro/gifsockets/blob/master/src/java/LZWEncoder.java
-                    /// https://github.com/avianbc/NGif/blob/master/Components/LZWEncoder.cs
+                    /// https://cs.android.com/android/platform/superproject/+/master:external/glide/third_party/gif_encoder/src/main/java/com/bumptech/glide/gifencoder/LZWEncoder.java
                     /// </summary>
                     internal class LZWEncoder
                     {

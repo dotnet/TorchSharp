@@ -12,6 +12,19 @@ namespace TorchSharp
             {
                 public static partial class GifEncoder
                 {
+                    /// <summary>
+                    /// Class AnimatedGifEncoder - Encodes a GIF file consisting of one or more frames.
+                    ///
+                    /// No copyright asserted on the source code of this class. May be used for any
+                    /// purpose, however, refer to the Unisys LZW patent for restrictions on use of
+                    /// the associated LZWEncoder class. Please forward any corrections to
+                    /// kweiner@fmsware.com.
+                    ///
+                    /// @author Kevin Weiner, FM Software
+                    /// @version 1.03 November 2003
+                    ///
+                    /// https://cs.android.com/android/platform/superproject/+/master:external/glide/third_party/gif_encoder/src/main/java/com/bumptech/glide/gifencoder/AnimatedGifEncoder.java
+                    /// </summary>
                     internal class Encoder : IDisposable
                     {
                         protected int width; // image size
