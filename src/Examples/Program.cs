@@ -8,14 +8,14 @@ namespace TorchSharp.Examples
     {
         public static async Task Main(string[] args)
         {
-            //MNIST.Main(args);
+            MNIST.Main(args);
             //AdversarialExampleGeneration.Main(args);
             //CIFAR10.Main(args);
             //SequenceToSequence.Main(args);
             //TextClassification.Main(args);
             //ImageTransforms.Main(args);
             //SpeechCommands.Main(args);
-            //IOReadWrite.Main(args);
+            IOReadWrite.Main(args);
             await Tensorboard.Main(args);
         }
     }
