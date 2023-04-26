@@ -6,8 +6,7 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __API Changes__:
 
-__Fixed Bugs__:
-
+Added Tensorboard support for histograms, images, video, and text.
 
 ## NuGet Version 0.99.4
 
