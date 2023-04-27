@@ -8,7 +8,7 @@ namespace TorchSharp
         {
             public static partial class tensorboard
             {
-                public static partial class GifEncoder
+                internal static partial class GifEncoder
                 {
                     /// <summary>
                     /// NeuQuant Neural-Net Quantization Algorithm

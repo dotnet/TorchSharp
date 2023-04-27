@@ -1,12 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
-using System.Threading.Tasks;
-
 namespace TorchSharp.Examples
 {
     public static class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             MNIST.Main(args);
             //AdversarialExampleGeneration.Main(args);
@@ -16,7 +14,7 @@ namespace TorchSharp.Examples
             //ImageTransforms.Main(args);
             //SpeechCommands.Main(args);
             IOReadWrite.Main(args);
-            await Tensorboard.Main(args);
+            Tensorboard.Main(args).Wait();
         }
     }
 }

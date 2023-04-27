@@ -9,7 +9,7 @@ namespace TorchSharp
         {
             public static partial class tensorboard
             {
-                public static partial class GifEncoder
+                internal static partial class GifEncoder
                 {
                     /// <summary>
                     /// Adapted from Jef Poskanzer's Java port by way of J. M. G. Elliott.

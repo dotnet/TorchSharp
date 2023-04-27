@@ -10,7 +10,7 @@ namespace TorchSharp
         {
             public static partial class tensorboard
             {
-                public static partial class GifEncoder
+                internal static partial class GifEncoder
                 {
                     /// <summary>
                     /// Class AnimatedGifEncoder - Encodes a GIF file consisting of one or more frames.
