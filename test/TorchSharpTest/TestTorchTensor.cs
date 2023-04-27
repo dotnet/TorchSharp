@@ -3534,8 +3534,18 @@ namespace TorchSharp
             var t2 = i[(1, 2), 0];
             Assert.Equal(6, t2[0].ToInt32());
 
+            t2 = i[1, -1];
+            Assert.Equal(4, t2.item<long>());
+
+            t2 = i[-1, -2];
+            Assert.Equal(5, t2.item<long>());
+
             // two slice
             var t3 = i[(1, 2), (1, 3)];
+            Assert.Equal(5, t3[0, 0].ToInt32());
+            Assert.Equal(4, t3[0, 1].ToInt32());
+
+            t3 = i[(1, 2), (-2, null)];
             Assert.Equal(5, t3[0, 0].ToInt32());
             Assert.Equal(4, t3[0, 1].ToInt32());
 
@@ -3564,6 +3574,9 @@ namespace TorchSharp
 
             t2 = i[1, ^1];
             Assert.Equal(4, t2.item<long>());
+
+            t2 = i[-1, -2];
+            Assert.Equal(5, t2.item<long>());
 
             // two slice
             var t3 = i[1..2, 1..3];
