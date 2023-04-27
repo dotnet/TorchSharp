@@ -2,6 +2,16 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.99.6
+
+__Breaking Changes__:
+
+There was a second version of `torch.squeeze()` with incorrect default arguments. It has now been removed.
+
+__API Changes__:
+
+Removed incorrect `torch.squeeze()` method.<br/>
+
 ## NuGet Version 0.99.5
 
 __API Changes__:
