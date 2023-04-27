@@ -6726,7 +6726,14 @@ namespace TorchSharp
                 long? end = !range.End.IsFromEnd ? range.End.Value : (range.End.Value == 0) ? null : -1 * range.End.Value;
                 return TensorIndex.Slice(start, end);
             }
+
+            public static implicit operator TensorIndex(System.Index index)
+            {
+                long idx = !index.IsFromEnd ? index.Value : -1 * index.Value;
+                return TensorIndex.Single(idx);
+            }
 #endif // NETSTANDARD2_0_OR_GREATER
+
         }
 
         /// <summary>
