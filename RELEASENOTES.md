@@ -11,6 +11,11 @@ There was a second version of `torch.squeeze()` with incorrect default arguments
 __API Changes__:
 
 Removed incorrect `torch.squeeze()` method.<br/>
+Adding two-tensor versions of `min()` and `max()`<br/>
+
+__Fixed Bugs__:
+
+#984 Conversion from System.Index to TensorIndex is missing<br/>
 
 ## NuGet Version 0.99.5
 
