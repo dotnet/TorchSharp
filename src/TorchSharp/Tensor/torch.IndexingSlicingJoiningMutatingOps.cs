@@ -465,10 +465,6 @@ namespace TorchSharp
         public static Tensor[] split(Tensor tensor, long[] split_size_or_sections, long dim = 0L)
             => tensor.split(split_size_or_sections, dim);
 
-        // https://pytorch.org/docs/stable/generated/torch.squeeze
-        public static Tensor squeeze(Tensor input, long dim = 0L)
-            => input.squeeze(dim);
-
         // https://pytorch.org/docs/stable/generated/torch.stack
         /// <summary>
         /// Concatenates a sequence of tensors along a new dimension.
