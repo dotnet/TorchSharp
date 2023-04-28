@@ -16,6 +16,7 @@ Adding two-tensor versions of `min()` and `max()`<br/>
 __Fixed Bugs__:
 
 #984 Conversion from System.Index to TensorIndex is missing<br/>
+#987 Different versions of System.Memory between build and package creation.<br/>
 
 ## NuGet Version 0.99.5
 
