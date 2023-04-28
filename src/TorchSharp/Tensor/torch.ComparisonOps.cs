@@ -172,6 +172,15 @@ namespace TorchSharp
         public static Tensor maximum(Tensor input, Tensor other)
             => input.maximum(other);
 
+        /// <summary>
+        /// Computes the element-wise maximum of input and other.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="other">The second tensor.</param>
+        [Pure]
+        public static Tensor max(Tensor input, Tensor other)
+            => torch.maximum(input, other);
+
         // https://pytorch.org/docs/stable/generated/torch.minimum
         /// <summary>
         /// Computes the element-wise minimum of input and other.
@@ -181,6 +190,16 @@ namespace TorchSharp
         [Pure]
         public static Tensor minimum(Tensor input, Tensor other)
             => input.minimum(other);
+
+        /// <summary>
+        /// Computes the element-wise minimum of input and other.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="other">The second tensor.</param>
+        [Pure]
+        public static Tensor min(Tensor input, Tensor other)
+            => torch.minimum(input, other);
+
 
         // https://pytorch.org/docs/stable/generated/torch.fmax
         /// <summary>
