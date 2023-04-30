@@ -243,11 +243,7 @@ namespace TorchSharp
 
                 internal static void _extract_zip(string from_path, string to_path)
                 {
-                    using (var fileStream = File.OpenRead(from_path)) {
-                        using (ZipArchive zipArchive = new ZipArchive(fileStream)) {
-                            zipArchive.ExtractToDirectory(to_path);
-                        }
-                    }
+                    ZipFile.ExtractToDirectory(from_path, to_path);
                 }
 
                 internal static string extract_archive(string from_path, string? to_path = null, bool remove_finished = false)
@@ -259,10 +255,10 @@ namespace TorchSharp
                         }
                     }
 
-                    if (Path.GetExtension(from_path) != "zip") {
+                    if (Path.GetExtension(from_path) == ".zip") {
                         _extract_zip(from_path, to_path);
                     }
-                    if (from_path.EndsWith(".tar.gz")) {
+                    else if (from_path.EndsWith(".tar.gz")) {
                         _extract_tar(from_path, to_path);
                     } else {
                         throw new ArgumentException();

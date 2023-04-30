@@ -110,7 +110,7 @@ namespace TorchSharp
                     this.attr = attr.data[mask];
                 }
                 // map from {-1, 1} to {0, 1}
-                this.attr = torch.div(this.attr + 1, 2, rounding_mode: RoundingMode.floor);
+                this.attr = torch.div(this.attr + 1, 2, rounding_mode: RoundingMode.floor).to(this.attr.dtype);
                 this.attr_names = attr.header;
             }
 
@@ -131,17 +131,17 @@ namespace TorchSharp
                 var indices = data.Select(row => row[0]).ToArray();
 
                 data = data.Select(row => row.AsSpan(1).ToArray()).ToList();
-                var data_int = new int[data.Count, data[0].Length];
-                for (int i = 0; i < data_int.GetLength(0); i++) {
-                    for (int j = 0; j < data_int.GetLength(1); j++) {
-                        if (data[i].Length != data_int.GetLength(1)) {
+                var data_long = new long[data.Count, data[0].Length];
+                for (int i = 0; i < data_long.GetLength(0); i++) {
+                    for (int j = 0; j < data_long.GetLength(1); j++) {
+                        if (data[i].Length != data_long.GetLength(1)) {
                             throw new Exception();
                         }
-                        int result = int.TryParse(data[i][j], out result) ? result : 0;
-                        data_int[i, j] = result;
+                        long result = long.TryParse(data[i][j], out result) ? result : 0;
+                        data_long[i, j] = result;
                     }
                 }
-                return new CSV(headers, indices, torch.tensor(data_int));
+                return new CSV(headers, indices, torch.tensor(data_long));
             }
 
             /// <summary>
@@ -154,20 +154,20 @@ namespace TorchSharp
                 if (this.filename is null) throw new InvalidOperationException();
                 Tensor X = torchvision.io.read_file(Path.Combine(this.root, base_folder, "img_align_celeba", this.filename[index]));
 
-                var target = new List<Tensor>();
+                var result = new Dictionary<string, Tensor>();
                 foreach (var t in this.target_type) {
                     if (t == "attr") {
                         if (this.attr is null) throw new InvalidDataException();
-                        target.Add(this.attr[index, TensorIndex.Colon]);
+                        result[t] = this.attr[index, TensorIndex.Colon];
                     } else if (t == "identity") {
                         if (this.identity is null) throw new InvalidDataException();
-                        target.Add(this.identity[index, 0]);
+                        result[t] = this.identity[index, 0];
                     } else if (t == "bbox") {
                         if (this.bbox is null) throw new InvalidDataException();
-                        target.Add(this.bbox[index, TensorIndex.Colon]);
+                        result[t] = this.bbox[index, TensorIndex.Colon];
                     } else if (t == "landmarks") {
                         if (this.landmarks_align is null) throw new InvalidDataException();
-                        target.Add(this.landmarks_align[index, TensorIndex.Colon]);
+                        result[t] = this.landmarks_align[index, TensorIndex.Colon];
                     } else {
                         throw new InvalidDataException($"Target type \"{t}\" is not recognized.");
                     }
@@ -176,13 +176,12 @@ namespace TorchSharp
                 if (this.transform is not null) {
                     X = this.transform.call(X);
                 }
+                result["input"] = X;
                 if (this.target_transform is not null) {
-                    target[0] = this.target_transform.call(target[0]);
+                    string t = this.target_type[0];
+                    result[t] = this.target_transform.call(result[t]);
                 }
-                return new Dictionary<string, Tensor> {
-                    { "input", X },
-                    { "target", target[0] }
-                };
+                return result;
             }
 
             private bool _check_integrity()
@@ -192,7 +191,7 @@ namespace TorchSharp
                     var ext = Path.GetExtension(filename);
                     // Allow original archive to be deleted (zip and 7z)
                     // Only need the extracted images
-                    if (ext != "zip" && ext != ".7z" && !check_integrity(fpath, md5)) {
+                    if (ext != ".zip" && ext != ".7z" && !check_integrity(fpath, md5)) {
                         return false;
                     }
                 }
