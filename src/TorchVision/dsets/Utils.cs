@@ -13,8 +13,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using Tensorboard;
-using static Tensorboard.CostGraphDef.Types;
 
 // A number of implementation details in this file have been translated from the Python version of torchvision,
 // largely located in the files found in this folder:

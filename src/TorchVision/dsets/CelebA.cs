@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.utils.data;
@@ -149,11 +148,11 @@ namespace TorchSharp
             /// Get tensor according to index
             /// </summary>
             /// <param name="index">Index for tensor</param>
-            /// <returns>Tensors of index. DataLoader will catenate these tensors as batchSize * 784 for image, batchSize * 1 for label</returns>
+            /// <returns>Tensors of index.</returns>
             public override Dictionary<string, Tensor> GetTensor(long index)
             {
-                // X = PIL.Image.open(os.path.join(self.root, self.base_folder, "img_align_celeba", self.filename[index]))
-                Tensor X = torch.zeros(10, 10);
+                if (this.filename is null) throw new InvalidOperationException();
+                Tensor X = torchvision.io.read_file(Path.Combine(this.root, base_folder, "img_align_celeba", this.filename[index]));
 
                 var target = new List<Tensor>();
                 foreach (var t in this.target_type) {
@@ -170,7 +169,6 @@ namespace TorchSharp
                         if (this.landmarks_align is null) throw new InvalidDataException();
                         target.Add(this.landmarks_align[index, TensorIndex.Colon]);
                     } else {
-                        // TODO: refactor with utils.verify_str_arg
                         throw new InvalidDataException($"Target type \"{t}\" is not recognized.");
                     }
                 }
@@ -236,12 +234,27 @@ namespace TorchSharp
     {
         public static partial class datasets
         {
+            /// <summary>
+            /// `Large-scale CelebFaces Attributes (CelebA) Dataset http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html Dataset.
+            /// </summary>
+            /// <param name="root">Root directory where images are downloaded to.</param>
+            /// <param name="split">One of {'train', 'valid', 'test', 'all'}.
+            /// Accordingly dataset is selected.</param>
+            /// <param name="target_type">Type of target to use, ``attr``, ``identity``, ``bbox``,
+            /// or ``landmarks``.</param>
+            /// <param name="transform">A function/transform that  takes in an PIL image
+            /// and returns a transformed version.</param>
+            /// <param name="target_transform">A function/transform that takes in the
+            /// target and transforms it.</param>
+            /// <param name="download">If true, downloads the dataset from the internet and
+            /// puts it in root directory. If dataset is already downloaded, it is not
+            /// downloaded again.</param>
             public static Dataset CelebA(
                 string root,
-                IModule<Tensor, Tensor>? transform = null,
-                IModule<Tensor, Tensor>? target_transform = null,
                 string split = "train",
                 string[]? target_type = null,
+                IModule<Tensor, Tensor>? transform = null,
+                IModule<Tensor, Tensor>? target_transform = null,
                 bool download = false)
             {
                 if (target_type == null) {
