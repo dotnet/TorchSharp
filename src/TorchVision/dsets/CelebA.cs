@@ -152,7 +152,7 @@ namespace TorchSharp
             public override Dictionary<string, Tensor> GetTensor(long index)
             {
                 if (this.filename is null) throw new InvalidOperationException();
-                Tensor X = torchvision.io.read_file(Path.Combine(this.root, base_folder, "img_align_celeba", this.filename[index]));
+                Tensor X = torchvision.io.read_image(Path.Combine(this.root, base_folder, "img_align_celeba", this.filename[index]));
 
                 var result = new Dictionary<string, Tensor>();
                 foreach (var t in this.target_type) {

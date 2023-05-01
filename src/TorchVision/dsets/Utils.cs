@@ -41,7 +41,9 @@ namespace TorchSharp
                 {
                     using (var progress_bar = torch.hub._create_progress_bar(false))
                     using (var fh = File.OpenWrite(destination)) {
+                        progress_bar.Maximum = length;
                         await fh.WriteAsync(head, 0, head.Length, cancellationToken);
+                        progress_bar.Value = head.Length;
                         byte[] buffer = new byte[64 * 1024];
                         while (true) {
                             int ret = await content.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
@@ -104,7 +106,7 @@ namespace TorchSharp
                 }
 
                 /// <summary>
-                /// Download a Google Drive file from  and place it in root.
+                /// Download a Google Drive file and place it in root.
                 /// </summary>
                 /// <param name="file_id">id of file to be downloaded</param>
                 /// <param name="root">Directory to place downloaded file in</param>
