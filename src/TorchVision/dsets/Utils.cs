@@ -20,7 +20,7 @@ using System.Web;
 // https://github.com/pytorch/vision/blob/b78d98bb152ffb9c0c0f5365f59f475c70b1784e/torchvision/datasets/utils.py
 // The origin has the following copyright notice and license:
 //
-// https://github.com/pytorch/audio/blob/main/LICENSE
+// https://github.com/pytorch/vision/blob/main/LICENSE
 //
 
 #nullable enable
@@ -167,7 +167,6 @@ namespace TorchSharp
                                 Cookie? kv = obj as Cookie;
                                 if (kv != null && kv.Name.StartsWith("download_warning")) {
                                     token = kv.Value;
-                                    Console.WriteLine("{0}={1}", kv.Name, kv.Value);
                                 }
                             }
                             string api_response = string.Empty;
