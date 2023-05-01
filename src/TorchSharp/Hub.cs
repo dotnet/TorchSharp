@@ -24,7 +24,8 @@ namespace TorchSharp
                 createProgressBarFunc = func;
             }
 
-            internal static IProgressBar _create_progress_bar(bool hidden)
+            // Used internally by TorchVision
+            public static IProgressBar _create_progress_bar(bool hidden)
             {
                 IProgressBar progress_bar;
                 if (createProgressBarFunc == null) {

@@ -39,10 +39,16 @@ namespace TorchSharp
                     long? length = null,
                     CancellationToken cancellationToken = default)
                 {
+                    using (var progress_bar = torch.hub._create_progress_bar(false))
                     using (var fh = File.OpenWrite(destination)) {
                         await fh.WriteAsync(head, 0, head.Length, cancellationToken);
-                        await content.CopyToAsync(fh);
-                        // pbar.update(len(chunk))
+                        byte[] buffer = new byte[64 * 1024];
+                        while (true) {
+                            int ret = await content.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                            if (ret == 0) break;
+                            await fh.WriteAsync(buffer, 0, ret, cancellationToken);
+                            progress_bar.Value += ret;
+                        }
                     }
                 }
 
@@ -130,9 +136,9 @@ namespace TorchSharp
 
                     if (check_integrity(fpath, md5)) {
                         if (md5 is null) {
-                            Console.Write($"Using downloaded file: {fpath}");
+                            Console.WriteLine($"Using downloaded file: {fpath}");
                         } else {
-                            Console.Write($"Using downloaded and verified file: {fpath}");
+                            Console.WriteLine($"Using downloaded and verified file: {fpath}");
                         }
                         return;
                     }
