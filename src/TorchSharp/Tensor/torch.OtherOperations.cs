@@ -628,17 +628,6 @@ namespace TorchSharp
         /// </summary>
         public static Tensor roll(Tensor input, ReadOnlySpan<long> shifts, ReadOnlySpan<long> dims = default) => input.roll(shifts, dims);
 
-        // https://pytorch.org/docs/stable/generated/torch.searchsorted
-        [Obsolete("not implemented", true)]
-        static Tensor searchsorted(
-            Tensor sorted_sequence,
-            Tensor values,
-            bool out_int32 = false,
-            bool right = false,
-            side side = side.left,
-            Tensor? sorter = null)
-            => throw new NotImplementedException();
-
         // https://pytorch.org/docs/stable/generated/torch.tensordot
         /// <summary>
         /// Returns a contraction of <paramref name="a"/> and <paramref name="b"/> over multiple dimensions.

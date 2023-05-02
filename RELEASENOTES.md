@@ -2,6 +2,28 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.99.6
+
+__Breaking Changes__:
+
+There was a second version of `torch.squeeze()` with incorrect default arguments. It has now been removed.
+
+__API Changes__:
+
+Removed incorrect `torch.squeeze()` method.<br/>
+Adding two-tensor versions of `min()` and `max()`<br/>
+
+__Fixed Bugs__:
+
+#984 Conversion from System.Index to TensorIndex is missing<br/>
+#987 Different versions of System.Memory between build and package creation.<br/>
+
+## NuGet Version 0.99.5
+
+__API Changes__:
+
+Added Tensorboard support for histograms, images, video, and text.
+
 ## NuGet Version 0.99.4
 
 __Breaking Changes__:

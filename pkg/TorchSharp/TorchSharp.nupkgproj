@@ -10,6 +10,8 @@
     <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\net6.0\$(MSBuildProjectName).targets" />
     <Content Include="$(RepoRoot)\LICENSE.txt" Pack="true" PackagePath="" />
     <PackageReference Include="Google.Protobuf" Version="3.21.9" />
-    <PackageReference Include="System.Memory" Version="4.5.3" />
+    <PackageReference Include="SharpZipLib" Version="1.4.0" />
+    <PackageReference Include="SkiaSharp" Version="2.88.3" />
+	<PackageReference Include="System.Memory" Version="4.5.5" />
   </ItemGroup>
 </Project>
