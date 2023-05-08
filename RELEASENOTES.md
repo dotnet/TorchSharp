@@ -2,6 +2,15 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.99.7
+
+Updated the NuGet metadata to use a license expression rather than a reference to a license file. This will help with automated license checking by users.
+
+__API Changes__:
+
+__Fixed Bugs__:
+
+
 ## NuGet Version 0.99.6
 
 __Breaking Changes__:
