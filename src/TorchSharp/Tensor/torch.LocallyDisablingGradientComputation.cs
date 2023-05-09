@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 #nullable enable
 using System;
 using System.Diagnostics.Contracts;
@@ -34,7 +34,7 @@ namespace TorchSharp
         /// Returns true if grad mode is currently enabled.
         /// </summary>
         /// <returns></returns>
-        [Pure]public static bool is_grad_enabled() => AutoGradMode.IsAutogradEnabled();
+        [Pure]public static bool is_grad_enabled() => AutoGradMode.IsEnabled;
 
         // https://pytorch.org/docs/stable/generated/torch.inference_mode
         [Obsolete("not implemented", true)]

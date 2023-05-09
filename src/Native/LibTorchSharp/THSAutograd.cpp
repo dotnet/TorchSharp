@@ -14,6 +14,22 @@ void THSAutograd_setGrad(bool enabled)
     torch::autograd::GradMode::set_enabled(enabled);
 }
 
+bool THSAutograd_isAnomalyEnabled()
+{
+    bool result = torch::autograd::AnomalyMode::is_enabled();
+    return result;
+}
+
+bool THSAutograd_shouldCheckNaN()
+{
+    return torch::autograd::AnomalyMode::should_check_nan();
+}
+
+void THSAutograd_setAnomaly(bool enabled, bool check_nan)
+{
+    torch::autograd::AnomalyMode::set_enabled(enabled, check_nan);
+}
+
 void THSAutograd_grad(
     Tensor* outputs, const int64_t oLength,
     Tensor* inputs, const int64_t iLength,
