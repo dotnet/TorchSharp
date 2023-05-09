@@ -8,6 +8,8 @@ Updated the NuGet metadata to use a license expression rather than a reference t
 
 __API Changes__:
 
+#989 Adding anomaly detection APIs to `torch.autograd`<br/>
+
 __Fixed Bugs__:
 
 
