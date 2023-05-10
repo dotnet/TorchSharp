@@ -266,8 +266,8 @@ vs.
 
 8. Run tests
 
-       dotnet build test -c Debug
-       dotnet build test -c Release
+       dotnet test -c Debug
+       dotnet test -c Release
 
 9. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
    get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` in [azure-pipelines.yml](azure-pipelines.yml):

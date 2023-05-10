@@ -27,9 +27,7 @@ namespace TorchSharp
         }
     }
 
-#if NET472_OR_GREATER
     [Collection("Sequential")]
-#endif // NET472_OR_GREATER
     public class TestNN
     {
         #region Linear
@@ -4674,15 +4672,27 @@ namespace TorchSharp
         public void TestDropout2d()
         {
             foreach (var device in TestUtils.AvailableDevices()) {
-                var drop = Dropout2d(0.75);
                 var data = torch.rand(new long[] { 12, 23, 24, 5 }, device: device);
-                var output = drop.call(data);
-                Assert.Equal(device.type, output.device_type);
-                Assert.Equal(data.shape, output.shape);
 
-                var dataVal = data.data<float>().ToArray();
-                var outVal = output.data<float>().ToArray();
-                Assert.NotEqual(outVal, dataVal);
+                {
+                    var output = torch.nn.functional.dropout2d(data, 0.75, true, false);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(data.shape, output.shape);
+
+                    var dataVal = data.data<float>().ToArray();
+                    var outVal = output.data<float>().ToArray();
+                    Assert.NotEqual(outVal, dataVal);
+                }
+                {
+                    var drop = Dropout2d(0.75);
+                    var output = drop.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(data.shape, output.shape);
+
+                    var dataVal = data.data<float>().ToArray();
+                    var outVal = output.data<float>().ToArray();
+                    Assert.NotEqual(outVal, dataVal);
+                }
             }
         }
 

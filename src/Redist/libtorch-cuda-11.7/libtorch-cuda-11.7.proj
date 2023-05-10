@@ -29,7 +29,7 @@
     <File Include= "libtorch\lib\c10.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\c10_cuda.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\caffe2_nvrtc.dll" PackageSuffix="part1" />
-    <File Include= "libtorch\lib\cublasLt64_11.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\cublas64_11.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\cudart64_110.dll" PackageSuffix="part1" />
 
     <File Include= "libtorch\lib\cudnn_adv_infer64_8.dll" PackageSuffix="part2" />
@@ -51,11 +51,14 @@
     <File Include= "libtorch\lib\cupti64_2022.2.0.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\cusolverMg64_11.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\fbgemm.dll" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\fbjni.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\libiomp5md.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\libiompstubs5md.dll" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\nvfuser_codegen.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\nvrtc64_112_0.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\nvrtc-builtins64_117.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackageSuffix="part6" />
+    <File Include= "libtorch\lib\pytorch_jni.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\uv.dll" PackageSuffix="part6" />
@@ -64,21 +67,25 @@
     <File Include= "libtorch\lib\cusolver64_11.dll"  PackageSuffix="part7" />
 
     <File Include= "libtorch\lib\cusparse64_11.dll" PackageSuffix="part8" />
-    <File Include= "libtorch\lib\torch_cuda.dll" PackageSuffix="part8" />
-    <File Include= "libtorch\lib\torch_cuda_cpp.dll" PackageSuffix="part8" />
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
-    <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment1" FileUnstitchIndex="1" FileUnstitchStart="300000000" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\torch_cuda_cu.dll"  PackageSuffix="part9-fragment2" FileUnstitchIndex="2" FileUnstitchStart="600000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="350000000" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment1" FileUnstitchIndex="1" FileUnstitchStart="350000000" FileUnstitchSize="350000000" />
+    <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment2" FileUnstitchIndex="2" FileUnstitchStart="700000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part10" />
 
-    <File Include= "libtorch\lib\cublas64_11.dll" PackageSuffix="part11" />
+    <File Include= "libtorch\lib\cublasLt64_11.dll" PackageSuffix="part11" />
 
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
+    <File Include= "libtorch\lib\libcudart-e409450e.so.11.0" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libgomp-a34b3233.so.1" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvToolsExt-847d78f2.so.1" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvrtc-d833c4f3.so.11.2" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvrtc-builtins-7237cb5d.so.11.7" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libcudnn.so.8" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libbackend_with_compiler.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libc10.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libc10_cuda.so"  PackageSuffix="part1"  />
@@ -87,29 +94,23 @@
     <File Include= "libtorch\lib\libfbjni.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libjitbackend_test.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnnapi_backend.so"  PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libnvfuser_codegen.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libpytorch_jni.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcudart-e409450e.so.11.0" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libgomp-a34b3233.so.1" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libnvToolsExt-847d78f2.so.1" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libnvrtc-d833c4f3.so.11.2" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libnvrtc-builtins-7237cb5d.so.11.7" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libcudnn.so.8" PackageSuffix="part1"  />
 
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
-    <File Include= "libtorch\lib\libtorch_cuda_cpp.so"  PackageSuffix="part2" />
+    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part2" />
     
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
-    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cuda_cu.so"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="500000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="360000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment1" FileUnstitchIndex="1" FileUnstitchStart="360000000" FileUnstitchSize="360000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="720000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libcudnn_cnn_infer.so.8"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\libcudnn_cnn_infer.so.8"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />

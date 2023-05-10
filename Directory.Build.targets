@@ -12,8 +12,10 @@
     <NativeAssemblyReference Include="asmjit" />
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="fbgemm" />
+    <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="libiomp5md" />
     <NativeAssemblyReference Include="libiompstubs5md" />
+    <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
     <NativeAssemblyReference Include="torch_global_deps" />
@@ -39,26 +41,30 @@
     <NativeAssemblyReference Include="cufft64_10" Variant="cuda\" />
     <NativeAssemblyReference Include="cufftw64_10" Variant="cuda\" />
     <NativeAssemblyReference Include="curand64_10" Variant="cuda\" />
+    <NativeAssemblyReference Include="cupti64_2022.2.0" Variant="cuda\" />
     <NativeAssemblyReference Include="cusolver64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="cusolverMg64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="cusparse64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="fbgemm" Variant="cuda\" />
+    <NativeAssemblyReference Include="fbjni" Variant="cuda\" />
     <NativeAssemblyReference Include="libiomp5md" Variant="cuda\" />
     <NativeAssemblyReference Include="libiompstubs5md" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvfuser_codegen" Variant="cuda\" />
     <NativeAssemblyReference Include="nvrtc64_112_0" Variant="cuda\" />
     <NativeAssemblyReference Include="nvrtc-builtins64_117" Variant="cuda\" />
     <NativeAssemblyReference Include="nvToolsExt64_1" Variant="cuda\" />
+    <NativeAssemblyReference Include="pytorch_jni" Variant="cuda\" />
     <NativeAssemblyReference Include="torch" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cpu" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cuda" Variant="cuda\" />
-    <NativeAssemblyReference Include="torch_cuda_cpp" Variant="cuda\" />
-    <NativeAssemblyReference Include="torch_cuda_cu" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_global_deps" Variant="cuda\" />
     <NativeAssemblyReference Include="uv" Variant="cuda\" />
+    <NativeAssemblyReference Include="zlibwapi" Variant="cuda\" />
   </ItemGroup>
 
   <!-- Mac libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64'and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
+    <NativeAssemblyReference Include="backend_with_compiler" />
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="iomp5" />
@@ -78,6 +84,7 @@
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="jitbackend_test" />
+    <NativeAssemblyReference Include="nnapi_backend" />
     <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="shm" />
     <NativeAssemblyReference Include="torch" />

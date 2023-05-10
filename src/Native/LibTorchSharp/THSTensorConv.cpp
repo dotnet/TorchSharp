@@ -409,12 +409,14 @@ Tensor THSTensor_upsample_nearest1d_backward(
     const int64_t* inputSize, const int inputSizeLength,
     const double* scaleFactors, const int scaleFactorsLength)
 {
-    CATCH_TENSOR(torch::upsample_nearest1d_backward(
-        *grad_output,
-        (outputSize == 0 ? c10::optional<c10::IntArrayRef>() : c10::optional<c10::IntArrayRef>(at::IntArrayRef(outputSize, outputSizeLength))),
-        at::IntArrayRef(inputSize, inputSizeLength),
-        (scaleFactors == 0 ? c10::optional<c10::ArrayRef<double>>() : c10::optional<c10::ArrayRef<double>>(at::ArrayRef<double>(scaleFactors, scaleFactorsLength))))
-    );
+    // TODO: Update to v2.0 format
+    //CATCH_TENSOR(torch::upsample_nearest1d_backward(
+    //    *grad_output,
+    //    (outputSize == 0 ? c10::optional<c10::IntArrayRef>() : c10::optional<c10::IntArrayRef>(at::IntArrayRef(outputSize, outputSizeLength))),
+    //    at::IntArrayRef(inputSize, inputSizeLength),
+    //    (scaleFactors == 0 ? c10::optional<double>() : c10::optional<double>(*scaleFactors)))
+    //);
+    return nullptr;
 }
 
 Tensor THSTensor_upsample_nearest2d(
@@ -435,12 +437,14 @@ Tensor THSTensor_upsample_nearest2d_backward(
     const int64_t* inputSize, const int inputSizeLength,
     const double* scaleFactors, const int scaleFactorsLength)
 {
-    CATCH_TENSOR(torch::upsample_nearest2d_backward(
-        *grad_output,
-        (outputSize == 0 ? c10::optional<c10::IntArrayRef>() : c10::optional<c10::IntArrayRef>(at::IntArrayRef(outputSize, outputSizeLength))),
-        at::IntArrayRef(inputSize, inputSizeLength),
-        (scaleFactors == 0 ? c10::optional<c10::ArrayRef<double>>() : c10::optional<c10::ArrayRef<double>>(at::ArrayRef<double>(scaleFactors, scaleFactorsLength))))
-    );
+    // TODO: Update to v2.0 format
+    //CATCH_TENSOR(torch::upsample_nearest2d_backward(
+    //    *grad_output,
+    //    (outputSize == 0 ? c10::optional<c10::IntArrayRef>() : c10::optional<c10::IntArrayRef>(at::IntArrayRef(outputSize, outputSizeLength))),
+    //    at::IntArrayRef(inputSize, inputSizeLength),
+    //    (scaleFactors == 0 ? c10::optional<c10::ArrayRef<double>>() : c10::optional<c10::ArrayRef<double>>(at::ArrayRef<double>(scaleFactors, scaleFactorsLength))))
+    //);
+    return nullptr;
 }
 
 Tensor THSTensor_upsample_nearest3d(
@@ -461,10 +465,12 @@ Tensor THSTensor_upsample_nearest3d_backward(
     const int64_t* inputSize, const int inputSizeLength,
     const double* scaleFactors, const int scaleFactorsLength)
 {
-    CATCH_TENSOR(torch::upsample_nearest3d_backward(
-        *grad_output,
-        (outputSize == 0 ? c10::optional<c10::IntArrayRef>() : c10::optional<c10::IntArrayRef>(at::IntArrayRef(outputSize, outputSizeLength))),
-        at::IntArrayRef(inputSize, inputSizeLength),
-        (scaleFactors == 0 ? c10::optional<c10::ArrayRef<double>>() : c10::optional<c10::ArrayRef<double>>(at::ArrayRef<double>(scaleFactors, scaleFactorsLength))))
-    );
+    // TODO: Update to v2.0 format
+    //CATCH_TENSOR(torch::upsample_nearest3d_backward(
+    //    *grad_output,
+    //    (outputSize == 0 ? c10::optional<c10::IntArrayRef>() : c10::optional<c10::IntArrayRef>(at::IntArrayRef(outputSize, outputSizeLength))),
+    //    at::IntArrayRef(inputSize, inputSizeLength),
+    //    (scaleFactors == 0 ? c10::optional<c10::ArrayRef<double>>() : c10::optional<c10::ArrayRef<double>>(at::ArrayRef<double>(scaleFactors, scaleFactorsLength))))
+    //);
+    return nullptr;
 }

@@ -9,9 +9,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
-#if NET472_OR_GREATER
     [Collection("Sequential")]
-#endif // NET472_OR_GREATER
     public class TestTorch
     {
         [Fact]
