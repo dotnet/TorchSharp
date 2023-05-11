@@ -674,8 +674,7 @@ namespace TorchSharp
         }
 
         // TODO: (Skip = "Intermittently failing on MacOS or Linux (note: may now be working, we need to recheck)")
-        //[FactIgnoreOnPlatform("OSX", "Linux", Skip = "Intermittently fails")]
-        [Fact]
+        [FactIgnoreOnPlatform("OSX", "Linux", Skip = "Intermittently fails")]
         [TestOf(nameof(linalg.eigvals))]
         public void EighvalsTest64()
         {
