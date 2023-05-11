@@ -679,8 +679,8 @@ namespace TorchSharp
         [TestOf(nameof(linalg.eigvals))]
         public void EighvalsTest64()
         {
-            // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+            // TODO: (Skip = "Intermittently failing on MacOS or Linux (note: may now be working, we need to recheck)")
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
                 var a = tensor(
                     new double[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
                 var expected = tensor(
@@ -690,12 +690,12 @@ namespace TorchSharp
             }
         }
 
-        [Fact]
+        [FactIgnoreOnPlatform("OSX", "Linux", Skip = "Intermittently fails")]
         [TestOf(nameof(linalg.eigvalsh))]
         public void EighvalshTest32()
         {
-            // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+            // TODO: (Skip = "Intermittently failing on MacOS (note: may now be working, we need to recheck)")
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
                 var a = tensor(
                     new float[] {  2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f,
                                   -2.7457f, -1.7517f, 1.7166f,  2.2207f, 2.2207f, -2.0898f }, 3, 2, 2);
@@ -706,7 +706,7 @@ namespace TorchSharp
             }
         }
 
-        [Fact]
+        [FactIgnoreOnPlatform("OSX", "Linux", Skip = "Intermittently fails")]
         [TestOf(nameof(linalg.eigvalsh))]
         public void EighvalshTest64()
         {

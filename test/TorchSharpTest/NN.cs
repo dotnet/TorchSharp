@@ -538,10 +538,7 @@ namespace TorchSharp
             }
         }
 
-        [FactIgnoreOnPlatform(
-            "Attempted to read or write protected memory.",
-            "Windows",
-            Architecture.X64)]
+        [Fact]
         public void EvaluateGLU()
         {
             var rel = GLU();
