@@ -154,20 +154,20 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
 1. Familiarise yourself with download links. See https://pytorch.org/get-started/locally/ for download links.
 
-   For example Linux, LibTorch 1.13.0 uses link
+   For example Linux, LibTorch 2.0.1 CPU download uses the link:
 
-       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.13.0%2Bcpu.zip
+       https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-2.0.1%2Bcpu.zip
 
    Don't download anything yet, or manually. The downloads are acquired automatically in step 2.
    
    To update the version, update this in [Dependencies.props](build/Dependencies.props):
 
-       <LibTorchVersion>1.13.0</LibTorchVersion>
+       <LibTorchVersion>2.0.1</LibTorchVersion>
 
     The libtorch version number is also referenced in source code, in the file 'src/TorchSharp/Torch.cs':
 
     ```C#
-    const string libtorchPackageVersion = "1.13.0.1";
+    const string libtorchPackageVersion = "2.0.1.1";
     ```
 
 2. Run these to test downloads and update SHA hashes for the various LibTorch downloads:
@@ -192,7 +192,7 @@ version of PyTorch then quite a lot of careful work needs to be done.
 
    Check the contents of the unzip of the archive, e.g.
 
-       bin\obj\x64.Debug\libtorch-cpu\libtorch-shared-with-deps-1.13.0\libtorch\lib
+       bin\obj\x64.Debug\libtorch-cpu\libtorch-shared-with-deps-2.0.1\libtorch\lib
 
    You may also need to precisely refactor the CUDA binaries into multiple parts so each package ends up under ~300MB. The NuGet gallery does not allow packages larger than 250MB, so if files are
    300MB, after compression, they are likely to be smaller than 250MB. However, you have to look out: if the compression is poor, then packages may end up larger. Note that it is 250 million
@@ -272,12 +272,12 @@ vs.
 9. Try building packages locally. The build (including CI) doesn't build `libtorch-*` packages by default, just the managed package. To
    get CI to build new `libtorch-*` packages update this version and set `BuildLibTorchPackages` in [azure-pipelines.yml](azure-pipelines.yml):
 
-       <LibTorchPackageVersion>1.13.0.1</LibTorchPackageVersion>
+       <LibTorchPackageVersion>2.0.1.1</LibTorchPackageVersion>
 
-       dotnet pack -c Debug /p:SkipCuda=true 
-       dotnet pack -c Release /p:SkipCuda=true
-       dotnet pack -c Debug 
-       dotnet pack -c Release
+       dotnet pack -c Release -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=true /p:IncludeLibTorchCudaPackages=true 
+       dotnet pack -c Release -v:n /p:SkipNative=true /p:SkipTests=true /p:TargetOS=linux /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=true /p:IncludeLibTorchCudaPackages=true        
+
+    Once these finish, the output can be found in `bin\packages\Release`. Look at the file sizes -- if anything is larger than 250,000,000 bytes, you need to go back to #4 above and redefine the package contents and fragmentation scheme. It maybe necessary to introduce new fragments.
 
 10. Submit to CI and debug problems.
 

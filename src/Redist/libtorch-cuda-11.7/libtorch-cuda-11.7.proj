@@ -108,9 +108,9 @@
     
     <!-- This vast file needs a special magic, we split it into multiple chunks in different packages. -->
     <!-- The chunks actually all have the same size but have different sections zero'd out. We "or" the bits back together on package restore. -->
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="360000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment1" FileUnstitchIndex="1" FileUnstitchStart="360000000" FileUnstitchSize="360000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="720000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="375000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment1" FileUnstitchIndex="1" FileUnstitchStart="375000000" FileUnstitchSize="325000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="700000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libcudnn_cnn_infer.so.8"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
     <File Include= "libtorch\lib\libcudnn_cnn_infer.so.8"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
