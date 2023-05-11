@@ -2108,7 +2108,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28 };
             //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
                 var conv = Conv1d(3, 64, 3, stride: 2, device: device);
                 var output = conv.call(t);
@@ -2124,7 +2124,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28 };
             //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
 
                 using (var conv = Conv1d(3, 64, 3, padding: 1, device: device))
@@ -2156,7 +2156,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28, 28 };
             //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
                 {
                     var conv = Conv2d(3, 64, 3, device: device);
@@ -2221,7 +2221,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28, 28 };
             //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
 
                 Tensor t = torch.rand(shape, device: device);
 
@@ -2251,9 +2251,9 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28, 28 };
             //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
 
-                Tensor t = torch.rand(shape);
+                Tensor t = torch.rand(shape, device: device);
                 using (var conv = Conv2d(3, 64, 3, padding: 1, device: device))
                 using (var output = conv.call(t)) {
                     Assert.Equal(device.type, output.device_type);
@@ -2417,7 +2417,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28 };
             //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
                 var conv = ConvTranspose1d(3, 64, 3, device: device);
                 var output = conv.call(t);
@@ -2433,7 +2433,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28, 28 };
             //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
                 var conv = ConvTranspose2d(3, 64, 3, device: device);
                 var output = conv.call(t);
@@ -2449,7 +2449,7 @@ namespace TorchSharp
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
             //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
                 var conv = ConvTranspose3d(3, 64, 3, device: device);
                 var output = conv.call(t);
