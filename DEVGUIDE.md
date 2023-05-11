@@ -261,8 +261,7 @@ vs.
 
        dotnet build
 
-7. You must also adjust the set of binaries referenced for tests, see various files under `tests` and `NativeAssemblyReference` in
-`TorchSharp\Directory.Build.targets`.
+7. You must also adjust the set of binaries referenced for tests, see various files under `tests` and `NativeAssemblyReference` in `TorchSharp\Directory.Build.targets`.
 
 8. Run tests
 
@@ -277,7 +276,9 @@ vs.
        dotnet pack -c Release -v:n /p:SkipNative=true /p:SkipTests=true /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=true /p:IncludeLibTorchCudaPackages=true 
        dotnet pack -c Release -v:n /p:SkipNative=true /p:SkipTests=true /p:TargetOS=linux /p:IncludeTorchSharpPackage=true /p:IncludeLibTorchCpuPackages=true /p:IncludeLibTorchCudaPackages=true        
 
-    Once these finish, the output can be found in `bin\packages\Release`. Look at the file sizes -- if anything is larger than 250,000,000 bytes, you need to go back to #4 above and redefine the package contents and fragmentation scheme. It maybe necessary to introduce new fragments.
+    Once these finish, the output can be found in `bin\packages\Release`. Look at the file sizes -- if anything is larger than 250,000,000 bytes, you need to go back to #3 above and redefine the package contents and fragmentation scheme. It maybe necessary to introduce new fragments.
+
+	**Note:** The locally built TorchSharp packages will only contain binaries for the local platform, so they cannot be used with other platforms. Therefore, only the packages built in Azure Pipelines can be used across platforms.
 
 10. Submit to CI and debug problems.
 
