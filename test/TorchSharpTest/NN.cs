@@ -4751,7 +4751,7 @@ namespace TorchSharp
         #endregion
 
 #if DEBUG
-        [Fact(Skip = "Not working on Mac and Ubuntu (note: may now be working, we need to recheck)")]
+        [FactIgnoreOnPlatform("Not working on Mac and Ubuntu (note: may now be working, we need to recheck)", "OSX", "Linux")]
         public void TestErrorHandling()
         {
             using (Tensor input = torch.tensor(new float[] { 0.5f, 1.5f }))

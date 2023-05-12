@@ -674,7 +674,7 @@ namespace TorchSharp
         }
 
         // TODO: (Skip = "Intermittently failing on MacOS or Linux (note: may now be working, we need to recheck)")
-        [FactIgnoreOnPlatform("OSX", "Linux", Skip = "Intermittently fails")]
+        [FactIgnoreOnPlatform("Intermittently fails", "OSX", "Linux")]
         [TestOf(nameof(linalg.eigvals))]
         public void EighvalsTest64()
         {
@@ -687,7 +687,7 @@ namespace TorchSharp
         }
 
         // TODO: (Skip = "Intermittently failing on MacOS or Linux (note: may now be working, we need to recheck)")
-        [FactIgnoreOnPlatform("OSX", "Linux", Skip = "Intermittently fails")]
+        [FactIgnoreOnPlatform("Intermittently fails", "OSX", "Linux")]
         [TestOf(nameof(linalg.eigvalsh))]
         public void EighvalshTest32()
         {
@@ -701,7 +701,7 @@ namespace TorchSharp
         }
 
         // TODO: (Skip = "Intermittently failing on MacOS or Linux (note: may now be working, we need to recheck)")
-        [FactIgnoreOnPlatform("OSX", "Linux", Skip = "Intermittently fails")]
+        [FactIgnoreOnPlatform("Intermittently fails", "OSX", "Linux")]
         [TestOf(nameof(linalg.eigvalsh))]
         public void EighvalshTest64()
         {

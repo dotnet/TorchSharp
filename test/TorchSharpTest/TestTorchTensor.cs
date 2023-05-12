@@ -417,7 +417,7 @@ namespace TorchSharp
         }
 
 #if !LINUX
-        [Fact(Skip = "Sensitive to parallelism in the xUnit test driver")]
+        [FactIgnoreOnPlatform("Sensitive to parallelism in the xUnit test driver", "Linux")]
         [TestOf(nameof(torch.randn))]
         public void TestUsings()
         {
