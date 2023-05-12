@@ -14,16 +14,21 @@ namespace TorchSharp
         /// </summary>
         public sealed class Dropout1d : torch.nn.Module<Tensor, Tensor>
         {
-            internal Dropout1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal Dropout1d(double p = 0.5, bool inplace = false) : base(nameof(Dropout1d))
+            {
+                this.p = p;
+                this.inplace = inplace;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
                 if (tensor.ndim != 3)
                     throw new ArgumentException("tensor passed to Dropout1d must be of the shape (N,C,L");
-                var res = THSNN_Dropout1d_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.dropout1d(tensor, this.p, this.training, this.inplace);
             }
+
+            private bool inplace;
+            private double p;
         }
     }
 
@@ -40,9 +45,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static Dropout1d Dropout1d(double p = 0.5, bool inplace = false)
             {
-                var handle = THSNN_Dropout1d_ctor(p, inplace, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Dropout1d(handle, boxedHandle);
+                return new Dropout1d(p, inplace);
             }
 
             public static partial class functional

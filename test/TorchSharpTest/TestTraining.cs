@@ -12,9 +12,7 @@ using TorchSharp.Modules;
 
 namespace TorchSharp
 {
-#if NET472_OR_GREATER
     [Collection("Sequential")]
-#endif // NET472_OR_GREATER
     public class TestTraining
     {
 
@@ -1446,7 +1444,7 @@ namespace TorchSharp
             LossIsClose(62.494f, loss);
         }
 
-        [Fact()]//(Skip = "Fails with an exception in native code.")]
+        [Fact()]
         public void TestTrainingSGDNesterov()
         {
             var gen = new Generator(4711);
