@@ -14,7 +14,11 @@ namespace TorchSharp
         /// </summary>
         public sealed class Dropout : torch.nn.Module<Tensor, Tensor>
         {
-            internal Dropout(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal Dropout(double p = 0.5, bool inplace = false) : base(nameof(Dropout))
+            {
+                this.p = p;
+                this.inplace = inplace;
+            }
 
             /// <summary>
             /// Forward pass.
@@ -23,10 +27,11 @@ namespace TorchSharp
             /// <returns></returns>
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Dropout_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.dropout(tensor, this.p, this.training, this.inplace);
             }
+
+            private bool inplace;
+            private double p;
         }
     }
 
@@ -43,9 +48,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static Dropout Dropout(double p = 0.5, bool inplace = false)
             {
-                var handle = THSNN_Dropout_ctor(p, inplace, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Dropout(handle, boxedHandle);
+                return new Dropout(p, inplace);
             }
 
             public static partial class functional

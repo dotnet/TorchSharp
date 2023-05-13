@@ -19,7 +19,11 @@ namespace TorchSharp
         /// </summary>
         public sealed class AlphaDropout : torch.nn.Module<Tensor, Tensor>
         {
-            internal AlphaDropout(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal AlphaDropout(double p = 0.5, bool inplace = false) : base(nameof(Dropout1d))
+            {
+                this.p = p;
+                this.inplace = inplace;
+            }
 
             /// <summary>
             /// Forward pass.
@@ -28,10 +32,11 @@ namespace TorchSharp
             /// <returns></returns>
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_AlphaDropout_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.alpha_dropout(tensor, this.p, this.training, inplace);
             }
+
+            private bool inplace;
+            private double p;
         }
     }
 
@@ -48,9 +53,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static AlphaDropout AlphaDropout(double p = 0.5, bool inplace = false)
             {
-                var handle = THSNN_AlphaDropout_ctor(p, inplace, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new AlphaDropout(handle, boxedHandle);
+                return new AlphaDropout(p, inplace);
             }
 
             public static partial class functional

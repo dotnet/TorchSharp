@@ -14,14 +14,21 @@ namespace TorchSharp
         /// </summary>
         public sealed class Dropout2d : torch.nn.Module<Tensor, Tensor>
         {
-            internal Dropout2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            public override Tensor forward(Tensor tensor)
+            internal Dropout2d(double p = 0.5, bool inplace = false) : base(nameof(Dropout2d))
             {
-                var res = THSNN_Dropout2d_forward(handle, tensor.Handle);
+                this.p = p;
+                this.inplace = inplace;
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                var res = THSNN_dropout2d(input.Handle, p, this.training, inplace);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            private bool inplace;
+            private double p;
         }
     }
 
@@ -38,9 +45,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static Dropout2d Dropout2d(double p = 0.5, bool inplace = false)
             {
-                var handle = THSNN_Dropout2d_ctor(p, inplace, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Dropout2d(handle, boxedHandle);
+                return new Dropout2d(p, inplace);
             }
 
             public static partial class functional
