@@ -6,6 +6,7 @@ using System.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.utils.data;
+using static TorchSharp.torchvision.datasets;
 using static TorchSharp.torchvision.datasets.utils;
 
 // A number of implementation details in this file have been translated from the Python version of torchvision,
@@ -40,7 +41,7 @@ namespace TorchSharp
 
             private const string base_folder = "celeba";
             private readonly string root;
-            private readonly string split;
+            private readonly CelebADatasetSplit split;
             private readonly string[] target_type;
             private readonly IModule<Tensor, Tensor>? transform;
             private readonly IModule<Tensor, Tensor>? target_transform;
@@ -53,7 +54,7 @@ namespace TorchSharp
 
             internal CelebA(
                 string root,
-                string split,
+                CelebADatasetSplit split,
                 string[] target_type,
                 IModule<Tensor, Tensor>? transform,
                 IModule<Tensor, Tensor>? target_transform)
@@ -73,21 +74,13 @@ namespace TorchSharp
                     throw new InvalidDataException("Dataset not found or corrupted. You can use download=True to download it");
                 }
 
-                var split_map = new Dictionary<string, int?> {
-                    { "train", 0 },
-                    { "valid", 1 },
-                    { "test", 2 },
-                    { "all", null },
-                };
-
-                var split_ = split_map[verify_str_arg(split.ToLower(), "split", new string[] { "train", "valid", "test", "all" })];
                 var splits = this._load_csv("list_eval_partition.txt");
                 var identity = this._load_csv("identity_CelebA.txt");
                 var bbox = this._load_csv("list_bbox_celeba.txt", header: 1);
                 var landmarks_align = this._load_csv("list_landmarks_align_celeba.txt", header: 1);
                 var attr = this._load_csv("list_attr_celeba.txt", header: 1);
 
-                if (split_ is null) {
+                if (this.split == CelebADatasetSplit.All) {
                     this.filename = splits.index;
 
                     this.identity = identity.data;
@@ -95,7 +88,7 @@ namespace TorchSharp
                     this.landmarks_align = landmarks_align.data;
                     this.attr = attr.data;
                 } else {
-                    var mask = (splits.data == split_).squeeze();
+                    var mask = (splits.data == (long)this.split).squeeze();
 
                     var x = torch.squeeze(torch.nonzero(mask), dim: null);
                     var y = new List<string>();
@@ -233,24 +226,32 @@ namespace TorchSharp
     {
         public static partial class datasets
         {
-            /// <summary>
-            /// `Large-scale CelebFaces Attributes (CelebA) Dataset http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html Dataset.
-            /// </summary>
-            /// <param name="root">Root directory where images are downloaded to.</param>
-            /// <param name="split">One of {'train', 'valid', 'test', 'all'}.
-            /// Accordingly dataset is selected.</param>
-            /// <param name="target_type">Type of target to use, ``attr``, ``identity``, ``bbox``,
-            /// or ``landmarks``.</param>
-            /// <param name="transform">A function/transform that  takes in an PIL image
-            /// and returns a transformed version.</param>
-            /// <param name="target_transform">A function/transform that takes in the
-            /// target and transforms it.</param>
-            /// <param name="download">If true, downloads the dataset from the internet and
-            /// puts it in root directory. If dataset is already downloaded, it is not
-            /// downloaded again.</param>
-            public static Dataset CelebA(
+            public enum CelebADatasetSplit
+            {
+                Train = 0,
+                Valid = 1,
+                Test = 2,
+                All = -1,
+            }
+
+        /// <summary>
+        /// `Large-scale CelebFaces Attributes (CelebA) Dataset http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html Dataset.
+        /// </summary>
+        /// <param name="root">Root directory where images are downloaded to.</param>
+        /// <param name="split">One of Train, Valid, Test, All.
+        /// Accordingly dataset is selected.</param>
+        /// <param name="target_type">Type of target to use, ``attr``, ``identity``, ``bbox``,
+        /// or ``landmarks``.</param>
+        /// <param name="transform">A function/transform that  takes in an PIL image
+        /// and returns a transformed version.</param>
+        /// <param name="target_transform">A function/transform that takes in the
+        /// target and transforms it.</param>
+        /// <param name="download">If true, downloads the dataset from the internet and
+        /// puts it in root directory. If dataset is already downloaded, it is not
+        /// downloaded again.</param>
+        public static Dataset CelebA(
                 string root,
-                string split = "train",
+                CelebADatasetSplit split = CelebADatasetSplit.Train,
                 string[]? target_type = null,
                 IModule<Tensor, Tensor>? transform = null,
                 IModule<Tensor, Tensor>? target_transform = null,
