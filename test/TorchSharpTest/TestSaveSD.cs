@@ -7,9 +7,7 @@ using Xunit;
 
 namespace TorchSharp
 {
-#if NET472_OR_GREATER
     [Collection("Sequential")]
-#endif // NET472_OR_GREATER
     public class TestSaveSD
     {
         private class LSTMModel : nn.Module<Tensor, Tensor>

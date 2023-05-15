@@ -2,9 +2,15 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.99.7
+## NuGet Version 0.100.0
+
+Updated backend binaries to libtorch v2.0.1.
 
 Updated the NuGet metadata to use a license expression rather than a reference to a license file. This will help with automated license checking by users.
+
+__Breaking Changes__:
+
+With v2.0.1, `torch.istft()` expects complex numbers in the input tensor.
 
 __API Changes__:
 
