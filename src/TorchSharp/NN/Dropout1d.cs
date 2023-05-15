@@ -27,6 +27,12 @@ namespace TorchSharp
                 return torch.nn.functional.dropout1d(tensor, this.p, this.training, this.inplace);
             }
 
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
+            protected internal override nn.Module _to(ScalarType dtype) => this;
+
             private bool inplace;
             private double p;
         }
