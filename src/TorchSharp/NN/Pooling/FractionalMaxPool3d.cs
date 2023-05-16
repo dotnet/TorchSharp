@@ -41,6 +41,12 @@ namespace TorchSharp
                 return (new Tensor(res), new Tensor(indices));
             }
 
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
+            protected internal override nn.Module _to(ScalarType dtype) => this;
+
             private bool _used_ratio = false;
         }
     }
