@@ -66,6 +66,7 @@ jobs:
         contents: |
           **/TestOutput/**/*
           **/*.trx
+          **/Sequence_*.xml
         targetFolder: $(Build.ArtifactStagingDirectory)
     - task: PublishBuildArtifacts@1
       displayName: Publish build and test logs

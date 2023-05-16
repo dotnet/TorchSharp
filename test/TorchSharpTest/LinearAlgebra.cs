@@ -9,9 +9,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
-#if NET472_OR_GREATER
     [Collection("Sequential")]
-#endif // NET472_OR_GREATER
     public class LinearAlgebra
     {
         [Fact]
@@ -667,60 +665,53 @@ namespace TorchSharp
         [TestOf(nameof(linalg.eigvals))]
         public void EighvalsTest32()
         {
-            {
-                var a = tensor(
-                    new float[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
-                var expected = tensor(
-                    new (float, float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
-                var l = linalg.eigvals(a);
-                Assert.True(l.allclose(expected));
-            }
+            var a = tensor(
+                new float[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
+            var expected = tensor(
+                new (float, float)[] { (3.44288778f, 0.0f), (2.17609453f, 0.0f), (-2.128083f, 0.0f) });
+            var l = linalg.eigvals(a);
+            Assert.True(l.allclose(expected));
         }
 
-        [Fact]
+        // TODO: (Skip = "Intermittently failing on MacOS or Linux (note: may now be working, we need to recheck)")
+        [FactIgnoreOnPlatform("Intermittently fails", "OSX", "Linux")]
         [TestOf(nameof(linalg.eigvals))]
         public void EighvalsTest64()
         {
-            // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                var a = tensor(
-                    new double[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
-                var expected = tensor(
-                    new System.Numerics.Complex[] { new System.Numerics.Complex(3.44288778f, 0.0f), new System.Numerics.Complex(2.17609453f, 0.0f), new System.Numerics.Complex(-2.128083f, 0.0f) });
-                var l = linalg.eigvals(a);
-                Assert.True(l.allclose(expected));
-            }
+            var a = tensor(
+                new double[] { 2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f, -2.7457f, -1.7517f, 1.7166f }, 3, 3);
+            var expected = tensor(
+                new System.Numerics.Complex[] { new System.Numerics.Complex(3.44288778f, 0.0f), new System.Numerics.Complex(2.17609453f, 0.0f), new System.Numerics.Complex(-2.128083f, 0.0f) });
+            var l = linalg.eigvals(a);
+            Assert.True(l.allclose(expected));
         }
 
-        [Fact]
+        // TODO: (Skip = "Intermittently failing on MacOS or Linux (note: may now be working, we need to recheck)")
+        [FactIgnoreOnPlatform("Intermittently fails", "OSX", "Linux")]
         [TestOf(nameof(linalg.eigvalsh))]
         public void EighvalshTest32()
         {
-            // TODO: (Skip = "Not working on MacOS (note: may now be working, we need to recheck)")
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                var a = tensor(
-                    new float[] {  2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f,
-                                  -2.7457f, -1.7517f, 1.7166f,  2.2207f, 2.2207f, -2.0898f }, 3, 2, 2);
-                var expected = tensor(
-                    new float[] { 2.5797f, 3.46290016f, -4.16046524f, 1.37806475f, -3.11126733f, 2.73806715f }, 3, 2);
-                var l = linalg.eigvalsh(a);
-                Assert.True(l.allclose(expected));
-            }
+            var a = tensor(
+                new float[] {  2.8050f, -0.3850f, -0.3850f, 3.2376f, -1.0307f, -2.7457f,
+                                -2.7457f, -1.7517f, 1.7166f,  2.2207f, 2.2207f, -2.0898f }, 3, 2, 2);
+            var expected = tensor(
+                new float[] { 2.5797f, 3.46290016f, -4.16046524f, 1.37806475f, -3.11126733f, 2.73806715f }, 3, 2);
+            var l = linalg.eigvalsh(a);
+            Assert.True(l.allclose(expected));
         }
 
-        [Fact]
+        // TODO: (Skip = "Intermittently failing on MacOS or Linux (note: may now be working, we need to recheck)")
+        [FactIgnoreOnPlatform("Intermittently fails", "OSX", "Linux")]
         [TestOf(nameof(linalg.eigvalsh))]
         public void EighvalshTest64()
         {
-            {
-                var a = tensor(
-                    new double[] {  2.8050, -0.3850, -0.3850, 3.2376, -1.0307, -2.7457,
-                                  -2.7457, -1.7517, 1.7166,  2.2207, 2.2207, -2.0898 }, 3, 2, 2);
-                var expected = tensor(
-                    new double[] { 2.5797, 3.46290016, -4.16046524, 1.37806475, -3.11126733, 2.73806715 }, 3, 2);
-                var l = linalg.eigvalsh(a);
-                Assert.True(l.allclose(expected));
-            }
+            var a = tensor(
+                new double[] {  2.8050, -0.3850, -0.3850, 3.2376, -1.0307, -2.7457,
+                                -2.7457, -1.7517, 1.7166,  2.2207, 2.2207, -2.0898 }, 3, 2, 2);
+            var expected = tensor(
+                new double[] { 2.5797, 3.46290016, -4.16046524, 1.37806475, -3.11126733, 2.73806715 }, 3, 2);
+            var l = linalg.eigvalsh(a);
+            Assert.True(l.allclose(expected));
         }
 
         [Fact]

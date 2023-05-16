@@ -769,9 +769,9 @@ void completeTensorIndices(const int64_t* indexStarts,
         else // TensorIndex by Slice
         {
             // slice
-            auto start = (n == INT64_MIN + 6) ? c10::optional<int64_t>() : c10::optional<int64_t>(n - INT64_MIN / 2);
-            auto end = (indexEnds == NULL || indexEnds[i] == INT64_MIN) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexEnds[i]);
-            auto step = (indexSteps == NULL || indexSteps[i] == INT64_MIN) ? c10::optional<int64_t>() : c10::optional<int64_t>(indexSteps[i]);
+            auto start = (n == INT64_MIN + 6) ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(n - INT64_MIN / 2);
+            auto end = (indexEnds == NULL || indexEnds[i] == INT64_MIN) ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(indexEnds[i]);
+            auto step = (indexSteps == NULL || indexSteps[i] == INT64_MIN) ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(indexSteps[i]);
             at::indexing::TensorIndex idx(at::indexing::Slice(start, end, step));
             memcpy(&indicesArray[i], &idx, sizeof(at::indexing::TensorIndex));
         }

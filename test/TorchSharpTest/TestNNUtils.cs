@@ -98,6 +98,26 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestAutoGradAnomaly()
+        {
+            Assert.False(AnomalyMode.IsEnabled);
+
+            using (var ad = torch.autograd.detect_anomaly(false)) {
+                Assert.True(AnomalyMode.IsEnabled);
+                Assert.False(AnomalyMode.ShouldCheckNaN);
+            }
+
+            Assert.False(AnomalyMode.IsEnabled);
+
+            using (var ad = torch.autograd.set_detect_anomaly(false)) {
+                Assert.False(AnomalyMode.IsEnabled);
+                Assert.True(AnomalyMode.ShouldCheckNaN);
+            }
+
+            Assert.False(AnomalyMode.IsEnabled);
+        }
+
+        [Fact]
         public void TestSizeSlice()
         {
             var shape = Enumerable.Range(0, 10).Select(i => (long)i).ToArray();

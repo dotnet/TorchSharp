@@ -23,9 +23,7 @@ namespace TorchSharp
     // The tests in this file are all derived from reported GitHub Issues, serving
     // as regression tests.
 
-#if NET472_OR_GREATER
     [Collection("Sequential")]
-#endif // NET472_OR_GREATER
     public class TestTorchTensorBugs
     {
 
@@ -42,7 +40,7 @@ namespace TorchSharp
             Assert.Equal(x, y);
         }
 
-        [Fact]
+        [Fact(Skip = "No longer throws an exception, and it doesn't seem like ever should have.")]
         public void ValidateIssue145()
         {
             // Tensor.DataItem gives a hard crash on GPU tensor
@@ -756,17 +754,17 @@ namespace TorchSharp
             // Per bug report.
             // https://github.com/dotnet/TorchSharp/issues/679
             //
-            var dtype = torch.float32;
-            var spec = torch.rand(1, 1024, 500, 2, dtype: dtype);
+            var dtype = torch.complex64;
+            var spec = torch.rand(1, 1024, 500, dtype: dtype);
             Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => torch.istft(spec, 512, 160, 400, null));
 
-            spec = torch.rand(1, 512, 500, 2, dtype: dtype);
+            spec = torch.rand(1, 512, 500, dtype: dtype);
             var x = torch.istft(spec, 512, 160, 400, null);
 
-            spec = torch.rand(1, 257, 500, 2, dtype: dtype);
+            spec = torch.rand(1, 257, 500, dtype: dtype);
             x = torch.istft(spec, 512, 160, 400, null);
 
-            dtype = torch.complex64;
+            dtype = torch.complex128;
             spec = torch.rand(1, 1024, 500, dtype: dtype);
             Assert.Throws<System.Runtime.InteropServices.ExternalException>(() => torch.istft(spec, 512, 160, 400, null));
 

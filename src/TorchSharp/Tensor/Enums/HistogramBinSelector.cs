@@ -2,9 +2,9 @@
 
 namespace TorchSharp
 {
-    public enum HistogramBinSelector
+    public enum HistogramBinSelector : byte
     {
-        Doane,
+        Doane = 0,
         Rice,
         Scott,
         Sqrt,

@@ -3899,6 +3899,18 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Computes the element-wise maximum of input and other.
+            /// </summary>
+            /// <param name="other">The second input tensor</param>
+            /// <returns></returns>
+            public Tensor max(Tensor other)
+            {
+                var res = LibTorchSharp.THSTensor_max_elementwise(Handle, other.Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Returns a named tuple (values, indexes) where values is the maximum value of each row of the input tensor in the given dimension dim.
             /// And indices is the index location of each maximum value found (argmax).
             /// </summary>
@@ -4036,6 +4048,23 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Computes the element-wise minimum of input and other.
+            /// </summary>
+            /// <param name="other">The second input tensor</param>
+            /// <returns></returns>
+            public Tensor min(Tensor other)
+            {
+                var res = LibTorchSharp.THSTensor_min_elementwise(Handle, other.Handle);
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Computes the element-wise minimum of input and other.
+            /// </summary>
+            /// <param name="other">The second input tensor</param>
+            /// <returns></returns>
             public Tensor minimum(Tensor other)
             {
                 var res = LibTorchSharp.THSTensor_min_elementwise(Handle, other.Handle);
@@ -6726,7 +6755,14 @@ namespace TorchSharp
                 long? end = !range.End.IsFromEnd ? range.End.Value : (range.End.Value == 0) ? null : -1 * range.End.Value;
                 return TensorIndex.Slice(start, end);
             }
+
+            public static implicit operator TensorIndex(System.Index index)
+            {
+                long idx = !index.IsFromEnd ? index.Value : -1 * index.Value;
+                return TensorIndex.Single(idx);
+            }
 #endif // NETSTANDARD2_0_OR_GREATER
+
         }
 
         /// <summary>

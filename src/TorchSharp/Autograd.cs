@@ -33,7 +33,40 @@ namespace TorchSharp
             }
         }
 
-        public static bool IsAutogradEnabled() => THSAutograd_isGradEnabled();
+        public static bool IsEnabled { get => THSAutograd_isGradEnabled(); }
+    }
+
+    /// <summary>
+    /// Helper class, relying on IDisposable to implement block-based scoping of anomaly settings.
+    /// </summary>
+    public class AnomalyMode : IDisposable
+    {
+        private readonly bool _isPrevGrad;
+        private readonly bool _shouldCheckNaN;
+
+        public AnomalyMode(bool enabled, bool check_nan = true)
+        {
+            _isPrevGrad = THSAutograd_isAnomalyEnabled();
+            _shouldCheckNaN = THSAutograd_shouldCheckNaN();
+            THSAutograd_setAnomaly(enabled, check_nan);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public void Dispose(bool disposing)
+        {
+            if (disposing) {
+                THSAutograd_setAnomaly(_isPrevGrad, _shouldCheckNaN);
+            }
+        }
+
+        public static bool IsEnabled { get => THSAutograd_isAnomalyEnabled(); }
+
+        public static bool ShouldCheckNaN { get => THSAutograd_shouldCheckNaN(); }
     }
 
     public static partial class torch
@@ -181,6 +214,27 @@ namespace TorchSharp
             public static void backward(Tensor tensor, Tensor grad_tensor, bool? retain_graph = null, bool create_graph = false, IList<Tensor> inputs = null)
             {
                 backward(new[] { tensor }, new[] { grad_tensor }, retain_graph, create_graph, inputs);
+            }
+
+            /// <summary>
+            /// Context-manager that enable anomaly detection for the autograd engine.
+            /// </summary>
+            /// <param name="check_nan">Flag whether to raise an error when the backward generate “nan”</param>
+            /// <returns></returns>
+            public static AnomalyMode detect_anomaly(bool check_nan = true)
+            {
+                return new AnomalyMode(true, check_nan);
+            }
+
+            /// <summary>
+            /// Context-manager that enable anomaly detection for the autograd engine.
+            /// </summary>
+            /// <param name="mode">Flag whether to enable anomaly detection (true), or disable (false)</param>
+            /// <param name="check_nan">Flag whether to raise an error when the backward generate “nan”</param>
+            /// <returns></returns>
+            public static AnomalyMode set_detect_anomaly(bool mode, bool check_nan = true)
+            {
+                return new AnomalyMode(mode, check_nan);
             }
         }
     }

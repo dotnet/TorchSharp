@@ -1,9 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Collections.Generic;
 using System.Threading;
 using Google.Protobuf;
 using Tensorboard;
@@ -104,17 +104,12 @@ namespace TorchSharp
             /// <param name="walltime">Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds())</param>
             public void add_scalar(string tag, float scalar_value, int global_step, long? walltime = null)
             {
-                var fileName = _fileNames["__default__"];
-
-                if (!File.Exists(fileName)) {
-                    InitFile(fileName);
-                }
-
-                var wt = walltime.HasValue ? walltime.Value : DateTimeOffset.Now.ToUnixTimeSeconds();
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
 
                 var summary = new Summary();
                 summary.Value.Add(new Summary.Types.Value() { SimpleValue = scalar_value, Tag = tag });
-                var evnt = new Event() { Step = global_step, WallTime = wt, Summary = summary };
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
 
                 WriteEvent(fileName, evnt);
             }
@@ -128,7 +123,7 @@ namespace TorchSharp
             /// <param name="walltime">Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds())</param>
             public void add_scalars(string main_tag, IDictionary<string, float> tag_scalar_dict, int global_step, long? walltime = null)
             {
-                var wt = walltime.HasValue ? walltime.Value : DateTimeOffset.Now.ToUnixTimeSeconds();
+                SetWalltime(ref walltime);
 
                 foreach (var kv in tag_scalar_dict) {
 
@@ -137,7 +132,7 @@ namespace TorchSharp
 
                     var summary = new Summary();
                     summary.Value.Add(new Summary.Types.Value() { SimpleValue = scalar_value, Tag = main_tag });
-                    var evnt = new Event() { Step = global_step, WallTime = wt, Summary = summary };
+                    var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
 
                     if (!_fileNames.TryGetValue(key, out var fileName)) {
 
@@ -173,13 +168,13 @@ namespace TorchSharp
             /// <param name="walltime">Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds())</param>
             public void add_scalars(string main_tag, IList<(string, float)> tag_scalar_dict, int global_step, long? walltime = null)
             {
-                var wt = walltime.HasValue ? walltime.Value : DateTimeOffset.Now.ToUnixTimeSeconds();
+                SetWalltime(ref walltime);
 
                 foreach (var (key, scalar_value) in tag_scalar_dict) {
 
                     var summary = new Summary();
                     summary.Value.Add(new Summary.Types.Value() { SimpleValue = scalar_value, Tag = main_tag });
-                    var evnt = new Event() { Step = global_step, WallTime = wt, Summary = summary };
+                    var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
 
                     if (!_fileNames.TryGetValue(key, out var fileName)) {
 
@@ -201,11 +196,146 @@ namespace TorchSharp
                 }
             }
 
+            /// <summary>
+            /// Add histogram to summary.
+            ///
+            /// https://pytorch.org/docs/stable/_modules/torch/utils/tensorboard/writer.html#SummaryWriter.add_histogram
+            /// </summary>
+            /// <param name="tag"> Data identifier </param>
+            /// <param name="values"> Values to build histogram </param>
+            /// <param name="global_step"> Global step value to record </param>
+            /// <param name="bins"> This determines how the bins are made </param>
+            /// <param name="walltime"> Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds()) </param>
+            /// <param name="max_bins"></param>
+            public void add_histogram(string tag,
+                torch.Tensor values,
+                int global_step,
+                Utils.tensorboard.Enums.HistogramBinSelector bins = Utils.tensorboard.Enums.HistogramBinSelector.Tensorflow,
+                long? walltime = null,
+                long? max_bins = null)
+            {
+                static torch.Tensor default_bins()
+                {
+                    double v = 1e-12;
+                    var buckets = new List<double>();
+                    var neg_buckets = new List<double>();
+                    while (v < 1e20) {
+                        buckets.Add(v);
+                        neg_buckets.Add(-v);
+                        v *= 1.1;
+                    }
+                    neg_buckets.Reverse();
+                    var result = new List<double>();
+                    result.AddRange(neg_buckets); result.Add(0); result.AddRange(buckets);
+                    return torch.tensor(result);
+                }
+
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
+                Summary summary = bins == Utils.tensorboard.Enums.HistogramBinSelector.Tensorflow ?
+                    torch.utils.tensorboard.Summary.histogram(tag, values, default_bins(), max_bins) :
+                    torch.utils.tensorboard.Summary.histogram(tag, values, (HistogramBinSelector)(byte)bins, max_bins);
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
+                WriteEvent(fileName, evnt);
+            }
+
+            /// <summary>
+            /// Add batched image data to summary.
+            ///
+            /// https://pytorch.org/docs/stable/tensorboard.html#torch.utils.tensorboard.writer.SummaryWriter.add_image
+            /// </summary>
+            /// <param name="tag"> Data identifier </param>
+            /// <param name="img_tensor"> Image data </param>
+            /// <param name="global_step"> Global step value to record </param>
+            /// <param name="walltime"> Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds()) </param>
+            /// <param name="dataformats"> Image data format specification of the form CHW, HWC, HW, WH, etc. </param>
+            public void add_img(string tag, torch.Tensor img_tensor, int global_step, long? walltime = null, string dataformats = "CHW")
+            {
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
+                Summary summary = torch.utils.tensorboard.Summary.image(tag, img_tensor, dataformats: dataformats);
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
+                WriteEvent(fileName, evnt);
+            }
+
+            /// <summary>
+            /// Add batched image data to summary.
+            ///
+            /// https://pytorch.org/docs/stable/tensorboard.html#torch.utils.tensorboard.writer.SummaryWriter.add_image
+            /// </summary>
+            /// <param name="tag"> Data identifier </param>
+            /// <param name="file_name"> Image file </param>
+            /// <param name="global_step"> Global step value to record </param>
+            /// <param name="walltime"> Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds()) </param>
+            public void add_img(string tag, string file_name, int global_step, long? walltime = null)
+            {
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
+                Summary summary = torch.utils.tensorboard.Summary.image(tag, file_name);
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
+                WriteEvent(fileName, evnt);
+            }
+
+            /// <summary>
+            /// Add video data to summary.
+            ///
+            /// https://pytorch.org/docs/stable/tensorboard.html#torch.utils.tensorboard.writer.SummaryWriter.add_video
+            /// </summary>
+            /// <param name="tag"> Data identifier </param>
+            /// <param name="vid_tensor">
+            /// Video data
+            ///
+            /// Shape: (N,T,C,H,W). The values should lie in [0, 255] for type uint8 or [0, 1] for type float.
+            /// </param>
+            /// <param name="global_step"> Global step value to record </param>
+            /// <param name="fps"> Frames per second </param>
+            /// <param name="walltime"> Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds()) </param>
+            public void add_video(string tag, torch.Tensor vid_tensor, int global_step, int fps = 4, long? walltime = null)
+            {
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
+                Summary summary = torch.utils.tensorboard.Summary.video(tag, vid_tensor, fps);
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = summary };
+                WriteEvent(fileName, evnt);
+            }
+
+            /// <summary>
+            /// Add text data to summary.
+            /// 
+            /// https://pytorch.org/docs/stable/_modules/torch/utils/tensorboard/writer.html#SummaryWriter.add_text
+            /// </summary>
+            /// <param name="tag"> Data identifier </param>
+            /// <param name="text_string"> String to save </param>
+            /// <param name="global_step"> Global step value to record </param>
+            /// <param name="walltime"> Optional override default walltime (DateTimeOffset.Now.ToUnixTimeSeconds()) </param>
+            public void add_text(string tag, string text_string, int global_step, long? walltime = null)
+            {
+                var fileName = InitDefaultFile();
+                SetWalltime(ref walltime);
+
+                var evnt = new Event() { Step = global_step, WallTime = walltime.Value, Summary = torch.utils.tensorboard.Summary.text(tag, text_string) };
+                WriteEvent(fileName, evnt);
+            }
+
             private static void InitFile(string fileName)
             {
                 var evnt = new Event() { FileVersion = "brain.Event:2", WallTime = DateTime.Now.Ticks };
                 WriteEvent(fileName, evnt);
             }
+
+            private string InitDefaultFile()
+            {
+                var fileName = _fileNames["__default__"];
+
+                if (!File.Exists(fileName)) {
+                    InitFile(fileName);
+                }
+
+                return fileName;
+            }
+
+            private static void SetWalltime(ref long? walltime)
+                => walltime ??= DateTimeOffset.Now.ToUnixTimeSeconds();
 
             private static void WriteEvent(string fileName, Event evnt)
             {
@@ -215,7 +345,7 @@ namespace TorchSharp
                 uint header_crc = GetMaskedCrc(header);
                 uint footer_crc = GetMaskedCrc(bytes);
 
-                using (var fStream = File.Open(fileName,FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read)) {
+                using (var fStream = File.Open(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read)) {
                     fStream.Seek(0, SeekOrigin.End);
 
                     using (var writers = new BinaryWriter(fStream)) {

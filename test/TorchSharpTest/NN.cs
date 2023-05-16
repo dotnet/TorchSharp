@@ -27,9 +27,7 @@ namespace TorchSharp
         }
     }
 
-#if NET472_OR_GREATER
     [Collection("Sequential")]
-#endif // NET472_OR_GREATER
     public class TestNN
     {
         #region Linear
@@ -540,10 +538,7 @@ namespace TorchSharp
             }
         }
 
-        [FactIgnoreOnPlatform(
-            "Attempted to read or write protected memory.",
-            "Windows",
-            Architecture.X64)]
+        [Fact]
         public void EvaluateGLU()
         {
             var rel = GLU();
@@ -2109,8 +2104,7 @@ namespace TorchSharp
         public void TestConv1dStride()
         {
             var shape = new long[] { 16, 3, 28 };
-            //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
                 var conv = Conv1d(3, 64, 3, stride: 2, device: device);
                 var output = conv.call(t);
@@ -2125,8 +2119,7 @@ namespace TorchSharp
         public void TestConv1dPadding()
         {
             var shape = new long[] { 16, 3, 28 };
-            //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
 
                 using (var conv = Conv1d(3, 64, 3, padding: 1, device: device))
@@ -2157,8 +2150,7 @@ namespace TorchSharp
         public void TestConv2d()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
                 {
                     var conv = Conv2d(3, 64, 3, device: device);
@@ -2222,8 +2214,7 @@ namespace TorchSharp
         public void TestConv2dStride()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
 
                 Tensor t = torch.rand(shape, device: device);
 
@@ -2252,10 +2243,9 @@ namespace TorchSharp
         public void TestConv2dPadding()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
 
-                Tensor t = torch.rand(shape);
+                Tensor t = torch.rand(shape, device: device);
                 using (var conv = Conv2d(3, 64, 3, padding: 1, device: device))
                 using (var output = conv.call(t)) {
                     Assert.Equal(device.type, output.device_type);
@@ -2418,8 +2408,7 @@ namespace TorchSharp
         public void TestConvTranspose1d()
         {
             var shape = new long[] { 16, 3, 28 };
-            //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
                 var conv = ConvTranspose1d(3, 64, 3, device: device);
                 var output = conv.call(t);
@@ -2434,8 +2423,7 @@ namespace TorchSharp
         public void TestConvTranspose2d()
         {
             var shape = new long[] { 16, 3, 28, 28 };
-            //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
                 var conv = ConvTranspose2d(3, 64, 3, device: device);
                 var output = conv.call(t);
@@ -2450,8 +2438,7 @@ namespace TorchSharp
         public void TestConvTranspose3d()
         {
             var shape = new long[] { 16, 3, 28, 28, 28 };
-            //TODO: Figure out why this is failing on CUDA.
-            foreach (var device in TestUtils.AvailableDevices(false)) {
+            foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
                 var conv = ConvTranspose3d(3, 64, 3, device: device);
                 var output = conv.call(t);
@@ -4674,15 +4661,27 @@ namespace TorchSharp
         public void TestDropout2d()
         {
             foreach (var device in TestUtils.AvailableDevices()) {
-                var drop = Dropout2d(0.75);
                 var data = torch.rand(new long[] { 12, 23, 24, 5 }, device: device);
-                var output = drop.call(data);
-                Assert.Equal(device.type, output.device_type);
-                Assert.Equal(data.shape, output.shape);
 
-                var dataVal = data.data<float>().ToArray();
-                var outVal = output.data<float>().ToArray();
-                Assert.NotEqual(outVal, dataVal);
+                {
+                    var output = torch.nn.functional.dropout2d(data, 0.75, true, false);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(data.shape, output.shape);
+
+                    var dataVal = data.data<float>().ToArray();
+                    var outVal = output.data<float>().ToArray();
+                    Assert.NotEqual(outVal, dataVal);
+                }
+                {
+                    var drop = Dropout2d(0.75);
+                    var output = drop.call(data);
+                    Assert.Equal(device.type, output.device_type);
+                    Assert.Equal(data.shape, output.shape);
+
+                    var dataVal = data.data<float>().ToArray();
+                    var outVal = output.data<float>().ToArray();
+                    Assert.NotEqual(outVal, dataVal);
+                }
             }
         }
 
@@ -4752,7 +4751,7 @@ namespace TorchSharp
         #endregion
 
 #if DEBUG
-        [Fact(Skip = "Not working on Mac and Ubuntu (note: may now be working, we need to recheck)")]
+        [FactIgnoreOnPlatform("Not working on Mac and Ubuntu (note: may now be working, we need to recheck)", "OSX", "Linux")]
         public void TestErrorHandling()
         {
             using (Tensor input = torch.tensor(new float[] { 0.5f, 1.5f }))

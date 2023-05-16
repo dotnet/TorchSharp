@@ -15,6 +15,17 @@ namespace TorchSharp.PInvoke
         internal static extern void THSAutograd_setGrad([MarshalAs(UnmanagedType.U1)] bool enabled);
 
         [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.U1)]
+        internal static extern bool THSAutograd_isAnomalyEnabled();
+
+        [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.U1)]
+        internal static extern bool THSAutograd_shouldCheckNaN();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSAutograd_setAnomaly([MarshalAs(UnmanagedType.U1)] bool enabled, [MarshalAs(UnmanagedType.U1)] bool check_nan);
+
+        [DllImport("LibTorchSharp")]
         internal static extern void THSAutograd_grad(
             IntPtr outputs, long oLength,
             IntPtr inputs, long iLength,

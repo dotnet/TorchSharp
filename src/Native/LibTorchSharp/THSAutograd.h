@@ -11,6 +11,14 @@ EXPORT_API(bool) THSAutograd_isGradEnabled();
 // Enables / disables grad.
 EXPORT_API(void) THSAutograd_setGrad(bool enabled);
 
+// Returns whether the grad is enabled or not.
+EXPORT_API(bool) THSAutograd_isAnomalyEnabled();
+
+EXPORT_API(bool) THSAutograd_shouldCheckNaN();
+
+// Enables / disables grad.
+EXPORT_API(void) THSAutograd_setAnomaly(bool enabled, bool check_nan);
+
 EXPORT_API(void) THSAutograd_grad(
     Tensor* outputs, const int64_t oLength,
     Tensor* inputs, const int64_t iLength,
