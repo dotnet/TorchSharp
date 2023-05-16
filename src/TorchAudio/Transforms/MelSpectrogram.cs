@@ -34,6 +34,15 @@ namespace TorchSharp
             public readonly Spectrogram spectrogram;
             public readonly MelScale mel_scale;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    spectrogram.Dispose();
+                    mel_scale.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
 
             internal MelSpectrogram(
                 string name,

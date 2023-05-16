@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using SkiaSharp;
 using static TorchSharp.torch;
-using static TorchSharp.LibTorchSharp;
+using static TorchSharp.NativeMethods;
 
 namespace TorchSharp
 {

@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 using static TorchSharp.torch;
@@ -32,6 +33,15 @@ namespace TorchSharp.Modules
             public readonly Parameter weight;
             public readonly Parameter bias;
             public readonly double eps;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    weight.Dispose();
+                    bias.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             public LayerNorm(
                 string name,
@@ -64,6 +74,14 @@ namespace TorchSharp.Modules
             public readonly long kernel_size;
             public readonly Module<Tensor, Tensor>? layer_norm;
             public readonly long stride;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    conv.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             public ConvLayerBlock(
                 string name,
@@ -160,6 +178,16 @@ namespace TorchSharp.Modules
             public readonly Module<Tensor, Tensor> layer_norm;
             public readonly Module<Tensor, Tensor> projection;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    dropout.Dispose();
+                    layer_norm.Dispose();
+                    projection.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             /// <summary>
             /// Projects features to encoder dimension.
             /// </summary>
@@ -200,6 +228,14 @@ namespace TorchSharp.Modules
             public readonly Module<Tensor, Tensor> conv;
             public readonly long embed_dim;
             public readonly long num_remove;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    conv.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             /// <param name="name"></param>
             /// <param name="embed_dim">Feature dimension of the input Tensor.</param>
@@ -248,6 +284,16 @@ namespace TorchSharp.Modules
                 private readonly Parameter bias;
                 private readonly long padding;
                 private readonly long groups;
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        weight_g.Dispose();
+                        weight_v.Dispose();
+                        bias.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
 
                 public WeightNormConv1d(string name, long in_channels, long out_channels, long kernel_size, long padding, long groups) : base(name)
                 {
@@ -302,6 +348,18 @@ namespace TorchSharp.Modules
             public readonly Module<Tensor, Tensor> q_proj;
             public readonly double scaling;
             public readonly Module<Tensor, Tensor> v_proj;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    dropout.Dispose();
+                    k_proj.Dispose();
+                    out_proj.Dispose();
+                    q_proj.Dispose();
+                    v_proj.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             /// <param name="name"></param>
             /// <param name="embed_dim">Total dimension of the model.</param>
@@ -391,6 +449,17 @@ namespace TorchSharp.Modules
             public readonly Module<Tensor, Tensor> output_dense;
             public readonly Module<Tensor, Tensor> output_dropout;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    intermediate_dense.Dispose();
+                    intermediate_dropout.Dispose();
+                    output_dense.Dispose();
+                    output_dropout.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             public FeedForward(
                 string name,
                 long io_features,
@@ -430,6 +499,17 @@ namespace TorchSharp.Modules
             public readonly Module<Tensor, Tensor> final_layer_norm;
             public readonly Module<Tensor, Tensor> layer_norm;
             public bool layer_norm_first;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    dropout.Dispose();
+                    feed_forward.Dispose();
+                    final_layer_norm.Dispose();
+                    layer_norm.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             public EncoderLayer(
                 string name,
@@ -483,6 +563,15 @@ namespace TorchSharp.Modules
             public readonly ModuleList<Module<Tensor, Tensor?, Tensor>> layers;
 
             public ConvolutionalPositionalEmbedding pos_conv_embed;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    dropout.Dispose();
+                    layer_norm.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             public Transformer(
                 string name,
@@ -1028,6 +1117,14 @@ namespace TorchSharp.Modules
             public readonly bool no_mask_channel_overlap;
             public readonly bool no_mask_overlap;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    mask_embedding.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             /// <param name="name"></param>
             /// <param name="encoder_embed_dim">The dimension of the transformer embedding output.</param>
             /// <param name="mask_prob">Probability for each token to be chosen as start of the span to be masked.
@@ -1165,6 +1262,15 @@ namespace TorchSharp.Modules
             public readonly Tensor label_embeddings;
             public readonly bool skip_masked;
             public readonly bool skip_nomask;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    final_proj.Dispose();
+                    label_embeddings.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             /// <param name="name"></param>
             /// <param name="encoder_embed_dim">The dimension of the transformer embedding output.</param>

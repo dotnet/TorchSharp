@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torchvision
@@ -42,9 +43,9 @@ namespace TorchSharp
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
             public static Modules.ResNet resnet18(int num_classes = 1000,
-                    string weights_file = null,
+                    string? weights_file = null,
                     bool skipfc = true,
-                    Device device = null)
+                    Device? device = null)
             {
                 return Modules.ResNet.ResNet18(num_classes, weights_file, skipfc, device);
             }
@@ -81,9 +82,9 @@ namespace TorchSharp
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
             public static Modules.ResNet resnet34(int num_classes = 1000,
-                    string weights_file = null,
+                    string? weights_file = null,
                     bool skipfc = true,
-                    Device device = null)
+                    Device? device = null)
             {
                 return Modules.ResNet.ResNet34(num_classes, weights_file, skipfc, device);
             }
@@ -120,9 +121,9 @@ namespace TorchSharp
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
             public static Modules.ResNet resnet50(int num_classes = 1000,
-                    string weights_file = null,
+                    string? weights_file = null,
                     bool skipfc = true,
-                    Device device = null)
+                    Device? device = null)
             {
                 return Modules.ResNet.ResNet50(num_classes, weights_file, skipfc, device);
             }
@@ -159,9 +160,9 @@ namespace TorchSharp
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
             public static Modules.ResNet resnet101(int num_classes = 1000,
-                    string weights_file = null,
+                    string? weights_file = null,
                     bool skipfc = true,
-                    Device device = null)
+                    Device? device = null)
             {
                 return Modules.ResNet.ResNet101(num_classes, weights_file, skipfc, device);
             }
@@ -198,9 +199,9 @@ namespace TorchSharp
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
             public static Modules.ResNet resnet152(int num_classes = 1000,
-                    string weights_file = null,
+                    string? weights_file = null,
                     bool skipfc = true,
-                    Device device = null)
+                    Device? device = null)
             {
                 return Modules.ResNet.ResNet152(num_classes, weights_file, skipfc, device);
             }
@@ -231,10 +232,26 @@ namespace TorchSharp
 
             private int in_planes = 64;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    conv1.Dispose();
+                    bn1.Dispose();
+                    relu.Dispose();
+                    maxpool.Dispose();
+                    avgpool.Dispose();
+                    flatten.Dispose();
+                    fc.Dispose();
+                    layer1.Dispose(); layer2.Dispose();
+                    layer3.Dispose(); layer4.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             public static ResNet ResNet18(int numClasses,
-                string weights_file = null,
-                bool skipfc = true,
-                Device device = null)
+                    string? weights_file = null,
+                    bool skipfc = true,
+                    Device? device = null)
             {
                 return new ResNet(
                     "ResNet18",
@@ -247,9 +264,9 @@ namespace TorchSharp
             }
 
             public static ResNet ResNet34(int numClasses,
-                string weights_file = null,
-                bool skipfc = true,
-                Device device = null)
+                    string? weights_file = null,
+                    bool skipfc = true,
+                    Device? device = null)
             {
                 return new ResNet(
                     "ResNet34",
@@ -262,9 +279,9 @@ namespace TorchSharp
             }
 
             public static ResNet ResNet50(int numClasses,
-                string weights_file = null,
-                bool skipfc = true,
-                Device device = null)
+                    string? weights_file = null,
+                    bool skipfc = true,
+                    Device? device = null)
             {
                 return new ResNet(
                     "ResNet50",
@@ -277,9 +294,9 @@ namespace TorchSharp
             }
 
             public static ResNet ResNet101(int numClasses,
-                string weights_file = null,
+                string? weights_file = null,
                 bool skipfc = true,
-                Device device = null)
+                Device? device = null)
             {
                 return new ResNet(
                     "ResNet101",
@@ -292,9 +309,9 @@ namespace TorchSharp
             }
 
             public static ResNet ResNet152(int numClasses,
-                string weights_file = null,
+                string? weights_file = null,
                 bool skipfc = true,
-                Device device = null)
+                Device? device = null)
             {
                 return new ResNet(
                     "ResNet152",
@@ -310,9 +327,9 @@ namespace TorchSharp
                 Func<int, int, int, Module<Tensor, Tensor>> block,
                 int expansion, IList<int> num_blocks,
                 int numClasses,
-                string weights_file = null,
+                string? weights_file = null,
                 bool skipfc = true,
-                Device device = null) : base(name)
+                Device? device = null) : base(name)
             {
                 var modules = new List<(string, Module<Tensor, Tensor>)>();
 
@@ -416,6 +433,19 @@ namespace TorchSharp
                     return x.add_(y).relu_();
                 }
 
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        conv1.Dispose();
+                        bn1.Dispose();
+                        conv2.Dispose();
+                        bn2.Dispose();
+                        relu1.Dispose();
+                        downsample.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
+
                 public static int expansion = 1;
 
                 private readonly Module<Tensor, Tensor> conv1;
@@ -461,6 +491,19 @@ namespace TorchSharp
                     foreach (var m in downsample) y = ((nn.Module<Tensor, Tensor>)m).call(y);
 
                     return x.add_(y).relu_();
+                }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        conv1.Dispose();
+                        bn1.Dispose();
+                        conv2.Dispose(); conv3.Dispose();
+                        bn2.Dispose(); bn3.Dispose();
+                        relu1.Dispose(); relu2.Dispose();
+                        downsample.Dispose();
+                    }
+                    base.Dispose(disposing);
                 }
 
                 public static int expansion = 4;

@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
@@ -20,7 +20,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = LibTorchSharp.THSNN_ReLU6_forward(handle, tensor.Handle);
+                var res = NativeMethods.THSNN_ReLU6_forward(handle, tensor.Handle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -45,7 +45,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReLU6 ReLU6(bool inplace = false)
             {
-                var handle = LibTorchSharp.THSNN_ReLU6_ctor(inplace, out var boxedHandle);
+                var handle = NativeMethods.THSNN_ReLU6_ctor(inplace, out var boxedHandle);
                 if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new ReLU6(handle, boxedHandle);
             }

@@ -198,7 +198,7 @@ namespace TorchSharp
                 }
             }
 
-            public class State : OptimizerState, IDisposable
+            public sealed class State : OptimizerState, IDisposable
             {
                 public long step;
                 public double mu_product;
@@ -207,8 +207,16 @@ namespace TorchSharp
 
                 public void Dispose()
                 {
-                    exp_avg.Dispose();
-                    exp_avg_sq.Dispose();
+                    Dispose(true);
+                    GC.SuppressFinalize(this);
+                }
+
+                private void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        exp_avg.Dispose();
+                        exp_avg_sq.Dispose();
+                    }
                 }
 
                 /// <summary>

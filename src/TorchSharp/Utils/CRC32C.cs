@@ -24,7 +24,7 @@
 */
 
 using System;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp.Utils
 {
