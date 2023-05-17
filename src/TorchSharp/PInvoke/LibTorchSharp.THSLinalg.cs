@@ -6,6 +6,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp.PInvoke
 {
+#pragma warning disable CA2101
     internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
@@ -156,4 +157,5 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_tensordot(IntPtr input1, IntPtr input2, IntPtr dims1, int dims1_length, IntPtr dims2, int dims2_length);
     }
+#pragma warning restore CA2101
 }

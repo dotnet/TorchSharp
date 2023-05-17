@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.PInvoke
 {
+#pragma warning disable CA2101
     internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
@@ -1303,4 +1304,5 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_MaxUnpool2d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr pPadding, int paddingLength, out IntPtr pBoxedModule);
     }
+#pragma warning restore CA2101
 }

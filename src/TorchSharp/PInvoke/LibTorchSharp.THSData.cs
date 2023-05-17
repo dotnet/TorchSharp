@@ -7,6 +7,7 @@ namespace TorchSharp.PInvoke
 {
     internal static partial class NativeMethods
     {
+#pragma warning disable CA2101
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSData_loaderMNIST(
             [MarshalAs(UnmanagedType.LPStr)] string filename,
@@ -35,4 +36,5 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern void THSData_dispose(IntPtr iterator);
     }
+#pragma warning restore CA2101
 }

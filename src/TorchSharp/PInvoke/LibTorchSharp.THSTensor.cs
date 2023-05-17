@@ -6,6 +6,7 @@ using TorchSharp.Modules;
 
 namespace TorchSharp.PInvoke
 {
+#pragma warning disable CA2101
     internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
@@ -2083,4 +2084,5 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_histogram_out_i(IntPtr input, long bins, IntPtr range, int length, IntPtr weight, bool density, out IntPtr hist, out IntPtr bin_edges, out IntPtr r_bin_edges);
     }
+#pragma warning restore CA2101
 }

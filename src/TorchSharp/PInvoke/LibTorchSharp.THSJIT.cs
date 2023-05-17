@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.PInvoke
 {
+#pragma warning disable CA2101
     internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
@@ -101,4 +102,5 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSJIT_Type_cast(torch.jit.Type.HType module);
     }
+#pragma warning restore CA2101
 }
