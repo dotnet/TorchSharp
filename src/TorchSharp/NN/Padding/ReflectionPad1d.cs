@@ -12,21 +12,9 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a ReflectionPad1d module.
         /// </summary>
-        public sealed class ReflectionPad1d : torch.nn.Module<Tensor, Tensor>
+        public sealed class ReflectionPad1d : PadBase
         {
-            internal ReflectionPad1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            /// <summary>
-            /// Forward pass.
-            /// </summary>
-            /// <param name="tensor">Input tensor</param>
-            /// <returns></returns>
-            public override Tensor forward(Tensor tensor)
-            {
-                var res = THSNN_ReflectionPad1d_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
-            }
+            internal ReflectionPad1d(params long[] padding) : base(nameof(ReflectionPad1d), PaddingModes.Reflect, 0, padding) { }
         }
     }
 
@@ -41,9 +29,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReflectionPad1d ReflectionPad1d(long padding)
             {
-                var handle = THSNN_ReflectionPad1d_ctor(padding, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ReflectionPad1d(handle, boxedHandle);
+                return new ReflectionPad1d(padding, padding);
             }
 
             /// <summary>
@@ -53,9 +39,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static ReflectionPad1d ReflectionPad1d((long, long) padding)
             {
-                var handle = THSNN_ReflectionPad1d_ctor_tuple(padding.Item1, padding.Item2, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ReflectionPad1d(handle, boxedHandle);
+                return new ReflectionPad1d(padding.Item1, padding.Item2);
             }
         }
     }
