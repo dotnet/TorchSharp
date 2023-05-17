@@ -26,7 +26,11 @@ namespace TorchSharp
 
             internal static Tensor _upcast_non_float(Tensor t) => (!t.is_floating_point() ? t.@float() : t.alias());
 
-            internal static (Tensor, Tensor, Tensor, Tensor) unwrap4(Tensor[] t) => (t[0], t[1], t[2], t[3]);
+            internal static (Tensor, Tensor, Tensor, Tensor) unwrap4(Tensor[] t)
+            {
+                if (t.Length != 4) throw new ArgumentException("Not the right length");
+                return (t[0], t[1], t[2], t[3]);
+            }
 
             internal static (Tensor, Tensor) _loss_inter_union(Tensor boxes1, Tensor boxes2)
             {
@@ -110,6 +114,45 @@ namespace TorchSharp
                     if (_tensor.size(1) != 4)
                         throw new ArgumentException("The shape of the tensor in the boxes list is not correct as List[Tensor[L, 4]]");
                 }
+            }
+
+            internal static Tensor _box_cxcywh_to_xyxy(Tensor boxes)
+            {
+                var (cx, cy, w, h) = unwrap4(boxes.unbind(dimension: -1));
+                var x1 = cx - 0.5 * w;
+                var y1 = cy - 0.5 * h;
+                var x2 = cx + 0.5 * w;
+                var y2 = cy + 0.5 * h;
+                boxes = torch.stack(new[] { x1, y1, x2, y2 }, dim: -1);
+                return boxes;
+            }
+
+            internal static Tensor _box_xyxy_to_cxcywh(Tensor boxes)
+            {
+                var (x1, y1, x2, y2) = unwrap4(boxes.unbind(dimension: -1));
+                var cx = (x1 + x2) / 2;
+                var cy = (y1 + y2) / 2;
+                var w = x2 - x1;
+                var h = y2 - y1;
+
+                boxes = torch.stack(new[] { cx, cy, w, h }, dim: -1);
+                return boxes;
+            }
+
+            internal static Tensor _box_xywh_to_xyxy(Tensor boxes)
+            {
+                var (x, y, w, h) = unwrap4(boxes.unbind(dimension: -1));
+                boxes = torch.stack(new[] { x, y, x + w, y + h }, dim: -1);
+                return boxes;
+            }
+
+            internal static Tensor _box_xyxy_to_xywh(Tensor boxes)
+            {
+                var (x1, y1, x2, y2) = unwrap4(boxes.unbind(dimension: -1));
+                var w = x2 - x1;
+                var h = y2 - y1;
+                boxes = torch.stack(new[] { x1, y1, w, h }, dim: -1);
+                return boxes;
             }
         }
     }
