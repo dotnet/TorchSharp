@@ -35,6 +35,14 @@ namespace TorchSharp
                 private readonly long stride;
                 private readonly bool use_res_connect;
 
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        conv.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
+
                 public InvertedResidual(
                     string name,
                     long inp,
@@ -98,6 +106,15 @@ namespace TorchSharp
             private readonly nn.Module<Tensor, Tensor> classifier;
             private readonly nn.Module<Tensor, Tensor> features;
             private readonly long last_channel;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    classifier.Dispose();
+                    features.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             internal MobileNetV2(
                 string name,

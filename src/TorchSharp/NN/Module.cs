@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
@@ -84,12 +84,8 @@ namespace TorchSharp
                     this.handle = handle;
                     boxedModule = boxedHandle.HasValue ? new BoxedModule(boxedHandle.Value) : null;
 
-                    foreach (var (parameterName, parameter) in _named_parameters()) {
-                        register_parameter(parameterName, parameter);
-                    }
-                    foreach (var (bufferName, buffer) in _named_buffers()) {
-                        register_buffer(bufferName, buffer);
-                    }
+                    if (handle.IsInvalid) return;
+                    register_p_and_b();
                 }
 
                 internal Module(IntPtr handle, IntPtr? boxedHandle, bool ownsHandle = true)
@@ -98,6 +94,11 @@ namespace TorchSharp
                     boxedModule = boxedHandle.HasValue ? new BoxedModule(boxedHandle.Value) : null;
 
                     if (handle == IntPtr.Zero) return;
+                    register_p_and_b();
+                }
+
+                private void register_p_and_b()
+                {
                     foreach (var (parameterName, parameter) in _named_parameters()) {
                         register_parameter(parameterName, parameter);
                     }
@@ -113,8 +114,8 @@ namespace TorchSharp
                 /// </summary>
                 public void Dispose()
                 {
-                    GC.SuppressFinalize(this);
                     Dispose(true);
+                    GC.SuppressFinalize(this);
                 }
 
                 /// <summary>
@@ -1062,8 +1063,12 @@ namespace TorchSharp
                     this._forwardNative = ForwardNative;
                     boxedModule = new BoxedModule(boxedHandle);
 
-                    // In this case, the parameter registration was not done yet.
+                    _init_parameters();
+                }
 
+                private void _init_parameters()
+                { 
+                    // In this case, the parameter registration was not done yet.
                     foreach (var (parameterName, parameter) in _named_parameters()) {
                         register_parameter(parameterName, parameter);
                     }

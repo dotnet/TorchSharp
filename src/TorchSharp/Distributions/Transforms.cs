@@ -36,7 +36,7 @@ namespace TorchSharp
                         get {
                             if (_domain.event_dim == codomain.event_dim)
                                 return _domain.event_dim;
-                            throw new ArgumentException("Please use either .domain.event_dim or .codomain.event_dim");
+                            throw new InvalidOperationException("Please use either .domain.event_dim or .codomain.event_dim");
                         }
                     }
 

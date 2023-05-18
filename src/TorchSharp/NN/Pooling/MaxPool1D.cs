@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using static TorchSharp.torch;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {

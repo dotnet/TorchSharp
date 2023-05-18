@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using static TorchSharp.torch;
 using static TorchSharp.torch.utils.data;
 
@@ -80,11 +81,42 @@ namespace TorchSharp
 
     namespace Modules
     {
-        internal abstract class CIFAR : Dataset
+        internal abstract class DatasetHelper : Dataset
+        {
+            protected void DownloadFile(string file, string target, string baseUrl)
+            {
+                var filePath = JoinPaths(target, file);
+
+                var netPath = baseUrl.EndsWith('/') ? $"{baseUrl}{file}" : $"{baseUrl}/{file}";
+
+                if (!File.Exists(filePath)) {
+                    lock (_httpClient) {
+                        using var s = _httpClient.GetStreamAsync(netPath).Result;
+                        using var fs = new FileStream(file, FileMode.CreateNew);
+                        s.CopyToAsync(fs).Wait();
+                    }
+                }
+            }
+
+            protected static string JoinPaths(string directory, string file)
+            {
+#if NETSTANDARD2_0_OR_GREATER
+                return NSPath.Join(directory, file);
+#else
+                return Path.Join(directory, file);
+#endif // NETSTANDARD2_0_OR_GREATER
+            }
+
+            // Sharing a client among all dataset downloads, based on this article's advice:
+            // https://www.aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
+            //
+            private static HttpClient _httpClient = new HttpClient();
+        }
+
+        internal abstract class CIFAR : DatasetHelper
         {
             protected void Download(string targetDir, string baseUrl, string dataset, string fileName)
             {
-
                 if (!Directory.Exists(targetDir)) {
                     Directory.CreateDirectory(targetDir);
                 }
@@ -99,27 +131,6 @@ namespace TorchSharp
             private static void DecompressFile(string file, string sourceDir, string targetDir)
             {
                 Utils.Decompress.ExtractTGZ(Path.Combine(sourceDir, file), targetDir);
-            }
-
-            private void DownloadFile(string file, string target, string baseUrl)
-            {
-                var filePath = JoinPaths(target, file);
-
-                var netPath = $"{baseUrl}{file}";
-
-                if (!File.Exists(filePath)) {
-                    WebClient webClient = new WebClient();
-                    webClient.DownloadFile(netPath, filePath);
-                }
-            }
-
-            protected static string JoinPaths(string directory, string file)
-            {
-#if NETSTANDARD2_0_OR_GREATER
-                return NSPath.Join(directory, file);
-#else
-                return Path.Join(directory, file);
-#endif // NETSTANDARD2_0_OR_GREATER
             }
         }
 
@@ -182,10 +193,12 @@ namespace TorchSharp
                 return count;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                data.ForEach(d => d.Dispose());
-                labels.ForEach(d => d.Dispose());
+                if (disposing) {
+                    data.ForEach(d => d.Dispose());
+                    labels.ForEach(d => d.Dispose());
+                }
             }
 
             /// <summary>
@@ -273,11 +286,13 @@ namespace TorchSharp
                 return count;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                data.ForEach(d => d.Dispose());
-                fine_labels.ForEach(d => d.Dispose());
-                coarse_labels.ForEach(d => d.Dispose());
+                if (disposing) {
+                    data.ForEach(d => d.Dispose());
+                    fine_labels.ForEach(d => d.Dispose());
+                    coarse_labels.ForEach(d => d.Dispose());
+                }
             }
 
             /// <summary>
