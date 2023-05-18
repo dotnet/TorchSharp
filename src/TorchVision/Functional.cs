@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using static TorchSharp.torch;
-using static TorchSharp.LibTorchSharp;
+using static TorchSharp.NativeMethods;
 
 // A number of implementation details in this file have been translated from the Python version of torchvision,
 // largely located in the files found in this folder:

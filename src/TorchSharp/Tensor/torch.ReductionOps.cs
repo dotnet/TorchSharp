@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {

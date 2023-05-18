@@ -196,13 +196,21 @@ namespace TorchSharp
                 _state.Clear();
             }
 
-            public class State : OptimizerState, IDisposable
+            public sealed class State : OptimizerState, IDisposable
             {
                 public Tensor momentum_buffer;
 
                 public void Dispose()
                 {
-                    momentum_buffer?.Dispose();
+                    Dispose(true);
+                    GC.SuppressFinalize(this);
+                }
+
+                private void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        momentum_buffer?.Dispose();
+                    }
                 }
 
                 /// <summary>

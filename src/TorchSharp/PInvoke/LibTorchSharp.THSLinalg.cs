@@ -6,7 +6,8 @@ using static TorchSharp.torch;
 
 namespace TorchSharp.PInvoke
 {
-    internal static partial class LibTorchSharp
+#pragma warning disable CA2101
+    internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_cholesky(IntPtr tensor);
@@ -20,7 +21,7 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_cond_float(IntPtr tensor, double p);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSLinalg_cond_str(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string p);
 
         [DllImport("LibTorchSharp")]
@@ -96,7 +97,7 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_multi_dot(IntPtr tensor, int len);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSLinalg_norm_str(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string p, IntPtr dim, int dim_length, [MarshalAs(UnmanagedType.U1)] bool keepdim);
 
         [DllImport("LibTorchSharp")]
@@ -156,4 +157,5 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_tensordot(IntPtr input1, IntPtr input2, IntPtr dims1, int dims1_length, IntPtr dims2, int dims2_length);
     }
+#pragma warning restore CA2101
 }

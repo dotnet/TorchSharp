@@ -221,7 +221,7 @@ namespace TorchSharp
                 }
             }
 
-            public class State : OptimizerState, IDisposable
+            public sealed class State : OptimizerState, IDisposable
             {
                 public long step;
                 public Tensor prev;
@@ -229,8 +229,16 @@ namespace TorchSharp
 
                 public void Dispose()
                 {
-                    prev.Dispose();
-                    step_size.Dispose();
+                    Dispose(true);
+                    GC.SuppressFinalize(this);
+                }
+
+                private void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        prev.Dispose();
+                        step_size.Dispose();
+                    }
                 }
 
                 /// <summary>

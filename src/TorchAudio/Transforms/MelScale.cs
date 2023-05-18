@@ -30,6 +30,14 @@ namespace TorchSharp
             public readonly torchaudio.MelScale mel_scale;
             public readonly Tensor fb;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    fb.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             internal MelScale(
                 string name,
                 long n_mels = 128,

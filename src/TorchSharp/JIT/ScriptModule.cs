@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp.PInvoke;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
@@ -20,11 +20,6 @@ namespace TorchSharp
             {
                 internal ScriptModule(IntPtr handle) : base(new HType(handle, true, THSJIT_Module_dispose), null)
                 {
-                }
-
-                ~ScriptModule()
-                {
-                    Dispose(false);
                 }
 
                 protected override (string name, TorchSharp.Modules.Parameter parameter)[] _named_parameters()

@@ -32,6 +32,14 @@ namespace TorchSharp
             public readonly double tolerance_loss;
             public readonly Tensor fb;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    fb.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             internal InverseMelScale(
                 string name,
                 long n_stft,

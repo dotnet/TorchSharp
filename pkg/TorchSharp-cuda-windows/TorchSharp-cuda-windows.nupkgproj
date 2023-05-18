@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
     <PackageDescription>TorchSharp makes PyTorch available for .NET users. This package combines the TorchSharp package with LibTorch $(LibTorchVersion) CUDA $(CudaVersionDot) support for Windows.</PackageDescription>
   </PropertyGroup>
 
@@ -10,13 +10,13 @@
     <ProjectReference Include="..\libtorch-cuda-11.7-win-x64\libtorch-cuda-11.7-win-x64.nupkgproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netcoreapp3.1\$(MSBuildProjectName).props" />
-    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netcoreapp3.1\$(MSBuildProjectName).targets" />
-    <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netcoreapp3.1\_._" />
+    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\net6.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\net6.0\$(MSBuildProjectName).targets" />
+    <Content Include="..\empty.txt" Pack="true" PackagePath="lib\net6.0\_._" />
     <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
     <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
     <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netstandard2.0\_._" />

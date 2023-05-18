@@ -3,6 +3,7 @@
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torchvision
@@ -42,7 +43,7 @@ namespace TorchSharp
             /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
-            public static Modules.AlexNet alexnet(int num_classes = 1000, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null)
+            public static Modules.AlexNet alexnet(int num_classes = 1000, float dropout = 0.5f, string? weights_file = null, bool skipfc = true, Device? device = null)
             {
                 return new Modules.AlexNet(num_classes, dropout, weights_file, skipfc, device);
             }
@@ -61,7 +62,16 @@ namespace TorchSharp
             private readonly Module<Tensor, Tensor> avgpool;
             private readonly Module<Tensor, Tensor> classifier;
 
-            public AlexNet(int numClasses, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null) : base(nameof(AlexNet))
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    features.Dispose(); avgpool.Dispose();
+                    classifier.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
+            public AlexNet(int numClasses, float dropout = 0.5f, string? weights_file = null, bool skipfc = true, Device? device = null) : base(nameof(AlexNet))
             {
                 features = Sequential(
                     Conv2d(3, 64, kernelSize: 11, stride: 4, padding: 2),

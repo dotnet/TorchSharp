@@ -19,8 +19,10 @@ namespace TorchSharp
                 /// </summary>
                 public abstract class Dataset<T> : IDisposable
                 {
-                    public virtual void Dispose()
+                    public void Dispose()
                     {
+                        Dispose(true);
+                        GC.SuppressFinalize(this);
                     }
 
                     /// <summary>
@@ -34,6 +36,10 @@ namespace TorchSharp
                     /// <param name="index">Index for tensor</param>
                     /// <returns>Tensors of index. DataLoader will catenate these tensors.</returns>
                     public abstract T GetTensor(long index);
+
+                    protected virtual void Dispose(bool disposing)
+                    {
+                    }
                 }
             }
         }

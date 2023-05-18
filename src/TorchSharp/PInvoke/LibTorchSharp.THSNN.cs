@@ -5,18 +5,19 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.PInvoke
 {
-    internal static partial class LibTorchSharp
+#pragma warning disable CA2101
+    internal static partial class NativeMethods
     {
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern void THSNN_Module_save(
             torch.nn.Module.HType handle,
             [MarshalAs(UnmanagedType.LPStr)] string location);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         [return: MarshalAs(UnmanagedType.LPStr)]
         internal static extern string THSNN_Module_name(torch.nn.Module.HType module);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSNN_custom_module(
             [MarshalAs(UnmanagedType.LPStr)] string name,
             ForwardFunctionC forward,
@@ -249,7 +250,7 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern void THSNN_Module_to_dtype(torch.nn.Module.HType module, sbyte dtype);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSNN_Module_load([MarshalAs(UnmanagedType.LPStr)] string location);
 
         [DllImport("LibTorchSharp")]
@@ -1303,4 +1304,5 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_MaxUnpool2d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr pPadding, int paddingLength, out IntPtr pBoxedModule);
     }
+#pragma warning restore CA2101
 }
