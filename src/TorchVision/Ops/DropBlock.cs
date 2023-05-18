@@ -3,7 +3,7 @@
 // A number of implementation details in this file have been translated from the Python version of torchvision,
 // largely located in the files found in this folder:
 //
-// https://github.com/pytorch/vision/blob/a4f53308b2d0f1aa9191686e326f45c26053f686/torchvision/ops/misc.py
+// https://github.com/pytorch/vision/blob/a4f53308b2d0f1aa9191686e326f45c26053f686/torchvision/ops/drop_block.py
 //
 // The origin has the following copyright notice and license:
 //
@@ -35,7 +35,7 @@ namespace TorchSharp
             /// <param name="eps">A small value added to the denominator for numerical stability.</param>
             /// <param name="training">Apply dropblock if is true</param>
             /// <returns>The randomly zeroed [N, C, H, W] tensor after dropblock</returns>
-            /// <exception cref="ArgumentOutOfRangeException">If is not in the range [0,1]</exception>
+            /// <exception cref="ArgumentOutOfRangeException">If p is not in the range [0,1]</exception>
             /// <exception cref="ArgumentException">If the input tensor is not 4-dimensional</exception>
             public static Tensor drop_block2d(Tensor input, double p, long block_size, bool inplace = false, double eps = 1e-6, bool training = true)
             {
@@ -75,7 +75,7 @@ namespace TorchSharp
             /// <param name="eps">A small value added to the denominator for numerical stability.</param>
             /// <param name="training">Apply dropblock if is true</param>
             /// <returns>The randomly zeroed [N, C, D, H, W] tensor after dropblock</returns>
-            /// <exception cref="ArgumentOutOfRangeException">If is not in the range [0,1]</exception>
+            /// <exception cref="ArgumentOutOfRangeException">If p is not in the range [0,1]</exception>
             /// <exception cref="ArgumentException">If the input tensor is not 5-dimensional</exception>
             public static Tensor drop_block3d(Tensor input, double p, long block_size, bool inplace = false, double eps = 1e-6, bool training = true)
             {
@@ -87,7 +87,7 @@ namespace TorchSharp
 
                 block_size = Math.Min(Math.Min(block_size, D), Math.Min(W, H));
                 // compute the gamma of Bernoulli distribution
-                var gamma = (p * D* H * W) / ((block_size * block_size * block_size) * ((D - block_size + 1) * (H - block_size + 1) * (W - block_size + 1)));
+                var gamma = (p * D * H * W) / ((block_size * block_size * block_size) * ((D - block_size + 1) * (H - block_size + 1) * (W - block_size + 1)));
                 var noise = torch.empty(new[] { N, C, D - block_size + 1, H - block_size + 1, W - block_size + 1 }, dtype: input.dtype, device: input.device);
                 noise.bernoulli_(gamma);
 
