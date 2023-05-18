@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using TorchSharp.PInvoke;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
@@ -37,8 +37,8 @@ namespace TorchSharp
                 /// </summary>
                 public void Dispose()
                 {
-                    GC.SuppressFinalize(this);
                     Dispose(true);
+                    GC.SuppressFinalize(this);
                 }
 
                 /// <summary>

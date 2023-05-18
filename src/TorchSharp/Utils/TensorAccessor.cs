@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp.Utils
 {
@@ -12,7 +12,7 @@ namespace TorchSharp.Utils
     /// of values that integrates well with things like LINQ and foreach loops in the .NET world.
     /// </summary>
     /// <typeparam name="T">The type of the tensor elements.</typeparam>
-    public class TensorAccessor<T> : IDisposable, IEnumerable<T> where T : unmanaged
+    public sealed class TensorAccessor<T> : IDisposable, IEnumerable<T> where T : unmanaged
     {
         public TensorAccessor(torch.Tensor tensor)
         {
@@ -196,7 +196,7 @@ namespace TorchSharp.Utils
                 long index = 0;
                 if (indices.Length == 1) {
                     index = indices[0];
-                    if (index >= Count) throw new IndexOutOfRangeException();
+                    validate(index);
                     unsafe {
                         T* ptr = (T*)_tensor_data_ptr;
                         return ptr[TranslateIndex(index, _tensor)];
@@ -212,7 +212,7 @@ namespace TorchSharp.Utils
                 long index = 0;
                 if (indices.Length == 1) {
                     index = indices[0];
-                    if (index >= Count) throw new IndexOutOfRangeException();
+                    validate(index);
                     unsafe {
                         T* ptr = (T*)_tensor_data_ptr;
                         ptr[TranslateIndex(indices, _tensor)] = value;
@@ -224,6 +224,11 @@ namespace TorchSharp.Utils
                     }
                 }
             }
+        }
+
+        private void validate(long index)
+        {
+            if (index >= Count) throw new IndexOutOfRangeException();
         }
 
         public void CopyTo(T[] array, int arrayIndex = 0, long tensorIndex = 0)
@@ -455,8 +460,13 @@ namespace TorchSharp.Utils
 
         public void Dispose()
         {
-            _tensor_data_ptr = IntPtr.Zero;
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
+        private void Dispose(bool disposing)
+        {
+            _tensor_data_ptr = IntPtr.Zero;
             // Clear the tensor that we've been keeping alive.
             _tensor = null;
         }

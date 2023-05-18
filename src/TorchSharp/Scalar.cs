@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
@@ -248,16 +248,17 @@ namespace TorchSharp
             return new Scalar(THSTorch_bool_to_scalar(value));
         }
 
+#if NET6_0_OR_GREATER
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
         /// <param name="value">The input scalar value</param>
-        public static Scalar ToFloat16Scalar(this float value)
+        public static Scalar ToFloat16Scalar(this Half value)
         {
             torch.InitializeDeviceType(DeviceType.CPU);
-            return new Scalar(THSTorch_float16_to_scalar(value));
+            return new Scalar(THSTorch_float16_to_scalar((float)value));
         }
-
+#endif
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
@@ -267,6 +268,19 @@ namespace TorchSharp
             torch.InitializeDeviceType(DeviceType.CPU);
             return new Scalar(THSTorch_bfloat16_to_scalar(value));
         }
+
+#if NET6_0_OR_GREATER
+        /// <summary>
+        /// Explicitly convert a Scalar value to a .NET scalar
+        /// </summary>
+        /// <param name="value">The input value.</param>
+        public static Half ToHalf(this Scalar value)
+        {
+            Half res;
+            THSTorch_scalar_to_float16(value.Handle, out res);
+            return res;
+        }
+#endif
 
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar

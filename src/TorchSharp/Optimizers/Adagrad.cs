@@ -181,14 +181,22 @@ namespace TorchSharp
                 }
             }
 
-            public class State : OptimizerState, IDisposable
+            public sealed class State : OptimizerState, IDisposable
             {
                 public long step;
                 public Tensor sum;
 
                 public void Dispose()
                 {
-                    sum.Dispose();
+                    Dispose(true);
+                    GC.SuppressFinalize(this);
+                }
+
+                private void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        sum.Dispose();
+                    }
                 }
 
                 /// <summary>

@@ -6,7 +6,8 @@ using TorchSharp.Modules;
 
 namespace TorchSharp.PInvoke
 {
-    internal static partial class LibTorchSharp
+#pragma warning disable CA2101
+    internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
         internal static extern void THSTensor_where_list(IntPtr condition, AllocatePinnedArray allocator);
@@ -255,10 +256,10 @@ namespace TorchSharp.PInvoke
         [return: MarshalAs(UnmanagedType.U1)]
         internal static extern bool THSTensor_is_sparse(IntPtr handle);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSTensor_load([MarshalAs(UnmanagedType.LPStr)] string location);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSTensor_save(IntPtr tensor, [MarshalAs(UnmanagedType.LPStr)] string location);
 
         [DllImport("LibTorchSharp")]
@@ -1562,7 +1563,7 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_dstack(IntPtr tensor, int len);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSTensor_meshgrid(IntPtr tensor, int len, [MarshalAs(UnmanagedType.LPStr)] string indexing, AllocatePinnedArray allocator);
 
         [DllImport("LibTorchSharp")]
@@ -1691,10 +1692,10 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_conj_physical(IntPtr tensor);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSTensor_div_scalar(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string? rounding_mode);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSTensor_div_(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string? rounding_mode);
 
         [DllImport("LibTorchSharp")]
@@ -1739,7 +1740,7 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_gcd(IntPtr tensor, IntPtr other);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSTensor_div(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string? rounding_mode);
 
         [DllImport("LibTorchSharp")]
@@ -1757,7 +1758,7 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_cumprod(IntPtr tensor, long dim, [MarshalAs(UnmanagedType.U1)] bool has_type, sbyte scalar_type);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSTensor_div_scalar_(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string? rounding_mode);
 
         [DllImport("LibTorchSharp")]
@@ -1979,7 +1980,7 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_trunc(IntPtr tensor);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSTensor_einsum([MarshalAs(UnmanagedType.LPStr)] string location, IntPtr tensors, int len);
 
         [DllImport("LibTorchSharp")]
@@ -2083,4 +2084,5 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_histogram_out_i(IntPtr input, long bins, IntPtr range, int length, IntPtr weight, bool density, out IntPtr hist, out IntPtr bin_edges, out IntPtr r_bin_edges);
     }
+#pragma warning restore CA2101
 }

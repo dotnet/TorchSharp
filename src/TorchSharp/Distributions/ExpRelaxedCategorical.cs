@@ -61,11 +61,11 @@ namespace TorchSharp
                 }
             }
 
-            public override Tensor mean => throw new NotImplementedException();
+            public override Tensor mean => new Tensor(IntPtr.Zero);
 
             public override Tensor mode => base.mode;
 
-            public override Tensor variance => throw new NotImplementedException();
+            public override Tensor variance => new Tensor(IntPtr.Zero);
 
             public override Tensor stddev => base.stddev;
 

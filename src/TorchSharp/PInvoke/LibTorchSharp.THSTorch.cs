@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.PInvoke
 {
-    internal static partial class LibTorchSharp
+    internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
         [return: MarshalAs(UnmanagedType.U1)]
@@ -61,6 +61,11 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern float THSTorch_scalar_to_float32(IntPtr handle);
+
+#if NET6_0_OR_GREATER
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorch_scalar_to_float16(IntPtr value, out Half res);
+#endif
 
         [DllImport("LibTorchSharp")]
         internal static extern double THSTorch_scalar_to_float64(IntPtr handle);
