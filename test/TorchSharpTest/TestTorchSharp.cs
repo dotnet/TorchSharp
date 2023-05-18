@@ -9,9 +9,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
-#if NET472_OR_GREATER
     [Collection("Sequential")]
-#endif // NET472_OR_GREATER
     public class TestTorch
     {
         [Fact]
@@ -150,7 +148,7 @@ namespace TorchSharp
             }
         }
 
-        [Fact(Skip = "Some non-deterministic race condition causes this test to fail every now and then. The lock help, but not completely.")]
+        [Fact]//(Skip = "Some non-deterministic race condition causes this test to fail every now and then. The lock helps, but not completely.")]
         public void TestGeneratorState()
         {
             // This test fails intermittently with CUDA. Just skip it.
@@ -228,7 +226,7 @@ namespace TorchSharp
             Assert.Equal(data, data1);
         }
 
-        [Fact(Skip ="Intermittently Fails on MacOS")]
+        [FactIgnoreOnPlatform("Intermittently Fails on MacOS", "OSX")]
         public void AllowTF32()
         {
             Assert.False(torch.backends.cuda.matmul.allow_tf32);
@@ -241,7 +239,7 @@ namespace TorchSharp
             Assert.False(torch.backends.cudnn.allow_tf32);
         }
 
-        [Fact(Skip = "Intermittently Fails on MacOS")]
+        [FactIgnoreOnPlatform("Intermittently Fails on MacOS", "OSX")]
         public void EndableSDP()
         {
             Assert.True(torch.backends.cuda.flash_sdp_enabled());
@@ -254,7 +252,7 @@ namespace TorchSharp
             Assert.False(torch.backends.cuda.math_sdp_enabled());
         }
 
-        [Fact(Skip = "Intermittently Fails on MacOS")]
+        [FactIgnoreOnPlatform("Intermittently Fails on MacOS", "OSX")]
         public void AllowFP16ReductionCuBLAS()
         {
             Assert.True(torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction);

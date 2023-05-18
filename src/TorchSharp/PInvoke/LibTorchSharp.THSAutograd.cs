@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.PInvoke
 {
-    internal static partial class LibTorchSharp
+    internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
         [return: MarshalAs(UnmanagedType.U1)]
@@ -13,6 +13,17 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSAutograd_setGrad([MarshalAs(UnmanagedType.U1)] bool enabled);
+
+        [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.U1)]
+        internal static extern bool THSAutograd_isAnomalyEnabled();
+
+        [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.U1)]
+        internal static extern bool THSAutograd_shouldCheckNaN();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSAutograd_setAnomaly([MarshalAs(UnmanagedType.U1)] bool enabled, [MarshalAs(UnmanagedType.U1)] bool check_nan);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSAutograd_grad(

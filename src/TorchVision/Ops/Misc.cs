@@ -211,6 +211,17 @@ namespace TorchSharp
                     var scale = this._scale(input);
                     return scale * input;
                 }
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        avgpool.Dispose();
+                        fc1.Dispose(); fc2.Dispose();
+                        activation.Dispose();
+                        scale_activation.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
             }
         }
     }

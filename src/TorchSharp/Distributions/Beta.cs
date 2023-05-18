@@ -102,7 +102,7 @@ namespace TorchSharp
 
             protected override IList<Tensor> NaturalParams => new Tensor[] { concentration1, concentration0 };
 
-            protected override Tensor MeanCarrierMeasure => throw new NotImplementedException();
+            protected override Tensor MeanCarrierMeasure => new Tensor(IntPtr.Zero);
 
             protected override Tensor LogNormalizer(params Tensor[] parameters)
             {

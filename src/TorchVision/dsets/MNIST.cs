@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using TorchSharp.Utils;
 using static TorchSharp.torch;
 using static TorchSharp.torch.utils.data;
@@ -73,7 +74,7 @@ namespace TorchSharp
         /// A number of single-channel (grayscale) images are laid out in a flat file with four 32-bit integers at the head.
         /// The format is documented at the bottom of the page at: http://yann.lecun.com/exdb/mnist/
         /// </summary>
-        internal class MNIST : Dataset
+        internal class MNIST : DatasetHelper
         {
             /// <summary>
             /// Constructor
@@ -192,22 +193,6 @@ namespace TorchSharp
                     Utils.Decompress.DecompressGZipFile(Path.Combine(sourceDir, file + ".gz"), targetDir);
             }
 
-            private void DownloadFile(string file, string target, string baseUrl)
-            {
-#if NETSTANDARD2_0_OR_GREATER
-                var filePath = NSPath.Join(target, file);
-#else
-                var filePath = Path.Join(target, file);
-#endif // NETSTANDARD2_0_OR_GREATER
-
-                var netPath = $"{baseUrl}{file}";
-
-                if (!File.Exists(filePath)) {
-                    WebClient webClient = new WebClient();
-                    webClient.DownloadFile(netPath, filePath);
-                }
-            }
-
             private torchvision.ITransform transform;
 
             /// <summary>
@@ -218,10 +203,12 @@ namespace TorchSharp
             private List<Tensor> data = new();
             private List<Tensor> labels = new();
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                data.ForEach(d => d.Dispose());
-                labels.ForEach(d => d.Dispose());
+                if (disposing) {
+                    data.ForEach(d => d.Dispose());
+                    labels.ForEach(d => d.Dispose());
+                }
             }
 
             /// <summary>

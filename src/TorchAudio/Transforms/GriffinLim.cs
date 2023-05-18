@@ -27,6 +27,14 @@ namespace TorchSharp.Transforms
         public readonly double momentum;
         public readonly bool rand_init;
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                window.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
         internal GriffinLim(
             string name,
             long n_fft = 400,

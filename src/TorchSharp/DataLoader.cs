@@ -271,12 +271,21 @@ namespace TorchSharp
                             foreach(var x in currentDisposables)
                                 x.Dispose();
                             currentDisposables = null;
+                            shuffler?.Dispose();
                         }
                     }
 
                     public void Dispose()
                     {
-                        dataset.Dispose();
+                        Dispose(true);
+                        GC.SuppressFinalize(this);
+                    }
+
+                    protected virtual void Dispose(bool disposing)
+                    {
+                        if (disposing) {
+                            dataset.Dispose();
+                        }
                     }
                 }
             }

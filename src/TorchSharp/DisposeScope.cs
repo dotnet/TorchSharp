@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace TorchSharp
     /// Keeps track of all disposables that are in the current scope - the dispose scopes can be nested and the
     /// nesting functionality is mainly managed by DisposeScopeManager.
     /// </summary>
-    public class DisposeScope : IDisposable
+    public sealed class DisposeScope : IDisposable
     {
         private readonly DisposeScopeManager _disposeScopeManager;
 

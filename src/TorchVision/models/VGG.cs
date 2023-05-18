@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torchvision
@@ -43,7 +44,7 @@ namespace TorchSharp
             /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
-            public static Modules.VGG vgg11(int num_classes = 1000, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null)
+            public static Modules.VGG vgg11(int num_classes = 1000, float dropout = 0.5f, string? weights_file = null, bool skipfc = true, Device? device = null)
             {
                 return new Modules.VGG("VGG11", num_classes, false, dropout, weights_file, skipfc, device);
             }
@@ -81,7 +82,7 @@ namespace TorchSharp
             /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
-            public static Modules.VGG vgg11_bn(int num_classes = 1000, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null)
+            public static Modules.VGG vgg11_bn(int num_classes = 1000, float dropout = 0.5f, string? weights_file = null, bool skipfc = true, Device? device = null)
             {
                 return new Modules.VGG("VGG11", num_classes, true, dropout, weights_file, skipfc, device);
             }
@@ -119,7 +120,7 @@ namespace TorchSharp
             /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
-            public static Modules.VGG vgg13(int num_classes = 1000, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null)
+            public static Modules.VGG vgg13(int num_classes = 1000, float dropout = 0.5f, string? weights_file = null, bool skipfc = true, Device? device = null)
             {
                 return new Modules.VGG("VGG13", num_classes, false, dropout, weights_file, skipfc, device);
             }
@@ -157,7 +158,7 @@ namespace TorchSharp
             /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
-            public static Modules.VGG vgg13_bn(int num_classes = 1000, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null)
+            public static Modules.VGG vgg13_bn(int num_classes = 1000, float dropout = 0.5f, string? weights_file = null, bool skipfc = true, Device? device = null)
             {
                 return new Modules.VGG("VGG13", num_classes, true, dropout, weights_file, skipfc, device);
             }
@@ -195,7 +196,7 @@ namespace TorchSharp
             /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
-            public static Modules.VGG vgg16(int num_classes = 1000, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null)
+            public static Modules.VGG vgg16(int num_classes = 1000, float dropout = 0.5f, string? weights_file = null, bool skipfc = true, Device? device = null)
             {
                 return new Modules.VGG("VGG16", num_classes, false, dropout, weights_file, skipfc, device);
             }
@@ -233,7 +234,7 @@ namespace TorchSharp
             /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
-            public static Modules.VGG vgg16_bn(int num_classes = 1000, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null)
+            public static Modules.VGG vgg16_bn(int num_classes = 1000, float dropout = 0.5f, string? weights_file = null, bool skipfc = true, Device? device = null)
             {
                 return new Modules.VGG("VGG16", num_classes, true, dropout, weights_file, skipfc, device);
             }
@@ -271,7 +272,7 @@ namespace TorchSharp
             /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
-            public static Modules.VGG vgg19(int num_classes = 1000, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null)
+            public static Modules.VGG vgg19(int num_classes = 1000, float dropout = 0.5f, string? weights_file = null, bool skipfc = true, Device? device = null)
             {
                 return new Modules.VGG("VGG19", num_classes, false, dropout, weights_file, skipfc, device);
             }
@@ -309,7 +310,7 @@ namespace TorchSharp
             /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
             /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
             /// </remarks>
-            public static Modules.VGG vgg19_bn(int num_classes = 1000, float dropout = 0.5f, string weights_file = null, bool skipfc = true, Device device = null)
+            public static Modules.VGG vgg19_bn(int num_classes = 1000, float dropout = 0.5f, string? weights_file = null, bool skipfc = true, Device? device = null)
             {
                 return new Modules.VGG("VGG19", num_classes, true, dropout, weights_file, skipfc, device);
             }
@@ -335,13 +336,23 @@ namespace TorchSharp
             private readonly Module<Tensor, Tensor> avgpool;
             private readonly Module<Tensor, Tensor> classifier;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    features.Dispose();
+                    avgpool.Dispose();
+                    classifier.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             public VGG(string name,
                 int numClasses,
                 bool batch_norm,
                 float dropout = 0.5f,
-                string weights_file = null,
+                string? weights_file = null,
                 bool skipfc = true,
-                Device device = null) : base(name)
+                Device? device = null) : base(name)
             {
                 var layers = new List<Module<Tensor, Tensor>>();
 

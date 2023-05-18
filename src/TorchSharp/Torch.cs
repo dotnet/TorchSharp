@@ -9,14 +9,14 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using TorchSharp.PInvoke;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_1_13_0_1
-        const string libtorchPackageVersion = "1.13.0.1";
+#if LIBTORCH_2_0_1_1
+        const string libtorchPackageVersion = "2.0.1.1";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -25,10 +25,6 @@ namespace TorchSharp
 #else
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool SetDllDirectory(string lpPathName);
 
         static string nativeRid =>
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "win-x64" :
@@ -500,24 +496,24 @@ namespace TorchSharp
                 {
                     public static bool allow_tf32 {
                         get {
-                            var result = LibTorchSharp.THSBackend_cublas_get_allow_tf32();
+                            var result = NativeMethods.THSBackend_cublas_get_allow_tf32();
                             CheckForErrors();
                             return result;
                         }
                         set {
-                            LibTorchSharp.THSBackend_cublas_set_allow_tf32(value);
+                            NativeMethods.THSBackend_cublas_set_allow_tf32(value);
                             CheckForErrors();
                         }
                     }
 
                     public static bool allow_fp16_reduced_precision_reduction {
                         get {
-                            var result = LibTorchSharp.THSBackend_cuda_get_allow_fp16_reduced_precision_reduction();
+                            var result = NativeMethods.THSBackend_cuda_get_allow_fp16_reduced_precision_reduction();
                             CheckForErrors();
                             return result;
                         }
                         set {
-                            LibTorchSharp.THSBackend_cuda_set_allow_fp16_reduced_precision_reduction(value);
+                            NativeMethods.THSBackend_cuda_set_allow_fp16_reduced_precision_reduction(value);
                             CheckForErrors();
                         }
                     }
@@ -525,27 +521,27 @@ namespace TorchSharp
 
                 public static bool flash_sdp_enabled()
                 {
-                    var result = LibTorchSharp.THSBackend_cuda_get_enable_flash_sdp();
+                    var result = NativeMethods.THSBackend_cuda_get_enable_flash_sdp();
                     CheckForErrors();
                     return result;
                 }
 
                 public static void enable_flash_sdp(bool enable)
                 {
-                    LibTorchSharp.THSBackend_cuda_set_enable_flash_sdp(enable);
+                    NativeMethods.THSBackend_cuda_set_enable_flash_sdp(enable);
                     CheckForErrors();
                 }
 
                 public static bool math_sdp_enabled()
                 {
-                    var result = LibTorchSharp.THSBackend_cuda_get_enable_math_sdp();
+                    var result = NativeMethods.THSBackend_cuda_get_enable_math_sdp();
                     CheckForErrors();
                     return result;
                 }
 
                 public static void enable_math_sdp(bool enable)
                 {
-                    LibTorchSharp.THSBackend_cuda_set_enable_math_sdp(enable);
+                    NativeMethods.THSBackend_cuda_set_enable_math_sdp(enable);
                     CheckForErrors();
                 }
             }
@@ -554,12 +550,12 @@ namespace TorchSharp
             {
                 public static bool allow_tf32 {
                     get {
-                        var result = LibTorchSharp.THSBackend_cudnn_get_allow_tf32();
+                        var result = NativeMethods.THSBackend_cudnn_get_allow_tf32();
                         CheckForErrors();
                         return result;
                     }
                     set {
-                        LibTorchSharp.THSBackend_cudnn_set_allow_tf32(value);
+                        NativeMethods.THSBackend_cudnn_set_allow_tf32(value);
                         CheckForErrors();
                     }
                 }

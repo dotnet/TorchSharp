@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using static TorchSharp.torch;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
@@ -14,14 +14,27 @@ namespace TorchSharp
         /// </summary>
         public sealed class Dropout3d : nn.Module<Tensor, Tensor>
         {
-            internal Dropout3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            public override Tensor forward(Tensor tensor)
+            internal Dropout3d(double p = 0.5, bool inplace = false) : base(nameof(Dropout3d))
             {
-                var res = THSNN_Dropout3d_forward(handle, tensor.Handle);
+                this.p = p;
+                this.inplace = inplace;
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                var res = THSNN_dropout3d(input.Handle, p, this.training, inplace);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
+            protected internal override nn.Module _to(ScalarType dtype) => this;
+
+            private bool inplace;
+            private double p;
         }
     }
 
@@ -38,9 +51,7 @@ namespace TorchSharp
             /// <returns></returns>
             public static Dropout3d Dropout3d(double p = 0.5, bool inplace = false)
             {
-                var handle = THSNN_Dropout3d_ctor(p, inplace, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Dropout3d(handle, boxedHandle);
+                return new Dropout3d(p, inplace);
             }
 
             public static partial class functional
