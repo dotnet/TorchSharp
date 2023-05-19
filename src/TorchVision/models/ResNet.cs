@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
@@ -54,9 +55,9 @@ namespace TorchSharp
                 int width_per_group = 64,
                 (bool, bool, bool)? replace_stride_with_dilation = null,
                 Func<int, Module<Tensor, Tensor>>? norm_layer = null,
-                    string? weights_file = null,
-                    bool skipfc = true,
-                    Device? device = null)
+                string? weights_file = null,
+                bool skipfc = true,
+                Device? device = null)
             {
                 return Modules.ResNet.ResNet18(num_classes,
                     zero_init_residual,
@@ -110,9 +111,9 @@ namespace TorchSharp
                 int width_per_group = 64,
                 (bool, bool, bool)? replace_stride_with_dilation = null,
                 Func<int, Module<Tensor, Tensor>>? norm_layer = null,
-                    string? weights_file = null,
-                    bool skipfc = true,
-                    Device? device = null)
+                string? weights_file = null,
+                bool skipfc = true,
+                Device? device = null)
             {
                 return Modules.ResNet.ResNet34(num_classes,
                     zero_init_residual,
@@ -166,14 +167,121 @@ namespace TorchSharp
                 int width_per_group = 64,
                 (bool, bool, bool)? replace_stride_with_dilation = null,
                 Func<int, Module<Tensor, Tensor>>? norm_layer = null,
-                    string? weights_file = null,
-                    bool skipfc = true,
-                    Device? device = null)
+                string? weights_file = null,
+                bool skipfc = true,
+                Device? device = null)
             {
                 return Modules.ResNet.ResNet50(num_classes,
                     zero_init_residual,
                     groups,
                     width_per_group,
+                    replace_stride_with_dilation,
+                    norm_layer,
+                    weights_file, skipfc, device);
+            }
+
+            /// <summary>
+            /// Wide ResNet-50-2 model from 'Wide Residual Networks' https://arxiv.org/abs/1605.07146_
+            /// </summary>
+            /// <param name="num_classes">The number of output classes.</param>
+            /// <param name="zero_init_residual">Whether to zero-initalize the residual block's norm layers.</param>
+            /// <param name="groups">The number of groups.</param>
+            /// <param name="replace_stride_with_dilation">Each element in the tuple indicates if we should replace the 2x2 stride with a dilated convolution instead</param>
+            /// <param name="norm_layer">The normalization layer to use -- a function creating a layer.</param>
+            /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
+            /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
+            /// <param name="device">The device to locate the model on.</param>
+            /// <remarks>
+            /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
+            /// using the exportsd.py script, then loading into the .NET instance:
+            ///
+            /// from torchvision import models
+            /// import exportsd
+            /// 
+            /// model = models.wide_resnet50_2(pretrained=True)
+            /// f = open("model_weights.dat", "wb")
+            /// exportsd.save_state_dict(model.state_dict(), f)
+            /// f.close()
+            ///
+            /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
+            ///
+            /// In order for the weights to be loaded, the number of classes has to be the same as
+            /// in the pre-trained model, which is 1000.
+            ///
+            /// It is also possible to skip loading the last linear layer and use it for transfer-learning
+            /// with a different number of output classes. To do so, pass skipfc=true.
+            ///
+            /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
+            /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
+            /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
+            /// </remarks>
+            public static Modules.ResNet wide_resnet50_2(
+                int num_classes = 1000,
+                bool zero_init_residual = false,
+                int groups = 1,
+                (bool, bool, bool)? replace_stride_with_dilation = null,
+                Func<int, Module<Tensor, Tensor>>? norm_layer = null,
+                string? weights_file = null,
+                bool skipfc = true,
+                Device? device = null)
+            {
+                return Modules.ResNet.ResNet50(num_classes,
+                    zero_init_residual,
+                    groups,
+                    64 * 2,
+                    replace_stride_with_dilation,
+                    norm_layer,
+                    weights_file, skipfc, device);
+            }
+
+            /// <summary>
+            /// ResNeXt-50 32x4d model from
+            /// `Aggregated Residual Transformation for Deep Neural Networks https://arxiv.org/abs/1611.05431
+            /// </summary>
+            /// <param name="num_classes">The number of output classes.</param>
+            /// <param name="zero_init_residual">Whether to zero-initalize the residual block's norm layers.</param>
+            /// <param name="replace_stride_with_dilation">Each element in the tuple indicates if we should replace the 2x2 stride with a dilated convolution instead</param>
+            /// <param name="norm_layer">The normalization layer to use -- a function creating a layer.</param>
+            /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
+            /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
+            /// <param name="device">The device to locate the model on.</param>
+            /// <remarks>
+            /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
+            /// using the exportsd.py script, then loading into the .NET instance:
+            ///
+            /// from torchvision import models
+            /// import exportsd
+            /// 
+            /// model = models.resnext50_32x4d(pretrained=True)
+            /// f = open("model_weights.dat", "wb")
+            /// exportsd.save_state_dict(model.state_dict(), f)
+            /// f.close()
+            ///
+            /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
+            ///
+            /// In order for the weights to be loaded, the number of classes has to be the same as
+            /// in the pre-trained model, which is 1000.
+            ///
+            /// It is also possible to skip loading the last linear layer and use it for transfer-learning
+            /// with a different number of output classes. To do so, pass skipfc=true.
+            ///
+            /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
+            /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
+            /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
+            /// </remarks>
+            public static Modules.ResNet resnext50_32x4d(
+                int num_classes = 1000,
+                bool zero_init_residual = false,
+                (bool, bool, bool)? replace_stride_with_dilation = null,
+                Func<int, Module<Tensor, Tensor>>? norm_layer = null,
+                string? weights_file = null,
+                bool skipfc = true,
+                Device? device = null)
+            {
+                return Modules.ResNet.ResNet50(num_classes,
+                    zero_init_residual,
+                    32,
+                    4,
                     replace_stride_with_dilation,
                     norm_layer,
                     weights_file, skipfc, device);
@@ -222,14 +330,174 @@ namespace TorchSharp
                 int width_per_group = 64,
                 (bool, bool, bool)? replace_stride_with_dilation = null,
                 Func<int, Module<Tensor, Tensor>>? norm_layer = null,
-                    string? weights_file = null,
-                    bool skipfc = true,
-                    Device? device = null)
+                string? weights_file = null,
+                bool skipfc = true,
+                Device? device = null)
             {
                 return Modules.ResNet.ResNet101(num_classes,
                     zero_init_residual,
                     groups,
                     width_per_group,
+                    replace_stride_with_dilation,
+                    norm_layer,
+                    weights_file, skipfc, device);
+            }
+
+            /// <summary>
+            /// ResNeXt-101 32x8d model from
+            /// `Aggregated Residual Transformation for Deep Neural Networks https://arxiv.org/abs/1611.05431
+            /// </summary>
+            /// <param name="num_classes">The number of output classes.</param>
+            /// <param name="zero_init_residual">Whether to zero-initalize the residual block's norm layers.</param>
+            /// <param name="replace_stride_with_dilation">Each element in the tuple indicates if we should replace the 2x2 stride with a dilated convolution instead</param>
+            /// <param name="norm_layer">The normalization layer to use -- a function creating a layer.</param>
+            /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
+            /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
+            /// <param name="device">The device to locate the model on.</param>
+            /// <remarks>
+            /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
+            /// using the exportsd.py script, then loading into the .NET instance:
+            ///
+            /// from torchvision import models
+            /// import exportsd
+            /// 
+            /// model = models.resnext101_32x8d(pretrained=True)
+            /// f = open("model_weights.dat", "wb")
+            /// exportsd.save_state_dict(model.state_dict(), f)
+            /// f.close()
+            ///
+            /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
+            ///
+            /// In order for the weights to be loaded, the number of classes has to be the same as
+            /// in the pre-trained model, which is 1000.
+            ///
+            /// It is also possible to skip loading the last linear layer and use it for transfer-learning
+            /// with a different number of output classes. To do so, pass skipfc=true.
+            ///
+            /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
+            /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
+            /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
+            /// </remarks>
+            public static Modules.ResNet resnext101_32x8d(
+                int num_classes = 1000,
+                bool zero_init_residual = false,
+                (bool, bool, bool)? replace_stride_with_dilation = null,
+                Func<int, Module<Tensor, Tensor>>? norm_layer = null,
+                string? weights_file = null,
+                bool skipfc = true,
+                Device? device = null)
+            {
+                return Modules.ResNet.ResNet50(num_classes,
+                    zero_init_residual,
+                    32,
+                    8,
+                    replace_stride_with_dilation,
+                    norm_layer,
+                    weights_file, skipfc, device);
+            }
+
+            /// <summary>
+            /// ResNeXt-101 64x4d model from
+            /// `Aggregated Residual Transformation for Deep Neural Networks https://arxiv.org/abs/1611.05431
+            /// </summary>
+            /// <param name="num_classes">The number of output classes.</param>
+            /// <param name="zero_init_residual">Whether to zero-initalize the residual block's norm layers.</param>
+            /// <param name="replace_stride_with_dilation">Each element in the tuple indicates if we should replace the 2x2 stride with a dilated convolution instead</param>
+            /// <param name="norm_layer">The normalization layer to use -- a function creating a layer.</param>
+            /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
+            /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
+            /// <param name="device">The device to locate the model on.</param>
+            /// <remarks>
+            /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
+            /// using the exportsd.py script, then loading into the .NET instance:
+            ///
+            /// from torchvision import models
+            /// import exportsd
+            /// 
+            /// model = models.resnext101_32x8d(pretrained=True)
+            /// f = open("model_weights.dat", "wb")
+            /// exportsd.save_state_dict(model.state_dict(), f)
+            /// f.close()
+            ///
+            /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
+            ///
+            /// In order for the weights to be loaded, the number of classes has to be the same as
+            /// in the pre-trained model, which is 1000.
+            ///
+            /// It is also possible to skip loading the last linear layer and use it for transfer-learning
+            /// with a different number of output classes. To do so, pass skipfc=true.
+            ///
+            /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
+            /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
+            /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
+            /// </remarks>
+            public static Modules.ResNet resnext101_64x4d(
+                int num_classes = 1000,
+                bool zero_init_residual = false,
+                (bool, bool, bool)? replace_stride_with_dilation = null,
+                Func<int, Module<Tensor, Tensor>>? norm_layer = null,
+                string? weights_file = null,
+                bool skipfc = true,
+                Device? device = null)
+            {
+                return Modules.ResNet.ResNet50(num_classes,
+                    zero_init_residual,
+                    64,
+                    4,
+                    replace_stride_with_dilation,
+                    norm_layer,
+                    weights_file, skipfc, device);
+            }
+
+            /// <summary>
+            /// Wide ResNet-101-2 model from 'Wide Residual Networks' https://arxiv.org/abs/1605.07146
+            /// </summary>
+            /// <param name="num_classes">The number of output classes.</param>
+            /// <param name="zero_init_residual">Whether to zero-initalize the residual block's norm layers.</param>
+            /// <param name="groups">The number of groups.</param>
+            /// <param name="replace_stride_with_dilation">Each element in the tuple indicates if we should replace the 2x2 stride with a dilated convolution instead</param>
+            /// <param name="norm_layer">The normalization layer to use -- a function creating a layer.</param>
+            /// <param name="weights_file">The location of a file containing pre-trained weights for the model.</param>
+            /// <param name="skipfc">If true, the last linear layer of the classifier will not be loaded from the weights file.</param>
+            /// <param name="device">The device to locate the model on.</param>
+            /// <remarks>
+            /// Pre-trained weights may be retrieved by using Pytorch and saving the model state-dict
+            /// using the exportsd.py script, then loading into the .NET instance:
+            ///
+            /// from torchvision import models
+            /// import exportsd
+            /// 
+            /// model = models.resnet101(pretrained=True)
+            /// f = open("model_weights.dat", "wb")
+            /// exportsd.save_state_dict(model.state_dict(), f)
+            /// f.close()
+            ///
+            /// See also: https://github.com/dotnet/TorchSharp/blob/main/docfx/articles/saveload.md
+            ///
+            /// In order for the weights to be loaded, the number of classes has to be the same as
+            /// in the pre-trained model, which is 1000.
+            ///
+            /// It is also possible to skip loading the last linear layer and use it for transfer-learning
+            /// with a different number of output classes. To do so, pass skipfc=true.
+            ///
+            /// All pre-trained models expect input images normalized in the same way, i.e. mini-batches of 3-channel RGB
+            /// images of shape (3 x H x W), where H and W are expected to be at least 224. The images have to be loaded
+            /// in to a range of [0, 1] and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225].
+            /// </remarks>
+            public static Modules.ResNet wide_resnet101_2(
+                int num_classes = 1000,
+                bool zero_init_residual = false,
+                int groups = 1,
+                (bool, bool, bool)? replace_stride_with_dilation = null,
+                Func<int, Module<Tensor, Tensor>>? norm_layer = null,
+                string? weights_file = null,
+                bool skipfc = true,
+                Device? device = null)
+            {
+                return Modules.ResNet.ResNet101(num_classes,
+                    zero_init_residual,
+                    groups,
+                    64*2,
                     replace_stride_with_dilation,
                     norm_layer,
                     weights_file, skipfc, device);
@@ -278,9 +546,9 @@ namespace TorchSharp
                 int width_per_group = 64,
                 (bool, bool, bool)? replace_stride_with_dilation = null,
                 Func<int, Module<Tensor, Tensor>>? norm_layer = null,
-                    string? weights_file = null,
-                    bool skipfc = true,
-                    Device? device = null)
+                string? weights_file = null,
+                bool skipfc = true,
+                Device? device = null)
             {
                 return Modules.ResNet.ResNet152(num_classes,
                     zero_init_residual,
@@ -351,7 +619,7 @@ namespace TorchSharp
             {
                 return new ResNet(
                     "ResNet18",
-                    (in_planes, planes, stride, downsample, groups, base_width, dialtion, norm_layer) => new BasicBlock(in_planes, planes, stride),
+                    (in_planes, planes, stride, downsample, groups, base_width, dilation, norm_layer) => new BasicBlock(in_planes, planes, stride, downsample, groups, base_width, dilation, norm_layer),
                     BasicBlock.expansion, new int[] { 2, 2, 2, 2 },
                     numClasses,
                     zero_init_residual,
@@ -377,7 +645,7 @@ namespace TorchSharp
             {
                 return new ResNet(
                     "ResNet34",
-                    (in_planes, planes, stride, downsample, groups, base_width, dialtion, norm_layer) => new BasicBlock(in_planes, planes, stride),
+                    (in_planes, planes, stride, downsample, groups, base_width, dilation, norm_layer) => new BasicBlock(in_planes, planes, stride, downsample, groups, base_width, dilation, norm_layer),
                     BasicBlock.expansion, new int[] { 3, 4, 6, 3 },
                     numClasses,
                     zero_init_residual,
@@ -403,7 +671,7 @@ namespace TorchSharp
             {
                 return new ResNet(
                     "ResNet50",
-                    (in_planes, planes, stride, downsample, groups, base_width, dialtion, norm_layer) => new Bottleneck(in_planes, planes, stride),
+                    (in_planes, planes, stride, downsample, groups, base_width, dilation, norm_layer) => new Bottleneck(in_planes, planes, stride, downsample, groups, base_width, dilation, norm_layer),
                     Bottleneck.expansion, new int[] { 3, 4, 6, 3 },
                     numClasses,
                     zero_init_residual,
@@ -429,7 +697,7 @@ namespace TorchSharp
             {
                 return new ResNet(
                     "ResNet101",
-                    (in_planes, planes, stride, downsample, groups, base_width, dialtion, norm_layer) => new Bottleneck(in_planes, planes, stride),
+                    (in_planes, planes, stride, downsample, groups, base_width, dilation, norm_layer) => new Bottleneck(in_planes, planes, stride, downsample, groups, base_width, dilation, norm_layer),
                     Bottleneck.expansion, new int[] { 3, 4, 23, 3 },
                     numClasses,
                     zero_init_residual,
@@ -455,7 +723,7 @@ namespace TorchSharp
             {
                 return new ResNet(
                     "ResNet152",
-                    (in_planes, planes, stride, downsample, groups, base_width, dialtion, norm_layer) => new Bottleneck(in_planes, planes, stride),
+                    (in_planes, planes, stride, downsample, groups, base_width, dilation, norm_layer) => new Bottleneck(in_planes, planes, stride, downsample, groups, base_width, dilation, norm_layer),
                     Bottleneck.expansion, new int[] { 3, 8, 36, 3 },
                     numClasses,
                     zero_init_residual,
@@ -500,9 +768,7 @@ namespace TorchSharp
                 this.groups = groups;
                 this.base_width = width_per_group;
 
-                if (replace_stride_with_dilation is null) {
-                    replace_stride_with_dilation = (false, false, false);
-                }
+                var rswd = replace_stride_with_dilation.HasValue ? replace_stride_with_dilation.Value : (false, false, false);
 
                 conv1 = Conv2d(3, in_planes, kernelSize: 7, stride: 2, padding: 3, bias: false);
                 bn1 = norm_layer(in_planes);
@@ -510,9 +776,10 @@ namespace TorchSharp
                 maxpool = MaxPool2d(kernelSize: 3, stride: 2, padding: 1);
 
                 MakeLayer(layer1, block, expansion, 64, layers[0], 1);
-                MakeLayer(layer2, block, expansion, 128, layers[1], 2);
-                MakeLayer(layer3, block, expansion, 256, layers[2], 2);
-                MakeLayer(layer4, block, expansion, 512, layers[3], 2);
+                MakeLayer(layer2, block, expansion, 128, layers[1], 2, rswd.Item1);
+                MakeLayer(layer3, block, expansion, 256, layers[2], 2, rswd.Item2);
+                MakeLayer(layer4, block, expansion, 512, layers[3], 2, rswd.Item3);
+
                 avgpool = nn.AdaptiveAvgPool2d(new long[] { 1, 1 });
                 flatten = Flatten();
                 fc = Linear(512 * expansion, numClasses);
@@ -565,13 +832,14 @@ namespace TorchSharp
                     this.to(device);
             }
 
-            private void MakeLayer(Sequential modules, BlockFunc block, int expansion, int planes, int blocks, int stride = 1, bool dilate = false)
+            private void MakeLayer(Sequential modules, BlockFunc block, int expansion, int planes, int blocks, int stride, bool dilate = false)
             {
                 Sequential? downsample = null;
                 var previous_dilation = this.dilation;
 
                 if (dilate) {
                     this.dilation *= stride;
+                    stride = 1;
                 }
 
                 if (stride != 1 || in_planes != planes * expansion) {
@@ -581,13 +849,12 @@ namespace TorchSharp
                         );
                 }
 
-                var layers = new List<Module<Tensor, Tensor>>();
                 modules.append(block(in_planes, planes, stride, downsample, groups, base_width, previous_dilation, norm_layer));
 
                 this.in_planes = planes * expansion;
 
                 for (int i = 1; i < blocks; i++) {
-                    modules.append(block(in_planes, planes, stride, downsample, groups, base_width, dilation, norm_layer));
+                    modules.append(block(in_planes, planes, 1, null, groups, base_width, dilation, norm_layer));
                 }
             }
 
@@ -696,7 +963,7 @@ namespace TorchSharp
                     bn1 = norm_layer(width);
                     relu1 = ReLU(inplace: true);
                     conv2 = Conv2d(width, width, kernelSize: 3, stride: stride, groups: groups, padding: dilation, dilation: dilation, bias: false);
-                    bn2 = norm_layer(planes);
+                    bn2 = norm_layer(width);
                     relu2 = ReLU(inplace: true);
                     conv3 = Conv2d(width, expansion * planes, kernelSize: 1, bias: false);
                     bn3 = norm_layer(expansion * planes);
