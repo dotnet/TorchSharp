@@ -94,7 +94,7 @@ namespace TorchSharp
                 var pad = block_size / 2;
                 var padding = new[] { pad, pad, pad, pad, pad, pad };
                 noise = torch.nn.functional.pad(noise, padding, value: 0);
-                noise = torch.nn.functional.max_pool3d(noise, strides: new long[] { 1, 1, 1 }, kernelSize: new[] { block_size, block_size, block_size }, padding: padding);
+                noise = torch.nn.functional.max_pool3d(noise, strides: new long[] { 1, 1, 1 }, kernelSize: new[] { block_size, block_size, block_size }, padding: new long[] { pad });
                 noise = 1 - noise;
 
                 var normalize_scale = noise.numel() / (eps + noise.sum());

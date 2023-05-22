@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Xunit;
 
@@ -249,6 +250,48 @@ namespace TorchSharp
                     var exp = torch.tensor(expected, dtype: dtype, device: device).reshape(12,4);
                     Assert.Equal(expected_shape, output.shape);
                     Assert.Equal(exp, output);
+                }
+            }
+        }
+
+        private void TestDropBlocks(int dim, double p, int block_size, bool inplace)
+        {
+            int batch_size = 5;
+            int channels = 3;
+            long height = 11;
+            long width = height;
+            long depth = height;
+
+            Tensor x = (dim == 2) ? torch.ones(batch_size, channels, height, width) : torch.ones(new[] { batch_size, channels, depth, height, width });
+            nn.Module<Tensor,Tensor> layer = (dim == 2) ?  DropBlock2d(p, block_size, inplace) : DropBlock3d(p, block_size, inplace);
+
+            int feature_size = (int)((dim == 2) ? height * width : depth * height * width);
+
+            var output = layer.call(x);
+
+            if (p == 0) {
+                Assert.Equal(x, output);
+            }
+            if (block_size == height) {
+                foreach (var b in Enumerable.Range(0, batch_size)) {
+                    foreach (var c in Enumerable.Range(0, channels)) {
+                        var nz = output[b, c].count_nonzero().item<long>();
+                        Assert.InRange(nz, 0, feature_size);
+                    }
+
+                }
+            }
+        }
+
+        [Fact]
+        public void TestDropBlock()
+        {
+            foreach (var dim in new int[] { 2, 3 }) {
+                foreach (var p in new double[] { 0, 0.5}) {
+                    foreach (var block_size in new int[] { 5, 11}) {
+                        TestDropBlocks(dim, p, block_size, false);
+                        TestDropBlocks(dim, p, block_size, true);
+                    }
                 }
             }
         }
