@@ -46,7 +46,7 @@ namespace TorchSharp
 
                 if (in_fmt == BoxFormats.xyxy) {
                     boxes = (out_fmt == BoxFormats.xywh) ? _box_xyxy_to_xywh(boxes) : _box_xyxy_to_cxcywh(boxes);
-                } else if (out_fmt != BoxFormats.xyxy) {
+                } else if (out_fmt == BoxFormats.xyxy) {
                     boxes = (in_fmt == BoxFormats.xywh) ? _box_xywh_to_xyxy(boxes) : _box_cxcywh_to_xyxy(boxes);
                 }
 
@@ -84,6 +84,7 @@ namespace TorchSharp
             /// <returns>The NxM matrix containing the pairwise generalized IoU values for every element in boxes1 and boxes2</returns>
             public static Tensor generalized_box_iou(Tensor boxes1, Tensor boxes2)
             {
+                using var _ = NewDisposeScope();
                 var inter = _box_inter_union(boxes1, boxes2, out var union);
                 var iou = inter / union;
 

@@ -35,13 +35,43 @@ namespace TorchSharp
         [Fact]
         public void TestLoadJIT_1()
         {
+            var input = torch.ones(10);
+            var expected = torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 });
+
             // One linear layer followed by ReLU.
-            using var m = torch.jit.load<Tensor, Tensor>(@"linrelu.script.dat");
-            var t = m.call(torch.ones(10));
+            var m = torch.jit.load<Tensor, Tensor>(@"linrelu.script.dat");
+            if (torch.cuda.is_available()) {
+                m = m.to(torch.CUDA);
+                input = input.to(torch.CUDA);
+                expected = expected.to(torch.CUDA);
+            }
+
+            var t = m.call(input);
 
             Assert.Equal(new long[] { 6 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
-            Assert.True(torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }).allclose(t));
+            Assert.True(expected.allclose(t));
+        }
+
+        [Fact]
+        public void TestLoadJIT_bug()
+        {
+            var input = torch.randn(8,3,600,800);
+            var expected = torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 });
+
+            // One linear layer followed by ReLU.
+            var m = torch.jit.load<Tensor, Tensor>(@"d:\Downloads\model\model.pt");
+            if (torch.cuda.is_available()) {
+                m = m.to(torch.CUDA);
+                input = input.to(torch.CUDA);
+                expected = expected.to(torch.CUDA);
+            }
+
+            var t = m.call(input);
+
+            Assert.Equal(new long[] { 6 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.True(expected.allclose(t));
         }
 
         [Fact]

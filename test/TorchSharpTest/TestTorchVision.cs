@@ -1,13 +1,159 @@
+using System;
 using System.Linq;
-using static TorchSharp.torchvision.models;
 using Xunit;
 
+using static TorchSharp.torch;
+using static TorchSharp.torchvision.models;
+using static TorchSharp.torchvision.ops;
 
 namespace TorchSharp
 {
     [Collection("Sequential")]
     public class TestTorchVision
     {
+
+        [Fact]
+        public void TestBoxConvert()
+        {
+            var input = tensor(new float[] { 0, 0, 100, 100, 0, 0, 0, 0, 10, 15, 30, 35, 23, 35, 93, 95 }).reshape(4, 4);
+            {
+                // Test no-op conversion.
+                var expected = tensor(new float[] { 0, 0, 100, 100, 0, 0, 0, 0, 10, 15, 30, 35, 23, 35, 93, 95 }).reshape(4, 4);
+                Assert.Equal(expected, box_convert(input, BoxFormats.xyxy, BoxFormats.xyxy));
+                Assert.Equal(expected, box_convert(input, BoxFormats.xywh, BoxFormats.xywh));
+                Assert.Equal(expected, box_convert(input, BoxFormats.cxcywh, BoxFormats.cxcywh));
+            }
+            {
+                // Test xyxy -> xywh and reverse.
+                var expected = tensor(new float[] { 0, 0, 100, 100, 0, 0, 0, 0, 10, 15, 20, 20, 23, 35, 70, 60 }).reshape(4, 4);
+                var output = box_convert(input, BoxFormats.xyxy, BoxFormats.xywh);
+                Assert.Equal(expected, output);
+
+                var back_again = box_convert(output, BoxFormats.xywh, BoxFormats.xyxy);
+                Assert.Equal(input, back_again);
+            }
+            {
+                // Test xyxy -> cxcywh and reverse.
+                var expected = tensor(new float[] { 50, 50, 100, 100, 0, 0, 0, 0, 20, 25, 20, 20, 58, 65, 70, 60 }).reshape(4, 4);
+                var output = box_convert(input, BoxFormats.xyxy, BoxFormats.cxcywh);
+                Assert.Equal(expected, output);
+
+                Assert.Equal(input, box_convert(output, BoxFormats.cxcywh, BoxFormats.xyxy));
+            }
+            {
+                // Test xywh -> cxcywh and reverse.
+                input = tensor(new float[] { 0, 0, 100, 100, 0, 0, 0, 0, 10, 15, 20, 20, 23, 35, 70, 60 }).reshape(4, 4);
+                var expected = tensor(new float[] { 50, 50, 100, 100, 0, 0, 0, 0, 20, 25, 20, 20, 58, 65, 70, 60 }).reshape(4, 4);
+                var output = box_convert(input, BoxFormats.xywh, BoxFormats.cxcywh);
+                Assert.Equal(expected, output);
+
+                Assert.Equal(input, box_convert(output, BoxFormats.cxcywh, BoxFormats.xywh));
+            }
+        }
+
+        [Fact]
+        public void TestBoxArea()
+        {
+            {
+                var box_tensor = tensor(new int[] { 0, 0, 100, 100, 0, 0, 0, 0 }, dtype: int16).reshape(2, 4);
+                var expected = new int[] { 10000, 0 };
+
+                var output = box_area(box_tensor);
+                Assert.Equal(expected, output.data<int>().ToArray());
+            }
+            {
+                var box_tensor = tensor(new int[] { 0, 0, 100, 100, 0, 0, 0, 0 }, dtype: int32).reshape(2,4);
+                var expected = new int[] { 10000, 0 };
+
+                var output = box_area(box_tensor);
+                Assert.Equal(expected, output.data<int>().ToArray());
+            }
+            {
+                var box_tensor = tensor(new int[] { 0, 0, 100, 100, 0, 0, 0, 0 }, dtype: int64).reshape(2, 4);
+                var expected = new long[] { 10000, 0 };
+
+                var output = box_area(box_tensor);
+                Assert.Equal(expected, output.data<long>().ToArray());
+            }
+            {
+                var box_tensor = tensor(new double[] { 285.3538, 185.5758, 1193.5110, 851.4551, 285.1472, 188.7374, 1192.4984, 851.0669, 279.2440, 197.9812, 1189.4746, 849.2019 }, dtype: float32).reshape(3, 4);
+                var expected = tensor(new float[] { 604723.0806f, 600965.4666f, 592761.0085f });
+
+                var output = box_area(box_tensor);
+                Assert.True(expected.allclose(output));
+            }
+            {
+                var box_tensor = tensor(new double[] { 285.3538, 185.5758, 1193.5110, 851.4551, 285.1472, 188.7374, 1192.4984, 851.0669, 279.2440, 197.9812, 1189.4746, 849.2019 }, dtype: float64).reshape(3, 4);
+                var expected = tensor(new double[] { 604723.0806, 600965.4666, 592761.0085 });
+
+                var output = box_area(box_tensor);
+                Assert.True(expected.allclose(output));
+            }
+        }
+
+        private (Tensor, Tensor, Tensor, Tensor, Tensor, Tensor) get_boxes(ScalarType dtype, Device device)
+        {
+            var box1 = tensor(new int[]{ -1, -1, 1, 1}, dtype: dtype, device: device);
+            var box2 = tensor(new int[] { 0, 0, 1, 1 }, dtype: dtype, device: device);
+            var box3 = tensor(new int[] { 0, 1, 1, 2 }, dtype: dtype, device: device);
+            var box4 = tensor(new int[] { 1, 1, 2, 2 }, dtype: dtype, device: device);
+
+            var box1s = stack(new[] { box2, box2 }, dim: 0);
+            var box2s = stack(new[] { box3, box4 }, dim: 0);
+
+            return (box1, box2, box3, box4, box1s, box2s);
+        }
+
+        // Using a delegate type instead of Func<...> allows us to rely on default arguments.
+
+        private delegate Tensor LossFunc(Tensor boxes1, Tensor boxes2, nn.Reduction reduction = nn.Reduction.None, double eps = 1e-7);
+
+        private void assert_iou_loss(LossFunc iou_fn, Tensor box1, Tensor box2, double expected_loss, Device device, nn.Reduction reduction = nn.Reduction.None)
+        {
+            var loss = iou_fn(box1, box2, reduction);
+            var expected = tensor(expected_loss, dtype: loss.dtype, device: device);
+            expected.allclose(loss);
+        }
+
+        [Fact]
+        public void TestGeneralizedBoxIouLoss()
+        {
+            var (box1, box2, box3, box4, box1s, box2s) = get_boxes(float32, CPU);
+            assert_iou_loss(generalized_box_iou_loss, box1, box1, 0.0, CPU, nn.Reduction.None);
+            assert_iou_loss(generalized_box_iou_loss, box1, box2, 0.75, CPU, nn.Reduction.None);
+            assert_iou_loss(generalized_box_iou_loss, box2, box3, 1.0, CPU, nn.Reduction.None);
+            assert_iou_loss(generalized_box_iou_loss, box2, box4, 1.5, CPU, nn.Reduction.None);
+
+            assert_iou_loss(generalized_box_iou_loss, box1s, box2s, 2.5, CPU, nn.Reduction.Sum);
+            assert_iou_loss(generalized_box_iou_loss, box1s, box2s, 1.25, CPU, nn.Reduction.Mean);
+        }
+
+        [Fact]
+        public void TestCompleteBoxIouLoss()
+        {
+            var (box1, box2, box3, box4, box1s, box2s) = get_boxes(float32, CPU);
+            assert_iou_loss(complete_box_iou_loss, box1, box1, 0.0, CPU, nn.Reduction.None);
+            assert_iou_loss(complete_box_iou_loss, box1, box2, 0.8125, CPU, nn.Reduction.None);
+            assert_iou_loss(complete_box_iou_loss, box1, box3, 1.1923, CPU, nn.Reduction.None);
+            assert_iou_loss(complete_box_iou_loss, box1, box4, 1.2500, CPU, nn.Reduction.None);
+
+            assert_iou_loss(complete_box_iou_loss, box1s, box2s, 1.2250, CPU, nn.Reduction.Sum);
+            assert_iou_loss(complete_box_iou_loss, box1s, box2s, 2.4500, CPU, nn.Reduction.Mean);
+        }
+
+        [Fact]
+        public void TestDistanceBoxIouLoss()
+        {
+            var (box1, box2, box3, box4, box1s, box2s) = get_boxes(float32, CPU);
+            assert_iou_loss(distance_box_iou_loss, box1, box1, 0.0, CPU, nn.Reduction.None);
+            assert_iou_loss(distance_box_iou_loss, box1, box2, 0.8125, CPU, nn.Reduction.None);
+            assert_iou_loss(distance_box_iou_loss, box1, box3, 1.1923, CPU, nn.Reduction.None);
+            assert_iou_loss(distance_box_iou_loss, box1, box4, 1.2500, CPU, nn.Reduction.None);
+
+            assert_iou_loss(distance_box_iou_loss, box1s, box2s, 1.2250, CPU, nn.Reduction.Sum);
+            assert_iou_loss(distance_box_iou_loss, box1s, box2s, 2.4500, CPU, nn.Reduction.Mean);
+        }
+
         [Fact]
         public void TestResNet18()
         {
@@ -377,7 +523,7 @@ namespace TorchSharp
 
             var img = torchvision.io.read_image(fileName);
             Assert.NotNull(img);
-            Assert.Equal(torch.uint8, img.dtype);
+            Assert.Equal(uint8, img.dtype);
             //Assert.Equal(new long[] { 3, 508, 728 }, img.shape);
 
             torchvision.io.write_image(img, outName1, torchvision.ImageFormat.Jpeg);
@@ -385,13 +531,13 @@ namespace TorchSharp
 
             var img2 = torchvision.io.read_image(outName1);
             Assert.NotNull(img2);
-            Assert.Equal(torch.uint8, img2.dtype);
+            Assert.Equal(uint8, img2.dtype);
             Assert.Equal(img.shape, img2.shape);
 
             var grey = torchvision.transforms.functional.rgb_to_grayscale(img);
-            Assert.Equal(torch.float32, grey.dtype);
+            Assert.Equal(float32, grey.dtype);
 
-            torchvision.io.write_jpeg(torchvision.transforms.functional.convert_image_dtype(grey, torch.ScalarType.Byte), outName2);
+            torchvision.io.write_jpeg(torchvision.transforms.functional.convert_image_dtype(grey, ScalarType.Byte), outName2);
             Assert.True(System.IO.File.Exists(outName2));
 
             System.IO.File.Delete(outName1);
