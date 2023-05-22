@@ -163,17 +163,18 @@ namespace TorchSharp
 
         private static readonly Tensor INT_BOXES = torch.tensor(new int[] { 0, 0, 100, 100, 0, 0, 50, 50, 200, 200, 300, 300, 0, 0, 25, 25 }).reshape(4, 4);
         private static readonly Tensor INT_BOXES2 = torch.tensor(new int[] { 0, 0, 100, 100, 0, 0, 50, 50, 200, 200, 300, 300 }).reshape(3, 4);
-        private static readonly Tensor FLOAT_BOXES = torch.tensor(new float[] { 
+        private static readonly Tensor FLOAT_BOXES = torch.tensor(new float[] {
                 285.3538f, 185.5758f, 1193.5110f, 851.4551f,
                 285.1472f, 188.7374f, 1192.4984f, 851.0669f,
                 279.2440f, 197.9812f, 1189.4746f, 849.2019f
-            }).reshape(3,4);
+            }).reshape(3, 4);
 
         [Fact]
         public void TestBoxIou()
         {
+            using var _ = torch.NewDisposeScope();
             foreach (var device in TestUtils.AvailableDevices()) {
-                var int_expected = torch.tensor(new float[] { 1.0f, 0.25f, 0.0f, 0.25f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0625f, 0.25f, 0.0f }, device:device).reshape(4, 3);
+                var int_expected = torch.tensor(new float[] { 1.0f, 0.25f, 0.0f, 0.25f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0625f, 0.25f, 0.0f }, device: device).reshape(4, 3);
                 var flt_expected = torch.tensor(new float[] { 1.0f, 0.9933f, 0.9673f, 0.9933f, 1.0f, 0.9737f, 0.9673f, 0.9737f, 1.0f }, device: device).reshape(3, 3);
 
                 RunBoxIoUTest(box_iou, INT_BOXES.to(device), INT_BOXES2.to(device), int_expected);
@@ -186,9 +187,10 @@ namespace TorchSharp
         [Fact]
         public void TestGeneralizedBoxIou()
         {
+            using var _ = torch.NewDisposeScope();
             foreach (var device in TestUtils.AvailableDevices()) {
-                var int_expected = torch.tensor(new [] { 1.0f, 0.25f, -0.7778f, 0.25f, 1.0f, -0.8611f, -0.7778f, -0.8611f, 1.0f, 0.0625f, 0.25f, -0.8819f }, device: device, dtype:float32).reshape(4, 3);
-                var flt_expected = torch.tensor(new [] { 1.0, 0.9933, 0.9673, 0.9933, 1.0, 0.9737, 0.9673, 0.9737, 1.0 }, device: device, dtype: float32).reshape(3, 3);
+                var int_expected = torch.tensor(new[] { 1.0f, 0.25f, -0.7778f, 0.25f, 1.0f, -0.8611f, -0.7778f, -0.8611f, 1.0f, 0.0625f, 0.25f, -0.8819f }, device: device, dtype: float32).reshape(4, 3);
+                var flt_expected = torch.tensor(new[] { 1.0, 0.9933, 0.9673, 0.9933, 1.0, 0.9737, 0.9673, 0.9737, 1.0 }, device: device, dtype: float32).reshape(3, 3);
 
                 RunBoxIoUTest(generalized_box_iou, INT_BOXES.to(device), INT_BOXES2.to(device), int_expected);
                 RunBoxIoUTest(generalized_box_iou, INT_BOXES.to(device).@long(), INT_BOXES2.to(device).@long(), int_expected);
@@ -200,11 +202,12 @@ namespace TorchSharp
         [Fact]
         public void TestDistanceBoxIoU()
         {
+            using var _ = torch.NewDisposeScope();
             foreach (var device in TestUtils.AvailableDevices()) {
                 var int_expected = torch.tensor(new[] { 1.0000, 0.1875, -0.4444, 0.1875, 1.0000, -0.5625, -0.4444, -0.5625, 1.0000, -0.0781, 0.1875, -0.6267 }, device: device, dtype: float32).reshape(4, 3);
                 var flt_expected = torch.tensor(new[] { 1.0, 0.9933, 0.9673, 0.9933, 1.0, 0.9737, 0.9673, 0.9737, 1.0 }, device: device, dtype: float32).reshape(3, 3);
 
-                RunBoxIoUTest((a,b) => distance_box_iou(a,b), INT_BOXES.to(device), INT_BOXES2.to(device), int_expected);
+                RunBoxIoUTest((a, b) => distance_box_iou(a, b), INT_BOXES.to(device), INT_BOXES2.to(device), int_expected);
                 RunBoxIoUTest((a, b) => distance_box_iou(a, b), INT_BOXES.to(device).@long(), INT_BOXES2.to(device).@long(), int_expected);
                 RunBoxIoUTest((a, b) => distance_box_iou(a, b), FLOAT_BOXES.to(device), FLOAT_BOXES.to(device), flt_expected);
                 RunBoxIoUTest((a, b) => distance_box_iou(a, b), FLOAT_BOXES.to(device).@double(), FLOAT_BOXES.to(device).@double(), flt_expected.@double());
@@ -214,6 +217,7 @@ namespace TorchSharp
         [Fact]
         public void TestCompleteBoxIou()
         {
+            using var _ = torch.NewDisposeScope();
             foreach (var device in TestUtils.AvailableDevices()) {
                 var int_expected = torch.tensor(new[] { 1.0f, 0.25f, -0.7778f, 0.25f, 1.0f, -0.8611f, -0.7778f, -0.8611f, 1.0f, 0.0625f, 0.25f, -0.8819f }, device: device, dtype: float32).reshape(4, 3);
                 var flt_expected = torch.tensor(new[] { 1.0, 0.9933, 0.9673, 0.9933, 1.0, 0.9737, 0.9673, 0.9737, 1.0 }, device: device, dtype: float32).reshape(3, 3);
@@ -222,6 +226,30 @@ namespace TorchSharp
                 RunBoxIoUTest((a, b) => complete_box_iou(a, b), INT_BOXES.to(device).@long(), INT_BOXES2.to(device).@long(), int_expected);
                 RunBoxIoUTest((a, b) => complete_box_iou(a, b), FLOAT_BOXES.to(device), FLOAT_BOXES.to(device), flt_expected);
                 RunBoxIoUTest((a, b) => complete_box_iou(a, b), FLOAT_BOXES.to(device).@double(), FLOAT_BOXES.to(device).@double(), flt_expected.@double());
+            }
+        }
+
+        [Fact]
+        public void TestMasksToBoxes()
+        {
+            using var _ = torch.NewDisposeScope();
+            var maskList = new[] {  0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0,
+                                    0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0,
+                                    0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0,
+                                    0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0.5, 0};
+            var expected = new[] { 1.0, 0.0, 2.0, 2.0, 1.0, 0.0, 2.0, 2.0, 1.0, 0.0, 2.0, 2.0, 1.0, 0.0, 2.0, 2.0, 1.0, 0.0, 2.0, 2.0, 1.0, 0.0, 2.0, 2.0,
+                                   1.0, 0.0, 2.0, 2.0, 1.0, 0.0, 2.0, 2.0, 1.0, 0.0, 2.0, 2.0, 1.0, 0.0, 2.0, 2.0, 1.0, 0.0, 2.0, 2.0, 1.0, 0.0, 2.0, 2.0 };
+            var expected_shape = new long[] { 12, 4 };
+
+            var types = new[] { float32, float64 };
+
+            foreach (var device in TestUtils.AvailableDevices()) {
+                foreach (var dtype in types) {
+                    var output = masks_to_boxes(torch.tensor(maskList, dtype: dtype, device: device).reshape(12,3,4));
+                    var exp = torch.tensor(expected, dtype: dtype, device: device).reshape(12,4);
+                    Assert.Equal(expected_shape, output.shape);
+                    Assert.Equal(exp, output);
+                }
             }
         }
 
