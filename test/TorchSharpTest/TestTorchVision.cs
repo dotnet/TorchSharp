@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -62,7 +63,7 @@ namespace TorchSharp
                 Assert.Equal(expected, output.data<int>().ToArray());
             }
             {
-                var box_tensor = tensor(new int[] { 0, 0, 100, 100, 0, 0, 0, 0 }, dtype: int32).reshape(2,4);
+                var box_tensor = tensor(new int[] { 0, 0, 100, 100, 0, 0, 0, 0 }, dtype: int32).reshape(2, 4);
                 var expected = new int[] { 10000, 0 };
 
                 var output = box_area(box_tensor);
@@ -93,7 +94,7 @@ namespace TorchSharp
 
         private (Tensor, Tensor, Tensor, Tensor, Tensor, Tensor) get_boxes(ScalarType dtype, Device device)
         {
-            var box1 = tensor(new int[]{ -1, -1, 1, 1}, dtype: dtype, device: device);
+            var box1 = tensor(new int[] { -1, -1, 1, 1 }, dtype: dtype, device: device);
             var box2 = tensor(new int[] { 0, 0, 1, 1 }, dtype: dtype, device: device);
             var box3 = tensor(new int[] { 0, 1, 1, 2 }, dtype: dtype, device: device);
             var box4 = tensor(new int[] { 1, 1, 2, 2 }, dtype: dtype, device: device);
@@ -152,6 +153,76 @@ namespace TorchSharp
 
             assert_iou_loss(distance_box_iou_loss, box1s, box2s, 1.2250, CPU, nn.Reduction.Sum);
             assert_iou_loss(distance_box_iou_loss, box1s, box2s, 2.4500, CPU, nn.Reduction.Mean);
+        }
+
+        private void RunBoxIoUTest(Func<Tensor, Tensor, Tensor> target_fn, Tensor actual_box1, Tensor actual_box2, Tensor expected)
+        {
+            var output = target_fn(actual_box1, actual_box2);
+            expected.allclose(output);
+        }
+
+        private static readonly Tensor INT_BOXES = torch.tensor(new int[] { 0, 0, 100, 100, 0, 0, 50, 50, 200, 200, 300, 300, 0, 0, 25, 25 }).reshape(4, 4);
+        private static readonly Tensor INT_BOXES2 = torch.tensor(new int[] { 0, 0, 100, 100, 0, 0, 50, 50, 200, 200, 300, 300 }).reshape(3, 4);
+        private static readonly Tensor FLOAT_BOXES = torch.tensor(new float[] { 
+                285.3538f, 185.5758f, 1193.5110f, 851.4551f,
+                285.1472f, 188.7374f, 1192.4984f, 851.0669f,
+                279.2440f, 197.9812f, 1189.4746f, 849.2019f
+            }).reshape(3,4);
+
+        [Fact]
+        public void TestBoxIou()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var int_expected = torch.tensor(new float[] { 1.0f, 0.25f, 0.0f, 0.25f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0625f, 0.25f, 0.0f }, device:device).reshape(4, 3);
+                var flt_expected = torch.tensor(new float[] { 1.0f, 0.9933f, 0.9673f, 0.9933f, 1.0f, 0.9737f, 0.9673f, 0.9737f, 1.0f }, device: device).reshape(3, 3);
+
+                RunBoxIoUTest(box_iou, INT_BOXES.to(device), INT_BOXES2.to(device), int_expected);
+                RunBoxIoUTest(box_iou, INT_BOXES.to(device).@long(), INT_BOXES2.to(device).@long(), int_expected);
+                RunBoxIoUTest(box_iou, FLOAT_BOXES.to(device), FLOAT_BOXES.to(device), flt_expected);
+                RunBoxIoUTest(box_iou, FLOAT_BOXES.to(device).@double(), FLOAT_BOXES.to(device).@double(), flt_expected.to(device).@double());
+            }
+        }
+
+        [Fact]
+        public void TestGeneralizedBoxIou()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var int_expected = torch.tensor(new [] { 1.0f, 0.25f, -0.7778f, 0.25f, 1.0f, -0.8611f, -0.7778f, -0.8611f, 1.0f, 0.0625f, 0.25f, -0.8819f }, device: device, dtype:float32).reshape(4, 3);
+                var flt_expected = torch.tensor(new [] { 1.0, 0.9933, 0.9673, 0.9933, 1.0, 0.9737, 0.9673, 0.9737, 1.0 }, device: device, dtype: float32).reshape(3, 3);
+
+                RunBoxIoUTest(generalized_box_iou, INT_BOXES.to(device), INT_BOXES2.to(device), int_expected);
+                RunBoxIoUTest(generalized_box_iou, INT_BOXES.to(device).@long(), INT_BOXES2.to(device).@long(), int_expected);
+                RunBoxIoUTest(generalized_box_iou, FLOAT_BOXES.to(device), FLOAT_BOXES.to(device), flt_expected);
+                RunBoxIoUTest(generalized_box_iou, FLOAT_BOXES.to(device).@double(), FLOAT_BOXES.to(device).@double(), flt_expected.@double());
+            }
+        }
+
+        [Fact]
+        public void TestDistanceBoxIoU()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var int_expected = torch.tensor(new[] { 1.0000, 0.1875, -0.4444, 0.1875, 1.0000, -0.5625, -0.4444, -0.5625, 1.0000, -0.0781, 0.1875, -0.6267 }, device: device, dtype: float32).reshape(4, 3);
+                var flt_expected = torch.tensor(new[] { 1.0, 0.9933, 0.9673, 0.9933, 1.0, 0.9737, 0.9673, 0.9737, 1.0 }, device: device, dtype: float32).reshape(3, 3);
+
+                RunBoxIoUTest((a,b) => distance_box_iou(a,b), INT_BOXES.to(device), INT_BOXES2.to(device), int_expected);
+                RunBoxIoUTest((a, b) => distance_box_iou(a, b), INT_BOXES.to(device).@long(), INT_BOXES2.to(device).@long(), int_expected);
+                RunBoxIoUTest((a, b) => distance_box_iou(a, b), FLOAT_BOXES.to(device), FLOAT_BOXES.to(device), flt_expected);
+                RunBoxIoUTest((a, b) => distance_box_iou(a, b), FLOAT_BOXES.to(device).@double(), FLOAT_BOXES.to(device).@double(), flt_expected.@double());
+            }
+        }
+
+        [Fact]
+        public void TestCompleteBoxIou()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var int_expected = torch.tensor(new[] { 1.0f, 0.25f, -0.7778f, 0.25f, 1.0f, -0.8611f, -0.7778f, -0.8611f, 1.0f, 0.0625f, 0.25f, -0.8819f }, device: device, dtype: float32).reshape(4, 3);
+                var flt_expected = torch.tensor(new[] { 1.0, 0.9933, 0.9673, 0.9933, 1.0, 0.9737, 0.9673, 0.9737, 1.0 }, device: device, dtype: float32).reshape(3, 3);
+
+                RunBoxIoUTest((a, b) => complete_box_iou(a, b), INT_BOXES.to(device), INT_BOXES2.to(device), int_expected);
+                RunBoxIoUTest((a, b) => complete_box_iou(a, b), INT_BOXES.to(device).@long(), INT_BOXES2.to(device).@long(), int_expected);
+                RunBoxIoUTest((a, b) => complete_box_iou(a, b), FLOAT_BOXES.to(device), FLOAT_BOXES.to(device), flt_expected);
+                RunBoxIoUTest((a, b) => complete_box_iou(a, b), FLOAT_BOXES.to(device).@double(), FLOAT_BOXES.to(device).@double(), flt_expected.@double());
+            }
         }
 
         [Fact]

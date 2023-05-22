@@ -94,7 +94,7 @@ namespace TorchSharp
                 var whi = _upcast(rbi - lti).clamp(min: 0);  // [N,M,2]
                 var areai = whi[colon, colon, 0] * whi[colon, colon, 1];
 
-                return iou - (areai - union) / areai;
+                return (iou - (areai - union) / areai).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -106,9 +106,9 @@ namespace TorchSharp
             /// <returns>The NxM matrix containing the complete distance IoU values for every element in boxes1 and boxes2</returns>
             public static Tensor complete_box_iou(Tensor boxes1, Tensor boxes2, double eps = 1e-7)
             {
+                using var _ = NewDisposeScope();
                 boxes1 = _upcast(boxes1);
                 boxes2 = _upcast(boxes2);
-
 
                 var diou = _box_diou_iou(boxes1, boxes2, out Tensor iou, eps);
 
@@ -122,10 +122,10 @@ namespace TorchSharp
 
                 Tensor alpha;
 
-                using (var _ = torch.no_grad()) {
+                using (var ng = torch.no_grad()) {
                     alpha = v / (1 - iou + v + eps);
                 }
-                return diou - alpha * v;
+                return (diou - alpha * v).MoveToOuterDisposeScope();
             }
 
 
@@ -138,10 +138,11 @@ namespace TorchSharp
             /// <returns>The NxM matrix containing the pairwise distance IoU values for every element in boxes1 and boxes2</returns>
             public static Tensor distance_box_iou(Tensor boxes1, Tensor boxes2, double eps = 1e-7)
             {
+                using var _ = NewDisposeScope();
                 boxes1 = _upcast(boxes1);
                 boxes2 = _upcast(boxes2);
                 var diou = _box_diou_iou(boxes1, boxes2, out var _, eps: eps);
-                return diou;
+                return diou.MoveToOuterDisposeScope();
             }
 
             /// <summary>
