@@ -42,9 +42,11 @@ namespace TorchSharp
 
                 if (mode == torchvision.StochasticDepth.Mode.Row) {
                     size.Add(input.shape[0]);
-                    size.Add(input.ndim - 1);
+                    for (var i = 0; i < input.ndim-1; i++)
+                        size.Add(1);
                 } else {
-                    size.Add(input.ndim - 1);
+                    for (var i = 0; i < input.ndim; i++)
+                        size.Add(1);
                 }
 
                 var noise = torch.empty(size.ToArray(), dtype: input.dtype, device: input.device);

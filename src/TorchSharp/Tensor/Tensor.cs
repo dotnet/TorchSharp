@@ -2348,6 +2348,10 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Counts the number of non-zero values in the tensor input along the given dim. If no dim is specified then all non-zeros in the tensor are counted.
+            /// </summary>
+            /// <param name="dims">List of dims along which to count non-zeros.</param>
             public Tensor count_nonzero(long[]? dims = null)
             {
                 unsafe {

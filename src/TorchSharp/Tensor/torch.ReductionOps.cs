@@ -550,6 +550,11 @@ namespace TorchSharp
             => input.var_mean(dimensions, unbiased, keepdim, type);
 
         // https://pytorch.org/docs/stable/generated/torch.count_nonzero
+        /// <summary>
+        /// Counts the number of non-zero values in the tensor input along the given dim. If no dim is specified then all non-zeros in the tensor are counted.
+        /// </summary>
+        /// <param name="input">The input tensor.</param>
+        /// <param name="dims">List of dims along which to count non-zeros.</param>
         [Pure]public static Tensor count_nonzero(Tensor input, long[]? dims = null)
             => input.count_nonzero(dims);
     }

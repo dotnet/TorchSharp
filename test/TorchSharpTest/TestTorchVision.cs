@@ -293,6 +293,80 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestStochasticDepth()
+        {
+            using var input = torch.ones(4, 250, 250);
+            var size = input.NumberOfElements;
+
+            {
+                // With p == 0, nothing should happen
+                using var output = stochastic_depth(input, 0, torchvision.StochasticDepth.Mode.Batch, true);
+                Assert.Equal(size, output.count_nonzero().item<long>());
+            }
+            {
+                // With training == false, nothing should happen
+                using var output = stochastic_depth(input, 1, torchvision.StochasticDepth.Mode.Batch, false);
+                Assert.Equal(size, output.count_nonzero().item<long>());
+            }
+            {
+                // If training and p == 1, then all elements should be cleared.
+                using var output = stochastic_depth(input, 1, torchvision.StochasticDepth.Mode.Batch, true);
+                Assert.Equal(0, output.count_nonzero().item<long>());
+            }
+            {
+                // If training and p in ]0,1[, either all or none of the elements should be cleared.
+                using var output = stochastic_depth(input, 0.5, torchvision.StochasticDepth.Mode.Batch, true);
+                var nz = output.count_nonzero().item<long>();
+                Assert.True(nz == 0 || nz == size);
+            }
+        }
+
+        [Fact]
+        public void TestFrozenBatchNorm2d()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                {
+                    var ones = torch.ones(new long[] { 16, 3, 28, 28 }, device: device);
+                    using (var pool = FrozenBatchNorm2d(3, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 }, device: device)));
+                    }
+                }
+                {
+                    var ones = torch.ones(new long[] { 1, 3, 28, 28 }, device: device);
+                    using (var pool = FrozenBatchNorm2d(3, device: device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(ones.shape, pooled.shape);
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public void TestSqueezeExcitation()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                {
+                    using var _ = NewDisposeScope();
+                    var ones = torch.ones(new long[] { 16, 3, 28, 28 }, device: device);
+                    using (var pool = SqueezeExcitation(3, 4).to(device)) {
+                        var pooled = pool.call(ones);
+                        Assert.Equal(ones.shape, pooled.shape);
+                        ones = torch.ones(new long[] { 3, 28, 28 }, device: device);
+                        pooled = pool.call(ones);
+                        Assert.Equal(ones.shape, pooled.shape);
+
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 2, 2 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 16, 4, 28, 28 }, device: device)));
+                        Assert.Throws<ArgumentException>(() => pool.call(torch.ones(new long[] { 2, 2, 2, 2, 2 }, device: device)));
+                    }
+                }
+            }
+        }
+
+        [Fact]
         public void TestResNet18()
         {
             using var model = resnet18();

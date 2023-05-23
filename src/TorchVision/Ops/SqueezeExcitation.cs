@@ -49,6 +49,8 @@ namespace TorchSharp
             private readonly nn.Module<Tensor, Tensor> activation;
             private readonly nn.Module<Tensor, Tensor> scale_activation;
 
+            private long input_channels;
+
             /// <summary>
             /// Constructor
             /// </summary>
@@ -62,6 +64,8 @@ namespace TorchSharp
                 Func<nn.Module<Tensor, Tensor>>? activation = null,
                 Func<nn.Module<Tensor, Tensor>>? scale_activation = null) : base(nameof(SqueezeExcitation))
             {
+                this.input_channels = input_channels;
+
                 this.avgpool = torch.nn.AdaptiveAvgPool2d(1);
                 this.fc1 = torch.nn.Conv2d(input_channels, squeeze_channels, 1);
                 this.fc2 = torch.nn.Conv2d(squeeze_channels, input_channels, 1);
@@ -82,8 +86,13 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                var scale = this._scale(input);
-                return scale * input;
+                if ((input.ndim == 4 && input.shape[1] == input_channels) ||
+                    (input.ndim == 3 && input.shape[0] == input_channels)) {
+                    using var _ = NewDisposeScope();
+                    var scale = this._scale(input);
+                    return (scale * input).MoveToOuterDisposeScope();
+                }
+                throw new ArgumentException("Expected 3D (unbatched) or 4D (batched) input to SqueezeExcitation");
             }
 
             protected override void Dispose(bool disposing)
