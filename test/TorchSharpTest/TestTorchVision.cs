@@ -173,7 +173,6 @@ namespace TorchSharp
         [Fact]
         public void TestBoxIou()
         {
-            using var _ = torch.NewDisposeScope();
             foreach (var device in TestUtils.AvailableDevices()) {
                 var int_expected = torch.tensor(new float[] { 1.0f, 0.25f, 0.0f, 0.25f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0625f, 0.25f, 0.0f }, device: device).reshape(4, 3);
                 var flt_expected = torch.tensor(new float[] { 1.0f, 0.9933f, 0.9673f, 0.9933f, 1.0f, 0.9737f, 0.9673f, 0.9737f, 1.0f }, device: device).reshape(3, 3);
@@ -188,7 +187,6 @@ namespace TorchSharp
         [Fact]
         public void TestGeneralizedBoxIou()
         {
-            using var _ = torch.NewDisposeScope();
             foreach (var device in TestUtils.AvailableDevices()) {
                 var int_expected = torch.tensor(new[] { 1.0f, 0.25f, -0.7778f, 0.25f, 1.0f, -0.8611f, -0.7778f, -0.8611f, 1.0f, 0.0625f, 0.25f, -0.8819f }, device: device, dtype: float32).reshape(4, 3);
                 var flt_expected = torch.tensor(new[] { 1.0, 0.9933, 0.9673, 0.9933, 1.0, 0.9737, 0.9673, 0.9737, 1.0 }, device: device, dtype: float32).reshape(3, 3);
@@ -203,7 +201,6 @@ namespace TorchSharp
         [Fact]
         public void TestDistanceBoxIoU()
         {
-            using var _ = torch.NewDisposeScope();
             foreach (var device in TestUtils.AvailableDevices()) {
                 var int_expected = torch.tensor(new[] { 1.0000, 0.1875, -0.4444, 0.1875, 1.0000, -0.5625, -0.4444, -0.5625, 1.0000, -0.0781, 0.1875, -0.6267 }, device: device, dtype: float32).reshape(4, 3);
                 var flt_expected = torch.tensor(new[] { 1.0, 0.9933, 0.9673, 0.9933, 1.0, 0.9737, 0.9673, 0.9737, 1.0 }, device: device, dtype: float32).reshape(3, 3);
@@ -218,7 +215,6 @@ namespace TorchSharp
         [Fact]
         public void TestCompleteBoxIou()
         {
-            using var _ = torch.NewDisposeScope();
             foreach (var device in TestUtils.AvailableDevices()) {
                 var int_expected = torch.tensor(new[] { 1.0f, 0.25f, -0.7778f, 0.25f, 1.0f, -0.8611f, -0.7778f, -0.8611f, 1.0f, 0.0625f, 0.25f, -0.8819f }, device: device, dtype: float32).reshape(4, 3);
                 var flt_expected = torch.tensor(new[] { 1.0, 0.9933, 0.9673, 0.9933, 1.0, 0.9737, 0.9673, 0.9737, 1.0 }, device: device, dtype: float32).reshape(3, 3);
