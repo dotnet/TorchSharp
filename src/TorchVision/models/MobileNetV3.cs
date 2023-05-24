@@ -126,8 +126,7 @@ namespace TorchSharp
                             layers.Add(se_layer(cnf.expanded_channels, squeeze_channels));
                         } else {
                             layers.Add(
-                                new SqueezeExcitation(
-                                    "SqueezeExcitation",
+                                torchvision.ops.SqueezeExcitation(
                                     cnf.expanded_channels,
                                     squeeze_channels,
                                     activation: () => nn.ReLU6(),
