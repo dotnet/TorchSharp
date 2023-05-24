@@ -12,13 +12,20 @@ namespace TorchSharp
     {
         public sealed class ConvTranspose3d : torch.nn.Module<Tensor, Tensor>
         {
-            internal ConvTranspose3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            public override Tensor forward(Tensor tensor)
+            internal ConvTranspose3d(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle)
             {
-                var res = THSNN_ConvTranspose3d_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                this.input_channels = input_channels;
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                if ((input.ndim == 5 && input.shape[1] == input_channels) ||
+                    (input.ndim == 4 && input.shape[0] == input_channels)) {
+                    var res = THSNN_ConvTranspose3d_forward(handle, input.Handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+                throw new ArgumentException($"Expected 4D (unbatched) or 5D (batched) input with {input_channels} channels to ConvTranspose3d.");
             }
 
             public Parameter? bias {
@@ -45,6 +52,8 @@ namespace TorchSharp
                     ConditionallyRegisterParameter("weight", value);
                 }
             }
+
+            private long input_channels;
         }
     }
 
@@ -72,7 +81,7 @@ namespace TorchSharp
             {
                 var res = THSNN_ConvTranspose3d_ctor(inputChannel, outputChannel, kernelSize, stride, padding, outputPadding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new ConvTranspose3d(res, boxedHandle).MoveModule<ConvTranspose3d>(device, dtype);
+                return new ConvTranspose3d(res, boxedHandle, inputChannel).MoveModule<ConvTranspose3d>(device, dtype);
             }
 
             public static partial class functional

@@ -416,8 +416,7 @@ namespace TorchSharp
             Assert.Throws<InvalidOperationException>(() => t1.Handle);
         }
 
-#if !LINUX
-        [FactIgnoreOnPlatform("Sensitive to parallelism in the xUnit test driver", "Linux")]
+        [Fact(Skip ="Sensitive to concurrency in xUnit test driver.")]
         [TestOf(nameof(torch.randn))]
         public void TestUsings()
         {
@@ -427,7 +426,6 @@ namespace TorchSharp
 
             Assert.Equal(tCount, Tensor.TotalCount);
         }
-#endif
 
         [Fact]
         [TestOf(nameof(torch.ones))]
