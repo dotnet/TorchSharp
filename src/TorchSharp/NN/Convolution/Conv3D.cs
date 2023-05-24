@@ -12,13 +12,20 @@ namespace TorchSharp
     {
         public sealed class Conv3d : torch.nn.Module<Tensor, Tensor>
         {
-            internal Conv3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            public override Tensor forward(Tensor tensor)
+            internal Conv3d(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle)
             {
-                var res = THSNN_Conv3d_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                this.input_channels = input_channels;
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                if ((input.ndim == 5 && input.shape[1] == input_channels) ||
+                    (input.ndim == 4 && input.shape[0] == input_channels)) {
+                    var res = THSNN_Conv3d_forward(handle, input.Handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+                throw new ArgumentException($"Expected 4D (unbatched) or 5D (batched) input with {input_channels} channels to Conv3d.");
             }
 
             public Parameter? bias {
@@ -45,6 +52,8 @@ namespace TorchSharp
                     ConditionallyRegisterParameter("weight", value);
                 }
             }
+
+            private long input_channels;
         }
     }
 
@@ -70,7 +79,7 @@ namespace TorchSharp
             {
                 var res = THSNN_Conv3d_ctor(inputChannel, outputChannel, kernelSize, stride, padding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Conv3d(res, boxedHandle).MoveModule<Conv3d>(device, dtype);
+                return new Conv3d(res, boxedHandle, inputChannel).MoveModule<Conv3d>(device, dtype);
             }
 
             /// <summary>
@@ -95,7 +104,7 @@ namespace TorchSharp
 
                 var res = THSNN_Conv3d_ctor_1(inputChannel, outputChannel, kernelSize.Item1, kernelSize.Item2, kernelSize.Item3, stride.Value.Item1, stride.Value.Item2, stride.Value.Item3, padding.Value.Item1, padding.Value.Item2, padding.Value.Item3, dilation.Value.Item1, dilation.Value.Item2, dilation.Value.Item3, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Conv3d(res, boxedHandle).MoveModule<Conv3d>(device, dtype);
+                return new Conv3d(res, boxedHandle, inputChannel).MoveModule<Conv3d>(device, dtype);
             }
 
             /// <summary>
@@ -116,7 +125,7 @@ namespace TorchSharp
             {
                 var res = THSNN_Conv3d_ctor(inputChannel, outputChannel, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Conv3d(res, boxedHandle).MoveModule<Conv3d>(device, dtype);
+                return new Conv3d(res, boxedHandle, inputChannel).MoveModule<Conv3d>(device, dtype);
             }
 
             /// <summary>
@@ -140,7 +149,7 @@ namespace TorchSharp
 
                 var res = THSNN_Conv3d_ctor_1(inputChannel, outputChannel, kernelSize.Item1, kernelSize.Item2, kernelSize.Item3, stride.Value.Item1, stride.Value.Item2, stride.Value.Item3, padding == Padding.Valid ? 0 : -1, 0, 0, dilation.Value.Item1, dilation.Value.Item2, dilation.Value.Item3, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Conv3d(res, boxedHandle).MoveModule<Conv3d>(device, dtype);
+                return new Conv3d(res, boxedHandle, inputChannel).MoveModule<Conv3d>(device, dtype);
             }
 
             public static partial class functional
