@@ -12,6 +12,10 @@ __API Changes__:
 
 Added operator functionality to Torchvision, but nms and roi are still missing.<br/>
 
+__Bug Fixes__:
+
+#1001 Issue with resnet50, resnet101, and resnet152<br/>
+
 ## NuGet Version 0.100.0
 
 Updated backend binaries to libtorch v2.0.1.
