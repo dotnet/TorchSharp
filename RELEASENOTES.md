@@ -2,6 +2,16 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.100.1
+
+__Breaking Changes__:
+
+TorchSharp no longer supports any .NET Core versions prior to 6.0. .NET FX version support is still the same: 4.7.2 and up.
+
+__API Changes__:
+
+Added operator functionality to Torchvision, but nms and roi are still missing.<br/>
+
 ## NuGet Version 0.100.0
 
 Updated backend binaries to libtorch v2.0.1.
