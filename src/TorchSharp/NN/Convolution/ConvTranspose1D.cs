@@ -10,17 +10,13 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class ConvTranspose1d : torch.nn.Module<Tensor, Tensor>
+        public sealed class ConvTranspose1d : Convolution
         {
-            internal ConvTranspose1d(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle)
-            {
-                this.input_channels = input_channels;
-            }
+            internal ConvTranspose1d(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle, input_channels) { }
 
             public override Tensor forward(Tensor input)
             {
-                if ((input.ndim == 3 && input.shape[1] == input_channels) ||
-                    (input.ndim == 2 && input.shape[0] == input_channels)) {
+                if (ValidateShape(input, 1)) {
                     var res = THSNN_ConvTranspose1d_forward(handle, input.Handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
@@ -52,8 +48,6 @@ namespace TorchSharp
                     ConditionallyRegisterParameter("weight", value);
                 }
             }
-
-            private long input_channels;
         }
     }
 

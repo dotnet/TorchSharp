@@ -25,17 +25,33 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class Conv1d : torch.nn.Module<Tensor, Tensor>
+        public abstract class Convolution : torch.nn.Module<Tensor, Tensor>
         {
-            internal Conv1d(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle)
+            protected Convolution(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle)
             {
                 this.input_channels = input_channels;
             }
 
+            protected bool ValidateShape(Tensor input, long dimensions)
+            {
+                var shape = input.shape;
+                var ndim = shape.LongLength;
+
+                return (ndim == dimensions+2) && (input.shape[1] == input_channels) ||  // Batched: N + C + dims
+                       (ndim == dimensions+1 && input.shape[0] == input_channels);      // Unbathced: C + dims
+
+            }
+
+            protected long input_channels;
+        }
+
+        public sealed class Conv1d : Convolution
+        {
+            internal Conv1d(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle, input_channels) { }
+
             public override Tensor forward(Tensor input)
             {
-                if ((input.ndim == 3 && input.shape[1] == input_channels) ||
-                    (input.ndim == 2 && input.shape[0] == input_channels)) {
+                if (ValidateShape(input, 1)) {
                     var res = THSNN_Conv1d_forward(handle, input.Handle);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
@@ -67,8 +83,6 @@ namespace TorchSharp
                     ConditionallyRegisterParameter("weight", value);
                 }
             }
-
-            private long input_channels;
         }
     }
 

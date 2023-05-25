@@ -326,7 +326,7 @@ namespace TorchSharp
         {
             foreach (var device in TestUtils.AvailableDevices()) {
                 {
-                    var ones = torch.ones(new long[] { 16, 3, 28, 28 }, device: device);
+                    using var ones = torch.ones(new long[] { 16, 3, 28, 28 }, device: device);
                     using (var pool = FrozenBatchNorm2d(3, device: device)) {
                         var pooled = pool.call(ones);
                         Assert.Equal(ones.shape, pooled.shape);
@@ -335,7 +335,7 @@ namespace TorchSharp
                     }
                 }
                 {
-                    var ones = torch.ones(new long[] { 1, 3, 28, 28 }, device: device);
+                    using var ones = torch.ones(new long[] { 1, 3, 28, 28 }, device: device);
                     using (var pool = FrozenBatchNorm2d(3, device: device)) {
                         var pooled = pool.call(ones);
                         Assert.Equal(ones.shape, pooled.shape);
@@ -388,7 +388,7 @@ namespace TorchSharp
                 () => Assert.Equal("fc", names[10])
             );
 
-            var input = torch.randn(8, 3, 416, 416);
+            using var input = torch.randn(8, 3, 416, 416);
             var output = model.call(input);
 
             Assert.Equal(new long[] { 8, 1000 }, output.shape);
@@ -416,8 +416,8 @@ namespace TorchSharp
                 () => Assert.Equal("fc", names[10])
             );
 
-            var input = torch.randn(8, 3, 416, 416);
-            var output = model.call(input);
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
 
             Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
@@ -446,19 +446,21 @@ namespace TorchSharp
                     () => Assert.Equal("fc", names[10])
                 );
 
-                var output = model.call(input);
+                using var output = model.call(input);
                 Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
             {
                 using var model = resnext50_32x4d();
-                var output = model.call(input);
+                using var output = model.call(input);
                 Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
+#if false // Requires more than 16GB of physical memory to run.
             {
                 using var model = wide_resnet50_2();
                 var output = model.call(input);
                 Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
+#endif
         }
 
         [Fact]
@@ -485,7 +487,7 @@ namespace TorchSharp
                     () => Assert.Equal("fc", names[10])
                 );
 
-                var output = model.call(input);
+                using var output = model.call(input);
                 Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
         }
@@ -500,12 +502,12 @@ namespace TorchSharp
             using var input = torch.randn(8, 3, 416, 416);
             {
                 using var model = resnext101_32x8d();
-                var output = model.call(input);
+                using var output = model.call(input);
                 Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
             {
                 using var model = resnext101_64x4d();
-                var output = model.call(input);
+                using var output = model.call(input);
                 Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
 #if false // Requires more than 16GB of physical memory to run.
@@ -539,8 +541,8 @@ namespace TorchSharp
                 () => Assert.Equal("fc", names[10])
             );
 
-            var input = torch.randn(8, 3, 416, 416);
-            var output = model.call(input);
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
 
             Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
@@ -558,8 +560,8 @@ namespace TorchSharp
                 () => Assert.Equal("classifier", names[2])
             );
 
-            var input = torch.randn(8, 3, 416, 416);
-            var output = model.call(input);
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
 
             Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
@@ -720,8 +722,8 @@ namespace TorchSharp
                 () => Assert.Equal("fc", names[21])
             );
 
-            var input = torch.randn(8, 3, 416, 416);
-            var output = model.call(input);
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
 
             Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
@@ -755,8 +757,8 @@ namespace TorchSharp
                 () => Assert.Equal("fc", names[18])
             );
 
-            var input = torch.randn(8, 3, 416, 416);
-            var output = model.call(input);
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
 
             Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
@@ -773,8 +775,8 @@ namespace TorchSharp
                 () => Assert.Equal("features", names[1])
             );
 
-            var input = torch.randn(8, 3, 416, 416);
-            var output = model.call(input);
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
 
             Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
@@ -792,8 +794,8 @@ namespace TorchSharp
                     () => Assert.Equal("features", names[2])
                 );
 
-                var input = torch.randn(8, 3, 416, 416);
-                var output = model.call(input);
+                using var input = torch.randn(8, 3, 416, 416);
+                using var output = model.call(input);
 
                 Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
@@ -808,8 +810,8 @@ namespace TorchSharp
                     () => Assert.Equal("features", names[2])
                 );
 
-                var input = torch.randn(8, 3, 416, 416);
-                var output = model.call(input);
+                using var input = torch.randn(8, 3, 416, 416);
+                using var output = model.call(input);
 
                 Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
@@ -827,7 +829,7 @@ namespace TorchSharp
 
             torchvision.io.DefaultImager = new torchvision.io.SkiaImager(100);
 
-            var img = torchvision.io.read_image(fileName);
+            using var img = torchvision.io.read_image(fileName);
             Assert.NotNull(img);
             Assert.Equal(uint8, img.dtype);
             //Assert.Equal(new long[] { 3, 508, 728 }, img.shape);
@@ -835,12 +837,12 @@ namespace TorchSharp
             torchvision.io.write_image(img, outName1, torchvision.ImageFormat.Jpeg);
             Assert.True(System.IO.File.Exists(outName1));
 
-            var img2 = torchvision.io.read_image(outName1);
+            using var img2 = torchvision.io.read_image(outName1);
             Assert.NotNull(img2);
             Assert.Equal(uint8, img2.dtype);
             Assert.Equal(img.shape, img2.shape);
 
-            var grey = torchvision.transforms.functional.rgb_to_grayscale(img);
+            using var grey = torchvision.transforms.functional.rgb_to_grayscale(img);
             Assert.Equal(float32, grey.dtype);
 
             torchvision.io.write_jpeg(torchvision.transforms.functional.convert_image_dtype(grey, ScalarType.Byte), outName2);
