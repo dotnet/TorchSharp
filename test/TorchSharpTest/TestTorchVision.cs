@@ -326,7 +326,7 @@ namespace TorchSharp
         {
             foreach (var device in TestUtils.AvailableDevices()) {
                 {
-                    var ones = torch.ones(new long[] { 16, 3, 28, 28 }, device: device);
+                    using var ones = torch.ones(new long[] { 16, 3, 28, 28 }, device: device);
                     using (var pool = FrozenBatchNorm2d(3, device: device)) {
                         var pooled = pool.call(ones);
                         Assert.Equal(ones.shape, pooled.shape);
@@ -335,7 +335,7 @@ namespace TorchSharp
                     }
                 }
                 {
-                    var ones = torch.ones(new long[] { 1, 3, 28, 28 }, device: device);
+                    using var ones = torch.ones(new long[] { 1, 3, 28, 28 }, device: device);
                     using (var pool = FrozenBatchNorm2d(3, device: device)) {
                         var pooled = pool.call(ones);
                         Assert.Equal(ones.shape, pooled.shape);
@@ -387,13 +387,18 @@ namespace TorchSharp
                 () => Assert.Equal("flatten", names[9]),
                 () => Assert.Equal("fc", names[10])
             );
+
+            using var input = torch.randn(8, 3, 416, 416);
+            var output = model.call(input);
+
+            Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
 
         [Fact]
         public void TestResNet34()
         {
             using var model = resnet34();
-            var sd = model.state_dict();
+            var sd = model.state_dict();            
             Assert.Equal(218, sd.Count);
 
             var names = model.named_children().Select(nm => nm.name).ToArray();
@@ -410,52 +415,108 @@ namespace TorchSharp
                 () => Assert.Equal("flatten", names[9]),
                 () => Assert.Equal("fc", names[10])
             );
+
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
+
+            Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
 
         [Fact]
         public void TestResNet50()
         {
-            using var model = resnet50();
-            var sd = model.state_dict();
-            Assert.Equal(320, sd.Count);
+            using var input = torch.randn(8, 3, 416, 416);
+            {
+                using var model = resnet50();
+                var sd = model.state_dict();
+                Assert.Equal(320, sd.Count);
 
-            var names = model.named_children().Select(nm => nm.name).ToArray();
-            Assert.Multiple(
-                () => Assert.Equal("conv1", names[0]),
-                () => Assert.Equal("bn1", names[1]),
-                () => Assert.Equal("relu", names[2]),
-                () => Assert.Equal("maxpool", names[3]),
-                () => Assert.Equal("layer1", names[4]),
-                () => Assert.Equal("layer2", names[5]),
-                () => Assert.Equal("layer3", names[6]),
-                () => Assert.Equal("layer4", names[7]),
-                () => Assert.Equal("avgpool", names[8]),
-                () => Assert.Equal("flatten", names[9]),
-                () => Assert.Equal("fc", names[10])
-            );
+                var names = model.named_children().Select(nm => nm.name).ToArray();
+                Assert.Multiple(
+                    () => Assert.Equal("conv1", names[0]),
+                    () => Assert.Equal("bn1", names[1]),
+                    () => Assert.Equal("relu", names[2]),
+                    () => Assert.Equal("maxpool", names[3]),
+                    () => Assert.Equal("layer1", names[4]),
+                    () => Assert.Equal("layer2", names[5]),
+                    () => Assert.Equal("layer3", names[6]),
+                    () => Assert.Equal("layer4", names[7]),
+                    () => Assert.Equal("avgpool", names[8]),
+                    () => Assert.Equal("flatten", names[9]),
+                    () => Assert.Equal("fc", names[10])
+                );
+
+                using var output = model.call(input);
+                Assert.Equal(new long[] { 8, 1000 }, output.shape);
+            }
+            {
+                using var model = resnext50_32x4d();
+                using var output = model.call(input);
+                Assert.Equal(new long[] { 8, 1000 }, output.shape);
+            }
+#if false // Requires more than 16GB of physical memory to run.
+            {
+                using var model = wide_resnet50_2();
+                var output = model.call(input);
+                Assert.Equal(new long[] { 8, 1000 }, output.shape);
+            }
+#endif
         }
 
         [Fact]
         public void TestResNet101()
         {
-            using var model = resnet101();
-            var sd = model.state_dict();
-            Assert.Equal(626, sd.Count);
+            using var input = torch.randn(8, 3, 416, 416);
+            {
+                using var model = resnet101();
+                var sd = model.state_dict();
+                Assert.Equal(626, sd.Count);
 
-            var names = model.named_children().Select(nm => nm.name).ToArray();
-            Assert.Multiple(
-                () => Assert.Equal("conv1", names[0]),
-                () => Assert.Equal("bn1", names[1]),
-                () => Assert.Equal("relu", names[2]),
-                () => Assert.Equal("maxpool", names[3]),
-                () => Assert.Equal("layer1", names[4]),
-                () => Assert.Equal("layer2", names[5]),
-                () => Assert.Equal("layer3", names[6]),
-                () => Assert.Equal("layer4", names[7]),
-                () => Assert.Equal("avgpool", names[8]),
-                () => Assert.Equal("flatten", names[9]),
-                () => Assert.Equal("fc", names[10])
-            );
+                var names = model.named_children().Select(nm => nm.name).ToArray();
+                Assert.Multiple(
+                    () => Assert.Equal("conv1", names[0]),
+                    () => Assert.Equal("bn1", names[1]),
+                    () => Assert.Equal("relu", names[2]),
+                    () => Assert.Equal("maxpool", names[3]),
+                    () => Assert.Equal("layer1", names[4]),
+                    () => Assert.Equal("layer2", names[5]),
+                    () => Assert.Equal("layer3", names[6]),
+                    () => Assert.Equal("layer4", names[7]),
+                    () => Assert.Equal("avgpool", names[8]),
+                    () => Assert.Equal("flatten", names[9]),
+                    () => Assert.Equal("fc", names[10])
+                );
+
+                using var output = model.call(input);
+                Assert.Equal(new long[] { 8, 1000 }, output.shape);
+            }
+        }
+
+#if DEBUG
+        [Fact(Skip = "The test takes too long to run.")]
+#else
+        [Fact]
+#endif
+        public void TestResNet101Alt()
+        {
+            using var input = torch.randn(8, 3, 416, 416);
+            {
+                using var model = resnext101_32x8d();
+                using var output = model.call(input);
+                Assert.Equal(new long[] { 8, 1000 }, output.shape);
+            }
+            {
+                using var model = resnext101_64x4d();
+                using var output = model.call(input);
+                Assert.Equal(new long[] { 8, 1000 }, output.shape);
+            }
+#if false // Requires more than 16GB of physical memory to run.
+            {
+                using var model = wide_resnet101_2();
+                var output = model.call(input);
+                Assert.Equal(new long[] { 8, 1000 }, output.shape);
+            }
+#endif
         }
 
         [Fact]
@@ -479,6 +540,11 @@ namespace TorchSharp
                 () => Assert.Equal("flatten", names[9]),
                 () => Assert.Equal("fc", names[10])
             );
+
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
+
+            Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
 
         [Fact]
@@ -493,6 +559,11 @@ namespace TorchSharp
                 () => Assert.Equal("avgpool", names[1]),
                 () => Assert.Equal("classifier", names[2])
             );
+
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
+
+            Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
 
 #if DEBUG
@@ -650,6 +721,11 @@ namespace TorchSharp
                 () => Assert.Equal("dropout", names[20]),
                 () => Assert.Equal("fc", names[21])
             );
+
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
+
+            Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
 
         [Fact]
@@ -680,6 +756,11 @@ namespace TorchSharp
                 () => Assert.Equal("dropout", names[17]),
                 () => Assert.Equal("fc", names[18])
             );
+
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
+
+            Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
 
         [Fact]
@@ -693,6 +774,11 @@ namespace TorchSharp
                 () => Assert.Equal("classifier", names[0]),
                 () => Assert.Equal("features", names[1])
             );
+
+            using var input = torch.randn(8, 3, 416, 416);
+            using var output = model.call(input);
+
+            Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
 
         [Fact]
@@ -707,6 +793,11 @@ namespace TorchSharp
                     () => Assert.Equal("classifier", names[1]),
                     () => Assert.Equal("features", names[2])
                 );
+
+                using var input = torch.randn(8, 3, 416, 416);
+                using var output = model.call(input);
+
+                Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
 
             using (var model = mobilenet_v3_small()) {
@@ -718,6 +809,11 @@ namespace TorchSharp
                     () => Assert.Equal("classifier", names[1]),
                     () => Assert.Equal("features", names[2])
                 );
+
+                using var input = torch.randn(8, 3, 416, 416);
+                using var output = model.call(input);
+
+                Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
         }
 
@@ -733,7 +829,7 @@ namespace TorchSharp
 
             torchvision.io.DefaultImager = new torchvision.io.SkiaImager(100);
 
-            var img = torchvision.io.read_image(fileName);
+            using var img = torchvision.io.read_image(fileName);
             Assert.NotNull(img);
             Assert.Equal(uint8, img.dtype);
             //Assert.Equal(new long[] { 3, 508, 728 }, img.shape);
@@ -741,12 +837,12 @@ namespace TorchSharp
             torchvision.io.write_image(img, outName1, torchvision.ImageFormat.Jpeg);
             Assert.True(System.IO.File.Exists(outName1));
 
-            var img2 = torchvision.io.read_image(outName1);
+            using var img2 = torchvision.io.read_image(outName1);
             Assert.NotNull(img2);
             Assert.Equal(uint8, img2.dtype);
             Assert.Equal(img.shape, img2.shape);
 
-            var grey = torchvision.transforms.functional.rgb_to_grayscale(img);
+            using var grey = torchvision.transforms.functional.rgb_to_grayscale(img);
             Assert.Equal(float32, grey.dtype);
 
             torchvision.io.write_jpeg(torchvision.transforms.functional.convert_image_dtype(grey, ScalarType.Byte), outName2);
