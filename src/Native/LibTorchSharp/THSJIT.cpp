@@ -6,11 +6,11 @@ JITModule THSJIT_load(const char* filename, int64_t device, int64_t index)
     c10::DeviceType dev = c10::kCPU;
     if (device == 1)
         dev = c10::kCUDA;
- 
+
     CATCH(
         auto res = torch::jit::load(filename, torch::Device(dev, index));
-        auto copy = new torch::jit::Module(res);
-        return new std::shared_ptr<torch::jit::Module>(copy);
+    auto copy = new torch::jit::Module(res);
+    return new std::shared_ptr<torch::jit::Module>(copy);
     );
 
     return nullptr;
@@ -159,50 +159,52 @@ JITMethod THSJIT_Module_get_method(const JITModule module, const char* name)
     return new std::shared_ptr<torch::jit::Method>(copy);
 }
 
-void ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
+TensorOrScalar* ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t* idx)
 {
     // TypeCode:
-//
-// 0 -- Not supported
-// 1 -- Single tensor
-// 2 -- Tuple of tensors
-// 3 -- List of tensors
-// 4 -- Single scalar
-// 5 -- Scalar tuple
-// 6 -- List of scalars
-// 7 -- List of scalars and tensors
-// 8 -- None / null
+    //
+    // 0 -- Not supported
+    // 1 -- Single tensor
+    // 2 -- Tuple of tensors
+    // 3 -- List of tensors
+    // 4 -- Single scalar
+    // 5 -- Scalar tuple
+    // 6 -- List of scalars
+    // 7 -- List of scalars and tensors
+    // 8 -- None / null
+    // 9 -- List of anything
+    // 10 -- Tuple of anything
 
     if (result.isNone())
     {
-        TensorOrScalar* output = allocator(1);
-        output[0] = { 8, (ptrdiff_t)0 };
+        TensorOrScalar* output = allocator(idx[0]++, 1);
+        output[0] = { 8, -1, (ptrdiff_t)0 };
         *typeCode = 8;
-        return;
+        return output;
     }
 
     if (result.isScalar())
     {
-        TensorOrScalar* output = allocator(1);
-        output[0] = { 0, (ptrdiff_t)new torch::Scalar(result.toScalar()) };
+        TensorOrScalar* output = allocator(idx[0]++, 1);
+        output[0] = { 0, -1, (ptrdiff_t)new torch::Scalar(result.toScalar()) };
         *typeCode = 4;
-        return;
+        return output;
     }
 
     if (result.isTensor()) {
-        TensorOrScalar* output = allocator(1);
-        output[0] = { 0, (ptrdiff_t)ResultTensor(result.toTensor()) };
+        TensorOrScalar* output = allocator(idx[0]++, 1);
+        output[0] = { 0, -1, (ptrdiff_t)ResultTensor(result.toTensor()) };
         *typeCode = 1;
-        return;
+        return output;
     }
 
     if (result.isTensorList()) {
         auto list = result.toTensorList();
         *typeCode = 3;
-        TensorOrScalar* output = allocator(list.size());
+        TensorOrScalar* output = allocator(idx[0]++, list.size());
         for (size_t i = 0; i < list.size(); i++)
-            output[i] = { 0, (ptrdiff_t)ResultTensor(list[i]) };
-        return;
+            output[i] = { 0, -1, (ptrdiff_t)ResultTensor(list[i]) };
+        return output;
     }
 
     if (result.isList())
@@ -210,9 +212,10 @@ void ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(size_t length
         int foundTensor = 0;
         int foundScalar = 0;
         int foundNull = 0;
+        int foundListOrTuple = 0;
 
         auto list = result.toList();
-        TensorOrScalar* output = allocator(list.size());
+        TensorOrScalar* output = allocator(idx[0]++, list.size());
 
         for (int i = 0; i < list.size(); ++i)
         {
@@ -221,40 +224,52 @@ void ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(size_t length
 
             if (value.isTensor())
             {
-                output[i] = { 0, (ptrdiff_t)ResultTensor(value.toTensor()) };
+                output[i] = { 0, -1, (ptrdiff_t)ResultTensor(value.toTensor()) };
                 foundTensor += 1;
                 continue;
             }
             if (value.isScalar())
             {
-                output[i] = { 4, (ptrdiff_t)new torch::Scalar(value.toScalar()) };
+                output[i] = { 4, -1, (ptrdiff_t)new torch::Scalar(value.toScalar()) };
                 foundScalar += 1;
                 continue;
             }
             if (value.isNone())
             {
-                output[i] = { 8, (ptrdiff_t)0 };
+                output[i] = { 8, -1, (ptrdiff_t)0 };
                 foundNull += 1;
                 continue;
             }
-            *typeCode = 0;
-            return;
+            else {
+                int8_t nestedTC = 0;
+                int64_t arrIdx = idx[0];
+                auto nested = ReturnHelper(value, allocator, &nestedTC, idx);
+                foundListOrTuple += 1;
+                output[i] = { nestedTC, arrIdx, (ptrdiff_t)nested };
+            }
         }
 
-        *typeCode = 7;
-        if (foundScalar == 0 && foundNull == 0)
-            *typeCode = 3;
-        if (foundTensor == 0 && foundNull == 0)
-            *typeCode = 6;
+        if (foundListOrTuple > 0) {
+            *typeCode = 9;
+        }
+        else {
+            *typeCode = 7;
+            if (foundScalar == 0 && foundNull == 0)
+                *typeCode = 3;
+            if (foundTensor == 0 && foundNull == 0)
+                *typeCode = 6;
+        }
+        return output;
     }
 
     if (result.isTuple()) {
         int foundTensor = 0;
         int foundScalar = 0;
         int foundNull = 0;
+        int foundListOrTuple = 0;
 
         auto& list = result.toTuple()->elements();
-        TensorOrScalar* output = allocator(list.size());
+        TensorOrScalar* output = allocator(idx[0]++, list.size());
 
         for (int i = 0; i < list.size(); ++i)
         {
@@ -263,36 +278,94 @@ void ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(size_t length
 
             if (value.isTensor())
             {
-                output[i] = { 0, (ptrdiff_t)ResultTensor(value.toTensor()) };
+                output[i] = { 0, -1, (ptrdiff_t)ResultTensor(value.toTensor()) };
                 foundTensor += 1;
                 continue;
             }
             if (value.isScalar())
             {
-                output[i] = { 4, (ptrdiff_t)new torch::Scalar(value.toScalar()) };
+                output[i] = { 4, -1, (ptrdiff_t)new torch::Scalar(value.toScalar()) };
                 foundScalar += 1;
                 continue;
             }
             if (value.isNone())
             {
-                output[i] = { 8, (ptrdiff_t)0 };
+                output[i] = { 8, -1, (ptrdiff_t)0 };
                 foundNull += 1;
                 continue;
             }
-            *typeCode = 0;
-            return;
+            else {
+                int8_t nestedTC = 0;
+                int64_t arrIdx = idx[0];
+                auto nested = ReturnHelper(value, allocator, &nestedTC, idx);
+                foundListOrTuple += 1;
+                output[i] = { nestedTC, arrIdx, (ptrdiff_t)nested };
+            }
         }
 
-        *typeCode = 7;
-        if (foundScalar == 0 && foundNull == 0)
-            *typeCode = 2;
-        if (foundTensor == 0 && foundNull == 0)
-            *typeCode = 5;
+        *typeCode = 10;
+        if (foundListOrTuple == 0) {
+            if (foundScalar == 0 && foundNull == 0)
+                *typeCode = 2;
+            if (foundTensor == 0 && foundNull == 0)
+                *typeCode = 5;
+        }
+
+        return output;
     }
+
+    *typeCode = 0;
+    return nullptr;
+}
+
+c10::impl::GenericList toScalarValueList(const TensorOrScalar* tensorPtrs, const int length)
+{
+    auto list = c10::impl::GenericList(c10::ScalarTypeType::get());
+
+    if (tensorPtrs != nullptr) {
+        for (int i = 0; i < length; i++)
+        {
+            switch (tensorPtrs[i].TypeCode) {
+            case 1:
+                list.push_back(*(torch::Scalar*)(tensorPtrs[i].Handle));
+                break;
+            }
+        }
+    }
+
+    return list;
+}
+
+c10::impl::GenericList toTensorValueList(const TensorOrScalar* tensorPtrs, const int length)
+{
+    auto list = c10::impl::GenericList(c10::TensorType::get());
+
+    if (tensorPtrs != nullptr) {
+        for (int i = 0; i < length; i++)
+        {
+            switch (tensorPtrs[i].TypeCode) {
+            case 0:
+                list.push_back(*(torch::Tensor*)(tensorPtrs[i].Handle));
+                break;
+            }
+        }
+    }
+
+    return list;
 }
 
 std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int length)
 {
+    // TypeCode:
+    //
+    // 0 -- Single tensor
+    // 1 -- Single scalar
+    // 2 -- Boolean
+    // 3 -- Int32
+    // 5 -- List of tensors
+    // 6 -- List of scalars
+    // 8 -- None / null
+
     std::vector<c10::IValue> tensors;
 
     if (tensorPtrs != nullptr) {
@@ -311,6 +384,18 @@ std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int le
             case 3:
                 tensors.push_back((int)tensorPtrs[i].Handle);
                 break;
+            case 5:
+            {
+                auto ts = toTensorValueList(reinterpret_cast<const TensorOrScalar*>(tensorPtrs[i].Handle), (int)tensorPtrs[i].ArrayIndex);
+                tensors.push_back(ts);
+                break;
+            }
+            case 6:
+            {
+                auto ts = toScalarValueList(reinterpret_cast<const TensorOrScalar*>(tensorPtrs[i].Handle), (int)tensorPtrs[i].ArrayIndex);
+                tensors.push_back(ts);
+                break;
+            }
             //case 4:
             //    tensors.push_back(c10::IValue(tensorPtrs[i].Handle)); // Clang on MacOS doesn't like. Pass as Scalar from .NET.
             //    break;
@@ -323,37 +408,37 @@ std::vector<c10::IValue> toIValue(const TensorOrScalar* tensorPtrs, const int le
     return tensors;
 }
 
-void THSJIT_Module_forward(const JITModule module, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
+void THSJIT_Module_forward(const JITModule module, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx)
 {
     *typeCode = 0;
 
     CATCH(
         auto result = (*module)->forward(toIValue(tensorPtrs, length));
-        ReturnHelper(result, allocator, typeCode);
+    ReturnHelper(result, allocator, typeCode, &idx);
     )
 }
 
-void THSJIT_Module_invoke(const JITModule module, const char* name, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
+void THSJIT_Module_invoke(const JITModule module, const char* name, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx)
 {
     *typeCode = 0;
 
     CATCH(
         auto method = (*module)->get_method(name);
-        auto result = method(toIValue(tensorPtrs, length));
-        ReturnHelper(result, allocator, typeCode);
+    auto result = method(toIValue(tensorPtrs, length));
+    ReturnHelper(result, allocator, typeCode, &idx);
     )
 }
 
-void THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode)
+void THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx)
 {
     *typeCode = 0;
 
-    CATCH(
-        auto args = toIValue(tensorPtrs, length);
-        auto func = (*module)->find_function(method);
-        auto result = (*func)(args);
-        ReturnHelper(result, allocator, typeCode);
-    )
+    //CATCH(
+    auto args = toIValue(tensorPtrs, length);
+    auto func = (*module)->find_function(method);
+    auto result = (*func)(args);
+    ReturnHelper(result, allocator, typeCode, &idx);
+    //)
 }
 
 void THSJIT_Module_dispose(const JITModule module)

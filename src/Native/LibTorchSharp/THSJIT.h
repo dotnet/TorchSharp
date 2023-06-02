@@ -19,6 +19,7 @@ enum TypeKind : int8_t {
 struct TensorOrScalar
 {
     int64_t TypeCode;
+    int64_t ArrayIndex;
     ptrdiff_t Handle;
 };
 
@@ -33,10 +34,10 @@ EXPORT_API(void) THSJIT_CompilationUnit_dispose(const JITCompilationUnit module)
 EXPORT_API(int) THSJIT_Module_num_inputs(const JITModule method);
 EXPORT_API(int) THSJIT_Module_num_outputs(const JITModule method);
 
-EXPORT_API(void) THSJIT_Module_forward(const JITModule module, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode);
-EXPORT_API(void) THSJIT_Module_invoke(const JITModule module, const char* name, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode);
+EXPORT_API(void) THSJIT_Module_forward(const JITModule module, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx);
+EXPORT_API(void) THSJIT_Module_invoke(const JITModule module, const char* name, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx);
 
-EXPORT_API(void) THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(size_t length), int8_t* typeCode);
+EXPORT_API(void) THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* method, const TensorOrScalar* tensorPtrs, const int length, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t idx);
 
 EXPORT_API(int) THSJIT_Module_is_training(JITModule module);
 EXPORT_API(void) THSJIT_Module_train(JITModule module, bool on);
