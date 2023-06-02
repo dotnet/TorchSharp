@@ -414,7 +414,7 @@ void THSJIT_Module_forward(const JITModule module, const TensorOrScalar* tensorP
 
     CATCH(
         auto result = (*module)->forward(toIValue(tensorPtrs, length));
-    ReturnHelper(result, allocator, typeCode, &idx);
+        ReturnHelper(result, allocator, typeCode, &idx);
     )
 }
 
@@ -424,8 +424,8 @@ void THSJIT_Module_invoke(const JITModule module, const char* name, const Tensor
 
     CATCH(
         auto method = (*module)->get_method(name);
-    auto result = method(toIValue(tensorPtrs, length));
-    ReturnHelper(result, allocator, typeCode, &idx);
+        auto result = method(toIValue(tensorPtrs, length));
+        ReturnHelper(result, allocator, typeCode, &idx);
     )
 }
 
@@ -433,12 +433,12 @@ void THSJIT_CompilationUnit_Invoke(const JITCompilationUnit module, const char* 
 {
     *typeCode = 0;
 
-    //CATCH(
-    auto args = toIValue(tensorPtrs, length);
-    auto func = (*module)->find_function(method);
-    auto result = (*func)(args);
-    ReturnHelper(result, allocator, typeCode, &idx);
-    //)
+    CATCH(
+        auto args = toIValue(tensorPtrs, length);
+        auto func = (*module)->find_function(method);
+        auto result = (*func)(args);
+        ReturnHelper(result, allocator, typeCode, &idx);
+    )
 }
 
 void THSJIT_Module_dispose(const JITModule module)
