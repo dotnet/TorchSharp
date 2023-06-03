@@ -68,17 +68,17 @@ namespace TorchSharp
 
             public override long Count => this.attr is null ? 0 : this.attr.shape[0];
 
-            internal void _load()
+            internal void Load()
             {
-                if (!this._check_integrity()) {
+                if (!this.CheckIntegrity()) {
                     throw new InvalidDataException("Dataset not found or corrupted. You can use download=True to download it");
                 }
 
-                var splits = this._load_csv("list_eval_partition.txt");
-                var identity = this._load_csv("identity_CelebA.txt");
-                var bbox = this._load_csv("list_bbox_celeba.txt", header: 1);
-                var landmarks_align = this._load_csv("list_landmarks_align_celeba.txt", header: 1);
-                var attr = this._load_csv("list_attr_celeba.txt", header: 1);
+                var splits = this.LoadCsv("list_eval_partition.txt");
+                var identity = this.LoadCsv("identity_CelebA.txt");
+                var bbox = this.LoadCsv("list_bbox_celeba.txt", header: 1);
+                var landmarks_align = this.LoadCsv("list_landmarks_align_celeba.txt", header: 1);
+                var attr = this.LoadCsv("list_attr_celeba.txt", header: 1);
 
                 if (this.split == CelebADatasetSplit.All) {
                     this.filename = splits.index;
@@ -107,7 +107,7 @@ namespace TorchSharp
                 this.attr_names = attr.header;
             }
 
-            private CSV _load_csv(string filename, int? header = null)
+            private CSV LoadCsv(string filename, int? header = null)
             {
                 IList<string[]> data = (
                     File.ReadAllLines(Path.Combine(this.root, base_folder, filename))
@@ -177,14 +177,14 @@ namespace TorchSharp
                 return result;
             }
 
-            private bool _check_integrity()
+            private bool CheckIntegrity()
             {
                 foreach (var (_, md5, filename) in file_list) {
                     var fpath = Path.Combine(this.root, base_folder, filename);
                     var ext = Path.GetExtension(filename);
                     // Allow original archive to be deleted (zip and 7z)
                     // Only need the extracted images
-                    if (ext != ".zip" && ext != ".7z" && !check_integrity(fpath, md5)) {
+                    if (ext != ".zip" && ext != ".7z" && !torchvision.datasets.utils.CheckIntegrity(fpath, md5)) {
                         return false;
                     }
                 }
@@ -195,7 +195,7 @@ namespace TorchSharp
 
             public void download()
             {
-                if (this._check_integrity()) {
+                if (this.CheckIntegrity()) {
                     Console.WriteLine("Files already downloaded and verified");
                     return;
                 }
@@ -269,7 +269,7 @@ namespace TorchSharp
                 if (download) {
                     dataset.download();
                 }
-                dataset._load();
+                dataset.Load();
                 return dataset;
             }
         }

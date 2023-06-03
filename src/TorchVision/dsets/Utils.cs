@@ -32,7 +32,7 @@ namespace TorchSharp
         {
             public static partial class utils
             {
-                private static async Task _save_response_content_async(
+                private static async Task SaveResponseContentAsync(
                     byte[] head,
                     Stream content,
                     string destination,
@@ -54,7 +54,7 @@ namespace TorchSharp
                     }
                 }
 
-                internal static string calculate_md5(string fpath)
+                private static string CalculateMD5(string fpath)
                 {
                     MD5 md5 = MD5.Create();
                     byte[] hash;
@@ -64,12 +64,12 @@ namespace TorchSharp
                     return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
                 }
 
-                internal static bool check_md5(string fpath, string md5)
+                private static bool CheckMD5(string fpath, string md5)
                 {
-                    return md5 == calculate_md5(fpath);
+                    return md5 == CalculateMD5(fpath);
                 }
 
-                internal static bool check_integrity(string fpath, string? md5 = null)
+                internal static bool CheckIntegrity(string fpath, string? md5 = null)
                 {
                     if (!File.Exists(fpath)) {
                         return false;
@@ -77,10 +77,10 @@ namespace TorchSharp
                     if (md5 is null) {
                         return true;
                     }
-                    return check_md5(fpath, md5);
+                    return CheckMD5(fpath, md5);
                 }
 
-                private static async Task<(string, byte[], Stream)> _extract_gdrive_api_response_async(
+                private static async Task<(string, byte[], Stream)> ExtractGdriveApiResponseAsync(
                     HttpResponseMessage response,
                     int chunk_size = 32 * 1024,
                     CancellationToken cancellationToken = default)
@@ -124,7 +124,15 @@ namespace TorchSharp
                     }
                 }
 
-                internal static async Task download_file_from_google_drive_async(
+                /// <summary>
+                /// Download a Google Drive file and place it in root.
+                /// </summary>
+                /// <param name="file_id">id of file to be downloaded</param>
+                /// <param name="root">Directory to place downloaded file in</param>
+                /// <param name="filename">Name to save the file under. If null, use the id of the file.</param>
+                /// <param name="md5">MD5 checksum of the download. If null, do not check</param>
+                /// <param name="cancellationToken">A cancellation token</param>
+                public static async Task download_file_from_google_drive_async(
                     string file_id, string root, string? filename = null, string? md5 = null,
                     CancellationToken cancellationToken = default)
                 {
@@ -136,7 +144,7 @@ namespace TorchSharp
 
                     Directory.CreateDirectory(root);
 
-                    if (check_integrity(fpath, md5)) {
+                    if (CheckIntegrity(fpath, md5)) {
                         if (md5 is null) {
                             Console.WriteLine($"Using downloaded file: {fpath}");
                         } else {
@@ -173,7 +181,7 @@ namespace TorchSharp
                             byte[]? head = null;
                             Stream? stream = null;
                             if (string.IsNullOrEmpty(token)) {
-                                (api_response, head, stream) = await _extract_gdrive_api_response_async(response, cancellationToken: cancellationToken);
+                                (api_response, head, stream) = await ExtractGdriveApiResponseAsync(response, cancellationToken: cancellationToken);
                                 token = api_response == "Virus scan warning" ? "t" : string.Empty;
                             }
 
@@ -183,7 +191,7 @@ namespace TorchSharp
                                 response.Dispose();
                                 response = null;
                                 response = await httpClient.GetAsync(query_url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-                                (api_response, head, stream) = await _extract_gdrive_api_response_async(response);
+                                (api_response, head, stream) = await ExtractGdriveApiResponseAsync(response);
                             }
 
                             if (head == null || stream == null) {
@@ -198,7 +206,7 @@ namespace TorchSharp
                                     "and can only be overcome by trying again later.");
                             }
 
-                            await _save_response_content_async(head, stream, fpath, cancellationToken: cancellationToken);
+                            await SaveResponseContentAsync(head, stream, fpath, cancellationToken: cancellationToken);
                         } finally {
                             if (response != null) {
                                 response.Dispose();
@@ -207,7 +215,7 @@ namespace TorchSharp
 
                         // In case we deal with an unhandled GDrive API response, the file should be smaller than 10kB and contain only text
                         if (new FileInfo(fpath).Length < 10 * 1024) {
-                            string text = _ReadAllTextAsync(fpath);
+                            string text = ReadAllTextAsync(fpath);
                             // Regular expression to detect HTML. Copied from https://stackoverflow.com/a/70585604
                             if (Regex.Match(text, @"</?\s*[a-z-][^>]*\s*>|(&(?:[\w\d]+|#\d+|#x[a-f\d]+);)").Success) {
                                 Console.WriteLine(
@@ -219,7 +227,7 @@ namespace TorchSharp
                             }
                         }
 
-                        if (md5 is not null && !check_md5(fpath, md5)) {
+                        if (md5 is not null && !CheckMD5(fpath, md5)) {
                             throw new InvalidDataException(
                                 $"The MD5 checksum of the download file {fpath} does not match the one on record." +
                                 $"Please delete the file and try again. " +
@@ -228,7 +236,7 @@ namespace TorchSharp
                     }
                 }
 
-                private static string _ReadAllTextAsync(string path, CancellationToken cancellationToken = default)
+                private static string ReadAllTextAsync(string path, CancellationToken cancellationToken = default)
                 {
                     var memory = new MemoryStream();
                     using (var stream = File.OpenRead(path)) {
@@ -237,7 +245,7 @@ namespace TorchSharp
                     return Encoding.ASCII.GetString(memory.GetBuffer());
                 }
 
-                internal static void _extract_tar(string from_path, string to_path)
+                private static void ExtractTar(string from_path, string to_path)
                 {
                     using (var fileStream = File.OpenRead(from_path)) {
                         using (var inputStream = new GZipInputStream(fileStream)) {
@@ -248,12 +256,24 @@ namespace TorchSharp
                     }
                 }
 
-                internal static void _extract_zip(string from_path, string to_path)
+                private static void ExtractZip(string from_path, string to_path)
                 {
                     ZipFile.ExtractToDirectory(from_path, to_path);
                 }
 
-                internal static string extract_archive(string from_path, string? to_path = null, bool remove_finished = false)
+                /// <summary>
+                /// Extract an archive.
+                ///
+                /// The archive type and a possible compression is automatically detected from the file name.If the file is compressed
+                /// but not an archive the call is dispatched to :func:`decompress`.
+                /// </summary>
+                /// <param name="from_path">Path to the file to be extracted.</param>
+                /// <param name="to_path"> Path to the directory the file will be extracted to.If omitted, the directory of the file is used.</param>
+                /// <param name="remove_finished">If ``True``, remove the file after the extraction.</param>
+                /// <returns>Path to the directory the file was extracted to.</returns>
+                /// <exception cref="InvalidDataException"></exception>
+                /// <exception cref="ArgumentException"></exception>
+                public static string extract_archive(string from_path, string? to_path = null, bool remove_finished = false)
                 {
                     if (to_path is null) {
                         to_path = Path.GetDirectoryName(from_path);
@@ -263,10 +283,10 @@ namespace TorchSharp
                     }
 
                     if (Path.GetExtension(from_path) == ".zip") {
-                        _extract_zip(from_path, to_path);
+                        ExtractZip(from_path, to_path);
                     }
                     else if (from_path.EndsWith(".tar.gz")) {
-                        _extract_tar(from_path, to_path);
+                        ExtractTar(from_path, to_path);
                     } else {
                         throw new ArgumentException();
                     }
@@ -278,12 +298,12 @@ namespace TorchSharp
                     return to_path;
                 }
 
-                private static string iterable_to_str(IList<string> iterable)
+                private static string IterableToStr(IList<string> iterable)
                 {
                     return "'" + string.Join("', '", iterable) + "'";
                 }
 
-                internal static string verify_str_arg(
+                internal static string VerifyStrArg(
                     string value,
                     string? arg = null,
                     IList<string>? valid_values = null,
@@ -300,7 +320,7 @@ namespace TorchSharp
                         } else {
                             msg = string.Format(
                                 "Unknown value '{0}' for argument {1}. Valid values are {2}.",
-                                value, arg, iterable_to_str(valid_values));
+                                value, arg, IterableToStr(valid_values));
                         }
                         throw new ArgumentException(msg);
                     }
