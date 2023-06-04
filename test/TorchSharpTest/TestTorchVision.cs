@@ -463,7 +463,7 @@ namespace TorchSharp
 #endif
         }
 
-        [Fact]
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
         public void TestResNet101()
         {
             using var input = torch.randn(8, 3, 416, 416);
@@ -492,11 +492,7 @@ namespace TorchSharp
             }
         }
 
-#if DEBUG
-        [Fact(Skip = "The test takes too long to run.")]
-#else
-        [Fact]
-#endif
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
         public void TestResNet101Alt()
         {
             using var input = torch.randn(8, 3, 416, 416);
@@ -519,7 +515,7 @@ namespace TorchSharp
 #endif
         }
 
-        [Fact]
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
         public void TestResNet152()
         {
             using var model = resnet152();
