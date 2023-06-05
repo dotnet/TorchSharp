@@ -422,7 +422,7 @@ namespace TorchSharp
             Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
 
-        [Fact]
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
         public void TestResNet50()
         {
             using var input = torch.randn(8, 3, 416, 416);
@@ -449,12 +449,12 @@ namespace TorchSharp
                 using var output = model.call(input);
                 Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
+#if false // Requires a lot of physical memory to run.
             {
                 using var model = resnext50_32x4d();
                 using var output = model.call(input);
                 Assert.Equal(new long[] { 8, 1000 }, output.shape);
             }
-#if false // Requires more than 16GB of physical memory to run.
             {
                 using var model = wide_resnet50_2();
                 var output = model.call(input);
@@ -463,7 +463,7 @@ namespace TorchSharp
 #endif
         }
 
-        [Fact]
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
         public void TestResNet101()
         {
             using var input = torch.randn(8, 3, 416, 416);
@@ -492,11 +492,7 @@ namespace TorchSharp
             }
         }
 
-#if DEBUG
-        [Fact(Skip = "The test takes too long to run.")]
-#else
-        [Fact]
-#endif
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
         public void TestResNet101Alt()
         {
             using var input = torch.randn(8, 3, 416, 416);
@@ -519,7 +515,7 @@ namespace TorchSharp
 #endif
         }
 
-        [Fact]
+        [Fact(Skip = "The test takes too long to run and causes trouble in CI/CD, since it uses a lot of memory.")]
         public void TestResNet152()
         {
             using var model = resnet152();
@@ -566,11 +562,7 @@ namespace TorchSharp
             Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
 
-#if DEBUG
         [Fact(Skip = "The test takes too long to run -- across the various VGG versions, 2/3 of overall test time is spent here.")]
-#else
-        [Fact]
-#endif
         public void TestVGG11()
         {
             {
@@ -597,11 +589,7 @@ namespace TorchSharp
             }
         }
 
-#if DEBUG
         [Fact(Skip = "The test takes too long to run -- across the various VGG versions, 2/3 of overall test time is spent here.")]
-#else
-        [Fact]
-#endif
         public void TestVGG13()
         {
             {
@@ -628,11 +616,7 @@ namespace TorchSharp
             }
         }
 
-#if DEBUG
         [Fact(Skip = "The test takes too long to run -- across the various VGG versions, 2/3 of overall test time is spent here.")]
-#else
-        [Fact]
-#endif
         public void TestVGG16()
         {
             {
@@ -659,11 +643,7 @@ namespace TorchSharp
             }
         }
 
-#if DEBUG
         [Fact(Skip = "The test takes too long to run -- across the various VGG versions, 2/3 of overall test time is spent here.")]
-#else
-        [Fact]
-#endif
         public void TestVGG19()
         {
             {
