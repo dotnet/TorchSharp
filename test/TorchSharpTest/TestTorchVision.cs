@@ -562,11 +562,7 @@ namespace TorchSharp
             Assert.Equal(new long[] { 8, 1000 }, output.shape);
         }
 
-#if DEBUG
         [Fact(Skip = "The test takes too long to run -- across the various VGG versions, 2/3 of overall test time is spent here.")]
-#else
-        [Fact]
-#endif
         public void TestVGG11()
         {
             {
@@ -593,11 +589,7 @@ namespace TorchSharp
             }
         }
 
-#if DEBUG
         [Fact(Skip = "The test takes too long to run -- across the various VGG versions, 2/3 of overall test time is spent here.")]
-#else
-        [Fact]
-#endif
         public void TestVGG13()
         {
             {
@@ -624,11 +616,7 @@ namespace TorchSharp
             }
         }
 
-#if DEBUG
         [Fact(Skip = "The test takes too long to run -- across the various VGG versions, 2/3 of overall test time is spent here.")]
-#else
-        [Fact]
-#endif
         public void TestVGG16()
         {
             {
@@ -655,11 +643,7 @@ namespace TorchSharp
             }
         }
 
-#if DEBUG
         [Fact(Skip = "The test takes too long to run -- across the various VGG versions, 2/3 of overall test time is spent here.")]
-#else
-        [Fact]
-#endif
         public void TestVGG19()
         {
             {
