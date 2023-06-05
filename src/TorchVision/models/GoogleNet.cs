@@ -3,6 +3,7 @@
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torchvision
@@ -46,11 +47,11 @@ namespace TorchSharp
             public static Modules.GoogleNet googlenet(
                     int num_classes = 1000,
                     bool transform_input = false,
-                    string weights_file = null,
+                    string? weights_file = null,
                     bool skipfc = true,
                     float dropout = 0.2f,
                     float dropout_aux = 0.7f,
-                    Device device = null)
+                    Device? device = null)
             {
                 return new Modules.GoogleNet(num_classes, transform_input, weights_file, skipfc, dropout, dropout_aux, device);
             }
@@ -90,13 +91,30 @@ namespace TorchSharp
 
             bool transform_input = false;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    conv1.Dispose(); conv2.Dispose(); conv3.Dispose();
+                    maxpool1.Dispose(); maxpool2.Dispose(); maxpool3.Dispose(); maxpool4.Dispose();
+                    inception3a.Dispose(); inception3b.Dispose();
+                    inception4a.Dispose(); inception5a.Dispose();
+                    inception4b.Dispose(); inception5b.Dispose();
+                    inception4c.Dispose(); inception4d.Dispose();
+                    inception4e.Dispose();
+                    avgpool.Dispose();
+                    dropout.Dispose();
+                    fc.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             public GoogleNet(int numClasses = 1000,
                 bool transform_input = false,
-                string weights_file = null,
+                string? weights_file = null,
                 bool skipfc = true,
                 float dropout = 0.2f,
                 float dropout_aux = 0.7f,
-                Device device = null) : base(nameof(GoogleNet))
+                Device? device = null) : base(nameof(GoogleNet))
             {
                 this.transform_input = transform_input;
 
@@ -279,6 +297,15 @@ namespace TorchSharp
                     return torch.cat(outputs, 1);
                 }
 
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        branch1.Dispose(); branch2.Dispose(); branch3.Dispose();
+                        branch4.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
+
                 private readonly Module<Tensor, Tensor> branch1;
                 private readonly Module<Tensor, Tensor> branch2;
                 private readonly Module<Tensor, Tensor> branch3;
@@ -291,6 +318,15 @@ namespace TorchSharp
                 private readonly Module<Tensor, Tensor> fc1;
                 private readonly Module<Tensor, Tensor> fc2;
                 private readonly Module<Tensor, Tensor> dropout;
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        conv.Dispose(); fc1.Dispose(); fc2.Dispose();
+                        dropout.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
 
                 public InceptionAux(int in_channels, int num_classes, float dropout = 0.7f) : base("InceptionAux")
                 {

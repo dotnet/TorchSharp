@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 // The scalar 'from' factories for complex tensors require some hand-written code, cannot be generated.
 

@@ -27,6 +27,14 @@ namespace TorchSharp.Transforms
         private readonly PaddingModes pad_mode;
         private readonly bool onesided;
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                window.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
         internal InverseSpectrogram(
             string name,
             long n_fft = 400,

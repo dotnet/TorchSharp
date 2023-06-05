@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 using static TorchSharp.torch;
 

@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TorchSharp.PInvoke;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
@@ -20,11 +20,6 @@ namespace TorchSharp
             {
                 internal ScriptModule(IntPtr handle) : base(new HType(handle, true, THSJIT_Module_dispose), null)
                 {
-                }
-
-                ~ScriptModule()
-                {
-                    Dispose(false);
                 }
 
                 protected override (string name, TorchSharp.Modules.Parameter parameter)[] _named_parameters()
@@ -249,16 +244,18 @@ namespace TorchSharp
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
 
-                    using (var parray = new PinnedArray<TensorOrScalar>()) {
+                    using (var parray = new IndexedPinnedArrays<TensorOrScalar>()) {
 
-                        DetermineArgumentTypeRefs(objs, out int count, out TensorOrScalar[] tensorRefs);
+                        var tRefsHandle = DetermineArgumentTypeRefs(objs, out var count, parray);
 
-                        THSJIT_Module_forward(handle, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
+                        var allocated = parray.Count;
+
+                        THSJIT_Module_forward(handle, tRefsHandle, count, parray.CreateArray, out typeCode, allocated);
                         torch.CheckForErrors();
-                        ptrArray = parray.Array;
-                    }
+                        ptrArray = parray[allocated];
 
-                    return ProcessReturnValue(name, ptrArray, typeCode);
+                        return ProcessReturnValue(name, parray, ptrArray, typeCode);
+                    }
                 }
 
                 /// <summary>
@@ -291,22 +288,26 @@ namespace TorchSharp
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
 
-                    using (var parray = new PinnedArray<TensorOrScalar>()) {
+                    using (var parray = new IndexedPinnedArrays<TensorOrScalar>()) {
 
-                        DetermineArgumentTypeRefs(objs, out int count, out TensorOrScalar[] tensorRefs);
+                        var tRefsHandle = DetermineArgumentTypeRefs(objs, out var count, parray);
 
-                        THSJIT_Module_invoke(handle, name, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
+                        var allocated = parray.Count;
+
+                        THSJIT_Module_invoke(handle, name, tRefsHandle, count, parray.CreateArray, out typeCode, allocated);
                         torch.CheckForErrors();
-                        ptrArray = parray.Array;
-                    }
+                        ptrArray = parray[allocated];
 
-                    return ProcessReturnValue(name, ptrArray, typeCode);
+                        return ProcessReturnValue(name, parray, ptrArray, typeCode);
+                    }
                 }
 
-                internal static void DetermineArgumentTypeRefs(object[] objs, out int count, out TensorOrScalar[] tensorRefs)
+                internal static IntPtr DetermineArgumentTypeRefs(object[] objs, out int count, IndexedPinnedArrays<TensorOrScalar> pinned)
                 {
                     count = objs.Length;
-                    tensorRefs = new TensorOrScalar[count];
+                    var tensorRefs = new TensorOrScalar[count];
+                    var result = pinned.CreateArray(pinned.Count, tensorRefs);
+
                     for (var idx = 0; idx < objs.Length; idx++) {
                         switch (objs[idx]) {
                         case Tensor t:
@@ -340,6 +341,12 @@ namespace TorchSharp
                             //tensorRefs[idx].Handle = (IntPtr)l;
                             //tensorRefs[idx].TypeCode = 4;
                             break;
+                        case Tensor[] tensors: {
+                                tensorRefs[idx].Handle = DetermineArgumentTypeRefs(tensors, out var _, pinned);
+                                tensorRefs[idx].TypeCode = 5;
+                                tensorRefs[idx].ArrayIndex = tensors.Length;
+                            }
+                            break;
                         default:
                             if (objs[idx] is null) {
                                 tensorRefs[idx].Handle = IntPtr.Zero;
@@ -350,14 +357,16 @@ namespace TorchSharp
                             break;
                         }
                     }
+
+                    return result;
                 }
 
-                internal static object ProcessReturnValue(string name, TensorOrScalar[] ptrArray, sbyte typeCode)
+                internal static object ProcessReturnValue(string name, IndexedPinnedArrays<TensorOrScalar> pinned, TensorOrScalar[] ptrArray, long typeCode)
                 {
                     switch (typeCode) {
                     default:
                         // Nothing.
-                        throw new NotImplementedException($"ScriptModule.{name}() returning something else than a tensor, a tuple of tensors, or list of tensors.");
+                        throw new NotImplementedException($"ScriptModule.{name}() returning something else than a tensor, a tuple of tensors, or list of tensors. TypeCode: {typeCode}");
                     case 1:
                         // Tensor
                         return new Tensor(ptrArray[0].Handle);
@@ -436,7 +445,7 @@ namespace TorchSharp
                                     result[i] = null;
                                     break;
                                 case 4:
-                                    result[i] = null;
+                                    result[i] = new Scalar(ptrArray[i].Handle);
                                     break;
                                 default:
                                     throw new NotImplementedException($"ScriptModule.{name}() returning something else than a tensor/scalar, a tuple of tensors/scalars, or list of tensors/scalars.");
@@ -447,7 +456,64 @@ namespace TorchSharp
                     case 8:
                         // The value 'null' of any reference type
                         return null;
+
+                    case 10: {
+                            switch (ptrArray.Length) {
+                            case 1:
+                                return ProcessReturnValue(name, pinned, ptrArray[0]);
+                            case 2:
+                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
+                                    ProcessReturnValue(name, pinned, ptrArray[1]));
+                            case 3:
+                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
+                                    ProcessReturnValue(name, pinned, ptrArray[1]),
+                                    ProcessReturnValue(name, pinned, ptrArray[2]));
+                            case 4:
+                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
+                                    ProcessReturnValue(name, pinned, ptrArray[1]),
+                                    ProcessReturnValue(name, pinned, ptrArray[2]),
+                                    ProcessReturnValue(name, pinned, ptrArray[3]));
+                            case 5:
+                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
+                                    ProcessReturnValue(name, pinned, ptrArray[1]),
+                                    ProcessReturnValue(name, pinned, ptrArray[2]),
+                                    ProcessReturnValue(name, pinned, ptrArray[3]),
+                                    ProcessReturnValue(name, pinned, ptrArray[4]));
+                            default: {
+                                    // Too long a tuple, return as a list, instead.
+                                    var result = new Scalar[ptrArray.Length];
+                                    for (var i = 0; i < ptrArray.Length; i++) {
+                                        result[i] = new Scalar(ptrArray[i].Handle);
+                                    }
+                                    return result;
+                                }
+                            }
+                        }
+                    case 9: {
+                            // List of anything
+                            var result = new object[ptrArray.Length];
+                            for (var i = 0; i < ptrArray.Length; i++) {
+                                result[i] = ProcessReturnValue(name, pinned, ptrArray[i]);
+                            }
+                            return result;
+                        }
                     }
+                }
+
+                internal static object ProcessReturnValue(string name, IndexedPinnedArrays<TensorOrScalar> pinned, TensorOrScalar value)
+                {
+                    switch (value.TypeCode) {
+                    case 0:
+                        return new Tensor(value.Handle);
+                    case 4:
+                        return new Scalar(value.Handle);
+                    case 8:
+                        return null;
+                    default:
+                        return ProcessReturnValue(name, pinned, pinned[(int)value.ArrayIndex], value.TypeCode);
+                    }
+
+                    throw new NotImplementedException($"ScriptModule.{name}() returning something else than a tensor/scalar, a tuple of tensors/scalars, or list of tensors/scalars.");
                 }
 
                 /// <summary>

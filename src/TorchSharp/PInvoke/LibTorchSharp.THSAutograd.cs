@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.PInvoke
 {
-    internal static partial class LibTorchSharp
+    internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
         [return: MarshalAs(UnmanagedType.U1)]

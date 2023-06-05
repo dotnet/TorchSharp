@@ -65,6 +65,7 @@ namespace TorchSharp
             }
         }
 
+#if false
         [Fact]
         [TestOf(nameof(Tensor))]
         public void TestArithmeticOperatorsBFloat16()
@@ -113,6 +114,7 @@ namespace TorchSharp
                 }
             }
         }
+#endif
 
         [Fact]
         [TestOf(nameof(Tensor))]

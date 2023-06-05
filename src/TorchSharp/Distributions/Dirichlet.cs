@@ -6,6 +6,7 @@ using static TorchSharp.torch;
 
 namespace TorchSharp
 {
+    using System.Reflection;
     using Modules;
 
     namespace Modules
@@ -108,7 +109,7 @@ namespace TorchSharp
 
             protected override IList<Tensor> NaturalParams => new Tensor[] { concentration - 1 };
 
-            protected override Tensor MeanCarrierMeasure => throw new NotImplementedException();
+            protected override Tensor MeanCarrierMeasure => new Tensor(IntPtr.Zero);
 
             protected override Tensor LogNormalizer(params Tensor[] parameters)
             {

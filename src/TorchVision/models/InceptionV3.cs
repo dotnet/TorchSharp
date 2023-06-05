@@ -3,6 +3,7 @@
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torchvision
@@ -46,9 +47,9 @@ namespace TorchSharp
                     int num_classes = 1000,
                     float dropout = 0.5f,
                     bool transform_input = false,
-                    string weights_file = null,
+                    string? weights_file = null,
                     bool skipfc = true,
-                    Device device = null)
+                    Device? device = null)
             {
                 return new Modules.InceptionV3(num_classes, dropout, transform_input, weights_file, skipfc, device);
             }
@@ -89,12 +90,29 @@ namespace TorchSharp
 
             bool transform_input = false;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    Conv2d_1a_3x3.Dispose(); Conv2d_2a_3x3.Dispose(); Conv2d_2b_3x3.Dispose();
+                    Conv2d_3b_1x1.Dispose(); Conv2d_4a_3x3.Dispose();
+                    Mixed_5b.Dispose(); Mixed_5c.Dispose(); Mixed_5d.Dispose();
+                    Mixed_6a.Dispose(); Mixed_6b.Dispose(); Mixed_6c.Dispose();
+                    Mixed_6d.Dispose(); Mixed_6e.Dispose();
+                    AuxLogits.Dispose();
+                    Mixed_7a.Dispose(); Mixed_7b.Dispose(); Mixed_7c.Dispose();
+                    maxpool1.Dispose(); maxpool2.Dispose(); avgpool.Dispose();
+                    dropout.Dispose(); fc.Dispose();
+
+                }
+                base.Dispose(disposing);
+            }
+
             public InceptionV3(int numClasses = 1000,
                 float dropout = 0.5f,
                 bool transform_input = false,
-                string weights_file = null,
+                string? weights_file = null,
                 bool skipfc = true,
-                Device device = null) : base(nameof(InceptionV3))
+                Device? device = null) : base(nameof(InceptionV3))
             {
                 this.transform_input = transform_input;
 
@@ -281,6 +299,17 @@ namespace TorchSharp
                     return torch.cat(outputs, 1);
                 }
 
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        branch1x1.Dispose();
+                        branch3x3dbl_1.Dispose(); branch3x3dbl_2.Dispose(); branch3x3dbl_3.Dispose();
+                        branch_pool.Dispose();
+                        branch5x5_1.Dispose(); branch5x5_2.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
+
                 private readonly Module<Tensor, Tensor> branch1x1;
                 private readonly Module<Tensor, Tensor> branch5x5_1;
                 private readonly Module<Tensor, Tensor> branch5x5_2;
@@ -319,6 +348,17 @@ namespace TorchSharp
                     return torch.cat(outputs, 1);
                 }
 
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        branch3x3.Dispose();
+                        branch3x3dbl_1.Dispose();
+                        branch3x3dbl_2.Dispose();
+                        branch3x3dbl_3.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
+
                 private readonly Module<Tensor, Tensor> branch3x3;
                 private readonly Module<Tensor, Tensor> branch3x3dbl_1;
                 private readonly Module<Tensor, Tensor> branch3x3dbl_2;
@@ -337,6 +377,18 @@ namespace TorchSharp
                 private readonly Module<Tensor, Tensor> branch7x7dbl_4;
                 private readonly Module<Tensor, Tensor> branch7x7dbl_5;
                 private readonly Module<Tensor, Tensor> branch_pool;
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        branch1x1.Dispose();
+                        branch_pool.Dispose();
+                        branch7x7_1.Dispose(); branch7x7_2.Dispose(); branch7x7_3?.Dispose();
+                        branch7x7dbl_1.Dispose(); branch7x7dbl_2.Dispose(); branch7x7dbl_3.Dispose();
+                        branch7x7dbl_4.Dispose(); branch7x7dbl_5.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
 
                 public InceptionC(int in_channels, int channels_7x7) : base("InceptionC")
                 {
@@ -390,6 +442,16 @@ namespace TorchSharp
                 private readonly Module<Tensor, Tensor> branch7x7x3_3;
                 private readonly Module<Tensor, Tensor> branch7x7x3_4;
 
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        branch3x3_1.Dispose(); branch3x3_2.Dispose();
+                        branch7x7x3_1.Dispose(); branch7x7x3_2.Dispose();
+                        branch7x7x3_3.Dispose(); branch7x7x3_4.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
+
                 public InceptionD(int in_channels) : base("InceptionD")
                 {
                     branch3x3_1 = conv_block(in_channels, 192, kernel_size: 1);
@@ -432,6 +494,17 @@ namespace TorchSharp
                 private readonly Module<Tensor, Tensor> branch3x3dbl_3a;
                 private readonly Module<Tensor, Tensor> branch3x3dbl_3b;
                 private readonly Module<Tensor, Tensor> branch_pool;
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        branch1x1.Dispose(); branch_pool.Dispose();
+                        branch3x3_1.Dispose(); branch3x3_2a.Dispose(); branch3x3_2b.Dispose();
+                        branch3x3dbl_1.Dispose(); branch3x3dbl_2.Dispose();
+                        branch3x3dbl_3a.Dispose(); branch3x3dbl_3b.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
 
                 public InceptionE(int in_channels) : base("InceptionE")
                 {
@@ -478,6 +551,16 @@ namespace TorchSharp
                 private readonly Module<Tensor, Tensor> conv0;
                 private readonly Module<Tensor, Tensor> conv1;
                 private readonly Module<Tensor, Tensor> fc;
+
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        conv0.Dispose();
+                        conv1.Dispose();
+                        fc.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
 
                 public InceptionAux(int in_channels, int num_classes) : base("InceptionAux")
                 {

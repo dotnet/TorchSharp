@@ -188,7 +188,7 @@ namespace TorchSharp
                 }
             }
 
-            public class State : OptimizerState,IDisposable
+            public sealed class State : OptimizerState,IDisposable
             {
                 public long step;
                 public Tensor exp_avg;
@@ -196,8 +196,16 @@ namespace TorchSharp
 
                 public void Dispose()
                 {
-                    exp_avg.Dispose();
-                    exp_inf.Dispose();
+                    Dispose(true);
+                    GC.SuppressFinalize(this);
+                }
+
+                private void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        exp_avg.Dispose();
+                        exp_inf.Dispose();
+                    }
                 }
 
                 /// <summary>

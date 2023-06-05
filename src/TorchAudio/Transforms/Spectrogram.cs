@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Security.Principal;
 using static TorchSharp.torch;
 using static TorchSharp.torchaudio;
 
@@ -27,6 +28,14 @@ namespace TorchSharp.Transforms
         private readonly bool center;
         private readonly PaddingModes pad_mode;
         private readonly bool onesided;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                window.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
         public Spectrogram(
             string name,
