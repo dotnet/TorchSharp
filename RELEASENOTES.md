@@ -10,7 +10,9 @@ TorchSharp no longer supports any .NET Core versions prior to 6.0. .NET FX versi
 
 __API Changes__:
 
-Added operator functionality to Torchvision, but nms and roi are still missing.<br/>
+Added operator functionality to Torchvision, but roi are still missing.<br/>
+Added support for additional types related to TorchScript modules. Scripts can now return lists of lists and tuples of lists and tuples, to an arbitrary level of nesting.
+Scripts can now accept lists of Tensors.
 
 __Bug Fixes__:
 

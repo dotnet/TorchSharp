@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 namespace TorchSharp.PInvoke
@@ -7,6 +7,7 @@ namespace TorchSharp.PInvoke
     internal struct TensorOrScalar
     {
         public long TypeCode;
+        public long ArrayIndex;
         public IntPtr Handle;
     }
 }

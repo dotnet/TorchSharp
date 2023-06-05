@@ -9,7 +9,7 @@ namespace TorchSharp.PInvoke
     internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-        internal static extern void THSJIT_CompilationUnit_Invoke(IntPtr module, string name, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
+        internal static extern void THSJIT_CompilationUnit_Invoke(IntPtr module, string name, IntPtr tensors, int length, AllocateIndexedPinnedArray allocator, out sbyte typeCode, int idx);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSJIT_CompilationUnit_dispose(IntPtr handle);
@@ -67,10 +67,10 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSJIT_getOutputType(torch.jit.Type.HType module, int index);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSJIT_Module_forward(torch.nn.Module.HType module, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
+        internal static extern void THSJIT_Module_forward(torch.nn.Module.HType module, IntPtr tensors, int length, AllocateIndexedPinnedArray allocator, out sbyte typeCode, int idx);
 
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-        internal static extern void THSJIT_Module_invoke(torch.nn.Module.HType module, string name, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
+        internal static extern void THSJIT_Module_invoke(torch.nn.Module.HType module, string name, IntPtr tensors, int length, AllocateIndexedPinnedArray allocator, out sbyte typeCode, int idx);
 
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSJIT_load(string filename, long deviceType, long deviceIndex);
