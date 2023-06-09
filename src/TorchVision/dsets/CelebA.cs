@@ -184,7 +184,7 @@ namespace TorchSharp
                     var ext = Path.GetExtension(filename);
                     // Allow original archive to be deleted (zip and 7z)
                     // Only need the extracted images
-                    if (ext != ".zip" && ext != ".7z" && !torchvision.datasets.utils.CheckIntegrity(fpath, md5)) {
+                    if (ext != ".zip" && ext != ".7z" && !torchvision.io.GDriveDownload.CheckIntegrity(fpath, md5)) {
                         return false;
                     }
                 }

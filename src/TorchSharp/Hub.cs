@@ -16,7 +16,7 @@ namespace TorchSharp
             private static Func<bool, IProgressBar> createProgressBarFunc = null;
 
             /// <summary>
-            /// Set a function to create progress bar.
+            /// Set a function to create a progress bar.
             /// </summary>
             /// <param name="func">A progress bar function or null to set default the console progress bar</param>
             public static void set_create_progress_bar_func(Func<bool, IProgressBar> func)
@@ -24,8 +24,12 @@ namespace TorchSharp
                 createProgressBarFunc = func;
             }
 
-            // Used internally by TorchVision
-            public static IProgressBar _create_progress_bar(bool hidden)
+            /// <summary>
+            /// Create a progress bar.
+            /// </summary>
+            /// <param name="hidden">Make a hidden progress bar.</param>
+            /// <returns>A progress bar</returns>
+            public static IProgressBar CreateProgressBar(bool hidden)
             {
                 IProgressBar progress_bar;
                 if (createProgressBarFunc == null) {
@@ -67,7 +71,7 @@ namespace TorchSharp
             public static async Task download_url_to_file_async(string url, string dst, string hash_prefix = null, bool progress = true, CancellationToken cancellationToken = default)
             {
                 try {
-                    using (var progress_bar = _create_progress_bar(!progress))
+                    using (var progress_bar = CreateProgressBar(!progress))
                     using (var httpClient = new HttpClient())
                     using (var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken)) {
                         response.EnsureSuccessStatusCode();
