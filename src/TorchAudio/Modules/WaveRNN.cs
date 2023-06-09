@@ -40,6 +40,22 @@ namespace TorchSharp.Modules
         public readonly GRU rnn2;
         internal readonly UpsampleNetwork upsample;
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                fc.Dispose();
+                fc1.Dispose();
+                fc2.Dispose();
+                fc3.Dispose();
+                relu1.Dispose();
+                relu2.Dispose();
+                rnn1.Dispose();
+                rnn2.Dispose();
+                upsample.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
         internal WaveRNN(
             string name,
             long[] upsample_scales,
@@ -221,6 +237,14 @@ namespace TorchSharp.Modules
         {
             public nn.Module<Tensor, Tensor> resblock_model;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    resblock_model.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             public ResBlock(string name, int n_freq = 128) : base(name)
             {
                 this.resblock_model = nn.Sequential(
@@ -241,6 +265,14 @@ namespace TorchSharp.Modules
         internal class MelResNet : nn.Module<Tensor, Tensor>
         {
             public readonly nn.Module<Tensor, Tensor> melresnet_model;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    melresnet_model.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             public MelResNet(
                 string name,
@@ -293,6 +325,16 @@ namespace TorchSharp.Modules
             public readonly Stretch2d resnet_stretch;
             public readonly long total_scale;
             public readonly nn.Module<Tensor, Tensor> upsample_layers;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    resnet.Dispose();
+                    resnet_stretch.Dispose();
+                    upsample_layers .Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             public UpsampleNetwork(
                 string name,

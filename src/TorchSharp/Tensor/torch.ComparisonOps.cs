@@ -172,15 +172,6 @@ namespace TorchSharp
         public static Tensor maximum(Tensor input, Tensor other)
             => input.maximum(other);
 
-        /// <summary>
-        /// Computes the element-wise maximum of input and other.
-        /// </summary>
-        /// <param name="input">The input tensor.</param>
-        /// <param name="other">The second tensor.</param>
-        [Pure]
-        public static Tensor max(Tensor input, Tensor other)
-            => torch.maximum(input, other);
-
         // https://pytorch.org/docs/stable/generated/torch.minimum
         /// <summary>
         /// Computes the element-wise minimum of input and other.
@@ -190,16 +181,6 @@ namespace TorchSharp
         [Pure]
         public static Tensor minimum(Tensor input, Tensor other)
             => input.minimum(other);
-
-        /// <summary>
-        /// Computes the element-wise minimum of input and other.
-        /// </summary>
-        /// <param name="input">The input tensor.</param>
-        /// <param name="other">The second tensor.</param>
-        [Pure]
-        public static Tensor min(Tensor input, Tensor other)
-            => torch.minimum(input, other);
-
 
         // https://pytorch.org/docs/stable/generated/torch.fmax
         /// <summary>
@@ -271,7 +252,7 @@ namespace TorchSharp
         /// <param name="sorter">If provided, a tensor matching the shape of the unsorted sorted_sequence containing a sequence of indices that sort it in the ascending order on the innermost dimension</param>
         public static Tensor searchsorted(Tensor sorted_sequence, Tensor values, bool out_int32 = false, bool right = false, Tensor sorter = null)
         {
-            var res = PInvoke.LibTorchSharp.THSTensor_searchsorted_t(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle);
+            var res = PInvoke.NativeMethods.THSTensor_searchsorted_t(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle);
             if (res == IntPtr.Zero) CheckForErrors();
             return new Tensor(res);
         }
@@ -290,7 +271,7 @@ namespace TorchSharp
         /// <param name="sorter">If provided, a tensor matching the shape of the unsorted sorted_sequence containing a sequence of indices that sort it in the ascending order on the innermost dimension</param>
         public static Tensor searchsorted(Tensor sorted_sequence, Scalar values, bool out_int32, bool right, Tensor sorter)
         {
-            var res = PInvoke.LibTorchSharp.THSTensor_searchsorted_s(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle);
+            var res = PInvoke.NativeMethods.THSTensor_searchsorted_s(sorted_sequence.Handle, values.Handle, out_int32, right, sorter is null ? IntPtr.Zero : sorter.Handle);
             if (res == IntPtr.Zero) CheckForErrors();
             return new Tensor(res);
         }
@@ -324,7 +305,7 @@ namespace TorchSharp
         /// <returns></returns>
         public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, Tensor bins, Tensor weight = null, bool density = false)
         {
-            var res = PInvoke.LibTorchSharp.THSTensor_histogram_t(input.Handle, bins.Handle, weight is null ? IntPtr.Zero : weight.Handle, density, out var r_bin_edges);
+            var res = PInvoke.NativeMethods.THSTensor_histogram_t(input.Handle, bins.Handle, weight is null ? IntPtr.Zero : weight.Handle, density, out var r_bin_edges);
             if (res == IntPtr.Zero) CheckForErrors();
             if (r_bin_edges == IntPtr.Zero) CheckForErrors();
             return (new Tensor(res), new Tensor(r_bin_edges));
@@ -351,8 +332,8 @@ namespace TorchSharp
             unsafe {
                 fixed (double* prange = _range) {
                     var res = _range == Array.Empty<double>()
-                        ? PInvoke.LibTorchSharp.THSTensor_histogram_i(input.Handle, bins, IntPtr.Zero, 0, weight is null ? IntPtr.Zero : weight.Handle, density, out var r_bin_edges)
-                        : PInvoke.LibTorchSharp.THSTensor_histogram_i(input.Handle, bins, (IntPtr)prange, _range.Length, weight is null ? IntPtr.Zero : weight.Handle, density, out r_bin_edges);
+                        ? PInvoke.NativeMethods.THSTensor_histogram_i(input.Handle, bins, IntPtr.Zero, 0, weight is null ? IntPtr.Zero : weight.Handle, density, out var r_bin_edges)
+                        : PInvoke.NativeMethods.THSTensor_histogram_i(input.Handle, bins, (IntPtr)prange, _range.Length, weight is null ? IntPtr.Zero : weight.Handle, density, out r_bin_edges);
                     if (res == IntPtr.Zero) CheckForErrors();
                     if (r_bin_edges == IntPtr.Zero) CheckForErrors();
                     return (new Tensor(res), new Tensor(r_bin_edges));
@@ -389,7 +370,7 @@ namespace TorchSharp
         /// <returns></returns>
         public static (Tensor hist, Tensor bin_edges) histogram(Tensor input, Tensor bins, Tensor weight, bool density, out (Tensor hist, Tensor bin_edges) out_tensor)
         {
-            var res = PInvoke.LibTorchSharp.THSTensor_histogram_out_t(input.Handle, bins.Handle, weight is null ? IntPtr.Zero : weight.Handle, density, out var hist, out var bin_edges, out var r_bin_edges);
+            var res = PInvoke.NativeMethods.THSTensor_histogram_out_t(input.Handle, bins.Handle, weight is null ? IntPtr.Zero : weight.Handle, density, out var hist, out var bin_edges, out var r_bin_edges);
             if (res == IntPtr.Zero) CheckForErrors();
             if (hist == IntPtr.Zero) CheckForErrors();
             if (bin_edges == IntPtr.Zero) CheckForErrors();
@@ -449,8 +430,8 @@ namespace TorchSharp
             unsafe {
                 fixed (double* prange = _range) {
                     var res = _range == Array.Empty<double>()
-                        ? PInvoke.LibTorchSharp.THSTensor_histogram_out_i(input.Handle, bins, IntPtr.Zero, 0, weight is null ? IntPtr.Zero : weight.Handle, density, out var hist, out var bin_edges, out var r_bin_edges)
-                        : PInvoke.LibTorchSharp.THSTensor_histogram_out_i(input.Handle, bins, (IntPtr)prange, _range.Length, weight is null ? IntPtr.Zero : weight.Handle, density, out hist, out bin_edges, out r_bin_edges);
+                        ? PInvoke.NativeMethods.THSTensor_histogram_out_i(input.Handle, bins, IntPtr.Zero, 0, weight is null ? IntPtr.Zero : weight.Handle, density, out var hist, out var bin_edges, out var r_bin_edges)
+                        : PInvoke.NativeMethods.THSTensor_histogram_out_i(input.Handle, bins, (IntPtr)prange, _range.Length, weight is null ? IntPtr.Zero : weight.Handle, density, out hist, out bin_edges, out r_bin_edges);
                     if (res == IntPtr.Zero) CheckForErrors();
                     if (hist == IntPtr.Zero) CheckForErrors();
                     if (bin_edges == IntPtr.Zero) CheckForErrors();

@@ -206,7 +206,7 @@ namespace TorchSharp
                 _state.Clear();
             }
 
-            public class State : OptimizerState, IDisposable
+            public sealed class State : OptimizerState, IDisposable
             {
                 public long step;
                 public Tensor square_avg;
@@ -215,9 +215,17 @@ namespace TorchSharp
 
                 public void Dispose()
                 {
-                    momentum_buffer?.Dispose();
-                    square_avg.Dispose();
-                    grad_avg?.Dispose();
+                    Dispose(true);
+                    GC.SuppressFinalize(this);
+                }
+
+                private void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        momentum_buffer?.Dispose();
+                        square_avg.Dispose();
+                        grad_avg?.Dispose();
+                    }
                 }
 
                 /// <summary>

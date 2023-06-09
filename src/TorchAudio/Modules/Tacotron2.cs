@@ -63,6 +63,17 @@ namespace TorchSharp.Modules
         private readonly Decoder decoder;
         private readonly Postnet postnet;
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+                embedding.Dispose();
+                encoder.Dispose();
+                decoder.Dispose();
+                postnet.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
         internal Tacotron2(
             string name,
             bool mask_padding = false,
@@ -221,6 +232,15 @@ namespace TorchSharp.Modules
             private readonly Modules.Conv1d location_conv;
             private readonly Modules.Linear location_dense;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    location_conv.Dispose();
+                    location_dense.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             public LocationLayer(
                 string name,
                 int attention_n_filter,
@@ -262,6 +282,17 @@ namespace TorchSharp.Modules
             private readonly Modules.Linear query_layer;
             public readonly float score_mask_value;
             private readonly Modules.Linear v;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    location_layer.Dispose();
+                    memory_layer.Dispose();
+                    query_layer.Dispose();
+                    v.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             public Attention(
                 string name,
@@ -317,6 +348,14 @@ namespace TorchSharp.Modules
         {
             private readonly Modules.ModuleList<Module<Tensor, Tensor>> layers;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    layers.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             public Prenet(string name, int in_dim, long[] out_sizes) : base(name)
             {
                 this.layers = nn.ModuleList<Module<Tensor, Tensor>>();
@@ -344,6 +383,15 @@ namespace TorchSharp.Modules
         {
             private readonly Modules.ModuleList<Module<Tensor, Tensor>> convolutions;
             public readonly int n_convs;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    convolutions.Dispose();
+                }
+
+                base.Dispose(disposing);
+            }
 
             public Postnet(
                 string name,
@@ -394,6 +442,15 @@ namespace TorchSharp.Modules
         {
             private readonly Modules.ModuleList<Module<Tensor, Tensor>> convolutions;
             private readonly Modules.LSTM lstm;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    convolutions.Dispose();
+                    lstm.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             public Encoder(
                 string name,
@@ -466,6 +523,18 @@ namespace TorchSharp.Modules
             public readonly int n_mels;
             public readonly Prenet prenet;
             public readonly long prenet_dim;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    attention_layer.Dispose(); attention_rnn.Dispose();
+                    decoder_rnn.Dispose();
+                    gate_layer.Dispose();
+                    linear_projection.Dispose();
+                    prenet.Dispose();
+                }
+                base.Dispose(disposing);
+            }
 
             public Decoder(
                 string name,

@@ -35,13 +35,22 @@ namespace TorchSharp
         [Fact]
         public void TestLoadJIT_1()
         {
+            var input = torch.ones(10);
+            var expected = torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 });
+
             // One linear layer followed by ReLU.
-            using var m = torch.jit.load<Tensor, Tensor>(@"linrelu.script.dat");
-            var t = m.call(torch.ones(10));
+            var m = torch.jit.load<Tensor, Tensor>(@"linrelu.script.dat");
+            if (torch.cuda.is_available()) {
+                m = m.to(torch.CUDA);
+                input = input.to(torch.CUDA);
+                expected = expected.to(torch.CUDA);
+            }
+
+            var t = m.call(input);
 
             Assert.Equal(new long[] { 6 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
-            Assert.True(torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 }).allclose(t));
+            Assert.True(expected.allclose(t));
         }
 
         [Fact]
@@ -321,8 +330,6 @@ namespace TorchSharp
             );
         }
 
-
-
         [Fact]
         public void TestJITCompile_2()
         {
@@ -331,6 +338,12 @@ namespace TorchSharp
     return a
   def none_tuple(a: Any, b: Any):
     return (a, None)
+  def tuple_tuple(a: Any, b: Any, c:Any):
+    return (a, (b, None))
+  def list_tuple(a: Any, b: Any, c:Any):
+    return [a, (b, c)]
+  def list_tuple_list(a: Any, b: Any, c:Any):
+    return [a, (b, [c, None])]
 ";
 
             using var cu = torch.jit.compile(script);
@@ -338,7 +351,8 @@ namespace TorchSharp
             Assert.NotNull(cu);
 
             var x = torch.randn(3, 4);
-            var y = torch.randn(3, 4);
+            var y = torch.randn(3, 5);
+            var w = torch.randn(3, 6);
 
             var z = cu.invoke("none_script", null, null);
             Assert.Null(z);
@@ -347,15 +361,88 @@ namespace TorchSharp
             z = cu.invoke("none_script", x, null);
             Assert.NotNull(z);
 
-            var zArr = cu.invoke<object[]>("none_tuple", null, null);
-            Assert.NotNull(zArr);
-            Assert.Null(zArr[0]);
-            Assert.Null(zArr[1]);
+            {
+                var zArr = cu.invoke<(object, object)>("none_tuple", null, null);
+                Assert.Null(zArr.Item1);
+                Assert.Null(zArr.Item2);
+            }
 
-            zArr = cu.invoke<object[]>("none_tuple", x, null);
-            Assert.NotNull(z);
-            Assert.NotNull(zArr[0]);
-            Assert.Null(zArr[1]);
+            {
+                var zArr = cu.invoke<(object, object)>("none_tuple", x, null);
+                Assert.NotNull(zArr.Item1);
+                Assert.Null(zArr.Item2);
+            }
+
+            {
+                var zArr = cu.invoke<(object, object)>("tuple_tuple", x, y, w);
+                Assert.NotNull(zArr.Item1);
+                Assert.Equal(x, (Tensor)zArr.Item1);
+                //Assert.NotNull(zArr.Item2);
+                var (a,b) = ((object, object))zArr.Item2;
+                Assert.NotNull(a);
+                Assert.Null(b);
+            }
+
+            {
+                var zArr = cu.invoke<object[]>("list_tuple", x, y, w);
+                Assert.NotNull(zArr);
+                Assert.NotNull(zArr[0]);
+                Assert.IsType<Tensor>(zArr[0]);
+                Assert.Equal(x, zArr[0]);
+                Assert.NotNull(zArr[1]);
+                Assert.IsType<(Tensor,Tensor)>(zArr[1]);
+            }
+
+            {
+                var zArr = cu.invoke<object[]>("list_tuple_list", x, y, w);
+                Assert.NotNull(z);
+                Assert.NotNull(zArr[0]);
+                Assert.Equal(x, zArr[0]);
+                Assert.NotNull(zArr[1]);
+            }
+        }
+
+        [Fact]//(Skip ="Doesn't work yet.")]
+        public void TestJITCompile_3()
+        {
+            string script = @"
+  def list_first(a: List[Tensor]) -> Tensor:
+    return a[0]
+  def list_two(a: List[Tensor]) -> List[Tensor]:
+    return [a[0],a[1]]
+  def list_from_two(a: List[Tensor], b: List[Tensor]) -> List[Tensor]:
+    return [a[0],a[1],b[0],b[1]]
+";
+
+            using var cu = torch.jit.compile(script);
+
+            Assert.NotNull(cu);
+
+            var x = torch.randn(3, 4);
+            var y = torch.randn(3, 5);
+            var w = torch.randn(3, 6);
+
+            {
+                var zArr = cu.invoke<Tensor>("list_first", new[] { new[] { x, y } });
+                Assert.NotNull(zArr);
+                Assert.Equal(x, zArr);
+            }
+            {
+                var zArr = cu.invoke<Tensor[]>("list_two", new [] { new[] { x, w } });
+                Assert.NotNull(zArr);
+                Assert.Equal(2, zArr.Length);
+                Assert.Equal(x, zArr[0]);
+                Assert.Equal(w, zArr[1]);
+            }
+            {
+                var zArr = cu.invoke<Tensor[]>("list_from_two", new[] { x, y }, new[] { y, w });
+                Assert.NotNull(zArr);
+                Assert.Equal(4, zArr.Length);
+                Assert.Equal(x, zArr[0]);
+                Assert.Equal(y, zArr[1]);
+                Assert.Equal(y, zArr[2]);
+                Assert.Equal(w, zArr[3]);
+            }
         }
     }
 }

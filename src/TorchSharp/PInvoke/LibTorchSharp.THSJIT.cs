@@ -5,15 +5,16 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.PInvoke
 {
-    internal static partial class LibTorchSharp
+#pragma warning disable CA2101
+    internal static partial class NativeMethods
     {
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSJIT_CompilationUnit_Invoke(IntPtr module, string name, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        internal static extern void THSJIT_CompilationUnit_Invoke(IntPtr module, string name, IntPtr tensors, int length, AllocateIndexedPinnedArray allocator, out sbyte typeCode, int idx);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSJIT_CompilationUnit_dispose(IntPtr handle);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSJIT_compile(string script);
 
         [DllImport("LibTorchSharp")]
@@ -66,15 +67,15 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSJIT_getOutputType(torch.jit.Type.HType module, int index);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSJIT_Module_forward(torch.nn.Module.HType module, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
+        internal static extern void THSJIT_Module_forward(torch.nn.Module.HType module, IntPtr tensors, int length, AllocateIndexedPinnedArray allocator, out sbyte typeCode, int idx);
 
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSJIT_Module_invoke(torch.nn.Module.HType module, string name, IntPtr tensors, int length, AllocatePinnedArray allocator, out sbyte typeCode);
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        internal static extern void THSJIT_Module_invoke(torch.nn.Module.HType module, string name, IntPtr tensors, int length, AllocateIndexedPinnedArray allocator, out sbyte typeCode, int idx);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSJIT_load(string filename, long deviceType, long deviceIndex);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern void THSJIT_save(torch.nn.Module.HType handle, string filename);
 
         [DllImport("LibTorchSharp")]
@@ -83,7 +84,7 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern int THSJIT_getDimensionedTensorTypeDimensions(torch.jit.Type.HType handle);
 
-        [DllImport("LibTorchSharp")]
+        [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern string THSJIT_getDimensionedTensorDevice(torch.jit.Type.HType handle);
 
         [DllImport("LibTorchSharp")]
@@ -101,4 +102,5 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSJIT_Type_cast(torch.jit.Type.HType module);
     }
+#pragma warning restore CA2101
 }

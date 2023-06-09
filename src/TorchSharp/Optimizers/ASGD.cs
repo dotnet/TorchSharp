@@ -185,7 +185,7 @@ namespace TorchSharp
                 _state.Clear();
             }
 
-            public class State : OptimizerState, IDisposable
+            public sealed class State : OptimizerState, IDisposable
             {
                 public long step;
                 public double eta;
@@ -194,7 +194,15 @@ namespace TorchSharp
 
                 public void Dispose()
                 {
-                    ax.Dispose();
+                    Dispose(true);
+                    GC.SuppressFinalize(this);
+                }
+
+                private void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        ax.Dispose();
+                    }
                 }
 
                 /// <summary>

@@ -75,6 +75,14 @@ namespace TorchSharp
                 private readonly long out_channels;
                 private readonly bool use_res_connect;
 
+                protected override void Dispose(bool disposing)
+                {
+                    if (disposing) {
+                        block.Dispose();
+                    }
+                    base.Dispose(disposing);
+                }
+
                 public InvertedResidual(
                     string name,
                     InvertedResidualConfig cnf,
@@ -118,8 +126,7 @@ namespace TorchSharp
                             layers.Add(se_layer(cnf.expanded_channels, squeeze_channels));
                         } else {
                             layers.Add(
-                                new SqueezeExcitation(
-                                    "SqueezeExcitation",
+                                torchvision.ops.SqueezeExcitation(
                                     cnf.expanded_channels,
                                     squeeze_channels,
                                     activation: () => nn.ReLU6(),
@@ -149,6 +156,15 @@ namespace TorchSharp
                 }
             }
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    avgpool.Dispose();
+                    classifier.Dispose();
+                    features.Dispose();
+                }
+                base.Dispose(disposing);
+            }
             private readonly nn.Module<Tensor, Tensor> avgpool;
             private readonly nn.Module<Tensor, Tensor> classifier;
             private readonly nn.Module<Tensor, Tensor> features;

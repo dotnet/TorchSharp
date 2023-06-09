@@ -48,7 +48,7 @@ namespace TorchSharp
                 /// <summary>
                 /// The mode of the distribution.
                 /// </summary>
-                public virtual Tensor mode { get { throw new NotImplementedException($"{this.GetType().FullName} does not implement mode"); } } 
+                public virtual Tensor mode { get { return new Tensor(IntPtr.Zero); } } 
 
                 /// <summary>
                 /// The variance of the distribution

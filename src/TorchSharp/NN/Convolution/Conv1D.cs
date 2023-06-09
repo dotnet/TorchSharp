@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using static TorchSharp.torch;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
 namespace TorchSharp
@@ -25,15 +25,38 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class Conv1d : torch.nn.Module<Tensor, Tensor>
+        public abstract class Convolution : torch.nn.Module<Tensor, Tensor>
         {
-            internal Conv1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
-
-            public override Tensor forward(Tensor tensor)
+            protected Convolution(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle)
             {
-                var res = THSNN_Conv1d_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                this.input_channels = input_channels;
+            }
+
+            protected bool ValidateShape(Tensor input, long dimensions)
+            {
+                var shape = input.shape;
+                var ndim = shape.LongLength;
+
+                return (ndim == dimensions+2) && (input.shape[1] == input_channels) ||  // Batched: N + C + dims
+                       (ndim == dimensions+1 && input.shape[0] == input_channels);      // Unbathced: C + dims
+
+            }
+
+            protected long input_channels;
+        }
+
+        public sealed class Conv1d : Convolution
+        {
+            internal Conv1d(IntPtr handle, IntPtr boxedHandle, long input_channels) : base(handle, boxedHandle, input_channels) { }
+
+            public override Tensor forward(Tensor input)
+            {
+                if (ValidateShape(input, 1)) {
+                    var res = THSNN_Conv1d_forward(handle, input.Handle);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
+                throw new ArgumentException($"Expected 2D (unbatched) or 3D (batched) input with {input_channels} channels to Conv1d.");
             }
 
             public Parameter? bias {
@@ -86,7 +109,7 @@ namespace TorchSharp
             {
                 var res = THSNN_Conv1d_ctor(inputChannel, outputChannel, kernelSize, stride, padding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Conv1d(res, boxedHandle).MoveModule<Conv1d>(device, dtype);
+                return new Conv1d(res, boxedHandle, inputChannel).MoveModule<Conv1d>(device, dtype);
             }
 
             /// <summary>
@@ -108,7 +131,7 @@ namespace TorchSharp
             {
                 var res = THSNN_Conv1d_ctor(inputChannel, outputChannel, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Conv1d(res, boxedHandle).MoveModule<Conv1d>(device, dtype);
+                return new Conv1d(res, boxedHandle, inputChannel).MoveModule<Conv1d>(device, dtype);
             }
 
             public static partial class functional

@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using TorchSharp.PInvoke;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
@@ -37,8 +37,8 @@ namespace TorchSharp
                 /// </summary>
                 public void Dispose()
                 {
-                    GC.SuppressFinalize(this);
                     Dispose(true);
+                    GC.SuppressFinalize(this);
                 }
 
                 /// <summary>
@@ -65,16 +65,18 @@ namespace TorchSharp
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
 
-                    using (var parray = new PinnedArray<TensorOrScalar>()) {
+                    using (var parray = new IndexedPinnedArrays<TensorOrScalar>()) {
 
-                        ScriptModule.DetermineArgumentTypeRefs(objs, out int count, out TensorOrScalar[] tensorRefs);
+                        var tRefsHandle = ScriptModule.DetermineArgumentTypeRefs(objs, out var count, parray);
 
-                        THSJIT_CompilationUnit_Invoke(handle, name, parray.CreateArray(tensorRefs), count, parray.CreateArray, out typeCode);
+                        var allocated = parray.Count;
+
+                        THSJIT_CompilationUnit_Invoke(handle, name, tRefsHandle, count, parray.CreateArray, out typeCode, allocated);
                         torch.CheckForErrors();
-                        ptrArray = parray.Array;
-                    }
+                        ptrArray = parray[allocated];
 
-                    return ScriptModule.ProcessReturnValue(name, ptrArray, typeCode);
+                        return ScriptModule.ProcessReturnValue(name, parray, ptrArray, typeCode);
+                    }
                 }
 
                 /// <summary>

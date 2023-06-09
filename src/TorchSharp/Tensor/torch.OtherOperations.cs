@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TorchSharp.PInvoke;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
@@ -688,7 +688,7 @@ namespace TorchSharp
                 device = torch.CPU;
             }
 
-            var res = LibTorchSharp.THSTensor_tril_indices(row, col, offset, (sbyte)dtype, (int)device.type, device.index);
+            var res = NativeMethods.THSTensor_tril_indices(row, col, offset, (sbyte)dtype, (int)device.type, device.index);
             if (res == IntPtr.Zero)
                 CheckForErrors();
             return new Tensor(res);
@@ -712,7 +712,7 @@ namespace TorchSharp
                 device = torch.CPU;
             }
 
-            var res = LibTorchSharp.THSTensor_triu_indices(row, col, offset, (sbyte)dtype, (int)device.type, device.index);
+            var res = NativeMethods.THSTensor_triu_indices(row, col, offset, (sbyte)dtype, (int)device.type, device.index);
             if (res == IntPtr.Zero)
                 CheckForErrors();
             return new Tensor(res);

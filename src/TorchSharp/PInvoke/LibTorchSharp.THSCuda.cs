@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace TorchSharp.PInvoke
 {
-    internal static partial class LibTorchSharp
+    internal static partial class NativeMethods
     {
         [DllImport("LibTorchSharp")]
         internal static extern void THSCuda_manual_seed(long seed);

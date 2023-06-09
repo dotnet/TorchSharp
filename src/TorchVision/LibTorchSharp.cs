@@ -1,10 +1,10 @@
-﻿// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
+// Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Runtime.InteropServices;
 
 namespace TorchSharp
 {
-    internal static class LibTorchSharp
+    internal static class NativeMethods
     {
         /* Tensor THSVision_AdjustHue(const Tensor i, const double hue_factor) */
         [DllImport("LibTorchSharp")]

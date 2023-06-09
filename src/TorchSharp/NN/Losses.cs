@@ -2,7 +2,7 @@
 using System;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
-using static TorchSharp.PInvoke.LibTorchSharp;
+using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
 
