@@ -68,7 +68,17 @@ namespace TorchSharp
 
             public override long Count => this.attr is null ? 0 : this.attr.shape[0];
 
-            internal void Load()
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    identity?.Dispose();
+                    bbox?.Dispose();
+                    landmarks_align?.Dispose();
+                    attr?.Dispose();
+                }
+            }
+
+        internal void Load()
             {
                 if (!this.CheckIntegrity()) {
                     throw new InvalidDataException("Dataset not found or corrupted. You can use download=True to download it");
