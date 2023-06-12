@@ -2,6 +2,13 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.100.2
+
+__API Changes__:
+
+Add torchvision.datasets.CelebA()<br/>
+
+
 ## NuGet Version 0.100.1
 
 __Breaking Changes__:
