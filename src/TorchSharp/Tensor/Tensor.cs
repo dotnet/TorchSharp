@@ -21,6 +21,7 @@ namespace TorchSharp
         /// <summary>
         /// Represents a TorchSharp tensor.
         /// </summary>
+        [TorchSharp.Utils.TypeFormatterSource(typeof(TorchSharp.Utils.TypeFormatterSource))]
         public partial class Tensor : IDisposable
         {
             /// <summary>

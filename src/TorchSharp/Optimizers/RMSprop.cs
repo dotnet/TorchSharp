@@ -234,9 +234,9 @@ namespace TorchSharp
                 /// <param name="device">The device to move all state to.</param>
                 public override void to(Device device)
                 {
-                    square_avg.to(device);
-                    momentum_buffer?.to(device);
-                    grad_avg?.to(device);
+                    square_avg = square_avg.to(device);
+                    momentum_buffer = momentum_buffer?.to(device);
+                    grad_avg = grad_avg?.to(device);
                 }
 
                 /// <summary>

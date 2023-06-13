@@ -8,6 +8,9 @@ __API Changes__:
 
 Add torchvision.datasets.CelebA()<br/>
 
+__Bug Fixes__:
+
+#1014 AdamW.State.to ignores returns<br/>
 
 ## NuGet Version 0.100.1
 
