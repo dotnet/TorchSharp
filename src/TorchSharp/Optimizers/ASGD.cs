@@ -211,7 +211,7 @@ namespace TorchSharp
                 /// <param name="device">The device to move all state to.</param>
                 public override void to(Device device)
                 {
-                    ax.to(device);
+                    ax = ax.to(device);
                 }
 
                 /// <summary>

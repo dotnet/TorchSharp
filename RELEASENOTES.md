@@ -2,6 +2,16 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.100.2
+
+__API Changes__:
+
+Add torchvision.datasets.CelebA()<br/>
+
+__Bug Fixes__:
+
+#1014 AdamW.State.to ignores returns<br/>
+
 ## NuGet Version 0.100.1
 
 __Breaking Changes__:
