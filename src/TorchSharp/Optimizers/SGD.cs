@@ -219,8 +219,7 @@ namespace TorchSharp
                 /// <param name="device">The device to move all state to.</param>
                 public override void to(Device device)
                 {
-                    if (momentum_buffer is not null)
-                        momentum_buffer.to(device);
+                    momentum_buffer = momentum_buffer?.to(device);
                 }
 
                 /// <summary>

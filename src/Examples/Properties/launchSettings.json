@@ -2,7 +2,7 @@
   "profiles": {
     "Examples": {
       "commandName": "Project",
-      "commandLineArgs": "mnist",
+      "commandLineArgs": "vgg11",
       "nativeDebugging": true
     }
   }
