@@ -1280,9 +1280,9 @@ EXPORT_API(void) THSTensor_dsplit_with_sizes(const Tensor tensor, Tensor* (*allo
 
 EXPORT_API(Tensor) THSTensor_tile(const Tensor tensor, const int64_t* rep, const int rep_length);
 
-EXPORT_API(Tensor) THSTensor_tril(const Tensor tensor, const int64_t diagonal);
+EXPORT_API(Tensor) THSTensor_tril(const Tensor tensor, const int64_t diagonal, const bool inplace);
 
-EXPORT_API(Tensor) THSTensor_triu(const Tensor tensor, const int64_t diagonal);
+EXPORT_API(Tensor) THSTensor_triu(const Tensor tensor, const int64_t diagonal, const bool inplace);
 
 EXPORT_API(Tensor) THSTensor_tril_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index);
 EXPORT_API(Tensor) THSTensor_triu_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index);
@@ -1503,6 +1503,8 @@ EXPORT_API(Tensor) THSLinalg_qr(const Tensor tensor, const char mode, Tensor* R)
 
 EXPORT_API(Tensor) THSLinalg_solve(const Tensor tensor, Tensor other, bool left);
 EXPORT_API(Tensor) THSLinalg_solve_ex(const Tensor tensor, Tensor other, bool left, bool check_errors, Tensor* S);
+EXPORT_API(Tensor) THSLinalg_solve_triangular(const Tensor tensor, Tensor other, bool upper, bool left, bool unitriangular);
+EXPORT_API(Tensor) THSLinalg_solve_triangular_out(const Tensor tensor, Tensor other, bool upper, bool left, bool unitriangular, Tensor out);
 
 EXPORT_API(Tensor) THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, Tensor* Vh);
 
