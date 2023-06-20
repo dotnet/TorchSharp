@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
+using System;
 using static TorchSharp.torch;
 
 
@@ -11,6 +12,11 @@ namespace TorchSharp
         {
             internal CenterCrop(int height, int width)
             {
+                if (height <= 0) 
+                    throw new ArgumentOutOfRangeException(nameof(height), "Height must be greater than 0.");
+                if (width <= 0) 
+                    throw new ArgumentOutOfRangeException(nameof(width), "Width must be greater than 0.");
+
                 this.height = height;
                 this.width = width;
             }
@@ -21,6 +27,10 @@ namespace TorchSharp
             }
 
             protected int height, width;
+
+            public int Height => height;
+            public int Width => width;
+
         }
 
         public static partial class transforms

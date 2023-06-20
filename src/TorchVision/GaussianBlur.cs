@@ -13,6 +13,12 @@ namespace TorchSharp
         {
             internal GaussianBlur(IList<long> kernelSize, float min, float max)
             {
+                if (kernelSize == null || kernelSize.Count != 2 || kernelSize.Any(x => x <= 0)) {
+                    throw new ArgumentException("Invalid kernel size argument.");
+                }
+                if (min < 0 || max < 0 || min >= max) {
+                    throw new ArgumentException("Invalid GaussianBlur arguments.");
+                }
                 this.sigma = (min == max) ?
                     min :
                     (float)(new Random().NextDouble() * (max - min) + min);
