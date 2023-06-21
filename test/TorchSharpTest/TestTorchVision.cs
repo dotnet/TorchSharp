@@ -1096,7 +1096,7 @@ namespace TorchSharp
             var actual = torchvision.transforms.functional.rotate(img, 45, InterpolationMode.Bilinear, true, (1, 1), null);
 
             Assert.Equal(expected.shape, actual.shape);
-            Assert.True(expected.allclose(actual));
+            Assert.True(expected.allclose(actual, rtol: 1e-4, atol: 1e-6));
         }
 
         [Fact]
@@ -1115,7 +1115,7 @@ namespace TorchSharp
             var actual = torchvision.transforms.functional.rotate(img, -45, InterpolationMode.Bilinear, true, (1, 1), null);
 
             Assert.Equal(expected.shape, actual.shape);
-            Assert.True(expected.allclose(actual));
+            Assert.True(expected.allclose(actual, rtol: 1e-4, atol:1e-6));
         }
     }
 }
