@@ -18,6 +18,8 @@ namespace TorchSharp
 
             public override Tensor variance => rate;
 
+            public override Tensor mode => rate.floor();
+
             /// <summary>
             /// Constructor
             /// </summary>

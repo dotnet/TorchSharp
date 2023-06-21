@@ -12,7 +12,13 @@ __API Changes__:
 
 Adding torch.linalg.solve_triangular()<br/>
 Adding torch.distributions.MultivariateNormal<br/>
-Adding in-place versions of `Tensor.triu()` and `Tensor.tril()`
+Adding torch.distributions.NegativeBinomial<br/>
+Adding in-place versions of `Tensor.triu()` and `Tensor.tril()`<br/>
+Adding torch.linalg.logsigmoid() and torch.nn.LogSigmoid<br/>
+
+__Bug Fixes__:
+
+TorchVision `rotate(), `solarize()` and `invert()` were incorrectly implemented.<br/>
 
 ## NuGet Version 0.100.2
 

@@ -27,26 +27,33 @@ namespace TorchSharp
             /// </summary>
             public override Tensor mode {
                 get {
-                    using var _ = NewDisposeScope();
-                    return ((total_count - 1) * logits.exp()).floor().clamp(min: 0).MoveToOuterDisposeScope();
+                    // Individual sub-expressions is slightly faster than using DisposeScope
+                    using var t0 = total_count - 1;
+                    using var t1 = t0 * logits.exp();
+                    return t1.floor_().clamp(min: 0);
                 }
             }
-
 
             /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => mean / torch.sigmoid(-logits);
+            public override Tensor variance {
+                get {
+                    // Individual sub-expressions is slightly faster than using DisposeScope
+                    using var t0 = torch.sigmoid(-logits);
+                    return mean / t0;
+                }
+            }
 
             public NegativeBinomial(Tensor total_count, Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
             {
                 this.batch_shape = p is null ? l.size() : p.size();
-                this._probs = p ?? LogitsToProbs(l, true);
-                this._logits = l ?? ProbsToLogits(p, true);
+                this._probs = p ?? LogitsToProbs(l, true).DetachFromDisposeScope();
+                this._logits = l ?? ProbsToLogits(p, true).DetachFromDisposeScope();
                 this.generator = generator;
 
                 var broadcast = (p is null) ? torch.broadcast_tensors(total_count, l) : torch.broadcast_tensors(total_count, p);
-                this.total_count = broadcast[0].type_as(p ?? l);
+                this.total_count = broadcast[0].type_as(p ?? l).DetachFromDisposeScope();
             }
 
             /// <summary>

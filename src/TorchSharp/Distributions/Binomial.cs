@@ -21,17 +21,36 @@ namespace TorchSharp
             /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => total_count * probs * (1 - probs);
+            public override Tensor variance {
+                get {
+                    // Individual sub-expressions is slightly faster than using DisposeScope
+                    using var t0 = total_count * probs;
+                    using var t1 = (1 - probs);
+                    return t0 * t1;
+                }
+            }
+
+            /// <summary>
+            /// Mode of the negative binomial distribution.
+            /// </summary>
+            public override Tensor mode {
+                get {
+                    // Individual sub-expressions is slightly faster than using DisposeScope
+                    using var t0 = total_count + 1;
+                    using var t1 = t0 * _probs;
+                    return t1.floor_().clamp(max: total_count);
+                }
+            }
 
             public Binomial(Tensor total_count, Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
             {
                 this.batch_shape = p is null ? l.size() : p.size();
-                this._probs = p;
-                this._logits = l;
+                this._probs = p ?? LogitsToProbs(l, true).DetachFromDisposeScope();
+                this._logits = l ?? ProbsToLogits(p, true).DetachFromDisposeScope();
                 this.generator = generator;
 
                 var broadcast = (p is null) ? torch.broadcast_tensors(total_count, l) : torch.broadcast_tensors(total_count, p);
-                this.total_count = broadcast[0].type_as(p ?? l);
+                this.total_count = broadcast[0].type_as(p ?? l).DetachFromDisposeScope();
             }
 
             /// <summary>
@@ -39,7 +58,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor probs {
                 get {
-                    return _probs ?? LogitsToProbs(_logits, true);
+                    return _probs;
                 }
             }
 
@@ -48,7 +67,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor logits {
                 get {
-                    return _logits ?? ProbsToLogits(_probs, true);
+                    return _logits;
                 }
             }
 

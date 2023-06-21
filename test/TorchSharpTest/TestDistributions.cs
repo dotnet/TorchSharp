@@ -596,7 +596,15 @@ namespace TorchSharp
         [Fact]
         public void TestBinomial()
         {
-            var dist = Binomial(torch.tensor(100), torch.rand(3, dtype: ScalarType.Float64));
+            var dist = Binomial(torch.tensor(100), torch.tensor(new[] { 0.25, 0.25, 0.15 }));
+            Assert.True(torch.tensor(new[] { 25.0, 25.0, 15.0 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 18.7500, 18.7500, 12.7500 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 25.0, 25.0, 15.0 }).allclose(dist.mode));
+
+            var log_prob = dist.log_prob(torch.arange(3));
+
+            Assert.True(torch.tensor(new[] { -28.7682, -25.2616, -11.2140 }).allclose(log_prob));
+
             {
                 var sample = dist.sample();
 
@@ -621,7 +629,15 @@ namespace TorchSharp
         public void TestBinomialGen()
         {
             var gen = new Generator(4711);
-            var dist = Binomial(torch.tensor(100), torch.rand(3, dtype: ScalarType.Float64), generator: gen);
+            var dist = Binomial(torch.tensor(100), torch.tensor(new[] { 0.25, 0.25, 0.15 }), generator: gen);
+            Assert.True(torch.tensor(new[] { 25.0, 25.0, 15.0 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 18.7500, 18.7500, 12.7500 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 25.0, 25.0, 15.0 }).allclose(dist.mode));
+
+            var log_prob = dist.log_prob(torch.arange(3));
+
+            Assert.True(torch.tensor(new[] { -28.7682, -25.2616, -11.2140 }).allclose(log_prob));
+
             {
                 var sample = dist.sample();
 
@@ -1135,7 +1151,7 @@ namespace TorchSharp
         public void TestMultivariateNormal()
         {
             var bs = 2;
-            var dist = torch.distributions.MultiVariateNormal(torch.zeros(bs), precision_matrix: torch.eye(bs));
+            var dist = torch.distributions.MultivariateNormal(torch.zeros(bs), precision_matrix: torch.eye(bs));
             {
                 var sample = dist.sample(2, 2);
 
