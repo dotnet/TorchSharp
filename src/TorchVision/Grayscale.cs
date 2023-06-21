@@ -17,6 +17,9 @@ namespace TorchSharp
 
             public Tensor call(Tensor input)
             {
+                if (input.shape[1] == 1) return input.alias();
+                if (input.shape[1] != 3)
+                    throw new ArgumentException("RGB input to 'Grayscale' transform must have 3 channels.");
                 return transforms.functional.rgb_to_grayscale(input, outputChannels);
             }
 

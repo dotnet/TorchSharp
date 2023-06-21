@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using SkiaSharp;
 using Xunit;
 
 using static TorchSharp.torch;
@@ -242,8 +243,8 @@ namespace TorchSharp
 
             foreach (var device in TestUtils.AvailableDevices()) {
                 foreach (var dtype in types) {
-                    var output = masks_to_boxes(torch.tensor(maskList, dtype: dtype, device: device).reshape(12,3,4));
-                    var exp = torch.tensor(expected, dtype: dtype, device: device).reshape(12,4);
+                    var output = masks_to_boxes(torch.tensor(maskList, dtype: dtype, device: device).reshape(12, 3, 4));
+                    var exp = torch.tensor(expected, dtype: dtype, device: device).reshape(12, 4);
                     Assert.Equal(expected_shape, output.shape);
                     Assert.Equal(exp, output);
                 }
@@ -259,7 +260,7 @@ namespace TorchSharp
             long depth = height;
 
             Tensor x = (dim == 2) ? torch.ones(batch_size, channels, height, width) : torch.ones(new[] { batch_size, channels, depth, height, width });
-            nn.Module<Tensor,Tensor> layer = (dim == 2) ?  DropBlock2d(p, block_size, inplace) : DropBlock3d(p, block_size, inplace);
+            nn.Module<Tensor, Tensor> layer = (dim == 2) ? DropBlock2d(p, block_size, inplace) : DropBlock3d(p, block_size, inplace);
 
             int feature_size = (int)((dim == 2) ? height * width : depth * height * width);
 
@@ -283,8 +284,8 @@ namespace TorchSharp
         public void TestDropBlock()
         {
             foreach (var dim in new int[] { 2, 3 }) {
-                foreach (var p in new double[] { 0, 0.5}) {
-                    foreach (var block_size in new int[] { 5, 11}) {
+                foreach (var p in new double[] { 0, 0.5 }) {
+                    foreach (var block_size in new int[] { 5, 11 }) {
                         TestDropBlocks(dim, p, block_size, false);
                         TestDropBlocks(dim, p, block_size, true);
                     }
@@ -398,7 +399,7 @@ namespace TorchSharp
         public void TestResNet34()
         {
             using var model = resnet34();
-            var sd = model.state_dict();            
+            var sd = model.state_dict();
             Assert.Equal(218, sd.Count);
 
             var names = model.named_children().Select(nm => nm.name).ToArray();
@@ -830,6 +831,291 @@ namespace TorchSharp
 
             System.IO.File.Delete(outName1);
             System.IO.File.Delete(outName2);
+        }
+
+        [Fact]
+        public void TestConstructor_ThrowsArgumentException_IfMeansAndStdevsHaveDifferentLengths()
+        {
+            // Arrange
+            double[] means = { 0.485, 0.456, 0.406 };
+            double[] stdevs = { 0.229, 0.224, 0.225, 0.222 }; // Different length
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => torchvision.transforms.Normalize(means, stdevs));
+        }
+
+        [Fact]
+        public void TestConstructor_ThrowsArgumentException_IfMeansAndStdevsHaveWrongLengths()
+        {
+            // Arrange
+            double[] means = { 0.485, 0.456 };
+            double[] stdevs = { 0.229, 0.224 }; // Not 1 or 3
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => torchvision.transforms.Normalize(means, stdevs));
+        }
+
+        [Fact]
+        public void TestConstructor_CreatesNewNormalizeObject_WithValidArguments()
+        {
+            // Arrange
+            double[] means = { 0.485, 0.456, 0.406 };
+            double[] stdevs = { 0.229, 0.224, 0.225 };
+
+            // Act
+            var result = torchvision.transforms.Normalize(null, null);// means, stdevs);
+
+            // Assert
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void TestCall_ThrowsArgumentException_IfNumberOfChannelsIsNotEqual()
+        {
+            // Arrange
+            double[] means = { 0.485, 0.456, 0.406 };
+            double[] stdevs = { 0.229, 0.224, 0.225 };
+            var sut = torchvision.transforms.Normalize(means, stdevs);
+            var wrongSizeInput = torch.rand(new long[] { 1, 4, 32, 32 }); // wrong number of input channels
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => sut.call(wrongSizeInput));
+        }
+
+        [Fact]
+        public void TestCall_CallsOperatorsCorrectly()
+        {
+            // Arrange
+            double[] means = { 0.485, 0.456, 0.406 };
+            double[] stdevs = { 0.229, 0.224, 0.225 };
+            var sut = torchvision.transforms.Normalize(means, stdevs);
+            var inputChannels = 3;
+            var input = torch.rand(new long[] { 1, inputChannels, 32, 32 }, dtype: float64);
+
+            var expectedOutput = (input - means.ToTensor(new long[] { 1, inputChannels, 1, 1 })) / stdevs.ToTensor(new long[] { 1, inputChannels, 1, 1 });
+
+            // Act
+            var actualOutput = sut.call(input);
+
+            // Assert
+            Assert.True(torch.allclose(expectedOutput, actualOutput, rtol: 1e-4, atol: 1e-5));
+        }
+
+        [Fact]
+        public void Call_ThrowsException_WithWrongNumberOfChannels()
+        {
+            // Act
+            Assert.Throws<ArgumentException>(() => torchvision.transforms.Grayscale(outputChannels: 2));
+
+            Tensor input = torch.rand(new long[] { 1, 2, 128, 128 });
+
+            var tfrm = torchvision.transforms.Grayscale(outputChannels: 1);
+
+            Assert.Throws<ArgumentException>(() => tfrm.call(input));
+        }
+
+        [Fact]
+        public void Resize_WithHeightAndWidth_ReturnsTensor()
+        {
+            //Arrange
+            int height = 20;
+            int width = 30;
+            var input = torch.randn(1, 3, 256, 256);
+            var transform = torchvision.transforms.Resize(height, width);
+
+            //Act
+            var result = transform.call(input);
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.Equal(new long[] { 1, 3, 20, 30 }, result.shape);
+        }
+
+        [Fact]
+        public void Resize_WithSizeAndMaxSize_ReturnsTensor()
+        {
+            //Arrange
+            int size = 20;
+            int? maxSize = 30;
+            var input = torch.randn(1, 3, 256, 256);
+            var transform = torchvision.transforms.Resize(size, maxSize);
+
+            //Act
+            var result = transform.call(input);
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.Equal(new long[] { 1, 3, 20, 20 }, result.shape);
+        }
+
+        [Fact]
+        public void TestAdjustGamma_GainLessThanOne_ReturnsWithLowerContrast()
+        {
+            var img = torch.empty(1, 2, 3).uniform_(0, 1);
+            var gamma = 0.5;
+            var gain = 0.5;
+            var expected = img.pow(gamma).mul(gain).max(torch.tensor(0.0)).min(torch.tensor(1.0));
+
+            var result = torchvision.transforms.functional.adjust_gamma(img, gamma, gain);
+
+            Assert.True(expected.allclose(result, 1e-5));
+        }
+
+        [Fact]
+        public void TestAutocontrast()
+        {
+            var img = torch.rand(new long[] { 1, 3, 256, 256 });
+            var result = torchvision.transforms.functional.autocontrast(img);
+
+            Assert.Equal(img.shape, result.shape);
+        }
+        [Fact]
+        public void TestAutoContrast()
+        {
+            // Arrange
+            var input = torch.ones(1, 3, 256, 256);
+
+            // Act
+            var autocontrast = torchvision.transforms.functional.autocontrast(input);
+
+            // Assert
+            Assert.True(autocontrast.min().ToDouble() >= 0);
+            Assert.True(autocontrast.max().ToDouble() <= 1);
+            Assert.True(autocontrast.dtype == input.dtype);
+        }
+
+        [Fact]
+        public void TestAutoContrastWithIntegralBounds()
+        {
+            // Arrange
+            float bound = 255.0f;
+            var input = torch.ones(1, 3, 256, 256, ScalarType.Int32);
+
+            // Act
+            var autocontrast = torchvision.transforms.functional.autocontrast(input);
+
+            // Assert
+            Assert.True(autocontrast.min().ToInt64() >= 0);
+            Assert.True(autocontrast.max().ToInt64() <= bound);
+            Assert.True(autocontrast.dtype == input.dtype);
+        }
+        [Fact]
+        public void TestResizedCrop()
+        {
+            var input = torch.rand(1, 3, 224, 224);
+            var top = 10;
+            var left = 20;
+            var height = 100;
+            var width = 100;
+            var newHeight = 50;
+            var newWidth = 75;
+
+            var result = torchvision.transforms.functional.resized_crop(input, top, left, height, width, newHeight, newWidth);
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void TestResizedCropWithInvalidInput()
+        {
+            var input = torch.rand(1, 3, 224, 224);
+            var top = 10;
+            var left = 20;
+            var height = 100;
+            var width = 100;
+            var newHeight = -1;
+            var newWidth = 75;
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => torchvision.transforms.functional.resized_crop(input, top, left, height, width, newHeight, newWidth));
+        }
+
+        [Fact]
+        public void TestRotateImage90DegreesCounterClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                {1, 1, 1},
+                                                {1, 1, 1}}});
+            var expected = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                        {1, 1, 1},
+                                                        {1, 1, 1}}}).rot90(1, (1, 2));
+            var actual = torchvision.transforms.functional.rotate(img, 90, InterpolationMode.Nearest, false, null, null);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestRotateImage180DegreesCounterClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                   {1, 1, 1},
+                                                   {1, 1, 1}}});
+            var expected = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                     {1, 1, 1},
+                                                     {1, 1, 1}}}).rot90(2, (1, 2));
+            var actual = torchvision.transforms.functional.rotate(img, 180, InterpolationMode.Nearest, false, null, null);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestRotateImage270DegreesCounterClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                   {1, 1, 1},
+                                                   {1, 1, 1}}});
+            var expected = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                        {1, 1, 1},
+                                                        {1, 1, 1}}}).rot90(-1, (1, 2));
+            var actual = torchvision.transforms.functional.rotate(img, 270, InterpolationMode.Nearest, false, null, null);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestRotateImage90DegreesClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                   {1, 1, 1},
+                                                   {1, 1, 1}}});
+            var expected = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                        {1, 1, 1},
+                                                        {1, 1, 1}}}).rot90(-1, (1, 2));
+            var actual = torchvision.transforms.functional.rotate(img, -90, InterpolationMode.Nearest, false, null, null);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestRotateImage45DegreesCounterClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 0},
+                                                {1, 1, 0},
+                                                {0, 0, 0}}});
+            var expected = torch.tensor(new float[,,]{{
+                     { 0.0000f, 0.0000f, 0.1930f, 0.0000f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.4393f, 1.0000f, 0.4393f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.4393f, 1.0000f, 0.4393f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.0000f, 0.1930f, 0.0000f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f }}});
+            var actual = torchvision.transforms.functional.rotate(img, 45, InterpolationMode.Bilinear, true, (1, 1), null);
+
+            Assert.Equal(expected.shape, actual.shape);
+            Assert.True(expected.allclose(actual));
+        }
+
+        [Fact]
+        public void TestRotateImage45DegreesClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 0},
+                                                {1, 1, 0},
+                                                {0, 0, 0}}});
+            var expected = torch.tensor(new float[,,]{{
+                     { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.4393f, 0.4393f, 0.0000f, 0.0000f },
+                     { 0.1930f, 1.0000f, 1.0000f, 0.1930f, 0.0000f },
+                     { 0.0000f, 0.4393f, 0.4393f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f }}});
+            var actual = torchvision.transforms.functional.rotate(img, -45, InterpolationMode.Bilinear, true, (1, 1), null);
+
+            Assert.Equal(expected.shape, actual.shape);
+            Assert.True(expected.allclose(actual));
         }
     }
 }

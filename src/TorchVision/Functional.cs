@@ -15,6 +15,7 @@ using static TorchSharp.NativeMethods;
 // https://github.com/pytorch/vision/blob/master/LICENSE
 //
 
+#nullable enable
 namespace TorchSharp
 {
     public static partial class torchvision
@@ -35,6 +36,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor adjust_brightness(Tensor img, double brightness_factor)
                 {
+                    if (brightness_factor < 0)
+                        throw new ArgumentException(nameof(brightness_factor), "'brightness_factor' should be a non-negative real number");
+
                     if (brightness_factor == 1.0)
                         // Special case -- no change.
                         return img.alias();
@@ -54,6 +58,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor adjust_contrast(Tensor img, double contrast_factor)
                 {
+                    if (contrast_factor < 0)
+                        throw new ArgumentException(nameof(contrast_factor), "'contrast_factor' should be a non-negative real number");
+
                     if (contrast_factor == 1.0)
                         // Special case -- no change.
                         return img.alias();
@@ -80,6 +87,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor adjust_gamma(Tensor img, double gamma, double gain = 1.0)
                 {
+                    if (gamma < 0)
+                        throw new ArgumentException(nameof(gamma), "'gamma' should be a non-negative real number");
+
                     var dtype = img.dtype;
                     if (!torch.is_floating_point(img)) {
                         img = transforms.functional.convert_image_dtype(img, torch.float32);
@@ -143,6 +153,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor adjust_saturation(Tensor img, double saturation_factor)
                 {
+                    if (saturation_factor < 0)
+                        throw new ArgumentException(nameof(saturation_factor), "'saturation_factor' should be a non-negative real number");
+
                     if (saturation_factor == 1.0)
                         // Special case -- no change.
                         return img.alias();
@@ -162,6 +175,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor adjust_sharpness(Tensor img, double sharpness)
                 {
+                    if (sharpness < 0)
+                        throw new ArgumentException(nameof(sharpness), "'sharpness' should be a non-negative real number");
+
                     if (img.shape[img.shape.Length - 1] <= 2 || img.shape[img.shape.Length - 2] <= 2)
                         return img.alias();
 
@@ -181,9 +197,9 @@ namespace TorchSharp
                 /// <param name="interpolation">Desired interpolation.</param>
                 /// <param name="fill">Pixel fill value for the area outside the transformed image.</param>
                 /// <returns></returns>
-                public static Tensor affine(Tensor img, IList<float> shear = null, float angle = 0.0f, IList<int> translate = null, float scale = 1.0f, InterpolationMode interpolation = InterpolationMode.Nearest, float? fill = null)
+                public static Tensor affine(Tensor img, IList<float>? shear = null, float angle = 0.0f, IList<int>? translate = null, float scale = 1.0f, InterpolationMode interpolation = InterpolationMode.Nearest, float? fill = null)
                 {
-                    IList<float> fills = (fill.HasValue) ? new float[] { fill.Value } : null;
+                    IList<float>? fills = (fill.HasValue) ? new float[] { fill.Value } : null;
 
                     if (translate == null) {
                         translate = new int[] { 0, 0 };
@@ -222,7 +238,7 @@ namespace TorchSharp
                 /// <param name="interpolation">Desired interpolation.</param>
                 /// <param name="fill">Pixel fill value for the area outside the transformed image.</param>
                 /// <returns></returns>
-                public static Tensor affine(Tensor img, float shear, float angle = 0.0f, IList<int> translate = null, float scale = 1.0f, InterpolationMode interpolation = InterpolationMode.Nearest, float? fill = null)
+                public static Tensor affine(Tensor img, float shear, float angle = 0.0f, IList<int>? translate = null, float scale = 1.0f, InterpolationMode interpolation = InterpolationMode.Nearest, float? fill = null)
                 {
                     return affine(img, new float[] { shear, 0.0f }, angle, translate, scale, interpolation, fill);
                 }
@@ -629,7 +645,7 @@ namespace TorchSharp
                 /// <param name="interpolation">Desired interpolation. Only InterpolationMode.Nearest, InterpolationMode.Bilinear are supported. </param>
                 /// <param name="fill">Pixel fill value for the area outside the transformed image.</param>
                 /// <returns></returns>
-                public static Tensor perspective(Tensor img, IList<IList<int>> startpoints, IList<IList<int>> endpoints, InterpolationMode interpolation = InterpolationMode.Bilinear, IList<float> fill = null)
+                public static Tensor perspective(Tensor img, IList<IList<int>> startpoints, IList<IList<int>> endpoints, InterpolationMode interpolation = InterpolationMode.Bilinear, IList<float>? fill = null)
                 {
                     if (interpolation != InterpolationMode.Nearest && interpolation != InterpolationMode.Bilinear)
                         throw new ArgumentException($"Invalid interpolation mode for 'perspective': {interpolation}. Use 'nearest' or 'bilinear'.");
@@ -718,6 +734,22 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor resized_crop(Tensor input, int top, int left, int height, int width, int newHeight, int newWidth)
                 {
+                    if (top < 0 || left < 0) throw new ArgumentOutOfRangeException("top and left must be >= 0");
+                    if (height <= 0 || width <= 0 || newHeight <= 0 || newWidth <= 0) throw new ArgumentOutOfRangeException("Input and output sizes must be positive.");
+
+                    switch(input.ndim) {
+                    case 3: // Unbatched
+                        if (top + height > input.shape[1] || left + width > input.shape[2])
+                            throw new ArgumentException("Crop dimensions exceed image size.", nameof(input));
+                        break;
+                    default: // Any number of batch dimensions
+                        if (top + height > input.shape[input.ndim-2] || left + width > input.shape[input.ndim-1]) 
+                            throw new ArgumentException("Crop dimensions exceed image size.", nameof(input));
+                        break;
+                    case 1:
+                    case 2:
+                        throw new ArgumentException("The input image must be a CxHxW or *xCxHxW tensor.", nameof(input));
+                    }
                     using var t0 = crop(input, top, left, height, width);
                     return resize(t0, newHeight, newWidth);
                 }
@@ -754,7 +786,7 @@ namespace TorchSharp
                 /// <summary>
                 /// Rotate the image by angle, counter-clockwise.
                 /// </summary>
-                public static Tensor rotate(Tensor img, float angle, InterpolationMode interpolation = InterpolationMode.Nearest, bool expand = false, (int, int)? center = null, IList<float> fill = null)
+                public static Tensor rotate(Tensor img, float angle, InterpolationMode interpolation = InterpolationMode.Nearest, bool expand = false, (int, int)? center = null, IList<float>? fill = null)
                 {
                     var center_f = (0.0f, 0.0f);
 
@@ -788,7 +820,7 @@ namespace TorchSharp
                 //
                 // Supporting implementation details.
                 //
-                private static Tensor RotateImage(Tensor img, IList<float> matrix, InterpolationMode interpolation, bool expand, IList<float> fill)
+                private static Tensor RotateImage(Tensor img, IList<float> matrix, InterpolationMode interpolation, bool expand, IList<float>? fill)
                 {
                     var (w, h) = GetImageSize(img);
                     var (ow, oh) = expand ? ComputeOutputSize(matrix, w, h) : (w, h);
@@ -857,7 +889,7 @@ namespace TorchSharp
                     return kernel_Y.mm(kernel_X);
                 }
 
-                private static Tensor ApplyGridTransform(Tensor img, Tensor grid, InterpolationMode mode, IList<float> fill = null)
+                private static Tensor ApplyGridTransform(Tensor img, Tensor grid, InterpolationMode mode, IList<float>? fill = null)
                 {
                     img = SqueezeIn(img, new ScalarType[] { grid.dtype }, out var needCast, out var needSqueeze, out var out_dtype);
 
