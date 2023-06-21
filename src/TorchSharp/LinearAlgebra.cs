@@ -588,13 +588,13 @@ namespace TorchSharp
             /// <summary>
             /// Computes the solution of a square system of linear equations with a unique solution.
             /// </summary>
-            /// <param name="input">Tensor of shape (*, n, n) where * is zero or more batch dimensions.</param>
-            /// <param name="other">Right-hand side tensor of shape (*, n) or (*, n, k) or (n,) or (n, k)</param>
+            /// <param name="A">Tensor of shape (*, n, n) where * is zero or more batch dimensions.</param>
+            /// <param name="B">Right-hand side tensor of shape (*, n) or (*, n, k) or (n,) or (n, k)</param>
             /// <param name="left">whether to solve the system AX = B or XA = B.</param>
             /// <returns></returns>
-            public static Tensor solve(Tensor input, Tensor other, bool left = true)
+            public static Tensor solve(Tensor A, Tensor B, bool left = true)
             {
-                var res = THSLinalg_solve(input.Handle, other.Handle, left);
+                var res = THSLinalg_solve(A.Handle, B.Handle, left);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return new Tensor(res);
@@ -603,17 +603,37 @@ namespace TorchSharp
             /// <summary>
             /// Computes the solution of a square system of linear equations with a unique solution.
             /// </summary>
-            /// <param name="input">Ttensor of shape (*, n, n) where * is zero or more batch dimensions.</param>
-            /// <param name="other">Right-hand side tensor of shape (*, n) or (*, n, k) or (n,) or (n, k)</param>
+            /// <param name="A">Ttensor of shape (*, n, n) where * is zero or more batch dimensions.</param>
+            /// <param name="B">Right-hand side tensor of shape (*, n) or (*, n, k) or (n,) or (n, k)</param>
             /// <param name="left">whether to solve the system AX = B or XA = B.</param>
             /// <param name="check_errors">controls whether to check the content of infos and raise an error if it is non-zero</param>
             /// <returns></returns>
-            public static (Tensor result, Tensor info) solve_ex(Tensor input, Tensor other, bool left = true, bool check_errors = false)
+            public static (Tensor result, Tensor info) solve_ex(Tensor A, Tensor B, bool left = true, bool check_errors = false)
             {
-                var res = THSLinalg_solve_ex(input.Handle, other.Handle, left, check_errors, out var infos);
+                var res = THSLinalg_solve_ex(A.Handle, B.Handle, left, check_errors, out var infos);
                 if (res == IntPtr.Zero)
                     torch.CheckForErrors();
                 return (new Tensor(res), new Tensor(infos));
+            }
+
+            /// <summary>
+            /// Computes the solution of a square system of linear equations with a unique solution.
+            /// </summary>
+            /// <param name="A">Tensor of shape (*, n, n) where * is zero or more batch dimensions.</param>
+            /// <param name="B">Right-hand side tensor of shape (*, n) or (*, n, k) or (n,) or (n, k)</param>
+            /// <param name="upper">Whether A is an upper or lower triangular matrix</param>
+            /// <param name="left">Whether to solve the system AX = B or XA = B.</param>
+            /// <param name="unitriangular">If true, the diagonal elements of A are assumed to be all equal to 1.</param>
+            /// <param name="out">Output tensor. B may be passed as out and the result is computed in-place on B.</param>
+            /// <returns></returns>
+            public static Tensor solve_triangular(Tensor A, Tensor B, bool upper, bool left = true, bool unitriangular = false, Tensor? @out = null)
+            {
+                var res = (@out is null)
+                    ? THSLinalg_solve_triangular(A.Handle, B.Handle, upper, left, unitriangular)
+                    : THSLinalg_solve_triangular_out(A.Handle, B.Handle, upper, left, unitriangular, @out.Handle);
+                if (res == IntPtr.Zero)
+                    torch.CheckForErrors();
+                return new Tensor(res);
             }
 
             /// <summary>
