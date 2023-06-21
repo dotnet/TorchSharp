@@ -643,6 +643,34 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestNegativeBinomial()
+        {
+            var dist = NegativeBinomial(torch.tensor(100), torch.tensor(new [] {0.25, 0.25, 0.15}));
+            Assert.True(torch.tensor(new[] { 33.3333, 33.3333, 17.6471 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 44.4444, 44.4444, 20.7612 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 33.0, 33.0, 17.0 }).allclose(dist.mode));
+
+            {
+                var sample = dist.sample();
+
+                Assert.Single(sample.shape);
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
+            }
+            {
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
+
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d <= 100));
+            }
+        }
+
+        [Fact]
         public void TestCategorical()
         {
             var gen = new Generator(4711);

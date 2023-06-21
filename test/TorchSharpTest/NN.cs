@@ -652,6 +652,21 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EvaluateLogSigmoid()
+        {
+            var rel = LogSigmoid();
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values.Select(v => Math.Exp(v)), val => Assert.True(val >= 0.0 && val <= 1.0));
+            }
+        }
+
+        [Fact]
         public void EvaluateSiLU()
         {
             var rel = SiLU();

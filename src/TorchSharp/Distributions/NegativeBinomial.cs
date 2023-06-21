@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using static TorchSharp.torch;
+using static TorchSharp.torch.nn.functional;
 
 namespace TorchSharp
 {
@@ -9,25 +10,39 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// A Binomial distribution parameterized by total_count and either probs or logits (but not both).
+        /// A NegativeBinomial distribution parameterized by total_count and either probs or logits (but not both).
+        ///
+        /// This is a distribution of the number of successful independent and identical Bernoulli trials
+        /// before `total_count` failures are achieved. The probability of success of each Bernoulli trial is `probs`.
         /// </summary>
-        public class Binomial : torch.distributions.Distribution
+        public class NegativeBinomial : torch.distributions.Distribution
         {
             /// <summary>
             /// The mean of the distribution.
             /// </summary>
-            public override Tensor mean => total_count * probs;
+            public override Tensor mean => total_count * torch.exp(logits);
+
+            /// <summary>
+            /// Mode of the negative binomial distribution.
+            /// </summary>
+            public override Tensor mode {
+                get {
+                    using var _ = NewDisposeScope();
+                    return ((total_count - 1) * logits.exp()).floor().clamp(min: 0).MoveToOuterDisposeScope();
+                }
+            }
+
 
             /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => total_count * probs * (1 - probs);
+            public override Tensor variance => mean / torch.sigmoid(-logits);
 
-            public Binomial(Tensor total_count, Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
+            public NegativeBinomial(Tensor total_count, Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
             {
                 this.batch_shape = p is null ? l.size() : p.size();
-                this._probs = p;
-                this._logits = l;
+                this._probs = p ?? LogitsToProbs(l, true);
+                this._logits = l ?? ProbsToLogits(p, true);
                 this.generator = generator;
 
                 var broadcast = (p is null) ? torch.broadcast_tensors(total_count, l) : torch.broadcast_tensors(total_count, p);
@@ -39,7 +54,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor probs {
                 get {
-                    return _probs ?? LogitsToProbs(_logits, true);
+                    return _probs;
                 }
             }
 
@@ -48,7 +63,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor logits {
                 get {
-                    return _logits ?? ProbsToLogits(_probs, true);
+                    return _logits;
                 }
             }
 
@@ -63,8 +78,12 @@ namespace TorchSharp
             /// <param name="sample_shape">The sample shape.</param>
             public override Tensor rsample(params long[] sample_shape)
             {
-                var shape = ExtendedShape(sample_shape);
-                return torch.binomial(total_count.expand(shape), probs.expand(shape), generator);
+                using var scope = NewDisposeScope();
+                using (var _ = torch.no_grad()) {
+                    var gamma = distributions.Gamma(concentration:total_count, rate: torch.exp(-_logits));
+                    var rate = gamma.sample(sample_shape);
+                    return torch.poisson(rate, generator).MoveToOuterDisposeScope();
+                }
             }
 
             /// <summary>
@@ -73,12 +92,12 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor log_prob(Tensor value)
             {
-                var log_factorial_n = torch.lgamma(total_count + 1);
-                var log_factorial_k = torch.lgamma(value + 1);
-                var log_factorial_nmk = torch.lgamma(total_count - value + 1);
+                using var _ = NewDisposeScope();
+                var log_unnormalized_prob = (total_count * (-_logits).log_sigmoid() + value * logits.log_sigmoid());
+                var log_normalization = (-torch.lgamma(total_count + value) + torch.lgamma(1.0 + value) + torch.lgamma(total_count));
+                log_normalization = log_normalization.masked_fill(total_count + value == 0, 0);
 
-                var normalize_term = (total_count * ClampByZero(logits) + total_count * torch.log1p(torch.exp(-torch.abs(logits))) - log_factorial_n);
-                return value * logits - log_factorial_k - log_factorial_nmk - normalize_term;
+                return (log_unnormalized_prob - log_normalization).MoveToOuterDisposeScope();
             }
 
             /// <summary>
@@ -86,7 +105,7 @@ namespace TorchSharp
             /// </summary>
             public override Tensor entropy()
             {
-                return torch.nn.functional.binary_cross_entropy_with_logits(logits, probs, reduction: nn.Reduction.None);
+                throw new NotImplementedException(nameof(entropy));
             }
 
             /// <summary>
@@ -98,12 +117,12 @@ namespace TorchSharp
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
-                if (instance != null && !(instance is Binomial))
-                    throw new ArgumentException("expand(): 'instance' must be a Binomial distribution");
+                if (instance != null && !(instance is NegativeBinomial))
+                    throw new ArgumentException("expand(): 'instance' must be a NegativeBinomial distribution");
 
                 var newDistribution = ((instance == null) ?
-                    new Binomial(total_count.expand(batch_shape), p: _probs?.expand(batch_shape), l: logits?.expand(batch_shape), generator) :
-                    instance) as Binomial;
+                    new NegativeBinomial(total_count.expand(batch_shape), p: _probs?.expand(batch_shape), l: logits?.expand(batch_shape), generator) :
+                    instance) as NegativeBinomial;
 
                 newDistribution.batch_shape = batch_shape;
                 if (newDistribution == instance) {
@@ -121,7 +140,7 @@ namespace TorchSharp
         public static partial class distributions
         {
             /// <summary>
-            /// Creates a Binomial distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a NegativeBinomial distribution parameterized by `probs` or `logits` (but not both).
             /// `total_count` must be broadcastable with `probs`/`logits`.
             /// </summary>
             /// <param name="total_count">Number of Bernoulli trials</param>
@@ -129,44 +148,44 @@ namespace TorchSharp
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Binomial Binomial(Tensor total_count, Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
+            public static NegativeBinomial NegativeBinomial(Tensor total_count, Tensor probs = null, Tensor logits = null, torch.Generator generator = null)
             {
-                return new Binomial(total_count, probs, logits);
+                return new NegativeBinomial(total_count, probs, logits);
             }
 
             /// <summary>
-            /// Creates a Binomial distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a NegativeBinomial distribution parameterized by `probs` or `logits` (but not both).
             /// </summary>
             /// <param name="total_count">Number of Bernoulli trials</param>
             /// <param name="probs">The probability of sampling '1'</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Binomial Binomial(int total_count, float? probs, float? logits, torch.Generator generator = null)
+            public static NegativeBinomial NegativeBinomial(int total_count, float? probs, float? logits, torch.Generator generator = null)
             {
                 if (probs.HasValue && !logits.HasValue)
-                    return new Binomial(torch.tensor(total_count), torch.tensor(probs.Value), null);
+                    return new NegativeBinomial(torch.tensor(total_count), torch.tensor(probs.Value), null);
                 else if (!probs.HasValue && logits.HasValue)
-                    return new Binomial(torch.tensor(total_count), null, torch.tensor(logits.Value));
+                    return new NegativeBinomial(torch.tensor(total_count), null, torch.tensor(logits.Value));
                 else
                     throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
             }
 
 
             /// <summary>
-            /// Creates a Binomial distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a NegativeBinomial distribution parameterized by `probs` or `logits` (but not both).
             /// </summary>
             /// <param name="total_count">Number of Bernoulli trials</param>
             /// <param name="probs">The probability of sampling '1'</param>
             /// <param name="logits">The log-odds of sampling '1'</param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static Binomial Binomial(int total_count, double? probs, double? logits, torch.Generator generator = null)
+            public static NegativeBinomial NegativeBinomial(int total_count, double? probs, double? logits, torch.Generator generator = null)
             {
                 if (probs.HasValue && !logits.HasValue)
-                    return new Binomial(torch.tensor(total_count), torch.tensor(probs.Value), null, generator);
+                    return new NegativeBinomial(torch.tensor(total_count), torch.tensor(probs.Value), null, generator);
                 else if (!probs.HasValue && logits.HasValue)
-                    return new Binomial(torch.tensor(total_count), null, torch.tensor(logits.Value), generator);
+                    return new NegativeBinomial(torch.tensor(total_count), null, torch.tensor(logits.Value), generator);
                 else
                     throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
             }
