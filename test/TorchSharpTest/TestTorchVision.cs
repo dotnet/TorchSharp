@@ -8,6 +8,7 @@ using Xunit;
 using static TorchSharp.torch;
 using static TorchSharp.torchvision.models;
 using static TorchSharp.torchvision.ops;
+using static TorchSharp.torchvision.transforms;
 
 namespace TorchSharp
 {
@@ -823,10 +824,10 @@ namespace TorchSharp
             Assert.Equal(uint8, img2.dtype);
             Assert.Equal(img.shape, img2.shape);
 
-            using var grey = torchvision.transforms.functional.rgb_to_grayscale(img);
+            using var grey = functional.rgb_to_grayscale(img);
             Assert.Equal(float32, grey.dtype);
 
-            torchvision.io.write_jpeg(torchvision.transforms.functional.convert_image_dtype(grey, ScalarType.Byte), outName2);
+            torchvision.io.write_jpeg(functional.convert_image_dtype(grey, ScalarType.Byte), outName2);
             Assert.True(System.IO.File.Exists(outName2));
 
             System.IO.File.Delete(outName1);
@@ -956,7 +957,7 @@ namespace TorchSharp
             var gain = 0.5;
             var expected = img.pow(gamma).mul(gain).max(torch.tensor(0.0)).min(torch.tensor(1.0));
 
-            var result = torchvision.transforms.functional.adjust_gamma(img, gamma, gain);
+            var result = functional.adjust_gamma(img, gamma, gain);
 
             Assert.True(expected.allclose(result, 1e-5));
         }
@@ -965,7 +966,7 @@ namespace TorchSharp
         public void TestAutocontrast()
         {
             var img = torch.rand(new long[] { 1, 3, 256, 256 });
-            var result = torchvision.transforms.functional.autocontrast(img);
+            var result = functional.autocontrast(img);
 
             Assert.Equal(img.shape, result.shape);
         }
@@ -976,7 +977,7 @@ namespace TorchSharp
             var input = torch.ones(1, 3, 256, 256);
 
             // Act
-            var autocontrast = torchvision.transforms.functional.autocontrast(input);
+            var autocontrast = functional.autocontrast(input);
 
             // Assert
             Assert.True(autocontrast.min().ToDouble() >= 0);
@@ -992,7 +993,7 @@ namespace TorchSharp
             var input = torch.ones(1, 3, 256, 256, ScalarType.Int32);
 
             // Act
-            var autocontrast = torchvision.transforms.functional.autocontrast(input);
+            var autocontrast = functional.autocontrast(input);
 
             // Assert
             Assert.True(autocontrast.min().ToInt64() >= 0);
@@ -1010,7 +1011,7 @@ namespace TorchSharp
             var newHeight = 50;
             var newWidth = 75;
 
-            var result = torchvision.transforms.functional.resized_crop(input, top, left, height, width, newHeight, newWidth);
+            var result = functional.resized_crop(input, top, left, height, width, newHeight, newWidth);
 
             Assert.NotNull(result);
         }
@@ -1026,7 +1027,7 @@ namespace TorchSharp
             var newHeight = -1;
             var newWidth = 75;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => torchvision.transforms.functional.resized_crop(input, top, left, height, width, newHeight, newWidth));
+            Assert.Throws<ArgumentOutOfRangeException>(() => functional.resized_crop(input, top, left, height, width, newHeight, newWidth));
         }
 
         [Fact]
@@ -1038,7 +1039,7 @@ namespace TorchSharp
             var expected = torch.tensor(new float[,,] {{{1, 1, 1},
                                                         {1, 1, 1},
                                                         {1, 1, 1}}}).rot90(1, (1, 2));
-            var actual = torchvision.transforms.functional.rotate(img, 90, InterpolationMode.Nearest, false, null, null);
+            var actual = functional.rotate(img, 90, InterpolationMode.Nearest, false, null, null);
             Assert.Equal(expected, actual);
         }
 
@@ -1051,7 +1052,7 @@ namespace TorchSharp
             var expected = torch.tensor(new float[,,] {{{1, 1, 1},
                                                      {1, 1, 1},
                                                      {1, 1, 1}}}).rot90(2, (1, 2));
-            var actual = torchvision.transforms.functional.rotate(img, 180, InterpolationMode.Nearest, false, null, null);
+            var actual = functional.rotate(img, 180, InterpolationMode.Nearest, false, null, null);
             Assert.Equal(expected, actual);
         }
 
@@ -1064,7 +1065,7 @@ namespace TorchSharp
             var expected = torch.tensor(new float[,,] {{{1, 1, 1},
                                                         {1, 1, 1},
                                                         {1, 1, 1}}}).rot90(-1, (1, 2));
-            var actual = torchvision.transforms.functional.rotate(img, 270, InterpolationMode.Nearest, false, null, null);
+            var actual = functional.rotate(img, 270, InterpolationMode.Nearest, false, null, null);
             Assert.Equal(expected, actual);
         }
 
@@ -1077,7 +1078,7 @@ namespace TorchSharp
             var expected = torch.tensor(new float[,,] {{{1, 1, 1},
                                                         {1, 1, 1},
                                                         {1, 1, 1}}}).rot90(-1, (1, 2));
-            var actual = torchvision.transforms.functional.rotate(img, -90, InterpolationMode.Nearest, false, null, null);
+            var actual = functional.rotate(img, -90, InterpolationMode.Nearest, false, null, null);
             Assert.Equal(expected, actual);
         }
 
@@ -1087,16 +1088,29 @@ namespace TorchSharp
             var img = torch.tensor(new float[,,] {{{1, 1, 0},
                                                 {1, 1, 0},
                                                 {0, 0, 0}}});
-            var expected = torch.tensor(new float[,,]{{
+            {
+                var expected = torch.tensor(new float[,,]{{
                      { 0.0000f, 0.0000f, 0.1930f, 0.0000f, 0.0000f, 0.0000f },
                      { 0.0000f, 0.4393f, 1.0000f, 0.4393f, 0.0000f, 0.0000f },
                      { 0.0000f, 0.4393f, 1.0000f, 0.4393f, 0.0000f, 0.0000f },
                      { 0.0000f, 0.0000f, 0.1930f, 0.0000f, 0.0000f, 0.0000f },
                      { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f }}});
-            var actual = torchvision.transforms.functional.rotate(img, 45, InterpolationMode.Bilinear, true, (1, 1), null);
+                var actual = functional.rotate(img, 45, InterpolationMode.Bilinear, true, (1, 1), null);
 
-            Assert.Equal(expected.shape, actual.shape);
-            Assert.True(expected.allclose(actual, rtol: 1e-4, atol: 1e-6));
+                Assert.Equal(expected.shape, actual.shape);
+                Assert.True(expected.allclose(actual, rtol: 1e-4, atol: 1e-6));
+            }
+
+            {
+                var expected = torch.tensor(new float[,,]{{
+                     { 0.7928932f, 0.7928932f, 0.0680195f },
+                     { 0.7928932f, 0.7928932f, 0.0680195f },
+                     { 0.0680195f, 0.0680195f, 0.0000000f }}});
+                var actual = functional.rotate(img, 45, InterpolationMode.Bilinear, false, (1, 1), null);
+
+                Assert.Equal(expected.shape, actual.shape);
+                Assert.True(expected.allclose(actual, rtol: 1e-4, atol: 1e-6));
+            }
         }
 
         [Fact]
@@ -1105,17 +1119,92 @@ namespace TorchSharp
             var img = torch.tensor(new float[,,] {{{1, 1, 0},
                                                 {1, 1, 0},
                                                 {0, 0, 0}}});
-            var expected = torch.tensor(new float[,,]{{
+            {
+                var expected = torch.tensor(new float[,,]{{
                      { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f },
                      { 0.0000f, 0.4393f, 0.4393f, 0.0000f, 0.0000f },
                      { 0.1930f, 1.0000f, 1.0000f, 0.1930f, 0.0000f },
                      { 0.0000f, 0.4393f, 0.4393f, 0.0000f, 0.0000f },
                      { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f },
                      { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f }}});
-            var actual = torchvision.transforms.functional.rotate(img, -45, InterpolationMode.Bilinear, true, (1, 1), null);
+                var actual = functional.rotate(img, -45, InterpolationMode.Bilinear, true, (1, 1), null);
 
-            Assert.Equal(expected.shape, actual.shape);
-            Assert.True(expected.allclose(actual, rtol: 1e-4, atol:1e-6));
+                Assert.Equal(expected.shape, actual.shape);
+                Assert.True(expected.allclose(actual, rtol: 1e-4, atol: 1e-6));
+            }
+            {
+                var expected = torch.tensor(new float[,,]{{
+                     { 0.7928932f, 0.7928932f, 0.0680195f },
+                     { 0.7928932f, 0.7928932f, 0.0680195f },
+                     { 0.0680195f, 0.0680195f, 0.0000f }}});
+                var actual = functional.rotate(img, -45, InterpolationMode.Bilinear, false, (1, 1), null);
+
+                Assert.Equal(expected.shape, actual.shape);
+                Assert.True(expected.allclose(actual, rtol: 1e-4, atol: 1e-6));
+            }
+        }
+
+        [Fact]
+        public void Solarize_InvertedPixel_True()
+        {
+            {
+                var input = torch.arange(9).reshape(3, 3).to(int8);
+                var expected = tensor(new sbyte[] { 0, 1, 2, 3, 123, 122, 121, 120, 119 }, requires_grad: false).reshape(3, 3);
+
+                var output = functional.solarize(input, 4f);
+
+                Assert.Equal(expected.dtype, output.dtype);
+                Assert.Equal(expected, output);
+            }
+            {
+                var input = torch.arange(9).reshape(3, 3).to(ScalarType.Byte);
+                var expected = tensor(new byte[] { 0, 1, 2, 3, 251, 250, 249, 248, 247 }, requires_grad: false).reshape(3, 3);
+
+                var output = functional.solarize(input, 4f);
+
+                Assert.Equal(expected.dtype, output.dtype);
+                Assert.Equal(expected, output);
+            }
+            {
+                var input = torch.arange(9).reshape(3, 3).to(ScalarType.Int16);
+                var expected = tensor(new short[] { 0, 1, 2, 3, 32763, 32762, 32761, 32760, 32759 }, requires_grad: false).reshape(3, 3);
+
+                var output = functional.solarize(input, 4f);
+
+                Assert.Equal(expected.dtype, output.dtype);
+                Assert.Equal(expected, output);
+            }
+        }
+
+        [Theory]
+        [InlineData(0.25)]
+        [InlineData(0.5)]
+        [InlineData(0.75)]
+        public void Solarize_Threshold50_True(double threshold)
+        {
+            var input = torch.arange(9).reshape(3, 3).to(float32) / 255.0f;
+            var solarized = input.data<float>().Select(f => (f > threshold ? (1.0f - f) : f)).ToArray();
+            var expected = tensor(solarized, requires_grad: false).reshape(3, 3);
+
+            var output = functional.solarize(input, threshold);
+
+            Assert.Equal(expected, output);
+        }
+
+        [Fact]
+        public void Solarize_EmptyInput_ThrowsException()
+        {
+            Tensor input = default;
+            double threshold = 0.5;
+
+            Assert.Throws<ArgumentNullException>(() => functional.solarize(input, threshold));
+        }
+
+        [Fact]
+        public void Solarize_ThresholdNegative_ThrowsException()
+        {
+            var input = torch.arange(9).reshape(3, 3).to(float32) / 255.0f;
+            Assert.Throws<ArgumentOutOfRangeException>(() => functional.solarize(input, 25000));
         }
     }
 }

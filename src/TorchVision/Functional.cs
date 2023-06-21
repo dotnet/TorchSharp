@@ -317,7 +317,7 @@ namespace TorchSharp
                     if (image.dtype == dtype)
                         return image.alias();
 
-                    var output_max = MaxValue(dtype);
+                    var output_max = torch.max_int_value(dtype);
 
                     if (torch.is_floating_point(image)) {
 
@@ -337,7 +337,7 @@ namespace TorchSharp
                     } else {
                         // Integer to floating point.
 
-                        var input_max = MaxValue(image.dtype);
+                        var input_max = torch.max_int_value(image.dtype);
 
                         if (torch.is_floating_point(dtype)) {
                             using var t0 = image.to_type(dtype);
@@ -506,9 +506,11 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor invert(Tensor input)
                 {
+                    if (input is null) throw new ArgumentNullException(nameof(input));
+
                     using var t0 = -input;
                     if (input.is_integral()) {
-                        return t0 + 255;
+                        return t0 + torch.max_int_value(input.dtype);
                     } else {
                         return t0 + 1.0;
                     }
@@ -806,6 +808,10 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor solarize(Tensor input, double threshold)
                 {
+                    if (input is null) throw new ArgumentNullException(nameof(input));
+                    if ((input.is_floating_point() && threshold > 1.0) ||
+                        (input.is_integral() && threshold > torch.max_int_value(input.dtype)))
+                        throw new ArgumentOutOfRangeException(nameof(threshold), "threshold should be less than bound of img.");
                     using (var inverted = invert(input))
                     using (var filter = input < threshold)
                         return torch.where(filter, input, inverted);
@@ -1075,25 +1081,6 @@ namespace TorchSharp
 
                     return img;
                 }
-
-                private static long MaxValue(ScalarType dtype)
-                {
-                    switch (dtype) {
-                    case ScalarType.Byte:
-                        return byte.MaxValue;
-                    case ScalarType.Int8:
-                        return sbyte.MaxValue;
-                    case ScalarType.Int16:
-                        return short.MaxValue;
-                    case ScalarType.Int32:
-                        return int.MaxValue;
-                    case ScalarType.Int64:
-                        return long.MaxValue;
-                    }
-
-                    return 0L;
-                }
-
             }
         }
 

@@ -6914,6 +6914,25 @@ namespace TorchSharp
             }
         }
 
+        public static long max_int_value(ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.Byte:
+                return byte.MaxValue;
+            case ScalarType.Int8:
+                return sbyte.MaxValue;
+            case ScalarType.Int16:
+                return short.MaxValue;
+            case ScalarType.Int32:
+                return int.MaxValue;
+            case ScalarType.Int64:
+                return long.MaxValue;
+            case ScalarType.Bool:
+            default:
+                throw new ArgumentException("Not an integral type");
+            }
+        }
+
         public static bool is_integral(Tensor t) => is_integral(t.dtype);
         //public static bool is_floating_point(Tensor t) => is_floating_point(t.dtype);
         //public static bool is_complex(Tensor t) => is_complex(t.dtype);
