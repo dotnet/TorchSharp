@@ -19,10 +19,12 @@ Adding in-place versions of `Tensor.triu()` and `Tensor.tril()`
 __API Changes__:
 
 Add torchvision.datasets.CelebA()<br/>
+Add support for properly formatting Tensors in Polyglot notebooks without the 'Register' call that was necessary before.<br/>
 
 __Bug Fixes__:
 
-#1014 AdamW.State.to ignores returns<br/>
+#1014 AdamW.State.to() ignores returns<br/>
+#999 Error in Torchsharp model inference in version 0.100.0<br/>
 
 ## NuGet Version 0.100.1
 
