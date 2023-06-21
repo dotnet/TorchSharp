@@ -1100,6 +1100,29 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestMultivariateNormal()
+        {
+            var bs = 2;
+            var dist = torch.distributions.MultiVariateNormal(torch.zeros(bs), precision_matrix: torch.eye(bs));
+            {
+                var sample = dist.sample(2, 2);
+
+                Assert.Equal(new long[] { bs, 2, 2 }, sample.shape);
+            }
+            {
+                torch.manual_seed(0);
+                var sample = dist.sample(2, 3);
+
+                Assert.Equal(new long[] { bs, 3, 2 }, sample.shape);
+            }
+            {
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
+
+                Assert.Equal(new long[] { bs, 3, 3, 3, 2 }, sample.shape);
+            }
+        }
+
+        [Fact]
         public void TestWeibull()
         {
             var dist = Weibull(torch.ones(3,3), torch.ones(3, 3));

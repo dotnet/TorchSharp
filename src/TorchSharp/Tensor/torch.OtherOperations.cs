@@ -673,6 +673,8 @@ namespace TorchSharp
         // https://pytorch.org/docs/stable/generated/torch.tril
         public static Tensor tril(Tensor input, long diagonal = 0) => input.tril(diagonal);
 
+        public static Tensor tril_(Tensor input, long diagonal = 0) => input.tril_(diagonal);
+
         // https://pytorch.org/docs/stable/generated/torch.tril_indices
         public static Tensor tril_indices(
             long row,
@@ -696,6 +698,8 @@ namespace TorchSharp
 
         // https://pytorch.org/docs/stable/generated/torch.triu
         public static Tensor triu(Tensor input, long diagonal = 0L) => input.triu(diagonal);
+
+        public static Tensor triu_(Tensor input, long diagonal = 0L) => input.triu_(diagonal);
 
         // https://pytorch.org/docs/stable/generated/torch.triu_indices
         public static Tensor triu_indices(
