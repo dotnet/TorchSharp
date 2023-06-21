@@ -999,5 +999,123 @@ namespace TorchSharp
             Assert.True(autocontrast.max().ToInt64() <= bound);
             Assert.True(autocontrast.dtype == input.dtype);
         }
+        [Fact]
+        public void TestResizedCrop()
+        {
+            var input = torch.rand(1, 3, 224, 224);
+            var top = 10;
+            var left = 20;
+            var height = 100;
+            var width = 100;
+            var newHeight = 50;
+            var newWidth = 75;
+
+            var result = torchvision.transforms.functional.resized_crop(input, top, left, height, width, newHeight, newWidth);
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void TestResizedCropWithInvalidInput()
+        {
+            var input = torch.rand(1, 3, 224, 224);
+            var top = 10;
+            var left = 20;
+            var height = 100;
+            var width = 100;
+            var newHeight = -1;
+            var newWidth = 75;
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => torchvision.transforms.functional.resized_crop(input, top, left, height, width, newHeight, newWidth));
+        }
+
+        [Fact]
+        public void TestRotateImage90DegreesCounterClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                {1, 1, 1},
+                                                {1, 1, 1}}});
+            var expected = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                        {1, 1, 1},
+                                                        {1, 1, 1}}}).rot90(1, (1, 2));
+            var actual = torchvision.transforms.functional.rotate(img, 90, InterpolationMode.Nearest, false, null, null);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestRotateImage180DegreesCounterClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                   {1, 1, 1},
+                                                   {1, 1, 1}}});
+            var expected = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                     {1, 1, 1},
+                                                     {1, 1, 1}}}).rot90(2, (1, 2));
+            var actual = torchvision.transforms.functional.rotate(img, 180, InterpolationMode.Nearest, false, null, null);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestRotateImage270DegreesCounterClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                   {1, 1, 1},
+                                                   {1, 1, 1}}});
+            var expected = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                        {1, 1, 1},
+                                                        {1, 1, 1}}}).rot90(-1, (1, 2));
+            var actual = torchvision.transforms.functional.rotate(img, 270, InterpolationMode.Nearest, false, null, null);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestRotateImage90DegreesClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                   {1, 1, 1},
+                                                   {1, 1, 1}}});
+            var expected = torch.tensor(new float[,,] {{{1, 1, 1},
+                                                        {1, 1, 1},
+                                                        {1, 1, 1}}}).rot90(-1, (1, 2));
+            var actual = torchvision.transforms.functional.rotate(img, -90, InterpolationMode.Nearest, false, null, null);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TestRotateImage45DegreesCounterClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 0},
+                                                {1, 1, 0},
+                                                {0, 0, 0}}});
+            var expected = torch.tensor(new float[,,]{{
+                     { 0.0000f, 0.0000f, 0.1930f, 0.0000f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.4393f, 1.0000f, 0.4393f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.4393f, 1.0000f, 0.4393f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.0000f, 0.1930f, 0.0000f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f }}});
+            var actual = torchvision.transforms.functional.rotate(img, 45, InterpolationMode.Bilinear, true, (1, 1), null);
+
+            Assert.Equal(expected.shape, actual.shape);
+            Assert.True(expected.allclose(actual));
+        }
+
+        [Fact]
+        public void TestRotateImage45DegreesClockwise()
+        {
+            var img = torch.tensor(new float[,,] {{{1, 1, 0},
+                                                {1, 1, 0},
+                                                {0, 0, 0}}});
+            var expected = torch.tensor(new float[,,]{{
+                     { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.4393f, 0.4393f, 0.0000f, 0.0000f },
+                     { 0.1930f, 1.0000f, 1.0000f, 0.1930f, 0.0000f },
+                     { 0.0000f, 0.4393f, 0.4393f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f },
+                     { 0.0000f, 0.0000f, 0.0000f, 0.0000f, 0.0000f }}});
+            var actual = torchvision.transforms.functional.rotate(img, -45, InterpolationMode.Bilinear, true, (1, 1), null);
+
+            Assert.Equal(expected.shape, actual.shape);
+            Assert.True(expected.allclose(actual));
+        }
     }
 }

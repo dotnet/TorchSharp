@@ -18,7 +18,7 @@ EXPORT_API(Tensor) THSVision_PerspectiveGrid(const float* coeffs, const int64_t 
 
 EXPORT_API(Tensor) THSVision_ScaleChannel(Tensor ic);
 
-EXPORT_API(void) THSVision_ComputeOutputSize(const float* matrix, const int64_t matrix_length, const int64_t w, const int64_t h);
+EXPORT_API(void) THSVision_ComputeOutputSize(const float* matrix, const int64_t matrix_length, const int64_t w, const int64_t h, int32_t* first, int32_t* second);
 
 EXPORT_API(void) THSVision_BRGA_RGB(const uint8_t* inputBytes, uint8_t* redBytes, uint8_t* greenBytes, uint8_t* blueBytes, int64_t inputChannelCount, int64_t imageSize);
 EXPORT_API(void) THSVision_BRGA_RGBA(const uint8_t* inputBytes, uint8_t* redBytes, uint8_t* greenBytes, uint8_t* blueBytes, uint8_t* alphaBytes, int64_t inputChannelCount, int64_t imageSize);

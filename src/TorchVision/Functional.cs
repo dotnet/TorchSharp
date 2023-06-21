@@ -734,6 +734,22 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor resized_crop(Tensor input, int top, int left, int height, int width, int newHeight, int newWidth)
                 {
+                    if (top < 0 || left < 0) throw new ArgumentOutOfRangeException("top and left must be >= 0");
+                    if (height <= 0 || width <= 0 || newHeight <= 0 || newWidth <= 0) throw new ArgumentOutOfRangeException("Input and output sizes must be positive.");
+
+                    switch(input.ndim) {
+                    case 3: // Unbatched
+                        if (top + height > input.shape[1] || left + width > input.shape[2])
+                            throw new ArgumentException("Crop dimensions exceed image size.", nameof(input));
+                        break;
+                    default: // Any number of batch dimensions
+                        if (top + height > input.shape[input.ndim-2] || left + width > input.shape[input.ndim-1]) 
+                            throw new ArgumentException("Crop dimensions exceed image size.", nameof(input));
+                        break;
+                    case 1:
+                    case 2:
+                        throw new ArgumentException("The input image must be a CxHxW or *xCxHxW tensor.", nameof(input));
+                    }
                     using var t0 = crop(input, top, left, height, width);
                     return resize(t0, newHeight, newWidth);
                 }
