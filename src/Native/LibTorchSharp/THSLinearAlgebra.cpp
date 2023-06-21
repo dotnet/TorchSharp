@@ -306,6 +306,16 @@ Tensor THSLinalg_solve_ex(const Tensor tensor, Tensor other, bool left, bool che
     return ResultTensor(std::get<0>(res));
 }
 
+Tensor THSLinalg_solve_triangular(const Tensor tensor, Tensor other, bool upper, bool left, bool unitriangular)
+{
+    CATCH_TENSOR(torch::linalg::solve_triangular(*tensor, *other, upper, left, unitriangular))
+}
+
+Tensor THSLinalg_solve_triangular_out(const Tensor tensor, Tensor other, bool upper, bool left, bool unitriangular, Tensor result)
+{
+    CATCH_TENSOR(torch::linalg::solve_triangular_out(*result, *tensor, *other, upper, left, unitriangular))
+}
+
 Tensor THSLinalg_svd(const Tensor tensor, const bool full_matrices, Tensor* S, Tensor* Vh)
 {
     std::tuple<at::Tensor, at::Tensor, at::Tensor> res;

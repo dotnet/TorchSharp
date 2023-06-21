@@ -1017,7 +1017,7 @@ namespace TorchSharp
                                 dimNamesArray[dIdx] = IntPtr.Zero;
                         }
 
-                        foreach (var name in names.Skip(idx+1)) {
+                        foreach (var name in names.Skip(idx + 1)) {
                             dimNamesArray[dIdx] = MarshalDimensionString(name);
                             dIdx++;
                         }
@@ -2015,6 +2015,20 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
+            /// Inplace version of transpose()
+            /// </summary>
+            /// <param name="dim0"></param>
+            /// <param name="dim1"></param>
+            public Tensor transpose_(long dim0, long dim1)
+            {
+                var res = NativeMethods.THSTensor_transpose_(Handle, dim0, dim1);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Returns a view of the tensor conjugated and with the last two dimensions transposed.
             /// </summary>
             public Tensor adjoint()
@@ -2032,7 +2046,21 @@ namespace TorchSharp
             /// <param name="diagonal">The diagonal to consider</param>
             public Tensor tril(long diagonal = 0)
             {
-                var res = NativeMethods.THSTensor_tril(Handle, diagonal);
+                var res = NativeMethods.THSTensor_tril(Handle, diagonal, false);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Returns the lower triangular part of the matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+            /// The lower triangular part of the matrix is defined as the elements on and below the diagonal.
+            /// In-place version of `tril()`
+            /// </summary>
+            /// <param name="diagonal">The diagonal to consider</param>
+            public Tensor tril_(long diagonal = 0)
+            {
+                var res = NativeMethods.THSTensor_tril(Handle, diagonal, true);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -2045,7 +2073,21 @@ namespace TorchSharp
             /// <param name="diagonal">The diagonal to consider</param>
             public Tensor triu(long diagonal = 0)
             {
-                var res = NativeMethods.THSTensor_triu(Handle, diagonal);
+                var res = NativeMethods.THSTensor_triu(Handle, diagonal, false);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Returns the upper triangular part of a matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+            /// The upper triangular part of the matrix is defined as the elements on and above the diagonal.
+            /// In-place version of `triu()`
+            /// </summary>
+            /// <param name="diagonal">The diagonal to consider</param>
+            public Tensor triu_(long diagonal = 0)
+            {
+                var res = NativeMethods.THSTensor_triu(Handle, diagonal, true);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -2060,20 +2102,6 @@ namespace TorchSharp
             /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
             /// </summary>
             public Tensor swapaxes(long dim0, long dim1) => transpose(dim0, dim1);
-
-            /// <summary>
-            /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
-            /// Inplace version of transpose()
-            /// </summary>
-            /// <param name="dim0"></param>
-            /// <param name="dim1"></param>
-            public Tensor transpose_(long dim0, long dim1)
-            {
-                var res = NativeMethods.THSTensor_transpose_(Handle, dim0, dim1);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
-            }
 
             /// <summary>
             /// Returns a new tensor with the same data as the input tensor but of a different shape.
@@ -3804,14 +3832,14 @@ namespace TorchSharp
             /// </summary>
             /// <param name="indices_or_sections">A list of split points</param>
             public Tensor[] dsplit((long, long, long) indices_or_sections)
-                => dsplit(new long[]{ indices_or_sections.Item1, indices_or_sections.Item2, indices_or_sections.Item3 });
+                => dsplit(new long[] { indices_or_sections.Item1, indices_or_sections.Item2, indices_or_sections.Item3 });
 
             /// <summary>
             /// Splits input, a tensor with three or more dimensions, into multiple tensors depthwise according to indices_or_sections. Each split is a view of input.
             /// </summary>
             /// <param name="indices_or_sections">A list of split points</param>
             public Tensor[] dsplit((long, long, long, long) indices_or_sections)
-                => dsplit(new long[]{ indices_or_sections.Item1, indices_or_sections.Item2, indices_or_sections.Item3, indices_or_sections.Item4 });
+                => dsplit(new long[] { indices_or_sections.Item1, indices_or_sections.Item2, indices_or_sections.Item3, indices_or_sections.Item4 });
 
             /// <summary>
             /// Splits input, a tensor with three or more dimensions, into multiple tensors depthwise according to indices_or_sections. Each split is a view of input.
@@ -5158,6 +5186,12 @@ namespace TorchSharp
                     }
                 }
             }
+
+            /// <summary>
+            /// Returns a view of the original tensor with its dimensions permuted.
+            /// </summary>
+            /// <param name="permutation">The desired ordering of dimensions</param>
+            public Tensor permute(IEnumerable<long> permutation) => permute(permutation.ToArray());
 
             /// <summary>
             /// Mutates the tensor to have the given size with all values set to 1
@@ -6763,7 +6797,8 @@ namespace TorchSharp
                 return TensorIndex.Single(value);
             }
 
-            public static implicit operator Tensor(TensorIndex value) {
+            public static implicit operator Tensor(TensorIndex value)
+            {
                 _throw();
                 return new Tensor(IntPtr.Zero);
             }

@@ -125,6 +125,12 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSLinalg_solve_ex(IntPtr tensor, IntPtr other, [MarshalAs(UnmanagedType.U1)] bool left, [MarshalAs(UnmanagedType.U1)] bool check_errors, out IntPtr infos);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSLinalg_solve_triangular(IntPtr tensor, IntPtr other, [MarshalAs(UnmanagedType.U1)] bool upper, [MarshalAs(UnmanagedType.U1)] bool left, [MarshalAs(UnmanagedType.U1)] bool unitriangular);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSLinalg_solve_triangular_out(IntPtr tensor, IntPtr other, [MarshalAs(UnmanagedType.U1)] bool upper, [MarshalAs(UnmanagedType.U1)] bool left, [MarshalAs(UnmanagedType.U1)] bool unitriangular, IntPtr _out);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSLinalg_svd(IntPtr tensor, [MarshalAs(UnmanagedType.U1)] bool fullMatrices, out IntPtr pS, out IntPtr pVh);
 
         [DllImport("LibTorchSharp")]
