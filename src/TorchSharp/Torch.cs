@@ -107,7 +107,8 @@ namespace TorchSharp
                         TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(torch).Assembly, trace);
                         TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(torch).Assembly, trace);
                         TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("nvrtc-builtins64_113", typeof(torch).Assembly, trace);
+                        TryLoadNativeLibraryByName("nvfuser_codegen", typeof(torch).Assembly, trace);
+                        TryLoadNativeLibraryByName("nvrtc-builtins64_117", typeof(torch).Assembly, trace);
                         TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
                         TryLoadNativeLibraryByName("nvrtc64_112_0", typeof(torch).Assembly, trace);
                     }

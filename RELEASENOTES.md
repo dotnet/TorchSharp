@@ -2,15 +2,29 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.100.3
+
+__Breaking Changes__:
+
+The two main arguments to `torch.linalg.solve()` and `torch.linalg.solve_ex()` were renamed 'A' and 'B' to align with PyTorch.
+
+__API Changes__:
+
+Adding torch.linalg.solve_triangular()<br/>
+Adding torch.distributions.MultivariateNormal<br/>
+Adding in-place versions of `Tensor.triu()` and `Tensor.tril()`
+
 ## NuGet Version 0.100.2
 
 __API Changes__:
 
 Add torchvision.datasets.CelebA()<br/>
+Add support for properly formatting Tensors in Polyglot notebooks without the 'Register' call that was necessary before.<br/>
 
 __Bug Fixes__:
 
-#1014 AdamW.State.to ignores returns<br/>
+#1014 AdamW.State.to() ignores returns<br/>
+#999 Error in Torchsharp model inference in version 0.100.0<br/>
 
 ## NuGet Version 0.100.1
 
