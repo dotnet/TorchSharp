@@ -650,6 +650,10 @@ namespace TorchSharp
             Assert.True(torch.tensor(new[] { 44.4444, 44.4444, 20.7612 }).allclose(dist.variance));
             Assert.True(torch.tensor(new[] { 33.0, 33.0, 17.0 }).allclose(dist.mode));
 
+            var log_prob = dist.log_prob(torch.arange(3));
+
+            Assert.True(torch.tensor(new[] { -28.7682, -25.5493, -11.5190 }).allclose(log_prob));
+
             {
                 var sample = dist.sample();
 
