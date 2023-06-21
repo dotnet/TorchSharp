@@ -947,5 +947,57 @@ namespace TorchSharp
             Assert.NotNull(result);
             Assert.Equal(new long[] { 1, 3, 20, 20 }, result.shape);
         }
+
+        [Fact]
+        public void TestAdjustGamma_GainLessThanOne_ReturnsWithLowerContrast()
+        {
+            var img = torch.empty(1, 2, 3).uniform_(0, 1);
+            var gamma = 0.5;
+            var gain = 0.5;
+            var expected = img.pow(gamma).mul(gain).max(torch.tensor(0.0)).min(torch.tensor(1.0));
+
+            var result = torchvision.transforms.functional.adjust_gamma(img, gamma, gain);
+
+            Assert.True(expected.allclose(result, 1e-5));
+        }
+
+        [Fact]
+        public void TestAutocontrast()
+        {
+            var img = torch.rand(new long[] { 1, 3, 256, 256 });
+            var result = torchvision.transforms.functional.autocontrast(img);
+
+            Assert.Equal(img.shape, result.shape);
+        }
+        [Fact]
+        public void TestAutoContrast()
+        {
+            // Arrange
+            var input = torch.ones(1, 3, 256, 256);
+
+            // Act
+            var autocontrast = torchvision.transforms.functional.autocontrast(input);
+
+            // Assert
+            Assert.True(autocontrast.min().ToDouble() >= 0);
+            Assert.True(autocontrast.max().ToDouble() <= 1);
+            Assert.True(autocontrast.dtype == input.dtype);
+        }
+
+        [Fact]
+        public void TestAutoContrastWithIntegralBounds()
+        {
+            // Arrange
+            float bound = 255.0f;
+            var input = torch.ones(1, 3, 256, 256, ScalarType.Int32);
+
+            // Act
+            var autocontrast = torchvision.transforms.functional.autocontrast(input);
+
+            // Assert
+            Assert.True(autocontrast.min().ToInt64() >= 0);
+            Assert.True(autocontrast.max().ToInt64() <= bound);
+            Assert.True(autocontrast.dtype == input.dtype);
+        }
     }
 }
