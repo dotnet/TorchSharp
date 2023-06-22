@@ -45,8 +45,8 @@ namespace TorchSharp
             protected virtual void Dispose(bool disposing)
             {
                 if (!disposedValue) {
-                    means.Dispose();
-                    stdevs.Dispose();
+                    means?.Dispose();
+                    stdevs?.Dispose();
                     disposedValue = true;
                 }
             }

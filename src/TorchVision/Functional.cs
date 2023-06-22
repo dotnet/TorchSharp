@@ -317,7 +317,7 @@ namespace TorchSharp
                     if (image.dtype == dtype)
                         return image.alias();
 
-                    var output_max = torch.max_int_value(dtype);
+                    var output_max = torch.is_integral(dtype) ? torch.max_int_value(dtype) : 0L;
 
                     if (torch.is_floating_point(image)) {
 
