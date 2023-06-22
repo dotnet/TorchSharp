@@ -124,84 +124,108 @@ namespace TorchSharp
         [Fact]
         public void TestHalfNormal()
         {
-            var dist = HalfNormal(torch.tensor(3.5));
+            var dist = HalfNormal(torch.tensor(new[] { 0.5000, 0.2500, 0.1500 }));
+            Assert.True(torch.tensor(new[] { 0.39894228, 0.19947114, 0.11968268 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 0.0, 0.0, 0.0 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.090845057, 0.022711264, 0.0081760551 }).allclose(dist.variance));
+
+            Assert.True(torch.tensor(new[] { 0.9544997, 0.9999366, 0.99999999 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { 0.032644172, -0.66050301, -1.1713286 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { -1.5326442, -6.839497, -20.550894 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
         [Fact]
         public void TestHalfNormalGen()
         {
-            var dist = HalfNormal(torch.tensor(3.5), new Generator(4711));
+            var dist = HalfNormal(torch.tensor(new[] { 0.5000, 0.2500, 0.1500 }), new Generator(4711));
+            Assert.True(torch.tensor(new[] { 0.39894228, 0.19947114, 0.11968268 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 0.0, 0.0, 0.0 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.090845057, 0.022711264, 0.0081760551 }).allclose(dist.variance));
+
+            Assert.True(torch.tensor(new[] { 0.9544997, 0.9999366, 0.99999999 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { 0.032644172, -0.66050301, -1.1713286 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { -1.5326442, -6.839497, -20.550894 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
         [Fact]
         public void TestHalfCauchy()
         {
-            var dist = HalfCauchy(torch.tensor(3.5));
+            var dist = HalfCauchy(torch.tensor(new[] { 0.5, 0.25, 0.15 }));
+            Assert.True(torch.tensor(new[] { 0.0, 0.0, 0.0 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.70483276, 0.84404174, 0.90521372 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { -11438666, -5719333, -3431599.8 }).allclose(dist.icdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { 1.1447299, 0.45158271, -0.059242918 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { -1.3678734, -1.8985017, -2.3709533 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
         [Fact]
         public void TestHalfCauchyGen()
         {
-            var dist = HalfCauchy(torch.tensor(3.5), new Generator(4711));
+            var dist = HalfCauchy(torch.tensor(new[] { 0.5, 0.25, 0.15 }), new Generator(4711));
+            Assert.True(torch.tensor(new[] { 0.0, 0.0, 0.0 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.70483276, 0.84404174, 0.90521372 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { -11438666, -5719333, -3431599.8 }).allclose(dist.icdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { 1.1447299, 0.45158271, -0.059242918 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { -1.3678734, -1.8985017, -2.3709533 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 

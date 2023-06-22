@@ -41,10 +41,10 @@ namespace TorchSharp
             /// <param name="generator">An optional random number generator object.</param>
             public Normal(Tensor loc, Tensor scale, Generator generator = null) : base(generator)
             {
-                batch_shape = loc.size();
                 var locScale = broadcast_tensors(loc, scale);
                 this.loc = locScale[0];
                 this.scale = locScale[1];
+                this.batch_shape = this.loc.size();
             }
 
             private Tensor loc;

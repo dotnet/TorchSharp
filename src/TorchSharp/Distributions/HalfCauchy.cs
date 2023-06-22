@@ -22,7 +22,7 @@ namespace TorchSharp
 
             public Tensor scale { get; private set; }
 
-            public override Tensor mean => scale * Math.Sqrt(2 / Math.PI);
+            public override Tensor mean => torch.full(ExtendedShape(), double.PositiveInfinity, dtype: scale.dtype, device: scale.device);
 
             public override Tensor mode => torch.zeros_like(scale);
 
@@ -33,7 +33,7 @@ namespace TorchSharp
                 using var _ = torch.NewDisposeScope();
                 value = torch.as_tensor(value, scale.dtype, scale.device);
                 var lp = base_distribution.log_prob(value) + Math.Log(2);
-                lp[value.expand(lp.shape) < 0] = double.NegativeInfinity;
+                lp = torch.where(value >= 0, lp, double.NegativeInfinity);
                 return lp.MoveToOuterDisposeScope();
             }
 

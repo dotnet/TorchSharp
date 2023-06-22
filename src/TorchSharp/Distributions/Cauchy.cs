@@ -37,12 +37,12 @@ namespace TorchSharp
             /// <param name="generator">An optional random number generator object.</param>
             public Cauchy(Tensor loc, Tensor scale, torch.Generator generator = null) : base(generator)
             {
-                this.batch_shape = loc.size();
                 var locScale = torch.broadcast_tensors(loc, scale);
                 this.loc = locScale[0].DetachFromDisposeScope();
                 this.scale = locScale[1].DetachFromDisposeScope();
                 this._mean = torch.full(ExtendedShape(), double.NaN, dtype: loc.dtype, device: loc.device).DetachFromDisposeScope();
                 this._variance = torch.full(ExtendedShape(), double.PositiveInfinity, dtype: loc.dtype, device: loc.device).DetachFromDisposeScope();
+                this.batch_shape = this.loc.size();
             }
 
             private Tensor loc;
