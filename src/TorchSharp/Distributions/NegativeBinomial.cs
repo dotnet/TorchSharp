@@ -25,25 +25,14 @@ namespace TorchSharp
             /// <summary>
             /// Mode of the negative binomial distribution.
             /// </summary>
-            public override Tensor mode {
-                get {
-                    // Individual sub-expressions is slightly faster than using DisposeScope
-                    using var t0 = total_count - 1;
-                    using var t1 = t0 * logits.exp();
-                    return t1.floor_().clamp(min: 0);
-                }
-            }
+            public override Tensor mode =>
+                WrappedTensorDisposeScope(() => ((total_count - 1) * logits.exp()).floor_().clamp(min: 0));
 
             /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance {
-                get {
-                    // Individual sub-expressions is slightly faster than using DisposeScope
-                    using var t0 = torch.sigmoid(-logits);
-                    return mean / t0;
-                }
-            }
+            public override Tensor variance =>
+                WrappedTensorDisposeScope(() => mean / torch.sigmoid(-logits));
 
             public NegativeBinomial(Tensor total_count, Tensor p = null, Tensor l = null, torch.Generator generator = null) : base(generator)
             {

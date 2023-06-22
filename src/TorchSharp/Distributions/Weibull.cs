@@ -26,12 +26,14 @@ namespace TorchSharp
             private Tensor concentration;
             private Tensor concentration_reciprocal;
 
-            public override Tensor mean => scale * torch.exp(torch.lgamma(1 + concentration_reciprocal));
+            public override Tensor mean =>
+                WrappedTensorDisposeScope(() => scale * torch.exp(torch.lgamma(1 + concentration_reciprocal)));
 
-            public override Tensor mode => scale * ((concentration - 1) / concentration).pow(concentration_reciprocal);
+            public override Tensor mode =>
+                WrappedTensorDisposeScope(() => scale * ((concentration - 1) / concentration).pow(concentration_reciprocal));
 
             public override Tensor variance =>
-                torch.WrappedTensorDisposeScope(() =>
+                WrappedTensorDisposeScope(() =>
                     scale.pow(2) * (torch.exp(torch.lgamma(1 + 2 * concentration_reciprocal)) - torch.exp(2 * torch.lgamma(1 + concentration_reciprocal)))
                 );
 

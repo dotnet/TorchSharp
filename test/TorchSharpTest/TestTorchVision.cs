@@ -864,7 +864,7 @@ namespace TorchSharp
             double[] stdevs = { 0.229, 0.224, 0.225 };
 
             // Act
-            var result = torchvision.transforms.Normalize(null, null);// means, stdevs);
+            var result = torchvision.transforms.Normalize(means, stdevs);
 
             // Assert
             Assert.NotNull(result);

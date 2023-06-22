@@ -26,9 +26,15 @@ namespace TorchSharp
             public override Tensor mean => loc;
 
             /// <summary>
+            /// The mode of the distribution.
+            /// </summary>
+            public override Tensor mode => loc;
+
+            /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => _unbroadcasted_scale_tril.pow(2).sum(-1).expand(batch_shape + event_shape);
+            public override Tensor variance =>
+                WrappedTensorDisposeScope(() => _unbroadcasted_scale_tril.pow(2).sum(-1).expand(batch_shape + event_shape));
 
             /// <summary>
             /// Constructor

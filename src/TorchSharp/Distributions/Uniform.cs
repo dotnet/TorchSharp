@@ -16,12 +16,14 @@ namespace TorchSharp
             /// <summary>
             /// The mean of the distribution.
             /// </summary>
-            public override Tensor mean => (high - low) / 2;
+            public override Tensor mean =>
+                WrappedTensorDisposeScope(() => (high - low) / 2);
 
             /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => (high - low).pow(2) / 12;
+            public override Tensor variance =>
+                WrappedTensorDisposeScope(() => (high - low).pow(2) / 12);
 
             /// <summary>
             /// Constructor
