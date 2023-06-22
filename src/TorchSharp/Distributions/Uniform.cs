@@ -17,7 +17,9 @@ namespace TorchSharp
             /// The mean of the distribution.
             /// </summary>
             public override Tensor mean =>
-                WrappedTensorDisposeScope(() => (high - low) / 2);
+                WrappedTensorDisposeScope(() => (high + low) / 2);
+
+            public override Tensor mode => double.NaN * high;
 
             /// <summary>
             /// The variance of the distribution
@@ -34,8 +36,8 @@ namespace TorchSharp
             public Uniform(Tensor low, Tensor high, torch.Generator generator = null) : base(generator, low.size())
             {
                 var lowHigh = torch.broadcast_tensors(low, high);
-                this.low = lowHigh[0];
-                this.high = lowHigh[1];
+                this.low = lowHigh[0].DetachFromDisposeScope();
+                this.high = lowHigh[1].DetachFromDisposeScope();
             }
 
             private Tensor high;
@@ -72,7 +74,7 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor cdf(Tensor value)
             {
-                return torch.WrappedTensorDisposeScope(() => (value - low) / (high - low).clamp(0, 1));
+                return torch.WrappedTensorDisposeScope(() => ((value - low) / (high - low)).clamp_(0, 1));
             }
 
             /// <summary>
@@ -81,7 +83,7 @@ namespace TorchSharp
             /// <param name="value"></param>
             public override Tensor icdf(Tensor value)
             {
-                return torch.WrappedTensorDisposeScope(() => value * (high - low) + low);
+                return torch.WrappedTensorDisposeScope(() => (value * (high - low)).add_(low));
             }
 
             /// <summary>
@@ -89,7 +91,7 @@ namespace TorchSharp
             /// </summary>
             public override Tensor entropy()
             {
-                return torch.WrappedTensorDisposeScope(() => (high - low).log());
+                return torch.WrappedTensorDisposeScope(() => (high - low).log_());
             }
 
             /// <summary>

@@ -150,7 +150,7 @@ namespace TorchSharp
 
                     protected internal override Tensor _inverse(Tensor y)
                     {
-                        throw new NotImplementedException();
+                        return _inv._call(y);
                     }
 
                     protected internal override Tensor _sign()
@@ -447,6 +447,23 @@ namespace TorchSharp
                     protected internal override Tensor _call(Tensor x) => x.exp();
 
                     protected internal override Tensor _inverse(Tensor y) => y.log();
+                }
+
+                public class LogTransform : Transform
+                {
+                    public override constraints.Constraint domain => constraints.positive;
+
+                    public override constraints.Constraint codomain => constraints.real;
+
+                    public override bool bijective => true;
+
+                    protected internal override Tensor _sign() => 1;
+
+                    protected internal override Tensor log_abs_det_jacobian(Tensor x, Tensor y) => -x;
+
+                    protected internal override Tensor _call(Tensor x) => x.log();
+
+                    protected internal override Tensor _inverse(Tensor y) => y.exp();
                 }
 
                 public class PowerTransform : Transform

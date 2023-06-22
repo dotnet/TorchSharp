@@ -19,6 +19,8 @@ namespace TorchSharp
             /// </summary>
             public override Tensor mean => rate.reciprocal();
 
+            public override Tensor mode => torch.zeros_like(rate);
+
             /// <summary>
             /// The variance of the distribution
             /// </summary>
@@ -59,37 +61,25 @@ namespace TorchSharp
             /// Returns the log of the probability density/mass function evaluated at `value`.
             /// </summary>
             /// <param name="value"></param>
-            public override Tensor log_prob(Tensor value)
-            {
-                return rate.log() - rate * value;
-            }
+            public override Tensor log_prob(Tensor value) => WrappedTensorDisposeScope(() => rate.log() - rate * value);
 
             /// <summary>
             /// Returns entropy of distribution, batched over batch_shape.
             /// </summary>
             /// <returns></returns>
-            public override Tensor entropy()
-            {
-                return 1 - rate.log();
-            }
+            public override Tensor entropy() => WrappedTensorDisposeScope(() => 1 - rate.log());
 
             /// <summary>
             /// Returns the cumulative density/mass function evaluated at `value`.
             /// </summary>
             /// <param name="value"></param>
-            public override Tensor cdf(Tensor value)
-            {
-                return 1 - torch.exp(-rate * value);
-            }
+            public override Tensor cdf(Tensor value) => WrappedTensorDisposeScope(() => 1 - torch.exp(-rate * value));
 
             /// <summary>
             /// Returns the inverse cumulative density/mass function evaluated at `value`.
             /// </summary>
             /// <param name="value"></param>
-            public override Tensor icdf(Tensor value)
-            {
-                return -torch.log(1 - value) / rate;
-            }
+            public override Tensor icdf(Tensor value) => WrappedTensorDisposeScope(() => -torch.log(1 - value) / rate);
 
             /// <summary>
             /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to

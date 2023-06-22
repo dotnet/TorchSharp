@@ -16,23 +16,29 @@ namespace TorchSharp
         [Fact]
         public void TestUniform()
         {
-            var dist = Uniform(torch.tensor(0.0), torch.tensor(3.5));
+            var dist = Uniform(torch.tensor(new[] { 0.5, 0.25, 0.15 }), torch.tensor(3.5));
+            Assert.True(torch.tensor(new[] { 2, 1.875, 1.825, }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 0.75, 0.88020833, 0.93520833 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 1.0986123, 1.178655, 1.2089603 }).allclose(dist.entropy(), rtol: 1e-3, atol: 1e-4));
+            Assert.True(torch.tensor(new[] { 0.16666667, 0.2307692308, 0.2537313433 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { 3.5000, 3.5000, 3.5000 }).allclose(dist.icdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { -1.0986123, -1.178655, -1.2089603 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
-                Assert.True(sample.ToDouble() >= 0.0 && sample.ToDouble() < 3.5);
+                Assert.Equal(new long[] { 3 }, sample.shape);
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d < 3.5));
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
                 Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d < 3.5));
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
                 Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d < 3.5));
             }
         }
@@ -42,23 +48,29 @@ namespace TorchSharp
         {
             var gen = new Generator(4711);
 
-            var dist = Uniform(torch.tensor(0.0), torch.tensor(3.5), gen);
+            var dist = Uniform(torch.tensor(new[] { 0.5, 0.25, 0.15 }), torch.tensor(3.5), gen);
+            Assert.True(torch.tensor(new[] { 2, 1.875, 1.825, }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 0.75, 0.88020833, 0.93520833 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 1.0986123, 1.178655, 1.2089603 }).allclose(dist.entropy(), rtol: 1e-3, atol: 1e-4));
+            Assert.True(torch.tensor(new[] { 0.16666667, 0.2307692308, 0.2537313433 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { 3.5000, 3.5000, 3.5000 }).allclose(dist.icdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { -1.0986123, -1.178655, -1.2089603 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
-                Assert.True(sample.ToDouble() >= 0.0 && sample.ToDouble() < 3.5);
+                Assert.Equal(new long[] { 3 }, sample.shape);
+                Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d < 3.5));
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
                 Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d < 3.5));
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
                 Assert.All<double>(sample.data<double>().ToArray(), d => Assert.True(d >= 0 && d < 3.5));
             }
         }
@@ -232,147 +244,188 @@ namespace TorchSharp
         [Fact]
         public void TestPareto()
         {
-            var dist = Pareto(torch.tensor(1.5), torch.tensor(1.0));
+            var dist = Pareto(torch.tensor(new[] { 0.5, 0.25, 0.15 }), torch.tensor(1.0));
+            Assert.True(torch.tensor(new[] { 0.5, 0.25, 0.15, }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.5000, 0.7500, 0.8500 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { 1.3068528, 0.61370564, 0.10288002 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { -0.69314718, -1.3862944, -1.89712 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
         [Fact]
         public void TestParetoGen()
         {
-            var dist = Pareto(torch.tensor(1.5), torch.tensor(1.0), new Generator(4711));
+            var dist = Pareto(torch.tensor(new[] { 0.5, 0.25, 0.15 }), torch.tensor(1.0), new Generator(4711));
+            Assert.True(torch.tensor(new[] { 0.5, 0.25, 0.15, }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.5000, 0.7500, 0.8500 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { 1.3068528, 0.61370564, 0.10288002 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { -0.69314718, -1.3862944, -1.89712 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
         [Fact]
         public void TestLogNormal()
         {
-            var dist = LogNormal(torch.tensor(0.25), torch.tensor(3.5));
+            var dist = LogNormal(torch.tensor(new[] { 0.5, 0.25, 0.15 }), torch.tensor(0.5));
+            Assert.True(torch.tensor(new[] { 1.868246, 1.4549914, 1.3165307 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 1.2840254, 1, 0.90483742 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.99134611, 0.60128181, 0.49228791 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 1.2257914, 0.97579135, 0.87579135 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { 0.15865525, 0.308537538, 0.38208857 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity }).allclose(dist.icdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { -0.72579135, -0.35079135, -0.27079135 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
         [Fact]
         public void TestLogNormalGen()
         {
-            var dist = LogNormal(torch.tensor(0.25), torch.tensor(3.5), new Generator(4711));
+            var dist = LogNormal(torch.tensor(new[] { 0.5, 0.25, 0.15 }), torch.tensor(0.5), new Generator(4711));
+            Assert.True(torch.tensor(new[] { 1.868246, 1.4549914, 1.3165307 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 1.2840254, 1, 0.90483742 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.99134611, 0.60128181, 0.49228791 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 1.2257914, 0.97579135, 0.87579135 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { 0.15865525, 0.308537538, 0.38208857 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity }).allclose(dist.icdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { -0.72579135, -0.35079135, -0.27079135 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
         [Fact]
         public void TestGumbel()
         {
-            var dist = Gumbel(torch.tensor(0.0), torch.tensor(3.5));
+            var dist = Gumbel(torch.tensor(new[] { 0.5, 0.25, 0.15 }), torch.tensor(3.5));
+            Assert.True(torch.tensor(new[] { 2.5202548, 2.2702548, 2.1702548 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 0.5, 0.25, 0.15 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 20.150442, 20.150442, 20.150442 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 2.8299786, 2.8299786, 2.8299786 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { 0.42026160, 0.44614211, 0.456400959 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { -2.26249801, -2.274166429, -2.28000367 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
         [Fact]
         public void TestGumbelGen()
         {
-            var dist = Gumbel(torch.tensor(0.0), torch.tensor(3.5), new Generator(4711));
+            var dist = Gumbel(torch.tensor(new[] { 0.5, 0.25, 0.15 }), torch.tensor(3.5), new Generator(4711));
+            Assert.True(torch.tensor(new[] { 2.5202548, 2.2702548, 2.1702548 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 0.5, 0.25, 0.15 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 20.150442, 20.150442, 20.150442 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 2.8299786, 2.8299786, 2.8299786 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { 0.42026160, 0.44614211, 0.456400959 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { -2.26249801, -2.274166429, -2.28000367 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
         [Fact]
         public void TestLaplace()
         {
-            var dist = Laplace(torch.tensor(0.0), torch.tensor(3.5));
+            var dist = Laplace(torch.tensor(new[] { 0.5, 0.25, 0.15 }), torch.tensor(0.5));
+            Assert.True(torch.tensor(new[] { 0.5, 0.25, 0.15 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 0.5, 0.25, 0.15 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.5, 0.5, 0.5 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 1.0, 1.0, 1.0 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { 0.81606028, 0.88843492, 0.90865824 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity }).allclose(dist.icdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { -1, -1.5, -1.7 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
@@ -381,21 +434,28 @@ namespace TorchSharp
         {
             var gen = new Generator(4711);
 
-            var dist = Laplace(torch.tensor(0.0), torch.tensor(3.5), gen);
+            var dist = Laplace(torch.tensor(new[] { 0.5, 0.25, 0.15 }), torch.tensor(0.5), gen);
+            Assert.True(torch.tensor(new[] { 0.5, 0.25, 0.15 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 0.5, 0.25, 0.15 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.5, 0.5, 0.5 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 1.0, 1.0, 1.0 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { 0.81606028, 0.88843492, 0.90865824 }).allclose(dist.cdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { double.PositiveInfinity, double.PositiveInfinity, double.PositiveInfinity }).allclose(dist.icdf(torch.ones(3))));
+            Assert.True(torch.tensor(new[] { -1, -1.5, -1.7 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
 
-                Assert.Empty(sample.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
-                var sample = dist.expand(new long[] { 3, 4 }).sample(2, 3);
+                var sample = dist.expand(new long[] { 3, 3 }).sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 4 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
             }
         }
 
@@ -997,18 +1057,21 @@ namespace TorchSharp
         [Fact]
         public void TestExponential()
         {
-            var dist = Exponential(torch.rand(3, 3) * 0.5f);
+            var dist = Exponential(torch.tensor(new[] { 0.5, 0.25, 0.15 }));
+            Assert.True(torch.tensor(new[] { 2, 4, 6.6666667, }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 0.0, 0.0, 0.0 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.25, 0.0625, 0.0225 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 1.6931472, 2.3862944, 2.89712 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { -1.1931472, -1.6362944, -2.04712 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
-                var entropy = dist.entropy();
 
-                Assert.Equal(new long[] { 3, 3 }, sample.shape);
-                Assert.Equal(new long[] { 3, 3 }, entropy.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
                 var sample = dist.expand(new long[] { 3, 3, 3 }).sample(2, 3);
@@ -1021,18 +1084,21 @@ namespace TorchSharp
         public void TestExponentialGen()
         {
             var gen = new Generator(4711);
-            var dist = Exponential(torch.rand(3, 3) * 0.5f, gen);
+            var dist = Exponential(torch.tensor(new[] { 0.5, 0.25, 0.15 }), gen);
+            Assert.True(torch.tensor(new[] { 2, 4, 6.6666667, }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 0.0, 0.0, 0.0 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.25, 0.0625, 0.0225 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { 1.6931472, 2.3862944, 2.89712 }).allclose(dist.entropy()));
+            Assert.True(torch.tensor(new[] { -1.1931472, -1.6362944, -2.04712 }).allclose(dist.log_prob(torch.ones(3))));
             {
                 var sample = dist.sample();
-                var entropy = dist.entropy();
 
-                Assert.Equal(new long[] { 3, 3 }, sample.shape);
-                Assert.Equal(new long[] { 3, 3 }, entropy.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
                 var sample = dist.expand(new long[] { 3, 3, 3 }).sample(2, 3);
