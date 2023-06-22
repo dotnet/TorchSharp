@@ -54,7 +54,7 @@ namespace TorchSharp
             /// </summary>
             public Tensor logits {
                 get {
-                    return _logits ?? ProbsToLogits(_probs);
+                    return _logits ?? ProbsToLogits(_probs, true);
                 }
             }
 

@@ -19,6 +19,9 @@ Adding torch.linalg.logsigmoid() and torch.nn.LogSigmoid<br/>
 __Bug Fixes__:
 
 TorchVision `rotate(), `solarize()` and `invert()` were incorrectly implemented.<br/>
+Fixed bug in Bernoulli's `entropy()` and `log_prob()` implementations.<br/>
+Fixed bug in Cauchy's `log_prob()` implementation.<br/>
+
 
 ## NuGet Version 0.100.2
 
