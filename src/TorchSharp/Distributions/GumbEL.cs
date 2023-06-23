@@ -17,16 +17,16 @@ namespace TorchSharp
             internal Gumbel(Tensor loc, Tensor scale, Distribution base_distribution, torch.distributions.transforms.Transform[] transforms, torch.Generator generator = null) :
                 base(base_distribution, transforms, generator)
             {
-                this.batch_shape = loc.size();
                 var locScale = torch.broadcast_tensors(loc, scale);
-                this.loc = locScale[0];
-                this.scale = locScale[1];
+                this.batch_shape = loc.size();
+                this.loc = locScale[0].DetachFromDisposeScope();
+                this.scale = locScale[1].DetachFromDisposeScope();
             }
 
             private Tensor loc;
             private Tensor scale;
 
-            public override Tensor mean => loc + scale * euler_constant;
+            public override Tensor mean => WrappedTensorDisposeScope(() => loc + scale * euler_constant);
 
             public override Tensor mode => loc;
 
@@ -34,10 +34,17 @@ namespace TorchSharp
 
             public override Tensor stddev => pioversqrtsix * scale;
 
+            public override Tensor log_prob(Tensor value)
+            {
+                using var _ = NewDisposeScope(); 
+                var y = (loc - value) / scale;
+                return ((y - y.exp()) - scale.log()).MoveToOuterDisposeScope();
+            }
+
             /// <summary>
             /// Returns entropy of distribution, batched over batch_shape.
             /// </summary>
-            public override Tensor entropy() => scale.log() + (1 + euler_constant);
+            public override Tensor entropy() => WrappedTensorDisposeScope(() => scale.log() + (1 + euler_constant));
 
             private readonly double pioversqrtsix = 1.282549830161864095544036359671; // Math.PI / Math.Sqrt(6);
         }
@@ -65,10 +72,10 @@ namespace TorchSharp
 
                 var base_dist = Uniform(torch.full_like(loc, finfo.tiny), torch.full_like(loc, 1 - finfo.eps), generator);
                 var transforms = new torch.distributions.transforms.Transform[] {
-                    new torch.distributions.transforms.ExpTransform().inv,
+                    new torch.distributions.transforms.LogTransform(),
                     new torch.distributions.transforms.AffineTransform(0, -torch.ones_like(scale)),
-                    new torch.distributions.transforms.ExpTransform().inv,
-                    new torch.distributions.transforms.AffineTransform(0, -scale)
+                    new torch.distributions.transforms.LogTransform(),
+                    new torch.distributions.transforms.AffineTransform(loc, -scale)
                 };
                 return new Gumbel(loc, scale, base_dist, transforms, generator);
             }

@@ -19,15 +19,28 @@ namespace TorchSharp
             /// <summary>
             /// The mean of the distribution.
             /// </summary>
-            public override Tensor mean => concentration / concentration.sum(-1, true);
+            public override Tensor mean => WrappedTensorDisposeScope(() => concentration / concentration.sum(-1, true));
+
+            public override Tensor mode
+            {
+                get {
+                    using var _ = NewDisposeScope();
+                    var concentrationm1 = (concentration - 1).clamp(min: 0.0);
+                    var mode = concentrationm1 / concentrationm1.sum(-1, true);
+                    var mask = (concentration < 1).all(dim: -1);
+                    mode[mask] = torch.nn.functional.one_hot(mode[mask].argmax(dim: -1), concentrationm1.shape[concentrationm1.ndim-1]).to(mode);
+                    return mode.MoveToOuterDisposeScope();
+                }
+            }
 
             /// <summary>
             /// The variance of the distribution
             /// </summary>
             public override Tensor variance {
                 get {
+                    using var _ = NewDisposeScope();
                     var con0 = concentration.sum(-1, true);
-                    return concentration * (con0 - concentration) / (con0.pow(2) * (con0 + 1));
+                    return (concentration * (con0 - concentration) / (con0.pow(2) * (con0 + 1))).MoveToOuterDisposeScope();
                 }
             }
 
@@ -40,8 +53,8 @@ namespace TorchSharp
             {
                 var cshape = concentration.shape;
                 this.batch_shape = cshape.Take(cshape.Length - 1).ToArray();
-                this.event_shape = new long[] { cshape[cshape.Length - 1]};
-                this.concentration = concentration;
+                this.event_shape = new long[] { cshape[cshape.Length - 1] };
+                this.concentration = concentration.alias().DetachFromDisposeScope();
             }
 
             internal Tensor concentration;

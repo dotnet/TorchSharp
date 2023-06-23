@@ -33,14 +33,14 @@ namespace TorchSharp
             /// <param name="generator"></param>
             public LogitRelaxedBernoulli(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null) : base(generator)
             {
-                _temperature = temperature;
+                _temperature = temperature.alias().DetachFromDisposeScope();
 
                 if ((probs is null && logits is null) || (probs is not null && logits is not null))
                     throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
 
                 this.batch_shape = probs is null ? logits.size() : probs.size();
-                this._probs = probs;
-                this._logits = logits;
+                this._probs = probs?.alias().DetachFromDisposeScope();
+                this._logits = logits?.alias().DetachFromDisposeScope();
             }
 
             /// <summary>
