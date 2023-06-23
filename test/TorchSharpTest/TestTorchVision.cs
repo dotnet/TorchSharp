@@ -905,7 +905,6 @@ namespace TorchSharp
         [Fact]
         public void Call_ThrowsException_WithWrongNumberOfChannels()
         {
-            // Act
             Assert.Throws<ArgumentException>(() => Grayscale(outputChannels: 2));
 
             Tensor input = torch.rand(new long[] { 1, 2, 128, 128 });
@@ -1579,8 +1578,6 @@ namespace TorchSharp
                 7.2f, 7.2f, 7.4f, 7.6f, 7.6f,
                 6.4f, 6.4f, 6.6f, 6.8f, 6.8f
             }).reshape(1, 3, 3, 5);
-
-            var outputStr = actual.str("g6", style: TensorStringStyle.Numpy);
 
             Assert.True(expected.allclose(actual, rtol: 1e-4, atol: 1e-6));
         }
