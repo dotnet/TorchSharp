@@ -674,18 +674,20 @@ namespace TorchSharp
         [Fact]
         public void TestBeta()
         {
-            var dist = Beta(torch.rand(3, 3) * 0.5f, torch.tensor(0.5f));
+            var dist = Beta(torch.tensor(new[] { 0.5, 0.25, 0.15 }), torch.tensor(0.15f));
+            Assert.True(torch.tensor(new[] { 0.769230762, 0.62499999, 0.5000 }).allclose(dist.mean));
+            Assert.True(torch.tensor(new[] { 1.0, 1.0, 1.0 }).allclose(dist.mode));
+            Assert.True(torch.tensor(new[] { 0.10758472, 0.16741072, 0.192307691 }).allclose(dist.variance));
+            Assert.True(torch.tensor(new[] { -3.0250008, -2.72106057, -3.4215678 }).allclose(dist.entropy()));
             {
                 var sample = dist.sample();
-                var entropy = dist.entropy();
 
-                Assert.Equal(new long[] { 3, 3 }, sample.shape);
-                Assert.Equal(new long[] { 3, 3 }, entropy.shape);
+                Assert.Equal(new long[] { 3 }, sample.shape);
             }
             {
                 var sample = dist.sample(2, 3);
 
-                Assert.Equal(new long[] { 2, 3, 3, 3 }, sample.shape);
+                Assert.Equal(new long[] { 2, 3, 3 }, sample.shape);
             }
             {
                 var sample = dist.expand(new long[] { 3, 3, 3 }).sample(2, 3);

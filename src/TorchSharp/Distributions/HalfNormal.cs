@@ -17,7 +17,7 @@ namespace TorchSharp
             internal HalfNormal(Tensor scale, torch.Generator generator = null) :
                 base(Normal(torch.tensor(0).to(scale.dtype), scale, generator), new torch.distributions.transforms.Transform[] { new torch.distributions.transforms.AbsTransform() }, generator)
             {
-                this.scale = scale;
+                this.scale = scale?.alias().DetachFromDisposeScope();
             }
 
             public Tensor scale { get; private set; }

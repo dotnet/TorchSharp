@@ -14,8 +14,8 @@ namespace TorchSharp
             internal Pareto(Tensor scale, Tensor alpha, Distribution base_distribution, torch.distributions.transforms.Transform[] transforms, Generator generator = null) :
                 base(base_distribution, transforms, generator)
             {
-                this.scale = scale;
-                this.alpha = alpha;
+                this.scale = scale.alias().DetachFromDisposeScope();
+                this.alpha = alpha.alias().DetachFromDisposeScope();
             }
 
             public Tensor scale { get; private set; }

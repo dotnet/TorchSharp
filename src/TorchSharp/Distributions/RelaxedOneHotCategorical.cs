@@ -25,8 +25,8 @@ namespace TorchSharp
             public RelaxedOneHotCategorical(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null) :
                 base(ExpRelaxedCategorical(temperature, probs, logits, generator), new distributions.transforms.ExpTransform(), generator)
             {
-                this._probs = probs;
-                this._logits = logits;
+                this._probs = probs?.alias().DetachFromDisposeScope();
+                this._logits = logits?.alias().DetachFromDisposeScope();
             }
 
             private Tensor _probs;

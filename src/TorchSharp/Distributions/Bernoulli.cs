@@ -36,8 +36,8 @@ namespace TorchSharp
                     throw new ArgumentException("One and only one of 'probs' and logits should be provided.");
 
                 this.batch_shape = p is null ? l.size() : p.size();
-                this._probs = p;
-                this._logits = l;
+                this._probs = p?.alias().DetachFromDisposeScope();
+                this._logits = l?.alias().DetachFromDisposeScope();
             }
 
             /// <summary>

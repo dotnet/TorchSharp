@@ -24,7 +24,7 @@ namespace TorchSharp
             /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => total_count * probs * (1 - probs);
+            public override Tensor variance => WrappedTensorDisposeScope(() => total_count * probs * (1 - probs));
 
             /// <summary>
             /// Constructor

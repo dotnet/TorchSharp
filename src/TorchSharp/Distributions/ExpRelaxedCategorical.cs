@@ -26,9 +26,9 @@ namespace TorchSharp
                 base(generator)
             {
                 this._categorical = Categorical(probs, logits, generator);
-                this._probs = probs;
-                this._logits = logits;
-                this._temperature = temperature;
+                this._probs = probs?.alias().DetachFromDisposeScope();
+                this._logits = logits?.alias().DetachFromDisposeScope();
+                this._temperature = temperature.alias().DetachFromDisposeScope();
                 base._init(_categorical.batch_shape, _categorical.event_shape);
             }
 

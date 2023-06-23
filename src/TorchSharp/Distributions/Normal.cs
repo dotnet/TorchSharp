@@ -42,8 +42,8 @@ namespace TorchSharp
             public Normal(Tensor loc, Tensor scale, Generator generator = null) : base(generator)
             {
                 var locScale = broadcast_tensors(loc, scale);
-                this.loc = locScale[0];
-                this.scale = locScale[1];
+                this.loc = locScale[0].DetachFromDisposeScope();
+                this.scale = locScale[1].DetachFromDisposeScope();
                 this.batch_shape = this.loc.size();
             }
 

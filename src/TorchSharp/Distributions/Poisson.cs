@@ -29,7 +29,7 @@ namespace TorchSharp
             {
                 var locScale = broadcast_tensors(rate);
                 batch_shape = rate.size();
-                this.rate = locScale[0];
+                this.rate = locScale[0].alias().DetachFromDisposeScope();
             }
 
             private Tensor rate;

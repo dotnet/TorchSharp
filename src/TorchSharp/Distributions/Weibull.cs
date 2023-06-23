@@ -84,8 +84,8 @@ namespace TorchSharp
             public static Weibull Weibull(Tensor scale, Tensor concentration, torch.Generator generator = null)
             {
                 var locScale = torch.broadcast_tensors(scale, concentration);
-                scale = locScale[0];
-                concentration = locScale[1];
+                scale = locScale[0].alias().DetachFromDisposeScope();
+                concentration = locScale[1].alias().DetachFromDisposeScope();
                 var concentration_reciprocal = concentration.reciprocal();
 
                 var base_dist = Exponential(torch.ones_like(scale), generator);

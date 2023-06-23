@@ -41,7 +41,7 @@ namespace TorchSharp
             {
                 var locScale = torch.broadcast_tensors(rate);
                 this.batch_shape = rate.size();
-                this.rate = locScale[0];
+                this.rate = locScale[0].DetachFromDisposeScope();
             }
 
             private Tensor rate;
