@@ -985,7 +985,7 @@ namespace TorchSharp
             var a = torch.tensor(new long[] { 100, 200, 300, 400 }, new long[] { 1, 4 });
             a.print();
             var str = a.ToString(TorchSharp.TensorStringStyle.Numpy);
-            Assert.Equal("[[100 200 300 400]]", str);
+            Assert.Equal("[[100, 200, 300, 400]]", str);
         }
 
         [Fact]

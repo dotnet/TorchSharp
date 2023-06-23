@@ -5716,7 +5716,7 @@ namespace TorchSharp
                     Assert.Equal(new long[] { 3, 6 }, result.shape);
 
                     var str = result.ToString(TensorStringStyle.Numpy, newLine: "\n");
-                    Assert.Equal("[[0 0 1 2 0 0]\n [0 3 4 5 0 0]\n [0 6 7 8 0 0]]", str);
+                    Assert.Equal("[[0, 0, 1, 2, 0, 0]\n [0, 3, 4, 5, 0, 0]\n [0, 6, 7, 8, 0, 0]]", str);
                 }
                 using (Tensor p4d = torch.randn(new long[] { 3, 3, 4, 2 }, device: device)) {
                     using (var res = pad(p4d, new long[] { 1, 1, 2, 3 }, PaddingModes.Constant, 0.0)) {
