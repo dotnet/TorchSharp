@@ -4,7 +4,7 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.100.3
 
-This release is focused on fixing bugs in distributions and adding a few new ones.
+This release is primarily, but not exclusively, focused on fixing bugs in distributions and adding a few new ones.
 
 __Breaking Changes__:
 
