@@ -245,11 +245,14 @@ void THSVision_ComputeOutputSize(const float* matrix, const int64_t matrix_lengt
         torch_last_err = 0;
 
         auto pts = torch::tensor({ -0.5f * w, -0.5f * h, 1.0f, -0.5f * w, 0.5f * h, 1.0f, 0.5f * w, 0.5f * h, 1.0f, 0.5f * w, -0.5f * h, 1.0f }).reshape({ 4,3 });
-        auto theta = torch::tensor(c10::ArrayRef<float>(matrix, matrix_length), c10::TensorOptions().dtype(c10::ScalarType::Float)).reshape({ 1, 2, 3 });
-        auto new_pts = pts.view({ 1, 4, 3 }).bmm(theta.transpose(1, 2)).view({ 4, 2 });
+        auto theta = torch::tensor(c10::ArrayRef<float>(matrix, matrix_length), c10::TensorOptions().dtype(c10::ScalarType::Float)).view({ 2, 3 });
+        auto new_pts = torch::matmul(pts, theta.t());
 
         auto min_vals = std::get<0>(new_pts.min(0));
         auto max_vals = std::get<0>(new_pts.max(0));
+
+        min_vals += torch::tensor({ w * 0.5f, h * 0.5f });
+        max_vals += torch::tensor({ w * 0.5f, h * 0.5f });
 
         float tol = 1e-4;
         auto cmax = torch::ceil((max_vals / tol).trunc_() * tol);
