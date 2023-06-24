@@ -33,7 +33,7 @@ namespace TorchSharp
                 public override Tensor entropy()
                 {
                     // Method to compute the entropy using Bregman divergence of the log normalizer.
-
+                    using var _ = NewDisposeScope();
                     var result = -MeanCarrierMeasure;
                     var nparams = NaturalParams.Select(p => p.detach().requires_grad_()).ToArray();
                     var lg_normal = LogNormalizer(nparams);
@@ -44,7 +44,7 @@ namespace TorchSharp
                         var g = gradients[i];
                         result -= np * g;
                     }
-                    return result;
+                    return result.MoveToOuterDisposeScope();
                 }
             }
         }

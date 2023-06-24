@@ -17,7 +17,7 @@ namespace TorchSharp
             internal HalfNormal(Tensor scale, torch.Generator generator = null) :
                 base(Normal(torch.tensor(0).to(scale.dtype), scale, generator), new torch.distributions.transforms.Transform[] { new torch.distributions.transforms.AbsTransform() }, generator)
             {
-                this.scale = scale;
+                this.scale = scale?.alias().DetachFromDisposeScope();
             }
 
             public Tensor scale { get; private set; }
@@ -32,10 +32,15 @@ namespace TorchSharp
             {
                 using var _ = torch.NewDisposeScope();
                 var lp = base_distribution.log_prob(value) + Math.Log(2);
-                lp[value.expand(lp.shape) < 0] = double.NegativeInfinity;
+                lp = torch.where(value >= 0, lp, double.NegativeInfinity);
                 return lp.MoveToOuterDisposeScope();
             }
 
+            public override Tensor cdf(Tensor value) => WrappedTensorDisposeScope(() => 2 * base_distribution.cdf(value) - 1);
+
+            public override Tensor icdf(Tensor prob) => WrappedTensorDisposeScope(() => base_distribution.icdf((prob + 1) / 2));
+
+            public override Tensor entropy() => WrappedTensorDisposeScope(() => base_distribution.entropy() - Math.Log(2));
 
             /// <summary>
             /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to

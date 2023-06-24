@@ -32,8 +32,8 @@ namespace TorchSharp
             {
                 var param = probs is null ? logits : probs;
 
-                this._probs = (probs is not null) ? probs / probs.sum(-1, keepdim: true) : null;
-                this._logits = (logits is not null) ? (logits - logits.logsumexp(-1, keepdim:true)) : null;
+                this._probs = (probs is not null) ? (probs / probs.sum(-1, keepdim: true)).DetachFromDisposeScope() : null;
+                this._logits = (logits is not null) ? (logits - logits.logsumexp(-1, keepdim:true)).DetachFromDisposeScope() : null;
                 this.num_events = param.size(-1);
                 this.batch_shape = param.ndim > 1 ? param.shape.Take(param.shape.Length-1).ToArray() : new long[0];
             }

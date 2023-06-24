@@ -4,6 +4,8 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.100.3
 
+This release is primarily, but not exclusively, focused on fixing bugs in distributions and adding a few new ones.
+
 __Breaking Changes__:
 
 The two main arguments to `torch.linalg.solve()` and `torch.linalg.solve_ex()` were renamed 'A' and 'B' to align with PyTorch.
@@ -12,7 +14,18 @@ __API Changes__:
 
 Adding torch.linalg.solve_triangular()<br/>
 Adding torch.distributions.MultivariateNormal<br/>
-Adding in-place versions of `Tensor.triu()` and `Tensor.tril()`
+Adding torch.distributions.NegativeBinomial<br/>
+Adding in-place versions of `Tensor.triu()` and `Tensor.tril()`<br/>
+Adding torch.linalg.logsigmoid() and torch.nn.LogSigmoid<br/>
+A number of distributions were missing the `mode` property.<br/>
+
+__Bug Fixes__:
+
+TorchVision `rotate(), `solarize()` and `invert()` were incorrectly implemented.<br/>
+Fixed bug in Bernoulli's `entropy()` and `log_prob()` implementations.<br/>
+Fixed bug in Cauchy's `log_prob()` implementation.<br/>
+Fixed several bugs in HalfCauchy and HalfNormal.<br/>
+The Numpy-style string formatting of tensors was missing commas between elements<br/>
 
 ## NuGet Version 0.100.2
 
