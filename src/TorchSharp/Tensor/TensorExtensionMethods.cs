@@ -208,12 +208,36 @@ namespace TorchSharp
         /// <returns></returns>
         /// <remarks>
         /// This method does exactly the same as str(TensorStringStyle.Numpy, ...) but is shorter,
-        /// looks more like Python 'str' and doesn't require a style argument in order
+        /// looks more like Python 'str()' and doesn't require a style argument in order
         /// to discriminate.
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string npstr(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
+        public static string npstr(this Tensor tensor, string? fltFormat = "g5", int? width = 100, string? newLine = "\n", CultureInfo? cultureInfo = null)
+        {
+            return tensor.ToString(TensorStringStyle.Numpy, fltFormat, width, cultureInfo, newLine);
+        }
+
+        /// <summary>
+        /// Get a C#-style string representation of the tensor.
+        /// </summary>
+        /// <param name="tensor">The input tensor.</param>
+        /// <param name="fltFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
+        /// <param name="width">The width of each line of the output string.</param>
+        /// <param name="newLine">The newline string to use, defaults to system default.</param>
+        /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This method does exactly the same as str(TensorStringStyle.CSharp, ...) but is shorter,
+        /// looks more like Python 'str()' and doesn't require a style argument in order
+        /// to discriminate.
+        ///
+        /// Primarily intended for use in interactive notebooks.
+        /// </remarks>
+        public static string cstr(this Tensor tensor, string? fltFormat = "g5", int? width = 100, string? newLine = "\n", CultureInfo? cultureInfo = null)
         {
             return tensor.ToString(TensorStringStyle.Numpy, fltFormat, width, cultureInfo, newLine);
         }
@@ -234,7 +258,7 @@ namespace TorchSharp
         /// The style to use -- either 'default,' 'metadata,' 'julia,' or 'numpy'
         /// </param>
         /// <returns></returns>
-        public static Tensor print(this Tensor t, string fltFormat = "g5", int width = 100, string newLine = "", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
+        public static Tensor print(this Tensor t, string? fltFormat = "g5", int? width = 100, string? newLine = "", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
         {
             Console.WriteLine(t.ToString(style, fltFormat, width, cultureInfo, newLine));
             return t;
