@@ -6315,13 +6315,18 @@ namespace TorchSharp
             {
                 var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
 
+                var trailingCols = torch.maxColumns / 2;
+                var leadingCols = torch.maxColumns - trailingCols;
+                var trailingRows = torch.maxRows / 2;
+                var leadingRows = torch.maxRows - trailingRows;
+
                 var dim = t.dim();
                 if (t.size().Length == 0) return "";
                 var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))) : "");
                 sb.Append('[');
                 var currentSize = t.size()[0];
                 if (dim == 1) {
-                    if (currentSize <= 2 * torch.maxHeightWidth) {
+                    if (currentSize <= torch.maxColumns) {
                         for (var i = 0; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
@@ -6329,14 +6334,14 @@ namespace TorchSharp
 
                         PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
                     } else {
-                        for (var i = 0; i < torch.maxHeightWidth; i++) {
+                        for (var i = 0; i < leadingCols; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
                         }
 
                         sb.Append("... ");
 
-                        for (var i = currentSize - torch.maxHeightWidth; i < currentSize - 1; i++) {
+                        for (var i = currentSize - trailingCols; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
                         }
@@ -6348,7 +6353,7 @@ namespace TorchSharp
 
                     if (currentSize == 1) {
                         sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
-                    } else if (currentSize <= 2 * torch.maxHeightWidth) {
+                    } else if (currentSize <= torch.maxRows) {
                         sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
                         sb.Append(newline);
                         for (var i = 1; i < currentSize - 1; i++) {
@@ -6360,7 +6365,7 @@ namespace TorchSharp
                     } else {
                         sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
                         sb.Append(newline);
-                        for (var i = 1; i < torch.maxHeightWidth; i++) {
+                        for (var i = 1; i < leadingRows; i++) {
                             sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
                             sb.Append(newline);
                         }
@@ -6369,7 +6374,7 @@ namespace TorchSharp
                         sb.Append(" ...");
                         sb.Append(newline);
 
-                        for (var i = currentSize - torch.maxHeightWidth; i < currentSize - 1; i++) {
+                        for (var i = currentSize - trailingRows; i < currentSize - 1; i++) {
                             sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
                             sb.Append(newline);
                         }
@@ -6385,6 +6390,11 @@ namespace TorchSharp
             private static string ToCSharpString(Tensor t, long mdim, bool isFCreate, string fltFormat, CultureInfo? cultureInfo, string newLine, bool top = false)
             {
                 var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
+
+                var trailingCols = torch.maxColumns / 2;
+                var leadingCols = torch.maxColumns - trailingCols;
+                var trailingRows = torch.maxRows / 2;
+                var leadingRows = torch.maxRows - trailingRows;
 
                 var dim = t.dim();
                 if (t.size().Length == 0) return "";
@@ -6461,7 +6471,7 @@ namespace TorchSharp
 
                 var currentSize = t.size()[0];
                 if (dim == 1) {
-                    if (currentSize <= 2 * torch.maxHeightWidth) {
+                    if (currentSize <= torch.maxColumns) {
                         for (var i = 0; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(appendChar);
@@ -6471,7 +6481,7 @@ namespace TorchSharp
                         PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
                         sb.Append(appendChar);
                     } else {
-                        for (var i = 0; i < torch.maxHeightWidth; i++) {
+                        for (var i = 0; i < leadingCols; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(appendChar);
                             sb.Append(',').Append(' ');
@@ -6479,7 +6489,7 @@ namespace TorchSharp
 
                         sb.Append("... ");
 
-                        for (var i = currentSize - torch.maxHeightWidth; i < currentSize - 1; i++) {
+                        for (var i = currentSize - trailingCols; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(appendChar);
                             sb.Append(',').Append(' ');
@@ -6491,7 +6501,7 @@ namespace TorchSharp
                 } else {
                     if (currentSize == 1) {
                         sb.Append(ToCSharpString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
-                    } else if (currentSize <= 2 * torch.maxHeightWidth) {
+                    } else if (currentSize <= torch.maxRows) {
                         sb.Append(ToCSharpString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
                         sb.Append(',').Append(newLine);
                         for (var i = 1; i < currentSize - 1; i++) {
@@ -6503,7 +6513,7 @@ namespace TorchSharp
                     } else {
                         sb.Append(ToCSharpString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
                         sb.Append(',').Append(newLine);
-                        for (var i = 1; i < torch.maxHeightWidth; i++) {
+                        for (var i = 1; i < leadingRows; i++) {
                             sb.Append(ToCSharpString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
                             sb.Append(',').Append(newLine);
                         }
@@ -6512,7 +6522,7 @@ namespace TorchSharp
                         sb.Append(" ...");
                         sb.Append(newLine);
 
-                        for (var i = currentSize - torch.maxHeightWidth; i < currentSize - 1; i++) {
+                        for (var i = currentSize - trailingRows; i < currentSize - 1; i++) {
                             sb.Append(ToCSharpString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
                             sb.Append(',').Append(newLine);
                         }
