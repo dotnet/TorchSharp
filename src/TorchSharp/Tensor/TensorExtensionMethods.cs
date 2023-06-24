@@ -43,17 +43,21 @@ namespace TorchSharp
         /// <param name="linewidth">The number of characters per line for the purpose of inserting line breaks (default = 100).</param>
         /// <param name="newLine">The string to use to represent new-lines. Starts out as 'Environment.NewLine'</param>
         /// <param name="sci_mode">Enable scientific notation.</param>
+        /// <param name="maxHeightWidth">The number of elements printed before and after a ... in string. -1 means no limit</param>
         public static void set_printoptions(
             int precision,
             int? linewidth = null,
             string? newLine = null,
-            bool sci_mode = false)
+            bool sci_mode = false,
+            int? maxHeightWidth = null)
         {
             torch.floatFormat = sci_mode ? $"E{precision}" : $"F{precision}";
             if (newLine is not null)
                 torch.newLine = newLine;
             if (linewidth.HasValue)
                 torch.lineWidth = linewidth.Value;
+            if (maxHeightWidth.HasValue)
+                torch.maxHeightWidth = maxHeightWidth.Value;
         }
 
         /// <summary>
@@ -66,11 +70,13 @@ namespace TorchSharp
         /// </param>
         /// <param name="linewidth">The number of characters per line for the purpose of inserting line breaks (default = 100).</param>
         /// <param name="newLine">The string to use to represent new-lines. Starts out as 'Environment.NewLine'</param>
+        /// <param name="maxHeightWidth">The number of elements printed before and after a ... in string. -1 means no limit</param>
         public static void set_printoptions(
             TensorStringStyle? style = null,
             string? floatFormat = null,
             int? linewidth = null,
-            string? newLine = null)
+            string? newLine = null,
+            int? maxHeightWidth = null)
         {
             if (style.HasValue)
                 torch._style = style.Value;
@@ -80,6 +86,8 @@ namespace TorchSharp
                 torch.newLine = newLine;
             if (linewidth.HasValue)
                 torch.lineWidth = linewidth.Value;
+            if (maxHeightWidth.HasValue)
+                torch.maxHeightWidth = maxHeightWidth.Value;
         }
 
         public const TensorStringStyle julia = TensorStringStyle.Julia;
@@ -91,6 +99,7 @@ namespace TorchSharp
         internal static string floatFormat = "g5";
         internal static string newLine = Environment.NewLine;
         internal static int lineWidth = 100;
+        internal static int maxHeightWidth = 3;
     }
 
     /// <summary>

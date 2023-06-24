@@ -6321,7 +6321,7 @@ namespace TorchSharp
                 sb.Append('[');
                 var currentSize = t.size()[0];
                 if (dim == 1) {
-                    if (currentSize <= 6) {
+                    if (currentSize <= 2 * torch.maxHeightWidth) {
                         for (var i = 0; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
@@ -6329,14 +6329,14 @@ namespace TorchSharp
 
                         PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
                     } else {
-                        for (var i = 0; i < 3; i++) {
+                        for (var i = 0; i < torch.maxHeightWidth; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
                         }
 
                         sb.Append("... ");
 
-                        for (var i = currentSize - 3; i < currentSize - 1; i++) {
+                        for (var i = currentSize - torch.maxHeightWidth; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
                             sb.Append(',').Append(' ');
                         }
@@ -6348,7 +6348,7 @@ namespace TorchSharp
 
                     if (currentSize == 1) {
                         sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
-                    } else if (currentSize <= 6) {
+                    } else if (currentSize <= 2 * torch.maxHeightWidth) {
                         sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
                         sb.Append(newline);
                         for (var i = 1; i < currentSize - 1; i++) {
@@ -6360,7 +6360,7 @@ namespace TorchSharp
                     } else {
                         sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
                         sb.Append(newline);
-                        for (var i = 1; i < 3; i++) {
+                        for (var i = 1; i < torch.maxHeightWidth; i++) {
                             sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
                             sb.Append(newline);
                         }
@@ -6369,7 +6369,7 @@ namespace TorchSharp
                         sb.Append(" ...");
                         sb.Append(newline);
 
-                        for (var i = currentSize - 3; i < currentSize - 1; i++) {
+                        for (var i = currentSize - torch.maxHeightWidth; i < currentSize - 1; i++) {
                             sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
                             sb.Append(newline);
                         }
@@ -6461,25 +6461,60 @@ namespace TorchSharp
 
                 var currentSize = t.size()[0];
                 if (dim == 1) {
-                    for (var i = 0; i < currentSize - 1; i++) {
-                        PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                    if (currentSize <= 2 * torch.maxHeightWidth) {
+                        for (var i = 0; i < currentSize - 1; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(appendChar);
+                            sb.Append(',').Append(' ');
+                        }
+
+                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
                         sb.Append(appendChar);
-                        sb.Append(',').Append(' ');
+                    } else {
+                        for (var i = 0; i < torch.maxHeightWidth; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(appendChar);
+                            sb.Append(',').Append(' ');
+                        }
+
+                        sb.Append("... ");
+
+                        for (var i = currentSize - torch.maxHeightWidth; i < currentSize - 1; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(appendChar);
+                            sb.Append(',').Append(' ');
+                        }
+
+                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                        sb.Append(appendChar);
                     }
-
-                    PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
-                    sb.Append(appendChar);
                 } else {
-                    var newline = newLine; // string.Join("", Enumerable.Repeat(newLine, (int)dim - 1).ToList());
-
                     if (currentSize == 1) {
                         sb.Append(ToCSharpString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
-                    } else {
+                    } else if (currentSize <= 2 * torch.maxHeightWidth) {
                         sb.Append(ToCSharpString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
-                        sb.Append(',').Append(newline);
+                        sb.Append(',').Append(newLine);
                         for (var i = 1; i < currentSize - 1; i++) {
                             sb.Append(ToCSharpString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
-                            sb.Append(',').Append(newline);
+                            sb.Append(',').Append(newLine);
+                        }
+
+                        sb.Append(ToCSharpString(t[currentSize - 1], mdim, true, fltFormat, cultureInfo, newLine));
+                    } else {
+                        sb.Append(ToCSharpString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
+                        sb.Append(',').Append(newLine);
+                        for (var i = 1; i < torch.maxHeightWidth; i++) {
+                            sb.Append(ToCSharpString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
+                            sb.Append(',').Append(newLine);
+                        }
+
+                        sb.Append(string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))));
+                        sb.Append(" ...");
+                        sb.Append(newLine);
+
+                        for (var i = currentSize - torch.maxHeightWidth; i < currentSize - 1; i++) {
+                            sb.Append(ToCSharpString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
+                            sb.Append(',').Append(newLine);
                         }
 
                         sb.Append(ToCSharpString(t[currentSize - 1], mdim, true, fltFormat, cultureInfo, newLine));
