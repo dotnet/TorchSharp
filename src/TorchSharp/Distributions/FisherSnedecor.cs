@@ -45,8 +45,8 @@ namespace TorchSharp
             public FisherSnedecor(Tensor df1, Tensor df2, torch.Generator generator = null) : base(generator)
             {
                 var bcast = torch.broadcast_tensors(df1, df2);
-                this.df1 = bcast[0];
-                this.df2 = bcast[1];
+                this.df1 = bcast[0].DetachFromDisposeScope();
+                this.df2 = bcast[1].DetachFromDisposeScope();
                 this.gamma1 = new Gamma(this.df1 * 0.5, this.df1, generator);
                 this.gamma2 = new Gamma(this.df2 * 0.5, this.df2, generator);
                 this.batch_shape = this.df1.size();

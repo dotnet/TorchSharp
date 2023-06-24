@@ -18,7 +18,7 @@ namespace TorchSharp
         /// or a positive definite precision matrix or a lower-triangular matrix with positive-valued diagonal entries. This triangular matrix
         /// can be obtained via Cholesky decomposition of the covariance.
         /// </summary>
-        public class MultiVariateNormal : torch.distributions.Distribution
+        public class MultivariateNormal : torch.distributions.Distribution
         {
             /// <summary>
             /// The mean of the distribution.
@@ -26,9 +26,15 @@ namespace TorchSharp
             public override Tensor mean => loc;
 
             /// <summary>
+            /// The mode of the distribution.
+            /// </summary>
+            public override Tensor mode => loc;
+
+            /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => _unbroadcasted_scale_tril.pow(2).sum(-1).expand(batch_shape + event_shape);
+            public override Tensor variance =>
+                WrappedTensorDisposeScope(() => _unbroadcasted_scale_tril.pow(2).sum(-1).expand(batch_shape + event_shape));
 
             /// <summary>
             /// Constructor
@@ -45,7 +51,7 @@ namespace TorchSharp
             /// If `covariance_matrix` or `precision_matrix` is passed instead, it is only used to compute
             /// the corresponding lower triangular matrices using a Cholesky decomposition.
             /// </remarks>
-            public MultiVariateNormal(Tensor loc, Tensor covariance_matrix = null, Tensor precision_matrix = null, Tensor scale_tril = null, torch.Generator generator = null) : base(generator)
+            public MultivariateNormal(Tensor loc, Tensor covariance_matrix = null, Tensor precision_matrix = null, Tensor scale_tril = null, torch.Generator generator = null) : base(generator)
             {
                 var argCount = 0;
                 argCount += (covariance_matrix is null ? 0 : 1);
@@ -85,7 +91,7 @@ namespace TorchSharp
                 this.event_shape = loc.shape[loc.shape.Length-1];
             }
 
-            private MultiVariateNormal(torch.Generator generator = null) : base(generator) { }
+            private MultivariateNormal(torch.Generator generator = null) : base(generator) { }
 
             private Tensor loc;
             private Tensor scale_tril;
@@ -104,7 +110,7 @@ namespace TorchSharp
                 using var _ = NewDisposeScope();
 
                 var shape = ExtendedShape(sample_shape);
-                var eps = torch.empty(shape, dtype: loc.dtype, device: loc.device).normal_();
+                var eps = torch.empty(shape, dtype: loc.dtype, device: loc.device).normal_(generator:generator);
                 return (loc + BatchMV(_unbroadcasted_scale_tril, eps)).MoveToOuterDisposeScope();
             }
 
@@ -131,10 +137,10 @@ namespace TorchSharp
             /// <param name="instance">new instance provided by subclasses that need to override `.expand`.</param>
             public override distributions.Distribution expand(Size batch_shape, distributions.Distribution instance = null)
             {
-                if (instance != null && !(instance is MultiVariateNormal))
-                    throw new ArgumentException("expand(): 'instance' must be a MultiVariateNormal distribution");
+                if (instance != null && !(instance is MultivariateNormal))
+                    throw new ArgumentException("expand(): 'instance' must be a MultivariateNormal distribution");
 
-                var newDistribution = ((instance == null) ? new MultiVariateNormal(generator) : instance) as MultiVariateNormal;
+                var newDistribution = ((instance == null) ? new MultivariateNormal(generator) : instance) as MultivariateNormal;
 
                 var loc_shape = batch_shape + event_shape;
                 var cov_shape = batch_shape + event_shape + event_shape;
@@ -256,7 +262,7 @@ namespace TorchSharp
         public static partial class distributions
         {
             /// <summary>
-            /// Creates a MultiVariateNormal distribution parameterized by `probs` or `logits` (but not both).
+            /// Creates a MultivariateNormal distribution parameterized by `probs` or `logits` (but not both).
             /// `total_count` must be broadcastable with `probs`/`logits`.
             /// </summary>
             /// <param name="loc"></param>
@@ -265,9 +271,9 @@ namespace TorchSharp
             /// <param name="scale_tril"></param>
             /// <param name="generator">An optional random number generator object.</param>
             /// <returns></returns>
-            public static MultiVariateNormal MultiVariateNormal(Tensor loc, Tensor covariance_matrix = null, Tensor precision_matrix = null, Tensor scale_tril = null, torch.Generator generator = null)
+            public static MultivariateNormal MultivariateNormal(Tensor loc, Tensor covariance_matrix = null, Tensor precision_matrix = null, Tensor scale_tril = null, torch.Generator generator = null)
             {
-                return new MultiVariateNormal(loc, covariance_matrix, precision_matrix, scale_tril, generator);
+                return new MultivariateNormal(loc, covariance_matrix, precision_matrix, scale_tril, generator);
             }
         }
     }

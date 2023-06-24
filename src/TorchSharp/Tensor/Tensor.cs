@@ -6323,21 +6323,21 @@ namespace TorchSharp
                     if (currentSize <= 6) {
                         for (var i = 0; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
-                            sb.Append(' ');
+                            sb.Append(',').Append(' ');
                         }
 
                         PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
                     } else {
                         for (var i = 0; i < 3; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
-                            sb.Append(' ');
+                            sb.Append(',').Append(' ');
                         }
 
                         sb.Append("... ");
 
                         for (var i = currentSize - 3; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
-                            sb.Append(' ');
+                            sb.Append(',').Append(' ');
                         }
 
                         PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);

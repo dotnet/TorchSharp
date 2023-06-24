@@ -19,13 +19,16 @@ namespace TorchSharp
             /// </summary>
             public override Tensor mean => concentration1 / (concentration1 + concentration0);
 
+            public override Tensor mode => dirichlet.mode[TensorIndex.Ellipsis, 0];
+
             /// <summary>
             /// The variance of the distribution
             /// </summary>
             public override Tensor variance {
                 get {
+                    using var _ = NewDisposeScope();
                     var total = concentration0 + concentration1;
-                    return concentration1 * concentration0 / (total.pow(2) * (total + 1));
+                    return (concentration1 * concentration0 / (total.pow(2) * (total + 1))).MoveToOuterDisposeScope();
                 }
             }
 
@@ -35,8 +38,8 @@ namespace TorchSharp
             public Beta(Tensor concentration1, Tensor concentration0, torch.Generator generator = null) : base(generator)
             {
                 var bcast = torch.broadcast_tensors(concentration1, concentration0);
-                this.concentration1 = bcast[0];
-                this.concentration0 = bcast[1];
+                this.concentration1 = bcast[0].DetachFromDisposeScope();
+                this.concentration0 = bcast[1].DetachFromDisposeScope();
                 this.dirichlet = new Dirichlet(torch.stack(bcast, -1), generator);
                 this.batch_shape = this.dirichlet.batch_shape;
             }

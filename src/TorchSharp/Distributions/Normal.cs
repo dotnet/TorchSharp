@@ -19,6 +19,11 @@ namespace TorchSharp
             public override Tensor mean => loc;
 
             /// <summary>
+            /// The mode of the distribution.
+            /// </summary>
+            public override Tensor mode => loc;
+
+            /// <summary>
             /// The standard deviation of the distribution
             /// </summary>
             public override Tensor stddev => scale;
@@ -28,7 +33,6 @@ namespace TorchSharp
             /// </summary>
             public override Tensor variance => scale.pow(2);
 
-
             /// <summary>
             /// Constructor
             /// </summary>
@@ -37,10 +41,10 @@ namespace TorchSharp
             /// <param name="generator">An optional random number generator object.</param>
             public Normal(Tensor loc, Tensor scale, Generator generator = null) : base(generator)
             {
-                batch_shape = loc.size();
                 var locScale = broadcast_tensors(loc, scale);
-                this.loc = locScale[0];
-                this.scale = locScale[1];
+                this.loc = locScale[0].DetachFromDisposeScope();
+                this.scale = locScale[1].DetachFromDisposeScope();
+                this.batch_shape = this.loc.size();
             }
 
             private Tensor loc;

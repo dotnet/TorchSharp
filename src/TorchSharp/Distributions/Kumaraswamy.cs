@@ -14,8 +14,8 @@ namespace TorchSharp
             internal Kumaraswamy(Tensor concentration1, Tensor concentration0, torch.Generator generator = null) : base(generator)
             {
                 var c1c0 = broadcast_tensors(concentration1, concentration0);
-                this.concentration1 = c1c0[0];
-                this.concentration0 = c1c0[1];
+                this.concentration1 = c1c0[0].DetachFromDisposeScope();
+                this.concentration0 = c1c0[1].DetachFromDisposeScope();
 
                 _init(Uniform(torch.full_like(this.concentration0, 0), torch.full_like(this.concentration0, 1)),
                       new distributions.transforms.Transform[] {

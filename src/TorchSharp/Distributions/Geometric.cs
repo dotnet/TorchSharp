@@ -36,8 +36,8 @@ namespace TorchSharp
             public Geometric(Tensor probs = null, Tensor logits = null, torch.Generator generator = null) : base(generator) 
             {
                 this.batch_shape = probs is null ? logits.size() : probs.size();
-                this._probs = probs;
-                this._logits = logits;
+                this._probs = probs?.alias().DetachFromDisposeScope();
+                this._logits = logits?.alias().DetachFromDisposeScope();
             }
 
             /// <summary>
