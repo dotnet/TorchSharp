@@ -6280,6 +6280,7 @@ namespace TorchSharp
                     TensorStringStyle.Metadata => ToMetadataString(),
                     TensorStringStyle.Julia => ToJuliaString(fmt, w, cultureInfo, nl),
                     TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fmt, cultureInfo, nl),
+                    TensorStringStyle.CSharp => ToCSharpString(this, ndim, true, fmt, cultureInfo, nl, true),
                     _ => throw new InvalidEnumArgumentException($"Unsupported tensor string style: {style}")
                 };
             }
@@ -6378,6 +6379,117 @@ namespace TorchSharp
                 }
 
                 sb.Append("]");
+                return sb.ToString();
+            }
+
+            private static string ToCSharpString(Tensor t, long mdim, bool isFCreate, string fltFormat, CultureInfo? cultureInfo, string newLine, bool top = false)
+            {
+                var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
+
+                var dim = t.dim();
+                if (t.size().Length == 0) return "";
+                var sb = new StringBuilder();
+
+                if (top) {
+                    sb.Append(t.ToMetadataString());
+                    sb.Append(", value = ");
+
+                    if (t.Dimensions == 0) {
+                        PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
+                        return sb.ToString(); ;
+                    }
+                }
+
+                if (top && t.Dimensions > 1) {
+                    sb.Append(newLine);
+                }
+
+                var appendChar = "";
+
+                switch (t.dtype) {
+                default:
+                    return t.ToMetadataString();
+                case ScalarType.Byte:
+                    if (top) sb.Append("byte ");
+                    break;
+                case ScalarType.Int8:
+                    if (top) sb.Append("sbyte ");
+                    break;
+                case ScalarType.Int16:
+                    if (top) sb.Append("short ");
+                    break;
+                case ScalarType.Int32:
+                    if (top) sb.Append("int ");
+                    break;
+                case ScalarType.Int64:
+                    if (top) sb.Append("long ");
+                    appendChar = "L";
+                    break;
+                case ScalarType.Float32:
+                    if (top) sb.Append("float ");
+                    appendChar = "f";
+                    break;
+                case ScalarType.Float64:
+                    if (top) sb.Append("double ");
+                    break;
+                case ScalarType.ComplexFloat32:
+                    if (top) sb.Append("complex32 ");
+                    break;
+                case ScalarType.ComplexFloat64:
+                    if (top) sb.Append("complex64 ");
+                    break;
+                }
+
+                if (top) {
+                    sb.Append('[');
+                    for (int i = 0; i < t.Dimensions - 1; i++) {
+                        sb.Append(',');
+                    }
+                    sb.Append("] ");
+                }
+
+                if (isFCreate) {
+                    sb.Append(string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))));
+                }
+
+                sb.Append('{');
+
+                if (top && t.Dimensions > 1) {
+                    sb.Append(newLine);
+                    sb.Append(' ');
+                }
+
+                var currentSize = t.size()[0];
+                if (dim == 1) {
+                    for (var i = 0; i < currentSize - 1; i++) {
+                        PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                        sb.Append(appendChar);
+                        sb.Append(',').Append(' ');
+                    }
+
+                    PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                    sb.Append(appendChar);
+                } else {
+                    var newline = newLine; // string.Join("", Enumerable.Repeat(newLine, (int)dim - 1).ToList());
+
+                    if (currentSize == 1) {
+                        sb.Append(ToCSharpString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
+                    } else {
+                        sb.Append(ToCSharpString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
+                        sb.Append(',').Append(newline);
+                        for (var i = 1; i < currentSize - 1; i++) {
+                            sb.Append(ToCSharpString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
+                            sb.Append(',').Append(newline);
+                        }
+
+                        sb.Append(ToCSharpString(t[currentSize - 1], mdim, true, fltFormat, cultureInfo, newLine));
+                    }
+                }
+
+                if (top && t.Dimensions > 1) {
+                    sb.Append(newLine);
+                }
+                sb.Append("}");
                 return sb.ToString();
             }
 

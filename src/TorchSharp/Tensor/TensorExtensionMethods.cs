@@ -15,6 +15,7 @@ namespace TorchSharp
         Metadata,   // Print only shape, dtype, and device
         Julia,      // Print tensor in the style of Julia
         Numpy,      // Print tensor in the style of NumPy
+        CSharp,     // Print tensor in the style of CSharp
         Default,    // Pick up the style to use from torch.TensorStringStyle
     }
 
@@ -83,6 +84,7 @@ namespace TorchSharp
 
         public const TensorStringStyle julia = TensorStringStyle.Julia;
         public const TensorStringStyle numpy = TensorStringStyle.Numpy;
+        public const TensorStringStyle csharp = TensorStringStyle.CSharp;
 
         private static TensorStringStyle _style = TensorStringStyle.Julia;
 

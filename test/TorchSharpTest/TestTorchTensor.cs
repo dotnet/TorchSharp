@@ -281,6 +281,45 @@ namespace TorchSharp
             Assert.Equal("[2x2], type = Float32, device = cpu", str);
         }
 
+        [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        public void Test1DToCSharpString()
+        {
+            var hundreds = torch.tensor(Enumerable.Range(0, 100).Select(x => 2 * x + 1).ToList(), ScalarType.Float32);
+
+            Assert.Multiple(
+            () => Assert.Equal("[4], type = Float32, device = cpu, value = float [] {0f, 0f, 0f, 0f}", torch.zeros(4).ToString(torch.csharp)),
+            () => Assert.Equal("[100], type = Int32, device = cpu, value = int [] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}", torch.ones(100, ScalarType.Int32).ToString(torch.csharp)),
+            () => Assert.Equal("[100], type = Float32, device = cpu, value = float [] {1f, 3f, 5f, 7f, 9f, 11f, 13f, 15f, 17f, 19f, 21f, 23f, 25f, 27f, 29f, 31f, 33f, 35f, 37f, 39f, 41f, 43f, 45f, 47f, 49f, 51f, 53f, 55f, 57f, 59f, 61f, 63f, 65f, 67f, 69f, 71f, 73f, 75f, 77f, 79f, 81f, 83f, 85f, 87f, 89f, 91f, 93f, 95f, 97f, 99f, 101f, 103f, 105f, 107f, 109f, 111f, 113f, 115f, 117f, 119f, 121f, 123f, 125f, 127f, 129f, 131f, 133f, 135f, 137f, 139f, 141f, 143f, 145f, 147f, 149f, 151f, 153f, 155f, 157f, 159f, 161f, 163f, 165f, 167f, 169f, 171f, 173f, 175f, 177f, 179f, 181f, 183f, 185f, 187f, 189f, 191f, 193f, 195f, 197f, 199f}", hundreds.ToString(torch.csharp))
+            );
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        public void Test2DToCSharpString()
+        {
+            var hundreds = torch.tensor(Enumerable.Range(0, 100).Select(x => 2 * x + 1).ToList(), ScalarType.Float32);
+
+            Assert.Multiple(
+            () => Assert.Equal($"[2x4], type = Float32, device = cpu, value = {_sep}float [,] {{{_sep} {{0f, 0f, 0f, 0f}},{_sep} {{0f, 0f, 0f, 0f}}{_sep}}}", torch.zeros(2, 4).ToString(torch.csharp)),
+            () => Assert.Equal($"[2x10], type = Int32, device = cpu, value = {_sep}int [,] {{{_sep} {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},{_sep} {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}}{_sep}}}", torch.ones(2, 10, ScalarType.Int32).ToString(torch.csharp)),
+            () => Assert.Equal($"[2x50], type = Float32, device = cpu, value = {_sep}float [,] {{{_sep} {{1f, 3f, 5f, 7f, 9f, 11f, 13f, 15f, 17f, 19f, 21f, 23f, 25f, 27f, 29f, 31f, 33f, 35f, 37f, 39f, 41f, 43f, 45f, 47f, 49f, 51f, 53f, 55f, 57f, 59f, 61f, 63f, 65f, 67f, 69f, 71f, 73f, 75f, 77f, 79f, 81f, 83f, 85f, 87f, 89f, 91f, 93f, 95f, 97f, 99f}},{_sep} {{101f, 103f, 105f, 107f, 109f, 111f, 113f, 115f, 117f, 119f, 121f, 123f, 125f, 127f, 129f, 131f, 133f, 135f, 137f, 139f, 141f, 143f, 145f, 147f, 149f, 151f, 153f, 155f, 157f, 159f, 161f, 163f, 165f, 167f, 169f, 171f, 173f, 175f, 177f, 179f, 181f, 183f, 185f, 187f, 189f, 191f, 193f, 195f, 197f, 199f}}{_sep}}}", hundreds.reshape(2, 50).ToString(torch.csharp)),
+            () => Assert.Equal($"[10x10], type = Float32, device = cpu, value = {_sep}float [,] {{{_sep} {{1f, 3f, 5f, 7f, 9f, 11f, 13f, 15f, 17f, 19f}},{_sep} {{21f, 23f, 25f, 27f, 29f, 31f, 33f, 35f, 37f, 39f}},{_sep} {{41f, 43f, 45f, 47f, 49f, 51f, 53f, 55f, 57f, 59f}},{_sep} {{61f, 63f, 65f, 67f, 69f, 71f, 73f, 75f, 77f, 79f}},{_sep} {{81f, 83f, 85f, 87f, 89f, 91f, 93f, 95f, 97f, 99f}},{_sep} {{101f, 103f, 105f, 107f, 109f, 111f, 113f, 115f, 117f, 119f}},{_sep} {{121f, 123f, 125f, 127f, 129f, 131f, 133f, 135f, 137f, 139f}},{_sep} {{141f, 143f, 145f, 147f, 149f, 151f, 153f, 155f, 157f, 159f}},{_sep} {{161f, 163f, 165f, 167f, 169f, 171f, 173f, 175f, 177f, 179f}},{_sep} {{181f, 183f, 185f, 187f, 189f, 191f, 193f, 195f, 197f, 199f}}{_sep}}}", hundreds.reshape(10, 10).ToString(torch.csharp))
+            );
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.ToString))]
+        public void Test3DToCSharpString()
+        {
+            var hundreds = torch.tensor(Enumerable.Range(0, 100).Select(x => 2 * x + 1).ToList(), ScalarType.Float32);
+            Assert.Multiple(
+            () => Assert.Equal($"[2x2x4], type = Float32, device = cpu, value = {_sep}float [,,] {{{_sep} {{{{0f, 0f, 0f, 0f}},{_sep}  {{0f, 0f, 0f, 0f}}}},{_sep} {{{{0f, 0f, 0f, 0f}},{_sep}  {{0f, 0f, 0f, 0f}}}}{_sep}}}", torch.zeros(2, 2, 4).ToString(torch.csharp)),
+            () => Assert.Equal($"[2x2x5], type = Int32, device = cpu, value = {_sep}int [,,] {{{_sep} {{{{1, 1, 1, 1, 1}},{_sep}  {{1, 1, 1, 1, 1}}}},{_sep} {{{{1, 1, 1, 1, 1}},{_sep}  {{1, 1, 1, 1, 1}}}}{_sep}}}", torch.ones(2, 2, 5, ScalarType.Int32).ToString(torch.csharp)),
+            () => Assert.Equal($"[2x5x10], type = Float32, device = cpu, value = {_sep}float [,,] {{{_sep} {{{{1f, 3f, 5f, 7f, 9f, 11f, 13f, 15f, 17f, 19f}},{_sep}  {{21f, 23f, 25f, 27f, 29f, 31f, 33f, 35f, 37f, 39f}},{_sep}  {{41f, 43f, 45f, 47f, 49f, 51f, 53f, 55f, 57f, 59f}},{_sep}  {{61f, 63f, 65f, 67f, 69f, 71f, 73f, 75f, 77f, 79f}},{_sep}  {{81f, 83f, 85f, 87f, 89f, 91f, 93f, 95f, 97f, 99f}}}},{_sep} {{{{101f, 103f, 105f, 107f, 109f, 111f, 113f, 115f, 117f, 119f}},{_sep}  {{121f, 123f, 125f, 127f, 129f, 131f, 133f, 135f, 137f, 139f}},{_sep}  {{141f, 143f, 145f, 147f, 149f, 151f, 153f, 155f, 157f, 159f}},{_sep}  {{161f, 163f, 165f, 167f, 169f, 171f, 173f, 175f, 177f, 179f}},{_sep}  {{181f, 183f, 185f, 187f, 189f, 191f, 193f, 195f, 197f, 199f}}}}{_sep}}}", hundreds.reshape(2, 5, 10).ToString(torch.csharp)),
+            () => Assert.Equal($"[10x2x5], type = Float32, device = cpu, value = {_sep}float [,,] {{{_sep} {{{{1f, 3f, 5f, 7f, 9f}},{_sep}  {{11f, 13f, 15f, 17f, 19f}}}},{_sep} {{{{21f, 23f, 25f, 27f, 29f}},{_sep}  {{31f, 33f, 35f, 37f, 39f}}}},{_sep} {{{{41f, 43f, 45f, 47f, 49f}},{_sep}  {{51f, 53f, 55f, 57f, 59f}}}},{_sep} {{{{61f, 63f, 65f, 67f, 69f}},{_sep}  {{71f, 73f, 75f, 77f, 79f}}}},{_sep} {{{{81f, 83f, 85f, 87f, 89f}},{_sep}  {{91f, 93f, 95f, 97f, 99f}}}},{_sep} {{{{101f, 103f, 105f, 107f, 109f}},{_sep}  {{111f, 113f, 115f, 117f, 119f}}}},{_sep} {{{{121f, 123f, 125f, 127f, 129f}},{_sep}  {{131f, 133f, 135f, 137f, 139f}}}},{_sep} {{{{141f, 143f, 145f, 147f, 149f}},{_sep}  {{151f, 153f, 155f, 157f, 159f}}}},{_sep} {{{{161f, 163f, 165f, 167f, 169f}},{_sep}  {{171f, 173f, 175f, 177f, 179f}}}},{_sep} {{{{181f, 183f, 185f, 187f, 189f}},{_sep}  {{191f, 193f, 195f, 197f, 199f}}}}{_sep}}}", hundreds.reshape(10, 2, 5).ToString(torch.csharp))
+            );
+        }
 
         [Fact]
         [TestOf(nameof(Tensor.ToString))]
