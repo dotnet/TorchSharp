@@ -239,7 +239,7 @@ namespace TorchSharp
         /// </remarks>
         public static string cstr(this Tensor tensor, string? fltFormat = "g5", int? width = 100, string? newLine = "\n", CultureInfo? cultureInfo = null)
         {
-            return tensor.ToString(TensorStringStyle.Numpy, fltFormat, width, cultureInfo, newLine);
+            return tensor.ToString(TensorStringStyle.CSharp, fltFormat, width, cultureInfo, newLine);
         }
 
         /// <summary>
