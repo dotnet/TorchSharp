@@ -22,7 +22,7 @@ Adding a C#-like string formatting style for tensors.<br/>
 
 __Bug Fixes__:
 
-TorchVision `rotate(), `solarize()` and `invert()` were incorrectly implemented.<br/>
+TorchVision `rotate()`, `solarize()` and `invert()` were incorrectly implemented.<br/>
 Fixed bug in Bernoulli's `entropy()` and `log_prob()` implementations.<br/>
 Fixed bug in Cauchy's `log_prob()` implementation.<br/>
 Fixed several bugs in HalfCauchy and HalfNormal.<br/>
