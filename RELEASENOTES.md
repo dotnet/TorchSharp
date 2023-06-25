@@ -18,6 +18,7 @@ Adding torch.distributions.NegativeBinomial<br/>
 Adding in-place versions of `Tensor.triu()` and `Tensor.tril()`<br/>
 Adding torch.linalg.logsigmoid() and torch.nn.LogSigmoid<br/>
 A number of distributions were missing the `mode` property.<br/>
+Adding a C#-like string formatting style for tensors.<br/>
 
 __Bug Fixes__:
 
