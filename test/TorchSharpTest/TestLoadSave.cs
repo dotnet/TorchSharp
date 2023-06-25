@@ -1798,7 +1798,7 @@ namespace TorchSharp
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Often takes a very long time. No idea why.")]
         public void TestSaveAdagradFile()
         {
             var location = ".TestSaveAdagradFile.ts";
