@@ -4985,9 +4985,10 @@ namespace TorchSharp
             /// <summary>
             /// Mutates the tensor to be a 1-D tensor of size [n] with a random permutation of [0, n).
             /// </summary>
+            [Obsolete("This doesn't exist in PyTorch.")]
             public Tensor randperm_out(long n)
             {
-                var res = NativeMethods.THSTensor_randperm_out(n, Handle);
+                var res = NativeMethods.THSTensor_randperm_out(IntPtr.Zero, n, Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
             }
