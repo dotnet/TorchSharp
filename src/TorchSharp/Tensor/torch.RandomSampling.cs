@@ -2,6 +2,7 @@
 #nullable enable
 using System;
 using System.Diagnostics.Contracts;
+using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
@@ -180,6 +181,19 @@ namespace TorchSharp
         public static Tensor randperm(long n, ScalarType? dtype = null, Device? device = null,
             bool requires_grad = false, Generator? generator = null)
             => randperm(n, generator, dtype, layout.strided, device, false);
+
+        /// <summary>
+        /// Mutates the existing tensor to be a 1-D tensor of size [n] with a random permutation of [0, n).
+        /// </summary>
+        public static Tensor randperm(long n,
+            Tensor @out,
+            Generator? generator = null)
+        {
+            var genHandle = generator?.Handle ?? IntPtr.Zero;
+            var res = NativeMethods.THSTensor_randperm_out(genHandle, n, @out.Handle);
+            if (res == IntPtr.Zero) { CheckForErrors(); }
+            return new Tensor(res);
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.randperm
         /// <summary>
