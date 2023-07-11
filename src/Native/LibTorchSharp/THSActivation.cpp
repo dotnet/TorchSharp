@@ -122,6 +122,29 @@ Tensor THSNN_Mish_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::Mish>()->forward(*tensor));
 }
 
+NNModule THSNN_PReLU_ctor(const int64_t nparams, const double init, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::PReLUOptions().num_parameters(nparams).init(init);
+        res = create_module<torch::nn::PReLUImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_PReLU_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::PReLU>()->forward(*tensor));
+}
+
+Tensor THSNN_PReLU_weight(const NNModule module)
+{
+    return get_weight<torch::nn::PReLU>(module);
+}
+
+void THSNN_PReLU_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::PReLU>(module, weight);
+}
+
 NNModule THSNN_ReLU_ctor(bool inplace, NNAnyModule* outAsAnyModule)
 {
     CATCH_RETURN_NNModule(
