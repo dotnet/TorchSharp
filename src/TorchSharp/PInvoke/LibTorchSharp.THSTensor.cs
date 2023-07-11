@@ -1120,7 +1120,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_randint_like(IntPtr input, long low, long high, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_randperm_out(long n, IntPtr tensorOut);
+        internal static extern IntPtr THSTensor_randperm_out(IntPtr generator, long n, IntPtr tensorOut);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_bernoulli(IntPtr tensor, IntPtr gen);

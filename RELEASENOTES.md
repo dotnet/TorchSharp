@@ -2,6 +2,13 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.100.4
+
+__API Changes__:
+
+Tensor.randperm_out() deprecated.<br/>
+torch.randperm accepts 'out' argument<br/>
+
 ## NuGet Version 0.100.3
 
 This release is primarily, but not exclusively, focused on fixing bugs in distributions and adding a few new ones.
