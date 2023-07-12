@@ -210,7 +210,8 @@ namespace TorchSharp
         /// <summary>
         ///  Mutates the tensor to be a 1-D tensor of size [n] with a random permutation of [0, n).
         /// </summary>
-        public static Tensor randperm_out(Tensor input, long n) => input.randperm_out(n);
+        [Obsolete("This doesn't exist in PyTorch.")]
+        public static Tensor randperm_out(Tensor input, long n) => torch.randperm(n, input);
 
         /// <summary>
         /// Draws a binomial distribution given a trial count and probabilities.
