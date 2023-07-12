@@ -583,6 +583,24 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EvaluatePReLU()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+
+                var rel = PReLU(1, 0.35, device);
+
+                var input = torch.randn(new long[] { 4, 3, 8, 8 }, device: device) * 5.0;
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.data<float>().ToArray();
+                var expected = input.where(input > 0.0, input * 0.35);
+                Assert.Equal(input.shape, output.shape);
+                Assert.Equal(expected, output);
+            }
+        }
+
+        [Fact]
         public void EvaluateHardshrink()
         {
             var rel = Hardshrink();
