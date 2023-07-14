@@ -3,8 +3,10 @@ using System;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
+#nullable enable
 namespace TorchSharp
 {
+    using System.Runtime.InteropServices;
     using Modules;
 
     namespace Modules
@@ -25,7 +27,7 @@ namespace TorchSharp
             /// <param name="tgt_key_padding_mask">The ByteTensor mask for tgt keys per batch (optional).</param>
             /// <param name="memory_key_padding_mask">The ByteTensor mask for memory keys per batch (optional).</param>
             /// <returns></returns>
-            public Tensor call(Tensor src, Tensor tgt, Tensor src_mask, Tensor tgt_mask = null, Tensor memory_mask = null, Tensor src_key_padding_mask = null, Tensor tgt_key_padding_mask = null, Tensor memory_key_padding_mask = null)
+            public Tensor call(Tensor src, Tensor tgt, Tensor src_mask, Tensor? tgt_mask = null, Tensor? memory_mask = null, Tensor? src_key_padding_mask = null, Tensor? tgt_key_padding_mask = null, Tensor? memory_key_padding_mask = null)
             {
                 var res = THSNN_Transformer_forward(handle,
                     src.Handle,
@@ -88,6 +90,33 @@ namespace TorchSharp
                 var res = THSNN_Transformer_ctor(d_model, nhead, num_encoder_layers, num_decoder_layers, dim_feedforward, dropout, (long)activation, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Transformer(res, boxedHandle);
+            }
+
+            public static partial class functional
+            {
+                /// <summary>
+                /// Computes scaled dot product attention on query, key and value tensors, using an optional attention mask if passed, and applying dropout if a probability greater than 0.0 is specified.
+                /// </summary>
+                /// <param name="query">Query tensor, shaped (N, ..., L, E)</param>
+                /// <param name="key">Key tensor, shaped (N, ..., S, E)</param>
+                /// <param name="value">Value tensor, shaped (N, ..., S, Ev)</param>
+                /// <param name="attn_mask">
+                /// Attention mask, shaped (N, ..., L, S).
+                /// Two types of masks are supported:
+                /// A boolean mask where a value of True indicates that the element should take part in attention.
+                /// A float mask of the same type as query, key, value that is added to the attention score.
+                /// </param>
+                /// <param name="p">Dropout probability</param>
+                /// <param name="is_casual">If true, assumes causal attention masking and errors if both attn_mask and is_causal are set.</param>
+                /// <returns></returns>
+                public static Tensor scaled_dot_product_attention(Tensor query, Tensor key, Tensor value, Tensor? attn_mask = null, double p = 0.0, [MarshalAs(UnmanagedType.U1)] bool is_casual = false)
+                {
+                    if (p < 0) throw new ArgumentException("Dropout probability must be greater than or equal to zero.");
+                    if (is_casual && attn_mask is not null) throw new ArgumentException("Casual attention masking cannot pass a mask.");
+                    var res = THSNN_scaled_dot_product_attention(query.Handle, key.Handle, value.Handle, attn_mask is null ? IntPtr.Zero : attn_mask.Handle, p, is_casual);
+                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new Tensor(res);
+                }
             }
         }
     }

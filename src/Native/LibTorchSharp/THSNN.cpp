@@ -1258,3 +1258,10 @@ Tensor THSNN_unfold(const Tensor input, const int64_t kernel1, const int64_t ker
 
     CATCH_TENSOR(torch::nn::functional::unfold(*input, opts));
 }
+
+Tensor THSNN_scaled_dot_product_attention(const Tensor query, const Tensor key, const Tensor value, const Tensor attention_mask, double p, bool casual)
+{
+    auto mask = attention_mask == nullptr ? c10::nullopt : c10::optional<at::Tensor>(*attention_mask);
+
+    CATCH_TENSOR(torch::scaled_dot_product_attention(*query, *key, *value, mask, p, casual));
+}
