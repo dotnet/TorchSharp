@@ -4450,6 +4450,32 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestScaledDotProduct()
+        {
+            var query = torch.ones(32, 8, 128, 64) * 0.25;
+            var key = torch.ones(32, 8, 128, 64) * 0.5;
+            var value = torch.ones(32, 8, 128, 64) * 0.125;
+            var x = torch.nn.functional.scaled_dot_product_attention(query, key, value);
+            Assert.Equal(query.shape, x.shape);
+            Assert.Equal(value, x);
+        }
+
+        [Fact]
+        public void TestScaledDotProductWithMask()
+        {
+            var query = torch.ones(32, 8, 128, 64) * 0.25;
+            var key = torch.ones(32, 8, 128, 64) * 0.5;
+            var value = torch.ones(32, 8, 128, 64) * 0.125;
+            var mask = torch.ones(32, 8, 128, 128) * 0.05;
+
+            var x = torch.nn.functional.scaled_dot_product_attention(query, key, value, attn_mask: mask);
+            Assert.Equal(query.shape, x.shape);
+            Assert.Equal(value, x);
+
+            Assert.Throws<ArgumentException>(() => torch.nn.functional.scaled_dot_product_attention(query, key, value, attn_mask: mask, is_casual: true));
+        }
+
+        [Fact]
         public void TestTransformer()
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
