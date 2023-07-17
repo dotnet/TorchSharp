@@ -8,6 +8,8 @@ __API Changes__:
 
 Tensor.randperm_out() deprecated.<br/>
 torch.randperm accepts 'out' argument<br/>
+Adding PReLU module.<br/>
+Adding scaled_dot_product_attention.<br/>
 
 ## NuGet Version 0.100.3
 
