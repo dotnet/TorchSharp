@@ -1005,6 +1005,18 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSNN_Mish_ctor(out IntPtr pBoxedModule);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSNN_PReLU_forward(torch.nn.Module.HType module, IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSNN_PReLU_ctor(long nparams, double init, out IntPtr pBoxedModule);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSNN_PReLU_weight(torch.nn.Module.HType module);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSNN_PReLU_set_weight(torch.nn.Module.HType module, IntPtr tensor);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_ReLU_forward(torch.nn.Module.HType module, IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
@@ -1021,6 +1033,9 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_RReLU_ctor(double lower, double upper, [MarshalAs(UnmanagedType.U1)] bool inplace, out IntPtr pBoxedModule);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSNN_scaled_dot_product_attention(IntPtr query, IntPtr key, IntPtr value, IntPtr attention_mask, double p, [MarshalAs(UnmanagedType.U1)] bool casual);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_SELU_forward(torch.nn.Module.HType module, IntPtr tensor);

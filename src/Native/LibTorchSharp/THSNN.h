@@ -376,6 +376,10 @@ EXPORT_API(NNModule) THSNN_LeakyReLU_ctor(const double negative_sloope, const bo
 EXPORT_API(Tensor)   THSNN_LeakyReLU_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_Mish_ctor(NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Mish_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(NNModule) THSNN_PReLU_ctor(const int64_t nparams, const double init, NNAnyModule* outAsAnyModule);
+EXPORT_API(Tensor)   THSNN_PReLU_forward(const NNModule module, const Tensor tensor);
+EXPORT_API(Tensor)   THSNN_PReLU_weight(const NNModule module);
+EXPORT_API(void)     THSNN_PReLU_set_weight(const NNModule module, const Tensor weight);
 EXPORT_API(NNModule) THSNN_ReLU_ctor(bool inplace, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_ReLU_forward(const NNModule module, const Tensor tensor);
 EXPORT_API(NNModule) THSNN_ReLU6_ctor(bool inplace, NNAnyModule* outAsAnyModule);
@@ -569,6 +573,8 @@ EXPORT_API(Tensor)   THSNN_CosineSimilarity_forward(const NNModule module, const
 
 EXPORT_API(NNModule) THSNN_PairwiseDistance_ctor(double p, double eps, bool keep_dim, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_PairwiseDistance_forward(const NNModule module, const Tensor input1, const Tensor input2);
+
+EXPORT_API(Tensor) THSNN_scaled_dot_product_attention(const Tensor query, const Tensor key, const Tensor value, const Tensor attention_mask, double p, bool casual);
 
 // Initializers
 

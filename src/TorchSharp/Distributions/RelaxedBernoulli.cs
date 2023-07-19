@@ -25,8 +25,8 @@ namespace TorchSharp
             public RelaxedBernoulli(Tensor temperature, Tensor probs = null, Tensor logits = null, torch.Generator generator = null) :
                 base(LogitRelaxedBernoulli(temperature, probs, logits, generator), new distributions.transforms.SigmoidTransform(), generator)
             {
-                this._probs = probs;
-                this._logits = logits;
+                this._probs = probs?.alias().DetachFromDisposeScope();
+                this._logits = logits?.alias().DetachFromDisposeScope();
             }
 
             private Tensor _probs;

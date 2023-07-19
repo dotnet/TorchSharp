@@ -247,8 +247,8 @@ namespace TorchSharp
                 /// <param name="device">The device to move all state to.</param>
                 public override void to(Device device)
                 {
-                    prev.to(device);
-                    step_size.to(device);
+                    prev = prev.to(device);
+                    step_size = step_size.to(device);
                 }
 
                 /// <summary>

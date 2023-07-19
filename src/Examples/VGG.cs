@@ -31,7 +31,7 @@ namespace TorchSharp.Examples
         {
             var modules = new List<(string, Module<Tensor, Tensor>)>();
 
-            var channels = _channels[name];
+            var channels = _channels[name.ToUpper()];
 
             long in_channels = 3;
 

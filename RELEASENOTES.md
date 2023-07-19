@@ -2,6 +2,53 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.100.4
+
+__API Changes__:
+
+Tensor.randperm_out() deprecated.<br/>
+torch.randperm accepts 'out' argument<br/>
+Adding PReLU module.<br/>
+Adding scaled_dot_product_attention.<br/>
+
+## NuGet Version 0.100.3
+
+This release is primarily, but not exclusively, focused on fixing bugs in distributions and adding a few new ones.
+
+__Breaking Changes__:
+
+The two main arguments to `torch.linalg.solve()` and `torch.linalg.solve_ex()` were renamed 'A' and 'B' to align with PyTorch.
+
+__API Changes__:
+
+Adding torch.linalg.solve_triangular()<br/>
+Adding torch.distributions.MultivariateNormal<br/>
+Adding torch.distributions.NegativeBinomial<br/>
+Adding in-place versions of `Tensor.triu()` and `Tensor.tril()`<br/>
+Adding torch.linalg.logsigmoid() and torch.nn.LogSigmoid<br/>
+A number of distributions were missing the `mode` property.<br/>
+Adding a C#-like string formatting style for tensors.<br/>
+
+__Bug Fixes__:
+
+TorchVision `rotate()`, `solarize()` and `invert()` were incorrectly implemented.<br/>
+Fixed bug in Bernoulli's `entropy()` and `log_prob()` implementations.<br/>
+Fixed bug in Cauchy's `log_prob()` implementation.<br/>
+Fixed several bugs in HalfCauchy and HalfNormal.<br/>
+The Numpy-style string formatting of tensors was missing commas between elements<br/>
+
+## NuGet Version 0.100.2
+
+__API Changes__:
+
+Add torchvision.datasets.CelebA()<br/>
+Add support for properly formatting Tensors in Polyglot notebooks without the 'Register' call that was necessary before.<br/>
+
+__Bug Fixes__:
+
+#1014 AdamW.State.to() ignores returns<br/>
+#999 Error in Torchsharp model inference in version 0.100.0<br/>
+
 ## NuGet Version 0.100.1
 
 __Breaking Changes__:

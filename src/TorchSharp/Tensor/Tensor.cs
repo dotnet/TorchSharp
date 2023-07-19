@@ -21,6 +21,7 @@ namespace TorchSharp
         /// <summary>
         /// Represents a TorchSharp tensor.
         /// </summary>
+        [TorchSharp.Utils.TypeFormatterSource(typeof(TorchSharp.Utils.TypeFormatterSource))]
         public partial class Tensor : IDisposable
         {
             /// <summary>
@@ -1016,7 +1017,7 @@ namespace TorchSharp
                                 dimNamesArray[dIdx] = IntPtr.Zero;
                         }
 
-                        foreach (var name in names.Skip(idx+1)) {
+                        foreach (var name in names.Skip(idx + 1)) {
                             dimNamesArray[dIdx] = MarshalDimensionString(name);
                             dIdx++;
                         }
@@ -2014,6 +2015,20 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
+            /// Inplace version of transpose()
+            /// </summary>
+            /// <param name="dim0"></param>
+            /// <param name="dim1"></param>
+            public Tensor transpose_(long dim0, long dim1)
+            {
+                var res = NativeMethods.THSTensor_transpose_(Handle, dim0, dim1);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
             /// Returns a view of the tensor conjugated and with the last two dimensions transposed.
             /// </summary>
             public Tensor adjoint()
@@ -2031,7 +2046,21 @@ namespace TorchSharp
             /// <param name="diagonal">The diagonal to consider</param>
             public Tensor tril(long diagonal = 0)
             {
-                var res = NativeMethods.THSTensor_tril(Handle, diagonal);
+                var res = NativeMethods.THSTensor_tril(Handle, diagonal, false);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Returns the lower triangular part of the matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+            /// The lower triangular part of the matrix is defined as the elements on and below the diagonal.
+            /// In-place version of `tril()`
+            /// </summary>
+            /// <param name="diagonal">The diagonal to consider</param>
+            public Tensor tril_(long diagonal = 0)
+            {
+                var res = NativeMethods.THSTensor_tril(Handle, diagonal, true);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -2044,7 +2073,21 @@ namespace TorchSharp
             /// <param name="diagonal">The diagonal to consider</param>
             public Tensor triu(long diagonal = 0)
             {
-                var res = NativeMethods.THSTensor_triu(Handle, diagonal);
+                var res = NativeMethods.THSTensor_triu(Handle, diagonal, false);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Returns the upper triangular part of a matrix (2-D tensor) or batch of matrices input, the other elements of the result tensor out are set to 0.
+            /// The upper triangular part of the matrix is defined as the elements on and above the diagonal.
+            /// In-place version of `triu()`
+            /// </summary>
+            /// <param name="diagonal">The diagonal to consider</param>
+            public Tensor triu_(long diagonal = 0)
+            {
+                var res = NativeMethods.THSTensor_triu(Handle, diagonal, true);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
                 return new Tensor(res);
@@ -2059,20 +2102,6 @@ namespace TorchSharp
             /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
             /// </summary>
             public Tensor swapaxes(long dim0, long dim1) => transpose(dim0, dim1);
-
-            /// <summary>
-            /// Returns a tensor that is a transposed version of input. The given dimensions dim0 and dim1 are swapped.
-            /// Inplace version of transpose()
-            /// </summary>
-            /// <param name="dim0"></param>
-            /// <param name="dim1"></param>
-            public Tensor transpose_(long dim0, long dim1)
-            {
-                var res = NativeMethods.THSTensor_transpose_(Handle, dim0, dim1);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
-            }
 
             /// <summary>
             /// Returns a new tensor with the same data as the input tensor but of a different shape.
@@ -3803,14 +3832,14 @@ namespace TorchSharp
             /// </summary>
             /// <param name="indices_or_sections">A list of split points</param>
             public Tensor[] dsplit((long, long, long) indices_or_sections)
-                => dsplit(new long[]{ indices_or_sections.Item1, indices_or_sections.Item2, indices_or_sections.Item3 });
+                => dsplit(new long[] { indices_or_sections.Item1, indices_or_sections.Item2, indices_or_sections.Item3 });
 
             /// <summary>
             /// Splits input, a tensor with three or more dimensions, into multiple tensors depthwise according to indices_or_sections. Each split is a view of input.
             /// </summary>
             /// <param name="indices_or_sections">A list of split points</param>
             public Tensor[] dsplit((long, long, long, long) indices_or_sections)
-                => dsplit(new long[]{ indices_or_sections.Item1, indices_or_sections.Item2, indices_or_sections.Item3, indices_or_sections.Item4 });
+                => dsplit(new long[] { indices_or_sections.Item1, indices_or_sections.Item2, indices_or_sections.Item3, indices_or_sections.Item4 });
 
             /// <summary>
             /// Splits input, a tensor with three or more dimensions, into multiple tensors depthwise according to indices_or_sections. Each split is a view of input.
@@ -4956,9 +4985,10 @@ namespace TorchSharp
             /// <summary>
             /// Mutates the tensor to be a 1-D tensor of size [n] with a random permutation of [0, n).
             /// </summary>
+            [Obsolete("This doesn't exist in PyTorch.")]
             public Tensor randperm_out(long n)
             {
-                var res = NativeMethods.THSTensor_randperm_out(n, Handle);
+                var res = NativeMethods.THSTensor_randperm_out(IntPtr.Zero, n, Handle);
                 if (res == IntPtr.Zero) { CheckForErrors(); }
                 return new Tensor(res);
             }
@@ -5157,6 +5187,12 @@ namespace TorchSharp
                     }
                 }
             }
+
+            /// <summary>
+            /// Returns a view of the original tensor with its dimensions permuted.
+            /// </summary>
+            /// <param name="permutation">The desired ordering of dimensions</param>
+            public Tensor permute(IEnumerable<long> permutation) => permute(permutation.ToArray());
 
             /// <summary>
             /// Mutates the tensor to have the given size with all values set to 1
@@ -6245,6 +6281,7 @@ namespace TorchSharp
                     TensorStringStyle.Metadata => ToMetadataString(),
                     TensorStringStyle.Julia => ToJuliaString(fmt, w, cultureInfo, nl),
                     TensorStringStyle.Numpy => ToNumpyString(this, ndim, true, fmt, cultureInfo, nl),
+                    TensorStringStyle.CSharp => ToCSharpString(this, ndim, true, fmt, cultureInfo, nl, true),
                     _ => throw new InvalidEnumArgumentException($"Unsupported tensor string style: {style}")
                 };
             }
@@ -6279,30 +6316,35 @@ namespace TorchSharp
             {
                 var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
 
+                var trailingCols = torch.maxColumns / 2;
+                var leadingCols = torch.maxColumns - trailingCols;
+                var trailingRows = torch.maxRows / 2;
+                var leadingRows = torch.maxRows - trailingRows;
+
                 var dim = t.dim();
                 if (t.size().Length == 0) return "";
                 var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))) : "");
                 sb.Append('[');
                 var currentSize = t.size()[0];
                 if (dim == 1) {
-                    if (currentSize <= 6) {
+                    if (currentSize <= torch.maxColumns) {
                         for (var i = 0; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
-                            sb.Append(' ');
+                            sb.Append(',').Append(' ');
                         }
 
                         PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
                     } else {
-                        for (var i = 0; i < 3; i++) {
+                        for (var i = 0; i < leadingCols; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
-                            sb.Append(' ');
+                            sb.Append(',').Append(' ');
                         }
 
                         sb.Append("... ");
 
-                        for (var i = currentSize - 3; i < currentSize - 1; i++) {
+                        for (var i = currentSize - trailingCols; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
-                            sb.Append(' ');
+                            sb.Append(',').Append(' ');
                         }
 
                         PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
@@ -6312,7 +6354,7 @@ namespace TorchSharp
 
                     if (currentSize == 1) {
                         sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
-                    } else if (currentSize <= 6) {
+                    } else if (currentSize <= torch.maxRows) {
                         sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
                         sb.Append(newline);
                         for (var i = 1; i < currentSize - 1; i++) {
@@ -6324,7 +6366,7 @@ namespace TorchSharp
                     } else {
                         sb.Append(ToNumpyString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
                         sb.Append(newline);
-                        for (var i = 1; i < 3; i++) {
+                        for (var i = 1; i < leadingRows; i++) {
                             sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
                             sb.Append(newline);
                         }
@@ -6333,7 +6375,7 @@ namespace TorchSharp
                         sb.Append(" ...");
                         sb.Append(newline);
 
-                        for (var i = currentSize - 3; i < currentSize - 1; i++) {
+                        for (var i = currentSize - trailingRows; i < currentSize - 1; i++) {
                             sb.Append(ToNumpyString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
                             sb.Append(newline);
                         }
@@ -6343,6 +6385,157 @@ namespace TorchSharp
                 }
 
                 sb.Append("]");
+                return sb.ToString();
+            }
+
+            private static string ToCSharpString(Tensor t, long mdim, bool isFCreate, string fltFormat, CultureInfo? cultureInfo, string newLine, bool top = false)
+            {
+                var actualCulturInfo = cultureInfo ?? CultureInfo.CurrentCulture;
+
+                var trailingCols = torch.maxColumns / 2;
+                var leadingCols = torch.maxColumns - trailingCols;
+                var trailingRows = torch.maxRows / 2;
+                var leadingRows = torch.maxRows - trailingRows;
+
+                var dim = t.dim();
+                if (t.size().Length == 0) return "";
+                var sb = new StringBuilder();
+
+                if (top) {
+                    sb.Append(t.ToMetadataString());
+                    sb.Append(", value = ");
+
+                    if (t.Dimensions == 0) {
+                        PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
+                        return sb.ToString(); ;
+                    }
+                }
+
+                if (top && t.Dimensions > 1) {
+                    sb.Append(newLine);
+                }
+
+                var appendChar = "";
+
+                switch (t.dtype) {
+                default:
+                    return t.ToMetadataString();
+                case ScalarType.Byte:
+                    if (top) sb.Append("byte ");
+                    break;
+                case ScalarType.Int8:
+                    if (top) sb.Append("sbyte ");
+                    break;
+                case ScalarType.Int16:
+                    if (top) sb.Append("short ");
+                    break;
+                case ScalarType.Int32:
+                    if (top) sb.Append("int ");
+                    break;
+                case ScalarType.Int64:
+                    if (top) sb.Append("long ");
+                    appendChar = "L";
+                    break;
+                case ScalarType.Float32:
+                    if (top) sb.Append("float ");
+                    appendChar = "f";
+                    break;
+                case ScalarType.Float64:
+                    if (top) sb.Append("double ");
+                    break;
+                case ScalarType.ComplexFloat32:
+                    if (top) sb.Append("complex32 ");
+                    break;
+                case ScalarType.ComplexFloat64:
+                    if (top) sb.Append("complex64 ");
+                    break;
+                }
+
+                if (top) {
+                    sb.Append('[');
+                    for (int i = 0; i < t.Dimensions - 1; i++) {
+                        sb.Append(',');
+                    }
+                    sb.Append("] ");
+                }
+
+                if (isFCreate) {
+                    sb.Append(string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))));
+                }
+
+                sb.Append('{');
+
+                if (top && t.Dimensions > 1) {
+                    sb.Append(newLine);
+                    sb.Append(' ');
+                }
+
+                var currentSize = t.size()[0];
+                if (dim == 1) {
+                    if (currentSize <= torch.maxColumns) {
+                        for (var i = 0; i < currentSize - 1; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(appendChar);
+                            sb.Append(',').Append(' ');
+                        }
+
+                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                        sb.Append(appendChar);
+                    } else {
+                        for (var i = 0; i < leadingCols; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(appendChar);
+                            sb.Append(',').Append(' ');
+                        }
+
+                        sb.Append("... ");
+
+                        for (var i = currentSize - trailingCols; i < currentSize - 1; i++) {
+                            PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
+                            sb.Append(appendChar);
+                            sb.Append(',').Append(' ');
+                        }
+
+                        PrintValue(sb, t.dtype, t[currentSize - 1].ToScalar(), fltFormat, actualCulturInfo);
+                        sb.Append(appendChar);
+                    }
+                } else {
+                    if (currentSize == 1) {
+                        sb.Append(ToCSharpString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
+                    } else if (currentSize <= torch.maxRows) {
+                        sb.Append(ToCSharpString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
+                        sb.Append(',').Append(newLine);
+                        for (var i = 1; i < currentSize - 1; i++) {
+                            sb.Append(ToCSharpString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
+                            sb.Append(',').Append(newLine);
+                        }
+
+                        sb.Append(ToCSharpString(t[currentSize - 1], mdim, true, fltFormat, cultureInfo, newLine));
+                    } else {
+                        sb.Append(ToCSharpString(t[0], mdim, false, fltFormat, cultureInfo, newLine));
+                        sb.Append(',').Append(newLine);
+                        for (var i = 1; i < leadingRows; i++) {
+                            sb.Append(ToCSharpString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
+                            sb.Append(',').Append(newLine);
+                        }
+
+                        sb.Append(string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))));
+                        sb.Append(" ...");
+                        sb.Append(newLine);
+
+                        for (var i = currentSize - trailingRows; i < currentSize - 1; i++) {
+                            sb.Append(ToCSharpString(t[i], mdim, true, fltFormat, cultureInfo, newLine));
+                            sb.Append(',').Append(newLine);
+                        }
+
+                        sb.Append(ToCSharpString(t[currentSize - 1], mdim, true, fltFormat, cultureInfo, newLine));
+                    }
+                }
+
+                if (top && t.Dimensions > 1) {
+                    sb.Append(newLine);
+                }
+                sb.Append("}");
                 return sb.ToString();
             }
 
@@ -6762,7 +6955,8 @@ namespace TorchSharp
                 return TensorIndex.Single(value);
             }
 
-            public static implicit operator Tensor(TensorIndex value) {
+            public static implicit operator Tensor(TensorIndex value)
+            {
                 _throw();
                 return new Tensor(IntPtr.Zero);
             }
@@ -6910,6 +7104,25 @@ namespace TorchSharp
                 return true;
             default:
                 return false;
+            }
+        }
+
+        public static long max_int_value(ScalarType type)
+        {
+            switch (type) {
+            case ScalarType.Byte:
+                return byte.MaxValue;
+            case ScalarType.Int8:
+                return sbyte.MaxValue;
+            case ScalarType.Int16:
+                return short.MaxValue;
+            case ScalarType.Int32:
+                return int.MaxValue;
+            case ScalarType.Int64:
+                return long.MaxValue;
+            case ScalarType.Bool:
+            default:
+                throw new ArgumentException("Not an integral type");
             }
         }
 

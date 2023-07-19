@@ -19,6 +19,11 @@ namespace TorchSharp
             public override Tensor mean => loc;
 
             /// <summary>
+            /// The mode of the distribution.
+            /// </summary>
+            public override Tensor mode => loc;
+
+            /// <summary>
             /// The standard deviation of the distribution
             /// </summary>
             public override Tensor stddev => scale * Math.Sqrt(2.0);
@@ -39,8 +44,8 @@ namespace TorchSharp
             {
                 this.batch_shape = loc.size();
                 var locScale = torch.broadcast_tensors(loc, scale);
-                this.loc = locScale[0];
-                this.scale = locScale[1];
+                this.loc = locScale[0].DetachFromDisposeScope();
+                this.scale = locScale[1].DetachFromDisposeScope();
             }
 
             private Tensor loc;

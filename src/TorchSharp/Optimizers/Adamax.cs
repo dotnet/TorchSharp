@@ -214,8 +214,8 @@ namespace TorchSharp
                 /// <param name="device">The device to move all state to.</param>
                 public override void to(Device device)
                 {
-                    exp_avg.to(device);
-                    exp_inf.to(device);
+                    exp_avg = exp_avg.to(device);
+                    exp_inf = exp_inf.to(device);
                 }
 
                 /// <summary>

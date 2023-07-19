@@ -1823,14 +1823,14 @@ Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, con
     );
 }
 
-Tensor THSTensor_triu(const Tensor tensor, const int64_t diagonal)
+Tensor THSTensor_triu(const Tensor tensor, const int64_t diagonal, const bool inplace)
 {
-    CATCH_TENSOR(tensor->triu(diagonal));
+    CATCH_TENSOR(inplace ? tensor->triu_(diagonal) : tensor->triu(diagonal));
 }
 
-Tensor THSTensor_tril(const Tensor tensor, const int64_t diagonal)
+Tensor THSTensor_tril(const Tensor tensor, const int64_t diagonal, const bool inplace)
 {
-    CATCH_TENSOR(tensor->tril(diagonal));
+    CATCH_TENSOR(inplace ? tensor->tril_(diagonal) : tensor->tril(diagonal));
 }
 
 Tensor THSTensor_tril_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index)

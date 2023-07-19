@@ -10,22 +10,20 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// This class is used to represent a Sigmoid module.
+        /// This class is used to represent a LogSigmoid module.
         /// </summary>
-        public sealed class Sigmoid : torch.nn.Module<Tensor, Tensor>
+        public sealed class LogSigmoid : torch.nn.Module<Tensor, Tensor>
         {
-            internal Sigmoid(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal LogSigmoid() : base(nameof(LogSigmoid)) { }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Sigmoid_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return tensor.log_sigmoid();
             }
 
             public override string GetName()
             {
-                return typeof(Sigmoid).Name;
+                return typeof(LogSigmoid).Name;
             }
 
             // Rather than spending cycles only to discover that this module has neither
@@ -40,26 +38,24 @@ namespace TorchSharp
         public static partial class nn
         {
             /// <summary>
-            /// Sigmoid activation
+            /// LogSigmoid activation
             /// </summary>
             /// <returns></returns>
-            public static Sigmoid Sigmoid()
+            public static LogSigmoid LogSigmoid()
             {
-                var handle = THSNN_Sigmoid_ctor(out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Sigmoid(handle, boxedHandle);
+                return new LogSigmoid();
             }
 
             public static partial class functional
             {
                 /// <summary>
-                /// Sigmoid activation
+                /// LogSigmoid activation
                 /// </summary>
                 /// <param name="x">The input tensor</param>
                 /// <returns></returns>
-                public static Tensor sigmoid(Tensor x)
+                public static Tensor logsigmoid(Tensor x)
                 {
-                    return x.sigmoid();
+                    return x.log_sigmoid();
                 }
             }
         }

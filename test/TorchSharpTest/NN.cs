@@ -581,6 +581,24 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void EvaluatePReLU()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+
+                var rel = PReLU(1, 0.35, device);
+
+                var input = torch.randn(new long[] { 4, 3, 8, 8 }, device: device) * 5.0;
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.data<float>().ToArray();
+                var expected = input.where(input > 0.0, input * 0.35);
+                Assert.Equal(input.shape, output.shape);
+                Assert.Equal(expected, output);
+            }
+        }
+
+        [Fact]
         public void EvaluateHardshrink()
         {
             var rel = Hardshrink();
@@ -648,6 +666,21 @@ namespace TorchSharp
                 var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);
                 Assert.All(values, val => Assert.True(val >= 0.0 && val <= 1.0));
+            }
+        }
+
+        [Fact]
+        public void EvaluateLogSigmoid()
+        {
+            var rel = LogSigmoid();
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var input = torch.randn(new long[] { 64, 8 }, device: device) * 25.0;
+                var output = rel.call(input);
+                Assert.Equal(device.type, output.device_type);
+
+                var values = output.data<float>().ToArray();
+                Assert.Equal(input.shape, output.shape);
+                Assert.All(values.Select(v => Math.Exp(v)), val => Assert.True(val >= 0.0 && val <= 1.0));
             }
         }
 
@@ -4417,6 +4450,32 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestScaledDotProduct()
+        {
+            var query = torch.ones(32, 8, 128, 64) * 0.25;
+            var key = torch.ones(32, 8, 128, 64) * 0.5;
+            var value = torch.ones(32, 8, 128, 64) * 0.125;
+            var x = torch.nn.functional.scaled_dot_product_attention(query, key, value);
+            Assert.Equal(query.shape, x.shape);
+            Assert.Equal(value, x);
+        }
+
+        [Fact]
+        public void TestScaledDotProductWithMask()
+        {
+            var query = torch.ones(32, 8, 128, 64) * 0.25;
+            var key = torch.ones(32, 8, 128, 64) * 0.5;
+            var value = torch.ones(32, 8, 128, 64) * 0.125;
+            var mask = torch.ones(32, 8, 128, 128) * 0.05;
+
+            var x = torch.nn.functional.scaled_dot_product_attention(query, key, value, attn_mask: mask);
+            Assert.Equal(query.shape, x.shape);
+            Assert.Equal(value, x);
+
+            Assert.Throws<ArgumentException>(() => torch.nn.functional.scaled_dot_product_attention(query, key, value, attn_mask: mask, is_casual: true));
+        }
+
+        [Fact]
         public void TestTransformer()
         {
             // Transformers are very memory-intensive. It is useful to avoid using the defaults here.
@@ -5701,7 +5760,7 @@ namespace TorchSharp
                     Assert.Equal(new long[] { 3, 6 }, result.shape);
 
                     var str = result.ToString(TensorStringStyle.Numpy, newLine: "\n");
-                    Assert.Equal("[[0 0 1 2 0 0]\n [0 3 4 5 0 0]\n [0 6 7 8 0 0]]", str);
+                    Assert.Equal("[[0, 0, 1, 2, 0, 0]\n [0, 3, 4, 5, 0, 0]\n [0, 6, 7, 8, 0, 0]]", str);
                 }
                 using (Tensor p4d = torch.randn(new long[] { 3, 3, 4, 2 }, device: device)) {
                     using (var res = pad(p4d, new long[] { 1, 1, 2, 3 }, PaddingModes.Constant, 0.0)) {

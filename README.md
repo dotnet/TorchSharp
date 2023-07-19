@@ -15,19 +15,13 @@ __TorchSharp is now in the .NET Foundation!__
 
 If you are using TorchSharp from NuGet, you should be using a version >= 0.98.3 of TorchSharp, and >= 1.12.0 of the libtorch-xxx redistributable packages. We recommend using one of the 'bundled' packages: TorchSharp-cpu, TorchSharp-cuda-windows, or TorchSharp-cuda-linux. They will pull in the right libtorch backends.
 
-__NOTE:__ At this moment, VS versions 17.4.X will not build the TorchSharp native code library. Use 17.3.X until further notice. See: https://github.com/dotnet/TorchSharp/issues/858 for more information and workarounds.
-
-__NOTE:__ Please do __not__ use 0.95.0 -- the package was released to NuGet in error, and without its many dependencies.
-
-__TorchSharp examples now has their own home!__
+__TorchSharp examples has their own home!__
 
 Head over to the [TorchSharp Examples Repo](https://github.com/dotnet/TorchSharpExamples) for convenient access to existing and upcoming examples.
 
-__NOTE:__
+__IMPORTANT NOTES:__
 
-In PR 302, significant changes were made to the TorchSharp API, aligning more closely with the Pytorch APIs. This was a massive breaking change. We apologize for any extra work this may cause, but we believe that what was done is in the best long-term interest of TorchSharp users.
-
-In PR 354, further significant changes were made, again aligning with the Pytorch APIs. It is also a massively breaking change. We removed the {IntNN|FloatNN|ComplexNN}Tensor.* APIs, which had no parallel in PyTorch. Once again, we apologize for any extra work this may cause, but we believe that what was done is in the best long-term interest of TorchSharp users.
+When targeting __.NET FX__ on Windows, the project configuration must be set to 'x64' rather than 'Any CPU' for anything that depends on TorchSharp.
 
 As we build up to a v1.0 release, we will continue to make breaking changes, but only when we consider it necessary for usability. Similarity to the PyTorch experience is a primary design tenet, and we will continue on that path.
 

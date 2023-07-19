@@ -15,6 +15,7 @@ namespace TorchSharp
         Metadata,   // Print only shape, dtype, and device
         Julia,      // Print tensor in the style of Julia
         Numpy,      // Print tensor in the style of NumPy
+        CSharp,     // Print tensor in the style of CSharp
         Default,    // Pick up the style to use from torch.TensorStringStyle
     }
 
@@ -42,17 +43,25 @@ namespace TorchSharp
         /// <param name="linewidth">The number of characters per line for the purpose of inserting line breaks (default = 100).</param>
         /// <param name="newLine">The string to use to represent new-lines. Starts out as 'Environment.NewLine'</param>
         /// <param name="sci_mode">Enable scientific notation.</param>
+        /// <param name="maxRows">The maximum number of rows prrinted.</param>
+        /// <param name="maxColumns">The maximum number of columns prrinted.</param>
         public static void set_printoptions(
             int precision,
             int? linewidth = null,
             string? newLine = null,
-            bool sci_mode = false)
+            bool sci_mode = false,
+            int? maxRows = null,
+            int? maxColumns = null)
         {
             torch.floatFormat = sci_mode ? $"E{precision}" : $"F{precision}";
             if (newLine is not null)
                 torch.newLine = newLine;
             if (linewidth.HasValue)
                 torch.lineWidth = linewidth.Value;
+            if (maxRows.HasValue)
+                torch.maxRows = maxRows.Value;
+            if (maxColumns.HasValue)
+                torch.maxColumns = maxColumns.Value;
         }
 
         /// <summary>
@@ -65,11 +74,15 @@ namespace TorchSharp
         /// </param>
         /// <param name="linewidth">The number of characters per line for the purpose of inserting line breaks (default = 100).</param>
         /// <param name="newLine">The string to use to represent new-lines. Starts out as 'Environment.NewLine'</param>
+        /// <param name="maxRows">The maximum number of rows prrinted.</param>
+        /// <param name="maxColumns">The maximum number of columns prrinted.</param>
         public static void set_printoptions(
             TensorStringStyle? style = null,
             string? floatFormat = null,
             int? linewidth = null,
-            string? newLine = null)
+            string? newLine = null,
+            int? maxRows = null,
+            int? maxColumns = null)
         {
             if (style.HasValue)
                 torch._style = style.Value;
@@ -79,16 +92,23 @@ namespace TorchSharp
                 torch.newLine = newLine;
             if (linewidth.HasValue)
                 torch.lineWidth = linewidth.Value;
+            if (maxRows.HasValue)
+                torch.maxRows = maxRows.Value;
+            if (maxColumns.HasValue)
+                torch.maxColumns = maxColumns.Value;
         }
 
         public const TensorStringStyle julia = TensorStringStyle.Julia;
         public const TensorStringStyle numpy = TensorStringStyle.Numpy;
+        public const TensorStringStyle csharp = TensorStringStyle.CSharp;
 
         private static TensorStringStyle _style = TensorStringStyle.Julia;
 
         internal static string floatFormat = "g5";
         internal static string newLine = Environment.NewLine;
         internal static int lineWidth = 100;
+        internal static int maxRows = 6;
+        internal static int maxColumns = 6;
     }
 
     /// <summary>
@@ -188,14 +208,38 @@ namespace TorchSharp
         /// <returns></returns>
         /// <remarks>
         /// This method does exactly the same as str(TensorStringStyle.Numpy, ...) but is shorter,
-        /// looks more like Python 'str' and doesn't require a style argument in order
+        /// looks more like Python 'str()' and doesn't require a style argument in order
         /// to discriminate.
         ///
         /// Primarily intended for use in interactive notebooks.
         /// </remarks>
-        public static string npstr(this Tensor tensor, string fltFormat = "g5", int width = 100, string newLine = "\n", CultureInfo? cultureInfo = null)
+        public static string npstr(this Tensor tensor, string? fltFormat = "g5", int? width = 100, string? newLine = "\n", CultureInfo? cultureInfo = null)
         {
             return tensor.ToString(TensorStringStyle.Numpy, fltFormat, width, cultureInfo, newLine);
+        }
+
+        /// <summary>
+        /// Get a C#-style string representation of the tensor.
+        /// </summary>
+        /// <param name="tensor">The input tensor.</param>
+        /// <param name="fltFormat">
+        /// The format string to use for floating point values.
+        /// See: https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+        /// </param>
+        /// <param name="width">The width of each line of the output string.</param>
+        /// <param name="newLine">The newline string to use, defaults to system default.</param>
+        /// <param name="cultureInfo">The culture info to be used when formatting the numbers.</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This method does exactly the same as str(TensorStringStyle.CSharp, ...) but is shorter,
+        /// looks more like Python 'str()' and doesn't require a style argument in order
+        /// to discriminate.
+        ///
+        /// Primarily intended for use in interactive notebooks.
+        /// </remarks>
+        public static string cstr(this Tensor tensor, string? fltFormat = "g5", int? width = 100, string? newLine = "\n", CultureInfo? cultureInfo = null)
+        {
+            return tensor.ToString(TensorStringStyle.CSharp, fltFormat, width, cultureInfo, newLine);
         }
 
         /// <summary>
@@ -214,7 +258,7 @@ namespace TorchSharp
         /// The style to use -- either 'default,' 'metadata,' 'julia,' or 'numpy'
         /// </param>
         /// <returns></returns>
-        public static Tensor print(this Tensor t, string fltFormat = "g5", int width = 100, string newLine = "", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
+        public static Tensor print(this Tensor t, string? fltFormat = "g5", int? width = 100, string? newLine = "", CultureInfo? cultureInfo = null, TensorStringStyle style = TensorStringStyle.Default)
         {
             Console.WriteLine(t.ToString(style, fltFormat, width, cultureInfo, newLine));
             return t;

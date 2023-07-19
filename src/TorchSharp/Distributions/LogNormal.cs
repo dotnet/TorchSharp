@@ -14,8 +14,8 @@ namespace TorchSharp
             internal LogNormal(Tensor loc, Tensor scale, torch.Generator generator = null) :
                 base(Normal(loc, scale, generator), new torch.distributions.transforms.Transform[] { new torch.distributions.transforms.ExpTransform() }, generator)
             {
-                this.loc = loc;
-                this.scale = scale;
+                this.loc = loc.alias().DetachFromDisposeScope();
+                this.scale = scale.alias().DetachFromDisposeScope();
             }
 
             public Tensor loc { get; private set; }

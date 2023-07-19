@@ -15,14 +15,19 @@ namespace TorchSharp
         public class Cauchy : torch.distributions.Distribution
         {
             /// <summary>
+            /// The mode of the distribution.
+            /// </summary>
+            public override Tensor mode => loc;
+
+            /// <summary>
             /// The mean of the distribution.
             /// </summary>
-            public override Tensor mean => torch.full(ExtendedShape(), double.NaN, dtype: loc.dtype, device: loc.device);
+            public override Tensor mean => _mean;
 
             /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => torch.full(ExtendedShape(), double.NaN, dtype: loc.dtype, device: loc.device);
+            public override Tensor variance => _variance;
 
             /// <summary>
             /// Constructor
@@ -32,14 +37,17 @@ namespace TorchSharp
             /// <param name="generator">An optional random number generator object.</param>
             public Cauchy(Tensor loc, Tensor scale, torch.Generator generator = null) : base(generator)
             {
-                this.batch_shape = loc.size();
                 var locScale = torch.broadcast_tensors(loc, scale);
-                this.loc = locScale[0];
-                this.scale = locScale[1];
+                this.loc = locScale[0].DetachFromDisposeScope();
+                this.scale = locScale[1].DetachFromDisposeScope();
+                this._mean = torch.full(ExtendedShape(), double.NaN, dtype: loc.dtype, device: loc.device).DetachFromDisposeScope();
+                this._variance = torch.full(ExtendedShape(), double.PositiveInfinity, dtype: loc.dtype, device: loc.device).DetachFromDisposeScope();
+                this.batch_shape = this.loc.size();
             }
 
             private Tensor loc;
             private Tensor scale;
+            private Tensor _mean, _variance;
 
             /// <summary>
             ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
@@ -58,37 +66,29 @@ namespace TorchSharp
             /// Returns the log of the probability density/mass function evaluated at `value`.
             /// </summary>
             /// <param name="value"></param>
-            public override Tensor log_prob(Tensor value)
-            {
-                return Math.Log(Math.PI) - scale.log() - (1 + ((value - loc) / scale).pow(2)).log();
-            }
+            public override Tensor log_prob(Tensor value) =>
+                WrappedTensorDisposeScope(() => -Math.Log(Math.PI) - scale.log() - (((value - loc) / scale).pow(2)).log1p());            
 
             /// <summary>
             /// Returns entropy of distribution, batched over batch_shape.
             /// </summary>
             /// <returns></returns>
-            public override Tensor entropy()
-            {
-                return Math.Log(Math.PI * 4) + scale.log();
-            }
+            public override Tensor entropy() =>
+                WrappedTensorDisposeScope(() => Math.Log(Math.PI * 4) + scale.log());
 
             /// <summary>
             /// Returns the cumulative density/mass function evaluated at `value`.
             /// </summary>
             /// <param name="value"></param>
-            public override Tensor cdf(Tensor value)
-            {
-                return torch.atan((value - loc) / scale) / Math.PI + 0.5;
-            }
+            public override Tensor cdf(Tensor value) =>
+                WrappedTensorDisposeScope(() => torch.atan((value - loc) / scale) / Math.PI + 0.5);
 
             /// <summary>
             /// Returns the inverse cumulative density/mass function evaluated at `value`.
             /// </summary>
             /// <param name="value"></param>
-            public override Tensor icdf(Tensor value)
-            {
-                return torch.tan(Math.PI * (value - 0.5)) * scale + loc;
-            }
+            public override Tensor icdf(Tensor value) =>
+                WrappedTensorDisposeScope(() => torch.tan(Math.PI * (value - 0.5)) * scale + loc);
 
 
             /// <summary>

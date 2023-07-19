@@ -17,12 +17,14 @@ namespace TorchSharp
             /// <summary>
             /// The mean of the distribution.
             /// </summary>
-            public override Tensor mean => concentration / rate;
+            public override Tensor mean => WrappedTensorDisposeScope(() => concentration / rate);
+
+            public override Tensor mode => WrappedTensorDisposeScope(() => ((concentration - 1) / rate).clamp_(min: 0));
 
             /// <summary>
             /// The variance of the distribution
             /// </summary>
-            public override Tensor variance => concentration / rate.pow(2);
+            public override Tensor variance => WrappedTensorDisposeScope(() => concentration / rate.pow(2));
 
             /// <summary>
             /// Constructor
@@ -33,8 +35,8 @@ namespace TorchSharp
             public Gamma(Tensor concentration, Tensor rate, torch.Generator generator = null) : base(generator)
             {
                 var locScale = torch.broadcast_tensors(concentration, rate);
-                this.concentration = locScale[0];
-                this.rate = locScale[1];
+                this.concentration = locScale[0].DetachFromDisposeScope();
+                this.rate = locScale[1].DetachFromDisposeScope();
                 this.batch_shape = this.concentration.size();
             }
 
@@ -69,12 +71,12 @@ namespace TorchSharp
             /// <summary>
             /// Returns entropy of distribution, batched over batch_shape.
             /// </summary>
-            public override Tensor entropy()
-            {
-                return torch.WrappedTensorDisposeScope(() =>
-                    concentration - rate.log() + concentration.lgamma() + (1.0 - concentration) * concentration.digamma()
-                );
-            }
+            public override Tensor entropy() =>
+                WrappedTensorDisposeScope(() =>
+                    concentration - rate.log() + concentration.lgamma() + (1.0 - concentration) * concentration.digamma());
+
+            public override Tensor cdf(Tensor value) =>
+                WrappedTensorDisposeScope(() => torch.special.gammainc(concentration, rate * value));
 
             /// <summary>
             /// Returns a new distribution instance (or populates an existing instance provided by a derived class) with batch dimensions expanded to

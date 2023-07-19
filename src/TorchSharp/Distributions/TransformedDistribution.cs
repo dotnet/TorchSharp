@@ -82,7 +82,7 @@ namespace TorchSharp
                 }
                 value = base_distribution.cdf(value);
                 value = monotonize_cdf(value);
-                return value;
+                return value.MoveToOuterDisposeScope();
             }
 
             public override Tensor entropy()
@@ -118,16 +118,18 @@ namespace TorchSharp
 
             public override Tensor icdf(Tensor value)
             {
+                using var scope = torch.NewDisposeScope();
                 value = monotonize_cdf(value);
                 value = base_distribution.icdf(value);
                 foreach (var transform in transforms) {
                     value = transform.forward(value);
                 }
-                return value;
+                return value.MoveToOuterDisposeScope();
             }
 
             public override Tensor log_prob(Tensor value)
             {
+                using var scope = torch.NewDisposeScope();
                 var event_dim = event_shape.Length;
                 Tensor lp = 0.0;
                 var y = value;
@@ -138,7 +140,7 @@ namespace TorchSharp
                     y = x;
                 }
                 lp = lp + distributions.transforms.Transform._sum_rightmost(base_distribution.log_prob(y), event_dim - base_distribution.event_shape.Length);
-                return lp;
+                return lp.MoveToOuterDisposeScope();
             }
 
             public override Tensor rsample(params long[] sample_shape)

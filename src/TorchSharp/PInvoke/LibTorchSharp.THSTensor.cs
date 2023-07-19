@@ -503,13 +503,13 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_transpose(IntPtr tensor, long dim1, long dim2);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_tril(IntPtr tensor, long diagonal);
+        internal static extern IntPtr THSTensor_tril(IntPtr tensor, long diagonal, [MarshalAs(UnmanagedType.U1)] bool inplace);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_tril_indices(long row, long col, long offset, sbyte scalar_type, int device_type, int device_index);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_triu(IntPtr tensor, long diagonal);
+        internal static extern IntPtr THSTensor_triu(IntPtr tensor, long diagonal, [MarshalAs(UnmanagedType.U1)] bool inplace);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_triu_indices(long row, long col, long offset, sbyte scalar_type, int device_type, int device_index);
@@ -1120,7 +1120,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_randint_like(IntPtr input, long low, long high, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_randperm_out(long n, IntPtr tensorOut);
+        internal static extern IntPtr THSTensor_randperm_out(IntPtr generator, long n, IntPtr tensorOut);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_bernoulli(IntPtr tensor, IntPtr gen);
