@@ -462,17 +462,25 @@ namespace TorchSharp
                 /// <returns>(string, torch.Tensor) – Tuple containing the name and buffer</returns>
                 public virtual IEnumerable<(string name, Tensor buffer)> named_buffers(bool recurse = true)
                 {
+                    var seen = new HashSet<IntPtr>();
+                    seen.Add(IntPtr.Zero);              // Ignore invalid buffers.
+
                     foreach (var nsm in _internal_buffers) {
+                        if (seen.Contains(nsm.Item2.handle)) continue;
+                        seen.Add(nsm.Item2.handle);
                         yield return nsm;
                     }
 
                     if (!recurse) yield break;
 
-                    foreach (var (submoduleName, submodule) in _internal_submodules) {
-                        foreach (var (parameterName, parameter) in submodule.named_buffers(true)) {
-                            yield return ($"{submoduleName}.{parameterName}", parameter);
+                    foreach (var (submoduleName, subModule) in _internal_submodules) {
+                        foreach (var (bufferName, buffer) in subModule.named_buffers(true)) {
+                            if (seen.Contains(buffer.handle)) continue;
+                            seen.Add(buffer.handle);
+                            yield return ($"{submoduleName}.{bufferName}", buffer);
                         }
                     }
+
                 }
 
                 /// <summary>
@@ -620,10 +628,11 @@ namespace TorchSharp
                 public virtual IEnumerable<(string name, Parameter parameter)> named_parameters(bool recurse = true)
                 {
                     var seen = new HashSet<IntPtr>();
+                    seen.Add(IntPtr.Zero);              // Ignore invalid parameters.
 
                     foreach (var nsm in _internal_params) {
-                        if (seen.Contains(nsm.Item2.Handle)) continue;
-                        seen.Add(nsm.Item2.Handle);
+                        if (seen.Contains(nsm.Item2.handle)) continue;
+                        seen.Add(nsm.Item2.handle);
                         yield return nsm;
                     }
 
