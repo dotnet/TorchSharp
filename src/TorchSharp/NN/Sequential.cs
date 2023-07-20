@@ -55,11 +55,12 @@ namespace TorchSharp
                 if (!recurse) yield break;
 
                 var seen = new HashSet<IntPtr>();
+                seen.Add(IntPtr.Zero);           // Ignore invalid parameters
 
                 for (var i = 0; i < _names.Count; i++) {
                     foreach (var (n, p) in ((torch.nn.Module)_modules[i]).named_parameters(true)) {
-                        if (seen.Contains(p.Handle)) continue;
-                        seen.Add(p.Handle);
+                        if (seen.Contains(p.handle)) continue;
+                        seen.Add(p.handle);
                         yield return ($"{_names[i]}.{n}", p);
                     }
                 }
@@ -69,8 +70,13 @@ namespace TorchSharp
             {
                 if (!recurse) yield break;
 
+                var seen = new HashSet<IntPtr>();
+                seen.Add(IntPtr.Zero);           // Ignore invalid buffers
+
                 for (var i = 0; i < _names.Count; i++) {
                     foreach (var (n, p) in ((torch.nn.Module)_modules[i]).named_buffers(true)) {
+                        if (seen.Contains(p.handle)) continue;
+                        seen.Add(p.handle);
                         yield return ($"{_names[i]}.{n}", p);
                     }
                 }
