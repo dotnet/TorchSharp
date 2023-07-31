@@ -167,6 +167,7 @@ Tensor THSVision_ApplyGridTransform(Tensor i, Tensor g, const int8_t m, const fl
             ? (torch::nn::functional::GridSampleFuncOptions::mode_t)torch::kNearest
             : (torch::nn::functional::GridSampleFuncOptions::mode_t)torch::kBilinear;
         auto sampleOpts = torch::nn::functional::GridSampleFuncOptions().padding_mode(torch::kZeros).mode(mode);
+        sampleOpts.align_corners(false); // Supress warning. Default=false for grid_sample since libtorch 1.3.0
 
         img = torch::nn::functional::grid_sample(img, grid, sampleOpts);
 
