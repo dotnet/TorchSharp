@@ -1195,7 +1195,7 @@ EXPORT_API(Tensor) THSTensor_histogram_out_i(const Tensor input, const int64_t b
 
 EXPORT_API(Tensor) THSTensor_set_(Tensor tensor, const Tensor source);
 
-EXPORT_API(Tensor) THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad);
+EXPORT_API(void) THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad);
 
 EXPORT_API(void) THSTensor_set1(const Tensor tensor, int64_t index, const Tensor value);
 

@@ -267,7 +267,7 @@ namespace TorchSharp.PInvoke
         internal static extern bool THSTensor_requires_grad(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_set_requires_grad(IntPtr handle, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
+        internal static extern void THSTensor_set_requires_grad(IntPtr handle, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSTensor_retain_grad(IntPtr handle);
