@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using TorchSharp;
 using static TorchSharp.torch;
 using static TorchSharp.torchvision.io;
 
@@ -16,9 +15,9 @@ namespace TorchSharp
                 long nrow = 8,
                 int padding = 2,
                 bool normalize = false,
-                (float low, float high)? value_range = null,
+                (double low, double high)? value_range = null,
                 bool scale_each = false,
-                float pad_value = 0.0f)
+                double pad_value = 0.0f)
             {
                 return make_grid(torch.stack(tensors, dim: 0), nrow, padding, normalize, value_range, scale_each, pad_value);
             }
@@ -28,9 +27,9 @@ namespace TorchSharp
                 long nrow = 8,
                 int padding = 2,
                 bool normalize = false,
-                (float low, float high)? value_range = null,
+                (double low, double high)? value_range = null,
                 bool scale_each = false,
-                float pad_value = 0.0f)
+                double pad_value = 0.0f)
             {
                 if (tensor.Dimensions == 2) // Single image H x W
                 {
@@ -51,13 +50,13 @@ namespace TorchSharp
 
                 if (normalize == true)
                 {
-                    void norm_ip(Tensor img, float low, float high)
+                    void norm_ip(Tensor img, double low, double high)
                     {
                         img.clamp_(min: low, max: high);
                         img.sub_(low).div_(Math.Max(high - low, 1e-5));
                     }
 
-                    void norm_range(Tensor t, (float low, float high)? range)
+                    void norm_range(Tensor t, (double low, double high)? range)
                     {
                         if (range.HasValue)
                         {
@@ -88,7 +87,7 @@ namespace TorchSharp
 
                 var nmaps = tensor.size(0);
                 var xmaps = Math.Min(nrow, nmaps);
-                var ymaps = (long)Math.Ceiling((float)nmaps / xmaps);
+                var ymaps = (long)Math.Ceiling((double)nmaps / xmaps);
                 var width = tensor.size(3) + padding;
                 var height = tensor.size(2) + padding;
                 var num_channels = tensor.size(1);
@@ -113,13 +112,13 @@ namespace TorchSharp
             public static void save_image(
                 Tensor tensor,
                 string filename,
-                TorchSharp.torchvision.ImageFormat format,
+                ImageFormat format,
                 long nrow = 8,
                 int padding = 2,
                 bool normalize = false,
-                (float low, float high)? value_range = null,
+                (double low, double high)? value_range = null,
                 bool scale_each = false,
-                float pad_value = 0.0f,
+                double pad_value = 0.0f,
                 Imager imager = null)
             {
                 var grid = make_grid(tensor, nrow, padding, normalize, value_range, scale_each, pad_value);
