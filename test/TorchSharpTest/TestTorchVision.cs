@@ -1206,6 +1206,14 @@ namespace TorchSharp
             Assert.Throws<ArgumentOutOfRangeException>(() => functional.solarize(input, 25000));
         }
 
+        [Fact]
+        public void Adjust_Contrast_ReturnsTensorWithCorrectDtype()
+        {
+            var img1 = torch.randn(1, 32, 32).to(torch.uint8);
+            var img2 = torchvision.transforms.functional.adjust_contrast(img1, 2);
+            Assert.Equal(img1.dtype, img2.dtype);
+        }
+
         
         [Fact]
         public void RgbToGrayscale_ReturnsCorrectNumberOfChannels()
