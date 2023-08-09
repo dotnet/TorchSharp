@@ -13,6 +13,8 @@ Adding scaled_dot_product_attention.<br/>
 
 __Bug Fixes__:
 
+Fixed torch.cuda.synchronize() method<br/>
+Suppress runtime warning by setting align_corners to 'false'<br/>
 Fixed argument validation bug in Grayscale<br/>
 #1057: Memory leak with requires_grad<br/>
 
