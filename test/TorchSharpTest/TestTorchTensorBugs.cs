@@ -1141,5 +1141,19 @@ namespace TorchSharp
 
             Assert.Equal(0.8165, std_dev, 0.0001);
         }
+
+        [Fact(Skip = "Takes too long to run to completion.")]
+        static void Validate1057()
+        {
+            if (torch.cuda_is_available()) {
+                var device = torch.CUDA;
+
+                for (int i = 0; i < 25; i++) {
+                    using (var _ = torch.NewDisposeScope()) {
+                        var data = torch.randn(200000, 3, 32, 32).to(device).requires_grad_(true);
+                    }
+                }
+            }
+        }
     }
 }
