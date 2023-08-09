@@ -140,7 +140,7 @@ int THSTorchCuda_device_count()
     return (int)torch::cuda::device_count();
 }
 
-EXPORT_API(void) THSTorchCuda_synchronize(const int64_t device_index)
+void THSTorchCuda_synchronize(const int64_t device_index)
 {
     CATCH(torch::cuda::synchronize(device_index);)
 }

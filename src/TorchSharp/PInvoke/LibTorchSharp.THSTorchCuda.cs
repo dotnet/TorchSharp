@@ -16,5 +16,8 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern int THSTorchCuda_device_count();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSTorchCuda_synchronize(long device_index);
     }
 }
