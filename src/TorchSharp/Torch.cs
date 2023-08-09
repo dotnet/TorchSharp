@@ -465,12 +465,12 @@ namespace TorchSharp
             /// <summary>
             /// Waits for all kernels in all streams on a CUDA device to complete.
             /// </summary>
-            /// <param name="seed">Device for which to synchronize.
+            /// <param name="device">Device for which to synchronize.
             /// It uses the current device, given by current_device(), if a device is not provided.</param>
-            public static void synchronize(long seed = -1L)
+            public static void synchronize(Device? device = null)
             {
-                TryInitializeDeviceType(DeviceType.CUDA);
-                THSCuda_synchronize(seed);
+                TryInitializeDeviceType(device?.type ?? DeviceType.CUDA);
+                THSTorchCuda_synchronize(device?.index ?? -1);
             }
         }
 
