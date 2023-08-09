@@ -1,16 +1,13 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Diagnostics.Contracts;
-using Google.Protobuf;
-using static Tensorboard.TensorShapeProto.Types;
-
 using TorchSharp.PInvoke;
 
 #nullable enable
@@ -366,6 +363,11 @@ namespace TorchSharp
                 case ScalarType.BFloat16:
                     throw new ArgumentException($"No support for {dtype.ToString()} in TorchSharp");
                 case ScalarType.Float16:
+#if NET5_0_OR_GREATER
+                    if (dotnetType != typeof(Half))
+                        throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
+                    break;
+#endif
                 case ScalarType.Float32:
                     if (dotnetType != typeof(float))
                         throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
@@ -7016,6 +7018,9 @@ namespace TorchSharp
             { typeof(short), ScalarType.Int16 },
             { typeof(int), ScalarType.Int32 },
             { typeof(long), ScalarType.Int64 },
+#if NET5_0_OR_GREATER
+            { typeof(Half), ScalarType.Float16 },
+#endif
             { typeof(float), ScalarType.Float32 },
             { typeof(double), ScalarType.Float64 },
             { typeof((float, float)), ScalarType.ComplexFloat32 },

@@ -542,6 +542,14 @@ namespace TorchSharp
         /// <param name="value">The input tensor</param>
         public static System.Numerics.Complex ToComplexFloat64(this Tensor value) => value.ToScalar().ToComplexFloat64();
 
+#if NET5_0_OR_GREATER
+        /// <summary>
+        /// Explicitly convert a singleton tensor to a .NET scalar value.
+        /// </summary>
+        /// <param name="value">The input tensor</param>
+        public static Half ToHalf(this Tensor value) => value.ToScalar().ToHalf();
+#endif
+
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>

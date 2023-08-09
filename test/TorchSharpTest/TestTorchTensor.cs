@@ -455,7 +455,7 @@ namespace TorchSharp
             Assert.Throws<InvalidOperationException>(() => t1.Handle);
         }
 
-        [Fact(Skip ="Sensitive to concurrency in xUnit test driver.")]
+        [Fact(Skip = "Sensitive to concurrency in xUnit test driver.")]
         [TestOf(nameof(torch.randn))]
         public void TestUsings()
         {
@@ -566,6 +566,28 @@ namespace TorchSharp
             Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
             Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
             x.data<long>();
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.ones))]
+        public void TestDataFloat16()
+        {
+            var x = torch.ones(5, torch.float16);
+            Assert.Throws<System.ArgumentException>(() => x.data<bool>());
+            Assert.Throws<System.ArgumentException>(() => x.data<byte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<sbyte>());
+            Assert.Throws<System.ArgumentException>(() => x.data<short>());
+            Assert.Throws<System.ArgumentException>(() => x.data<int>());
+            Assert.Throws<System.ArgumentException>(() => x.data<long>());
+            Assert.Throws<System.ArgumentException>(() => x.data<double>());
+            Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
+            Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
+#if NET5_0_OR_GREATER
+            Assert.Throws<System.ArgumentException>(() => x.data<float>());
+            x.data<System.Half>();
+#else
+            x.data<float>();
+#endif
         }
 
         [Fact]
@@ -1181,6 +1203,68 @@ namespace TorchSharp
                 Assert.Equal(array.Cast<long>().ToArray(), t.data<long>().ToArray());
             }
         }
+
+#if NET5_0_OR_GREATER
+        [Fact]
+        [TestOf(nameof(torch.tensor))]
+        public void TestMDTensorFactoryFloat16()
+        {
+            {
+                var array = new Half[8];
+                var t = torch.tensor(array);
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.Float16, t.dtype);
+            }
+
+            {
+                var array = new Half[8];
+                var t = torch.tensor(array, new long[] { 8 });
+                Assert.Equal(1, t.ndim);
+                Assert.Equal(ScalarType.Float16, t.dtype);
+            }
+
+            {
+                var array = new Half[1, 2];
+                var t = torch.tensor(array);
+                Assert.Equal(2, t.ndim);
+                Assert.Equal(new long[] { 1, 2 }, t.shape);
+                Assert.Equal(ScalarType.Float16, t.dtype);
+            }
+
+            {
+                var array = new Half[1, 2, 3];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3 }, t.shape);
+                Assert.Equal(ScalarType.Float16, t.dtype);
+            }
+
+            {
+                var array = new Half[100, 100, 250];
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 100, 100, 250 }, t.shape);
+                Assert.Equal(ScalarType.Float16, t.dtype);
+            }
+
+            {
+                var array = new Half[1, 2, 3, 4];
+                var t = torch.tensor(array);
+                Assert.Equal(4, t.ndim);
+                Assert.Equal(new long[] { 1, 2, 3, 4 }, t.shape);
+                Assert.Equal(ScalarType.Float16, t.dtype);
+            }
+
+            {
+                var array = new Half[,,] { { { (Half)1, (Half)2 }, { (Half)3, (Half)4 } }, { { (Half)5, (Half)6 }, { (Half)7, (Half)8 } } };
+                var t = torch.tensor(array);
+                Assert.Equal(3, t.ndim);
+                Assert.Equal(new long[] { 2, 2, 2 }, t.shape);
+                Assert.Equal(ScalarType.Float16, t.dtype);
+                Assert.Equal(array.Cast<Half>().ToArray(), t.data<Half>().ToArray());
+            }
+        }
+#endif
 
         [Fact]
         [TestOf(nameof(torch.tensor))]
@@ -5623,7 +5707,7 @@ namespace TorchSharp
         }
 
 
-        [Fact(Skip="Failing")]
+        [Fact(Skip = "Failing")]
         [TestOf(nameof(torch.nn.functional.conv1d))]
         public void Conv1DTest2()
         {
@@ -7841,7 +7925,7 @@ namespace TorchSharp
             Assert.True(bin_edges.allclose(torch.tensor(new double[] { 0, 1, 2, 3 }), 0.001));
         }
 
-        [Fact(Skip ="Fails intermittently")]
+        [Fact(Skip = "Fails intermittently")]
         public void TestHistogramOptimBinNums()
         {
             // https://github.com/numpy/numpy/blob/b50568d9e758b489c2a3c409ef4e57b67820f090/numpy/lib/tests/test_histograms.py#L412
