@@ -13,9 +13,6 @@ namespace TorchSharp.PInvoke
         internal static extern void THSCuda_manual_seed_all(long seed);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSCuda_synchronize(long device_index);
-
-        [DllImport("LibTorchSharp")]
         [return: MarshalAs(UnmanagedType.U1)]
         internal static extern bool THSBackend_cublas_get_allow_tf32();
         [DllImport("LibTorchSharp")]

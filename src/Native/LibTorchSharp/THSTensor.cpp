@@ -606,7 +606,7 @@ Tensor THSTensor_grad(const Tensor tensor)
     Tensor res;
     CATCH(
         torch::Tensor grad = tensor->grad();
-    res = grad.defined() ? new torch::Tensor(grad) : NULL;
+        res = grad.defined() ? new torch::Tensor(grad) : NULL;
     );
     return res;
 }
@@ -1631,9 +1631,9 @@ Tensor THSTensor_sub_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->sub(*right));
 }
 
-Tensor THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad)
+void THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad)
 {
-    CATCH_TENSOR(tensor->set_requires_grad(requires_grad));
+    CATCH(tensor->set_requires_grad(requires_grad););
 }
 
 Tensor THSTensor_stack(const Tensor* tensors, const int length, const int64_t dim)
