@@ -845,7 +845,7 @@ namespace TorchSharp
                     using var t2 = img2 * (1.0 - ratio);
                     using var t3 = (t0 + t2);
                     using var t4 = t3.clamp(0, bound);
-                    return t4.to(img2.dtype);
+                    return t4.to(img1.dtype);
                 }
 
                 private static Tensor BlurredDegenerateImage(Tensor input)
