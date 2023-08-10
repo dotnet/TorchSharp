@@ -85,8 +85,10 @@ namespace TorchSharp
                     }
                 }
 
-                if (tensor.size(0) == 1)
-                    return tensor.unsqueeze(0);
+                if (tensor.size(0) == 1) {
+                    tensor = tensor.unsqueeze(0);
+                    return tensor.MoveToOuterDisposeScope();
+                }
 
                 var nmaps = tensor.size(0);
                 var xmaps = Math.Min(nrow, nmaps);
