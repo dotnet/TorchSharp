@@ -42,6 +42,13 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestSynchronize()
+        {
+            // Will throw if the underlying native function fails to link at runtime
+            cuda.synchronize();
+        }
+
+        [Fact]
         public void ExplicitDisposal()
         {
             // Allocate many 256MB tensors. Without explicit disposal memory use relies on finalization.

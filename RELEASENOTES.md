@@ -11,6 +11,11 @@ torch.randperm accepts 'out' argument<br/>
 Adding PReLU module.<br/>
 Adding scaled_dot_product_attention.<br/>
 
+__Bug Fixes__:
+
+Fixed argument validation bug in Grayscale<br/>
+#1057: Memory leak with requires_grad<br/>
+
 ## NuGet Version 0.100.3
 
 This release is primarily, but not exclusively, focused on fixing bugs in distributions and adding a few new ones.

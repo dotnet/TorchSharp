@@ -84,6 +84,7 @@ namespace TorchSharp
             protected virtual void Dispose(bool disposing)
             {
                 OwningDisposeScope?.MarkAsDisposed(this);
+
                 if (handle != IntPtr.Zero) {
                     System.Threading.Interlocked.Decrement(ref _totalCount);
                     NativeMethods.THSTensor_dispose(handle);
@@ -637,9 +638,8 @@ namespace TorchSharp
             public bool requires_grad {
                 get { return NativeMethods.THSTensor_requires_grad(Handle); }
                 set {
-                    var res = NativeMethods.THSTensor_set_requires_grad(Handle, value);
-                    if (res == IntPtr.Zero)
-                        CheckForErrors();
+                    NativeMethods.THSTensor_set_requires_grad(Handle, value);
+                    CheckForErrors();
                 }
             }
 
