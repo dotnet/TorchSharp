@@ -50,6 +50,7 @@ namespace TorchSharp
 
                 if (normalize == true)
                 {
+                    tensor = tensor.clone();  // avoid modifying tensor in-place
                     void norm_ip(Tensor img, double low, double high)
                     {
                         img.clamp_(min: low, max: high);
