@@ -33,5 +33,35 @@ namespace TorchSharp
             using var result = torchvision.utils.make_grid(image);
             Assert.Equal(new long[] { 3, 2, 2 }, result.shape);
         }
+
+        [Fact]
+        public void Make_Grid_ColorImageInput()
+        {
+            using var image = torch.tensor(new[, ,] {
+                { { 1.0f, 0.0f }, { 0.0f, 1.0f } },
+                { { 1.0f, 0.0f }, { 0.0f, 1.0f } },
+                { { 1.0f, 0.0f }, { 0.0f, 1.0f } }
+            });
+            using var result = torchvision.utils.make_grid(image);
+            Assert.Equal(new long[] { 3, 2, 2 }, result.shape);
+        }
+
+        [Fact]
+        public void Make_Grid_BatchColorImageInput()
+        {
+            using var image = torch.tensor(new[, , ,] {{
+                    { { 1.0f, 0.0f }, { 0.0f, 1.0f } },
+                    { { 1.0f, 0.0f }, { 0.0f, 1.0f } },
+                    { { 1.0f, 0.0f }, { 0.0f, 1.0f } }
+                },
+                {
+                    { { 1.0f, 0.0f }, { 0.0f, 1.0f } },
+                    { { 1.0f, 0.0f }, { 0.0f, 1.0f } },
+                    { { 1.0f, 0.0f }, { 0.0f, 1.0f } }
+                }
+            });
+            using var result = torchvision.utils.make_grid(image, padding: 0);
+            Assert.Equal(new long[] { 3, 2, 4 }, result.shape);
+        }
     }
 }
