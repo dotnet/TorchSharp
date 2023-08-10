@@ -86,7 +86,7 @@ namespace TorchSharp
                 }
 
                 if (tensor.size(0) == 1) {
-                    tensor = tensor.unsqueeze(0);
+                    tensor = tensor.squeeze(0);
                     return tensor.MoveToOuterDisposeScope();
                 }
 
