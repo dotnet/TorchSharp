@@ -4,16 +4,24 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.100.4
 
+__Breaking Changes__:
+
+The constructor for TensorAccessor is now `internal`, which means that the only way to create one is to use the `data<T>()` method on Tensor. This was always the intent.
+
 __API Changes__:
 
 Tensor.randperm_out() deprecated.<br/>
 torch.randperm accepts 'out' argument<br/>
 Adding PReLU module.<br/>
 Adding scaled_dot_product_attention.<br/>
+The constructor for TensorAccessor was made `internal`<br/>
 
 __Bug Fixes__:
 
+Fixed torch.cuda.synchronize() method<br/>
+Suppress runtime warning by setting align_corners to 'false'<br/>
 Fixed argument validation bug in Grayscale<br/>
+#1056: Access violation with TensorAccessor.ToArray - incompatible data types<br/>
 #1057: Memory leak with requires_grad<br/>
 
 ## NuGet Version 0.100.3
