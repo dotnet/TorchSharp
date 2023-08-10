@@ -22,7 +22,7 @@ namespace TorchSharp
                     var c1 = torch.ones(new long[] { 10, 10 }, float16, device: device);
                     var c2 = torch.ones(new long[] { 10, 10 }, float16, device: device);
                     var c3 = torch.ones(new long[] { 10, 10 }, float16, device: device);
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
                     Func<Tensor, long, long, Half> getFunc = (tt, i, j) => tt[i, j].ToHalf();
 
                     // scalar-tensor operators

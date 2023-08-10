@@ -448,8 +448,7 @@ namespace TorchSharp
                 tensor = skip
                     ? torch.zeros(loadedShape, dtype: type)
                     : torch.empty(loadedShape, dtype: type);
-            }
-            else if (!skip && !loadedShape.SequenceEqual(tensor.shape)) {
+            } else if (!skip && !loadedShape.SequenceEqual(tensor.shape)) {
                 // We only care about this if the bytes will be written to the tensor.
                 throw new ArgumentException("Mismatched tensor shape while loading. Make sure that the model you are loading into is exactly the same as the origin.");
             }
@@ -542,7 +541,7 @@ namespace TorchSharp
         /// <param name="value">The input tensor</param>
         public static System.Numerics.Complex ToComplexFloat64(this Tensor value) => value.ToScalar().ToComplexFloat64();
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
         /// <summary>
         /// Explicitly convert a singleton tensor to a .NET scalar value.
         /// </summary>

@@ -582,7 +582,7 @@ namespace TorchSharp
             Assert.Throws<System.ArgumentException>(() => x.data<double>());
             Assert.Throws<System.ArgumentException>(() => x.data<(float, float)>());
             Assert.Throws<System.ArgumentException>(() => x.data<System.Numerics.Complex>());
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
             Assert.Throws<System.ArgumentException>(() => x.data<float>());
             x.data<System.Half>();
 #else
@@ -1204,7 +1204,7 @@ namespace TorchSharp
             }
         }
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
         [Fact]
         [TestOf(nameof(torch.tensor))]
         public void TestMDTensorFactoryFloat16()

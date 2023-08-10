@@ -69,7 +69,7 @@ namespace TorchSharp
             return value.ToScalar();
         }
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
         /// <summary>
         /// Implicitly convert a .NET scalar value to Scalar
         /// </summary>
@@ -259,7 +259,7 @@ namespace TorchSharp
             return new Scalar(THSTorch_bool_to_scalar(value));
         }
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
         /// <summary>
         /// Explcitly construct a Scalar from a .NET scalar.
         /// </summary>
@@ -281,7 +281,7 @@ namespace TorchSharp
             return new Scalar(THSTorch_bfloat16_to_scalar(value));
         }
 
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
         /// <summary>
         /// Explicitly convert a Scalar value to a .NET scalar
         /// </summary>
