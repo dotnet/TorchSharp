@@ -11,76 +11,84 @@ namespace TorchSharp
     {
         internal abstract class AutoAugmentBase
         {
+            protected enum opType {
+                ShearX,
+                ShearY,
+                TranslateX,
+                TranslateY,
+                Rotate,
+                Brightness,
+                Color,
+                Contrast,
+                Sharpness,
+                Posterize,
+                Solarize,
+                AutoContrast,
+                Equalize,
+                Invert,
+                Identity
+            }
+
             protected static Tensor apply_op(
                                     Tensor img,
-                                    string op_name,
+                                    opType op_name,
                                     float magnitude,
                                     InterpolationMode interpolation,
                                     IList<float>? fill)
             {
-                if (op_name == "ShearX") {
-                    img = F.affine(
-                        img,
-                        angle: 0.0f,
-                        translate: new[] { 0, 0 },
-                        scale: 1.0f,
-                        shear: new[] { (float)((180.0f / Math.PI) * Math.Atan(magnitude)), 0.0f },
-                        interpolation: interpolation,
-                        fill: fill?.FirstOrDefault());
-                } else if (op_name == "ShearY") {
-                    img = F.affine(
-                        img,
-                        angle: 0.0f,
-                        translate: new[] { 0, 0 },
-                        scale: 1.0f,
-                        shear: new[] { 0.0f, (float)((180.0f / Math.PI) * Math.Atan(magnitude)) },
-                        interpolation: interpolation,
-                        fill: fill?.FirstOrDefault());
-                } else if (op_name == "TranslateX") {
-                    img = F.affine(
-                        img,
-                        angle: 0.0f,
-                        translate: new[] { (int)(magnitude), 0 },
-                        scale: 1.0f,
-                        interpolation: interpolation,
-                        shear: new[] { 0.0f, 0.0f },
-                        fill: fill?.FirstOrDefault());
-                } else if (op_name == "TranslateY") {
-                    img = F.affine(
-                        img,
-                        angle: 0.0f,
-                        translate: new[] { 0, (int)(magnitude) },
-                        scale: 1.0f,
-                        interpolation: interpolation,
-                        shear: new[] { 0.0f, 0.0f },
-                        fill: fill?.FirstOrDefault());
-                } else if (op_name == "Rotate") {
-                    img = F.rotate(img, magnitude, interpolation, fill: fill);
-                } else if (op_name == "Brightness") {
-                    img = F.adjust_brightness(img, 1.0 + magnitude);
-                } else if (op_name == "Color") {
-                    img = F.adjust_saturation(img, 1.0 + magnitude);
-                } else if (op_name == "Contrast") {
-                    img = F.adjust_contrast(img, 1.0 + magnitude);
-                } else if (op_name == "Sharpness") {
-                    img = F.adjust_sharpness(img, 1.0 + magnitude);
-                } else if (op_name == "Posterize") {
-                    img = F.posterize(img, (int)magnitude);
-                } else if (op_name == "Solarize") {
-                    img = F.solarize(img, magnitude);
-                } else if (op_name == "AutoContrast") {
-                    img = F.autocontrast(img);
-                } else if (op_name == "Equalize") {
-                    img = F.equalize(img);
-                } else if (op_name == "Invert") {
-                    img = F.invert(img);
-                } else if (op_name == "Identity") {
-                    // Pass
-                } else {
-                    throw new ArgumentException($"The provided operator {op_name} is not recognized.");
+                switch(op_name) {
+                    case opType.ShearX:
+                        return F.affine(
+                            img,
+                            angle: 0.0f,
+                            translate: new[] { 0, 0 },
+                            scale: 1.0f,
+                            shear: new[] { 0.0f, (float)((180.0f / Math.PI) * Math.Atan(magnitude)) },
+                            interpolation: interpolation,
+                            fill: fill?.FirstOrDefault());
+                    case opType.TranslateX:
+                        return F.affine(
+                            img,
+                            angle: 0.0f,
+                            translate: new[] { (int)(magnitude), 0 },
+                            scale: 1.0f,
+                            interpolation: interpolation,
+                            shear: new[] { 0.0f, 0.0f },
+                            fill: fill?.FirstOrDefault());
+                    case opType.TranslateY:
+                        return F.affine(
+                            img,
+                            angle: 0.0f,
+                            translate: new[] { 0, (int)(magnitude) },
+                            scale: 1.0f,
+                            interpolation: interpolation,
+                            shear: new[] { 0.0f, 0.0f },
+                            fill: fill?.FirstOrDefault());
+                    case opType.Rotate:
+                        return F.rotate(img, magnitude, interpolation, fill: fill);
+                    case opType.Brightness:
+                        return F.adjust_brightness(img, 1.0 + magnitude);
+                    case opType.Color:
+                        return F.adjust_saturation(img, 1.0 + magnitude);
+                    case opType.Contrast:
+                        return F.adjust_contrast(img, 1.0 + magnitude);
+                    case opType.Sharpness:
+                        return F.adjust_sharpness(img, 1.0 + magnitude);
+                    case opType.Posterize:
+                        return F.posterize(img, (int)magnitude);
+                    case opType.Solarize:
+                        return F.solarize(img, magnitude);
+                    case opType.AutoContrast:
+                        return F.autocontrast(img);
+                    case opType.Equalize:
+                        return F.equalize(img);
+                    case opType.Invert:
+                        return F.invert(img);
+                    case opType.Identity:
+                        return img; // Pass
+                    default:
+                        throw new ArgumentException($"The provided operator {op_name} is not recognized.");
                 }
-
-                return img;
             }
         }
 
@@ -121,23 +129,23 @@ namespace TorchSharp
                 return img;
             }
 
-            private Dictionary<string, (Tensor, bool)> augmentation_space(int num_bins, (long height, long width) image_size)
+            private Dictionary<opType, (Tensor, bool)> augmentation_space(int num_bins, (long height, long width) image_size)
             {
-                return new Dictionary<string, (Tensor, bool)> {
-                    { "Identity", (torch.tensor(0.0), false) },
-                    { "ShearX", (torch.linspace(0.0, 0.3, num_bins), true) },
-                    { "ShearY", (torch.linspace(0.0, 0.3, num_bins), true) },
-                    { "TranslateX", (torch.linspace(0.0, 150.0 / 331.0 * image_size.height, num_bins), true) },
-                    { "TranslateY", (torch.linspace(0.0, 150.0 / 331.0 * image_size.width, num_bins), true) },
-                    { "Rotate", (torch.linspace(0.0, 30.0, num_bins), true) },
-                    { "Brightness", (torch.linspace(0.0, 0.9, num_bins), true) },
-                    { "Color", (torch.linspace(0.0, 0.9, num_bins), true) },
-                    { "Contrast", (torch.linspace(0.0, 0.9, num_bins), true) },
-                    { "Sharpness", (torch.linspace(0.0, 0.9, num_bins), true) },
-                    { "Posterize", (8 - (torch.arange(num_bins) / ((num_bins - 1) / 4)).round().@int(), false)},
-                    { "Solarize", (torch.linspace(255.0, 0.0, num_bins), false) },
-                    { "AutoContrast", (torch.tensor(0.0), false) },
-                    { "Equalize", (torch.tensor(0.0), false) }
+                return new Dictionary<opType, (Tensor, bool)> {
+                    { opType.Identity, (torch.tensor(0.0), false) },
+                    { opType.ShearX, (torch.linspace(0.0, 0.3, num_bins), true) },
+                    { opType.ShearY, (torch.linspace(0.0, 0.3, num_bins), true) },
+                    { opType.TranslateX, (torch.linspace(0.0, 150.0 / 331.0 * image_size.height, num_bins), true) },
+                    { opType.TranslateY, (torch.linspace(0.0, 150.0 / 331.0 * image_size.width, num_bins), true) },
+                    { opType.Rotate, (torch.linspace(0.0, 30.0, num_bins), true) },
+                    { opType.Brightness, (torch.linspace(0.0, 0.9, num_bins), true) },
+                    { opType.Color, (torch.linspace(0.0, 0.9, num_bins), true) },
+                    { opType.Contrast, (torch.linspace(0.0, 0.9, num_bins), true) },
+                    { opType.Sharpness, (torch.linspace(0.0, 0.9, num_bins), true) },
+                    { opType.Posterize, (8 - (torch.arange(num_bins) / ((num_bins - 1) / 4)).round().@int(), false)},
+                    { opType.Solarize, (torch.linspace(255.0, 0.0, num_bins), false) },
+                    { opType.AutoContrast, (torch.tensor(0.0), false) },
+                    { opType.Equalize, (torch.tensor(0.0), false) }
                 };
             }
 
