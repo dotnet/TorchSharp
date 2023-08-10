@@ -9,80 +9,82 @@ namespace TorchSharp
 {
     public static partial class torchvision
     {
-        private static Tensor apply_op(
-                                Tensor img,
-                                string op_name,
-                                float magnitude,
-                                InterpolationMode interpolation,
-                                IList<float>? fill)
+        internal abstract class AutoAugmentBase
         {
-            if (op_name == "ShearX") {
-                img = F.affine(
-                    img,
-                    angle: 0.0f,
-                    translate: new[] { 0, 0 },
-                    scale: 1.0f,
-                    shear: new[] { (float)((180.0f / Math.PI) * Math.Atan(magnitude)), 0.0f },
-                    interpolation: interpolation,
-                    fill: fill?.FirstOrDefault());
-            } else if (op_name == "ShearY") {
-                img = F.affine(
-                    img,
-                    angle: 0.0f,
-                    translate: new[] { 0, 0 },
-                    scale: 1.0f,
-                    shear: new[] { 0.0f, (float)((180.0f / Math.PI) * Math.Atan(magnitude)) },
-                    interpolation: interpolation,
-                    fill: fill?.FirstOrDefault());
-            } else if (op_name == "TranslateX") {
-                img = F.affine(
-                    img,
-                    angle: 0.0f,
-                    translate: new[] { (int)(magnitude), 0 },
-                    scale: 1.0f,
-                    interpolation: interpolation,
-                    shear: new[] { 0.0f, 0.0f },
-                    fill: fill?.FirstOrDefault());
-            } else if (op_name == "TranslateY") {
-                img = F.affine(
-                    img,
-                    angle: 0.0f,
-                    translate: new[] { 0, (int)(magnitude) },
-                    scale: 1.0f,
-                    interpolation: interpolation,
-                    shear: new[] { 0.0f, 0.0f },
-                    fill: fill?.FirstOrDefault());
-            } else if (op_name == "Rotate") {
-                img = F.rotate(img, magnitude, interpolation, fill: fill);
-            } else if (op_name == "Brightness") {
-                img = F.adjust_brightness(img, 1.0 + magnitude);
-            } else if (op_name == "Color") {
-                img = F.adjust_saturation(img, 1.0 + magnitude);
-            } else if (op_name == "Contrast") {
-                img = F.adjust_contrast(img, 1.0 + magnitude);
-            } else if (op_name == "Sharpness") {
-                img = F.adjust_sharpness(img, 1.0 + magnitude);
-            } else if (op_name == "Posterize") {
-                img = F.posterize(img, (int)magnitude);
-            } else if (op_name == "Solarize") {
-                img = F.solarize(img, magnitude);
-            } else if (op_name == "AutoContrast") {
-                img = F.autocontrast(img);
-            } else if (op_name == "Equalize") {
-                img = F.equalize(img);
-            } else if (op_name == "Invert") {
-                img = F.invert(img);
-            } else if (op_name == "Identity") {
-                // Pass
-            } else {
-                throw new ArgumentException($"The provided operator {op_name} is not recognized.");
-            }
+            protected static Tensor apply_op(
+                                    Tensor img,
+                                    string op_name,
+                                    float magnitude,
+                                    InterpolationMode interpolation,
+                                    IList<float>? fill)
+            {
+                if (op_name == "ShearX") {
+                    img = F.affine(
+                        img,
+                        angle: 0.0f,
+                        translate: new[] { 0, 0 },
+                        scale: 1.0f,
+                        shear: new[] { (float)((180.0f / Math.PI) * Math.Atan(magnitude)), 0.0f },
+                        interpolation: interpolation,
+                        fill: fill?.FirstOrDefault());
+                } else if (op_name == "ShearY") {
+                    img = F.affine(
+                        img,
+                        angle: 0.0f,
+                        translate: new[] { 0, 0 },
+                        scale: 1.0f,
+                        shear: new[] { 0.0f, (float)((180.0f / Math.PI) * Math.Atan(magnitude)) },
+                        interpolation: interpolation,
+                        fill: fill?.FirstOrDefault());
+                } else if (op_name == "TranslateX") {
+                    img = F.affine(
+                        img,
+                        angle: 0.0f,
+                        translate: new[] { (int)(magnitude), 0 },
+                        scale: 1.0f,
+                        interpolation: interpolation,
+                        shear: new[] { 0.0f, 0.0f },
+                        fill: fill?.FirstOrDefault());
+                } else if (op_name == "TranslateY") {
+                    img = F.affine(
+                        img,
+                        angle: 0.0f,
+                        translate: new[] { 0, (int)(magnitude) },
+                        scale: 1.0f,
+                        interpolation: interpolation,
+                        shear: new[] { 0.0f, 0.0f },
+                        fill: fill?.FirstOrDefault());
+                } else if (op_name == "Rotate") {
+                    img = F.rotate(img, magnitude, interpolation, fill: fill);
+                } else if (op_name == "Brightness") {
+                    img = F.adjust_brightness(img, 1.0 + magnitude);
+                } else if (op_name == "Color") {
+                    img = F.adjust_saturation(img, 1.0 + magnitude);
+                } else if (op_name == "Contrast") {
+                    img = F.adjust_contrast(img, 1.0 + magnitude);
+                } else if (op_name == "Sharpness") {
+                    img = F.adjust_sharpness(img, 1.0 + magnitude);
+                } else if (op_name == "Posterize") {
+                    img = F.posterize(img, (int)magnitude);
+                } else if (op_name == "Solarize") {
+                    img = F.solarize(img, magnitude);
+                } else if (op_name == "AutoContrast") {
+                    img = F.autocontrast(img);
+                } else if (op_name == "Equalize") {
+                    img = F.equalize(img);
+                } else if (op_name == "Invert") {
+                    img = F.invert(img);
+                } else if (op_name == "Identity") {
+                    // Pass
+                } else {
+                    throw new ArgumentException($"The provided operator {op_name} is not recognized.");
+                }
 
-            return img;
+                return img;
+            }
         }
 
-
-        internal class RandAugment : ITransform
+        internal class RandAugment : AutoAugmentBase, ITransform
         {
             public RandAugment(
                 int num_ops = 2,
