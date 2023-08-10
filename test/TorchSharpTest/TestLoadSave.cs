@@ -14,10 +14,17 @@ namespace TorchSharp
     [Collection("Sequential")]
     public class TestLoadSave
     {
+        private static Random rand = new Random();
+
+        static string RandomFileName(string extension)
+        {
+            return $"_STR{rand.Next()}.{extension}";
+        }
+
         [Fact]
         public void TestSaveLoadLinear1()
         {
-            var location = "TestSaveLoadLinear1.ts";
+            var location = RandomFileName("ts");
 
             if (File.Exists(location)) File.Delete(location);
 
@@ -46,7 +53,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadLinear2()
         {
-            var location = "TestSaveLoadLinear2.ts";
+            var location = RandomFileName("ts");
 
             if (File.Exists(location)) File.Delete(location);
             try {
@@ -69,7 +76,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadLinear3()
         {
-            var location = "TestSaveLoadLinear3.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             try {
@@ -93,7 +100,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadConv2D()
         {
-            var location = "TestSaveLoadConv2D.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
             try {
                 using var conv = Conv2d(100, 10, 5);
@@ -127,7 +134,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadConv2DStream()
         {
-            var location = "TestSaveLoadConv2D.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
             try {
                 using var conv = Conv2d(100, 10, 5);
@@ -154,7 +161,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadSequential()
         {
-            var location = "TestSaveLoadSequential.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
             try {
                 using var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
@@ -173,7 +180,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadSequentialStream()
         {
-            var location = "TestSaveLoadSequential.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
             try {
                 using var conv = Sequential(Conv2d(100, 10, 5), Linear(100, 10, true));
@@ -265,7 +272,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadCustomWithParameters()
         {
-            var location = "TestSaveLoadCustomWithParameters.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             try {
@@ -311,7 +318,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadError_1()
         {
-            var location = "TestSaveLoadError_1.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             try {
@@ -348,7 +355,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadError_3()
         {
-            var location = "TestSaveLoadError_3.ts";
+            var location = RandomFileName("ts");
             // Submodule name mismatch
             if (File.Exists(location)) File.Delete(location);
             try {
@@ -387,7 +394,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadGruOnCPU()
         {
-            var location = "TestSaveLoadGruOnCPU.ts";
+            var location = RandomFileName("ts");
             // Works on CPU
             if (File.Exists(location)) File.Delete(location);
             try {
@@ -408,7 +415,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveLoadGruOnCUDA()
         {
-            var location = "TestSaveLoadGruOnCUDA.ts";
+            var location = RandomFileName("ts");
             if (torch.cuda.is_available()) {
 
                 // Fails on CUDA
@@ -560,7 +567,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveRpropFile()
         {
-            var location = ".TestSaveRpropFile1.ts";
+            var location = RandomFileName("ts");
 
             if (File.Exists(location)) File.Delete(location);
             var l1 = Linear(10, 10, true);
@@ -656,7 +663,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveSGDFile()
         {
-            var location = ".TestSaveSGDFile.ts";
+            var location = RandomFileName("ts");
 
             if (File.Exists(location)) File.Delete(location);
             var l1 = Linear(10, 10, true);
@@ -708,7 +715,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveSGDFile2()
         {
-            var location = ".TestSaveSGDFile2.ts";
+            var location = RandomFileName("ts");
 
             if (File.Exists(location)) File.Delete(location);
             var l1 = Linear(10, 10, true);
@@ -778,7 +785,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveSGDFile3()
         {
-            var location = ".TestSaveSGDFile3.ts";
+            var location = RandomFileName("ts");
 
             if (File.Exists(location)) File.Delete(location);
             var l1 = Linear(10, 10, true);
@@ -892,7 +899,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveASGDFile()
         {
-            var location = ".TestSaveASGDFile.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -989,7 +996,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveRMSPropFile()
         {
-            var location = ".TestSaveRMSPropFile.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1086,7 +1093,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveRAdamFile()
         {
-            var location = ".TestSaveRAdamFile.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1184,7 +1191,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveNAdamFile()
         {
-            var location = ".TestSaveNAdamFile.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1284,7 +1291,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveAdamFile()
         {
-            var location = ".TestSaveAdamFile.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1339,7 +1346,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveAdamFile2()
         {
-            var location = ".TestSaveAdamFile2.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1394,7 +1401,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveAdamFile3()
         {
-            var location = ".TestSaveAdamFile3.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1495,7 +1502,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveAdamWFile()
         {
-            var location = ".TestSaveAdamWFile.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1550,7 +1557,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveAdamWFile2()
         {
-            var location = ".TestSaveAdamWFile2.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1605,7 +1612,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveAdamWFile3()
         {
-            var location = ".TestSaveAdamWFile3.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1704,7 +1711,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveAdamaxFile()
         {
-            var location = ".TestSaveAdamaxFile.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1801,7 +1808,7 @@ namespace TorchSharp
         [Fact(Skip = "Often takes a very long time. No idea why.")]
         public void TestSaveAdagradFile()
         {
-            var location = ".TestSaveAdagradFile.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1897,7 +1904,7 @@ namespace TorchSharp
         [Fact]
         public void TestSaveAdadeltaFile()
         {
-            var location = ".TestSaveAdadeltaFile.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
@@ -1950,7 +1957,7 @@ namespace TorchSharp
         public void TestMisMatchedFile()
         {
 
-            var location = ".TestMisMatchedFile.ts";
+            var location = RandomFileName("ts");
             if (File.Exists(location)) File.Delete(location);
 
             var l1 = Linear(10, 10, true);
