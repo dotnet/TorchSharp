@@ -121,11 +121,26 @@ namespace TorchSharp
                 double pad_value = 0.0f,
                 Imager imager = null)
             {
+                using var filestream = new FileStream(filename, FileMode.OpenOrCreate);
+                save_image(tensor, filestream, format, nrow, padding, normalize, value_range, scale_each, pad_value, imager);
+            }
+
+            public static void save_image(
+                Tensor tensor,
+                Stream filestream,
+                ImageFormat format,
+                long nrow = 8,
+                int padding = 2,
+                bool normalize = false,
+                (double low, double high)? value_range = null,
+                bool scale_each = false,
+                double pad_value = 0.0f,
+                Imager imager = null)
+            {
                 var grid = make_grid(tensor, nrow, padding, normalize, value_range, scale_each, pad_value);
                 // Add 0.5 after unnormalizing to [0, 255] to round to nearest integer
                 var narr = grid.mul(255).add_(0.5).clamp_(0, 255).to(uint8, CPU);
-                using (var filestream = new FileStream(filename, FileMode.OpenOrCreate))
-                    (imager ?? DefaultImager).EncodeImage(narr, format, filestream);
+                (imager ?? DefaultImager).EncodeImage(narr, format, filestream);
             }
         }
     }
