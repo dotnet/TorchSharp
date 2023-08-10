@@ -137,9 +137,9 @@ namespace TorchSharp
                 double pad_value = 0.0f,
                 Imager imager = null)
             {
-                var grid = make_grid(tensor, nrow, padding, normalize, value_range, scale_each, pad_value);
+                using var grid = make_grid(tensor, nrow, padding, normalize, value_range, scale_each, pad_value);
                 // Add 0.5 after unnormalizing to [0, 255] to round to nearest integer
-                var narr = grid.mul(255).add_(0.5).clamp_(0, 255).to(uint8, CPU);
+                using var narr = grid.mul_(255).add_(0.5).clamp_(0, 255).to(uint8, CPU);
                 (imager ?? DefaultImager).EncodeImage(narr, format, filestream);
             }
         }
