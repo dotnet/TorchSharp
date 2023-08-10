@@ -33,13 +33,13 @@ jobs:
       displayName: 'Use .NET Core sdk'
       inputs:
         packageType: sdk
-        version: 6.0.402
+        version: 6.x
         installationPath: $(Agent.ToolsDirectory)/dotnet
     - script: $(_prepScript)
       displayName: Install build dependencies
-    - script: $(_buildScript) $(_configuration)  
+    - script: $(_buildScript) $(_configuration)
       displayName: Build
-    - script: $(_testScript) $(_configuration) 
+    - script: $(_testScript) $(_configuration)
       displayName: Run Tests
     - task: PublishTestResults@2
       displayName: Publish Test Results
