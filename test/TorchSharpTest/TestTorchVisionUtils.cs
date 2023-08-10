@@ -32,6 +32,14 @@ namespace TorchSharp
             using var image = torch.tensor(new[,] { { 1.0f, 0.0f }, { 0.0f, 1.0f } });
             using var result = torchvision.utils.make_grid(image);
             Assert.Equal(new long[] { 3, 2, 2 }, result.shape);
+
+            using var expected = torch.tensor(new[, ,] {
+                { { 1.0f, 0.0f }, { 0.0f, 1.0f } },
+                { { 1.0f, 0.0f }, { 0.0f, 1.0f } },
+                { { 1.0f, 0.0f }, { 0.0f, 1.0f } }
+            });
+
+            Assert.Equal(expected, result);
         }
 
         [Fact]
@@ -44,6 +52,8 @@ namespace TorchSharp
             });
             using var result = torchvision.utils.make_grid(image);
             Assert.Equal(new long[] { 3, 2, 2 }, result.shape);
+
+            Assert.Equal(image, result);
         }
 
         [Fact]
@@ -62,6 +72,14 @@ namespace TorchSharp
             });
             using var result = torchvision.utils.make_grid(image, padding: 0);
             Assert.Equal(new long[] { 3, 2, 4 }, result.shape);
+
+            using var expected = torch.tensor(new[, ,] {
+                { { 1.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+                { { 1.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+                { { 1.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
+            });
+
+            Assert.Equal(expected, result);
         }
     }
 }
