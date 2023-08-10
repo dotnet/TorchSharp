@@ -5,7 +5,7 @@ namespace TorchSharp
 {
     public class TestTorchVisionUtils
     {
-        [Fact(Skip = "Intermittent fail")]
+        [Fact]
         public void Save_Image_TestMemoryUsage()
         {
             var imager = new torchvision.io.SkiaImager();
