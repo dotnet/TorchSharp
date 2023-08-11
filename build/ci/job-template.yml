@@ -45,7 +45,8 @@ jobs:
       displayName: Show volume
       condition: succeededOrFailed()
       inputs:
-        script: Get-Volume
+        targetType: 'inline'
+        script: 'Get-Volume'
     - task: PublishTestResults@2
       displayName: Publish Test Results
       condition: succeededOrFailed()
