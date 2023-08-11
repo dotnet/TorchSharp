@@ -41,6 +41,10 @@ jobs:
       displayName: Build
     - script: $(_testScript) $(_configuration)
       displayName: Run Tests
+    - task: PowerShell@2
+      displayName: Show volume
+      inputs:
+        script: Get-Volume
     - task: PublishTestResults@2
       displayName: Publish Test Results
       condition: succeededOrFailed()
