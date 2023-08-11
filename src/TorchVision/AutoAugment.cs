@@ -166,6 +166,20 @@ namespace TorchSharp
 
         public static partial class transforms
         {
+            /// <summary>
+            /// RandAugment data augmentation method based on
+            /// "RandAugment: Practical automated data augmentation with a reduced search space"
+            /// <https://arxiv.org/abs/1909.13719>.
+            /// The image is expected to be a torch Tensor, it should be of type torch.uint8, and it is expected
+            /// to have [..., 1 or 3, H, W] shape, where ... means an arbitrary number of leading dimensions.
+            /// </summary>
+            /// <param name="num_ops">Number of augmentation transformations to apply sequentially. Default: 2</param>
+            /// <param name="magnitude">Magnitude for all the transformations. Default: 9</param>
+            /// <param name="num_magnitude_bins">The number of different magnitude values. Default: 31</param>
+            /// <param name="interpolation">Desired interpolation enum defined by
+            /// torchvision.transforms.InterpolationMode. Default: InterpolationMode.NEAREST.</param>
+            /// <param name="fill">Pixel fill value for the area outside the transformed
+            /// image. If given a number, the value is used for all bands respectively. Default: null</param>
             static public ITransform RandAugment(
                 int num_ops = 2,
                 int magnitude = 9,
