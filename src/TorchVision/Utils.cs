@@ -10,6 +10,22 @@ namespace TorchSharp
     {
         public static class utils
         {
+            /// <summary>
+            /// Make a grid of images.
+            /// </summary>
+            /// <param name="tensors">A list of images all of the same size.</param>
+            /// <param name="nrow">Number of images displayed in each row of the grid.
+            /// The final grid size is (B / nrow, nrow). Default: 8.</param>
+            /// <param name="padding">Amount of padding. Default: 2.</param>
+            /// <param name="normalize">If true, shift the image to the range (0, 1),
+            /// by the min and max values specified by value_range. Default: false.</param>
+            /// <param name="value_range">Tuple (min, max) where min and max are numbers,
+            /// then these numbers are used to normalize the image. By default, min and max
+            /// are computed from the tensor.</param>
+            /// <param name="scale_each">If true, scale each image in the batch of
+            /// images separately rather than the (min, max) over all images. Default: false.</param>
+            /// <param name="pad_value">Value for the padded pixels. Default: 0.</param>
+            /// <returns>The tensor containing grid of images.</returns>
             public static Tensor make_grid(
                 IEnumerable<Tensor> tensors,
                 long nrow = 8,
@@ -22,6 +38,22 @@ namespace TorchSharp
                 return make_grid(torch.stack(tensors, dim: 0), nrow, padding, normalize, value_range, scale_each, pad_value);
             }
 
+            /// <summary>
+            /// Make a grid of images.
+            /// </summary>
+            /// <param name="tensor">4D mini-batch Tensor of shape (B x C x H x W).</param>
+            /// <param name="nrow">Number of images displayed in each row of the grid.
+            /// The final grid size is (B / nrow, nrow). Default: 8.</param>
+            /// <param name="padding">Amount of padding. Default: 2.</param>
+            /// <param name="normalize">If true, shift the image to the range (0, 1),
+            /// by the min and max values specified by value_range. Default: false.</param>
+            /// <param name="value_range">Tuple (min, max) where min and max are numbers,
+            /// then these numbers are used to normalize the image. By default, min and max
+            /// are computed from the tensor.</param>
+            /// <param name="scale_each">If true, scale each image in the batch of
+            /// images separately rather than the (min, max) over all images. Default: false.</param>
+            /// <param name="pad_value">Value for the padded pixels. Default: 0.</param>
+            /// <returns>The tensor containing grid of images.</returns>
             public static Tensor make_grid(
                 Tensor tensor,
                 long nrow = 8,
@@ -114,6 +146,26 @@ namespace TorchSharp
                 return grid.MoveToOuterDisposeScope();
             }
 
+            /// <summary>
+            /// Save a given Tensor into an image file.
+            /// </summary>
+            /// <param name="tensor">Image to be saved. If given a mini-batch tensor,
+            /// saves the tensor as a grid of images by calling make_grid.</param>
+            /// <param name="filename">A file name</param>
+            /// <param name="format">The format to use is not determined from the
+            /// filename extension this parameter should always be used.</param>
+            /// <param name="nrow">Number of images displayed in each row of the grid.
+            /// The final grid size is (B / nrow, nrow). Default: 8.</param>
+            /// <param name="padding">Amount of padding. Default: 2.</param>
+            /// <param name="normalize">If true, shift the image to the range (0, 1),
+            /// by the min and max values specified by value_range. Default: false.</param>
+            /// <param name="value_range">Tuple (min, max) where min and max are numbers,
+            /// then these numbers are used to normalize the image. By default, min and max
+            /// are computed from the tensor.</param>
+            /// <param name="scale_each">If true, scale each image in the batch of
+            /// images separately rather than the (min, max) over all images. Default: false.</param>
+            /// <param name="pad_value">Value for the padded pixels. Default: 0.</param>
+            /// <param name="imager">Imager to use instead of DefaultImager. Default: null</param>
             public static void save_image(
                 Tensor tensor,
                 string filename,
@@ -130,6 +182,26 @@ namespace TorchSharp
                 save_image(tensor, filestream, format, nrow, padding, normalize, value_range, scale_each, pad_value, imager);
             }
 
+            /// <summary>
+            /// Save a given Tensor into an image file.
+            /// </summary>
+            /// <param name="tensor">Image to be saved. If given a mini-batch tensor,
+            /// saves the tensor as a grid of images by calling make_grid.</param>
+            /// <param name="filestream">A file stream</param>
+            /// <param name="format">The format to use is not determined from the
+            /// filename extension this parameter should always be used.</param>
+            /// <param name="nrow">Number of images displayed in each row of the grid.
+            /// The final grid size is (B / nrow, nrow). Default: 8.</param>
+            /// <param name="padding">Amount of padding. Default: 2.</param>
+            /// <param name="normalize">If true, shift the image to the range (0, 1),
+            /// by the min and max values specified by value_range. Default: false.</param>
+            /// <param name="value_range">Tuple (min, max) where min and max are numbers,
+            /// then these numbers are used to normalize the image. By default, min and max
+            /// are computed from the tensor.</param>
+            /// <param name="scale_each">If true, scale each image in the batch of
+            /// images separately rather than the (min, max) over all images. Default: false.</param>
+            /// <param name="pad_value">Value for the padded pixels. Default: 0.</param>
+            /// <param name="imager">Imager to use instead of DefaultImager. Default: null</param>
             public static void save_image(
                 Tensor tensor,
                 Stream filestream,
