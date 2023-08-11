@@ -43,6 +43,15 @@ namespace TorchSharp
                             angle: 0.0f,
                             translate: new[] { 0, 0 },
                             scale: 1.0f,
+                            shear: new[] { (float)((180.0f / Math.PI) * Math.Atan(magnitude)), 0.0f },
+                            interpolation: interpolation,
+                            fill: fill?.FirstOrDefault());
+                    case opType.ShearY:
+                        return F.affine(
+                            img,
+                            angle: 0.0f,
+                            translate: new[] { 0, 0 },
+                            scale: 1.0f,
                             shear: new[] { 0.0f, (float)((180.0f / Math.PI) * Math.Atan(magnitude)) },
                             interpolation: interpolation,
                             fill: fill?.FirstOrDefault());
