@@ -119,6 +119,7 @@ namespace TorchSharp
 
             public Tensor call(Tensor img)
             {
+                using var _ = torch.NewDisposeScope();
                 var cDim = img.Dimensions - 3;
                 var height = img.shape[cDim + 1];
                 var width = img.shape[cDim + 2];
@@ -134,7 +135,7 @@ namespace TorchSharp
 
                     img = apply_op(img, op_name, magnitude, interpolation, this.fill);
                 }
-                return img;
+                return img.MoveToOuterDisposeScope();
             }
 
             private Dictionary<opType, (Tensor, bool)> augmentation_space(int num_bins, (long height, long width) image_size)
