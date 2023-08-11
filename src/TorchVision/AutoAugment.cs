@@ -32,7 +32,7 @@ namespace TorchSharp
             protected static Tensor apply_op(
                                     Tensor img,
                                     opType op_name,
-                                    float magnitude,
+                                    double magnitude,
                                     InterpolationMode interpolation,
                                     IList<float>? fill)
             {
@@ -43,7 +43,7 @@ namespace TorchSharp
                             angle: 0.0f,
                             translate: new[] { 0, 0 },
                             scale: 1.0f,
-                            shear: new[] { (float)((180.0f / Math.PI) * Math.Atan(magnitude)), 0.0f },
+                            shear: new[] { (float)((180.0 / Math.PI) * Math.Atan(magnitude)), 0.0f },
                             interpolation: interpolation,
                             fill: fill?.FirstOrDefault());
                     case opType.ShearY:
@@ -52,7 +52,7 @@ namespace TorchSharp
                             angle: 0.0f,
                             translate: new[] { 0, 0 },
                             scale: 1.0f,
-                            shear: new[] { 0.0f, (float)((180.0f / Math.PI) * Math.Atan(magnitude)) },
+                            shear: new[] { 0.0f, (float)((180.0 / Math.PI) * Math.Atan(magnitude)) },
                             interpolation: interpolation,
                             fill: fill?.FirstOrDefault());
                     case opType.TranslateX:
@@ -74,7 +74,7 @@ namespace TorchSharp
                             shear: new[] { 0.0f, 0.0f },
                             fill: fill?.FirstOrDefault());
                     case opType.Rotate:
-                        return F.rotate(img, magnitude, interpolation, fill: fill);
+                        return F.rotate(img, (float)magnitude, interpolation, fill: fill);
                     case opType.Brightness:
                         return F.adjust_brightness(img, 1.0 + magnitude);
                     case opType.Color:
@@ -119,7 +119,6 @@ namespace TorchSharp
 
             public Tensor call(Tensor img)
             {
-                var fill = this.fill;
                 var cDim = img.Dimensions - 3;
                 var height = img.shape[cDim + 1];
                 var width = img.shape[cDim + 2];
@@ -128,12 +127,12 @@ namespace TorchSharp
                     var op_index = torch.randint(op_meta.Count, new[] { 1 }).ToInt32();
                     var op_name = op_meta.Keys.ToList()[op_index];
                     var (magnitudes, signed) = op_meta[op_name];
-                    var magnitude = magnitudes.Dimensions > 0 ? magnitudes[this.magnitude] : 0.0f;
+                    var magnitude = magnitudes.Dimensions > 0 ? magnitudes[this.magnitude].ToDouble() : 0.0;
 
                     if (signed && torch.randint(2, new[] { 1 }).ToBoolean())
                         magnitude *= -1.0;
 
-                    img = apply_op(img, op_name, magnitude.ToSingle(), interpolation, fill);
+                    img = apply_op(img, op_name, magnitude, interpolation, this.fill);
                 }
                 return img;
             }
