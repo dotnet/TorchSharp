@@ -169,7 +169,7 @@ namespace TorchSharp
             /// <summary>
             /// RandAugment data augmentation method based on
             /// "RandAugment: Practical automated data augmentation with a reduced search space"
-            /// <https://arxiv.org/abs/1909.13719>.
+            /// https://arxiv.org/abs/1909.13719
             /// The image is expected to be a torch Tensor, it should be of type torch.uint8, and it is expected
             /// to have [..., 1 or 3, H, W] shape, where ... means an arbitrary number of leading dimensions.
             /// </summary>
