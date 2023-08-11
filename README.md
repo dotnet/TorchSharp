@@ -126,6 +126,10 @@ For more information see the [.NET Foundation Code of Conduct](https://dotnetfou
 
 See [DEVGUIDE.md](DEVGUIDE.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
+<a href="https://github.com/dotnet/TorchSharp/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=dotnet/TorchSharp" />
+</a>
+
 # Uses
 
 [DiffSharp](https://github.com/DiffSharp/DiffSharp/) also uses this
