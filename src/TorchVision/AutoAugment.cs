@@ -124,12 +124,12 @@ namespace TorchSharp
                 var width = img.shape[cDim + 2];
                 var op_meta = augmentation_space(num_magnitude_bins, (height, width));
                 for (int i = 0; i < num_ops; ++i) {
-                    var op_index = torch.randint(op_meta.Count, new[] { 1 }).ToInt32();
+                    var op_index = torch.randint(0, op_meta.Count, 1).ToInt32();
                     var op_name = op_meta.Keys.ToList()[op_index];
                     var (magnitudes, signed) = op_meta[op_name];
                     var magnitude = magnitudes.Dimensions > 0 ? magnitudes[this.magnitude].ToDouble() : 0.0;
 
-                    if (signed && torch.randint(2, new[] { 1 }).ToBoolean())
+                    if (signed && torch.randint(0, 2, 1).ToBoolean())
                         magnitude *= -1.0;
 
                     img = apply_op(img, op_name, magnitude, interpolation, this.fill);
