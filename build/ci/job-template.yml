@@ -43,6 +43,7 @@ jobs:
       displayName: Run Tests
     - task: PowerShell@2
       displayName: Show volume
+      condition: succeededOrFailed()
       inputs:
         script: Get-Volume
     - task: PublishTestResults@2
