@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Xunit;
 
@@ -5,14 +6,37 @@ namespace TorchSharp
 {
     public class TestTorchVisionUtils
     {
+        private class MockImager : torchvision.io.Imager
+        {
+#region " Mock implementation "
+            public override torch.Tensor DecodeImage(Stream stream, torchvision.io.ImageReadMode mode = torchvision.io.ImageReadMode.UNCHANGED)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override torch.Tensor DecodeImage(byte[] data, torchvision.io.ImageReadMode mode = torchvision.io.ImageReadMode.UNCHANGED)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void EncodeImage(torch.Tensor image, torchvision.ImageFormat format, Stream stream)
+            {
+            }
+
+            public override byte[] EncodeImage(torch.Tensor image, torchvision.ImageFormat format)
+            {
+                throw new NotImplementedException();
+            }
+#endregion
+        }
+
         [Fact]
         public void Save_Image_TestMemoryUsage()
         {
-            var imager = new torchvision.io.SkiaImager();
-            using var ms = new MemoryStream();
+            var imager = new MockImager();
             using var image = torch.randn(32, 3, 32, 32);
             using (var d = torch.NewDisposeScope()) {
-                torchvision.utils.save_image(image, ms, torchvision.ImageFormat.Png, imager: imager);
+                torchvision.utils.save_image(image, (Stream)null, torchvision.ImageFormat.Png, imager: imager);
                 Assert.Equal(0, d.DisposablesCount);
             }
         }
