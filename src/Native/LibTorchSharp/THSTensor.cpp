@@ -381,17 +381,17 @@ Tensor THSTensor_cumsum(const Tensor tensor, const int64_t dim, bool has_type, c
 
 void* THSTensor_data(const Tensor tensor)
 {
-    CATCH_RETURN(void*, NULL, tensor->data_ptr());
+    CATCH_RETURN(void*, nullptr, tensor->data_ptr());
 }
 
 float THSTensor_data_idx_float16(const Tensor tensor, const int64_t i)
 {
-    CATCH_RETURN(float, NULL, (float)(tensor->data_ptr<c10::Half>())[i]);
+    CATCH_RETURN(float, 0.0f, (float)(tensor->data_ptr<c10::Half>())[i]);
 }
 
 float THSTensor_data_idx_bfloat16(const Tensor tensor, const int64_t i)
 {
-    CATCH_RETURN(float, NULL, (float)(tensor->data_ptr<c10::BFloat16>())[i]);
+    CATCH_RETURN(float, 0.0f, (float)(tensor->data_ptr<c10::BFloat16>())[i]);
 }
 
 const char* THSTensor_device_str(const Tensor tensor)
