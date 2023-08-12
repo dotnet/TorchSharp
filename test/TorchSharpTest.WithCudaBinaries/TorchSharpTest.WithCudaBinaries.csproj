@@ -37,6 +37,7 @@
     <Compile Include="..\TorchSharpTest\TestTorchTensor.cs" Link="TestTorchTensor.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchTensorBugs.cs" Link="TestTorchTensorBugs.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchVision.cs" Link="TestTorchVision.cs" />
+    <Compile Include="..\TorchSharpTest\TestTorchVisionUtils.cs" Link="TestTorchVisionUtils.cs" />
     <Compile Include="..\TorchSharpTest\TestTorchVisionOps.cs" Link="TestTorchVisionOps.cs" />
     <Compile Include="..\TorchSharpTest\TestTraining.cs" Link="TestTraining.cs" />
     <Compile Include="..\TorchSharpTest\TestDisposeScopes.cs" Link="TestDisposeScopes.cs" />
