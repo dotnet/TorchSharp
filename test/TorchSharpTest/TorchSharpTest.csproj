@@ -112,6 +112,7 @@
   <ItemGroup>
       <AssemblyAttribute Include="Xunit.CollectionBehavior">
           <_Parameter1>DisableTestParallelization=true</_Parameter1>
+          <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
       </AssemblyAttribute>
   </ItemGroup>
 
