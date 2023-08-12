@@ -101,6 +101,8 @@ namespace TorchSharp
             }
         }
 
+        /* Original implementation from:
+         * https://pytorch.org/vision/main/_modules/torchvision/transforms/autoaugment.html#RandAugment */
         internal class RandAugment : AutoAugmentBase, ITransform
         {
             public RandAugment(
