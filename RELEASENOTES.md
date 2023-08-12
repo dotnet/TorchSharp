@@ -15,6 +15,9 @@ torch.randperm accepts 'out' argument<br/>
 Adding PReLU module.<br/>
 Adding scaled_dot_product_attention.<br/>
 The constructor for TensorAccessor was made `internal`<br/>
+torchvision.utils.save_image implemented<br/>
+torchvision.utils.make_grid implemented<br/>
+torchvision.transforms.RandAugment implemented<br/>
 
 __Bug Fixes__:
 
