@@ -110,6 +110,12 @@
   </ItemGroup>
 
   <ItemGroup>
+      <AssemblyAttribute Include="Xunit.CollectionBehavior">
+          <_Parameter1>DisableTestParallelization=true</_Parameter1>
+      </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="3.2.0" Condition="'$(TargetFramework)' != 'net472'" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Numerics.Tensors" Version="7.0.0-rtm.22518.5" />

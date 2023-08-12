@@ -55,6 +55,12 @@
   </ItemGroup>
 
   <ItemGroup>
+      <AssemblyAttribute Include="Xunit.CollectionBehavior">
+          <_Parameter1>DisableTestParallelization=true</_Parameter1>
+      </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="..\TorchSharpTest\linrelu.script.dat" Link="linrelu.script.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
