@@ -46,7 +46,7 @@ jobs:
       condition: succeededOrFailed()
       inputs:
         targetType: 'inline'
-        script: 'Get-Volume'
+        script: 'df -h'
     - task: PublishTestResults@2
       displayName: Publish Test Results
       condition: succeededOrFailed()
