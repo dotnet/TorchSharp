@@ -221,7 +221,7 @@ NNModule THSNN_custom_module(const char* name,
 
     // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
     // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
+    if (outAsAnyModule != nullptr)
     {
         auto modShared = new std::shared_ptr<CustomModule>(mod);
         auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<CustomModule>(*modShared));

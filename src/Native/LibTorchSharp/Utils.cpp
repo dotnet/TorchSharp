@@ -10,7 +10,7 @@
 #define TP_CoTaskMemAlloc(t) malloc(t)
 #endif
 
-thread_local char * torch_last_err = NULL;
+thread_local char * torch_last_err = nullptr;
 
 const char * make_sharable_string(const std::string str)
 {

@@ -458,7 +458,7 @@ NNModule THSNN_Embedding_from_pretrained(const Tensor embeddings, const bool fre
 
         // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
         // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
+        if (outAsAnyModule != nullptr)
         {
             auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::EmbeddingImpl>(*mod));
             *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
@@ -545,7 +545,7 @@ NNModule THSNN_EmbeddingBag_from_pretrained(const Tensor embeddings, const bool 
 
         // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
         // a Module can only be boxed to AnyModule at the point its static type is known).
-        if (outAsAnyModule != NULL)
+        if (outAsAnyModule != nullptr)
         {
             auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<torch::nn::EmbeddingBagImpl>(*mod));
             *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
