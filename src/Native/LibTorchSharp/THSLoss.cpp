@@ -20,7 +20,7 @@ Tensor THSNN_binary_cross_entropy(const Tensor input, const Tensor target, const
     CATCH_RETURN_Tensor(
         auto opts = torch::nn::functional::BinaryCrossEntropyFuncOptions();
         ApplyReduction(opts, reduction);
-        if (weight != NULL)
+        if (weight != nullptr)
             opts = opts.weight(*weight);
         res = ResultTensor(torch::nn::functional::binary_cross_entropy(*input, *target, opts));
     )
@@ -56,7 +56,7 @@ Tensor THSNN_cross_entropy(const Tensor input, const Tensor target, const Tensor
         opts.label_smoothing(smoothing);
         if (has_ii)
             opts = opts.ignore_index(ignore_index);
-        if (weight != NULL)
+        if (weight != nullptr)
             opts = opts.weight(*weight);
         res = ResultTensor(torch::nn::functional::cross_entropy(*input, *target, opts));
     )
@@ -125,7 +125,7 @@ Tensor THSNN_nll_loss(const Tensor input, const Tensor target, const Tensor weig
     CATCH_RETURN_Tensor(
         auto opts = torch::nn::functional::NLLLossFuncOptions();
         ApplyReduction(opts, reduction);
-        if (weight != NULL)
+        if (weight != nullptr)
             opts = opts.weight(*weight);
 
         res = ResultTensor(torch::nn::functional::nll_loss(*input, *target, opts));
@@ -187,7 +187,7 @@ Tensor THSNN_multilabel_soft_margin_loss(const Tensor input, const Tensor target
     CATCH_RETURN_Tensor(
         auto opts = torch::nn::functional::MultilabelSoftMarginLossFuncOptions();
         ApplyReduction(opts, reduction);
-        if (weight != NULL)
+        if (weight != nullptr)
             opts = opts.weight(*weight);
 
         res = ResultTensor(torch::nn::functional::multilabel_soft_margin_loss(*input, *target, opts));
@@ -201,7 +201,7 @@ Tensor THSNN_multi_margin_loss(const Tensor input, const Tensor target, const in
         .p(p)
         .margin(margin);
         ApplyReduction(opts, reduction);
-        if (weight != NULL)
+        if (weight != nullptr)
             opts = opts.weight(*weight);
 
         res = ResultTensor(torch::nn::functional::multi_margin_loss(*input, *target, opts));
