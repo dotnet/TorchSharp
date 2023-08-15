@@ -45,16 +45,16 @@ typedef std::shared_ptr<c10::TensorType>* JITTensorType;
     return res;
 
 #define CATCH_RETURN(ty, dflt, expr) CATCH_RETURN_RES(ty, dflt, res = expr)
-#define CATCH_RETURN_NNModule(stmt) CATCH_RETURN_RES(NNModule, NULL, stmt)
-#define CATCH_RETURN_Tensor(stmt) CATCH_RETURN_RES(Tensor, NULL, stmt)
+#define CATCH_RETURN_NNModule(stmt) CATCH_RETURN_RES(NNModule, nullptr, stmt)
+#define CATCH_RETURN_Tensor(stmt) CATCH_RETURN_RES(Tensor, nullptr, stmt)
 
-// Return undefined tensors as NULL to C#
+// Return undefined tensors as nullptr to C#
 inline Tensor ResultTensor(const at::Tensor & res)
 {
     if (res.defined())
         return new torch::Tensor(res);
     else
-        return NULL;
+        return nullptr;
 }
 
 #define CATCH_TENSOR(expr) \
@@ -253,7 +253,7 @@ NNModule create_module(NNAnyModule* outAsAnyModule)
 
     // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
     // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
+    if (outAsAnyModule != nullptr)
     {
         auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<TImpl>(*mod));
         *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
@@ -269,7 +269,7 @@ NNModule create_module(const TOptions& opts, NNAnyModule* outAsAnyModule)
 
     // Keep a boxed version of the module in case we add it to a Sequential later (the C++ templating means
     // a Module can only be boxed to AnyModule at the point its static type is known).
-    if (outAsAnyModule != NULL)
+    if (outAsAnyModule != nullptr)
     {
         auto wrapped = std::make_shared<torch::nn::AnyModule>(torch::nn::ModuleHolder<TImpl>(*mod));
         *outAsAnyModule = new std::shared_ptr<torch::nn::AnyModule>(wrapped);
