@@ -14,7 +14,7 @@ namespace TorchSharp.Utils
     /// <typeparam name="T">The type of the tensor elements.</typeparam>
     public sealed class TensorAccessor<T> : IDisposable, IEnumerable<T> where T : unmanaged
     {
-        public TensorAccessor(torch.Tensor tensor)
+        internal TensorAccessor(torch.Tensor tensor)
         {
             if (tensor.device_type != DeviceType.CPU) {
                 throw new InvalidOperationException("Reading data from non-CPU memory is not supported. Move or copy the tensor to the cpu before reading.");
