@@ -31,7 +31,7 @@ namespace TorchSharp
             }
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/dotnet/TorchSharp/issues/1074")]
         public void RandAugment_TestAugment()
         {
             /* Seed 3 applies this order of transforms:
