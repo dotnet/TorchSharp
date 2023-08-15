@@ -2,6 +2,14 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.100.5
+
+__API Changes__:
+
+
+__Bug Fixes__:
+
+
 ## NuGet Version 0.100.4
 
 __Breaking Changes__:
