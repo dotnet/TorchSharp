@@ -381,17 +381,17 @@ Tensor THSTensor_cumsum(const Tensor tensor, const int64_t dim, bool has_type, c
 
 void* THSTensor_data(const Tensor tensor)
 {
-    CATCH_RETURN(void*, NULL, tensor->data_ptr());
+    CATCH_RETURN(void*, nullptr, tensor->data_ptr());
 }
 
 float THSTensor_data_idx_float16(const Tensor tensor, const int64_t i)
 {
-    CATCH_RETURN(float, NULL, (float)(tensor->data_ptr<c10::Half>())[i]);
+    CATCH_RETURN(float, 0.0f, (float)(tensor->data_ptr<c10::Half>())[i]);
 }
 
 float THSTensor_data_idx_bfloat16(const Tensor tensor, const int64_t i)
 {
-    CATCH_RETURN(float, NULL, (float)(tensor->data_ptr<c10::BFloat16>())[i]);
+    CATCH_RETURN(float, 0.0f, (float)(tensor->data_ptr<c10::BFloat16>())[i]);
 }
 
 const char* THSTensor_device_str(const Tensor tensor)
@@ -606,7 +606,7 @@ Tensor THSTensor_grad(const Tensor tensor)
     Tensor res;
     CATCH(
         torch::Tensor grad = tensor->grad();
-        res = grad.defined() ? new torch::Tensor(grad) : NULL;
+        res = grad.defined() ? new torch::Tensor(grad) : nullptr;
     );
     return res;
 }
@@ -770,8 +770,8 @@ void completeTensorIndices(const int64_t* indexStarts,
         {
             // slice
             auto start = (n == INT64_MIN + 6) ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(n - INT64_MIN / 2);
-            auto end = (indexEnds == NULL || indexEnds[i] == INT64_MIN) ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(indexEnds[i]);
-            auto step = (indexSteps == NULL || indexSteps[i] == INT64_MIN) ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(indexSteps[i]);
+            auto end = (indexEnds == nullptr || indexEnds[i] == INT64_MIN) ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(indexEnds[i]);
+            auto step = (indexSteps == nullptr || indexSteps[i] == INT64_MIN) ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(indexSteps[i]);
             at::indexing::TensorIndex idx(at::indexing::Slice(start, end, step));
             memcpy(&indicesArray[i], &idx, sizeof(at::indexing::TensorIndex));
         }
@@ -885,7 +885,7 @@ int THSTensor_is_sparse(const Tensor tensor)
 
 Scalar THSTensor_item(const Tensor tensor)
 {
-    CATCH_RETURN(Scalar, NULL, new torch::Scalar(tensor->item()));
+    CATCH_RETURN(Scalar, nullptr, new torch::Scalar(tensor->item()));
 }
 
 Tensor THSTensor_leaky_relu(const Tensor tensor, const Scalar negative_slope)

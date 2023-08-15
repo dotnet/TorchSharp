@@ -514,7 +514,7 @@ void* THSJIT_Type_cast(const JITType type)
     case c10::TypeKind::TensorType:
         return new std::shared_ptr<torch::jit::TensorType>((*type)->cast<c10::TensorType>());
     default:
-        return NULL;
+        return nullptr;
     }
 }
 
