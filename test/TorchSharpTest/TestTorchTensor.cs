@@ -5607,6 +5607,20 @@ namespace TorchSharp
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
 
+            using (var x = torch.tensor(data).expand(new long[] { 1, 1, 3 })) {
+                var z = x.squeeze(0);
+                Assert.NotSame(x, z);
+                var y = x.squeeze_(0);
+                Assert.Same(x, y);
+            }
+
+            using (var x = torch.tensor(data).expand(new long[] { 1, 1, 3 })) {
+                var z = x.squeeze();
+                Assert.NotSame(x, z);
+                var y = x.squeeze_();
+                Assert.Same(x, y);
+            }
+
             using (var res = torch.tensor(data).expand(new long[] { 1, 1, 3 }).squeeze_(0).squeeze_(0)) {
                 Assert.Equal(new long[] { 3 }, res.shape);
                 Assert.Equal(1.1f, res[0].ToSingle());

@@ -13,10 +13,10 @@ namespace TorchSharp.PInvoke
         internal static extern void THSTensor_where_list(IntPtr condition, AllocatePinnedArray allocator);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_squeeze_(IntPtr tensor, long dim);
+        internal static extern void THSTensor_squeeze_(IntPtr tensor, long dim);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_squeeze_no_dim_(IntPtr tensor);
+        internal static extern void THSTensor_squeeze_no_dim_(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_conv1d(IntPtr input, IntPtr weight, IntPtr bias,
@@ -626,13 +626,13 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_relu(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_relu_(IntPtr tensor);
+        internal static extern void THSTensor_relu_(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_relu6(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_relu6_(IntPtr tensor);
+        internal static extern void THSTensor_relu6_(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_celu(IntPtr tensor);
@@ -758,22 +758,22 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_clamp_tensor(IntPtr input, IntPtr min, IntPtr max);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_clamp_(IntPtr input, IntPtr min, IntPtr max);
+        internal static extern void THSTensor_clamp_(IntPtr input, IntPtr min, IntPtr max);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_clamp_tensor_(IntPtr input, IntPtr min, IntPtr max);
+        internal static extern void THSTensor_clamp_tensor_(IntPtr input, IntPtr min, IntPtr max);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_clamp_max(IntPtr input, IntPtr max);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_clamp_max_(IntPtr input, IntPtr max);
+        internal static extern void THSTensor_clamp_max_(IntPtr input, IntPtr max);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_clamp_min(IntPtr input, IntPtr min);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_clamp_min_(IntPtr input, IntPtr min);
+        internal static extern void THSTensor_clamp_min_(IntPtr input, IntPtr min);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_diff(IntPtr tensor, long n, long dim, IntPtr prepend, IntPtr append);
@@ -1048,7 +1048,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_sigmoid(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_sigmoid_(IntPtr tensor);
+        internal static extern void THSTensor_sigmoid_(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_std(IntPtr tensor, [MarshalAs(UnmanagedType.U1)] bool unbiased);
@@ -1741,13 +1741,13 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_floor_divide(IntPtr left, IntPtr right);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_floor_divide_(IntPtr left, IntPtr right);
+        internal static extern void THSTensor_floor_divide_(IntPtr left, IntPtr right);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_floor_divide_scalar(IntPtr left, IntPtr right);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_floor_divide_scalar_(IntPtr left, IntPtr right);
+        internal static extern void THSTensor_floor_divide_scalar_(IntPtr left, IntPtr right);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_frexp(IntPtr tensor, out IntPtr exponent);
@@ -1759,7 +1759,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_div(IntPtr tensor, IntPtr trg, [MarshalAs(UnmanagedType.LPStr)] string? rounding_mode);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_fmod_(IntPtr tensor, IntPtr trg);
+        internal static extern void THSTensor_fmod_(IntPtr tensor, IntPtr trg);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_fmod_scalar(IntPtr tensor, IntPtr scalar);
@@ -1855,7 +1855,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_float_power(IntPtr tensor, IntPtr trg);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_fmod_scalar_(IntPtr tensor, IntPtr scalar);
+        internal static extern void THSTensor_fmod_scalar_(IntPtr tensor, IntPtr scalar);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_frac(IntPtr tensor);
@@ -1873,7 +1873,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_fmod(IntPtr tensor, IntPtr trg);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_frac_(IntPtr tensor);
+        internal static extern void THSTensor_frac_(IntPtr tensor);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_gcd_(IntPtr tensor, IntPtr other);
@@ -1969,13 +1969,13 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_true_divide(IntPtr left, IntPtr right);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_true_divide_(IntPtr left, IntPtr right);
+        internal static extern void THSTensor_true_divide_(IntPtr left, IntPtr right);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_true_divide_scalar(IntPtr left, IntPtr right);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_true_divide_scalar_(IntPtr left, IntPtr right);
+        internal static extern void THSTensor_true_divide_scalar_(IntPtr left, IntPtr right);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSTensor_trunc_(IntPtr tensor);

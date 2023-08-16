@@ -502,41 +502,54 @@ namespace TorchSharp
 
         [Fact]
         [TestOf(nameof(Tensor.clamp))]
+        [TestOf(nameof(Tensor.clamp_))]
         public void ClampTest1()
         {
             var data = torch.rand(3, 3, 3) * 10;
             var cl = data.clamp(1, 5);
+            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
 
+            cl = data.clamp_(1, 5);
+            Assert.Same(data, cl);
             Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
         }
 
         [Fact]
         [TestOf(nameof(Tensor.clamp))]
+        [TestOf(nameof(Tensor.clamp_))]
         public void ClampTest2()
         {
             var data = torch.rand(3, 3, 3) * 10;
             var cl = data.clamp(torch.ones(3, 3, 3), torch.ones(3, 3, 3) * 5);
-
+            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+            cl = data.clamp_(torch.ones(3, 3, 3), torch.ones(3, 3, 3) * 5);
+            Assert.Same(data, cl);
             Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
         }
 
         [Fact]
         [TestOf(nameof(Tensor.clamp))]
+        [TestOf(nameof(Tensor.clamp_))]
         public void ClampTest3()
         {
             var data = torch.rand(3, 3, 3) * 10;
             var cl = torch.clamp(data, 1, 5);
-
+            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+            cl = torch.clamp_(data, 1, 5);
+            Assert.Same(data, cl);
             Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
         }
 
         [Fact]
         [TestOf(nameof(Tensor.clamp))]
+        [TestOf(nameof(Tensor.clamp_))]
         public void ClampTest4()
         {
             var data = torch.rand(3, 3, 3) * 10;
             var cl = torch.clamp(data, torch.ones(3, 3, 3), torch.ones(3, 3, 3) * 5);
-
+            Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
+            cl = torch.clamp_(data, torch.ones(3, 3, 3), torch.ones(3, 3, 3) * 5);
+            Assert.Same(data, cl);
             Assert.All(cl.data<float>().ToArray(), d => Assert.True(d >= 1.0f && d <= 5.0f));
         }
 
@@ -1068,7 +1081,8 @@ namespace TorchSharp
             var res = input.floor_divide(2.0f);
             Assert.True(res.allclose(torch.tensor(expected)));
 
-            input.floor_divide_(2.0f);
+            var z = input.floor_divide_(2.0f);
+            Assert.Same(input, z);
             Assert.True(input.allclose(torch.tensor(expected)));
         }
 

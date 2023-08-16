@@ -867,10 +867,9 @@ namespace TorchSharp
             /// <param name="other">the divisor</param>
             public Tensor floor_divide_(Tensor other)
             {
-                var res = THSTensor_floor_divide_(Handle, other.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_floor_divide_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -879,10 +878,9 @@ namespace TorchSharp
             /// <param name="other">the divisor</param>
             public Tensor floor_divide_(Scalar other)
             {
-                var res = THSTensor_floor_divide_scalar_(Handle, other.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_floor_divide_scalar_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -904,9 +902,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor fmod_(Tensor target)
             {
-                var res = THSTensor_fmod_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_fmod_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -928,9 +926,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor fmod_(Scalar scalar)
             {
-                var res = THSTensor_fmod_scalar_(Handle, scalar.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_fmod_scalar_(Handle, scalar.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -950,9 +948,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor frac_()
             {
-                var res = THSTensor_frac_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_frac_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1776,10 +1774,9 @@ namespace TorchSharp
             /// <param name="other">the divisor</param>
             public Tensor true_divide_(Tensor other)
             {
-                var res = THSTensor_true_divide_(Handle, other.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_true_divide_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1788,10 +1785,9 @@ namespace TorchSharp
             /// <param name="other">the divisor</param>
             public Tensor true_divide_(Scalar other)
             {
-                var res = THSTensor_true_divide_scalar_(Handle, other.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_true_divide_scalar_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>

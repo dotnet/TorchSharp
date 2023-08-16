@@ -1940,10 +1940,13 @@ namespace TorchSharp
             /// <param name="dim">If given, the input will be squeezed only in this dimension</param>
             public Tensor squeeze_(long? dim = null)
             {
-                var res = dim.HasValue ? NativeMethods.THSTensor_squeeze_(Handle, dim.Value) : NativeMethods.THSTensor_squeeze_no_dim_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                if (dim.HasValue) {
+                    NativeMethods.THSTensor_squeeze_(Handle, dim.Value);
+                } else {
+                    NativeMethods.THSTensor_squeeze_no_dim_(Handle);
+                }
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -2588,10 +2591,9 @@ namespace TorchSharp
 
             public Tensor relu_()
             {
-                var res = NativeMethods.THSTensor_relu_(Handle);
-                if (res == IntPtr.Zero)
+                NativeMethods.THSTensor_relu_(Handle);
                     CheckForErrors();
-                return new Tensor(res);
+                return this;
             }
 
             public Tensor relu6()
@@ -2604,10 +2606,9 @@ namespace TorchSharp
 
             public Tensor relu6_()
             {
-                var res = NativeMethods.THSTensor_relu6_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_relu6_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor celu()
@@ -3028,9 +3029,9 @@ namespace TorchSharp
             /// <param name="max">The maximum value</param>
             public Tensor clamp_(Scalar? min = null, Scalar? max = null)
             {
-                var res = NativeMethods.THSTensor_clamp_(Handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_clamp_(Handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -3040,9 +3041,9 @@ namespace TorchSharp
             /// <param name="max">The maximum value</param>
             public Tensor clamp_(Tensor? min = null, Tensor? max = null)
             {
-                var res = NativeMethods.THSTensor_clamp_tensor_(Handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_clamp_tensor_(Handle, min?.Handle ?? IntPtr.Zero, max?.Handle ?? IntPtr.Zero);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor clamp_max(Scalar max)
@@ -3054,9 +3055,9 @@ namespace TorchSharp
 
             public Tensor clamp_max_(Scalar max)
             {
-                var res = NativeMethods.THSTensor_clamp_max_(Handle, max.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_clamp_max_(Handle, max.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor clamp_min(Scalar min)
@@ -3068,9 +3069,9 @@ namespace TorchSharp
 
             public Tensor clamp_min_(Scalar min)
             {
-                var res = NativeMethods.THSTensor_clamp_min_(Handle, min.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_clamp_min_(Handle, min.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -4334,9 +4335,9 @@ namespace TorchSharp
             /// </summary>
             public Tensor sigmoid_()
             {
-                var res = NativeMethods.THSTensor_sigmoid_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_sigmoid_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>

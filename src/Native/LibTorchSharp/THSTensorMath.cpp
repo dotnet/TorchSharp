@@ -464,14 +464,14 @@ Tensor THSTensor_floor_divide_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->floor_divide(*right));
 }
 
-Tensor THSTensor_floor_divide_(const Tensor left, const Tensor right)
+void THSTensor_floor_divide_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->floor_divide_(*right));
+    CATCH(left->floor_divide_(*right););
 }
 
-Tensor THSTensor_floor_divide_scalar_(const Tensor left, const Scalar right)
+void THSTensor_floor_divide_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->floor_divide_(*right));
+    CATCH(left->floor_divide_(*right););
 }
 
 Tensor THSTensor_true_divide(const Tensor left, const Tensor right)
@@ -484,14 +484,14 @@ Tensor THSTensor_true_divide_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->true_divide(*right));
 }
 
-Tensor THSTensor_true_divide_(const Tensor left, const Tensor right)
+void THSTensor_true_divide_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->true_divide_(*right));
+    CATCH(left->true_divide_(*right););
 }
 
-Tensor THSTensor_true_divide_scalar_(const Tensor left, const Scalar right)
+void THSTensor_true_divide_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->true_divide_(*right));
+    CATCH(left->true_divide_(*right););
 }
 
 Tensor THSTensor_fmax(const Tensor left, const Tensor right)
@@ -509,9 +509,9 @@ Tensor THSTensor_fmod(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->fmod(*right));
 }
 
-Tensor THSTensor_fmod_(const Tensor left, const Tensor right)
+void THSTensor_fmod_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->fmod_(*right));
+    CATCH(left->fmod_(*right););
 }
 
 Tensor THSTensor_fmod_scalar(const Tensor left, const Scalar right)
@@ -519,9 +519,9 @@ Tensor THSTensor_fmod_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->fmod(*right));
 }
 
-Tensor THSTensor_fmod_scalar_(const Tensor left, const Scalar right)
+void THSTensor_fmod_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->fmod_(*right));
+    CATCH(left->fmod_(*right););
 }
 
 Tensor THSTensor_frac(const Tensor tensor)
@@ -529,9 +529,9 @@ Tensor THSTensor_frac(const Tensor tensor)
     CATCH_TENSOR(tensor->frac());
 }
 
-Tensor THSTensor_frac_(const Tensor tensor)
+void THSTensor_frac_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->frac_());
+    CATCH(tensor->frac_(););
 }
 
 Tensor THSTensor_ge(const Tensor left, const Tensor right)

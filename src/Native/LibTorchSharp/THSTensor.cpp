@@ -228,11 +228,11 @@ Tensor THSTensor_clamp(const Tensor tensor, const Scalar min, const Scalar max)
     CATCH_TENSOR(tensor->clamp(mn, mx));
 }
 
-Tensor THSTensor_clamp_(const Tensor tensor, const Scalar min, const Scalar max)
+void THSTensor_clamp_(const Tensor tensor, const Scalar min, const Scalar max)
 {
     auto mn = min == nullptr ? c10::optional<c10::Scalar>() : *min;
     auto mx = max == nullptr ? c10::optional<c10::Scalar>() : *max;
-    CATCH_TENSOR(tensor->clamp_(mn, mx));
+    CATCH(tensor->clamp_(mn, mx););
 }
 
 Tensor THSTensor_clamp_tensor(const Tensor tensor, const Tensor min, const Tensor max)
@@ -242,11 +242,11 @@ Tensor THSTensor_clamp_tensor(const Tensor tensor, const Tensor min, const Tenso
     CATCH_TENSOR(tensor->clamp(mn, mx));
 }
 
-Tensor THSTensor_clamp_tensor_(const Tensor tensor, const Tensor min, const Tensor max)
+void THSTensor_clamp_tensor_(const Tensor tensor, const Tensor min, const Tensor max)
 {
     auto mn = min == nullptr ? c10::optional<at::Tensor>() : *min;
     auto mx = max == nullptr ? c10::optional<at::Tensor>() : *max;
-    CATCH_TENSOR(tensor->clamp_(mn, mx));
+    CATCH(tensor->clamp_(mn, mx););
 }
 
 Tensor THSTensor_clamp_max(const Tensor tensor, const Scalar max)
@@ -254,9 +254,9 @@ Tensor THSTensor_clamp_max(const Tensor tensor, const Scalar max)
     CATCH_TENSOR(tensor->clamp_max(*max));
 }
 
-Tensor THSTensor_clamp_max_(const Tensor tensor, const Scalar max)
+void THSTensor_clamp_max_(const Tensor tensor, const Scalar max)
 {
-    CATCH_TENSOR(tensor->clamp_max_(*max));
+    CATCH(tensor->clamp_max_(*max););
 }
 
 Tensor THSTensor_clamp_min(const Tensor tensor, const Scalar min)
@@ -264,9 +264,9 @@ Tensor THSTensor_clamp_min(const Tensor tensor, const Scalar min)
     CATCH_TENSOR(tensor->clamp_min(*min));
 }
 
-Tensor THSTensor_clamp_min_(const Tensor tensor, const Scalar min)
+void THSTensor_clamp_min_(const Tensor tensor, const Scalar min)
 {
-    CATCH_TENSOR(tensor->clamp_min_(*min));
+    CATCH(tensor->clamp_min_(*min););
 }
 
 Tensor THSTensor_clone(const Tensor tensor)
@@ -1157,9 +1157,9 @@ Tensor THSTensor_relu(const Tensor tensor)
     CATCH_TENSOR(torch::relu(*tensor));
 }
 
-Tensor THSTensor_relu_(const Tensor tensor)
+void THSTensor_relu_(const Tensor tensor)
 {
-    CATCH_TENSOR(torch::relu_(*tensor));
+    CATCH(torch::relu_(*tensor););
 }
 
 Tensor THSTensor_relu6(const Tensor tensor)
@@ -1167,9 +1167,9 @@ Tensor THSTensor_relu6(const Tensor tensor)
     CATCH_TENSOR(torch::nn::functional::relu6(*tensor));
 }
 
-Tensor THSTensor_relu6_(const Tensor tensor)
+void THSTensor_relu6_(const Tensor tensor)
 {
-    CATCH_TENSOR(torch::nn::functional::relu6(*tensor, torch::nn::functional::ReLU6FuncOptions().inplace(true)));
+    CATCH(torch::nn::functional::relu6(*tensor, torch::nn::functional::ReLU6FuncOptions().inplace(true)););
 }
 
 Tensor THSTensor_renorm(const Tensor tensor, const float p, const int64_t dim, const float maxnorm)
@@ -1385,9 +1385,9 @@ Tensor THSTensor_sigmoid(const Tensor tensor)
     CATCH_TENSOR(tensor->sigmoid());
 }
 
-Tensor THSTensor_sigmoid_(const Tensor tensor)
+void THSTensor_sigmoid_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->sigmoid_());
+    CATCH(tensor->sigmoid_(););
 }
 
 Tensor THSTensor_cumulative_trapezoid_x(const Tensor y, const Tensor x, int64_t dim)
@@ -1584,14 +1584,14 @@ Tensor THSTensor_squeeze(Tensor tensor, int64_t dim)
     CATCH_TENSOR(tensor->squeeze(dim));
 }
 
-Tensor THSTensor_squeeze_no_dim_(Tensor tensor)
+void THSTensor_squeeze_no_dim_(Tensor tensor)
 {
-    CATCH_TENSOR(tensor->squeeze_());
+    CATCH(tensor->squeeze_(););
 }
 
-Tensor THSTensor_squeeze_(Tensor tensor, int64_t dim)
+void THSTensor_squeeze_(Tensor tensor, int64_t dim)
 {
-    CATCH_TENSOR(tensor->squeeze_(dim));
+    CATCH(tensor->squeeze_(dim););
 }
 
 int64_t THSTensor_stride(const Tensor tensor, const int64_t dim)
