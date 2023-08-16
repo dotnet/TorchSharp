@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static TorchSharp.torchvision.ops;
 using Xunit;
+using TorchSharp;
 
-namespace TorchSharp
+namespace TorchVision
 {
     [Collection("Sequential")]
     public class TestTorchVisionOps

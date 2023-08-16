@@ -279,9 +279,9 @@ Tensor THSTensor_combinations(const Tensor tensor, const int r, const bool with_
     CATCH_TENSOR(torch::combinations(*tensor, r, with_replacement));
 }
 
-Tensor THSTensor_copy_(const Tensor input, const Tensor other, const bool non_blocking)
+void THSTensor_copy_(const Tensor input, const Tensor other, const bool non_blocking)
 {
-    CATCH_TENSOR(input->copy_(*other, non_blocking));
+    CATCH(input->copy_(*other, non_blocking););
 }
 
 Tensor THSTensor_complex(const Tensor real, const Tensor imag)
@@ -406,9 +406,9 @@ Tensor THSTensor_detach(const Tensor tensor)
     CATCH_TENSOR(tensor->detach());
 }
 
-Tensor THSTensor_detach_(const Tensor tensor)
+void THSTensor_detach_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->detach_());
+    CATCH(tensor->detach_();)
 }
 
 int THSTensor_device_index(const Tensor tensor)
@@ -793,7 +793,7 @@ Tensor THSTensor_index(Tensor tensor,
     CATCH_TENSOR(tensor->index(indices));
 }
 
-Tensor THSTensor_index_put_(Tensor tensor,
+void THSTensor_index_put_(Tensor tensor,
     const int64_t* indexStarts,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
@@ -805,10 +805,10 @@ Tensor THSTensor_index_put_(Tensor tensor,
     memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
     completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
     auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
-    CATCH_TENSOR(tensor->index_put_(indices, *value));
+    CATCH(tensor->index_put_(indices, *value););
 }
 
-Tensor THSTensor_index_put_scalar_(Tensor tensor,
+void THSTensor_index_put_scalar_(Tensor tensor,
     const int64_t* indexStarts,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
@@ -820,7 +820,7 @@ Tensor THSTensor_index_put_scalar_(Tensor tensor,
     memset(indicesArray, 0, indicesLength * sizeof(at::indexing::TensorIndex));
     completeTensorIndices(indexStarts, indexEnds, indexSteps, indexTensors, indicesArray, indicesLength);
     auto indices = at::ArrayRef<at::indexing::TensorIndex>(indicesArray, indicesLength);
-    CATCH_TENSOR(tensor->index_put_(indices, *value));
+    CATCH(tensor->index_put_(indices, *value););
 }
 
 Tensor THSTensor_index_select(Tensor tensor, int64_t dim, Tensor index)
@@ -838,9 +838,9 @@ Tensor THSTensor_index_add(const Tensor tensor, const int64_t dim, const Tensor 
     CATCH_TENSOR(tensor->index_add(dim, *index, *source, *alpha));
 }
 
-Tensor THSTensor_index_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source, const Scalar alpha)
+void THSTensor_index_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source, const Scalar alpha)
 {
-    CATCH_TENSOR(tensor->index_add_(dim, *index, *source, *alpha));
+    CATCH(tensor->index_add_(dim, *index, *source, *alpha););
 }
 
 Tensor THSTensor_index_copy(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source)
@@ -848,9 +848,9 @@ Tensor THSTensor_index_copy(const Tensor tensor, const int64_t dim, const Tensor
     CATCH_TENSOR(tensor->index_copy(dim, *index, *source));
 }
 
-Tensor THSTensor_index_copy_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source)
+void THSTensor_index_copy_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source)
 {
-    CATCH_TENSOR(tensor->index_copy_(dim, *index, *source));
+    CATCH(tensor->index_copy_(dim, *index, *source););
 }
 
 Tensor THSTensor_index_fill(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value)
@@ -858,9 +858,9 @@ Tensor THSTensor_index_fill(const Tensor tensor, const int64_t dim, const Tensor
     CATCH_TENSOR(tensor->index_fill(dim, *index, *value));
 }
 
-Tensor THSTensor_index_fill_(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value)
+void THSTensor_index_fill_(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value)
 {
-    CATCH_TENSOR(tensor->index_fill_(dim, *index, *value));
+    CATCH(tensor->index_fill_(dim, *index, *value););
 }
 
 Tensor THSTensor_indices(Tensor tensor)
@@ -1226,13 +1226,13 @@ Tensor THSTensor_scatter(
     CATCH_TENSOR(torch::scatter(*tensor, dim, *index, *source));
 }
 
-Tensor THSTensor_scatter_(
+void THSTensor_scatter_(
     const Tensor tensor,
     const int64_t dim,
     const Tensor index,
     const Tensor source)
 {
-    CATCH_TENSOR(tensor->scatter_(dim, *index, *source));
+    CATCH(tensor->scatter_(dim, *index, *source););
 }
 
 Tensor THSTensor_select_scatter(
@@ -1274,13 +1274,13 @@ Tensor THSTensor_scatter_add(
     CATCH_TENSOR(torch::scatter_add(*tensor, dim, *index, *source));
 }
 
-Tensor THSTensor_scatter_add_(
+void THSTensor_scatter_add_(
     const Tensor tensor,
     const int64_t dim,
     const Tensor index,
     const Tensor source)
 {
-    CATCH_TENSOR(tensor->scatter_add_(dim, *index, *source));
+    CATCH(tensor->scatter_add_(dim, *index, *source););
 }
 
 Tensor THSTensor_selu(const Tensor tensor)
@@ -1787,9 +1787,9 @@ Tensor THSTensor_to_dense(Tensor tensor)
     CATCH_TENSOR(tensor->to_dense());
 }
 
-Tensor THSTensor_set_(Tensor tensor, const Tensor source)
+void THSTensor_set_(Tensor tensor, const Tensor source)
 {
-    CATCH_TENSOR(tensor->set_(*source));
+    CATCH(tensor->set_(*source););
 }
 
 Tensor THSTensor_to_device(const Tensor tensor, const int device_type, const int device_index, const bool copy)

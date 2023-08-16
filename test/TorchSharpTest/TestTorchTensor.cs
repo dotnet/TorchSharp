@@ -2995,6 +2995,7 @@ namespace TorchSharp
             var y = x.index_add_(0, index, t, 2.0);
 
             Assert.Multiple(
+                () => Assert.Same(x, y),
                 () => Assert.Equal(9.0, x[0, 0].ToSingle()),
                 () => Assert.Equal(1.0, x[1, 0].ToSingle()),
                 () => Assert.Equal(3.0, x[2, 0].ToSingle()),
@@ -3041,6 +3042,7 @@ namespace TorchSharp
             var y = x.index_copy_(0, index, t);
 
             Assert.Multiple(
+                () => Assert.Same(x, y),
                 () => Assert.Equal(4.0, x[0, 0].ToSingle()),
                 () => Assert.Equal(0.0, x[1, 0].ToSingle()),
                 () => Assert.Equal(1.0, x[2, 0].ToSingle()),
@@ -3085,6 +3087,7 @@ namespace TorchSharp
             var y = x.index_fill_(1, index, 1.0);
 
             Assert.Multiple(
+                () => Assert.Same(x, y),
                 () => Assert.Equal(1.0, x[0, 0].ToSingle()),
                 () => Assert.Equal(1.0, x[1, 0].ToSingle()),
                 () => Assert.Equal(1.0, x[2, 0].ToSingle()),

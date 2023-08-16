@@ -1,7 +1,7 @@
-
 using Xunit;
+using TorchSharp;
 
-namespace TorchSharp
+namespace TorchVision
 {
     public class TestTorchVisionTransforms
     {

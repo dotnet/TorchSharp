@@ -317,7 +317,7 @@ EXPORT_API(Tensor) THSTensor_conv_transpose3d(const Tensor input, const Tensor w
 
 EXPORT_API(Tensor) THSTensor_copysign(const Tensor input, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_copy_(const Tensor input, const Tensor other, const bool non_blocking);
+EXPORT_API(void) THSTensor_copy_(const Tensor input, const Tensor other, const bool non_blocking);
 
 EXPORT_API(Tensor) THSTensor_cos(const Tensor tensor);
 
@@ -362,7 +362,7 @@ EXPORT_API(float) THSTensor_data_idx_bfloat16(const Tensor tensor, const int64_t
 EXPORT_API(Tensor) THSTensor_deg2rad(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_detach(const Tensor tensor);
-EXPORT_API(Tensor) THSTensor_detach_(const Tensor tensor);
+EXPORT_API(void) THSTensor_detach_(const Tensor tensor);
 
 EXPORT_API(const char*) THSTensor_device_str(const Tensor tensor);
 
@@ -609,13 +609,13 @@ EXPORT_API(Tensor) THSTensor_histc(const Tensor tensor, const int64_t bins, cons
 EXPORT_API(Tensor) THSTensor_imag(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_index_add(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source, const Scalar alpha);
-EXPORT_API(Tensor) THSTensor_index_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source, const Scalar alpha);
+EXPORT_API(void) THSTensor_index_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source, const Scalar alpha);
 
 EXPORT_API(Tensor) THSTensor_index_copy(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
-EXPORT_API(Tensor) THSTensor_index_copy_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
+EXPORT_API(void) THSTensor_index_copy_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 
 EXPORT_API(Tensor) THSTensor_index_fill(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value);
-EXPORT_API(Tensor) THSTensor_index_fill_(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value);
+EXPORT_API(void) THSTensor_index_fill_(const Tensor tensor, const int64_t dim, const Tensor index, const Scalar value);
 
 EXPORT_API(Tensor) THSTensor_indices(Tensor tensor);
 
@@ -626,7 +626,7 @@ EXPORT_API(Tensor) THSTensor_index(Tensor tensor,
     const Tensor* indexTensors,
     const int indicesLength);
 
-EXPORT_API(Tensor) THSTensor_index_put_scalar_(Tensor tensor,
+EXPORT_API(void) THSTensor_index_put_scalar_(Tensor tensor,
     const int64_t* indexStarts,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
@@ -634,7 +634,7 @@ EXPORT_API(Tensor) THSTensor_index_put_scalar_(Tensor tensor,
     const int indicesLength,
     const Scalar value);
 
-EXPORT_API(Tensor) THSTensor_index_put_(Tensor tensor,
+EXPORT_API(void) THSTensor_index_put_(Tensor tensor,
     const int64_t* indexStarts,
     const int64_t* indexEnds,
     const int64_t* indexSteps,
@@ -1183,14 +1183,14 @@ EXPORT_API(Tensor) THSTensor_sum_along_dimensions(const Tensor tensor, const int
 EXPORT_API(void) THSTensor_save(const Tensor tensor, const char* location);
 
 EXPORT_API(Tensor) THSTensor_scatter(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
-EXPORT_API(Tensor) THSTensor_scatter_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
+EXPORT_API(void) THSTensor_scatter_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 
 EXPORT_API(Tensor) THSTensor_diagonal_scatter(const Tensor tensor, const Tensor source, const int64_t offset, const int64_t dim1, const int64_t dim2);
 EXPORT_API(Tensor) THSTensor_select_scatter(const Tensor tensor, const Tensor source, const int64_t dim, const int64_t index);
 EXPORT_API(Tensor) THSTensor_slice_scatter(const Tensor tensor, const Tensor source, const int64_t dim, const int64_t* start, const int64_t* end, const int64_t step);
 
 EXPORT_API(Tensor) THSTensor_scatter_add(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
-EXPORT_API(Tensor) THSTensor_scatter_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
+EXPORT_API(void) THSTensor_scatter_add_(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);
 
 EXPORT_API(Tensor) THSTensor_searchsorted_t(const Tensor sorted_sequence, const Tensor values, const bool out_int32, const bool right, const Tensor sorter);
 EXPORT_API(Tensor) THSTensor_searchsorted_s(const Tensor sorted_sequence, const Scalar values, const bool out_int32, const bool right, const Tensor sorter);
@@ -1200,7 +1200,7 @@ EXPORT_API(Tensor) THSTensor_histogram_i(const Tensor input, const int64_t bins,
 EXPORT_API(Tensor) THSTensor_histogram_out_t(const Tensor input, const Tensor bins, const Tensor weight, const bool density, Tensor* hist, Tensor* bin_edges, Tensor* r_bin_edges);
 EXPORT_API(Tensor) THSTensor_histogram_out_i(const Tensor input, const int64_t bins, const double* range, const int length, const Tensor weight, const bool density, Tensor* hist, Tensor* bin_edges, Tensor* r_bin_edges);
 
-EXPORT_API(Tensor) THSTensor_set_(Tensor tensor, const Tensor source);
+EXPORT_API(void) THSTensor_set_(Tensor tensor, const Tensor source);
 
 EXPORT_API(void) THSTensor_set_requires_grad(const Tensor tensor, const bool requires_grad);
 
