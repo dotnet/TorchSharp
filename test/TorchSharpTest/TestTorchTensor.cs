@@ -5508,6 +5508,67 @@ namespace TorchSharp
             Assert.Equal(new long[] { 20, 10 }, res11.shape);
         }
 
+
+        [Fact]
+        [TestOf(nameof(torch.randint_bool))]
+        [TestOf(nameof(torch.randint_int))]
+        [TestOf(nameof(torch.randint_long))]
+        [TestOf(nameof(torch.rand_float))]
+        [TestOf(nameof(torch.randn_float))]
+        public void RandomScalarTest()
+        {
+            torch.randint_bool();   // Just check it doesn't throw.
+
+            var res1 = torch.randint_int(15); // Exclusive upper bound
+            Assert.InRange(res1, 0, 14);      // Inclusive upper bound
+
+            var res2 = torch.randint_long(155); // Exclusive upper bound
+            Assert.InRange(res1, 0, 154);       // Inclusive upper bound
+
+            var res3 = torch.randint_int(5, 15); // Exclusive upper bound
+            Assert.InRange(res3, 5, 14);         // Inclusive upper bound
+
+            var res4 = torch.randint_long(5, 155); // Exclusive upper bound
+            Assert.InRange(res4, 5, 154);          // Inclusive upper bound
+
+            for (var i = 0; i < 1000; i++) {
+                Assert.InRange(torch.rand_float(), 0, 1.0);
+            }
+
+            torch.randn_float(); // Check that it doesn't blow up.
+        }
+
+        [Fact]
+        [TestOf(nameof(torch.randint_bool))]
+        [TestOf(nameof(torch.randint_int))]
+        [TestOf(nameof(torch.randint_long))]
+        [TestOf(nameof(torch.rand_float))]
+        [TestOf(nameof(torch.randn_float))]
+        public void RandomScalarTest_Gen()
+        {
+            var gen = new Generator(4711);
+
+            torch.randint_bool(gen);   // Just check it doesn't throw.
+
+            var res1 = torch.randint_int(15, gen); // Exclusive upper bound
+            Assert.InRange(res1, 0, 14);      // Inclusive upper bound
+
+            var res2 = torch.randint_long(155, gen); // Exclusive upper bound
+            Assert.InRange(res1, 0, 154);       // Inclusive upper bound
+
+            var res3 = torch.randint_int(5, 15, gen); // Exclusive upper bound
+            Assert.InRange(res3, 5, 14);         // Inclusive upper bound
+
+            var res4 = torch.randint_long(5, 155, gen); // Exclusive upper bound
+            Assert.InRange(res4, 5, 154);          // Inclusive upper bound
+
+            for (var i = 0; i < 1000; i++) {
+                Assert.InRange(torch.rand_float(gen), 0, 1.0);
+            }
+
+            torch.randn_float(gen); // Check that it doesn't blow up.
+        }
+
         [Fact]
         [TestOf(nameof(torch.squeeze))]
         public void SqueezeTest()
