@@ -420,12 +420,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor erase(Tensor img, int top, int left, int height, int width, Tensor value, bool inplace = false)
                 {
-                    if (!inplace) {
-                        using var t0 = img.clone();
-                        return t0.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, (top, top + height), (left, left + width) });
-                    } else {
-                        return img.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, (top, top + height), (left, left + width) });
-                    }
+                    return inplace
+                        ? img.index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, (top, top + height), (left, left + width) })
+                        : img.clone().index_put_(value, new TensorIndex[] { TensorIndex.Ellipsis, (top, top + height), (left, left + width) });
                 }
 
                 /// <summary>
@@ -864,8 +861,7 @@ namespace TorchSharp
                     using var t5 = torch.nn.functional.conv2d(t4, t3, groups: t4.shape[t4.shape.Length - 3]);
                     using var result_tmp = SqueezeOut(t5, needCast, needSqueeze, out_dtype);
 
-                    using var result = input.clone();
-                    return result.index_put_(result_tmp, TensorIndex.Ellipsis, TensorIndex.Slice(1, -1), TensorIndex.Slice(1, -1));
+                    return input.clone().index_put_(result_tmp, TensorIndex.Ellipsis, TensorIndex.Slice(1, -1), TensorIndex.Slice(1, -1));
                 }
 
                 private static Tensor GetGaussianKernel1d(long size, float sigma)
