@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
 namespace TorchSharp
@@ -90,5 +91,41 @@ namespace TorchSharp
         /// Returns a tensor with the same size as input filled with 'value.'
         /// </summary>
         public static Tensor full_like(Tensor input, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null) => input.full_like(value, dtype, device, requires_grad);
+
+        /// <summary>
+        /// Create a new tensor filled with a given value
+        /// </summary>
+        private static Tensor _full(ReadOnlySpan<long> size, Scalar value, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
+        {
+            device = InitializeDevice(device);
+            if (!dtype.HasValue) {
+                // Determine the element type dynamically.
+                if (value.Type.IsIntegral()) {
+                    dtype = ScalarType.Int64;
+                } else {
+                    dtype = get_default_dtype();
+                }
+            }
+
+            unsafe {
+                fixed (long* psizes = size) {
+                    var handle = THSTensor_full((IntPtr)psizes, size.Length, value.Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    if (handle == IntPtr.Zero) {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        handle = THSTensor_full((IntPtr)psizes, size.Length, value.Handle, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    }
+                    if (handle == IntPtr.Zero) { CheckForErrors(); }
+                    var result = new Tensor(handle);
+
+                    if (names != null && names.Length > 0) {
+
+                        result.rename_(names);
+                    }
+
+                    return result;
+                }
+            }
+        }
     }
 }
