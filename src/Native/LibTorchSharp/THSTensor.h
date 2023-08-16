@@ -1038,6 +1038,13 @@ EXPORT_API(Tensor) THSTensor_randint_out(const Generator gen, const int64_t low,
 
 EXPORT_API(Tensor) THSTensor_randint_like(const Tensor input, const int64_t low, const int64_t high, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
+EXPORT_API(int32_t) THSTensor_randint_bool(const Generator gen);
+EXPORT_API(int32_t) THSTensor_randint_int(const Generator gen, const int32_t low, const int32_t high);
+EXPORT_API(int64_t) THSTensor_randint_long(const Generator gen, const int64_t low, const int64_t high);
+
+EXPORT_API(double) THSTensor_rand_float(const Generator gen);
+EXPORT_API(double) THSTensor_randn_float(const Generator gen);
+
 EXPORT_API(Tensor) THSTensor_randn(const Generator gen, const int64_t* sizes, const int length, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_randn_out(const Generator gen, const int64_t* sizes, const int length, const Tensor out);
