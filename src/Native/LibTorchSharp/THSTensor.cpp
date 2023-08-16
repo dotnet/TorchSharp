@@ -1777,16 +1777,6 @@ void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), co
     )
 }
 
-Tensor THSTensor_trunc(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->trunc());
-}
-
-Tensor THSTensor_trunc_(const Tensor tensor)
-{
-    CATCH_TENSOR(tensor->trunc_());
-}
-
 int8_t THSTensor_type(const Tensor tensor)
 {
     CATCH_RETURN(int8_t, 0, (int8_t)tensor->scalar_type());

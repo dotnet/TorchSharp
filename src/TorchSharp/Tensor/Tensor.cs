@@ -3438,9 +3438,9 @@ namespace TorchSharp
             /// <remarks>Typically this function is used to construct floating point numbers by multiplying mantissas in input with integral powers of two created from the exponents in other.</remarks>
             public Tensor ldexp_(Tensor other)
             {
-                var res = NativeMethods.THSTensor_ldexp_(Handle, other.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_ldexp_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor le(Tensor target)

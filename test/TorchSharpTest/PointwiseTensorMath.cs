@@ -895,6 +895,43 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.pow))]
+        public void PowTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+            var input = torch.tensor(data);
+            var exp = input.clone();
+            var expected = torch.tensor(data.Select(x => MathF.Pow(x, x)).ToArray());
+            {
+                var res = input.pow(exp);
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.pow_(exp);
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.pow))]
+        public void PowScalarTest()
+        {
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+            var input = torch.tensor(data);
+            var expected = torch.tensor(data.Select(x => MathF.Pow(x, 2.5f)).ToArray());
+            {
+                var res = input.pow(2.5);
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.pow_(2.5);
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.log10))]
         public void Log10Test()
         {
@@ -969,8 +1006,28 @@ namespace TorchSharp
             Assert.All(x.data<float>().ToArray(), a => Assert.Equal(4.0f, a));
             Assert.All(y.data<float>().ToArray(), a => Assert.Equal(0.25f, a));
 
-            x.reciprocal_();
+            var z = x.reciprocal_();
+            Assert.Same(x, z);
             Assert.All(x.data<float>().ToArray(), a => Assert.Equal(0.25f, a));
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.exp2))]
+        public void ExpTest()
+        {
+            var x = new float[] { 1.0f, 2.0f, 3.0f };
+            var expected = torch.tensor(x.Select(MathF.Exp).ToArray());
+            var input = torch.tensor(x);
+            {
+                var res = input.exp();
+                Assert.NotSame(input, res);
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.exp_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
         }
 
         [Fact]
@@ -988,13 +1045,17 @@ namespace TorchSharp
         public void FloorTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
-            var expected = data.Select(MathF.Floor).ToArray();
+            var expected = torch.tensor(data.Select(MathF.Floor).ToArray());
             var input = torch.tensor(data);
-            var res = input.floor();
-            Assert.True(res.allclose(torch.tensor(expected)));
-
-            input.floor_();
-            Assert.True(input.allclose(torch.tensor(expected)));
+            {
+                var res = input.floor();
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.floor_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
         }
 
         [Fact]
@@ -1015,13 +1076,18 @@ namespace TorchSharp
         [TestOf(nameof(Tensor.trunc))]
         public void TruncTest()
         {
-            var input = torch.randn(new long[] { 25 });
-            var expected = input.data<float>().ToArray().Select(MathF.Truncate).ToArray();
-            var res = input.trunc();
-            Assert.True(res.allclose(torch.tensor(expected)));
-
-            input.trunc_();
-            Assert.True(input.allclose(torch.tensor(expected)));
+            var data = new float[] { 1.1f, 2.0f, 3.1f };
+            var expected = torch.tensor(data.Select(MathF.Truncate).ToArray());
+            var input = torch.tensor(data);
+            {
+                var res = input.trunc();
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.trunc_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
         }
 
         [Fact]
@@ -1029,13 +1095,17 @@ namespace TorchSharp
         public void CeilTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f };
-            var expected = data.Select(MathF.Ceiling).ToArray();
+            var expected = torch.tensor(data.Select(MathF.Ceiling).ToArray());
             var input = torch.tensor(data);
-            var res = input.ceil();
-            Assert.True(res.allclose(torch.tensor(expected)));
-
-            input.ceil_();
-            Assert.True(res.allclose(torch.tensor(expected)));
+            {
+                var res = input.ceil();
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.ceil_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
         }
 
         [Fact]
@@ -1051,7 +1121,8 @@ namespace TorchSharp
                 var res = input.round();
                 Assert.True(res.allclose(torch.tensor(expected)));
 
-                input.round_();
+                var z = input.round_();
+                Assert.Same(input, z);
                 Assert.True(input.allclose(torch.tensor(expected)));
             }
             {
@@ -1060,7 +1131,8 @@ namespace TorchSharp
                 var res = input.round(1);
                 Assert.True(res.allclose(torch.tensor(expected)));
 
-                input.round_(1);
+                var z = input.round_(1);
+                Assert.Same(input, z);
                 Assert.True(input.allclose(torch.tensor(expected)));
             }
             {
@@ -1069,7 +1141,8 @@ namespace TorchSharp
                 var res = input.round(2);
                 Assert.True(res.allclose(torch.tensor(expected)));
 
-                input.round_(2);
+                var z = input.round_(2);
+                Assert.Same(input, z);
                 Assert.True(input.allclose(torch.tensor(expected)));
             }
             {
@@ -1078,7 +1151,8 @@ namespace TorchSharp
                 var res = input.round(-1);
                 Assert.True(res.allclose(torch.tensor(expected)));
 
-                input.round_(-1);
+                var z = input.round_(-1);
+                Assert.Same(input, z);
                 Assert.True(input.allclose(torch.tensor(expected)));
             }
             {
@@ -1087,7 +1161,8 @@ namespace TorchSharp
                 var res = input.round(-2);
                 Assert.True(res.allclose(torch.tensor(expected)));
 
-                input.round_(-2);
+                var z = input.round_(-2);
+                Assert.Same(input, z);
                 Assert.True(input.allclose(torch.tensor(expected)));
             }
         }
