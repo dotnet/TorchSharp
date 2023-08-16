@@ -3219,14 +3219,18 @@ namespace TorchSharp
         public void InfinityTest()
         {
             using Tensor tensor = torch.empty(new long[] { 2, 2 });
-            tensor.fill_(float.PositiveInfinity);
+            using var t1 = tensor.fill_(float.PositiveInfinity);
+            Assert.Same(tensor, t1);
+
             Assert.True(tensor.isposinf().data<bool>().ToArray().All(b => b));
             Assert.True(tensor.isinf().data<bool>().ToArray().All(b => b));
             Assert.False(tensor.isneginf().data<bool>().ToArray().All(b => b));
             Assert.False(tensor.isfinite().data<bool>().ToArray().All(b => b));
             Assert.False(tensor.isnan().data<bool>().ToArray().All(b => b));
 
-            tensor.fill_(float.NegativeInfinity);
+            using var t2 = tensor.fill_(float.NegativeInfinity);
+            Assert.Same(tensor, t2);
+
             Assert.True(tensor.isneginf().data<bool>().ToArray().All(b => b));
             Assert.True(tensor.isinf().data<bool>().ToArray().All(b => b));
             Assert.False(tensor.isposinf().data<bool>().ToArray().All(b => b));

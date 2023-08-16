@@ -381,6 +381,7 @@ namespace TorchSharp
             var x = c1 * c2;
             var xClone = x.clone();
             var y = tensorFunc(x);
+            // TODO: Assert.Same(x, y);
 
             for (int i = 0; i < 10; i++) {
                 for (int j = 0; j < 10; j++) {
@@ -432,6 +433,7 @@ namespace TorchSharp
             var y = c2 * c3;
 
             var z = tensorFunc(x, y);
+            Assert.Same(x, z);
 
             if (x.device_type == DeviceType.CPU) {
                 var xData = x.data<Tin>();
@@ -554,8 +556,15 @@ namespace TorchSharp
         {
             var data = torch.arange(-10.0f, 10.0f, 1.0f);
             var expected = data.data<float>().ToArray().Select(MathF.Abs).ToArray();
-            var res = data.abs();
-            Assert.True(res.allclose(torch.tensor(expected)));
+            {
+                var res = data.abs();
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var res = data.abs_();
+                Assert.Same(data, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
         }
 
         [Fact]
@@ -612,8 +621,16 @@ namespace TorchSharp
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
             var expected = data.Select(MathF.Sqrt).ToArray();
-            var res = torch.tensor(data).sqrt();
-            Assert.True(res.allclose(torch.tensor(expected)));
+            var input = torch.tensor(data);
+            {
+                var res = input.sqrt();
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var res = input.sqrt_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
         }
 
         [Fact]
@@ -622,10 +639,22 @@ namespace TorchSharp
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
             var expected = data.Select(MathF.Sin).ToArray();
-            var res = torch.tensor(data).sin();
-            Assert.True(res.allclose(torch.tensor(expected)));
-            res = torch.sin(torch.tensor(data));
-            Assert.True(res.allclose(torch.tensor(expected)));
+            var input = torch.tensor(data);
+            {
+                var res = input.sin();
+                Assert.True(res.allclose(torch.tensor(expected)));
+                res = torch.sin(input);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var res = input.sin_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+                input = torch.tensor(data);
+                res = torch.sin_(input);
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
         }
 
         [Fact]
@@ -633,11 +662,23 @@ namespace TorchSharp
         public void CosTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Cos).ToArray();
-            var res = torch.tensor(data).cos();
-            Assert.True(res.allclose(torch.tensor(expected)));
-            res = torch.cos(torch.tensor(data));
-            Assert.True(res.allclose(torch.tensor(expected)));
+            var expected = torch.tensor(data.Select(MathF.Cos).ToArray());
+            var input = torch.tensor(data);
+            {
+                var res = input.cos();
+                Assert.True(res.allclose(expected));
+                res = torch.cos(input);
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.cos_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+                input = torch.tensor(data);
+                res = torch.cos_(input);
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
         }
 
         [Fact]
@@ -667,8 +708,16 @@ namespace TorchSharp
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
             var expected = data.Select(MathF.Tan).ToArray();
-            var res = torch.tensor(data).tan();
-            Assert.True(res.allclose(torch.tensor(expected)));
+            var input = torch.tensor(data);
+            {
+                var res = input.tan();
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var res = input.tan_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
         }
 
         [Fact]
@@ -677,8 +726,16 @@ namespace TorchSharp
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
             var expected = data.Select(MathF.Sinh).ToArray();
-            var res = torch.tensor(data).sinh();
-            Assert.True(res.allclose(torch.tensor(expected)));
+            var input = torch.tensor(data);
+            {
+                var res = input.sinh();
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var res = input.sinh_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
         }
 
         [Fact]
@@ -686,10 +743,23 @@ namespace TorchSharp
         public void CoshTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Cosh).ToArray();
-            var res = torch.tensor(data).cosh();
-            var tmp = res.data<Single>();
-            Assert.True(res.allclose(torch.tensor(expected)));
+            var expected = torch.tensor(data.Select(MathF.Cosh).ToArray());
+            var input = torch.tensor(data);
+            {
+                var res = input.cosh();
+                Assert.True(res.allclose(expected));
+                res = torch.cosh(input);
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.cosh_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+                input = torch.tensor(data);
+                res = torch.cosh_(input);
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
         }
 
         [Fact]
@@ -698,8 +768,16 @@ namespace TorchSharp
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
             var expected = data.Select(MathF.Tanh).ToArray();
-            var res = torch.tensor(data).tanh();
-            Assert.True(res.allclose(torch.tensor(expected)));
+            var input = torch.tensor(data);
+            {
+                var res = input.tanh();
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
+            {
+                var res = input.tanh_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(torch.tensor(expected)));
+            }
         }
 
         [Fact]
@@ -753,14 +831,26 @@ namespace TorchSharp
         public void AcosTest()
         {
             var data = new float[] { 1.0f, 0.2f, -0.1f };
-            var expected = data.Select(MathF.Acos).ToArray();
+            var expected = torch.tensor(data.Select(MathF.Acos).ToArray());
+            var input = torch.tensor(data);
             {
-                var res = torch.tensor(data).acos();
-                Assert.True(res.allclose(torch.tensor(expected)));
+                var res = input.acos();
+                Assert.True(res.allclose(expected));
             }
             {
-                var res = torch.tensor(data).arccos();
-                Assert.True(res.allclose(torch.tensor(expected)));
+                var res = input.arccos();
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.acos_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
+            {
+                input = torch.tensor(data);
+                var res = input.arccos_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
             }
         }
 
@@ -769,14 +859,20 @@ namespace TorchSharp
         public void AtanTest()
         {
             var data = new float[] { 1.0f, 0.2f, -0.1f };
-            var expected = data.Select(MathF.Atan).ToArray();
+            var input = torch.tensor(data);
+            var expected = torch.tensor(data.Select(MathF.Atan).ToArray());
             {
-                var res = torch.tensor(data).atan();
-                Assert.True(res.allclose(torch.tensor(expected)));
+                var res = input.atan();
+                Assert.True(res.allclose(expected));
             }
             {
-                var res = torch.tensor(data).arctan();
-                Assert.True(res.allclose(torch.tensor(expected)));
+                var res = input.arctan();
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.atan_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
             }
         }
 
@@ -785,9 +881,17 @@ namespace TorchSharp
         public void LogTest()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(x => MathF.Log(x)).ToArray();
-            var res = torch.tensor(data).log();
-            Assert.True(res.allclose(torch.tensor(expected)));
+            var input = torch.tensor(data);
+            var expected = torch.tensor(data.Select(x => MathF.Log(x)).ToArray());
+            {
+                var res = input.log();
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.log_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
         }
 
         [Fact]
@@ -795,19 +899,35 @@ namespace TorchSharp
         public void Log10Test()
         {
             var data = new float[] { 1.0f, 2.0f, 3.0f };
-            var expected = data.Select(MathF.Log10).ToArray();
-            var res = torch.tensor(data).log10();
-            Assert.True(res.allclose(torch.tensor(expected)));
+            var input = torch.tensor(data);
+            var expected = torch.tensor(data.Select(x => MathF.Log10(x)).ToArray());
+            {
+                var res = input.log10();
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.log10_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
         }
 
         [Fact]
         [TestOf(nameof(Tensor.log2))]
         public void Log2Test()
         {
-            var data = new float[] { 1.0f, 2.0f, 32.0f };
-            var expected = data.Select(MathF.Log2).ToArray();
-            var res = torch.tensor(data).log2();
-            Assert.True(res.allclose(torch.tensor(expected)));
+            var data = new float[] { 1.0f, 2.0f, 3.0f };
+            var input = torch.tensor(data);
+            var expected = torch.tensor(data.Select(x => MathF.Log2(x)).ToArray());
+            {
+                var res = input.log2();
+                Assert.True(res.allclose(expected));
+            }
+            {
+                var res = input.log2_();
+                Assert.Same(input, res);
+                Assert.True(res.allclose(expected));
+            }
         }
 
         [Fact]

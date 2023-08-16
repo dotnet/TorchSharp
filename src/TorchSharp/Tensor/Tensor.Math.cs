@@ -38,10 +38,9 @@ namespace TorchSharp
             /// </summary>
             public Tensor abs_()
             {
-                var res = THSTensor_abs_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_abs_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -115,10 +114,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor add_(Tensor target, Scalar alpha)
             {
-                var res = THSTensor_add_(Handle, target.Handle, alpha.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_add_(Handle, target.Handle, alpha.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -139,10 +137,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor add_(Scalar scalar, Scalar alpha)
             {
-                var res = THSTensor_add_scalar_(Handle, scalar.Handle, alpha.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_add_scalar_(Handle, scalar.Handle, alpha.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -175,10 +172,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor addbmm_(Tensor batch1, Tensor batch2, float beta = 1, float alpha = 1)
             {
-                var res = THSTensor_addbmm_(Handle, batch1.Handle, batch2.Handle, beta, alpha);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_addbmm_(Handle, batch1.Handle, batch2.Handle, beta, alpha);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -216,10 +212,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor addcdiv_(Tensor tensor1, Tensor tensor2, Scalar value)
             {
-                var res = THSTensor_addcdiv_(Handle, tensor1.Handle, tensor2.Handle, value.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_addcdiv_(Handle, tensor1.Handle, tensor2.Handle, value.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -257,10 +252,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor addcmul_(Tensor tensor1, Tensor tensor2, Scalar value)
             {
-                var res = THSTensor_addcmul_(Handle, tensor1.Handle, tensor2.Handle, value.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_addcmul_(Handle, tensor1.Handle, tensor2.Handle, value.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -289,10 +283,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor addmm_(Tensor mat1, Tensor mat2, float beta = 1, float alpha = 1)
             {
-                var res = THSTensor_addmm_(Handle, mat1.Handle, mat2.Handle, beta, alpha);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_addmm_(Handle, mat1.Handle, mat2.Handle, beta, alpha);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -321,10 +314,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor addmv_(Tensor mat, Tensor vec, float beta = 1.0f, float alpha = 1.0f)
             {
-                var res = THSTensor_addmv_(Handle, mat.Handle, vec.Handle, beta, alpha);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_addmv_(Handle, mat.Handle, vec.Handle, beta, alpha);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -355,10 +347,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor addr_(Tensor vec1, Tensor vec2, float beta = 1.0f, float alpha = 1.0f)
             {
-                var res = THSTensor_addr_(Handle, vec1.Handle, vec2.Handle, beta, alpha);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_addr_(Handle, vec1.Handle, vec2.Handle, beta, alpha);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -724,9 +715,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor div_(Tensor target, RoundingMode rounding_mode = RoundingMode.None)
             {
-                var res = THSTensor_div_(Handle, target.Handle, rounding_mode == RoundingMode.trunc ? "trunc" : rounding_mode == RoundingMode.floor ? "floor" : null);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_div_(Handle, target.Handle, rounding_mode == RoundingMode.trunc ? "trunc" : rounding_mode == RoundingMode.floor ? "floor" : null);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -745,9 +736,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor div_(Scalar target, RoundingMode rounding_mode = RoundingMode.None)
             {
-                var res = THSTensor_div_scalar_(Handle, target.Handle, rounding_mode == RoundingMode.trunc ? "trunc" : rounding_mode == RoundingMode.floor ? "floor" : null);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_div_scalar_(Handle, target.Handle, rounding_mode == RoundingMode.trunc ? "trunc" : rounding_mode == RoundingMode.floor ? "floor" : null);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1047,9 +1038,9 @@ namespace TorchSharp
             /// </summary>
             public Tensor log_()
             {
-                var res = THSTensor_log_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_log_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1131,10 +1122,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor log10_()
             {
-                var res = THSTensor_log10_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_log10_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1155,9 +1145,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor log1p_()
             {
-                var res = THSTensor_log1p_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_log1p_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1178,9 +1168,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor log2_()
             {
-                var res = THSTensor_log2_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_log2_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1341,9 +1331,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor mul_(Tensor target)
             {
-                var res = THSTensor_mul_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_mul_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1353,9 +1343,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor mul_(Scalar target)
             {
-                var res = THSTensor_mul_scalar_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_mul_scalar_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public static Tensor operator -(Tensor tensor)
@@ -1482,9 +1472,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor remainder_(Tensor target)
             {
-                var res = THSTensor_remainder_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_remainder_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1506,9 +1496,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor remainder_(Scalar scalar)
             {
-                var res = THSTensor_remainder_scalar_(Handle, scalar.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_remainder_scalar_(Handle, scalar.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1554,9 +1544,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor rsqrt_()
             {
-                var res = THSTensor_rsqrt_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_rsqrt_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1582,9 +1572,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor sqrt_()
             {
-                var res = THSTensor_sqrt_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_sqrt_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1605,10 +1595,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor sign_()
             {
-                var res = THSTensor_sign_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_sign_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1635,10 +1624,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor sgn_()
             {
-                var res = THSTensor_sgn_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_sgn_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1689,9 +1677,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor sub_(Tensor target)
             {
-                var res = THSTensor_sub_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_sub_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1701,9 +1689,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor sub_(Scalar target)
             {
-                var res = THSTensor_sub_scalar_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_sub_scalar_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1864,10 +1852,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor xlogy_(Tensor y)
             {
-                var res = THSTensor_xlogy_(Handle, y.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_xlogy_(Handle, y.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1890,10 +1877,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor xlogy_(Scalar y)
             {
-                var res = THSTensor_xlogy_scalar_(Handle, y.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_xlogy_scalar_(Handle, y.Handle);
+                CheckForErrors();
+                return this;
             }
         }
     }

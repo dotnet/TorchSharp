@@ -535,9 +535,9 @@ Tensor THSTensor_flipud(const Tensor tensor)
     CATCH_TENSOR(tensor->flipud());
 }
 
-Tensor THSTensor_fill_(const Tensor tensor, const Scalar value)
+void THSTensor_fill_(const Tensor tensor, const Scalar value)
 {
-    CATCH_TENSOR(tensor->fill_(*value));
+    CATCH(tensor->fill_(*value););
 }
 
 Tensor THSTensor_frexp(const Tensor tensor, Tensor* exponent)

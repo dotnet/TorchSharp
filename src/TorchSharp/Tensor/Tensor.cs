@@ -549,9 +549,9 @@ namespace TorchSharp
             /// <param name="value">A scalar value</param>
             public Tensor fill_(Scalar value)
             {
-                var res = NativeMethods.THSTensor_fill_(handle, value is null ? IntPtr.Zero : value.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_fill_(Handle, value is null ? IntPtr.Zero : value.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -3265,9 +3265,9 @@ namespace TorchSharp
             public Tensor eq_(Tensor target)
             {
                 if (target is null) return false;
-                var res = NativeMethods.THSTensor_eq_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_eq_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor eq(Scalar target)
@@ -3281,9 +3281,9 @@ namespace TorchSharp
             public Tensor eq_(Scalar target)
             {
                 if (target is null) return false;
-                var res = NativeMethods.THSTensor_eq_scalar_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_eq_scalar_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public bool Equals(Tensor target)
@@ -3322,9 +3322,9 @@ namespace TorchSharp
             public Tensor ge_(Tensor target)
             {
                 if (target is null) return false;
-                var res = NativeMethods.THSTensor_ge_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_ge_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor ge(Scalar target)
@@ -3338,9 +3338,9 @@ namespace TorchSharp
             public Tensor ge_(Scalar target)
             {
                 if (target is null) return false;
-                var res = NativeMethods.THSTensor_ge_scalar_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_ge_scalar_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor gt(Tensor target)
@@ -3356,9 +3356,9 @@ namespace TorchSharp
             public Tensor gt_(Tensor target)
             {
                 if (target is null) return false;
-                var res = NativeMethods.THSTensor_gt_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_gt_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor gt(Scalar target)
@@ -3372,9 +3372,9 @@ namespace TorchSharp
             public Tensor gt_(Scalar target)
             {
                 if (target is null) return false;
-                var res = NativeMethods.THSTensor_gt_scalar_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_gt_scalar_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -3454,9 +3454,9 @@ namespace TorchSharp
 
             public Tensor le_(Tensor target)
             {
-                var res = NativeMethods.THSTensor_le_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_le_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor less_equal_(Tensor target) => le_(target);
@@ -3470,9 +3470,9 @@ namespace TorchSharp
 
             public Tensor le_(Scalar target)
             {
-                var res = NativeMethods.THSTensor_le_scalar_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_le_scalar_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor lt(Tensor target)
@@ -3486,9 +3486,9 @@ namespace TorchSharp
 
             public Tensor lt_(Tensor target)
             {
-                var res = NativeMethods.THSTensor_lt_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_lt_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor lt(Scalar target)
@@ -3500,9 +3500,9 @@ namespace TorchSharp
 
             public Tensor lt_(Scalar target)
             {
-                var res = NativeMethods.THSTensor_lt_scalar_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_lt_scalar_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor masked_fill(Tensor mask, Scalar value)
@@ -4173,9 +4173,9 @@ namespace TorchSharp
 
             public Tensor ne_(Tensor target)
             {
-                var res = NativeMethods.THSTensor_ne_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_ne_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor not_equal_(Tensor target) => ne_(target);
@@ -4189,9 +4189,9 @@ namespace TorchSharp
 
             public Tensor ne_(Scalar target)
             {
-                var res = NativeMethods.THSTensor_ne_scalar_(Handle, target.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_ne_scalar_(Handle, target.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
