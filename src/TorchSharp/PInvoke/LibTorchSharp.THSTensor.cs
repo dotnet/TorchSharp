@@ -1303,6 +1303,21 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_randint(IntPtr generator, long low, long high, IntPtr psizes, int length, sbyte scalarType, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
         [DllImport("LibTorchSharp")]
+        internal static extern int THSTensor_randint_bool(IntPtr generator);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern int THSTensor_randint_int(IntPtr generator, int low, int high);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern long THSTensor_randint_long(IntPtr generator, long low, long high);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern double THSTensor_rand_float(IntPtr generator);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern double THSTensor_randn_float(IntPtr generator);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_sparse(IntPtr indices, IntPtr values, IntPtr sizes, int length, sbyte type, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
 
         [DllImport("LibTorchSharp")]

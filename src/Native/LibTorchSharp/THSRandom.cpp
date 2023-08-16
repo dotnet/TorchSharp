@@ -184,6 +184,132 @@ Tensor THSTensor_randint_like(
     CATCH_TENSOR(torch::randint_like(*input, low, high, options));
 }
 
+int32_t THSTensor_randint_bool(const Generator gen)
+{
+    try {
+        torch_last_err = 0;
+        auto options = at::TensorOptions()
+            .dtype(at::ScalarType(at::ScalarType::Bool))
+            .requires_grad(false);
+
+        auto result = (gen == nullptr)
+            ? torch::randint(0, 2, 1, options)
+            : torch::randint(0, 2, 1, *gen, options);
+
+        return (int32_t)((bool*)result.data_ptr())[0];
+    }
+    catch (const c10::Error e) {
+        torch_last_err = strdup(e.what());
+    }
+    catch (const std::runtime_error e) {
+        torch_last_err = strdup(e.what());
+    }
+
+    return -1;
+}
+
+int32_t THSTensor_randint_int(
+    const Generator gen,
+    const int32_t low,
+    const int32_t high)
+{
+    try {
+        torch_last_err = 0;
+        auto options = at::TensorOptions()
+            .dtype(at::ScalarType(at::ScalarType::Int))
+            .requires_grad(false);
+
+        auto result = (gen == nullptr)
+            ? torch::randint(low, high, 1, options)
+            : torch::randint(low, high, 1, *gen, options);
+
+        return ((int32_t*)result.data_ptr())[0];
+    }
+    catch (const c10::Error e) {
+        torch_last_err = strdup(e.what());
+    }
+    catch (const std::runtime_error e) {
+        torch_last_err = strdup(e.what());
+    }
+
+    return 0;
+}
+
+int64_t THSTensor_randint_long(
+    const Generator gen,
+    const int64_t low,
+    const int64_t high)
+{
+    try {
+        torch_last_err = 0;
+        auto options = at::TensorOptions()
+            .dtype(at::ScalarType(at::ScalarType::Long))
+            .requires_grad(false);
+
+        auto result = (gen == nullptr)
+            ? torch::randint(low, high, 1, options)
+            : torch::randint(low, high, 1, *gen, options);
+
+        return ((int64_t*)result.data_ptr())[0];
+    }
+    catch (const c10::Error e) {
+        torch_last_err = strdup(e.what());
+    }
+    catch (const std::runtime_error e) {
+        torch_last_err = strdup(e.what());
+    }
+
+    return 0;
+}
+
+double THSTensor_rand_float(const Generator gen)
+{
+    try {
+        torch_last_err = 0;
+        auto options = at::TensorOptions()
+            .dtype(at::ScalarType(at::ScalarType::Double))
+            .requires_grad(false);
+
+        auto result = (gen == nullptr)
+            ? torch::rand(1, options)
+            : torch::rand(1, *gen, options);
+
+        return ((double*)result.data_ptr())[0];
+    }
+    catch (const c10::Error e) {
+        torch_last_err = strdup(e.what());
+    }
+    catch (const std::runtime_error e) {
+        torch_last_err = strdup(e.what());
+    }
+
+    return 0.0;
+}
+
+double THSTensor_randn_float(const Generator gen)
+{
+    try {
+        torch_last_err = 0;
+        auto options = at::TensorOptions()
+            .dtype(at::ScalarType(at::ScalarType::Double))
+            .requires_grad(false);
+
+        auto result = (gen == nullptr)
+            ? torch::randn(1, options)
+            : torch::randn(1, *gen, options);
+
+        return ((double*)result.data_ptr())[0];
+    }
+    catch (const c10::Error e) {
+        torch_last_err = strdup(e.what());
+    }
+    catch (const std::runtime_error e) {
+        torch_last_err = strdup(e.what());
+    }
+
+    return 0.0;
+}
+
 Tensor THSTensor_randn(
     const Generator gen,
     const int64_t* sizes,
