@@ -58,7 +58,7 @@ namespace TorchVision
             }
         }
 
-        [Fact]
+        [Fact(Skip="Introduces concurrency into unit test run")]
         public void NMS_Multithread()
         {
             // Multiple Thread.
