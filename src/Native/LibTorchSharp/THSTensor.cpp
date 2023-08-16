@@ -205,9 +205,9 @@ Tensor THSTensor_celu(const Tensor tensor)
     CATCH_TENSOR(torch::celu(*tensor));
 }
 
-Tensor THSTensor_celu_(const Tensor tensor)
+void THSTensor_celu_(const Tensor tensor)
 {
-    CATCH_TENSOR(torch::celu_(*tensor));
+    CATCH(torch::celu_(*tensor););
 }
 
 void THSTensor_chunk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int64_t chunks, const int64_t dim)
@@ -470,9 +470,9 @@ Tensor THSTensor_elu(const Tensor tensor, const Scalar alpha, const Scalar scale
     CATCH_TENSOR(torch::elu(*tensor, *alpha, *scale, *input_scale));
 }
 
-Tensor THSTensor_elu_(const Tensor tensor, const Scalar alpha, const Scalar scale, const Scalar input_scale)
+void THSTensor_elu_(const Tensor tensor, const Scalar alpha, const Scalar scale, const Scalar input_scale)
 {
-    CATCH_TENSOR(torch::elu_(*tensor, *alpha, *scale, *input_scale));
+    CATCH(torch::elu_(*tensor, *alpha, *scale, *input_scale););
 }
 
 Tensor THSTensor_expand(const Tensor tensor, const int64_t* sizes, const int length, bool implicit)
@@ -616,9 +616,9 @@ Tensor THSTensor_hardsigmoid(const Tensor tensor)
     CATCH_TENSOR(torch::hardsigmoid(*tensor));
 }
 
-Tensor THSTensor_hardsigmoid_(const Tensor tensor)
+void THSTensor_hardsigmoid_(const Tensor tensor)
 {
-    CATCH_TENSOR(torch::hardsigmoid_(*tensor));
+    CATCH(torch::hardsigmoid_(*tensor););
 }
 
 Tensor THSTensor_hardswish(const Tensor tensor)
@@ -626,9 +626,9 @@ Tensor THSTensor_hardswish(const Tensor tensor)
     CATCH_TENSOR(torch::hardswish(*tensor));
 }
 
-Tensor THSTensor_hardswish_(const Tensor tensor)
+void THSTensor_hardswish_(const Tensor tensor)
 {
-    CATCH_TENSOR(torch::hardswish_(*tensor));
+    CATCH(torch::hardswish_(*tensor););
 }
 
 Tensor THSTensor_hardtanh(const Tensor tensor, const Scalar min, const Scalar max)
@@ -636,9 +636,9 @@ Tensor THSTensor_hardtanh(const Tensor tensor, const Scalar min, const Scalar ma
     CATCH_TENSOR(torch::hardtanh(*tensor, *min, *max));
 }
 
-Tensor THSTensor_hardtanh_(const Tensor tensor, const Scalar min, const Scalar max)
+void THSTensor_hardtanh_(const Tensor tensor, const Scalar min, const Scalar max)
 {
-    CATCH_TENSOR(torch::hardtanh_(*tensor, *min, *max));
+    CATCH(torch::hardtanh_(*tensor, *min, *max););
 }
 
 Tensor THSTensor_heaviside(const Tensor left, const Tensor right)
@@ -893,9 +893,9 @@ Tensor THSTensor_leaky_relu(const Tensor tensor, const Scalar negative_slope)
     CATCH_TENSOR(torch::leaky_relu(*tensor, *negative_slope));
 }
 
-Tensor THSTensor_leaky_relu_(const Tensor tensor, const Scalar negative_slope)
+void THSTensor_leaky_relu_(const Tensor tensor, const Scalar negative_slope)
 {
-    CATCH_TENSOR(torch::leaky_relu_(*tensor, *negative_slope));
+    CATCH(torch::leaky_relu_(*tensor, *negative_slope););
 }
 
 Tensor THSTensor_load(const char* location)
@@ -922,9 +922,9 @@ Tensor THSTensor_lerp(const Tensor tensor, const Tensor end, const Tensor weight
     CATCH_TENSOR(tensor->lerp(*end, *weight));
 }
 
-Tensor THSTensor_lerp_(const Tensor tensor, const Tensor end, const Tensor weight)
+void THSTensor_lerp_(const Tensor tensor, const Tensor end, const Tensor weight)
 {
-    CATCH_TENSOR(tensor->lerp_(*end, *weight));
+    CATCH(tensor->lerp_(*end, *weight););
 }
 
 Tensor THSTensor_masked_fill(const Tensor tensor, const Tensor mask, const Scalar value)
@@ -1288,9 +1288,9 @@ Tensor THSTensor_selu(const Tensor tensor)
     CATCH_TENSOR(torch::selu(*tensor));
 }
 
-Tensor THSTensor_selu_(const Tensor tensor)
+void THSTensor_selu_(const Tensor tensor)
 {
-    CATCH_TENSOR(torch::selu_(*tensor));
+    CATCH(torch::selu_(*tensor););
 }
 
 Tensor THSTensor_silu(const Tensor tensor)
@@ -1298,9 +1298,9 @@ Tensor THSTensor_silu(const Tensor tensor)
     CATCH_TENSOR(torch::silu(*tensor));
 }
 
-Tensor THSTensor_silu_(const Tensor tensor)
+void THSTensor_silu_(const Tensor tensor)
 {
-    CATCH_TENSOR(torch::silu_(*tensor));
+    CATCH(torch::silu_(*tensor););
 }
 
 void THSTensor_set1(const Tensor tensor, int64_t index, const Tensor value)

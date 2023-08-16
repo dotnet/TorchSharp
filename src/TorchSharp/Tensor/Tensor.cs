@@ -2613,10 +2613,9 @@ namespace TorchSharp
 
             public Tensor celu_()
             {
-                var res = NativeMethods.THSTensor_celu_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_celu_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor elu(Scalar alpha, Scalar scale, Scalar input_scale)
@@ -2629,10 +2628,9 @@ namespace TorchSharp
 
             public Tensor elu_(Scalar alpha, Scalar scale, Scalar input_scale)
             {
-                var res = NativeMethods.THSTensor_elu_(Handle, alpha.Handle, scale.Handle, input_scale.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_elu_(Handle, alpha.Handle, scale.Handle, input_scale.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor gelu()
@@ -2653,10 +2651,9 @@ namespace TorchSharp
 
             public Tensor hardsigmoid_()
             {
-                var res = NativeMethods.THSTensor_hardsigmoid_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_hardsigmoid_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor hardswish()
@@ -2669,26 +2666,23 @@ namespace TorchSharp
 
             public Tensor hardswish_()
             {
-                var res = NativeMethods.THSTensor_hardswish_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_hardswish_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor hardtanh(Scalar min, Scalar max)
             {
-                var res = NativeMethods.THSTensor_hardtanh(Handle, min.Handle, max.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_hardtanh(Handle, min.Handle, max.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor hardtanh_(Scalar min, Scalar max)
             {
-                var res = NativeMethods.THSTensor_hardtanh_(Handle, min.Handle, max.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_hardtanh_(Handle, min.Handle, max.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor heaviside(Tensor other)
@@ -2831,10 +2825,9 @@ namespace TorchSharp
 
             public Tensor leaky_relu_(Scalar negative_slope)
             {
-                var res = NativeMethods.THSTensor_leaky_relu_(Handle, negative_slope.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_leaky_relu_(Handle, negative_slope.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor selu()
@@ -2847,10 +2840,9 @@ namespace TorchSharp
 
             public Tensor selu_()
             {
-                var res = NativeMethods.THSTensor_selu_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_selu_(Handle);
+                CheckForErrors();
+                return this;
             }
 
 
@@ -2864,10 +2856,9 @@ namespace TorchSharp
 
             public Tensor silu_()
             {
-                var res = NativeMethods.THSTensor_silu_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_silu_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor log_sigmoid()
@@ -2878,6 +2869,12 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Does a linear interpolation of two tensors start (given by input) and end based on a scalar or
+            /// tensor weight and returns the resulting out tensor.
+            /// </summary>
+            /// <param name="end">The tensor with the ending points</param>
+            /// <param name="weight">The weight for the interpolation formula</param>
             public Tensor lerp(Tensor end, Tensor weight)
             {
                 var res = NativeMethods.THSTensor_lerp(Handle, end.Handle, weight.Handle);
@@ -2886,12 +2883,18 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// Does an inplace linear interpolation of two tensors start (given by input) and end based on a scalar or
+            /// tensor weight and returns the resulting out tensor.
+            /// </summary>
+            /// <param name="end">The tensor with the ending points</param>
+            /// <param name="weight">The weight for the interpolation formula</param>
+            /// <remarks>The 'start' tensor will be overwritten by the operation.</remarks>
             public Tensor lerp_(Tensor end, Tensor weight)
             {
-                var res = NativeMethods.THSTensor_lerp_(Handle, end.Handle, weight.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_lerp_(Handle, end.Handle, weight.Handle);
+                CheckForErrors();
+                return this;
             }
 
 
