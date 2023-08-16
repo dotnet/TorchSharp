@@ -3282,9 +3282,8 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.zeros_(tensor)) { }
-            using (var res = torch.nn.init.zeros_(tensor)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.zeros_(tensor));
         }
 
         [Fact]
@@ -3293,9 +3292,8 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.ones_(tensor)) { }
-            using (var res = torch.nn.init.ones_(tensor)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.ones_(tensor));
         }
 
         [Fact]
@@ -3304,9 +3302,8 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.dirac_(tensor)) { }
-            using (var res = torch.nn.init.dirac_(tensor)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.dirac_(tensor));
         }
 
         [Fact]
@@ -3315,9 +3312,8 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.eye_(tensor)) { }
-            using (var res = torch.nn.init.eye_(tensor)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.eye_(tensor));
         }
 
         [Fact]
@@ -3326,9 +3322,8 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.constant_(tensor, Math.PI)) { }
-            using (var res = torch.nn.init.constant_(tensor, Math.PI)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.constant_(tensor, Math.PI));
         }
 
         [Fact]
@@ -3337,10 +3332,10 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.uniform_(tensor)) { }
-            using (var gen = new torch.Generator(4711L))
-            using (var res = torch.nn.init.uniform_(tensor, generator: gen)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.uniform_(tensor));
+            using var gen = new torch.Generator(4711L);
+            Assert.Same(tensor, torch.nn.init.uniform_(tensor, generator: gen));
         }
 
         [Fact]
@@ -3349,10 +3344,10 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.normal_(tensor)) { }
-            using (var gen = new torch.Generator(4711L))
-            using (var res = torch.nn.init.normal_(tensor, generator: gen)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.normal_(tensor));
+            using var gen = new torch.Generator(4711L);
+            Assert.Same(tensor, torch.nn.init.normal_(tensor, generator: gen));
         }
 
         [Fact]
@@ -3361,10 +3356,10 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.trunc_normal_(tensor, 0, 1, -0.5, 0.5)) { }
-            using (var gen = new torch.Generator(4711L))
-            using (var res = torch.nn.init.trunc_normal_(tensor, generator: gen)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.trunc_normal_(tensor));
+            using var gen = new torch.Generator(4711L);
+            Assert.Same(tensor, torch.nn.init.trunc_normal_(tensor, generator: gen));
         }
 
         [Fact]
@@ -3373,9 +3368,8 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.orthogonal_(tensor)) { }
-            using (var res = torch.nn.init.orthogonal_(tensor)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.orthogonal_(tensor));
         }
 
         [Fact]
@@ -3384,9 +3378,8 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.sparse_(tensor, 0.25)) { }
-            using (var res = torch.nn.init.sparse_(tensor, 0.25)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.sparse_(tensor, 0.25));
         }
 
         [Fact]
@@ -3395,9 +3388,8 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.kaiming_uniform_(tensor)) { }
-            using (var res = torch.nn.init.kaiming_uniform_(tensor)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.kaiming_uniform_(tensor));
         }
 
         [Fact]
@@ -3406,9 +3398,8 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.kaiming_normal_(tensor)) { }
-            using (var res = torch.nn.init.kaiming_normal_(tensor)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.kaiming_normal_(tensor));
         }
 
         [Fact]
@@ -3417,9 +3408,8 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.xavier_uniform_(tensor)) { }
-            using (var res = torch.nn.init.xavier_uniform_(tensor)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.xavier_uniform_(tensor));
         }
 
         [Fact]
@@ -3428,9 +3418,8 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.zeros(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = torch.nn.init.xavier_normal_(tensor)) { }
-            using (var res = torch.nn.init.xavier_normal_(tensor)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, torch.nn.init.xavier_normal_(tensor));
         }
 
         [Fact]
@@ -3439,10 +3428,10 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.empty(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = tensor.bernoulli_()) { }
-            using (var gen = new torch.Generator(4711L))
-            using (var res = tensor.bernoulli_(generator: gen)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, tensor.bernoulli_());
+            using var gen = new torch.Generator(4711L);
+            Assert.Same(tensor, tensor.bernoulli_(generator: gen));
         }
 
         [Fact]
@@ -3451,10 +3440,10 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.empty(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = tensor.cauchy_()) { }
-            using (var gen = new torch.Generator(4711L))
-            using (var res = tensor.cauchy_(generator: gen)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, tensor.cauchy_());
+            using var gen = new torch.Generator(4711L);
+            Assert.Same(tensor, tensor.cauchy_(generator: gen));
         }
 
         [Fact]
@@ -3463,10 +3452,10 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.empty(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = tensor.exponential_()) { }
-            using (var gen = new torch.Generator(4711L))
-            using (var res = tensor.exponential_(generator: gen)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, tensor.exponential_());
+            using var gen = new torch.Generator(4711L);
+            Assert.Same(tensor, tensor.exponential_(generator: gen));
         }
 
         [Fact]
@@ -3475,9 +3464,10 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.empty(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = tensor.geometric_(0.25)) { }
-            using (var gen = new torch.Generator(4711L))
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, tensor.geometric_(0.25));
+            using var gen = new torch.Generator(4711L);
+            Assert.Same(tensor, tensor.geometric_(0.25, generator: gen));
             using (var res = tensor.geometric_(0.25, generator: gen)) { }
         }
 
@@ -3487,10 +3477,10 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.empty(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = tensor.log_normal_()) { }
-            using (var gen = new torch.Generator(4711L))
-            using (var res = tensor.log_normal_(generator: gen)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, tensor.log_normal_());
+            using var gen = new torch.Generator(4711L);
+            Assert.Same(tensor, tensor.log_normal_(generator: gen));
         }
 
         [Fact]
@@ -3512,10 +3502,10 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.empty(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = tensor.normal_()) { }
-            using (var gen = new torch.Generator(4711L))
-            using (var res = tensor.normal_(generator: gen)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, tensor.normal_());
+            using var gen = new torch.Generator(4711L);
+            Assert.Same(tensor, tensor.normal_(generator: gen));
         }
 
         [Fact]
@@ -3524,10 +3514,10 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.empty(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = tensor.random_(0.0, 1.0)) { }
-            using (var gen = new torch.Generator(4711L))
-            using (var res = tensor.random_(0, 1, generator: gen)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, tensor.random_(0.0, 1.0));
+            using var gen = new torch.Generator(4711L);
+            Assert.Same(tensor, tensor.random_(0.0, 1.0, generator: gen));
         }
 
         [Fact]
@@ -3536,10 +3526,10 @@ namespace TorchSharp
         {
             using Tensor tensor = torch.empty(new long[] { 2, 2 });
             // Really just testing that the native interop works and that the fact
-            // that there are two handles to the tensor is okay.
-            using (var res = tensor.uniform_(0.0, 1.0)) { }
-            using (var gen = new torch.Generator(4711L))
-            using (var res = tensor.uniform_(0, 1, generator: gen)) { }
+            // that there are two handles to the tensor are the same.
+            Assert.Same(tensor, tensor.uniform_(0.0, 1.0));
+            using var gen = new torch.Generator(4711L);
+            Assert.Same(tensor, tensor.uniform_(0.0, 1.0, generator: gen));
         }
 
         [Fact]

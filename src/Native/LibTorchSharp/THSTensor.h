@@ -1425,23 +1425,23 @@ EXPORT_API(Tensor) THSTensor_standard_gamma_(Tensor tensor, const Generator gen)
 
 // Random number in-place:
 
-EXPORT_API(Tensor) THSTensor_bernoulli_0(Tensor tensor, const double p, const Generator gen);
+EXPORT_API(void) THSTensor_bernoulli_0(Tensor tensor, const double p, const Generator gen);
 
-EXPORT_API(Tensor) THSTensor_bernoulli_1(Tensor tensor, const Tensor p_tensor, const Generator gen);
+EXPORT_API(void) THSTensor_bernoulli_1(Tensor tensor, const Tensor p_tensor, const Generator gen);
 
-EXPORT_API(Tensor) THSTensor_cauchy_(Tensor tensor, const double median, const double sigma, const Generator gen);
+EXPORT_API(void) THSTensor_cauchy_(Tensor tensor, const double median, const double sigma, const Generator gen);
 
-EXPORT_API(Tensor) THSTensor_exponential_(Tensor tensor, const double lambda, const Generator gen);
+EXPORT_API(void) THSTensor_exponential_(Tensor tensor, const double lambda, const Generator gen);
 
-EXPORT_API(Tensor) THSTensor_geometric_(Tensor tensor, const double p, const Generator gen);
+EXPORT_API(void) THSTensor_geometric_(Tensor tensor, const double p, const Generator gen);
 
-EXPORT_API(Tensor) THSTensor_normal_(Tensor tensor, double mean, double std, const Generator gen);
+EXPORT_API(void) THSTensor_normal_(Tensor tensor, double mean, double std, const Generator gen);
 
-EXPORT_API(Tensor) THSTensor_log_normal_(Tensor tensor, double mean, double std, const Generator gen);
+EXPORT_API(void) THSTensor_log_normal_(Tensor tensor, double mean, double std, const Generator gen);
 
-EXPORT_API(Tensor) THSTensor_random_(Tensor tensor, double low, double high, const Generator gen);
+EXPORT_API(void) THSTensor_random_(Tensor tensor, double low, double high, const Generator gen);
 
-EXPORT_API(Tensor) THSTensor_uniform_(Tensor tensor, double low, double high, const Generator gen);
+EXPORT_API(void) THSTensor_uniform_(Tensor tensor, double low, double high, const Generator gen);
 
 
 // torch.linalg:
@@ -1637,33 +1637,33 @@ EXPORT_API(Tensor) THSSpecial_zeta(const Tensor input, const Tensor other);
 
 EXPORT_API(double) THSInit_calculate_gain(int64_t nonlinearity, double param);
 
-EXPORT_API(Tensor) THSInit_constant_(Tensor tensor, Scalar value);
+EXPORT_API(void) THSInit_constant_(Tensor tensor, Scalar value);
 
-EXPORT_API(Tensor) THSInit_dirac_(Tensor tensor);
+EXPORT_API(void) THSInit_dirac_(Tensor tensor);
 
-EXPORT_API(Tensor) THSInit_eye_(Tensor matrix);
+EXPORT_API(void) THSInit_eye_(Tensor matrix);
 
-EXPORT_API(Tensor) THSInit_normal_(Tensor tensor, double mean, double std);
+EXPORT_API(void) THSInit_normal_(Tensor tensor, double mean, double std);
 
-EXPORT_API(Tensor) THSInit_trunc_normal_(Tensor tensor, double mean, double std, double a, double b);
+EXPORT_API(void) THSInit_trunc_normal_(Tensor tensor, double mean, double std, double a, double b);
 
-EXPORT_API(Tensor) THSInit_ones_(Tensor tensor);
+EXPORT_API(void) THSInit_ones_(Tensor tensor);
 
-EXPORT_API(Tensor) THSInit_orthogonal_(Tensor tensor, double gain);
+EXPORT_API(void) THSInit_orthogonal_(Tensor tensor, double gain);
 
-EXPORT_API(Tensor) THSInit_sparse_(Tensor tensor, double sparsity, double std);
+EXPORT_API(void) THSInit_sparse_(Tensor tensor, double sparsity, double std);
 
-EXPORT_API(Tensor) THSInit_uniform_(Tensor tensor, double low, double high);
+EXPORT_API(void) THSInit_uniform_(Tensor tensor, double low, double high);
 
-EXPORT_API(Tensor) THSInit_kaiming_normal_(Tensor tensor, double a, const int64_t mode, const int64_t nonlinearity);
+EXPORT_API(void) THSInit_kaiming_normal_(Tensor tensor, double a, const int64_t mode, const int64_t nonlinearity);
 
-EXPORT_API(Tensor) THSInit_kaiming_uniform_(Tensor tensor, double a, const int64_t mode, const int64_t nonlinearity);
+EXPORT_API(void) THSInit_kaiming_uniform_(Tensor tensor, double a, const int64_t mode, const int64_t nonlinearity);
 
-EXPORT_API(Tensor) THSInit_xavier_normal_(Tensor tensor, double gain);
+EXPORT_API(void) THSInit_xavier_normal_(Tensor tensor, double gain);
 
-EXPORT_API(Tensor) THSInit_xavier_uniform_(Tensor tensor, double gain);
+EXPORT_API(void) THSInit_xavier_uniform_(Tensor tensor, double gain);
 
-EXPORT_API(Tensor) THSInit_zeros_(Tensor tensor);
+EXPORT_API(void) THSInit_zeros_(Tensor tensor);
 
 
 // torch::fft:

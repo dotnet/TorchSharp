@@ -5029,7 +5029,6 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
-
             /// <summary>
             /// Fills each location of the input tensor with an independent sample from Bernoulli(p)
             /// </summary>
@@ -5038,9 +5037,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor bernoulli_(double p = 0.5, torch.Generator? generator = null)
             {
-                var res = NativeMethods.THSTensor_bernoulli_0(Handle, p, (generator is null) ? IntPtr.Zero : generator.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_bernoulli_0(Handle, p, (generator is null) ? IntPtr.Zero : generator.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -5051,9 +5050,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor bernoulli_(Tensor p, torch.Generator? generator = null)
             {
-                var res = NativeMethods.THSTensor_bernoulli_1(Handle, p.Handle, (generator is null) ? IntPtr.Zero : generator.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_bernoulli_1(Handle, p.Handle, (generator is null) ? IntPtr.Zero : generator.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor binomial(Tensor prob, torch.Generator? generator = null)
@@ -5069,9 +5068,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cauchy_(double median = 0.0, double sigma = 1.0, torch.Generator? generator = null)
             {
-                var res = NativeMethods.THSTensor_cauchy_(Handle, median, sigma, (generator is null) ? IntPtr.Zero : generator.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_cauchy_(Handle, median, sigma, (generator is null) ? IntPtr.Zero : generator.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -5082,9 +5081,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor exponential_(double lambda = 1.0, torch.Generator? generator = null)
             {
-                var res = NativeMethods.THSTensor_exponential_(Handle, lambda, (generator is null) ? IntPtr.Zero : generator.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_exponential_(Handle, lambda, (generator is null) ? IntPtr.Zero : generator.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -5095,9 +5094,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor geometric_(double p, torch.Generator? generator = null)
             {
-                var res = NativeMethods.THSTensor_geometric_(Handle, p, (generator is null) ? IntPtr.Zero : generator.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_geometric_(Handle, p, (generator is null) ? IntPtr.Zero : generator.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -5109,9 +5108,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor normal_(double mean = 0.0, double std = 1.0, torch.Generator? generator = null)
             {
-                var res = NativeMethods.THSTensor_normal_(Handle, mean, std, (generator is null) ? IntPtr.Zero : generator.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_normal_(Handle, mean, std, (generator is null) ? IntPtr.Zero : generator.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -5124,9 +5123,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor log_normal_(double mean = 0.0, double std = 1.0, torch.Generator? generator = null)
             {
-                var res = NativeMethods.THSTensor_log_normal_(Handle, mean, std, (generator is null) ? IntPtr.Zero : generator.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_log_normal_(Handle, mean, std, (generator is null) ? IntPtr.Zero : generator.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -5141,9 +5140,9 @@ namespace TorchSharp
             /// </remarks>
             public Tensor random_(double from, double to, torch.Generator? generator = null)
             {
-                var res = NativeMethods.THSTensor_random_(Handle, from, to, (generator is null) ? IntPtr.Zero : generator.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_random_(Handle, from, to, (generator is null) ? IntPtr.Zero : generator.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -5155,9 +5154,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor uniform_(double from, double to, torch.Generator? generator = null)
             {
-                var res = NativeMethods.THSTensor_uniform_(Handle, from, to, (generator is null) ? IntPtr.Zero : generator.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_uniform_(Handle, from, to, (generator is null) ? IntPtr.Zero : generator.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
