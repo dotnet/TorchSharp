@@ -515,7 +515,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_triu_indices(long row, long col, long offset, sbyte scalar_type, int device_type, int device_index);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_transpose_(IntPtr tensor, long dim1, long dim2);
+        internal static extern void THSTensor_transpose_(IntPtr tensor, long dim1, long dim2);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_view(IntPtr tensor, IntPtr shape, int length);
@@ -1267,7 +1267,7 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_unsqueeze(IntPtr tensor, long dim);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_unsqueeze_(IntPtr tensor, long dim);
+        internal static extern void THSTensor_unsqueeze_(IntPtr tensor, long dim);
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_where(IntPtr condition, IntPtr x, IntPtr y);

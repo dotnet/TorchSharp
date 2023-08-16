@@ -5645,18 +5645,38 @@ namespace TorchSharp
 
         [Fact]
         [TestOf(nameof(torch.unsqueeze))]
+        [TestOf(nameof(torch.unsqueeze_))]
         public void UnsqueezeTest()
         {
             var data = new float[] { 1.1f, 2.0f, 3.1f, 4.1f };
 
-            using (var res = torch.tensor(data).unsqueeze(0)) {
+            var input = torch.tensor(data);
+
+            using (var res = input.unsqueeze(0)) {
                 Assert.Equal(new long[] { 1, 4 }, res.shape);
                 Assert.Equal(1.1f, res[0, 0].ToSingle());
                 Assert.Equal(2.0f, res[0, 1].ToSingle());
                 Assert.Equal(3.1f, res[0, 2].ToSingle());
                 Assert.Equal(4.1f, res[0, 3].ToSingle());
             }
-            using (var res = torch.tensor(data).unsqueeze(1)) {
+            using (var res = input.unsqueeze(1)) {
+                Assert.Equal(new long[] { 4, 1 }, res.shape);
+                Assert.Equal(1.1f, res[0, 0].ToSingle());
+                Assert.Equal(2.0f, res[1, 0].ToSingle());
+                Assert.Equal(3.1f, res[2, 0].ToSingle());
+                Assert.Equal(4.1f, res[3, 0].ToSingle());
+            }
+            using (var res = input.unsqueeze_(0)) {
+                Assert.Same(input, res);
+                Assert.Equal(new long[] { 1, 4 }, res.shape);
+                Assert.Equal(1.1f, res[0, 0].ToSingle());
+                Assert.Equal(2.0f, res[0, 1].ToSingle());
+                Assert.Equal(3.1f, res[0, 2].ToSingle());
+                Assert.Equal(4.1f, res[0, 3].ToSingle());
+            }
+            input = torch.tensor(data);
+            using (var res = input.unsqueeze_(1)) {
+                Assert.Same(input, res);
                 Assert.Equal(new long[] { 4, 1 }, res.shape);
                 Assert.Equal(1.1f, res[0, 0].ToSingle());
                 Assert.Equal(2.0f, res[1, 0].ToSingle());

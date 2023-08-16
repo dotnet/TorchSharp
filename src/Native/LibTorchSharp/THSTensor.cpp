@@ -1845,9 +1845,9 @@ Tensor THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_
     CATCH_TENSOR(tensor->transpose(dim1, dim2));
 }
 
-Tensor THSTensor_transpose_(const Tensor tensor, const int64_t dim1, const int64_t dim2)
+void THSTensor_transpose_(const Tensor tensor, const int64_t dim1, const int64_t dim2)
 {
-    CATCH_TENSOR(tensor->transpose_(dim1, dim2));
+    CATCH(tensor->transpose_(dim1, dim2););
 }
 
 Tensor THSTensor_view(const Tensor tensor, const int64_t* shape, const int length)

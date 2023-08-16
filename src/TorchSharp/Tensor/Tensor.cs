@@ -2027,10 +2027,9 @@ namespace TorchSharp
             /// <param name="dim1"></param>
             public Tensor transpose_(long dim0, long dim1)
             {
-                var res = NativeMethods.THSTensor_transpose_(Handle, dim0, dim1);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_transpose_(Handle, dim0, dim1);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -5923,14 +5922,13 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Returns a new tensor with a dimension of size one inserted at the specified position.
-            /// The returned tensor shares the same underlying data with this tensor.
+            /// Inserts a dimension of size one at the specified position. The tensor is modified in place.
             /// </summary>
             public Tensor unsqueeze_(long dim)
             {
-                var res = NativeMethods.THSTensor_unsqueeze_(Handle, dim);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_unsqueeze_(Handle, dim);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
