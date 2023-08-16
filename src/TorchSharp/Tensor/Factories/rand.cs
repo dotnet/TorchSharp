@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
@@ -9,7 +10,7 @@ namespace TorchSharp
     public static partial class torch
     {
         /// <summary>
-        /// Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [low, high).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -66,7 +67,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [0, high).
         /// </summary>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
         /// <param name="size">The shape of the output tensor.</param>
@@ -83,7 +84,7 @@ namespace TorchSharp
         // Note: Once F# implicit conversion support is broadly available, all the following overloads will be redundant.
 
         /// <summary>
-        /// Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [0, high).
         /// </summary>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
         /// <param name="size">The shape of the output tensor.</param>
@@ -98,7 +99,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [low, high).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -118,7 +119,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Create a new tensor filled with random integer values taken from a uniform distribution in [low, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [low, high).
         /// </summary>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
@@ -138,7 +139,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Create a new tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// Create a new tensor filled with random integer values taken from a uniform distribution in [0, high).
         /// </summary>
         /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
         /// <param name="size">The shape of the output tensor.</param>
@@ -153,7 +154,75 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Create a new 32-bit complex tensor filled with random integer values taken from a uniform distribution in [0, max).
+        /// Create a random Boolean value.
+        /// </summary>
+        /// <param name="generator">An optional random number genertor object.</param>
+        /// <remarks>This method does not exist in PyTorch, but is useful for getting a scalar from a torch RNG.</remarks>
+        public static bool randint_bool(Generator? generator = null)
+        {
+            var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle;
+
+            var result = THSTensor_randint_bool(genHandle);
+            if (result == -1) CheckForErrors();
+            return result == 1;
+        }
+
+        /// <summary>
+        /// Create a random integer value taken from a uniform distribution in [0, high).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="generator">An optional random number genertor object.</param>
+        /// <remarks>This method does not exist in PyTorch, but is useful for getting a scalar from a torch RNG.</remarks>
+        public static int randint_int(int high, Generator? generator = null)
+        {
+            return randint_int(0, high, generator);
+        }
+
+        /// <summary>
+        /// Create a random integer value taken from a uniform distribution in [low, high).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="generator">An optional random number genertor object.</param>
+        /// <remarks>This method does not exist in PyTorch, but is useful for getting a scalar from a torch RNG.</remarks>
+        public static int randint_int(int low, int high, Generator? generator = null)
+        {
+            var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle;
+
+            var result = THSTensor_randint_int(genHandle, low, high);
+            CheckForErrors();
+            return result;
+        }
+
+        /// <summary>
+        /// Create a random integer value taken from a uniform distribution in [0, high).
+        /// </summary>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="generator">An optional random number genertor object.</param>
+        /// <remarks>This method does not exist in PyTorch, but is useful for getting a scalar from a torch RNG.</remarks>
+        public static long randint_long(long high, Generator? generator = null)
+        {
+            return randint_long(0, high, generator);
+        }
+
+        /// <summary>
+        /// Create a random integer value taken from a uniform distribution in [low, high).
+        /// </summary>
+        /// <param name="low">Lowest integer to be drawn from the distribution.</param>
+        /// <param name="high">One above the highest integer to be drawn from the distribution.</param>
+        /// <param name="generator">An optional random number genertor object.</param>
+        /// <remarks>This method does not exist in PyTorch, but is useful for getting a scalar from a torch RNG.</remarks>
+        public static long randint_long(long low, long high, Generator? generator = null)
+        {
+            var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle;
+
+            var result = THSTensor_randint_long(genHandle, low, high);
+            CheckForErrors();
+            return result;
+        }
+
+        /// <summary>
+        /// Create a new 32-bit complex tensor filled with random integer values taken from a uniform distribution in [0, high).
         /// </summary>
         /// <param name="genHandle"></param>
         /// <param name="low">Lowest integer to be drawn from the distribution.</param>
@@ -388,6 +457,20 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Create a random floating-point value taken from a uniform distribution in [0, 1).
+        /// </summary>
+        /// <param name="generator">An optional random number genertor object.</param>
+        /// <remarks>This method does not exist in PyTorch, but is useful for getting a scalar from a torch RNG.</remarks>
+        public static double rand_float(Generator? generator = null)
+        {
+            var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle;
+
+            var result = THSTensor_rand_float(genHandle);
+            CheckForErrors();
+            return result;
+        }
+
+        /// <summary>
         /// Create a new tensor filled with random values taken from a normal distribution with mean 0 and variance 1.
         /// </summary>
         private static Tensor _randn(ReadOnlySpan<long> size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
@@ -499,6 +582,20 @@ namespace TorchSharp
         public static Tensor randn(int dim0, int dim1, int dim2, int dim3, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, Generator? generator = null, string[]? names = null)
         {
             return _randn(stackalloc long[] { dim0, dim1, dim2, dim3 }, dtype, device, requires_grad, generator, names);
+        }
+
+        /// <summary>
+        /// Create a random floating-point value taken from a normal distribution with mean 0 and variance 1.
+        /// </summary>
+        /// <param name="generator">An optional random number genertor object.</param>
+        /// <remarks>This method does not exist in PyTorch, but is useful for getting a scalar from a torch RNG.</remarks>
+        public static double randn_float(Generator? generator = null)
+        {
+            var genHandle = (generator is null) ? IntPtr.Zero : generator.Handle;
+
+            var result = THSTensor_randn_float(genHandle);
+            CheckForErrors();
+            return result;
         }
     }
 }
