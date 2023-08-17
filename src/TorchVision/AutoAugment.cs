@@ -165,6 +165,8 @@ namespace TorchSharp
             private readonly IList<float>? fill;
         }
 
+        /* Original implementation from:
+         * https://pytorch.org/vision/main/_modules/torchvision/transforms/autoaugment.html#AugMix */
         internal class AugMix :AutoAugmentBase, ITransform
         {
             public AugMix(
@@ -293,6 +295,23 @@ namespace TorchSharp
                 return new RandAugment(num_ops, magnitude, num_magnitude_bins, interpolation, fill);
             }
 
+            /// <summary>
+            /// AugMix data augmentation method based on
+            /// "AugMix: A Simple Data Processing Method to Improve Robustness and Uncertainty"
+            /// https://arxiv.org/abs/1912.02781
+            /// The image is expected to be a torch Tensor, it should be of type torch.uint8, and it is expected
+            /// to have [..., 1 or 3, H, W] shape, where ... means an arbitrary number of leading dimensions.
+            /// </summary>
+            /// <param name="severity">The severity of base augmentation operators. Default: 3</param>
+            /// <param name="mixture_width">The number of augmentation chains. Default: 3</param>
+            /// <param name="chain_depth">The depth of augmentation chains. A negative value denotes stochastic
+            /// depth sampled from the interval [1, 3]. Default: -1</param>
+            /// <param name="alpha">The hyperparameter for the probability distributions. Default 1.0</param>
+            /// <param name="all_ops">Use all operations (including brightness, contrast, color and sharpness). Default: true</param>
+            /// <param name="interpolation">Desired interpolation enum defined by
+            /// torchvision.transforms.InterpolationMode. Default: InterpolationMode.Bilinear.</param>
+            /// <param name="fill">Pixel fill value for the area outside the transformed
+            /// image. If given a number, the value is used for all bands respectively. Default: null</param>
             static public ITransform AugMix(
                 int severity = 3,
                 int mixture_width = 3,
