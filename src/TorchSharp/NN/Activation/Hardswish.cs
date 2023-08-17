@@ -64,7 +64,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor hardswish(Tensor input, bool inplace = false)
                 {
-                    return inplace ? input.hardswish_() : input.hardswish();
+                    return inplace ? input.hardswish_().alias() : input.hardswish();
                 }
             }
         }

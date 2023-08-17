@@ -57,12 +57,10 @@ namespace TorchSharp
                 /// Tanh activation
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                /// <returns></returns>
-                public static Tensor tanh(Tensor x)
+                /// <param name="inplace">Do the operation in-place. Default: False</param>
+                public static Tensor tanh(Tensor x, bool inplace = false)
                 {
-                    using (var m = nn.Tanh()) {
-                        return m.call(x);
-                    }
+                    return inplace ? x.tanh_().alias() : x.tanh();
                 }
             }
         }

@@ -1,10 +1,11 @@
 using Xunit;
+using TorchSharp;
 
-namespace TorchSharp
+namespace TorchAudio
 {
     public class TestTorchAudioModels
     {
-        private Modules.Tacotron2 CreateTacotron2(int n_symbols)
+        private TorchSharp.Modules.Tacotron2 CreateTacotron2(int n_symbols)
         {
             return torchaudio.models.Tacotron2(
                 mask_padding: false,
@@ -32,7 +33,7 @@ namespace TorchSharp
                 );
         }
 
-        private Modules.WaveRNN CreateWaveRNN()
+        private TorchSharp.Modules.WaveRNN CreateWaveRNN()
         {
             return torchaudio.models.WaveRNN(
                 upsample_scales: new long[] { 5, 5, 11 },
