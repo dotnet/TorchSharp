@@ -9,9 +9,9 @@ Tensor THSTensor_abs(const Tensor tensor)
     CATCH_TENSOR(tensor->abs());
 }
 
-Tensor THSTensor_abs_(const Tensor tensor)
+void THSTensor_abs_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->abs_());
+    CATCH(tensor->abs_();)
 }
 
 Tensor THSTensor_acos(const Tensor tensor)
@@ -19,9 +19,9 @@ Tensor THSTensor_acos(const Tensor tensor)
     CATCH_TENSOR(tensor->acos());
 }
 
-Tensor THSTensor_acos_(const Tensor tensor)
+void THSTensor_acos_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->acos_());
+    CATCH(tensor->acos_();)
 }
 
 Tensor THSTensor_add(const Tensor left, const Tensor right, const Scalar alpha)
@@ -29,9 +29,9 @@ Tensor THSTensor_add(const Tensor left, const Tensor right, const Scalar alpha)
     CATCH_TENSOR(left->add(*right, *alpha));
 }
 
-Tensor THSTensor_add_(const Tensor left, const Tensor right, const Scalar alpha)
+void THSTensor_add_(const Tensor left, const Tensor right, const Scalar alpha)
 {
-    CATCH_TENSOR(left->add_(*right, *alpha));
+    CATCH(left->add_(*right, *alpha);)
 }
 
 Tensor THSTensor_add_scalar(const Tensor left, const Scalar right, const Scalar alpha)
@@ -39,9 +39,9 @@ Tensor THSTensor_add_scalar(const Tensor left, const Scalar right, const Scalar 
     CATCH_TENSOR(left->add(*right, *alpha));
 }
 
-Tensor THSTensor_add_scalar_(const Tensor left, const Scalar right, const Scalar alpha)
+void THSTensor_add_scalar_(const Tensor left, const Scalar right, const Scalar alpha)
 {
-    CATCH_TENSOR(left->add_(*right, *alpha));
+    CATCH(left->add_(*right, *alpha);)
 }
 
 Tensor THSTensor_addbmm(const Tensor mat, const Tensor batch1, const Tensor batch2, const float beta, const float alpha)
@@ -49,9 +49,9 @@ Tensor THSTensor_addbmm(const Tensor mat, const Tensor batch1, const Tensor batc
     CATCH_TENSOR(mat->addbmm(*batch1, *batch2, beta, alpha));
 }
 
-Tensor THSTensor_addbmm_(const Tensor mat, const Tensor batch1, const Tensor batch2, const float beta, const float alpha)
+void THSTensor_addbmm_(const Tensor mat, const Tensor batch1, const Tensor batch2, const float beta, const float alpha)
 {
-    CATCH_TENSOR(mat->addbmm_(*batch1, *batch2, beta, alpha));
+    CATCH(mat->addbmm_(*batch1, *batch2, beta, alpha);)
 }
 
 Tensor THSTensor_addcdiv(const Tensor left, const Tensor tensor1, const Tensor tensor2, const Scalar value)
@@ -59,9 +59,9 @@ Tensor THSTensor_addcdiv(const Tensor left, const Tensor tensor1, const Tensor t
     CATCH_TENSOR(left->addcdiv(*tensor1, *tensor2, *value));
 }
 
-Tensor THSTensor_addcdiv_(const Tensor left, const Tensor tensor1, const Tensor tensor2, const Scalar value)
+void THSTensor_addcdiv_(const Tensor left, const Tensor tensor1, const Tensor tensor2, const Scalar value)
 {
-    CATCH_TENSOR(left->addcdiv_(*tensor1, *tensor2, *value));
+    CATCH(left->addcdiv_(*tensor1, *tensor2, *value);)
 }
 
 Tensor THSTensor_addcmul(const Tensor left, const Tensor tensor1, const Tensor tensor2, const Scalar value)
@@ -69,9 +69,9 @@ Tensor THSTensor_addcmul(const Tensor left, const Tensor tensor1, const Tensor t
     CATCH_TENSOR(left->addcmul(*tensor1, *tensor2, *value));
 }
 
-Tensor THSTensor_addcmul_(const Tensor left, const Tensor tensor1, const Tensor tensor2, const Scalar value)
+void THSTensor_addcmul_(const Tensor left, const Tensor tensor1, const Tensor tensor2, const Scalar value)
 {
-    CATCH_TENSOR(left->addcmul_(*tensor1, *tensor2, *value));
+    CATCH(left->addcmul_(*tensor1, *tensor2, *value);)
 }
 
 Tensor THSTensor_addmm(const Tensor mat, const Tensor mat1, const Tensor mat2, const float beta, const float alpha)
@@ -79,9 +79,9 @@ Tensor THSTensor_addmm(const Tensor mat, const Tensor mat1, const Tensor mat2, c
     CATCH_TENSOR(mat->addmm(*mat1, *mat2, beta, alpha));
 }
 
-Tensor THSTensor_addmm_(const Tensor mat, const Tensor mat1, const Tensor mat2, const float beta, const float alpha)
+void THSTensor_addmm_(const Tensor mat, const Tensor mat1, const Tensor mat2, const float beta, const float alpha)
 {
-    CATCH_TENSOR(mat->addmm_(*mat1, *mat2, beta, alpha));
+    CATCH(mat->addmm_(*mat1, *mat2, beta, alpha);)
 }
 
 Tensor THSTensor_addmv(const Tensor mat, const Tensor mat1, const Tensor vec2, const float beta, const float alpha)
@@ -89,9 +89,9 @@ Tensor THSTensor_addmv(const Tensor mat, const Tensor mat1, const Tensor vec2, c
     CATCH_TENSOR(mat->addmv(*mat1, *vec2, beta, alpha));
 }
 
-Tensor THSTensor_addmv_(const Tensor mat, const Tensor mat1, const Tensor vec2, const float beta, const float alpha)
+void THSTensor_addmv_(const Tensor mat, const Tensor mat1, const Tensor vec2, const float beta, const float alpha)
 {
-    CATCH_TENSOR(mat->addmv_(*mat1, *vec2, beta, alpha));
+    CATCH(mat->addmv_(*mat1, *vec2, beta, alpha);)
 }
 
 Tensor THSTensor_addr(const Tensor mat, const Tensor mat1, const Tensor vec2, const float beta, const float alpha)
@@ -99,9 +99,9 @@ Tensor THSTensor_addr(const Tensor mat, const Tensor mat1, const Tensor vec2, co
     CATCH_TENSOR(mat->addr(*mat1, *vec2, beta, alpha));
 }
 
-Tensor THSTensor_addr_(const Tensor mat, const Tensor mat1, const Tensor vec2, const float beta, const float alpha)
+void THSTensor_addr_(const Tensor mat, const Tensor mat1, const Tensor vec2, const float beta, const float alpha)
 {
-    CATCH_TENSOR(mat->addr_(*mat1, *vec2, beta, alpha));
+    CATCH(mat->addr_(*mat1, *vec2, beta, alpha);)
 }
 
 Tensor THSTensor_arccosh(const Tensor tensor)
@@ -109,9 +109,9 @@ Tensor THSTensor_arccosh(const Tensor tensor)
     CATCH_TENSOR(tensor->arccosh());
 }
 
-Tensor THSTensor_arccosh_(const Tensor tensor)
+void THSTensor_arccosh_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->arccosh_());
+    CATCH(tensor->arccosh_();)
 }
 
 Tensor THSTensor_arcsinh(const Tensor tensor)
@@ -119,9 +119,9 @@ Tensor THSTensor_arcsinh(const Tensor tensor)
     CATCH_TENSOR(tensor->arcsinh());
 }
 
-Tensor THSTensor_arcsinh_(const Tensor tensor)
+void THSTensor_arcsinh_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->arcsinh_());
+    CATCH(tensor->arcsinh_();)
 }
 
 Tensor THSTensor_arctanh(const Tensor tensor)
@@ -129,9 +129,9 @@ Tensor THSTensor_arctanh(const Tensor tensor)
     CATCH_TENSOR(tensor->arctanh());
 }
 
-Tensor THSTensor_arctanh_(const Tensor tensor)
+void THSTensor_arctanh_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->arctanh_());
+    CATCH(tensor->arctanh_();)
 }
 
 
@@ -140,9 +140,9 @@ Tensor THSTensor_asin(const Tensor tensor)
     CATCH_TENSOR(tensor->asin());
 }
 
-Tensor THSTensor_asin_(const Tensor tensor)
+void THSTensor_asin_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->asin_());
+    CATCH(tensor->asin_();)
 }
 
 Tensor THSTensor_atan(const Tensor tensor)
@@ -150,9 +150,9 @@ Tensor THSTensor_atan(const Tensor tensor)
     CATCH_TENSOR(tensor->atan());
 }
 
-Tensor THSTensor_atan_(const Tensor tensor)
+void THSTensor_atan_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->atan_());
+    CATCH(tensor->atan_();)
 }
 
 Tensor THSTensor_atan2(const Tensor tensor, const Tensor other)
@@ -160,9 +160,9 @@ Tensor THSTensor_atan2(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->atan2(*other));
 }
 
-Tensor THSTensor_atan2_(const Tensor tensor, const Tensor other)
+void THSTensor_atan2_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->atan2_(*other));
+    CATCH(tensor->atan2_(*other);)
 }
 
 Tensor THSTensor_baddbmm(
@@ -181,9 +181,9 @@ Tensor THSTensor_bitwise_and(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_and(*other));
 }
 
-Tensor THSTensor_bitwise_and_(const Tensor tensor, const Tensor other)
+void THSTensor_bitwise_and_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->bitwise_and_(*other));
+    CATCH(tensor->bitwise_and_(*other);)
 }
 
 Tensor THSTensor_bitwise_not(const Tensor tensor)
@@ -191,9 +191,9 @@ Tensor THSTensor_bitwise_not(const Tensor tensor)
     CATCH_TENSOR(tensor->bitwise_not());
 }
 
-Tensor THSTensor_bitwise_not_(const Tensor tensor)
+void THSTensor_bitwise_not_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->bitwise_not_());
+    CATCH(tensor->bitwise_not_();)
 }
 
 Tensor THSTensor_bitwise_or(const Tensor tensor, const Tensor other)
@@ -201,9 +201,9 @@ Tensor THSTensor_bitwise_or(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_or(*other));
 }
 
-Tensor THSTensor_bitwise_or_(const Tensor tensor, const Tensor other)
+void THSTensor_bitwise_or_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->bitwise_or_(*other));
+    CATCH(tensor->bitwise_or_(*other);)
 }
 
 Tensor THSTensor_bitwise_xor(const Tensor tensor, const Tensor other)
@@ -211,9 +211,9 @@ Tensor THSTensor_bitwise_xor(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_xor(*other));
 }
 
-Tensor THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other)
+void THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->bitwise_xor_(*other));
+    CATCH(tensor->bitwise_xor_(*other);)
 }
 
 Tensor THSTensor_bitwise_left_shift(const Tensor tensor, const Tensor other)
@@ -221,9 +221,9 @@ Tensor THSTensor_bitwise_left_shift(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_left_shift(*other));
 }
 
-Tensor THSTensor_bitwise_left_shift_(const Tensor tensor, const Tensor other)
+void THSTensor_bitwise_left_shift_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->bitwise_left_shift_(*other));
+    CATCH(tensor->bitwise_left_shift_(*other);)
 }
 
 Tensor THSTensor_bitwise_right_shift(const Tensor tensor, const Tensor other)
@@ -231,9 +231,9 @@ Tensor THSTensor_bitwise_right_shift(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_right_shift(*other));
 }
 
-Tensor THSTensor_bitwise_right_shift_(const Tensor tensor, const Tensor other)
+void THSTensor_bitwise_right_shift_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->bitwise_right_shift_(*other));
+    CATCH(tensor->bitwise_right_shift_(*other);)
 }
 
 Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
@@ -253,9 +253,9 @@ Tensor THSTensor_ceil(const Tensor tensor)
     CATCH_TENSOR(tensor->ceil());
 }
 
-Tensor THSTensor_ceil_(const Tensor tensor)
+void THSTensor_ceil_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->ceil_());
+    CATCH(tensor->ceil_();)
 }
 
 Tensor THSTensor_conj(const Tensor tensor)
@@ -278,9 +278,9 @@ Tensor THSTensor_conj_physical(const Tensor tensor)
     CATCH_TENSOR(tensor->conj_physical());
 }
 
-Tensor THSTensor_conj_physical_(const Tensor tensor)
+void THSTensor_conj_physical_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->conj_physical_());
+    CATCH(tensor->conj_physical_();)
 }
 
 Tensor THSTensor_resolve_conj(const Tensor tensor)
@@ -298,9 +298,9 @@ Tensor THSTensor_cos(const Tensor tensor)
     CATCH_TENSOR(tensor->cos());
 }
 
-Tensor THSTensor_cos_(const Tensor tensor)
+void THSTensor_cos_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->cos_());
+    CATCH(tensor->cos_();)
 }
 
 Tensor THSTensor_cosh(const Tensor tensor)
@@ -308,9 +308,9 @@ Tensor THSTensor_cosh(const Tensor tensor)
     CATCH_TENSOR(tensor->cosh());
 }
 
-Tensor THSTensor_cosh_(const Tensor tensor)
+void THSTensor_cosh_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->cosh_());
+    CATCH(tensor->cosh_();)
 }
 
 Tensor THSTensor_cov(const Tensor input, int64_t correction, const Tensor fweights, const Tensor aweights)
@@ -334,9 +334,9 @@ Tensor THSTensor_div(const Tensor left, const Tensor right, const char* rounding
     CATCH_TENSOR(rounding_mode == nullptr ? left->div(*right) : left->div(*right, rounding_mode));
 }
 
-Tensor THSTensor_div_(const Tensor left, const Tensor right, const char* rounding_mode)
+void THSTensor_div_(const Tensor left, const Tensor right, const char* rounding_mode)
 {
-    CATCH_TENSOR(rounding_mode == nullptr ? left->div_(*right) : left->div_(*right, rounding_mode));
+    CATCH(rounding_mode == nullptr ? left->div_(*right) : left->div_(*right, rounding_mode);)
 }
 
 Tensor THSTensor_div_scalar(const Tensor left, const Scalar right, const char* rounding_mode)
@@ -344,9 +344,9 @@ Tensor THSTensor_div_scalar(const Tensor left, const Scalar right, const char* r
     CATCH_TENSOR(rounding_mode == nullptr ? left->div(*right) : left->div(*right, rounding_mode));
 }
 
-Tensor THSTensor_div_scalar_(const Tensor left, const Scalar right, const char* rounding_mode)
+void THSTensor_div_scalar_(const Tensor left, const Scalar right, const char* rounding_mode)
 {
-    CATCH_TENSOR(rounding_mode == nullptr ? left->div_(*right) : left->div_(*right, rounding_mode));
+    CATCH(rounding_mode == nullptr ? left->div_(*right) : left->div_(*right, rounding_mode);)
 }
 
 Tensor THSTensor_dot(const Tensor left, const Tensor right)
@@ -364,9 +364,9 @@ Tensor THSTensor_eq(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->eq(*right));
 }
 
-Tensor THSTensor_eq_(const Tensor left, const Tensor right)
+void THSTensor_eq_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->eq_(*right));
+    CATCH(left->eq_(*right);)
 }
 
 Tensor THSTensor_eq_scalar(const Tensor left, const Scalar right)
@@ -374,9 +374,9 @@ Tensor THSTensor_eq_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->eq(*right));
 }
 
-Tensor THSTensor_eq_scalar_(const Tensor left, const Scalar right)
+void THSTensor_eq_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->eq_(*right));
+    CATCH(left->eq_(*right);)
 }
 
 int THSTensor_equal(const Tensor left, const Tensor right)
@@ -394,9 +394,9 @@ Tensor THSTensor_exp2(const Tensor tensor)
     CATCH_TENSOR(tensor->exp2());
 }
 
-Tensor THSTensor_exp_(const Tensor tensor)
+void THSTensor_exp_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->exp_());
+    CATCH(tensor->exp_();)
 }
 
 Tensor THSTensor_expm1(const Tensor tensor)
@@ -404,9 +404,9 @@ Tensor THSTensor_expm1(const Tensor tensor)
     CATCH_TENSOR(tensor->expm1());
 }
 
-Tensor THSTensor_expm1_(const Tensor tensor)
+void THSTensor_expm1_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->expm1_());
+    CATCH(tensor->expm1_();)
 }
 
 Tensor THSTensor_erf(const Tensor tensor)
@@ -414,9 +414,9 @@ Tensor THSTensor_erf(const Tensor tensor)
     CATCH_TENSOR(tensor->erf());
 }
 
-Tensor THSTensor_erf_(const Tensor tensor)
+void THSTensor_erf_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->erf_());
+    CATCH(tensor->erf_();)
 }
 
 Tensor THSTensor_erfc(const Tensor tensor)
@@ -424,9 +424,9 @@ Tensor THSTensor_erfc(const Tensor tensor)
     CATCH_TENSOR(tensor->erfc());
 }
 
-Tensor THSTensor_erfc_(const Tensor tensor)
+void THSTensor_erfc_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->erfc_());
+    CATCH(tensor->erfc_();)
 }
 
 Tensor THSTensor_erfinv(const Tensor tensor)
@@ -434,9 +434,9 @@ Tensor THSTensor_erfinv(const Tensor tensor)
     CATCH_TENSOR(tensor->erfinv());
 }
 
-Tensor THSTensor_erfinv_(const Tensor tensor)
+void THSTensor_erfinv_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->erfinv_());
+    CATCH(tensor->erfinv_();)
 }
 
 Tensor THSTensor_float_power(const Tensor input, const Tensor exponent)
@@ -449,9 +449,9 @@ Tensor THSTensor_floor(const Tensor tensor)
     CATCH_TENSOR(tensor->floor());
 }
 
-Tensor THSTensor_floor_(const Tensor tensor)
+void THSTensor_floor_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->floor_());
+    CATCH(tensor->floor_();)
 }
 
 Tensor THSTensor_floor_divide(const Tensor left, const Tensor right)
@@ -464,14 +464,14 @@ Tensor THSTensor_floor_divide_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->floor_divide(*right));
 }
 
-Tensor THSTensor_floor_divide_(const Tensor left, const Tensor right)
+void THSTensor_floor_divide_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->floor_divide_(*right));
+    CATCH(left->floor_divide_(*right);)
 }
 
-Tensor THSTensor_floor_divide_scalar_(const Tensor left, const Scalar right)
+void THSTensor_floor_divide_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->floor_divide_(*right));
+    CATCH(left->floor_divide_(*right);)
 }
 
 Tensor THSTensor_true_divide(const Tensor left, const Tensor right)
@@ -484,14 +484,14 @@ Tensor THSTensor_true_divide_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->true_divide(*right));
 }
 
-Tensor THSTensor_true_divide_(const Tensor left, const Tensor right)
+void THSTensor_true_divide_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->true_divide_(*right));
+    CATCH(left->true_divide_(*right);)
 }
 
-Tensor THSTensor_true_divide_scalar_(const Tensor left, const Scalar right)
+void THSTensor_true_divide_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->true_divide_(*right));
+    CATCH(left->true_divide_(*right);)
 }
 
 Tensor THSTensor_fmax(const Tensor left, const Tensor right)
@@ -509,9 +509,9 @@ Tensor THSTensor_fmod(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->fmod(*right));
 }
 
-Tensor THSTensor_fmod_(const Tensor left, const Tensor right)
+void THSTensor_fmod_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->fmod_(*right));
+    CATCH(left->fmod_(*right);)
 }
 
 Tensor THSTensor_fmod_scalar(const Tensor left, const Scalar right)
@@ -519,9 +519,9 @@ Tensor THSTensor_fmod_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->fmod(*right));
 }
 
-Tensor THSTensor_fmod_scalar_(const Tensor left, const Scalar right)
+void THSTensor_fmod_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->fmod_(*right));
+    CATCH(left->fmod_(*right);)
 }
 
 Tensor THSTensor_frac(const Tensor tensor)
@@ -529,9 +529,9 @@ Tensor THSTensor_frac(const Tensor tensor)
     CATCH_TENSOR(tensor->frac());
 }
 
-Tensor THSTensor_frac_(const Tensor tensor)
+void THSTensor_frac_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->frac_());
+    CATCH(tensor->frac_();)
 }
 
 Tensor THSTensor_ge(const Tensor left, const Tensor right)
@@ -539,9 +539,9 @@ Tensor THSTensor_ge(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->ge(*right));
 }
 
-Tensor THSTensor_ge_(const Tensor left, const Tensor right)
+void THSTensor_ge_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->ge_(*right));
+    CATCH(left->ge_(*right);)
 }
 
 Tensor THSTensor_ge_scalar(const Tensor left, const Scalar right)
@@ -549,9 +549,9 @@ Tensor THSTensor_ge_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->ge(*right));
 }
 
-Tensor THSTensor_ge_scalar_(const Tensor left, const Scalar right)
+void THSTensor_ge_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->ge_(*right));
+    CATCH(left->ge_(*right);)
 }
 
 Tensor THSTensor_gt(const Tensor left, const Tensor right)
@@ -559,9 +559,9 @@ Tensor THSTensor_gt(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->gt(*right));
 }
 
-Tensor THSTensor_gt_(const Tensor left, const Tensor right)
+void THSTensor_gt_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->gt_(*right));
+    CATCH(left->gt_(*right);)
 }
 
 Tensor THSTensor_gt_scalar(const Tensor left, const Scalar right)
@@ -569,9 +569,9 @@ Tensor THSTensor_gt_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->gt(*right));
 }
 
-Tensor THSTensor_gt_scalar_(const Tensor left, const Scalar right)
+void THSTensor_gt_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->gt_(*right));
+    CATCH(left->gt_(*right);)
 }
 
 Tensor THSTensor_histc(const Tensor tensor, const int64_t bins, const int64_t min, const int64_t max)
@@ -584,9 +584,9 @@ Tensor THSTensor_ldexp(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->ldexp(*right));
 }
 
-Tensor THSTensor_ldexp_(const Tensor left, const Tensor right)
+void THSTensor_ldexp_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->ldexp_(*right));
+    CATCH(left->ldexp_(*right);)
 }
 
 Tensor THSTensor_le(const Tensor left, const Tensor right)
@@ -594,9 +594,9 @@ Tensor THSTensor_le(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->le(*right));
 }
 
-Tensor THSTensor_le_(const Tensor left, const Tensor right)
+void THSTensor_le_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->le_(*right));
+    CATCH(left->le_(*right);)
 }
 
 Tensor THSTensor_le_scalar(const Tensor left, const Scalar right)
@@ -604,9 +604,9 @@ Tensor THSTensor_le_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->le(*right));
 }
 
-Tensor THSTensor_le_scalar_(const Tensor left, const Scalar right)
+void THSTensor_le_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->le_(*right));
+    CATCH(left->le_(*right);)
 }
 
 Tensor THSTensor_logcumsumexp(const Tensor tensor, const long dimension)
@@ -635,9 +635,9 @@ Tensor THSTensor_log(const Tensor tensor)
     CATCH_TENSOR(tensor->log());
 }
 
-Tensor THSTensor_log_(const Tensor tensor)
+void THSTensor_log_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->log_());
+    CATCH(tensor->log_();)
 }
 
 Tensor THSTensor_log2(const Tensor tensor)
@@ -645,9 +645,9 @@ Tensor THSTensor_log2(const Tensor tensor)
     CATCH_TENSOR(tensor->log2());
 }
 
-Tensor THSTensor_log2_(const Tensor tensor)
+void THSTensor_log2_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->log2_());
+    CATCH(tensor->log2_();)
 }
 
 Tensor THSTensor_log10(const Tensor tensor)
@@ -655,9 +655,9 @@ Tensor THSTensor_log10(const Tensor tensor)
     CATCH_TENSOR(tensor->log10());
 }
 
-Tensor THSTensor_log10_(const Tensor tensor)
+void THSTensor_log10_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->log10_());
+    CATCH(tensor->log10_();)
 }
 
 Tensor THSTensor_log1p(const Tensor tensor)
@@ -665,9 +665,9 @@ Tensor THSTensor_log1p(const Tensor tensor)
     CATCH_TENSOR(tensor->log1p());
 }
 
-Tensor THSTensor_log1p_(const Tensor tensor)
+void THSTensor_log1p_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->log1p_());
+    CATCH(tensor->log1p_();)
 }
 
 Tensor THSTensor_logical_and(const Tensor tensor, const Tensor other)
@@ -675,9 +675,9 @@ Tensor THSTensor_logical_and(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->logical_and(*other));
 }
 
-Tensor THSTensor_logical_and_(const Tensor tensor, const Tensor other)
+void THSTensor_logical_and_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->logical_and_(*other));
+    CATCH(tensor->logical_and_(*other);)
 }
 
 Tensor THSTensor_logical_not(const Tensor tensor)
@@ -685,9 +685,9 @@ Tensor THSTensor_logical_not(const Tensor tensor)
     CATCH_TENSOR(tensor->logical_not());
 }
 
-Tensor THSTensor_logical_not_(const Tensor tensor)
+void THSTensor_logical_not_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->logical_not_());
+    CATCH(tensor->logical_not_();)
 }
 
 Tensor THSTensor_logical_or(const Tensor tensor, const Tensor other)
@@ -695,9 +695,9 @@ Tensor THSTensor_logical_or(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->logical_or(*other));
 }
 
-Tensor THSTensor_logical_or_(const Tensor tensor, const Tensor other)
+void THSTensor_logical_or_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->logical_or_(*other));
+    CATCH(tensor->logical_or_(*other);)
 }
 
 Tensor THSTensor_logical_xor(const Tensor tensor, const Tensor other)
@@ -705,9 +705,9 @@ Tensor THSTensor_logical_xor(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->logical_xor(*other));
 }
 
-Tensor THSTensor_logical_xor_(const Tensor tensor, const Tensor other)
+void THSTensor_logical_xor_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->logical_xor_(*other));
+    CATCH(tensor->logical_xor_(*other);)
 }
 
 Tensor THSTensor_logit(const Tensor tensor, const double* eps)
@@ -725,9 +725,9 @@ Tensor THSTensor_lt(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->lt(*right));
 }
 
-Tensor THSTensor_lt_(const Tensor left, const Tensor right)
+void THSTensor_lt_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->lt_(*right));
+    CATCH(left->lt_(*right);)
 }
 
 Tensor THSTensor_lt_scalar(const Tensor left, const Scalar right)
@@ -735,9 +735,9 @@ Tensor THSTensor_lt_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->lt(*right));
 }
 
-Tensor THSTensor_lt_scalar_(const Tensor left, const Scalar right)
+void THSTensor_lt_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->lt_(*right));
+    CATCH(left->lt_(*right);)
 }
 
 Tensor THSTensor_matmul(const Tensor left, const Tensor right)
@@ -770,9 +770,9 @@ Tensor THSTensor_mul(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->mul(*right));
 }
 
-Tensor THSTensor_mul_(const Tensor left, const Tensor right)
+void THSTensor_mul_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->mul_(*right));
+    CATCH(left->mul_(*right);)
 }
 
 Tensor THSTensor_mul_scalar(const Tensor tensor, const Scalar scalar)
@@ -780,9 +780,9 @@ Tensor THSTensor_mul_scalar(const Tensor tensor, const Scalar scalar)
     CATCH_TENSOR(tensor->mul(*scalar));
 }
 
-Tensor THSTensor_mul_scalar_(const Tensor tensor, const Scalar scalar)
+void THSTensor_mul_scalar_(const Tensor tensor, const Scalar scalar)
 {
-    CATCH_TENSOR(tensor->mul_(*scalar));
+    CATCH(tensor->mul_(*scalar);)
 }
 
 Tensor THSTensor_mvlgamma(const Tensor tensor, int64_t p)
@@ -790,9 +790,9 @@ Tensor THSTensor_mvlgamma(const Tensor tensor, int64_t p)
     CATCH_TENSOR(tensor->mvlgamma(p));
 }
 
-Tensor THSTensor_mvlgamma_(const Tensor tensor, int64_t p)
+void THSTensor_mvlgamma_(const Tensor tensor, int64_t p)
 {
-    CATCH_TENSOR(tensor->mvlgamma_(p));
+    CATCH(tensor->mvlgamma_(p);)
 }
 
 Tensor THSTensor_ne(const Tensor left, const Tensor right)
@@ -800,9 +800,9 @@ Tensor THSTensor_ne(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->ne(*right));
 }
 
-Tensor THSTensor_ne_(const Tensor left, const Tensor right)
+void THSTensor_ne_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->ne_(*right));
+    CATCH(left->ne_(*right);)
 }
 
 Tensor THSTensor_ne_scalar(const Tensor left, const Scalar right)
@@ -810,9 +810,9 @@ Tensor THSTensor_ne_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->ne(*right));
 }
 
-Tensor THSTensor_ne_scalar_(const Tensor left, const Scalar right)
+void THSTensor_ne_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->ne_(*right));
+    CATCH(left->ne_(*right);)
 }
 
 Tensor THSTensor_neg(const Tensor tensor)
@@ -820,9 +820,9 @@ Tensor THSTensor_neg(const Tensor tensor)
     CATCH_TENSOR(tensor->neg());
 }
 
-Tensor THSTensor_neg_(const Tensor tensor)
+void THSTensor_neg_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->neg_());
+    CATCH(tensor->neg_();)
 }
 
 Tensor THSTensor_pow(const Tensor tensor, const Tensor exponent)
@@ -830,9 +830,9 @@ Tensor THSTensor_pow(const Tensor tensor, const Tensor exponent)
     CATCH_TENSOR(tensor->pow(*exponent));
 }
 
-Tensor THSTensor_pow_(const Tensor tensor, const Tensor exponent)
+void THSTensor_pow_(const Tensor tensor, const Tensor exponent)
 {
-    CATCH_TENSOR(tensor->pow_(*exponent));
+    CATCH(tensor->pow_(*exponent);)
 }
 
 Tensor THSTensor_pow_scalar(const Tensor tensor, const Scalar exponent)
@@ -840,9 +840,9 @@ Tensor THSTensor_pow_scalar(const Tensor tensor, const Scalar exponent)
     CATCH_TENSOR(tensor->pow(*exponent));
 }
 
-Tensor THSTensor_pow_scalar_(const Tensor tensor, const Scalar exponent)
+void THSTensor_pow_scalar_(const Tensor tensor, const Scalar exponent)
 {
-    CATCH_TENSOR(tensor->pow_(*exponent));
+    CATCH(tensor->pow_(*exponent);)
 }
 
 Tensor THSTensor_rad2deg(const Tensor tensor)
@@ -855,9 +855,9 @@ Tensor THSTensor_reciprocal(const Tensor tensor)
     CATCH_TENSOR(torch::reciprocal(*tensor));
 }
 
-Tensor THSTensor_reciprocal_(const Tensor tensor)
+void THSTensor_reciprocal_(const Tensor tensor)
 {
-    CATCH_TENSOR(torch::reciprocal_(*tensor));
+    CATCH(torch::reciprocal_(*tensor);)
 }
 
 Tensor THSTensor_remainder(const Tensor left, const Tensor right)
@@ -865,9 +865,9 @@ Tensor THSTensor_remainder(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->remainder(*right));
 }
 
-Tensor THSTensor_remainder_(const Tensor left, const Tensor right)
+void THSTensor_remainder_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->remainder_(*right));
+    CATCH(left->remainder_(*right);)
 }
 
 Tensor THSTensor_remainder_scalar(const Tensor left, const Scalar right)
@@ -875,9 +875,9 @@ Tensor THSTensor_remainder_scalar(const Tensor left, const Scalar right)
     CATCH_TENSOR(left->remainder(*right));
 }
 
-Tensor THSTensor_remainder_scalar_(const Tensor left, const Scalar right)
+void THSTensor_remainder_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->remainder_(*right));
+    CATCH(left->remainder_(*right);)
 }
 
 Tensor THSTensor_round(const Tensor tensor, const int64_t decimals)
@@ -885,9 +885,9 @@ Tensor THSTensor_round(const Tensor tensor, const int64_t decimals)
     CATCH_TENSOR(tensor->round(decimals));
 }
 
-Tensor THSTensor_round_(const Tensor tensor, const int64_t decimals)
+void THSTensor_round_(const Tensor tensor, const int64_t decimals)
 {
-    CATCH_TENSOR(tensor->round_(decimals));
+    CATCH(tensor->round_(decimals);)
 }
 
 Tensor THSTensor_rsqrt(const Tensor tensor)
@@ -895,9 +895,9 @@ Tensor THSTensor_rsqrt(const Tensor tensor)
     CATCH_TENSOR(tensor->rsqrt());
 }
 
-Tensor THSTensor_rsqrt_(const Tensor tensor)
+void THSTensor_rsqrt_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->rsqrt_());
+    CATCH(tensor->rsqrt_();)
 }
 
 Tensor THSTensor_sqrt(const Tensor tensor)
@@ -905,9 +905,9 @@ Tensor THSTensor_sqrt(const Tensor tensor)
     CATCH_TENSOR(tensor->sqrt());
 }
 
-Tensor THSTensor_sqrt_(const Tensor tensor)
+void THSTensor_sqrt_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->sqrt_());
+    CATCH(tensor->sqrt_();)
 }
 
 Tensor THSTensor_sign(const Tensor tensor)
@@ -915,9 +915,9 @@ Tensor THSTensor_sign(const Tensor tensor)
     CATCH_TENSOR(tensor->sign());
 }
 
-Tensor THSTensor_sign_(const Tensor tensor)
+void THSTensor_sign_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->sign_());
+    CATCH(tensor->sign_();)
 }
 
 Tensor THSTensor_sgn(const Tensor tensor)
@@ -925,9 +925,9 @@ Tensor THSTensor_sgn(const Tensor tensor)
     CATCH_TENSOR(tensor->sgn());
 }
 
-Tensor THSTensor_sgn_(const Tensor tensor)
+void THSTensor_sgn_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->sgn_());
+    CATCH(tensor->sgn_();)
 }
 
 Tensor THSTensor_signbit(const Tensor tensor)
@@ -940,9 +940,9 @@ Tensor THSTensor_sin(const Tensor tensor)
     CATCH_TENSOR(tensor->sin());
 }
 
-Tensor THSTensor_sin_(const Tensor tensor)
+void THSTensor_sin_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->sin_());
+    CATCH(tensor->sin_();)
 }
 
 Tensor THSTensor_sinc(const Tensor tensor)
@@ -950,9 +950,9 @@ Tensor THSTensor_sinc(const Tensor tensor)
     CATCH_TENSOR(tensor->sinc());
 }
 
-Tensor THSTensor_sinc_(const Tensor tensor)
+void THSTensor_sinc_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->sinc_());
+    CATCH(tensor->sinc_();)
 }
 
 Tensor THSTensor_sinh(const Tensor tensor)
@@ -960,9 +960,9 @@ Tensor THSTensor_sinh(const Tensor tensor)
     CATCH_TENSOR(tensor->sinh());
 }
 
-Tensor THSTensor_sinh_(const Tensor tensor)
+void THSTensor_sinh_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->sinh_());
+    CATCH(tensor->sinh_();)
 }
 
 Tensor THSTensor_sub(const Tensor left, const Tensor right)
@@ -970,14 +970,14 @@ Tensor THSTensor_sub(const Tensor left, const Tensor right)
     CATCH_TENSOR(left->sub(*right));
 }
 
-Tensor THSTensor_sub_(const Tensor left, const Tensor right)
+void THSTensor_sub_(const Tensor left, const Tensor right)
 {
-    CATCH_TENSOR(left->sub_(*right));
+    CATCH(left->sub_(*right);)
 }
 
-Tensor THSTensor_sub_scalar_(const Tensor left, const Scalar right)
+void THSTensor_sub_scalar_(const Tensor left, const Scalar right)
 {
-    CATCH_TENSOR(left->sub_(*right));
+    CATCH(left->sub_(*right);)
 }
 
 Tensor THSTensor_tan(const Tensor tensor)
@@ -985,9 +985,9 @@ Tensor THSTensor_tan(const Tensor tensor)
     CATCH_TENSOR(tensor->tan());
 }
 
-Tensor THSTensor_tan_(const Tensor tensor)
+void THSTensor_tan_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->tan_());
+    CATCH(tensor->tan_();)
 }
 
 Tensor THSTensor_tanh(const Tensor tensor)
@@ -995,9 +995,19 @@ Tensor THSTensor_tanh(const Tensor tensor)
     CATCH_TENSOR(tensor->tanh());
 }
 
-Tensor THSTensor_tanh_(const Tensor tensor)
+void THSTensor_tanh_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->tanh_());
+    CATCH(tensor->tanh_();)
+}
+
+Tensor THSTensor_trunc(const Tensor tensor)
+{
+    CATCH_TENSOR(tensor->trunc());
+}
+
+void THSTensor_trunc_(const Tensor tensor)
+{
+    CATCH(tensor->trunc_();)
 }
 
 Tensor THSTensor_xlogy(const Tensor x, const Tensor y)
@@ -1005,9 +1015,9 @@ Tensor THSTensor_xlogy(const Tensor x, const Tensor y)
     CATCH_TENSOR(x->xlogy(*y));
 }
 
-Tensor THSTensor_xlogy_(const Tensor x, const Tensor y)
+void THSTensor_xlogy_(const Tensor x, const Tensor y)
 {
-    CATCH_TENSOR(x->xlogy_(*y));
+    CATCH(x->xlogy_(*y);)
 }
 
 Tensor THSTensor_xlogy_scalar(const Tensor x, const Scalar y)
@@ -1015,7 +1025,7 @@ Tensor THSTensor_xlogy_scalar(const Tensor x, const Scalar y)
     CATCH_TENSOR(x->xlogy(*y));
 }
 
-Tensor THSTensor_xlogy_scalar_(const Tensor x, const Scalar y)
+void THSTensor_xlogy_scalar_(const Tensor x, const Scalar y)
 {
-    CATCH_TENSOR(x->xlogy_(*y));
+    CATCH(x->xlogy_(*y);)
 }

@@ -199,7 +199,7 @@ namespace TorchSharp
             DisposeScopeManager.Statistics.Reset();
             using (var d = torch.NewDisposeScope()) {
                 var testTraining = new TestTraining();
-                testTraining.TestTraining1();
+                testTraining.Training1();
             }
 
             _testOutputHelper.WriteLine(
@@ -214,7 +214,7 @@ namespace TorchSharp
             DisposeScopeManager.Statistics.Reset();
             using (var d = torch.NewDisposeScope()) {
                 var testTraining = new TestTraining();
-                testTraining.TestTrainingConv2d();
+                testTraining.TrainingConv2d();
                 _testOutputHelper.WriteLine($"Undisposed Tensors inside DisposeScope: {d.DisposablesCount}");
             }
 

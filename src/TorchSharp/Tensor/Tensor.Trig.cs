@@ -54,10 +54,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor asin_()
             {
-                var res = THSTensor_asin_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_asin_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor arcsin_() => asin_();
@@ -86,10 +85,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor acos_()
             {
-                var res = THSTensor_acos_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_acos_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -114,9 +112,9 @@ namespace TorchSharp
             /// Computes the arctangent of the elements of input.
             /// </summary>
             /// <returns></returns>
-            [Pure]public Tensor arctan() => atan();
+            [Pure] public Tensor arctan() => atan();
 
-            [Pure]public Tensor arctan(Tensor other) => atan2(other);
+            [Pure] public Tensor arctan(Tensor other) => atan2(other);
             public Tensor arctan_(Tensor other) => atan2_(other);
 
             /// <summary>
@@ -125,10 +123,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor atan_()
             {
-                var res = THSTensor_atan_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_atan_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -159,10 +156,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor atan2_(Tensor other)
             {
-                var res = THSTensor_atan2_(Handle, other.Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_atan2_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -183,10 +179,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cos_()
             {
-                var res = THSTensor_cos_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_cos_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -207,10 +202,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor sin_()
             {
-                var res = THSTensor_sin_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_sin_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -231,10 +225,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor tan_()
             {
-                var res = THSTensor_tan_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_tan_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -255,10 +248,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor sinc_()
             {
-                var res = THSTensor_sinc_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_sinc_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -279,10 +271,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor sinh_()
             {
-                var res = THSTensor_sinh_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_sinh_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -303,10 +294,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor cosh_()
             {
-                var res = THSTensor_cosh_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_cosh_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -327,10 +317,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor tanh_()
             {
-                var res = THSTensor_tanh_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_tanh_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -357,10 +346,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor arcsinh_()
             {
-                var res = THSTensor_arcsinh_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_arcsinh_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -393,10 +381,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor arccosh_()
             {
-                var res = THSTensor_arccosh_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_arccosh_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -429,10 +416,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor arctanh_()
             {
-                var res = THSTensor_arctanh_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_arctanh_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>

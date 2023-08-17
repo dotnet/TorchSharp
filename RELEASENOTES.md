@@ -4,11 +4,15 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.100.5
 
-__API Changes__:
+__Breaking Changes__:
 
+Inplace operators no longer create an alias, but instead return 'this'. This change will impact any code that explicitly calls `Dispose` on a tensor after the operation.
+
+__API Changes__:
 
 __Bug Fixes__:
 
+#1064 Inplace operators create an alias
 
 ## NuGet Version 0.100.4
 

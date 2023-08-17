@@ -96,9 +96,8 @@ namespace TorchSharp
                         if (res == IntPtr.Zero)
                             torch.CheckForErrors();
 
-                        res = THSTensor_copy_(res, cmplx, false);
-                        if (res == IntPtr.Zero)
-                            torch.CheckForErrors();
+                        THSTensor_copy_(res, cmplx, false);
+                        torch.CheckForErrors();
 
                         THSTensor_dispose(handle);
                         THSTensor_dispose(cmplx);
@@ -196,9 +195,8 @@ namespace TorchSharp
                         if (res == IntPtr.Zero)
                             torch.CheckForErrors();
 
-                        res = THSTensor_copy_(res, cmplx, false);
-                        if (res == IntPtr.Zero)
-                            torch.CheckForErrors();
+                        THSTensor_copy_(res, cmplx, false);
+                        torch.CheckForErrors();
 
                         THSTensor_dispose(handle);
                         THSTensor_dispose(cmplx);

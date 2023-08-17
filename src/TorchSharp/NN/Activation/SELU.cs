@@ -62,9 +62,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor selu(Tensor x, bool inplace = false)
                 {
-                    using (var m = nn.SELU(inplace)) {
-                        return m.call(x);
-                    }
+                    return inplace ? x.selu_().alias() : x.selu();
                 }
             }
         }
