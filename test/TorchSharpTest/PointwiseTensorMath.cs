@@ -1387,5 +1387,35 @@ namespace TorchSharp
             Assert.True(i.allclose(r0_), "round_() failed");
             Assert.True(i.allclose(r1_), "round_() failed");
         }
+
+        [Fact]
+        public void GreatestCommonDivisor()
+        {
+            using var x = torch.randint(1, 400, 50, int32);
+            using var y = torch.randint(1, 400, 50, int32);
+
+            using var z = x.gcd(y);
+            Assert.NotSame(x, z);
+
+            var w = x.gcd_(y);
+            Assert.Same(x, w);
+
+            Assert.Equal(x, z);
+        }
+
+        [Fact]
+        public void LeastCommonMultiple()
+        {
+            using var x = torch.randint(1, 400, 50, int32);
+            using var y = torch.randint(1, 400, 50, int32);
+
+            using var z = x.lcm(y);
+            Assert.NotSame(x, z);
+
+            var w = x.lcm_(y);
+            Assert.Same(x, w);
+
+            Assert.Equal(x, z);
+        }
     }
 }
