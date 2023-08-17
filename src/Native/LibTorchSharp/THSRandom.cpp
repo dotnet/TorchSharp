@@ -13,12 +13,12 @@ Tensor THSTensor_bernoulli(const Tensor tensor, const Generator gen)
 
 void THSTensor_bernoulli_0(Tensor tensor, const double p, const Generator gen)
 {
-    CATCH(gen == nullptr ? tensor->bernoulli_(p) : tensor->bernoulli_(p, *gen););
+    CATCH(gen == nullptr ? tensor->bernoulli_(p) : tensor->bernoulli_(p, *gen);)
 }
 
 void THSTensor_bernoulli_1(Tensor tensor, const Tensor p_tensor, const Generator gen)
 {
-    CATCH(gen == nullptr ? tensor->bernoulli_(*p_tensor) : tensor->bernoulli_(*p_tensor, *gen););
+    CATCH(gen == nullptr ? tensor->bernoulli_(*p_tensor) : tensor->bernoulli_(*p_tensor, *gen);)
 }
 
 Tensor THSTensor_binomial(Tensor tensor, const Tensor p_tensor, const Generator gen)
@@ -28,22 +28,22 @@ Tensor THSTensor_binomial(Tensor tensor, const Tensor p_tensor, const Generator 
 
 void THSTensor_cauchy_(Tensor tensor, const double median, const double sigma, const Generator gen)
 {
-    CATCH(gen == nullptr ? tensor->cauchy_(median, sigma) : tensor->cauchy_(median, sigma, *gen););
+    CATCH(gen == nullptr ? tensor->cauchy_(median, sigma) : tensor->cauchy_(median, sigma, *gen);)
 }
 
 void THSTensor_exponential_(Tensor tensor, const double lambda, const Generator gen)
 {
-    CATCH(gen == nullptr ? tensor->exponential_(lambda) : tensor->exponential_(lambda, *gen););
+    CATCH(gen == nullptr ? tensor->exponential_(lambda) : tensor->exponential_(lambda, *gen);)
 }
 
 void THSTensor_geometric_(Tensor tensor, const double p, const Generator gen)
 {
-    CATCH(gen == nullptr ? tensor->geometric_(p) : tensor->geometric_(p, *gen););
+    CATCH(gen == nullptr ? tensor->geometric_(p) : tensor->geometric_(p, *gen);)
 }
 
 void THSTensor_log_normal_(Tensor tensor, double mean, double std, const Generator gen)
 {
-    CATCH(gen == nullptr ? tensor->log_normal_(mean, std) : tensor->log_normal_(mean, std, *gen););
+    CATCH(gen == nullptr ? tensor->log_normal_(mean, std) : tensor->log_normal_(mean, std, *gen);)
 }
 
 Tensor THSTensor_multinomial(const Tensor tensor, const int64_t num_samples, const bool replacement, const Generator gen)
@@ -63,7 +63,7 @@ void THSInit_normal_(Tensor tensor, double mean, double std)
 
 void THSTensor_normal_(Tensor tensor, double mean, double std, const Generator gen)
 {
-    CATCH(gen == nullptr ? tensor->normal_(mean, std) : tensor->normal_(mean, std, *gen););
+    CATCH(gen == nullptr ? tensor->normal_(mean, std) : tensor->normal_(mean, std, *gen);)
 }
 
 double norm_cdf(double x) { return (1.0 + erf(x / sqrt(2.0))) / 2.0; }
@@ -346,7 +346,7 @@ Tensor THSTensor_randn_like(
 
 void THSTensor_random_(Tensor tensor, double low, double high, const Generator gen)
 {
-    CATCH(gen == nullptr ? tensor->random_(low, high) : tensor->random_(low, high, *gen););
+    CATCH(gen == nullptr ? tensor->random_(low, high) : tensor->random_(low, high, *gen);)
 }
 
 
@@ -387,7 +387,7 @@ void THSInit_kaiming_uniform_(Tensor tensor, double a, const int64_t mode, const
 
 void THSTensor_uniform_(Tensor tensor, double low, double high, const Generator gen)
 {
-    CATCH(gen == nullptr ? tensor->uniform_(low, high) : tensor->uniform_(low, high, *gen););
+    CATCH(gen == nullptr ? tensor->uniform_(low, high) : tensor->uniform_(low, high, *gen);)
 }
 
 Tensor THSTensor_sample_dirichlet_(Tensor tensor, const Generator gen)
