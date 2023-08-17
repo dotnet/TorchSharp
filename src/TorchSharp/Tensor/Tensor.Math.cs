@@ -371,9 +371,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor bitwise_and_(Tensor other)
             {
-                var res = THSTensor_bitwise_and_(Handle, other.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_bitwise_and_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -393,9 +393,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor bitwise_not_()
             {
-                var res = THSTensor_bitwise_not_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_bitwise_not_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -417,9 +417,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor bitwise_or_(Tensor other)
             {
-                var res = THSTensor_bitwise_or_(Handle, other.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_bitwise_or_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -441,9 +441,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor bitwise_xor_(Tensor other)
             {
-                var res = THSTensor_bitwise_xor_(Handle, other.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_bitwise_xor_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -465,9 +465,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor bitwise_left_shift_(Tensor other)
             {
-                var res = THSTensor_bitwise_left_shift_(Handle, other.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_bitwise_left_shift_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -489,9 +489,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor bitwise_right_shift_(Tensor other)
             {
-                var res = THSTensor_bitwise_right_shift_(Handle, other.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_bitwise_right_shift_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -547,10 +547,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor conj_physical_()
             {
-                var res = THSTensor_conj_physical_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                THSTensor_conj_physical_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -983,9 +982,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor gcd_(Tensor other)
             {
-                var res = THSTensor_gcd_(Handle, other.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_gcd_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1188,9 +1187,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor logical_and_(Tensor other)
             {
-                var res = THSTensor_logical_and_(Handle, other.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_logical_and_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1210,9 +1209,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor logical_not_()
             {
-                var res = THSTensor_logical_not_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_logical_not_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1234,9 +1233,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor logical_or_(Tensor other)
             {
-                var res = THSTensor_logical_or_(Handle, other.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_logical_or_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -1258,9 +1257,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor logical_xor_(Tensor other)
             {
-                var res = THSTensor_logical_xor_(Handle, other.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                THSTensor_logical_xor_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>

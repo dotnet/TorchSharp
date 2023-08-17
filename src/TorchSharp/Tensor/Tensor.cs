@@ -926,8 +926,6 @@ namespace TorchSharp
                 if (names != null && names.Count() != ndim && !names.Contains("..."))
                     throw new ArgumentException($"The number of dimension names ({names.Count()}) is different from the number of dimensions ({ndim}).");
 
-                IntPtr res = IntPtr.Zero;
-
                 if (names != null && names.Count() > 0) {
 
                     var dimNamesArray = ExpandEllipsis(names);
@@ -937,16 +935,16 @@ namespace TorchSharp
                     using PinnedArray<IntPtr> pinnedArray = new PinnedArray<IntPtr>();
                     namesRef = pinnedArray.CreateArray(dimNamesArray);
 
-                    res = NativeMethods.THSTensor_rename_(Handle, namesRef, names is null ? 0 : dimNamesArray.Length);
+                    NativeMethods.THSTensor_rename_(Handle, namesRef, names is null ? 0 : dimNamesArray.Length);
                 } else {
 
-                    res = NativeMethods.THSTensor_rename_(Handle, IntPtr.Zero, 0);
+                    NativeMethods.THSTensor_rename_(Handle, IntPtr.Zero, 0);
                 }
 
-                if (res == IntPtr.Zero) { CheckForErrors(); }
+                CheckForErrors();
                 // This is the only situation in which the names change in place.
                 _names = null;
-                return new Tensor(res);
+                return this;
             }
 
             /// <summary>
@@ -2464,10 +2462,9 @@ namespace TorchSharp
 
             public Tensor digamma_()
             {
-                var res = NativeMethods.THSTensor_digamma_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_digamma_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -2488,10 +2485,9 @@ namespace TorchSharp
 
             public Tensor lgamma_()
             {
-                var res = NativeMethods.THSTensor_lgamma_(Handle);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_lgamma_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -2514,10 +2510,9 @@ namespace TorchSharp
 
             public Tensor mvlgamma_(long p)
             {
-                var res = NativeMethods.THSTensor_mvlgamma_(Handle, p);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_mvlgamma_(Handle, p);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor polygamma(long p)
@@ -2530,10 +2525,9 @@ namespace TorchSharp
 
             public Tensor polygamma_(long p)
             {
-                var res = NativeMethods.THSTensor_polygamma_(Handle, p);
-                if (res == IntPtr.Zero)
-                    CheckForErrors();
-                return new Tensor(res);
+                NativeMethods.THSTensor_polygamma_(Handle, p);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -3199,9 +3193,9 @@ namespace TorchSharp
             /// </summary>
             public Tensor erf_()
             {
-                var res = NativeMethods.THSTensor_erf_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_erf_(Handle);
+                CheckForErrors(); 
+                return this;
             }
 
             /// <summary>
@@ -3221,9 +3215,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor erfc_()
             {
-                var res = NativeMethods.THSTensor_erfc_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_erfc_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -3243,9 +3237,9 @@ namespace TorchSharp
             /// <returns></returns>
             public Tensor erfinv_()
             {
-                var res = NativeMethods.THSTensor_erfinv_(Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_erfinv_(Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor eq(Tensor target)
@@ -3408,9 +3402,9 @@ namespace TorchSharp
             {
                 if (!torch.is_integral(this.dtype) || !torch.is_integral(other.dtype))
                     throw new ArgumentException("Arguments to 'lcm' must have integer element types.");
-                var res = NativeMethods.THSTensor_lcm_(Handle, other.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_lcm_(Handle, other.Handle);
+                CheckForErrors();
+                return this;
             }
 
             /// <summary>
@@ -3510,9 +3504,9 @@ namespace TorchSharp
 
             public Tensor masked_fill_(Tensor mask, Scalar value)
             {
-                var res = NativeMethods.THSTensor_masked_fill_(Handle, mask.Handle, value.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_masked_fill_(Handle, mask.Handle, value.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor masked_scatter(Tensor mask, Tensor value)
@@ -3525,9 +3519,9 @@ namespace TorchSharp
 
             public Tensor masked_scatter_(Tensor mask, Tensor value)
             {
-                var res = NativeMethods.THSTensor_masked_scatter_(Handle, mask.Handle, value.Handle);
-                if (res == IntPtr.Zero) { CheckForErrors(); }
-                return new Tensor(res);
+                NativeMethods.THSTensor_masked_scatter_(Handle, mask.Handle, value.Handle);
+                CheckForErrors();
+                return this;
             }
 
             public Tensor masked_select(Tensor mask)

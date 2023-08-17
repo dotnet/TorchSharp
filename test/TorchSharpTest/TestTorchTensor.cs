@@ -1769,10 +1769,12 @@ namespace TorchSharp
             names = s.names.ToArray();
             Assert.Equal(new[] { "N", "C" }, names);
 
-            t.rename_(null);
+            var z = t.rename_(null);
+            Assert.Same(t, z);
             //Assert.False(t.has_names());  FAILS ON RELEASE BUILDS
 
-            t.rename_(new[] { "Batch", "Channels" });
+            z = t.rename_(new[] { "Batch", "Channels" });
+            Assert.Same(t, z);
             Assert.True(t.has_names());
             Assert.Equal(new[] { "Batch", "Channels" }, t.names.ToArray());
         }
@@ -3971,21 +3973,43 @@ namespace TorchSharp
 
         [Fact]
         [TestOf(nameof(Tensor.masked_scatter))]
+        [TestOf(nameof(Tensor.masked_scatter_))]
         public void MaskedScatter()
         {
             var input = torch.zeros(new long[] { 4, 4 });
             var mask = torch.zeros(new long[] { 4, 4 }, torch.@bool);
             var tTrue = torch.tensor(true);
-            mask[0, 1] = tTrue;
-            mask[2, 3] = tTrue;
+            mask[0, 1] = true;
+            mask[2, 3] = true;
 
             var res = input.masked_scatter(mask, torch.tensor(new float[] { 3.14f, 2 * 3.14f }));
             Assert.Equal(3.14f, res[0, 1].item<float>());
             Assert.Equal(2 * 3.14f, res[2, 3].item<float>());
 
-            input.masked_scatter_(mask, torch.tensor(new float[] { 3.14f, 2 * 3.14f }));
+            var z = input.masked_scatter_(mask, torch.tensor(new float[] { 3.14f, 2 * 3.14f }));
+            Assert.Same(input, z);
             Assert.Equal(3.14f, input[0, 1].item<float>());
             Assert.Equal(2 * 3.14f, input[2, 3].item<float>());
+        }
+
+        [Fact]
+        [TestOf(nameof(Tensor.masked_fill))]
+        [TestOf(nameof(Tensor.masked_fill_))]
+        public void MaskedFill()
+        {
+            var input = torch.zeros(new long[] { 4, 4 });
+            var mask = torch.zeros(new long[] { 4, 4 }, torch.@bool);
+            mask[0, 1] = true;
+            mask[2, 3] = true;
+
+            var res = input.masked_fill(mask, 3.14f);
+            Assert.Equal(3.14f, res[0, 1].item<float>());
+            Assert.Equal(3.14f, res[2, 3].item<float>());
+
+            var z = input.masked_fill_(mask, 3.14f);
+            Assert.Same(input, z);
+            Assert.Equal(3.14f, input[0, 1].item<float>());
+            Assert.Equal(3.14f, input[2, 3].item<float>());
         }
 
         [Fact]

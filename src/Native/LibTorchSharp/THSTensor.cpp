@@ -450,9 +450,9 @@ Tensor THSTensor_digamma(const Tensor tensor)
     CATCH_TENSOR(tensor->digamma());
 }
 
-Tensor THSTensor_digamma_(const Tensor tensor)
+void THSTensor_digamma_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->digamma_());
+    CATCH(tensor->digamma_(););
 }
 
 Tensor THSTensor_dist(const Tensor tensor, const Tensor other, const float p)
@@ -596,9 +596,9 @@ Tensor THSTensor_gcd(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->gcd(*other));
 }
 
-Tensor THSTensor_gcd_(const Tensor tensor, const Tensor other)
+void THSTensor_gcd_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->gcd_(*other));
+    CATCH(tensor->gcd_(*other););
 }
 
 Tensor THSTensor_grad(const Tensor tensor)
@@ -932,9 +932,9 @@ Tensor THSTensor_masked_fill(const Tensor tensor, const Tensor mask, const Scala
     CATCH_TENSOR(tensor->masked_fill(*mask, *value));
 }
 
-Tensor THSTensor_masked_fill_(const Tensor tensor, const Tensor mask, const Scalar value)
+void THSTensor_masked_fill_(const Tensor tensor, const Tensor mask, const Scalar value)
 {
-    CATCH_TENSOR(tensor->masked_fill_(*mask, *value));
+    CATCH(tensor->masked_fill_(*mask, *value););
 }
 
 Tensor THSTensor_masked_scatter(const Tensor tensor, const Tensor mask, const Tensor value)
@@ -942,9 +942,9 @@ Tensor THSTensor_masked_scatter(const Tensor tensor, const Tensor mask, const Te
     CATCH_TENSOR(tensor->masked_scatter(*mask, *value));
 }
 
-Tensor THSTensor_masked_scatter_(const Tensor tensor, const Tensor mask, const Tensor value)
+void THSTensor_masked_scatter_(const Tensor tensor, const Tensor mask, const Tensor value)
 {
-    CATCH_TENSOR(tensor->masked_scatter_(*mask, *value));
+    CATCH(tensor->masked_scatter_(*mask, *value););
 }
 
 Tensor THSTensor_masked_select(const Tensor tensor, const Tensor mask)
@@ -1127,9 +1127,9 @@ Tensor THSTensor_polygamma(const Tensor tensor, int64_t n)
     CATCH_TENSOR(tensor->polygamma(n));
 }
 
-Tensor THSTensor_polygamma_(const Tensor tensor, int64_t n)
+void THSTensor_polygamma_(const Tensor tensor, int64_t n)
 {
-    CATCH_TENSOR(tensor->polygamma_(n));
+    CATCH(tensor->polygamma_(n););
 }
 
 Tensor THSTensor_positive(const Tensor tensor)
@@ -2097,7 +2097,7 @@ Tensor THSTensor_rename(Tensor tensor, const char** names, int64_t nLength)
     return nullptr;
 }
 
-Tensor THSTensor_rename_(Tensor tensor, const char** names, int64_t nLength)
+void THSTensor_rename_(Tensor tensor, const char** names, int64_t nLength)
 {
     CATCH(
         if (names != nullptr && nLength > 0) {
@@ -2111,14 +2111,12 @@ Tensor THSTensor_rename_(Tensor tensor, const char** names, int64_t nLength)
                 }
             }
 
-            return ResultTensor(tensor->rename_(nvec));
+            tensor->rename_(nvec);
         }
         else {
-            return ResultTensor(tensor->rename_(c10::nullopt));
+            tensor->rename_(c10::nullopt);
         }
     );
-
-    return nullptr;
 }
 
 Tensor THSTensor_refine_names(Tensor tensor, const char** names, int64_t nLength)

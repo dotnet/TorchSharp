@@ -177,27 +177,27 @@ EXPORT_API(Tensor) THSTensor_bincount(const Tensor tensor, const Tensor weights,
 
 EXPORT_API(Tensor) THSTensor_bitwise_and(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_bitwise_and_(const Tensor tensor, const Tensor other);
+EXPORT_API(void) THSTensor_bitwise_and_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_bitwise_not(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_bitwise_not_(const Tensor tensor);
+EXPORT_API(void) THSTensor_bitwise_not_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_bitwise_or(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_bitwise_or_(const Tensor tensor, const Tensor other);
+EXPORT_API(void) THSTensor_bitwise_or_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_bitwise_xor(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other);
+EXPORT_API(void) THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_bitwise_left_shift(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_bitwise_left_shift_(const Tensor tensor, const Tensor other);
+EXPORT_API(void) THSTensor_bitwise_left_shift_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_bitwise_right_shift(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_bitwise_right_shift_(const Tensor tensor, const Tensor other);
+EXPORT_API(void) THSTensor_bitwise_right_shift_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_block_diag(const Tensor* tensor, const int length);
 
@@ -269,7 +269,7 @@ EXPORT_API(int64_t) THSTensor_is_nonzero(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_conj_physical(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_conj_physical_(const Tensor tensor);
+EXPORT_API(void) THSTensor_conj_physical_(const Tensor tensor);
 
 EXPORT_API(int64_t) THSTensor_is_conj(const Tensor tensor);
 
@@ -462,15 +462,15 @@ EXPORT_API(Tensor) THSTensor_expand(const Tensor tensor, const int64_t* sizes, c
 
 EXPORT_API(Tensor) THSTensor_erf(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_erf_(const Tensor tensor);
+EXPORT_API(void) THSTensor_erf_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_erfc(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_erfc_(const Tensor tensor);
+EXPORT_API(void) THSTensor_erfc_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_erfinv(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_erfinv_(const Tensor tensor);
+EXPORT_API(void) THSTensor_erfinv_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_eye(const int64_t n, const int64_t m, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad);
 
@@ -534,15 +534,15 @@ EXPORT_API(Tensor) THSTensor_full_like(const Tensor input, Scalar value, const i
 
 EXPORT_API(Tensor) THSTensor_digamma(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_digamma_(const Tensor tensor);
+EXPORT_API(void) THSTensor_digamma_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_lgamma(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_lgamma_(const Tensor tensor);
+EXPORT_API(void) THSTensor_lgamma_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_mvlgamma(const Tensor tensor, int64_t p);
 
-EXPORT_API(Tensor) THSTensor_mvlgamma_(const Tensor tensor, int64_t p);
+EXPORT_API(void) THSTensor_mvlgamma_(const Tensor tensor, int64_t p);
 
 EXPORT_API(Tensor) THSTensor_gather(const Tensor tensor, const int64_t dim, const Tensor index);
 
@@ -570,7 +570,7 @@ EXPORT_API(Tensor) THSTensor_get6(const Tensor tensor, int64_t index1, int64_t i
 
 EXPORT_API(Tensor) THSTensor_gcd(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_gcd_(const Tensor tensor, const Tensor other);
+EXPORT_API(void) THSTensor_gcd_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_grad(const Tensor tensor);
 
@@ -678,7 +678,7 @@ EXPORT_API(Tensor) THSTensor_kthvalue(const Tensor input, int64_t k, int64_t dim
 
 EXPORT_API(Tensor) THSTensor_lcm(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_lcm_(const Tensor tensor, const Tensor other);
+EXPORT_API(void) THSTensor_lcm_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_ldexp(const Tensor left, const Tensor right);
 EXPORT_API(void) THSTensor_ldexp_(const Tensor left, const Tensor right);
@@ -737,19 +737,19 @@ EXPORT_API(void) THSTensor_log1p_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_logical_and(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_logical_and_(const Tensor tensor, const Tensor other);
+EXPORT_API(void) THSTensor_logical_and_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_logical_not(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_logical_not_(const Tensor tensor);
+EXPORT_API(void) THSTensor_logical_not_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_logical_or(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_logical_or_(const Tensor tensor, const Tensor other);
+EXPORT_API(void) THSTensor_logical_or_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_logical_xor(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_logical_xor_(const Tensor tensor, const Tensor other);
+EXPORT_API(void) THSTensor_logical_xor_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_logit(const Tensor tensor, const double* eps);
 EXPORT_API(Tensor) THSTensor_logit_(const Tensor tensor, const double* eps);
@@ -772,11 +772,11 @@ EXPORT_API(Tensor) THSTensor_lu_unpack(const Tensor LU_data, const Tensor LU_piv
 
 EXPORT_API(Tensor) THSTensor_masked_fill(const Tensor tensor, const Tensor mask, const Scalar value);
 
-EXPORT_API(Tensor) THSTensor_masked_fill_(const Tensor tensor, const Tensor mask, const Scalar value);
+EXPORT_API(void) THSTensor_masked_fill_(const Tensor tensor, const Tensor mask, const Scalar value);
 
 EXPORT_API(Tensor) THSTensor_masked_scatter(const Tensor tensor, const Tensor mask, const Tensor source);
 
-EXPORT_API(Tensor) THSTensor_masked_scatter_(const Tensor tensor, const Tensor mask, const Tensor source);
+EXPORT_API(void) THSTensor_masked_scatter_(const Tensor tensor, const Tensor mask, const Tensor source);
 
 EXPORT_API(Tensor) THSTensor_masked_select(const Tensor tensor, const Tensor mask);
 
@@ -1008,7 +1008,7 @@ EXPORT_API(Tensor) THSTensor_polar(const Tensor abs, const Tensor angle);
 
 EXPORT_API(Tensor) THSTensor_polygamma(const Tensor tensor, int64_t n);
 
-EXPORT_API(Tensor) THSTensor_polygamma_(const Tensor tensor, int64_t n);
+EXPORT_API(void) THSTensor_polygamma_(const Tensor tensor, int64_t n);
 
 EXPORT_API(Tensor) THSTensor_positive(const Tensor tensor);
 
@@ -1375,7 +1375,7 @@ EXPORT_API(Tensor) THSTensor_values(Tensor tensor);
 EXPORT_API(bool) THSTensor_has_names(Tensor tensor);
 EXPORT_API(void) THSTensor_names(Tensor tensor, const char** (*allocator)(size_t length));
 EXPORT_API(Tensor) THSTensor_rename(Tensor tensor, const char** names, int64_t nLength);
-EXPORT_API(Tensor) THSTensor_rename_(Tensor tensor, const char** names, int64_t nLength);
+EXPORT_API(void) THSTensor_rename_(Tensor tensor, const char** names, int64_t nLength);
 
 EXPORT_API(Tensor) THSTensor_refine_names(Tensor tensor, const char** names, int64_t nLength);
 

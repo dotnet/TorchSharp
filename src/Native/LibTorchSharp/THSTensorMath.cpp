@@ -181,9 +181,9 @@ Tensor THSTensor_bitwise_and(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_and(*other));
 }
 
-Tensor THSTensor_bitwise_and_(const Tensor tensor, const Tensor other)
+void THSTensor_bitwise_and_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->bitwise_and_(*other));
+    CATCH(tensor->bitwise_and_(*other););
 }
 
 Tensor THSTensor_bitwise_not(const Tensor tensor)
@@ -191,9 +191,9 @@ Tensor THSTensor_bitwise_not(const Tensor tensor)
     CATCH_TENSOR(tensor->bitwise_not());
 }
 
-Tensor THSTensor_bitwise_not_(const Tensor tensor)
+void THSTensor_bitwise_not_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->bitwise_not_());
+    CATCH(tensor->bitwise_not_(););
 }
 
 Tensor THSTensor_bitwise_or(const Tensor tensor, const Tensor other)
@@ -201,9 +201,9 @@ Tensor THSTensor_bitwise_or(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_or(*other));
 }
 
-Tensor THSTensor_bitwise_or_(const Tensor tensor, const Tensor other)
+void THSTensor_bitwise_or_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->bitwise_or_(*other));
+    CATCH(tensor->bitwise_or_(*other););
 }
 
 Tensor THSTensor_bitwise_xor(const Tensor tensor, const Tensor other)
@@ -211,9 +211,9 @@ Tensor THSTensor_bitwise_xor(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_xor(*other));
 }
 
-Tensor THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other)
+void THSTensor_bitwise_xor_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->bitwise_xor_(*other));
+    CATCH(tensor->bitwise_xor_(*other););
 }
 
 Tensor THSTensor_bitwise_left_shift(const Tensor tensor, const Tensor other)
@@ -221,9 +221,9 @@ Tensor THSTensor_bitwise_left_shift(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_left_shift(*other));
 }
 
-Tensor THSTensor_bitwise_left_shift_(const Tensor tensor, const Tensor other)
+void THSTensor_bitwise_left_shift_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->bitwise_left_shift_(*other));
+    CATCH(tensor->bitwise_left_shift_(*other););
 }
 
 Tensor THSTensor_bitwise_right_shift(const Tensor tensor, const Tensor other)
@@ -231,9 +231,9 @@ Tensor THSTensor_bitwise_right_shift(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->bitwise_right_shift(*other));
 }
 
-Tensor THSTensor_bitwise_right_shift_(const Tensor tensor, const Tensor other)
+void THSTensor_bitwise_right_shift_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->bitwise_right_shift_(*other));
+    CATCH(tensor->bitwise_right_shift_(*other););
 }
 
 Tensor THSTensor_bmm(const Tensor batch1, const Tensor batch2)
@@ -278,9 +278,9 @@ Tensor THSTensor_conj_physical(const Tensor tensor)
     CATCH_TENSOR(tensor->conj_physical());
 }
 
-Tensor THSTensor_conj_physical_(const Tensor tensor)
+void THSTensor_conj_physical_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->conj_physical_());
+    CATCH(tensor->conj_physical_(););
 }
 
 Tensor THSTensor_resolve_conj(const Tensor tensor)
@@ -414,9 +414,9 @@ Tensor THSTensor_erf(const Tensor tensor)
     CATCH_TENSOR(tensor->erf());
 }
 
-Tensor THSTensor_erf_(const Tensor tensor)
+void THSTensor_erf_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->erf_());
+    CATCH(tensor->erf_(););
 }
 
 Tensor THSTensor_erfc(const Tensor tensor)
@@ -424,9 +424,9 @@ Tensor THSTensor_erfc(const Tensor tensor)
     CATCH_TENSOR(tensor->erfc());
 }
 
-Tensor THSTensor_erfc_(const Tensor tensor)
+void THSTensor_erfc_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->erfc_());
+    CATCH(tensor->erfc_(););
 }
 
 Tensor THSTensor_erfinv(const Tensor tensor)
@@ -434,9 +434,9 @@ Tensor THSTensor_erfinv(const Tensor tensor)
     CATCH_TENSOR(tensor->erfinv());
 }
 
-Tensor THSTensor_erfinv_(const Tensor tensor)
+void THSTensor_erfinv_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->erfinv_());
+    CATCH(tensor->erfinv_(););
 }
 
 Tensor THSTensor_float_power(const Tensor input, const Tensor exponent)
@@ -675,9 +675,9 @@ Tensor THSTensor_logical_and(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->logical_and(*other));
 }
 
-Tensor THSTensor_logical_and_(const Tensor tensor, const Tensor other)
+void THSTensor_logical_and_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->logical_and_(*other));
+    CATCH(tensor->logical_and_(*other););
 }
 
 Tensor THSTensor_logical_not(const Tensor tensor)
@@ -685,9 +685,9 @@ Tensor THSTensor_logical_not(const Tensor tensor)
     CATCH_TENSOR(tensor->logical_not());
 }
 
-Tensor THSTensor_logical_not_(const Tensor tensor)
+void THSTensor_logical_not_(const Tensor tensor)
 {
-    CATCH_TENSOR(tensor->logical_not_());
+    CATCH(tensor->logical_not_(););
 }
 
 Tensor THSTensor_logical_or(const Tensor tensor, const Tensor other)
@@ -695,9 +695,9 @@ Tensor THSTensor_logical_or(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->logical_or(*other));
 }
 
-Tensor THSTensor_logical_or_(const Tensor tensor, const Tensor other)
+void THSTensor_logical_or_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->logical_or_(*other));
+    CATCH(tensor->logical_or_(*other););
 }
 
 Tensor THSTensor_logical_xor(const Tensor tensor, const Tensor other)
@@ -705,9 +705,9 @@ Tensor THSTensor_logical_xor(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->logical_xor(*other));
 }
 
-Tensor THSTensor_logical_xor_(const Tensor tensor, const Tensor other)
+void THSTensor_logical_xor_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->logical_xor_(*other));
+    CATCH(tensor->logical_xor_(*other););
 }
 
 Tensor THSTensor_logit(const Tensor tensor, const double* eps)
@@ -790,9 +790,9 @@ Tensor THSTensor_mvlgamma(const Tensor tensor, int64_t p)
     CATCH_TENSOR(tensor->mvlgamma(p));
 }
 
-Tensor THSTensor_mvlgamma_(const Tensor tensor, int64_t p)
+void THSTensor_mvlgamma_(const Tensor tensor, int64_t p)
 {
-    CATCH_TENSOR(tensor->mvlgamma_(p));
+    CATCH(tensor->mvlgamma_(p););
 }
 
 Tensor THSTensor_ne(const Tensor left, const Tensor right)
