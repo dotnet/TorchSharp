@@ -64,7 +64,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor hardsigmoid(Tensor input, bool inplace = false)
                 {
-                    return inplace ? input.hardsigmoid_() : input.hardsigmoid();
+                    return inplace ? input.hardsigmoid_().alias() : input.hardsigmoid();
                 }
             }
         }

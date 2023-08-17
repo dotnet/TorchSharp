@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using SkiaSharp;
+using TorchSharp;
 using Xunit;
 
 using static TorchSharp.torch;
@@ -10,7 +10,7 @@ using static TorchSharp.torchvision.models;
 using static TorchSharp.torchvision.ops;
 using static TorchSharp.torchvision.transforms;
 
-namespace TorchSharp
+namespace TorchVision
 {
     [Collection("Sequential")]
     public class TestTorchVision

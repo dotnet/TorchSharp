@@ -410,14 +410,19 @@ Tensor THSTensor_lcm(const Tensor tensor, const Tensor other)
     CATCH_TENSOR(tensor->lcm(*other))
 }
 
-Tensor THSTensor_lcm_(const Tensor tensor, const Tensor other)
+void THSTensor_lcm_(const Tensor tensor, const Tensor other)
 {
-    CATCH_TENSOR(tensor->lcm_(*other))
+    CATCH(tensor->lcm_(*other);)
 }
 
 Tensor THSTensor_lgamma(const Tensor tensor)
 {
     CATCH_TENSOR(tensor->lgamma())
+}
+
+void THSTensor_lgamma_(const Tensor tensor)
+{
+    CATCH(tensor->lgamma_();)
 }
 
 Tensor THSTensor_norm(const Tensor tensor, float p)

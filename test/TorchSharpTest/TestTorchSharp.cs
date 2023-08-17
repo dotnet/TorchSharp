@@ -13,7 +13,7 @@ namespace TorchSharp
     public class TestTorch
     {
         [Fact]
-        public void TestEnumEquivalence()
+        public void EnumEquivalence()
         {
             Assert.Equal((int)InterpolationMode.Nearest, (int)UpsampleMode.Nearest);
             Assert.Equal((int)InterpolationMode.Linear, (int)UpsampleMode.Linear);
@@ -25,7 +25,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestDeviceCount()
+        public void DeviceCount()
         {
             //var shape = new long[] { 2, 2 };
 
@@ -42,7 +42,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestSynchronize()
+        public void Synchronize()
         {
             // Will throw if the underlying native function fails to link at runtime
             cuda.synchronize();
@@ -67,7 +67,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestDefaultGenerators()
+        public void DefaultGenerators()
         {
             // This tests that the default generator can be disposed, but will keep on going,
             long a, b, c;
@@ -103,7 +103,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestExplicitGenerators()
+        public void ExplicitGenerators()
         {
             // This tests that the default generator can be disposed, but will keep on going.
             lock (_lock) {
@@ -156,7 +156,7 @@ namespace TorchSharp
         }
 
         [Fact]//(Skip = "Some non-deterministic race condition causes this test to fail every now and then. The lock helps, but not completely.")]
-        public void TestGeneratorState()
+        public void GeneratorState()
         {
             // This test fails intermittently with CUDA. Just skip it.
             if (cuda.is_available()) return;
@@ -192,7 +192,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestUtilsPtoV()
+        public void UtilsPtoV()
         {
             var lin1 = nn.Linear(1000, 100);
             var lin2 = nn.Linear(100, 10);
@@ -211,7 +211,7 @@ namespace TorchSharp
             torch.nn.utils.vector_to_parameters(torch.as_tensor(array).cpu(), seq.parameters());
         }
         [Fact]
-        public void TestUtilsVtoP()
+        public void UtilsVtoP()
         {
             var lin1 = nn.Linear(1000, 100);
             var lin2 = nn.Linear(100, 10);

@@ -2517,7 +2517,8 @@ namespace TorchSharp
             param = module.get_parameter("test");
 
             using (torch.no_grad()) {
-                param.transpose_(0, 1);
+                var z = param.transpose_(0, 1);
+                Assert.Same(param, z);
             }
             Assert.Equal(100, module.get_parameter("test").shape[0]);
             Assert.Equal(1000, module.get_parameter("test").shape[1]);

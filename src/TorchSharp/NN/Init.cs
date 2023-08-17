@@ -43,9 +43,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor ones_(Tensor tensor)
                 {
-                    var res = THSInit_ones_(tensor.Handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_ones_(tensor.Handle);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -53,9 +53,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor zeros_(Tensor tensor)
                 {
-                    var res = THSInit_zeros_(tensor.Handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_zeros_(tensor.Handle);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -64,9 +64,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor dirac_(Tensor tensor)
                 {
-                    var res = THSInit_dirac_(tensor.Handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_dirac_(tensor.Handle);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -75,9 +75,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor eye_(Tensor tensor)
                 {
-                    var res = THSInit_eye_(tensor.Handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_eye_(tensor.Handle);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -85,9 +85,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor constant_(Tensor tensor, Scalar val)
                 {
-                    var res = THSInit_constant_(tensor.Handle, val.Handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_constant_(tensor.Handle, val.Handle);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -95,9 +95,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor uniform_(Tensor tensor, double low = 0, double high = 1, Generator generator = null)
                 {
-                    var res = THSInit_uniform_(tensor.Handle, low, high);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_uniform_(tensor.Handle, low, high);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -105,9 +105,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor normal_(Tensor tensor, double mean = 0, double std = 1, Generator generator = null)
                 {
-                    var res = THSInit_normal_(tensor.Handle, mean, std);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_normal_(tensor.Handle, mean, std);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -123,9 +123,9 @@ namespace TorchSharp
                 public static Tensor trunc_normal_(Tensor tensor, double mean = 0.0, double std = 1.0, double a = -2.0, double b = 2.0, Generator generator = null)
                 {
                     using (torch.no_grad()) {
-                        var res = THSInit_trunc_normal_(tensor.Handle, mean, std, a, b);
-                        if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return tensor.alias();
+                        THSInit_trunc_normal_(tensor.Handle, mean, std, a, b);
+                        torch.CheckForErrors();
+                        return tensor;
                     }
                 }
 
@@ -134,9 +134,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor orthogonal_(Tensor tensor, double gain = 1.0)
                 {
-                    var res = THSInit_orthogonal_(tensor.Handle, gain);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_orthogonal_(tensor.Handle, gain);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -144,9 +144,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor sparse_(Tensor tensor, double sparsity, double std = 0.01)
                 {
-                    var res = THSInit_sparse_(tensor.Handle, sparsity, std);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_sparse_(tensor.Handle, sparsity, std);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -154,9 +154,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor kaiming_uniform_(Tensor tensor, double a = 0, FanInOut mode = FanInOut.FanIn, NonlinearityType nonlinearity = NonlinearityType.LeakyReLU)
                 {
-                    var res = THSInit_kaiming_uniform_(tensor.Handle, a, (long)mode, (long)nonlinearity);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_kaiming_uniform_(tensor.Handle, a, (long)mode, (long)nonlinearity);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -164,9 +164,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor kaiming_normal_(Tensor tensor, double a = 0, FanInOut mode = FanInOut.FanIn, NonlinearityType nonlinearity = NonlinearityType.LeakyReLU)
                 {
-                    var res = THSInit_kaiming_normal_(tensor.Handle, a, (long)mode, (long)nonlinearity);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_kaiming_normal_(tensor.Handle, a, (long)mode, (long)nonlinearity);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -174,9 +174,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor xavier_uniform_(Tensor tensor, double gain = 1.0)
                 {
-                    var res = THSInit_xavier_uniform_(tensor.Handle, gain);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_xavier_uniform_(tensor.Handle, gain);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
@@ -189,9 +189,9 @@ namespace TorchSharp
                 /// </summary>
                 public static Tensor xavier_normal_(Tensor tensor, double gain = 1.0)
                 {
-                    var res = THSInit_xavier_uniform_(tensor.Handle, gain);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    THSInit_xavier_uniform_(tensor.Handle, gain);
+                    torch.CheckForErrors();
+                    return tensor;
                 }
 
                 /// <summary>
