@@ -65,6 +65,18 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void AugMix_TestMemoryUsage()
+        {
+            using (var d = torch.NewDisposeScope()) {
+                var transform = torchvision.transforms.AugMix();
+                var result = transform.call(image);
+                Assert.Equal(1, d.DisposablesCount);
+                result?.Dispose();
+                Assert.Equal(0, d.DisposablesCount);
+            }
+        }
+
+        [Fact]
         public void AugMix_TestAugment()
         {
             var g = new torch.Generator();
@@ -76,7 +88,7 @@ namespace TorchSharp
 
             // Verified expected results from pytorch torchvision
             var expected = torch.tensor(new[, , ,]
-             {
+            {
                 {
                     {{8, 0}, {0, 8}},
                     {{8, 0}, {0, 8}},
