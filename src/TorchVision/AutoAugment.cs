@@ -110,13 +110,15 @@ namespace TorchSharp
                 int magnitude = 9,
                 int num_magnitude_bins = 31,
                 InterpolationMode interpolation = InterpolationMode.Nearest,
-                IList<float>? fill = null)
+                IList<float>? fill = null,
+                Generator? generator = null)
             {
                 this.num_ops = num_ops;
                 this.magnitude = magnitude;
                 this.num_magnitude_bins = num_magnitude_bins;
                 this.interpolation = interpolation;
                 this.fill = fill;
+                this.generator = generator;
             }
 
             public Tensor call(Tensor img)
@@ -125,12 +127,12 @@ namespace TorchSharp
                 var (_, height, width) = F.get_dimensions(img);
                 var op_meta = augmentation_space(num_magnitude_bins, (height, width));
                 for (int i = 0; i < num_ops; ++i) {
-                    var op_index = torch.randint(0, op_meta.Count, 1).ToInt32();
+                    var op_index = torch.randint(0, op_meta.Count, 1, generator: this.generator).ToInt32();
                     var op_name = op_meta.Keys.ElementAt(op_index);
                     var (magnitudes, signed) = op_meta[op_name];
                     var magnitude = magnitudes.Dimensions > 0 ? magnitudes[this.magnitude].ToDouble() : 0.0;
 
-                    if (signed && torch.randint(0, 2, 1).ToBoolean())
+                    if (signed && torch.randint(0, 2, 1, generator: this.generator).ToBoolean())
                         magnitude *= -1.0;
 
                     img = apply_op(img, op_name, magnitude, interpolation, this.fill);
@@ -163,6 +165,7 @@ namespace TorchSharp
             private readonly int num_magnitude_bins;
             private readonly InterpolationMode interpolation;
             private readonly IList<float>? fill;
+            private readonly Generator? generator;
         }
 
         /* Original implementation from:
@@ -176,7 +179,8 @@ namespace TorchSharp
                 double alpha = 1.0,
                 bool all_ops = true,
                 InterpolationMode interpolation = InterpolationMode.Bilinear,
-                IList<float>? fill = null)
+                IList<float>? fill = null,
+                Generator? generator = null)
             {
                 if (severity < 1 || severity > ParameterMax)
                     throw new ArgumentException($"The severity must be between [1, {ParameterMax}]. Got {severity} instead.");
@@ -188,6 +192,7 @@ namespace TorchSharp
                 this.all_ops = all_ops;
                 this.interpolation = interpolation;
                 this.fill = fill;
+                this.generator = generator;
             }
 
             private Dictionary<opType, (Tensor, bool)> augmentation_space(int num_bins, (long height, long width) image_size)
@@ -238,15 +243,15 @@ namespace TorchSharp
                 for(int i = 0; i < this.mixture_width; ++i)
                 {
                     var aug = batch;
-                    var depth = this.chain_depth > 0 ? this.chain_depth : torch.randint(low: 1, high: 4, size: 1).ToInt32();
+                    var depth = this.chain_depth > 0 ? this.chain_depth : torch.randint(low: 1, high: 4, size: 1, generator: this.generator).ToInt32();
                     for(int d = 0; d < depth; ++d)
                     {
-                        var op_index = torch.randint(op_meta.Count, size: 1).ToInt32();
+                        var op_index = torch.randint(op_meta.Count, size: 1, generator: this.generator).ToInt32();
                         var op_name = op_meta.Keys.ElementAt(op_index);
                         var (magnitudes, signed) = op_meta[op_name];
 
-                        var magnitude = magnitudes.ndim > 0 ? magnitudes[torch.randint(this.severity, size: 1).ToInt32()].ToDouble() : 0.0;
-                        if (signed && torch.randint(0, 2, 1).ToBoolean())
+                        var magnitude = magnitudes.ndim > 0 ? magnitudes[torch.randint(this.severity, size: 1, generator: this.generator).ToInt32()].ToDouble() : 0.0;
+                        if (signed && torch.randint(0, 2, 1, generator: this.generator).ToBoolean())
                             magnitude *= -1.0;
 
                         aug = apply_op(aug, op_name, magnitude, interpolation: this.interpolation, fill: this.fill);
@@ -267,6 +272,7 @@ namespace TorchSharp
             private readonly bool all_ops;
             private readonly InterpolationMode interpolation;
             private readonly IList<float>? fill;
+            private readonly Generator? generator;
         }
 
         public static partial class transforms
@@ -285,14 +291,16 @@ namespace TorchSharp
             /// torchvision.transforms.InterpolationMode. Default: InterpolationMode.NEAREST.</param>
             /// <param name="fill">Pixel fill value for the area outside the transformed
             /// image. If given a number, the value is used for all bands respectively. Default: null</param>
+            /// <param name="generator">The generator used for random values. Default: null</param>
             static public ITransform RandAugment(
                 int num_ops = 2,
                 int magnitude = 9,
                 int num_magnitude_bins = 31,
                 InterpolationMode interpolation = InterpolationMode.Nearest,
-                IList<float>? fill = null)
+                IList<float>? fill = null,
+                Generator? generator = null)
             {
-                return new RandAugment(num_ops, magnitude, num_magnitude_bins, interpolation, fill);
+                return new RandAugment(num_ops, magnitude, num_magnitude_bins, interpolation, fill, generator);
             }
 
             /// <summary>
@@ -312,6 +320,7 @@ namespace TorchSharp
             /// torchvision.transforms.InterpolationMode. Default: InterpolationMode.Bilinear.</param>
             /// <param name="fill">Pixel fill value for the area outside the transformed
             /// image. If given a number, the value is used for all bands respectively. Default: null</param>
+            /// <param name="generator">The generator used for random values. Default: null</param>
             static public ITransform AugMix(
                 int severity = 3,
                 int mixture_width = 3,
@@ -319,9 +328,10 @@ namespace TorchSharp
                 double alpha = 1.0,
                 bool all_ops = true,
                 InterpolationMode interpolation = InterpolationMode.Bilinear,
-                IList<float>? fill = null)
+                IList<float>? fill = null,
+                Generator? generator = null)
             {
-                return new AugMix(severity, mixture_width, chain_depth, alpha, all_ops, interpolation, fill);
+                return new AugMix(severity, mixture_width, chain_depth, alpha, all_ops, interpolation, fill, generator);
             }
         }
     }

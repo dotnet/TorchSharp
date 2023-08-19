@@ -31,7 +31,7 @@ namespace TorchSharp
             }
         }
 
-        [Fact(Skip = "https://github.com/dotnet/TorchSharp/issues/1074")]
+        [Fact]
         public void RandAugment_TestAugment()
         {
             /* Seed 3 applies this order of transforms:
@@ -39,9 +39,10 @@ namespace TorchSharp
              * Posterize
              * Identity
              * ShearX */
-            torch.manual_seed(3);
+            var g = new torch.Generator();
+            g.manual_seed(3);
 
-            var transform = torchvision.transforms.RandAugment();
+            var transform = torchvision.transforms.RandAugment(generator: g);
 
             var result = transform.call(image);
 
