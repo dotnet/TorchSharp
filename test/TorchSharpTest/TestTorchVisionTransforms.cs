@@ -63,5 +63,33 @@ namespace TorchSharp
 
             Assert.Equal(expected, result);
         }
+
+        [Fact]
+        public void AugMix_TestAugment()
+        {
+            var g = new torch.Generator();
+            g.manual_seed(3);
+
+            var transform = torchvision.transforms.AugMix(generator: g);
+
+            var result = transform.call(image);
+
+            // Verified expected results from pytorch torchvision
+            var expected = torch.tensor(new[, , ,]
+             {
+                {
+                    {{8, 0}, {0, 8}},
+                    {{8, 0}, {0, 8}},
+                    {{8, 0}, {0, 8}}
+                },
+                {
+                    {{8, 0}, {0, 8}},
+                    {{8, 0}, {0, 8}},
+                    {{8, 0}, {0, 8}}
+                }
+            }, dtype: torch.uint8);
+
+            Assert.Equal(expected, result);
+        }
     }
 }

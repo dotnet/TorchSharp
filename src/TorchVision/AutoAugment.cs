@@ -231,11 +231,13 @@ namespace TorchSharp
                 var batch_dims = new[]{batch.size(0)}.Concat(Enumerable.Repeat(1L, (int)batch.ndim - 1)).ToArray();
 
                 var m = torch._sample_dirichlet(
-                    torch.tensor(new[]{this.alpha, this.alpha}, device: batch.device).expand(batch_dims[0], -1)
+                    torch.tensor(new[]{this.alpha, this.alpha}, device: batch.device).expand(batch_dims[0], -1),
+                    generator: this.generator
                     );
 
                 var combined_weights = torch._sample_dirichlet(
-                    torch.tensor(Enumerable.Repeat(this.alpha, this.mixture_width).ToArray(), device: batch.device).expand(batch_dims[0], -1)
+                    torch.tensor(Enumerable.Repeat(this.alpha, this.mixture_width).ToArray(), device: batch.device).expand(batch_dims[0], -1),
+                    generator: this.generator
                     ) * m.select(1, 1).view(new[]{batch_dims[0], -1});
 
                 var mix = m.select(1, 0).view(batch_dims) * batch;
