@@ -149,9 +149,9 @@ namespace TorchSharp
 
             private (int, Tensor, Tensor) get_params(int transform_num)
             {
-                var policy_id = torch.randint(0, transform_num, 1, generator: this.generator).ToInt32();
+                var policy_id = torch.randint(0, transform_num, size: 1, generator: this.generator).ToInt32();
                 var probs = torch.rand(2, generator: this.generator);
-                var signs = torch.randint(2, 2, generator: this.generator);
+                var signs = torch.randint(0, 2, size: 2, generator: this.generator);
                 return (policy_id, probs, signs);
             }
 
@@ -301,12 +301,12 @@ namespace TorchSharp
                 var (_, height, width) = F.get_dimensions(img);
                 var op_meta = augmentation_space(num_magnitude_bins, (height, width));
                 for (int i = 0; i < num_ops; ++i) {
-                    var op_index = torch.randint(0, op_meta.Count, 1, generator: this.generator).ToInt32();
+                    var op_index = torch.randint(0, op_meta.Count, size: 1, generator: this.generator).ToInt32();
                     var op_name = op_meta.Keys.ElementAt(op_index);
                     var (magnitudes, signed) = op_meta[op_name];
                     var magnitude = magnitudes.Dimensions > 0 ? magnitudes[this.magnitude].ToDouble() : 0.0;
 
-                    if (signed && torch.randint(0, 2, 1, generator: this.generator).ToBoolean())
+                    if (signed && torch.randint(0, 2, size: 1, generator: this.generator).ToBoolean())
                         magnitude *= -1.0;
 
                     img = apply_op(img, op_name, magnitude, interpolation, this.fill);
@@ -361,10 +361,10 @@ namespace TorchSharp
             public Tensor call(Tensor img)
             {
                 var op_meta = this.augmentation_space(this.num_magnitude_bins);
-                var op_index = torch.randint(0, op_meta.Count(), 1, generator: this.generator).ToInt32();
+                var op_index = torch.randint(0, op_meta.Count(), size: 1, generator: this.generator).ToInt32();
                 var op_name = op_meta.Keys.ElementAt(op_index);
                 var (magnitudes, signed) = op_meta[op_name];
-                var magnitude = magnitudes.ndim > 0 ? magnitudes[torch.randint(0, num_magnitude_bins, 1, generator: this.generator).ToInt32()] .ToDouble() : 0.0;
+                var magnitude = magnitudes.ndim > 0 ? magnitudes[torch.randint(0, num_magnitude_bins, size: 1, generator: this.generator).ToInt32()] .ToDouble() : 0.0;
 
                 return apply_op(img, op_name, magnitude, interpolation: this.interpolation, fill: this.fill);
             }
@@ -481,7 +481,7 @@ namespace TorchSharp
                         var (magnitudes, signed) = op_meta[op_name];
 
                         var magnitude = magnitudes.ndim > 0 ? magnitudes[torch.randint(0, this.severity, size: 1, generator: this.generator).ToInt32()].ToDouble() : 0.0;
-                        if (signed && torch.randint(0, 2, 1, generator: this.generator).ToBoolean())
+                        if (signed && torch.randint(0, 2, size: 1, generator: this.generator).ToBoolean())
                             magnitude *= -1.0;
 
                         aug = apply_op(aug, op_name, magnitude, interpolation: this.interpolation, fill: this.fill);
