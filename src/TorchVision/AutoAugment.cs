@@ -557,6 +557,28 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Dataset-independent data-augmentation with TrivialAugment Wide, as described in
+            /// "TrivialAugment: Tuning-free Yet State-of-the-Art Data Augmentation"
+            /// https://arxiv.org/abs/2103.10158
+            /// The image is expected to be a torch Tensor, it should be of type torch.uint8, and it is expected
+            /// to have [..., 1 or 3, H, W] shape, where ... means an arbitrary number of leading dimensions.
+            /// </summary>
+            /// <param name="num_magnitude_bins">The number of different magnitude values. Default: 31</param>
+            /// <param name="interpolation">Desired interpolation enum defined by
+            /// torchvision.transforms.InterpolationMode. Default: InterpolationMode.Nearest.</param>
+            /// <param name="fill">Pixel fill value for the area outside the transformed
+            /// image. If given a number, the value is used for all bands respectively. Default: null</param>
+            /// <param name="generator">The generator used for random values. Default: null</param>
+            static public ITransform TrivialAugmentWide(
+                int num_magnitude_bins = 31,
+                InterpolationMode interpolation = InterpolationMode.Nearest,
+                IList<float>? fill = null,
+                Generator? generator = null)
+            {
+                return new TrivialAugmentWide(num_magnitude_bins, interpolation, fill, generator);
+            }
+
+            /// <summary>
             /// AugMix data augmentation method based on
             /// "AugMix: A Simple Data Processing Method to Improve Robustness and Uncertainty"
             /// https://arxiv.org/abs/1912.02781
