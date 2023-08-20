@@ -107,6 +107,8 @@ namespace TorchSharp
             }
         }
 
+        /* Original implementation from:
+         * https://pytorch.org/vision/main/_modules/torchvision/transforms/autoaugment.html#AutoAugment */
         internal class AutoAugment : autoaugment, ITransform
         {
             public AutoAugment(
