@@ -9,7 +9,7 @@ namespace TorchSharp
 {
     public static partial class torchvision
     {
-        internal abstract class AutoAugmentBase
+        public abstract class autoaugment
         {
             protected enum opType {
                 ShearX,
@@ -107,7 +107,7 @@ namespace TorchSharp
             }
         }
 
-        internal class AutoAugment : AutoAugmentBase, ITransform
+        internal class AutoAugment : autoaugment, ITransform
         {
             public AutoAugment(
                 AutoAugmentPolicy policy = AutoAugmentPolicy.ImageNet,
@@ -275,7 +275,7 @@ namespace TorchSharp
 
         /* Original implementation from:
          * https://pytorch.org/vision/main/_modules/torchvision/transforms/autoaugment.html#RandAugment */
-        internal class RandAugment : AutoAugmentBase, ITransform
+        internal class RandAugment : autoaugment, ITransform
         {
             public RandAugment(
                 int num_ops = 2,
@@ -342,7 +342,7 @@ namespace TorchSharp
 
         /* Original implementation from:
          * https://pytorch.org/vision/main/_modules/torchvision/transforms/autoaugment.html#AugMix */
-        internal class AugMix :AutoAugmentBase, ITransform
+        internal class AugMix :autoaugment, ITransform
         {
             public AugMix(
                 int severity = 3,
@@ -459,14 +459,14 @@ namespace TorchSharp
             /// to have [..., 1 or 3, H, W] shape, where ... means an arbitrary number of leading dimensions.
             /// </summary>
             /// <param name="policy"> Desired policy enum defined by
-            /// torchvision.transforms.AutoAugmentBase.AutoAugmentPolicy. Default: AutoAugmentPolicy.ImageNet</param>
+            /// torchvision.transforms.autoaugment.AutoAugmentPolicy. Default: AutoAugmentPolicy.ImageNet</param>
             /// <param name="interpolation">Desired interpolation enum defined by
             /// torchvision.transforms.InterpolationMode. Default: InterpolationMode.Nearest.</param>
             /// <param name="fill">Pixel fill value for the area outside the transformed
             /// image. If given a number, the value is used for all bands respectively. Default: null</param>
             /// <param name="generator">The generator used for random values. Default: null</param>
             static public ITransform AutoAugment(
-                AutoAugmentPolicy policy = AutoAugmentPolicy.ImageNet,
+                autoaugment.AutoAugmentPolicy policy = autoaugment.AutoAugmentPolicy.ImageNet,
                 InterpolationMode interpolation = InterpolationMode.Nearest,
                 IList<float>? fill = null,
                 Generator? generator = null)
