@@ -459,7 +459,7 @@ namespace TorchSharp
             /// to have [..., 1 or 3, H, W] shape, where ... means an arbitrary number of leading dimensions.
             /// </summary>
             /// <param name="policy"> Desired policy enum defined by
-            /// torchvision.transforms.autoaugment.AutoAugmentBase.AutoAugmentPolicy. Default: AutoAugmentPolicy.ImageNet</param>
+            /// torchvision.transforms.AutoAugmentBase.AutoAugmentPolicy. Default: AutoAugmentPolicy.ImageNet</param>
             /// <param name="interpolation">Desired interpolation enum defined by
             /// torchvision.transforms.InterpolationMode. Default: InterpolationMode.Nearest.</param>
             /// <param name="fill">Pixel fill value for the area outside the transformed
