@@ -149,7 +149,7 @@ namespace TorchSharp
 
             private (int, Tensor, Tensor) get_params(int transform_num)
             {
-                var policy_id = torch.randint(transform_num, 1, generator: this.generator).ToInt32();
+                var policy_id = torch.randint(0, transform_num, 1, generator: this.generator).ToInt32();
                 var probs = torch.rand(2, generator: this.generator);
                 var signs = torch.randint(2, 2, generator: this.generator);
                 return (policy_id, probs, signs);
@@ -343,6 +343,60 @@ namespace TorchSharp
         }
 
         /* Original implementation from:
+         * https://pytorch.org/vision/main/_modules/torchvision/transforms/autoaugment.html#TrivialAugmentWide */
+        internal class TrivialAugmentWide : autoaugment, ITransform
+        {
+            public TrivialAugmentWide(
+                int num_magnitude_bins = 31,
+                InterpolationMode interpolation = InterpolationMode.Nearest,
+                IList<float>? fill = null,
+                Generator? generator = null)
+            {
+                this.num_magnitude_bins = num_magnitude_bins;
+                this.interpolation = interpolation;
+                this.fill = fill;
+                this.generator = generator;
+            }
+
+            public Tensor call(Tensor img)
+            {
+                var op_meta = this.augmentation_space(this.num_magnitude_bins);
+                var op_index = torch.randint(0, op_meta.Count(), 1, generator: this.generator).ToInt32();
+                var op_name = op_meta.Keys.ElementAt(op_index);
+                var (magnitudes, signed) = op_meta[op_name];
+                var magnitude = magnitudes.ndim > 0 ? magnitudes[torch.randint(0, num_magnitude_bins, 1, generator: this.generator).ToInt32()] .ToDouble() : 0.0;
+
+                return apply_op(img, op_name, magnitude, interpolation: this.interpolation, fill: this.fill);
+            }
+
+            private Dictionary<opType, (Tensor, bool)> augmentation_space(int num_bins)
+            {
+                return new Dictionary<opType, (Tensor, bool)> {
+                    { opType.Identity, (torch.tensor(0.0), false) },
+                    { opType.ShearX, (torch.linspace(0.0, 0.99, num_bins), true) },
+                    { opType.ShearY, (torch.linspace(0.0, 0.99, num_bins), true) },
+                    { opType.TranslateX, (torch.linspace(0.0, 32.0, num_bins), true) },
+                    { opType.TranslateY, (torch.linspace(0.0, 32.0, num_bins), true) },
+                    { opType.Rotate, (torch.linspace(0.0, 135.0, num_bins), true) },
+                    { opType.Brightness, (torch.linspace(0.0, 0.99, num_bins), true) },
+                    { opType.Color, (torch.linspace(0.0, 0.99, num_bins), true) },
+                    { opType.Contrast, (torch.linspace(0.0, 0.99, num_bins), true) },
+                    { opType.Sharpness, (torch.linspace(0.0, 0.99, num_bins), true) },
+                    { opType.Posterize, (8 - (torch.arange(num_bins) / ((num_bins - 1) / 6)).round().@int(), false) },
+                    { opType.Solarize, (torch.linspace(255.0, 0.0, num_bins), false) },
+                    { opType.AutoContrast, (torch.tensor(0.0), false) },
+                    { opType.Equalize, (torch.tensor(0.0), false) },
+                };
+            }
+
+            public readonly int num_magnitude_bins;
+            public readonly InterpolationMode interpolation;
+            public readonly IList<float>? fill;
+            public readonly Generator? generator;
+
+        }
+
+        /* Original implementation from:
          * https://pytorch.org/vision/main/_modules/torchvision/transforms/autoaugment.html#AugMix */
         internal class AugMix :autoaugment, ITransform
         {
@@ -422,11 +476,11 @@ namespace TorchSharp
                     var depth = this.chain_depth > 0 ? this.chain_depth : torch.randint(low: 1, high: 4, size: 1, generator: this.generator).ToInt32();
                     for(int d = 0; d < depth; ++d)
                     {
-                        var op_index = torch.randint(op_meta.Count, size: 1, generator: this.generator).ToInt32();
+                        var op_index = torch.randint(0, op_meta.Count, size: 1, generator: this.generator).ToInt32();
                         var op_name = op_meta.Keys.ElementAt(op_index);
                         var (magnitudes, signed) = op_meta[op_name];
 
-                        var magnitude = magnitudes.ndim > 0 ? magnitudes[torch.randint(this.severity, size: 1, generator: this.generator).ToInt32()].ToDouble() : 0.0;
+                        var magnitude = magnitudes.ndim > 0 ? magnitudes[torch.randint(0, this.severity, size: 1, generator: this.generator).ToInt32()].ToDouble() : 0.0;
                         if (signed && torch.randint(0, 2, 1, generator: this.generator).ToBoolean())
                             magnitude *= -1.0;
 
