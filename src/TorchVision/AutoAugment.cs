@@ -29,6 +29,12 @@ namespace TorchSharp
                 Identity
             }
 
+            public enum AutoAugmentPolicy {
+                ImageNet,
+                CIFAR10,
+                SVHN
+            }
+
             protected static Tensor apply_op(
                                     Tensor img,
                                     opType op_name,
@@ -99,6 +105,172 @@ namespace TorchSharp
                         throw new ArgumentException($"The provided operator {op_name} is not recognized.");
                 }
             }
+        }
+
+        class AutoAugment : AutoAugmentBase, ITransform
+        {
+            public AutoAugment(
+                AutoAugmentPolicy policy = AutoAugmentPolicy.ImageNet,
+                InterpolationMode interpolation = InterpolationMode.Nearest,
+                IList<float>? fill = null,
+                Generator? generator = null)
+            {
+                this.policy = policy;
+                this.interpolation = interpolation;
+                this.fill = fill;
+                this.policies = this.get_policies(policy);
+                this.generator = generator;
+            }
+
+            public Tensor call(Tensor img)
+            {
+                var (channels, height, width) = F.get_dimensions(img);
+
+                var (transform_id, probs, signs) = this.get_params(this.policies.Count);
+
+                var op_meta = this.augmentation_space(10, (height, width));
+
+                var (policy1, policy2) = policies[transform_id];
+                foreach (var (i, (op_name, p, magnitude_id)) in new[]{(0, policy1), (1, policy2)})
+                {
+                    if (probs[i].ToDouble() <= p) {
+                        var (magnitudes, signed) = op_meta[op_name];
+                        var magnitude = magnitude_id != null ? magnitudes[magnitude_id].ToDouble() : 0.0;
+                        if (signed && signs[i].ToBoolean())
+                            magnitude *= -1.0;
+                        img = apply_op(img, op_name, magnitude, interpolation: this.interpolation, fill: this.fill);
+                    }
+                }
+
+                return img;
+            }
+
+            private (int, Tensor, Tensor) get_params(int transform_num)
+            {
+                var policy_id = torch.randint(transform_num, 1, generator: this.generator).ToInt32();
+                var probs = torch.rand(2, generator: this.generator);
+                var signs = torch.randint(2, 2, generator: this.generator);
+                return (policy_id, probs, signs);
+            }
+
+            private Dictionary<opType, (Tensor, bool)> augmentation_space(int num_bins, (long height, long width) image_size)
+            {
+                return new Dictionary<opType, (Tensor, bool)> {
+                        { opType.ShearX, (torch.linspace(0.0, 0.3, num_bins), true)},
+                        { opType.ShearY, (torch.linspace(0.0, 0.3, num_bins), true)},
+                        { opType.TranslateX, (torch.linspace(0.0, 150.0 / 331.0 * image_size.width, num_bins), true)},
+                        { opType.TranslateY, (torch.linspace(0.0, 150.0 / 331.0 * image_size.height, num_bins), true)},
+                        { opType.Rotate, (torch.linspace(0.0, 30.0, num_bins), true)},
+                        { opType.Brightness, (torch.linspace(0.0, 0.9, num_bins), true)},
+                        { opType.Color, (torch.linspace(0.0, 0.9, num_bins), true)},
+                        { opType.Contrast, (torch.linspace(0.0, 0.9, num_bins), true)},
+                        { opType.Sharpness, (torch.linspace(0.0, 0.9, num_bins), true)},
+                        { opType.Posterize, (8 - (torch.arange(num_bins) / ((num_bins - 1) / 4)).round().@int(), false)},
+                        { opType.Solarize, (torch.linspace(255.0, 0.0, num_bins), false)},
+                        { opType.AutoContrast, (torch.tensor(0.0), false)},
+                        { opType.Equalize, (torch.tensor(0.0), false)},
+                        { opType.Invert, (torch.tensor(0.0), false)}
+                    };
+            }
+
+            private IList<((opType, double, int?), (opType, double, int?))> get_policies(AutoAugmentPolicy policy)
+            {
+                switch(policy)
+                {
+                    case AutoAugmentPolicy.ImageNet:
+                        return new ((opType, double, int?), (opType, double, int?))[] {
+                            ((opType.Posterize, 0.4, 8), (opType.Rotate, 0.6, 9)),
+                            ((opType.Solarize, 0.6, 5), (opType.AutoContrast, 0.6, null)),
+                            ((opType.Equalize, 0.8, null), (opType.Equalize, 0.6, null)),
+                            ((opType.Posterize, 0.6, 7), (opType.Posterize, 0.6, 6)),
+                            ((opType.Equalize, 0.4, null), (opType.Solarize, 0.2, 4)),
+                            ((opType.Equalize, 0.4, null), (opType.Rotate, 0.8, 8)),
+                            ((opType.Solarize, 0.6, 3), (opType.Equalize, 0.6, null)),
+                            ((opType.Posterize, 0.8, 5), (opType.Equalize, 1.0, null)),
+                            ((opType.Rotate, 0.2, 3), (opType.Solarize, 0.6, 8)),
+                            ((opType.Equalize, 0.6, null), (opType.Posterize, 0.4, 6)),
+                            ((opType.Rotate, 0.8, 8), (opType.Color, 0.4, 0)),
+                            ((opType.Rotate, 0.4, 9), (opType.Equalize, 0.6, null)),
+                            ((opType.Equalize, 0.0, null), (opType.Equalize, 0.8, null)),
+                            ((opType.Invert, 0.6, null), (opType.Equalize, 1.0, null)),
+                            ((opType.Color, 0.6, 4), (opType.Contrast, 1.0, 8)),
+                            ((opType.Rotate, 0.8, 8), (opType.Color, 1.0, 2)),
+                            ((opType.Color, 0.8, 8), (opType.Solarize, 0.8, 7)),
+                            ((opType.Sharpness, 0.4, 7), (opType.Invert, 0.6, null)),
+                            ((opType.ShearX, 0.6, 5), (opType.Equalize, 1.0, null)),
+                            ((opType.Color, 0.4, 0), (opType.Equalize, 0.6, null)),
+                            ((opType.Equalize, 0.4, null), (opType.Solarize, 0.2, 4)),
+                            ((opType.Solarize, 0.6, 5), (opType.AutoContrast, 0.6, null)),
+                            ((opType.Invert, 0.6, null), (opType.Equalize, 1.0, null)),
+                            ((opType.Color, 0.6, 4), (opType.Contrast, 1.0, 8)),
+                            ((opType.Equalize, 0.8, null), (opType.Equalize, 0.6, null))
+                        };
+                    case AutoAugmentPolicy.CIFAR10:
+                        return new ((opType, double, int?), (opType, double, int?))[] {
+                            ((opType.Invert, 0.1, null), (opType.Contrast, 0.2, 6)),
+                            ((opType.Rotate, 0.7, 2), (opType.TranslateX, 0.3, 9)),
+                            ((opType.Sharpness, 0.8, 1), (opType.Sharpness, 0.9, 3)),
+                            ((opType.ShearY, 0.5, 8), (opType.TranslateY, 0.7, 9)),
+                            ((opType.AutoContrast, 0.5, null), (opType.Equalize, 0.9, null)),
+                            ((opType.ShearY, 0.2, 7), (opType.Posterize, 0.3, 7)),
+                            ((opType.Color, 0.4, 3), (opType.Brightness, 0.6, 7)),
+                            ((opType.Sharpness, 0.3, 9), (opType.Brightness, 0.7, 9)),
+                            ((opType.Equalize, 0.6, null), (opType.Equalize, 0.5, null)),
+                            ((opType.Contrast, 0.6, 7), (opType.Sharpness, 0.6, 5)),
+                            ((opType.Color, 0.7, 7), (opType.TranslateX, 0.5, 8)),
+                            ((opType.Equalize, 0.3, null), (opType.AutoContrast, 0.4, null)),
+                            ((opType.TranslateY, 0.4, 3), (opType.Sharpness, 0.2, 6)),
+                            ((opType.Brightness, 0.9, 6), (opType.Color, 0.2, 8)),
+                            ((opType.Solarize, 0.5, 2), (opType.Invert, 0.0, null)),
+                            ((opType.Equalize, 0.2, null), (opType.AutoContrast, 0.6, null)),
+                            ((opType.Equalize, 0.2, null), (opType.Equalize, 0.6, null)),
+                            ((opType.Color, 0.9, 9), (opType.Equalize, 0.6, null)),
+                            ((opType.AutoContrast, 0.8, null), (opType.Solarize, 0.2, 8)),
+                            ((opType.Brightness, 0.1, 3), (opType.Color, 0.7, 0)),
+                            ((opType.Solarize, 0.4, 5), (opType.AutoContrast, 0.9, null)),
+                            ((opType.TranslateY, 0.9, 9), (opType.TranslateY, 0.7, 9)),
+                            ((opType.AutoContrast, 0.9, null), (opType.Solarize, 0.8, 3)),
+                            ((opType.Equalize, 0.8, null), (opType.Invert, 0.1, null)),
+                            ((opType.TranslateY, 0.7, 9), (opType.AutoContrast, 0.9, null))
+                        };
+                    case AutoAugmentPolicy.SVHN:
+                        return new ((opType, double, int?), (opType, double, int?))[] {
+                            ((opType.ShearX, 0.9, 4), (opType.Invert, 0.2, null)),
+                            ((opType.ShearY, 0.9, 8), (opType.Invert, 0.7, null)),
+                            ((opType.Equalize, 0.6, null), (opType.Solarize, 0.6, 6)),
+                            ((opType.Invert, 0.9, null), (opType.Equalize, 0.6, null)),
+                            ((opType.Equalize, 0.6, null), (opType.Rotate, 0.9, 3)),
+                            ((opType.ShearX, 0.9, 4), (opType.AutoContrast, 0.8, null)),
+                            ((opType.ShearY, 0.9, 8), (opType.Invert, 0.4, null)),
+                            ((opType.ShearY, 0.9, 5), (opType.Solarize, 0.2, 6)),
+                            ((opType.Invert, 0.9, null), (opType.AutoContrast, 0.8, null)),
+                            ((opType.Equalize, 0.6, null), (opType.Rotate, 0.9, 3)),
+                            ((opType.ShearX, 0.9, 4), (opType.Solarize, 0.3, 3)),
+                            ((opType.ShearY, 0.8, 8), (opType.Invert, 0.7, null)),
+                            ((opType.Equalize, 0.9, null), (opType.TranslateY, 0.6, 6)),
+                            ((opType.Invert, 0.9, null), (opType.Equalize, 0.6, null)),
+                            ((opType.Contrast, 0.3, 3), (opType.Rotate, 0.8, 4)),
+                            ((opType.Invert, 0.8, null), (opType.TranslateY, 0.0, 2)),
+                            ((opType.ShearY, 0.7, 6), (opType.Solarize, 0.4, 8)),
+                            ((opType.Invert, 0.6, null), (opType.Rotate, 0.8, 4)),
+                            ((opType.ShearY, 0.3, 7), (opType.TranslateX, 0.9, 3)),
+                            ((opType.ShearX, 0.1, 6), (opType.Invert, 0.6, null)),
+                            ((opType.Solarize, 0.7, 2), (opType.TranslateY, 0.6, 7)),
+                            ((opType.ShearY, 0.8, 4), (opType.Invert, 0.8, null)),
+                            ((opType.ShearX, 0.7, 9), (opType.TranslateY, 0.8, 3)),
+                            ((opType.ShearY, 0.8, 5), (opType.AutoContrast, 0.7, null)),
+                            ((opType.ShearX, 0.7, 2), (opType.Invert, 0.1, null))
+                        };
+                    default:
+                        throw new ArgumentException($"The provided policy {policy} is not recognized.");
+                }
+            }
+
+            private readonly AutoAugmentPolicy policy;
+            private readonly InterpolationMode interpolation;
+            private readonly IList<float>? fill;
+            private readonly IList<((opType, double, int?), (opType, double, int?))> policies;
+            private readonly Generator? generator;
         }
 
         /* Original implementation from:
