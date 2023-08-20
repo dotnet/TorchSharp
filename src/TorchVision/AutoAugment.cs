@@ -107,7 +107,7 @@ namespace TorchSharp
             }
         }
 
-        class AutoAugment : AutoAugmentBase, ITransform
+        internal class AutoAugment : AutoAugmentBase, ITransform
         {
             public AutoAugment(
                 AutoAugmentPolicy policy = AutoAugmentPolicy.ImageNet,
@@ -451,6 +451,29 @@ namespace TorchSharp
 
         public static partial class transforms
         {
+            /// <summary>
+            /// AutoAugment data augmentation method based on
+            /// "AutoAugment: Learning Augmentation Strategies from Data"
+            /// https://arxiv.org/pdf/1805.09501.pdf
+            /// The image is expected to be a torch Tensor, it should be of type torch.uint8, and it is expected
+            /// to have [..., 1 or 3, H, W] shape, where ... means an arbitrary number of leading dimensions.
+            /// </summary>
+            /// <param name="policy"> Desired policy enum defined by
+            /// torchvision.transforms.autoaugment.AutoAugmentBase.AutoAugmentPolicy. Default: AutoAugmentPolicy.ImageNet</param>
+            /// <param name="interpolation">Desired interpolation enum defined by
+            /// torchvision.transforms.InterpolationMode. Default: InterpolationMode.Nearest.</param>
+            /// <param name="fill">Pixel fill value for the area outside the transformed
+            /// image. If given a number, the value is used for all bands respectively. Default: null</param>
+            /// <param name="generator">The generator used for random values. Default: null</param>
+            static public ITransform AutoAugment(
+                AutoAugmentPolicy policy = AutoAugmentPolicy.ImageNet,
+                InterpolationMode interpolation = InterpolationMode.Nearest,
+                IList<float>? fill = null,
+                Generator? generator = null)
+            {
+                return new AutoAugment(policy, interpolation, fill, generator);
+            }
+
             /// <summary>
             /// RandAugment data augmentation method based on
             /// "RandAugment: Practical automated data augmentation with a reduced search space"
