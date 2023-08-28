@@ -61,9 +61,7 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor relu(Tensor x, bool inplace = false)
                 {
-                    using (var m = nn.ReLU(inplace)) {
-                        return m.call(x);
-                    }
+                    return inplace ? x.relu_().alias() : x.relu();
                 }
             }
         }

@@ -57,12 +57,10 @@ namespace TorchSharp
                 /// Sigmoid-Weighted Linear Unit
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                /// <returns></returns>
-                public static Tensor SiLU(Tensor x)
+                /// <param name="inplace">Do the operation in-place. Default: false</param>
+                public static Tensor SiLU(Tensor x, bool inplace = false)
                 {
-                    using (var m = nn.SiLU()) {
-                        return m.call(x);
-                    }
+                    return inplace ? x.silu_().alias() : x.silu();
                 }
             }
         }

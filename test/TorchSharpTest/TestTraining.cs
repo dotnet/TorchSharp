@@ -21,7 +21,7 @@ namespace TorchSharp
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/examples_nn/two_layer_net_nn.html"/>.
         /// </summary>
         [Fact]
-        public void TestTraining1()
+        public void Training1()
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
@@ -71,7 +71,7 @@ namespace TorchSharp
         /// Adding a dropout module to the linear nn.
         /// </summary>
         [Fact]
-        public void TestTrainingWithDropout()
+        public void TrainingWithDropout()
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
@@ -112,7 +112,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestAdam()
+        public void Adam()
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
@@ -126,7 +126,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestAdamBetas()
+        public void AdamBetas()
         {
             var lin1 = Linear(1000, 100);
             var lin2 = Linear(100, 10);
@@ -290,7 +290,7 @@ namespace TorchSharp
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
         /// </summary>
         [Fact]
-        public void TestTrainingAdamDefaults()
+        public void TrainingAdamDefaults()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -306,7 +306,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamMax()
+        public void TrainingAdamMax()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -322,7 +322,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamParamGroups()
+        public void TrainingAdamParamGroups()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -342,7 +342,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamAmsGrad()
+        public void TrainingAdamAmsGrad()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -358,7 +358,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamWeightDecay()
+        public void TrainingAdamWeightDecay()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -374,7 +374,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamOneCycleLR()
+        public void TrainingAdamOneCycleLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -396,7 +396,7 @@ namespace TorchSharp
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
         /// </summary>
         [Fact]
-        public void TestTrainingAdamWDefaults()
+        public void TrainingAdamWDefaults()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -412,7 +412,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamWParamGroups()
+        public void TrainingAdamWParamGroups()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -432,7 +432,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamWAmsGrad()
+        public void TrainingAdamWAmsGrad()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -448,7 +448,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamWWeightDecay()
+        public void TrainingAdamWWeightDecay()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -464,7 +464,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamWOneCycleLR()
+        public void TrainingAdamWOneCycleLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -487,7 +487,7 @@ namespace TorchSharp
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
         /// </summary>
         [Fact]
-        public void TestTrainingAdagrad()
+        public void TrainingAdagrad()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -504,7 +504,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdagradWeightDecay()
+        public void TrainingAdagradWeightDecay()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -521,7 +521,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdagradLRDecay()
+        public void TrainingAdagradLRDecay()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -538,7 +538,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdagradParamGroups()
+        public void TrainingAdagradParamGroups()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -558,7 +558,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdagradParamGroupsWD()
+        public void TrainingAdagradParamGroupsWD()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -578,7 +578,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdadelta()
+        public void TrainingAdadelta()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -595,7 +595,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdadeltaMax()
+        public void TrainingAdadeltaMax()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -612,7 +612,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdadeltaWD()
+        public void TrainingAdadeltaWD()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -629,7 +629,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdadeltaRHO()
+        public void TrainingAdadeltaRHO()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -646,7 +646,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdadeltaParamGroups()
+        public void TrainingAdadeltaParamGroups()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -666,7 +666,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamax()
+        public void TrainingAdamax()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -682,7 +682,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamaxWD()
+        public void TrainingAdamaxWD()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -698,7 +698,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamaxBetas()
+        public void TrainingAdamaxBetas()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -714,7 +714,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingAdamaxParamGroups()
+        public void TrainingAdamaxParamGroups()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -737,7 +737,7 @@ namespace TorchSharp
         /// Fully connected ReLU net with one hidden layer trained using Adamax optimizer.
         /// </summary>
         [Fact]
-        public void TestTrainingAdamaxOneCycleLR()
+        public void TrainingAdamaxOneCycleLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -755,7 +755,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingNAdam()
+        public void TrainingNAdam()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -771,7 +771,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingNAdamWD()
+        public void TrainingNAdamWD()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -787,7 +787,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingNAdamBetas()
+        public void TrainingNAdamBetas()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -803,7 +803,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingNAdamMD()
+        public void TrainingNAdamMD()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -819,7 +819,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingNAdamParamGroups()
+        public void TrainingNAdamParamGroups()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -842,7 +842,7 @@ namespace TorchSharp
         /// Fully connected ReLU net with one hidden layer trained using NAdam optimizer.
         /// </summary>
         [Fact]
-        public void TestTrainingNAdamOneCycleLR()
+        public void TrainingNAdamOneCycleLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -863,7 +863,7 @@ namespace TorchSharp
         /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
         /// </summary>
         [Fact]
-        public void TestTrainingRAdam()
+        public void TrainingRAdam()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -879,7 +879,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRAdamWD()
+        public void TrainingRAdamWD()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -895,7 +895,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRAdamBetas()
+        public void TrainingRAdamBetas()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -911,7 +911,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRAdamParamGroups()
+        public void TrainingRAdamParamGroups()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -934,7 +934,7 @@ namespace TorchSharp
         /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
         /// </summary>
         [Fact]
-        public void TestTrainingRAdamOneCycleLR()
+        public void TrainingRAdamOneCycleLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -955,7 +955,7 @@ namespace TorchSharp
         /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
         /// </summary>
         [Fact]
-        public void TestTrainingRAdamOneCycleLR_PG()
+        public void TrainingRAdamOneCycleLR_PG()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -980,7 +980,7 @@ namespace TorchSharp
         /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
         /// </summary>
         [Fact]
-        public void TestTrainingRAdamCyclicLR_PG()
+        public void TrainingRAdamCyclicLR_PG()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1005,7 +1005,7 @@ namespace TorchSharp
         /// Fully connected ReLU net with one hidden layer trained using RAdam optimizer.
         /// </summary>
         [Fact]
-        public void TestTrainingRAdamReduceLROnPlateau_PG()
+        public void TrainingRAdamReduceLROnPlateau_PG()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1036,7 +1036,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingASGD()
+        public void TrainingASGD()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1052,7 +1052,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingASGDMax()
+        public void TrainingASGDMax()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1068,7 +1068,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingASGDLambda()
+        public void TrainingASGDLambda()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1084,7 +1084,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingASGDAlpha()
+        public void TrainingASGDAlpha()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1100,7 +1100,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingASGDWD()
+        public void TrainingASGDWD()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1116,7 +1116,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingASGDT0()
+        public void TrainingASGDT0()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1132,7 +1132,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingASGDParamGroups()
+        public void TrainingASGDParamGroups()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1158,7 +1158,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRprop()
+        public void TrainingRprop()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1175,7 +1175,7 @@ namespace TorchSharp
 
 
         [Fact]
-        public void TestTrainingRpropMax()
+        public void TrainingRpropMax()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1191,7 +1191,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRpropEtam()
+        public void TrainingRpropEtam()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1207,7 +1207,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRpropEtap()
+        public void TrainingRpropEtap()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1224,7 +1224,7 @@ namespace TorchSharp
 
 
         [Fact]
-        public void TestTrainingRpropParamGroups()
+        public void TrainingRpropParamGroups()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1248,7 +1248,7 @@ namespace TorchSharp
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
         /// </summary>
         [Fact]
-        public void TestTrainingRMSLR()
+        public void TrainingRMSLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1269,7 +1269,7 @@ namespace TorchSharp
         /// Taken from <see href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html#pytorch-optim"/>.
         /// </summary>
         [Fact]
-        public void TestTrainingRMSOneCycleLR()
+        public void TrainingRMSOneCycleLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1287,7 +1287,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRMSAlpha()
+        public void TrainingRMSAlpha()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1304,7 +1304,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRMSAlphaMax()
+        public void TrainingRMSAlphaMax()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1321,7 +1321,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRMSWD()
+        public void TrainingRMSWD()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1338,7 +1338,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRMSCentered()
+        public void TrainingRMSCentered()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1355,7 +1355,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRMSCenteredWD()
+        public void TrainingRMSCenteredWD()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1372,7 +1372,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRMSMomentum()
+        public void TrainingRMSMomentum()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1389,7 +1389,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingRMSCenteredParamGroups()
+        public void TrainingRMSCenteredParamGroups()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1411,7 +1411,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDMomentum()
+        public void TrainingSGDMomentum()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1428,7 +1428,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDDampening()
+        public void TrainingSGDDampening()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1445,7 +1445,7 @@ namespace TorchSharp
         }
 
         [Fact()]
-        public void TestTrainingSGDNesterov()
+        public void TrainingSGDNesterov()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1462,7 +1462,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDDefaults()
+        public void TrainingSGDDefaults()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1479,7 +1479,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDDefaultsParamGroups()
+        public void TrainingSGDDefaultsParamGroups()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1501,7 +1501,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDStepLR()
+        public void TrainingSGDStepLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1519,7 +1519,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDLambdaLR()
+        public void TrainingSGDLambdaLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1537,7 +1537,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDMultiplicativeLR()
+        public void TrainingSGDMultiplicativeLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1555,7 +1555,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDExponentialLR()
+        public void TrainingSGDExponentialLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1573,7 +1573,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDLinearLR()
+        public void TrainingSGDLinearLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1591,7 +1591,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDSequentialLR()
+        public void TrainingSGDSequentialLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1611,7 +1611,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDMultiStepLR()
+        public void TrainingSGDMultiStepLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1657,7 +1657,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDCosineAnnealingLR()
+        public void TrainingSGDCosineAnnealingLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1703,7 +1703,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDCyclicLR()
+        public void TrainingSGDCyclicLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1721,7 +1721,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingSGDOneCycleLR()
+        public void TrainingSGDOneCycleLR()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1739,7 +1739,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingLBFGSDefaults()
+        public void TrainingLBFGSDefaults()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1777,7 +1777,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingLBFGSNoClosure()
+        public void TrainingLBFGSNoClosure()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1791,7 +1791,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingLBFGS_ME()
+        public void TrainingLBFGS_ME()
         {
             var gen = new Generator(4711);
             CreateLinearLayers(gen, out var lin1, out var lin2);
@@ -1831,7 +1831,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingLoadedTorchScript()
+        public void TrainingLoadedTorchScript()
         {
             var gen = new Generator(4711);
             CreateDataAndLabels(gen, out var x, out var y);
@@ -1849,7 +1849,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestTrainingConv2d()
+        public void TrainingConv2d()
         {
             var conv1 = Conv2d(3, 4, 3, stride: 2);
             var lin1 = Linear(4 * 13 * 13, 32);
@@ -1874,7 +1874,7 @@ namespace TorchSharp
 
 
         [Fact]
-        public void TestTrainingConv2dCUDA()
+        public void TrainingConv2dCUDA()
         {
             if (torch.cuda.is_available()) {
                 var device = torch.CUDA;

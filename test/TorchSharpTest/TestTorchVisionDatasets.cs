@@ -5,10 +5,10 @@ using static TorchSharp.torch.utils.data;
 using static TorchSharp.torchvision.datasets;
 using Xunit;
 using System.Collections.Generic;
-using System;
+using TorchSharp;
 using System.IO;
 
-namespace TorchSharp
+namespace TorchVision
 {
 #if NET472_OR_GREATER
     [Collection("Sequential")]

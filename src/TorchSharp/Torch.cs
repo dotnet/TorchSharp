@@ -75,17 +75,18 @@ namespace TorchSharp
             return ok;
         }
 
-        private static void LoadNativeBackend(bool useCudaBackend, out StringBuilder trace)
+        private static void LoadNativeBackend(bool useCudaBackend, out StringBuilder? trace)
         {
             if (!System.Environment.Is64BitProcess) {
                 throw new NotSupportedException("TorchSharp only supports 64-bit processes.");
             }
 
             var alreadyLoaded = useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded;
-            trace = new StringBuilder();
+            trace = null;
+
             if (!alreadyLoaded) {
                 bool ok;
-
+                trace = new StringBuilder();
                 trace.AppendLine($"");
                 trace.AppendLine($"TorchSharp: LoadNativeBackend: Initialising native backend, useCudaBackend = {useCudaBackend}");
                 trace.AppendLine($"");
@@ -205,6 +206,7 @@ namespace TorchSharp
                         throw new NotSupportedException(message);
                     }
                 }
+                
 
                 // Record the successful load
                 if (useCudaBackend)
@@ -272,7 +274,7 @@ namespace TorchSharp
                 // If it doesn't we report the entire load trace.
                 var result = cuda.CallTorchCudaIsAvailable();
                 if (!result)
-                    throw new InvalidOperationException($"Torch device type {deviceType} did not initialise on the current machine. Trace from LoadNativeBackend:\n{trace}");
+                    throw new InvalidOperationException($"Torch device type {deviceType} did not initialise on the current machine. Trace from LoadNativeBackend:\n{trace?.ToString() ?? string.Empty}");
             }
         }
 

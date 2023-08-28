@@ -500,37 +500,37 @@ torch::nn::init::FanModeType get_fan_mode(int64_t mode)
     return mode == 0 ? torch::nn::init::FanModeType(torch::kFanIn) : torch::nn::init::FanModeType(torch::kFanOut);
 }
 
-Tensor THSInit_constant_(Tensor tensor, Scalar value)
+void THSInit_constant_(Tensor tensor, Scalar value)
 {
-    CATCH_TENSOR(torch::nn::init::constant_(*tensor, *value))
+    CATCH(torch::nn::init::constant_(*tensor, *value);)
 }
 
-Tensor THSInit_dirac_(Tensor tensor)
+void THSInit_dirac_(Tensor tensor)
 {
-    CATCH_TENSOR(torch::nn::init::dirac_(*tensor))
+    CATCH(torch::nn::init::dirac_(*tensor);)
 }
 
-Tensor THSInit_eye_(Tensor tensor)
+void THSInit_eye_(Tensor tensor)
 {
-    CATCH_TENSOR(torch::nn::init::eye_(*tensor))
+    CATCH(torch::nn::init::eye_(*tensor);)
 }
 
-Tensor THSInit_ones_(Tensor tensor)
+void THSInit_ones_(Tensor tensor)
 {
-    CATCH_TENSOR(torch::nn::init::ones_(*tensor))
+    CATCH(torch::nn::init::ones_(*tensor);)
 }
 
-Tensor THSInit_orthogonal_(Tensor tensor, double gain)
+void THSInit_orthogonal_(Tensor tensor, double gain)
 {
-    CATCH_TENSOR(torch::nn::init::orthogonal_(*tensor, gain))
+    CATCH(torch::nn::init::orthogonal_(*tensor, gain);)
 }
 
-Tensor THSInit_sparse_(Tensor tensor, double sparsity, double std)
+void THSInit_sparse_(Tensor tensor, double sparsity, double std)
 {
-    CATCH_TENSOR(torch::nn::init::sparse_(*tensor, sparsity, std))
+    CATCH(torch::nn::init::sparse_(*tensor, sparsity, std);)
 }
 
-Tensor THSInit_zeros_(Tensor tensor)
+void THSInit_zeros_(Tensor tensor)
 {
-    CATCH_TENSOR(torch::nn::init::zeros_(*tensor))
+    CATCH(torch::nn::init::zeros_(*tensor);)
 }
