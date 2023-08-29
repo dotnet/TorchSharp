@@ -1909,6 +1909,18 @@ namespace TorchSharp
             seq.zero_grad();
 
             output.backward();
+
+            foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+                Assert.NotNull(grad);
+            }
+
+            seq.zero_grad();
+
+            foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+                Assert.Null(grad);
+            }
         }
 
         [Fact]
@@ -1933,6 +1945,15 @@ namespace TorchSharp
             output.backward();
 
             foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+                Assert.NotNull(grad);
+            }
+
+            seq.zero_grad();
+
+            foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+                Assert.Null(grad);
             }
         }
 
@@ -1959,6 +1980,14 @@ namespace TorchSharp
 
             foreach (var parm in seq.parameters()) {
                 var grad = parm.grad();
+                Assert.NotNull(grad);
+            }
+
+            seq.zero_grad();
+
+            foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+                Assert.Null(grad);
             }
         }
 

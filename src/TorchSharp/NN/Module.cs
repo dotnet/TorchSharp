@@ -453,6 +453,10 @@ namespace TorchSharp
                 {
                     THSNN_Module_zero_grad(handle);
                     CheckForErrors();
+
+                    foreach (var (_,m) in named_modules()) {
+                        m.zero_grad();
+                    }
                 }
 
                 /// <summary>
