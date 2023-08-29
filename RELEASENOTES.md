@@ -12,7 +12,8 @@ __API Changes__:
 
 __Bug Fixes__:
 
-#1064 Inplace operators create an alias
+#1064 Inplace operators create an alias<br/>
+#1084 Module.zero_grad() does not work<br/>
 
 ## NuGet Version 0.100.4
 
