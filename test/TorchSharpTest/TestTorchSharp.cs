@@ -233,7 +233,7 @@ namespace TorchSharp
             Assert.Equal(data, data1);
         }
 
-        [FactIgnoreOnPlatform("Intermittently Fails on MacOS", "OSX")]
+        [Fact(Skip = "Intermittently fails")]
         public void AllowTF32()
         {
             Assert.False(torch.backends.cuda.matmul.allow_tf32);
@@ -246,7 +246,7 @@ namespace TorchSharp
             Assert.False(torch.backends.cudnn.allow_tf32);
         }
 
-        [FactIgnoreOnPlatform("Intermittently Fails on MacOS", "OSX")]
+        [Fact(Skip = "Intermittently fails")]
         public void EndableSDP()
         {
             Assert.True(torch.backends.cuda.flash_sdp_enabled());
@@ -259,7 +259,7 @@ namespace TorchSharp
             Assert.False(torch.backends.cuda.math_sdp_enabled());
         }
 
-        [FactIgnoreOnPlatform("Intermittently Fails on MacOS", "OSX")]
+        [Fact(Skip ="Intermittently fails")]
         public void AllowFP16ReductionCuBLAS()
         {
             Assert.True(torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction);

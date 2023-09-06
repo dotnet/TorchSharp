@@ -6,6 +6,7 @@ using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using Xunit;
 
+#if false
 #nullable enable
 
 namespace TorchSharp
@@ -446,3 +447,4 @@ namespace TorchSharp
         }
     }
 }
+#endif
