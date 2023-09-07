@@ -1907,6 +1907,18 @@ namespace TorchSharp
             seq.zero_grad();
 
             output.backward();
+
+            foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+                Assert.NotNull(grad);
+            }
+
+            seq.zero_grad();
+
+            foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+                Assert.True(grad is null || grad!.count_nonzero().item<long>() == 0);
+            }
         }
 
         [Fact]
@@ -1931,6 +1943,15 @@ namespace TorchSharp
             output.backward();
 
             foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+                Assert.NotNull(grad);
+            }
+
+            seq.zero_grad();
+
+            foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+                Assert.True(grad is null || grad!.count_nonzero().item<long>() == 0);
             }
         }
 
@@ -1957,6 +1978,14 @@ namespace TorchSharp
 
             foreach (var parm in seq.parameters()) {
                 var grad = parm.grad();
+                Assert.NotNull(grad);
+            }
+
+            seq.zero_grad();
+
+            foreach (var parm in seq.parameters()) {
+                var grad = parm.grad();
+                Assert.True(grad is null || grad!.count_nonzero().item<long>() == 0);
             }
         }
 
@@ -2501,6 +2530,30 @@ namespace TorchSharp
             var ps = module.parameters();
             var n = ps.Count();
             Assert.Equal(4, n);
+
+            var x = torch.rand(2, 2);
+            var y = torch.rand(2);
+
+            var eval = module.call(x);
+            var loss = MSELoss(Reduction.Sum);
+            var output = loss.call(eval, y);
+
+            module.zero_grad();
+
+            output.backward();
+
+            foreach (var (pName, parm) in module.named_parameters()) {
+                var grad = parm.grad();
+                Assert.NotNull(grad);
+            }
+
+            module.zero_grad();
+
+            foreach (var (pName, parm) in module.named_parameters()) {
+                var grad = parm.grad();
+                Assert.True(grad is null || grad!.count_nonzero().item<long>() == 0);
+            }
+
         }
 
         [Fact]
@@ -2600,7 +2653,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                throw new NotImplementedException();
+                return input * test + list[0] + dict["first"] - dict["second"];
             }
 
             private Parameter test;

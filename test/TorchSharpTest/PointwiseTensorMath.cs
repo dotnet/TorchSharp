@@ -17,47 +17,46 @@ namespace TorchSharp
         {
             // Float16 arange_cuda not available on cuda in LibTorch 1.8.0
             // Float16 arange_cpu not available on cuda in LibTorch 1.8.0
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.ones(new long[] { 10, 10 }, float16, device: device);
-                    var c2 = torch.ones(new long[] { 10, 10 }, float16, device: device);
-                    var c3 = torch.ones(new long[] { 10, 10 }, float16, device: device);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var c1 = torch.ones(new long[] { 10, 10 }, float16, device: device);
+                var c2 = torch.ones(new long[] { 10, 10 }, float16, device: device);
+                var c3 = torch.ones(new long[] { 10, 10 }, float16, device: device);
 #if NET6_0_OR_GREATER
-                    Func<Tensor, long, long, Half> getFunc = (tt, i, j) => tt[i, j].ToHalf();
+                Func<Tensor, long, long, Half> getFunc = (tt, i, j) => tt[i, j].ToHalf();
 
-                    // scalar-tensor operators
-                    TestOneTensor(c1, c2, getFunc, getFunc, a => a + (Half)0.5, a => (Half)((double)a + 0.5f));
-                    TestOneTensor(c1, c2, getFunc, getFunc, a => (Half)0.5 + a, a => (Half)(0.5 + (double)a));
-                    TestOneTensor(c1, c2, getFunc, getFunc, a => a - (Half)0.5, a => (Half)((double)a - 0.5));
-                    TestOneTensor(c1, c2, getFunc, getFunc, a => a * (Half)0.5, a => (Half)((double)a * 0.5f));
-                    TestOneTensor(c1, c2, getFunc, getFunc, a => (Half)0.5 * a, a => (Half)(0.5f * (double)a));
-                    TestOneTensor(c1, c2, getFunc, getFunc, a => a / (Half)0.5, a => (Half)((double)a / 0.5f));
+                // scalar-tensor operators
+                TestOneTensor(c1, c2, getFunc, getFunc, a => a + (Half)0.5, a => (Half)((double)a + 0.5f));
+                TestOneTensor(c1, c2, getFunc, getFunc, a => (Half)0.5 + a, a => (Half)(0.5 + (double)a));
+                TestOneTensor(c1, c2, getFunc, getFunc, a => a - (Half)0.5, a => (Half)((double)a - 0.5));
+                TestOneTensor(c1, c2, getFunc, getFunc, a => a * (Half)0.5, a => (Half)((double)a * 0.5f));
+                TestOneTensor(c1, c2, getFunc, getFunc, a => (Half)0.5 * a, a => (Half)(0.5f * (double)a));
+                TestOneTensor(c1, c2, getFunc, getFunc, a => a / (Half)0.5, a => (Half)((double)a / 0.5f));
 
-                    TestOneTensor(c1, c2, getFunc, getFunc, a => a.add((Half)0.5), a => (Half)((double)a + 0.5f));
-                    TestOneTensor(c1, c2, getFunc, getFunc, a => a.sub((Half)0.5), a => (Half)((double)a - 0.5f));
-                    TestOneTensor(c1, c2, getFunc, getFunc, a => a.mul((Half)0.5), a => (Half)((double)a * 0.5f));
-                    TestOneTensor(c1, c2, getFunc, getFunc, a => a.div((Half)0.5), a => (Half)((double)a / 0.5f));
+                TestOneTensor(c1, c2, getFunc, getFunc, a => a.add((Half)0.5), a => (Half)((double)a + 0.5f));
+                TestOneTensor(c1, c2, getFunc, getFunc, a => a.sub((Half)0.5), a => (Half)((double)a - 0.5f));
+                TestOneTensor(c1, c2, getFunc, getFunc, a => a.mul((Half)0.5), a => (Half)((double)a * 0.5f));
+                TestOneTensor(c1, c2, getFunc, getFunc, a => a.div((Half)0.5), a => (Half)((double)a / 0.5f));
 
-                    TestOneTensorInPlace(c1, c2, getFunc, a => a.add_((Half)0.5), a => (Half)((double)a + 0.5f));
-                    TestOneTensorInPlace(c1, c2, getFunc, a => a.sub_((Half)0.5), a => (Half)((double)a - 0.5f));
-                    TestOneTensorInPlace(c1, c2, getFunc, a => a.mul_((Half)0.5), a => (Half)((double)a * 0.5f));
-                    TestOneTensorInPlace(c1, c2, getFunc, a => a.div_((Half)0.5), a => (Half)((double)a / 0.5f));
+                TestOneTensorInPlace(c1, c2, getFunc, a => a.add_((Half)0.5), a => (Half)((double)a + 0.5f));
+                TestOneTensorInPlace(c1, c2, getFunc, a => a.sub_((Half)0.5), a => (Half)((double)a - 0.5f));
+                TestOneTensorInPlace(c1, c2, getFunc, a => a.mul_((Half)0.5), a => (Half)((double)a * 0.5f));
+                TestOneTensorInPlace(c1, c2, getFunc, a => a.div_((Half)0.5), a => (Half)((double)a / 0.5f));
 
-                    // tensor-tensor operators
-                    TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => (Half)((double)a + (double)b));
-                    TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => (Half)((double)a - (double)b));
-                    TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => (Half)((double)a * (double)b));
-                    TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => (Half)((double)a / (double)b));
+                // tensor-tensor operators
+                TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => (Half)((double)a + (double)b));
+                TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => (Half)((double)a - (double)b));
+                TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => (Half)((double)a * (double)b));
+                TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => (Half)((double)a / (double)b));
 
-                    TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => (Half)((double)a + (double)b));
-                    TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => (Half)((double)a - (double)b));
-                    TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => (Half)((double)a * (double)b));
-                    TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => (Half)((double)a / (double)b));
+                TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => (Half)((double)a + (double)b));
+                TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => (Half)((double)a - (double)b));
+                TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => (Half)((double)a * (double)b));
+                TestTwoTensor(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => (Half)((double)a / (double)b));
 
-                    TestTwoTensorInPlace(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => (Half)((double)a + (double)b));
-                    TestTwoTensorInPlace(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => (Half)((double)a - (double)b));
-                    TestTwoTensorInPlace(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => (Half)((double)a * (double)b));
-                    TestTwoTensorInPlace(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => (Half)((double)a / (double)b));
+                TestTwoTensorInPlace(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => (Half)((double)a + (double)b));
+                TestTwoTensorInPlace(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => (Half)((double)a - (double)b));
+                TestTwoTensorInPlace(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => (Half)((double)a * (double)b));
+                TestTwoTensorInPlace(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => (Half)((double)a / (double)b));
 #else
                     Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
 
@@ -95,7 +94,6 @@ namespace TorchSharp
                     TestTwoTensorInPlace(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
                     TestTwoTensorInPlace(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
 #endif
-                }
             }
         }
 
@@ -154,9 +152,8 @@ namespace TorchSharp
         [TestOf(nameof(Tensor))]
         public void ArithmeticOperatorsFloat32()
         {
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.arange(0, 10, float32, device: device).expand(10, 10);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var c1 = torch.arange(0, 10, float32, device: device).expand(10, 10);
                     var c2 = torch.arange(10, 0, -1, float32, device: device).expand(10, 10);
                     var c3 = torch.ones(new long[] { 10, 10 }, float32, device: device);
                     Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
@@ -194,16 +191,14 @@ namespace TorchSharp
                     TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
                     TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
                 }
-            }
         }
 
         [Fact]
         [TestOf(nameof(Tensor))]
         public void ArithmeticOperatorsFloat64()
         {
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.arange(0, 10, float64, device: device).expand(10, 10);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var c1 = torch.arange(0, 10, float64, device: device).expand(10, 10);
                     var c2 = torch.arange(10, 0, -1, float64, device: device).expand(10, 10);
                     var c3 = torch.ones(new long[] { 10, 10 }, float64, device: device);
                     Func<Tensor, long, long, double> getFunc = (tt, i, j) => tt[i, j].ToDouble();
@@ -241,56 +236,53 @@ namespace TorchSharp
                     TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
                     TestTwoTensorInPlace<double>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
                 }
-            }
         }
 
         [Fact]
         [TestOf(nameof(Tensor))]
         public void ArithmeticOperatorsComplexFloat64()
         {
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.arange(0, 10, complex128, device: device).expand(10, 10);
-                    var c2 = torch.arange(10, 0, -1, complex128, device: device).expand(10, 10);
-                    var c3 = torch.ones(new long[] { 10, 10 }, complex128, device: device);
-                    Func<Tensor, long, long, System.Numerics.Complex> getFunc = (tt, i, j) => tt[i, j].ToComplexFloat64();
-                    // scalar-tensor operators
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a + 0.5, a => a + 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => 0.5 + a, a => 0.5 + a);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a - 0.5, a => a - 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a * 0.5, a => a * 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => 0.5 * a, a => 0.5 * a);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a / 0.5, a => a / 0.5);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var c1 = torch.arange(0, 10, complex128, device: device).expand(10, 10);
+                var c2 = torch.arange(10, 0, -1, complex128, device: device).expand(10, 10);
+                var c3 = torch.ones(new long[] { 10, 10 }, complex128, device: device);
+                Func<Tensor, long, long, System.Numerics.Complex> getFunc = (tt, i, j) => tt[i, j].ToComplexFloat64();
+                // scalar-tensor operators
+                TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a + 0.5, a => a + 0.5);
+                TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => 0.5 + a, a => 0.5 + a);
+                TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a - 0.5, a => a - 0.5);
+                TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a * 0.5, a => a * 0.5);
+                TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => 0.5 * a, a => 0.5 * a);
+                TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a / 0.5, a => a / 0.5);
 
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.add(0.5), a => a + 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.sub(0.5), a => a - 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.mul(0.5), a => a * 0.5);
-                    TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.div(0.5), a => a / 0.5);
+                TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.add(0.5), a => a + 0.5);
+                TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.sub(0.5), a => a - 0.5);
+                TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.mul(0.5), a => a * 0.5);
+                TestOneTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, getFunc, getFunc, a => a.div(0.5), a => a / 0.5);
 
-                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.add_(0.5), a => a + 0.5);
-                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.sub_(0.5), a => a - 0.5);
-                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.mul_(0.5), a => a * 0.5);
-                    TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.div_(0.5), a => a / 0.5);
+                TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.add_(0.5), a => a + 0.5);
+                TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.sub_(0.5), a => a - 0.5);
+                TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.mul_(0.5), a => a * 0.5);
+                TestOneTensorInPlace<System.Numerics.Complex>(c1, c2, getFunc, a => a.div_(0.5), a => a / 0.5);
 
-                    // tensor-tensor operators
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
-                    // Rounding errors make this test volatile
-                    //TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
+                // tensor-tensor operators
+                TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a + b, (a, b) => a + b);
+                TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a - b, (a, b) => a - b);
+                TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a * b, (a, b) => a * b);
+                // Rounding errors make this test volatile
+                //TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a / b, (a, b) => a / b);
 
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
-                    TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
-                    // Rounding errors make this test volatile
-                    //TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
+                TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.add(b), (a, b) => a + b);
+                TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.sub(b), (a, b) => a - b);
+                TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.mul(b), (a, b) => a * b);
+                // Rounding errors make this test volatile
+                //TestTwoTensor<System.Numerics.Complex, System.Numerics.Complex>(c1, c2, c3, getFunc, getFunc, (a, b) => a.div(b), (a, b) => a / b);
 
-                    TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
-                    TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
-                    TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
-                    // Rounding errors make this test volatile
-                    //TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
-                }
+                TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.add_(b), (a, b) => a + b);
+                TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.sub_(b), (a, b) => a - b);
+                TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.mul_(b), (a, b) => a * b);
+                // Rounding errors make this test volatile
+                //TestTwoTensorInPlace<System.Numerics.Complex>(c1, c2, c3, getFunc, (a, b) => a.div_(b), (a, b) => a / b);
             }
         }
 
@@ -298,55 +290,53 @@ namespace TorchSharp
         [TestOf(nameof(Tensor))]
         public void ComparisonOperatorsFloat32()
         {
-            foreach (var device in new Device[] { torch.CPU, torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var c1 = torch.arange(0, 10, float32, device: device).expand(10, 10);
-                    var c2 = torch.arange(10, 0, -1, float32, device: device).expand(10, 10);
-                    var c3 = torch.ones(new long[] { 10, 10 }, float32, device: device);
-                    Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
-                    Func<Tensor, long, long, bool> getFuncBool = (tt, i, j) => tt[i, j].ToBoolean();
-                    // scalar-tensor operators
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a == 5.0f, a => a == 5.0f);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a != 5.0f, a => a != 5.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.eq_(5.0f), a => a == 5.0f ? 1.0f : 0.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.ne_(5.0f), a => a != 5.0f ? 1.0f : 0.0f);
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var c1 = torch.arange(0, 10, float32, device: device).expand(10, 10);
+                var c2 = torch.arange(10, 0, -1, float32, device: device).expand(10, 10);
+                var c3 = torch.ones(new long[] { 10, 10 }, float32, device: device);
+                Func<Tensor, long, long, float> getFunc = (tt, i, j) => tt[i, j].ToSingle();
+                Func<Tensor, long, long, bool> getFuncBool = (tt, i, j) => tt[i, j].ToBoolean();
+                // scalar-tensor operators
+                TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a == 5.0f, a => a == 5.0f);
+                TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a != 5.0f, a => a != 5.0f);
+                TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.eq_(5.0f), a => a == 5.0f ? 1.0f : 0.0f);
+                TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.ne_(5.0f), a => a != 5.0f ? 1.0f : 0.0f);
 
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a < 5.0f, a => a < 5.0f);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f < a, a => 5.0f < a);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a <= 5.0f, a => a <= 5.0f);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f <= a, a => 5.0f <= a);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a > 5.0f, a => a > 5.0f);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f > a, a => 5.0f > a);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a >= 5.0f, a => a >= 5.0f);
-                    TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f >= a, a => 5.0f >= a);
+                TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a < 5.0f, a => a < 5.0f);
+                TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f < a, a => 5.0f < a);
+                TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a <= 5.0f, a => a <= 5.0f);
+                TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f <= a, a => 5.0f <= a);
+                TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a > 5.0f, a => a > 5.0f);
+                TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f > a, a => 5.0f > a);
+                TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => a >= 5.0f, a => a >= 5.0f);
+                TestOneTensor<float, bool>(c1, c2, getFunc, getFuncBool, a => 5.0f >= a, a => 5.0f >= a);
 
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.lt_(5.0f), a => a < 5.0f ? 1.0f : 0.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.le_(5.0f), a => a <= 5.0f ? 1.0f : 0.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.gt_(5.0f), a => a > 5.0f ? 1.0f : 0.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.ge_(5.0f), a => a >= 5.0f ? 1.0f : 0.0f);
+                TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.lt_(5.0f), a => a < 5.0f ? 1.0f : 0.0f);
+                TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.le_(5.0f), a => a <= 5.0f ? 1.0f : 0.0f);
+                TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.gt_(5.0f), a => a > 5.0f ? 1.0f : 0.0f);
+                TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.ge_(5.0f), a => a >= 5.0f ? 1.0f : 0.0f);
 
-                    TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a % 5.0f, a => a % 5.0f);
-                    TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.remainder_(5.0f), a => a % 5.0f);
+                TestOneTensor<float, float>(c1, c2, getFunc, getFunc, a => a % 5.0f, a => a % 5.0f);
+                TestOneTensorInPlace<float>(c1, c2, getFunc, a => a.remainder_(5.0f), a => a % 5.0f);
 
-                    // tensor-tensor operators
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a == b, (a, b) => a == b);
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a != b, (a, b) => a != b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.eq_(b), (a, b) => a == b ? 1.0f : 0.0f);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.ne_(b), (a, b) => a != b ? 1.0f : 0.0f);
+                // tensor-tensor operators
+                TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a == b, (a, b) => a == b);
+                TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a != b, (a, b) => a != b);
+                TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.eq_(b), (a, b) => a == b ? 1.0f : 0.0f);
+                TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.ne_(b), (a, b) => a != b ? 1.0f : 0.0f);
 
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a < b, (a, b) => a < b);
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a <= b, (a, b) => a <= b);
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a > b, (a, b) => a > b);
-                    TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a >= b, (a, b) => a >= b);
+                TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a < b, (a, b) => a < b);
+                TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a <= b, (a, b) => a <= b);
+                TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a > b, (a, b) => a > b);
+                TestTwoTensor<float, bool>(c1, c2, c3, getFunc, getFuncBool, (a, b) => a >= b, (a, b) => a >= b);
 
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.lt_(b), (a, b) => a < b ? 1.0f : 0.0f);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.le_(b), (a, b) => a <= b ? 1.0f : 0.0f);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.gt_(b), (a, b) => a > b ? 1.0f : 0.0f);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.ge_(b), (a, b) => a >= b ? 1.0f : 0.0f);
+                TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.lt_(b), (a, b) => a < b ? 1.0f : 0.0f);
+                TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.le_(b), (a, b) => a <= b ? 1.0f : 0.0f);
+                TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.gt_(b), (a, b) => a > b ? 1.0f : 0.0f);
+                TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.ge_(b), (a, b) => a >= b ? 1.0f : 0.0f);
 
-                    TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a % b, (a, b) => a % b);
-                    TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.remainder_(b), (a, b) => a % b);
-                }
+                TestTwoTensor<float, float>(c1, c2, c3, getFunc, getFunc, (a, b) => a % b, (a, b) => a % b);
+                TestTwoTensorInPlace<float>(c1, c2, c3, getFunc, (a, b) => a.remainder_(b), (a, b) => a % b);
             }
         }
 
@@ -377,12 +367,12 @@ namespace TorchSharp
             TestOneTensorInPlace<bool>(c1, c2, getBoolFunc, a => a.logical_xor_(false), a => a);
             TestOneTensorInPlace<bool>(c1, c2, getBoolFunc, a => a.logical_xor_(true), a => !a);
 
-            TestTwoTensor<bool, bool>(c1, c2, c3, getBoolFunc, getBoolFunc, (a,b) => a.logical_and(b), (a,b) => a & b);
-            TestTwoTensor<bool, bool>(c1, c2, c4, getBoolFunc, getBoolFunc, (a,b) => a.logical_and(b), (a,b) => a & b);
-            TestTwoTensor<bool, bool>(c1, c2, c3, getBoolFunc, getBoolFunc, (a,b) => a.logical_or(b), (a,b) => a | b);
-            TestTwoTensor<bool, bool>(c1, c2, c4, getBoolFunc, getBoolFunc, (a,b) => a.logical_or(b), (a,b) => a | b);
-            TestTwoTensor<bool, bool>(c1, c2, c3, getBoolFunc, getBoolFunc, (a,b) => a.logical_xor(b), (a,b) => a ^ b);
-            TestTwoTensor<bool, bool>(c1, c2, c4, getBoolFunc, getBoolFunc, (a,b) => a.logical_xor(b), (a,b) => a ^ b);
+            TestTwoTensor<bool, bool>(c1, c2, c3, getBoolFunc, getBoolFunc, (a, b) => a.logical_and(b), (a, b) => a & b);
+            TestTwoTensor<bool, bool>(c1, c2, c4, getBoolFunc, getBoolFunc, (a, b) => a.logical_and(b), (a, b) => a & b);
+            TestTwoTensor<bool, bool>(c1, c2, c3, getBoolFunc, getBoolFunc, (a, b) => a.logical_or(b), (a, b) => a | b);
+            TestTwoTensor<bool, bool>(c1, c2, c4, getBoolFunc, getBoolFunc, (a, b) => a.logical_or(b), (a, b) => a | b);
+            TestTwoTensor<bool, bool>(c1, c2, c3, getBoolFunc, getBoolFunc, (a, b) => a.logical_xor(b), (a, b) => a ^ b);
+            TestTwoTensor<bool, bool>(c1, c2, c4, getBoolFunc, getBoolFunc, (a, b) => a.logical_xor(b), (a, b) => a ^ b);
 
             TestTwoTensorInPlace<bool>(c1, c2, c3, getBoolFunc, (a, b) => a.logical_and_(b), (a, b) => a & b);
             TestTwoTensorInPlace<bool>(c1, c2, c4, getBoolFunc, (a, b) => a.logical_and_(b), (a, b) => a & b);
@@ -490,13 +480,13 @@ namespace TorchSharp
             TestOneTensorInPlace<int>(c1, c2, getFunc, a => a.bitwise_xor_(0), a => a ^ 0);
             TestOneTensorInPlace<int>(c1, c2, getFunc, a => a.bitwise_xor_(1), a => a ^ 1);
 
-            TestTwoTensor<int, int>(c1, c2, c3, getFunc, getFunc, (a,b) => a.bitwise_and(b), (a,b) => a & b);
-            TestTwoTensor<int, int>(c1, c2, c3, getFunc, getFunc, (a,b) => a.bitwise_or(b), (a,b) => a | b);
-            TestTwoTensor<int, int>(c1, c2, c3, getFunc, getFunc, (a,b) => a.bitwise_xor(b), (a,b) => a ^ b);
+            TestTwoTensor<int, int>(c1, c2, c3, getFunc, getFunc, (a, b) => a.bitwise_and(b), (a, b) => a & b);
+            TestTwoTensor<int, int>(c1, c2, c3, getFunc, getFunc, (a, b) => a.bitwise_or(b), (a, b) => a | b);
+            TestTwoTensor<int, int>(c1, c2, c3, getFunc, getFunc, (a, b) => a.bitwise_xor(b), (a, b) => a ^ b);
 
-            TestTwoTensorInPlace<int>(c1, c2, c3, getFunc, (a,b) => a.bitwise_and_(b), (a,b) => a & b);
-            TestTwoTensorInPlace<int>(c1, c2, c3, getFunc, (a,b) => a.bitwise_or_(b), (a,b) => a | b);
-            TestTwoTensorInPlace<int>(c1, c2, c3, getFunc, (a,b) => a.bitwise_xor_(b), (a,b) => a ^ b);
+            TestTwoTensorInPlace<int>(c1, c2, c3, getFunc, (a, b) => a.bitwise_and_(b), (a, b) => a & b);
+            TestTwoTensorInPlace<int>(c1, c2, c3, getFunc, (a, b) => a.bitwise_or_(b), (a, b) => a | b);
+            TestTwoTensorInPlace<int>(c1, c2, c3, getFunc, (a, b) => a.bitwise_xor_(b), (a, b) => a ^ b);
         }
 
         [Fact]
