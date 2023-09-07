@@ -12,6 +12,7 @@ __API Changes__:
 
 __Bug Fixes__:
 
+#1041 Running example code got error in Windows 10<br/>
 #1064 Inplace operators create an alias<br/>
 #1084 Module.zero_grad() does not work<br/>
 

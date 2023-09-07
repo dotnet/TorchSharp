@@ -1649,15 +1649,13 @@ namespace TorchSharp
         [TestOf(nameof(torch.zeros))]
         public void CreateFloat16TensorZeros()
         {
-            foreach (var device in new Device[] { torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var shape = new long[] { 2, 2 };
+            if (torch.cuda.is_available()) {
+                var shape = new long[] { 2, 2 };
 
-                    Tensor t = torch.zeros(shape, device: device, dtype: torch.float16);
-                    Assert.Equal(shape, t.shape);
-                    Assert.Equal(0.0f, t[0, 0].ToSingle());
-                    Assert.Equal(0.0f, t[1, 1].ToSingle());
-                }
+                Tensor t = torch.zeros(shape, device: torch.CUDA, dtype: torch.float16);
+                Assert.Equal(shape, t.shape);
+                Assert.Equal(0.0f, t[0, 0].ToSingle());
+                Assert.Equal(0.0f, t[1, 1].ToSingle());
             }
         }
 
@@ -1665,15 +1663,13 @@ namespace TorchSharp
         [TestOf(nameof(torch.zeros))]
         public void CreateBFloat16TensorZeros()
         {
-            foreach (var device in new Device[] { torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var shape = new long[] { 2, 2 };
+            if (torch.cuda.is_available()) {
+                var shape = new long[] { 2, 2 };
 
-                    Tensor t = torch.zeros(shape, device: device, dtype: torch.bfloat16);
-                    Assert.Equal(shape, t.shape);
-                    Assert.Equal(0.0f, t[0, 0].ToSingle());
-                    Assert.Equal(0.0f, t[1, 1].ToSingle());
-                }
+                Tensor t = torch.zeros(shape, device: torch.CUDA, dtype: torch.bfloat16);
+                Assert.Equal(shape, t.shape);
+                Assert.Equal(0.0f, t[0, 0].ToSingle());
+                Assert.Equal(0.0f, t[1, 1].ToSingle());
             }
         }
 
@@ -1910,13 +1906,11 @@ namespace TorchSharp
         [TestOf(nameof(torch.empty))]
         public void CreateFloat16TensorEmpty()
         {
-            foreach (var device in new Device[] { torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var shape = new long[] { 2, 2 };
+            if (torch.cuda.is_available()) {
+                var shape = new long[] { 2, 2 };
 
-                    Tensor t = torch.empty(shape, float16, device: device);
-                    Assert.Equal(shape, t.shape);
-                }
+                Tensor t = torch.empty(shape, float16, device: torch.CUDA);
+                Assert.Equal(shape, t.shape);
             }
         }
 
@@ -1924,13 +1918,11 @@ namespace TorchSharp
         [TestOf(nameof(torch.empty))]
         public void CreateBFloat16TensorEmpty()
         {
-            foreach (var device in new Device[] { torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var shape = new long[] { 2, 2 };
+            if (torch.cuda.is_available()) {
+                var shape = new long[] { 2, 2 };
 
-                    Tensor t = torch.empty(shape, bfloat16, device: device);
-                    Assert.Equal(shape, t.shape);
-                }
+                Tensor t = torch.empty(shape, bfloat16, device: torch.CUDA);
+                Assert.Equal(shape, t.shape);
             }
         }
 
@@ -2015,15 +2007,13 @@ namespace TorchSharp
         [TestOf(nameof(torch.ones))]
         public void CreateFloat16TensorOnes()
         {
-            foreach (var device in new Device[] { torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var shape = new long[] { 2, 2 };
+            if (torch.cuda.is_available()) {
+                var shape = new long[] { 2, 2 };
 
-                    Tensor t = torch.ones(shape, float16, device: device);
-                    Assert.Equal(shape, t.shape);
-                    Assert.Equal(1.0f, t[0, 0].ToSingle());
-                    Assert.Equal(1.0f, t[1, 1].ToSingle());
-                }
+                Tensor t = torch.ones(shape, float16, device: torch.CUDA);
+                Assert.Equal(shape, t.shape);
+                Assert.Equal(1.0f, t[0, 0].ToSingle());
+                Assert.Equal(1.0f, t[1, 1].ToSingle());
             }
         }
 
@@ -2031,15 +2021,13 @@ namespace TorchSharp
         [TestOf(nameof(torch.ones))]
         public void CreateBFloat16TensorOnes()
         {
-            foreach (var device in new Device[] { torch.CUDA }) {
-                if (device.type != DeviceType.CUDA || torch.cuda.is_available()) {
-                    var shape = new long[] { 2, 2 };
+            if (torch.cuda.is_available()) {
+                var shape = new long[] { 2, 2 };
 
-                    Tensor t = torch.ones(shape, bfloat16, device: device);
-                    Assert.Equal(shape, t.shape);
-                    Assert.Equal(1.0f, t[0, 0].ToSingle());
-                    Assert.Equal(1.0f, t[1, 1].ToSingle());
-                }
+                Tensor t = torch.ones(shape, bfloat16, device: torch.CUDA);
+                Assert.Equal(shape, t.shape);
+                Assert.Equal(1.0f, t[0, 0].ToSingle());
+                Assert.Equal(1.0f, t[1, 1].ToSingle());
             }
         }
 
