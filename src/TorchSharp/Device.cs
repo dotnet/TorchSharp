@@ -80,24 +80,24 @@ namespace TorchSharp
         /// <summary>
         /// Convenience declaration of a CPU device accessible everywhere.
         /// </summary>
-        public static Device CPU = new Device(DeviceType.CPU, -1);
+        public static Device CPU = InitializeDevice(new Device(DeviceType.CPU, -1));
 
         /// <summary>
         /// Convenience declaration of a CUDA device accessible everywhere.
         /// </summary>
-        public static Device CUDA = new Device(DeviceType.CUDA, -1);
+        public static Device CUDA => InitializeDevice(new Device(DeviceType.CUDA, -1));
 
         /// <summary>
         /// Convenience declaration of a META device accessible everywhere.
         /// </summary>
-        public static Device META = new Device(DeviceType.META, -1);
+        public static Device META = InitializeDevice(new Device(DeviceType.META, -1));
 
         /// <summary>
         /// Factory for a device object, following the Pytorch API.
         /// </summary>
         /// <param name="description">String description of the device, e.g. 'cpu' or 'cuda:0'</param>
         /// <returns></returns>
-        public static Device device(string description) => new Device(description);
+        public static Device device(string description) => InitializeDevice(new Device(description));
 
         /// <summary>
         /// Factory for a device object, following the Pytorch API.
@@ -105,7 +105,7 @@ namespace TorchSharp
         /// <param name="deviceType">The device type, e.g. 'cpu' or 'cuda'</param>
         /// <param name="index">The device index. Ignored for CPUs</param>
         /// <returns></returns>
-        public static Device device(string deviceType, int index = -1) => new Device(deviceType, index);
+        public static Device device(string deviceType, int index = -1) => InitializeDevice(new Device(deviceType, index));
 
         /// <summary>
         /// Factory for a device object, following the Pytorch API.
@@ -113,7 +113,7 @@ namespace TorchSharp
         /// <param name="deviceType">The device type, e.g. DeviceType.CPU or DeviceType.CUDA.</param>
         /// <param name="index">The device index. Ignored for CPUs</param>
         /// <returns></returns>
-        public static Device device(DeviceType deviceType, int index = -1) => new Device(deviceType, index);
+        public static Device device(DeviceType deviceType, int index = -1) => InitializeDevice(new Device(deviceType, index));
 
         /// <summary>
         /// Factory for a CUDA device object, following the Pytorch API.

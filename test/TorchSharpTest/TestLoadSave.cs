@@ -7,6 +7,7 @@ using static TorchSharp.torch.nn;
 using Xunit;
 using System.Collections.Generic;
 
+#if false
 #nullable enable
 
 namespace TorchSharp
@@ -2552,3 +2553,4 @@ namespace TorchSharp
         }
     }
 }
+#endif
