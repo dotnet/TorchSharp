@@ -1155,5 +1155,30 @@ namespace TorchSharp
                 }
             }
         }
+
+        [Fact]
+        public void Validate1089_2d()
+        {
+            var t = torch.zeros(1, 6, 28, 28);
+            var expectedShape = new long[] { 1, 6, 14, 14 };
+
+            Assert.Multiple(
+            () => Assert.Equal(expectedShape, functional.max_pool2d(t, 2).shape),
+            () => Assert.Equal(expectedShape, functional.max_pool2d(t, ( 2, 2 )).shape),
+            () => Assert.Equal(expectedShape, functional.max_pool2d(t, new long[] { 2, 2 }).shape)
+            );
+
+            Assert.Equal(expectedShape, functional.max_pool2d_with_indices(t, new long[] { 2, 2 }).output.shape);
+        }
+
+        [Fact]
+        public void Validate1089_3d()
+        {
+            var t = torch.zeros(new long[] { 1, 6, 28, 28, 28 });
+            var expectedShape = new long[] { 1, 6, 14, 14, 14 };
+
+            Assert.Equal(expectedShape, functional.max_pool3d(t, new long[] { 2, 2, 2 }).shape);
+            Assert.Equal(expectedShape, functional.max_pool3d_with_indices(t, new long[] { 2, 2, 2 }).output.shape);
+        }
     }
 }
