@@ -89,7 +89,7 @@ namespace TorchSharp
                     long? padding = null, long? dilation = null, bool ceil_mode = false)
                 {
                     var kernelSizes = new long[] { kernelSize };
-                    var strides = new long[] { stride ?? 1 };
+                    var strides = new long[] { stride ?? kernelSize };
                     var paddings = new long[] { padding ?? 0 };
                     var dilations = new long[] { dilation ?? 1 };
                     unsafe {
@@ -121,7 +121,7 @@ namespace TorchSharp
                     long? padding = null, long? dilation = null, bool ceil_mode = false)
                 {
                     var kernelSizes = new long[] { kernelSize };
-                    var strides = new long[] { stride ?? 1 };
+                    var strides = new long[] { stride ?? kernelSize };
                     var paddings = new long[] { padding ?? 0 };
                     var dilations = new long[] { dilation ?? 1 };
                     IntPtr[] ptrArray;

@@ -114,7 +114,7 @@ namespace TorchSharp
                 public static Tensor max_pool3d(Tensor input, long[] kernelSize, long[] strides = null,
                     long[] padding = null, long[] dilation = null, bool ceil_mode = false)
                 {
-                    strides = strides ?? kernelSize.Select(x => 1L).ToArray();
+                    strides = strides ?? kernelSize;
                     padding = padding ?? kernelSize.Select(x => 0L).ToArray();
                     dilation = dilation ?? kernelSize.Select(x => 1L).ToArray();
                     unsafe {
@@ -145,7 +145,7 @@ namespace TorchSharp
                 public static (Tensor output, Tensor indices) max_pool3d_with_indices(Tensor input, long[] kernelSize, long[] strides = null,
                     long[] padding = null, long[] dilation = null, bool ceil_mode = false)
                 {
-                    strides = strides ?? kernelSize.Select(x => 1L).ToArray();
+                    strides = strides ?? kernelSize;
                     padding = padding ?? kernelSize.Select(x => 0L).ToArray();
                     dilation = dilation ?? kernelSize.Select(x => 1L).ToArray();
                     IntPtr[] ptrArray;
