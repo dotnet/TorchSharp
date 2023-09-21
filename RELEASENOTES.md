@@ -2,13 +2,17 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.100.6
+
+__Bug Fixes__:
+
+Update to SkiaSharp 2.88.6 to avoid the libwebp vulnerability.<br/>
+
 ## NuGet Version 0.100.5
 
 __Breaking Changes__:
 
 Inplace operators no longer create an alias, but instead return 'this'. This change will impact any code that explicitly calls `Dispose` on a tensor after the operation.
-
-__API Changes__:
 
 __Bug Fixes__:
 
