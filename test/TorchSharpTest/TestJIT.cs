@@ -6,7 +6,6 @@ using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using Xunit;
 
-#if false
 #nullable enable
 
 namespace TorchSharp
@@ -14,6 +13,7 @@ namespace TorchSharp
     [Collection("Sequential")]
     public class TestJIT
     {
+#if false
         [Fact]
         public void TestLoadJIT_Func()
         {
@@ -445,6 +445,6 @@ namespace TorchSharp
                 Assert.Equal(w, zArr[3]);
             }
         }
+#endif
     }
 }
-#endif
