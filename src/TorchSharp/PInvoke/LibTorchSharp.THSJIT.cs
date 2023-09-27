@@ -75,6 +75,9 @@ namespace TorchSharp.PInvoke
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern IntPtr THSJIT_load(string filename, long deviceType, long deviceIndex);
 
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSJIT_load_byte_array(IntPtr bytes, long size, long deviceType, long deviceIndex);
+
         [DllImport("LibTorchSharp", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         internal static extern void THSJIT_save(torch.nn.Module.HType handle, string filename);
 

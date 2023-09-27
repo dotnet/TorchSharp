@@ -16,6 +16,23 @@ JITModule THSJIT_load(const char* filename, int64_t device, int64_t index)
     return nullptr;
 }
 
+JITModule THSJIT_load_byte_array(char* bytes, ptrdiff_t size, int64_t device, int64_t index)
+{
+    c10::DeviceType dev = c10::kCPU;
+    if (device == 1)
+        dev = c10::kCUDA;
+
+    CATCH(
+        std::istringstream stream(std::string(bytes, size));
+
+        auto res = torch::jit::load(stream, torch::Device(dev, index));
+        auto copy = new torch::jit::Module(res);
+        return new std::shared_ptr<torch::jit::Module>(copy);
+    );
+
+    return nullptr;
+}
+
 JITCompilationUnit THSJIT_compile(const char* script)
 {
     CATCH(
