@@ -437,7 +437,7 @@ namespace TorchSharp
                             // List of scalars and tensors
                             var result = new object[ptrArray.Length];
                             for (var i = 0; i < ptrArray.Length; i++) {
-                                switch(ptrArray[i].TypeCode) {
+                                switch (ptrArray[i].TypeCode) {
                                 case 0:
                                     result[i] = new Tensor(ptrArray[i].Handle);
                                     break;
@@ -851,6 +851,42 @@ namespace TorchSharp
             /// <typeparam name="T1">The first argument type.</typeparam>
             /// <typeparam name="T2">The second argument type.</typeparam>
             /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="bytes">The serialized module.</param>
+            /// <param name="device_type">The device type, e.g. 'CPU' or 'CUDA'.</param>
+            /// <param name="device_index">The optional device index.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
+            public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(byte[] bytes, DeviceType device_type = DeviceType.CPU, long device_index = -1)
+            {
+                return new ScriptModule<T1, T2, TResult>(_load(bytes, device_type, device_index));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The first argument type.</typeparam>
+            /// <typeparam name="T2">The second argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="bytes">The serialized module.</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(byte[] bytes, Device map_location)
+            {
+                return new ScriptModule<T1, T2, TResult>(_load(bytes, map_location.type, map_location.index));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The first argument type.</typeparam>
+            /// <typeparam name="T2">The second argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
             /// <param name="filename">The file name of the module.</param>
             /// <param name="map_location">The device type where the script module should be loaded.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
@@ -875,6 +911,20 @@ namespace TorchSharp
                 if (result == IntPtr.Zero)
                     CheckForErrors();
                 return result;
+            }
+
+            private unsafe static IntPtr _load(byte[] bytes, DeviceType device_type, long device_index)
+            {
+                if (device_type != DeviceType.CUDA) device_index = -1;
+
+                if (device_type == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
+
+                fixed (byte* inputs = bytes) {
+                    var result = THSJIT_load_byte_array((IntPtr)inputs, bytes.LongLength, (long)device_type, device_index);
+                    if (result == IntPtr.Zero)
+                        CheckForErrors();
+                    return result;
+                }
             }
 
             /// <summary>
