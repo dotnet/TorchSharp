@@ -66,5 +66,17 @@ namespace TorchVision
                 }
             });
         }
+
+        [Fact]
+
+        public void TestMNISTDownload()
+        {
+            var data = torchvision.datasets.MNIST("TestMNISTDownload", true, true);
+
+            Assert.True(File.Exists(Path.Combine("TestMNISTDownload", "mnist", "train-images-idx3-ubyte.gz")));
+            Assert.True(File.Exists(Path.Combine("TestMNISTDownload", "mnist", "test_data", "train-images-idx3-ubyte")));
+            Assert.True(File.Exists(Path.Combine("TestMNISTDownload", "mnist", "t10k-images-idx3-ubyte.gz")));
+            Assert.True(File.Exists(Path.Combine("TestMNISTDownload", "mnist", "test_data", "t10k-images-idx3-ubyte")));
+        }
     }
 }
