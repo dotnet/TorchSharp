@@ -92,7 +92,7 @@ namespace TorchSharp
                 if (!File.Exists(filePath)) {
                     lock (_httpClient) {
                         using var s = _httpClient.GetStreamAsync(netPath).Result;
-                        using var fs = new FileStream(file, FileMode.CreateNew);
+                        using var fs = new FileStream(filePath, FileMode.CreateNew);
                         s.CopyToAsync(fs).Wait();
                     }
                 }
