@@ -13,7 +13,7 @@ namespace TorchSharp
     [Collection("Sequential")]
     public class TestJIT
     {
-#if false
+#if true
         [Fact]
         public void TestLoadJIT_1()
         {
@@ -91,7 +91,9 @@ namespace TorchSharp
 
             int i = 0;
             m.register_forward_pre_hook((m,t) => { i += 1; return t; });
-            m.register_forward_hook((m, t1, t2) => { i += 2; return t2; });
+            m.register_forward_pre_hook((m, t) => { i += 2; return t; });
+            m.register_forward_hook((m, t1, t2) => { i += 4; return t2; });
+            m.register_forward_hook((m, t1, t2) => { i += 8; return t2; });
 
             var t = m.forward(input);
 
@@ -99,7 +101,7 @@ namespace TorchSharp
 
             t = m.call(input);
 
-            Assert.Equal(3, i);
+            Assert.Equal(15, i);
 
             Assert.Equal(new long[] { 6 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
