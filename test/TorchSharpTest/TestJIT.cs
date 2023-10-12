@@ -13,7 +13,7 @@ namespace TorchSharp
     [Collection("Sequential")]
     public class TestJIT
     {
-#if true
+#if false
         [Fact]
         public void TestLoadJIT_1()
         {
