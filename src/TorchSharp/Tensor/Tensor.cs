@@ -1410,6 +1410,18 @@ namespace TorchSharp
                 }
             }
 
+
+            /// <summary>
+            /// Tensor indexer.
+            /// </summary>
+            /// <param name="indices">A variable-lenght list of indices.</param>
+            /// <returns>A tensor, possbily singleton.</returns>
+            [IndexerName("TensorItems")]
+            public Tensor this[params long[] indices] {
+                get { return index(indices.Select(t => TensorIndex.Single(t)).ToArray()); }
+                set { index_put_(value, indices.Select(t => TensorIndex.Single(t)).ToArray()); }
+            }
+
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions.
             /// </summary>
@@ -1427,7 +1439,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
             }
 
             /// <summary>
