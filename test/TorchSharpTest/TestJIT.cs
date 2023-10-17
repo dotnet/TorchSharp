@@ -15,6 +15,27 @@ namespace TorchSharp
     {
 #if false
         [Fact]
+        public void TestLoadJIT_1()
+        {
+            var input = torch.ones(10);
+            var expected = torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 });
+
+            // One linear layer followed by ReLU.
+            var m = torch.jit.load<Tensor, Tensor>(@"linrelu.script.dat");
+            if (torch.cuda.is_available()) {
+                m = m.to(torch.CUDA);
+                input = input.to(torch.CUDA);
+                expected = expected.to(torch.CUDA);
+            }
+
+            var t = m.forward(input);
+
+            Assert.Equal(new long[] { 6 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.True(expected.allclose(t));
+        }
+
+        [Fact]
         public void TestLoadJIT_Func()
         {
             // One linear layer followed by ReLU.
@@ -34,7 +55,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void TestLoadJIT_1()
+        public void TestLoadJIT_5()
         {
             var input = torch.ones(10);
             var expected = torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 });
@@ -48,6 +69,39 @@ namespace TorchSharp
             }
 
             var t = m.call(input);
+
+            Assert.Equal(new long[] { 6 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.True(expected.allclose(t));
+        }
+
+        [Fact]
+        public void TestLoadJIT_6()
+        {
+            var input = torch.ones(10);
+            var expected = torch.tensor(new float[] { 0.313458264f, 0, 0.9996568f, 0, 0, 0 });
+
+            // One linear layer followed by ReLU.
+            var m = torch.jit.load<Tensor, Tensor>(@"linrelu.script.dat");
+            if (torch.cuda.is_available()) {
+                m = m.to(torch.CUDA);
+                input = input.to(torch.CUDA);
+                expected = expected.to(torch.CUDA);
+            }
+
+            int i = 0;
+            m.register_forward_pre_hook((m,t) => { i += 1; return t; });
+            m.register_forward_pre_hook((m, t) => { i += 2; return t; });
+            m.register_forward_hook((m, t1, t2) => { i += 4; return t2; });
+            m.register_forward_hook((m, t1, t2) => { i += 8; return t2; });
+
+            var t = m.forward(input);
+
+            Assert.Equal(0, i);
+
+            t = m.call(input);
+
+            Assert.Equal(15, i);
 
             Assert.Equal(new long[] { 6 }, t.shape);
             Assert.Equal(torch.float32, t.dtype);
