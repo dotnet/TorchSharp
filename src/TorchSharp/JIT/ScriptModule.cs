@@ -220,8 +220,8 @@ namespace TorchSharp
                 /// <summary>
                 /// Invoke the 'forward' function of the script with any number of arguments.
                 /// </summary>
-                /// <param name="objs"></param>
-                /// <returns></returns>
+                /// <param name="input">Any number of parameters for the forward function.</param>
+                /// <returns>An object.</returns>
                 /// <remarks>
                 /// Only certain types can currently be passed:
                 /// 1. Tensor
@@ -238,15 +238,14 @@ namespace TorchSharp
                 /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
                 /// If a tuple contains both tensors and scalars, it is returned as an object[].
                 /// </remarks>
-                /// <exception cref="NotImplementedException"></exception>
-                public object call(params object[] objs)
+                public object forward(params object[] input)
                 {
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
 
                     using (var parray = new IndexedPinnedArrays<TensorOrScalar>()) {
 
-                        var tRefsHandle = DetermineArgumentTypeRefs(objs, out var count, parray);
+                        var tRefsHandle = DetermineArgumentTypeRefs(input, out var count, parray);
 
                         var allocated = parray.Count;
 
@@ -256,6 +255,40 @@ namespace TorchSharp
 
                         return ProcessReturnValue(name, parray, ptrArray, typeCode);
                     }
+                }
+
+                /// <summary>
+                /// Synonym for `forward`
+                /// </summary>
+                /// <param name="input">Any number of parameters for the forward function.</param>
+                /// <returns>An object.</returns>
+                /// <remarks>
+                /// Only certain types can currently be passed:
+                /// 1. Tensor
+                /// 2. Scalar
+                /// 3. int/long
+                /// 4. double/float
+                /// 5. bool
+                ///
+                /// Only certain types can currently be returned:
+                /// 1. Tensor / Scalar
+                /// 2. Tuple of Tensor / Scalar
+                /// 3. Array (Python list) of Tensor / Scalar
+                ///
+                /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
+                /// If a tuple contains both tensors and scalars, it is returned as an object[].
+                ///
+                /// Note: this currently does not support hooking the module.
+                /// </remarks>
+                public object call(params object[] input)
+                {
+                    // TODO: Call pre-hooks, if available.
+
+                    var result = forward(input);
+
+                    // TODO: Call post-hooks, if available.
+
+                    return result;
                 }
 
                 /// <summary>
@@ -437,7 +470,7 @@ namespace TorchSharp
                             // List of scalars and tensors
                             var result = new object[ptrArray.Length];
                             for (var i = 0; i < ptrArray.Length; i++) {
-                                switch(ptrArray[i].TypeCode) {
+                                switch (ptrArray[i].TypeCode) {
                                 case 0:
                                     result[i] = new Tensor(ptrArray[i].Handle);
                                     break;
@@ -566,6 +599,62 @@ namespace TorchSharp
                 public TResult invoke<T, TResult>(string name, params T[] inputs) => (TResult)invoke(name, inputs);
             }
 
+
+
+            /// <summary>
+            /// Represents a module that accepts 'hook' to the module logic.
+            /// </summary>
+            public class HookableScriptModule<TPreHook, TPostHook> : ScriptModule
+            {
+                internal HookableScriptModule(IntPtr handle) : base(handle)
+                {
+                }
+
+                public HookRemover register_forward_hook(TPostHook hook)
+                {
+                    var key = Guid.NewGuid().ToString();
+                    post_hooks.Add(key, hook);
+                    return new HookRemover(this, key);
+                }
+
+                public HookRemover register_forward_pre_hook(TPreHook hook)
+                {
+                    var key = Guid.NewGuid().ToString();
+                    pre_hooks.Add(key, hook);
+                    return new HookRemover(this, key);
+                }
+
+                private void remove(string key)
+                {
+                    if (pre_hooks.ContainsKey(key)) pre_hooks.Remove(key);
+                    if (post_hooks.ContainsKey(key)) post_hooks.Remove(key);
+                }
+
+                protected Dictionary<string, TPreHook> pre_hooks = new Dictionary<string, TPreHook>();
+                protected Dictionary<string, TPostHook> post_hooks = new Dictionary<string, TPostHook>();
+
+                /// <summary>
+                /// Used to remove a specific hook, following the PyTorch API design.
+                /// </summary>
+                /// <remarks>The name and namespace of this class is not the same as in PyTorch, but serves the same purpose.</remarks>
+                public class HookRemover
+                {
+                    public HookRemover(HookableScriptModule<TPreHook, TPostHook> module, string key)
+                    {
+                        this.module = module;
+                        this.key = key;
+                    }
+
+                    public void remove()
+                    {
+                        module.remove(key);
+                    }
+
+                    private HookableScriptModule<TPreHook, TPostHook> module;
+                    private string key;
+                }
+            }
+
             /// <summary>
             /// A script module taking any number of tensors as input
             /// </summary>
@@ -593,10 +682,18 @@ namespace TorchSharp
                 /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
                 /// If a tuple contains both tensors and scalars, it is returned as an object[].
                 /// </remarks>
-                public TResult call(params Tensor[] tensor)
+                public TResult call(params Tensor[] input)
                 {
-                    return (TResult)base.call(tensor);
+                    // TODO: Call pre-hooks, if available.
+
+                    var result = forward(input);
+
+                    // TODO: Call post-hooks, if available.
+
+                    return result;
                 }
+
+                public TResult forward(params Tensor[] tensor) => (TResult)base.forward(tensor);
             }
 
             /// <summary>
@@ -604,7 +701,7 @@ namespace TorchSharp
             /// </summary>
             /// <typeparam name="T">The argument type.</typeparam>
             /// <typeparam name="TResult">The return type of the module.</typeparam>
-            public class ScriptModule<T, TResult> : ScriptModule, torch.nn.IModule<T, TResult>
+            public class ScriptModule<T, TResult> : HookableScriptModule<Func<ScriptModule<T, TResult>, T, T>, Func<ScriptModule<T, TResult>, T, TResult, TResult>>, torch.nn.IModule<T, TResult>
             {
                 internal ScriptModule(IntPtr handle) : base(handle) { }
 
@@ -627,10 +724,30 @@ namespace TorchSharp
                 /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
                 /// If a tuple contains both tensors and scalars, it is returned as an object[].
                 /// </remarks>
-                public TResult call(T tensor)
+                public TResult call(T input)
                 {
-                    return (TResult)base.call(tensor);
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input);
+                        if (modified is not null)
+                            input = modified;
+                    }
+
+                    var result = forward(input);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
                 }
+
+                public TResult forward(T tensor) => (TResult)base.forward(tensor);
             }
 
             /// <summary>
@@ -639,7 +756,7 @@ namespace TorchSharp
             /// <typeparam name="T1">The first argument type.</typeparam>
             /// <typeparam name="T2">The second argument type.</typeparam>
             /// <typeparam name="TResult">The return type of the module.</typeparam>
-            public class ScriptModule<T1, T2, TResult> : ScriptModule, torch.nn.IModule<T1, T2, TResult>
+            public class ScriptModule<T1, T2, TResult> : HookableScriptModule<Func<ScriptModule<T1, T2, TResult>, T1, T2, (T1, T2)?>, Func<ScriptModule<T1, T2, TResult>, T1, T2, TResult, TResult>>, torch.nn.IModule<T1, T2, TResult>
             {
                 internal ScriptModule(IntPtr handle) : base(handle) { }
 
@@ -664,8 +781,30 @@ namespace TorchSharp
                 /// </remarks>
                 public TResult call(T1 input1, T2 input2)
                 {
-                    return (TResult)base.call(input1, input2);
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                        }
+                    }
+
+                    var result = forward(input1, input2);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
                 }
+
+                public TResult forward(T1 input1, T2 input2) => (TResult)base.forward(input1, input2);
             }
 
             /// <summary>
