@@ -119,6 +119,19 @@ namespace TorchSharp
             return randn(size, dtype: dtype, device: device, requires_grad: requires_grad, generator: generator) * std + mean;
         }
 
+        /// <summary>
+        /// This private method handles most tensor creation, centrally.
+        /// </summary>
+        /// <param name="rawArray">An array of contiguous elements, to be used for creating the tensor.</param>
+        /// <param name="dimensions">The dimensions of the tensor.</param>
+        /// <param name="origType">The element type of the input array.</param>
+        /// <param name="dtype">The element type of the tensor to be created.</param>
+        /// <param name="device">The device where the tensor should be located.</param>
+        /// <param name="requires_grad">Whether the tensor should be tracking gradients.</param>
+        /// <param name="clone">Whether to clone the input array or use it as the backing storage for the tensor.</param>
+        /// <param name="names">Names of the dimensions of the tensor.</param>
+        /// <returns>A constructed tensor with elements of `dtype`</returns>
+        /// <exception cref="ArgumentException"></exception>
         private static Tensor _tensor_generic(Array rawArray, ReadOnlySpan<long> dimensions, sbyte origType, ScalarType? dtype, Device? device, bool requires_grad, bool clone = true, string[]? names = null)
         {
             {
@@ -147,30 +160,26 @@ namespace TorchSharp
             });
             deleters.TryAdd(deleter, deleter); // keep the delegate alive
 
+            dtype = dtype.HasValue ? dtype : (ScalarType)origType;
+
             unsafe {
                 fixed (long* shape = dimensions) {
-                    var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
 
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
                     }
 
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
                     var tensor = new Tensor(handle);
 
-                    var needsConversion = dtype.HasValue && dtype.Value != (ScalarType)origType;
-
-                    if (needsConversion) {
-                        tensor = tensor.to_type(dtype!.Value);
-                    }
                     if (names != null && names.Length > 0) {
                         tensor.rename_(names);
                     }
 
-                    return //requires_grad ? tensor.with_requires_grad(requires_grad) :
-                        tensor;
+                    return tensor;
                 }
             }
         }
@@ -327,12 +336,12 @@ namespace TorchSharp
             deleters.TryAdd(deleter, deleter); // keep the delegate alive
 
             unsafe {
-                var handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, (int)device.type, device.index, requires_grad);
+                var handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, (sbyte)dtype, (int)device.type, device.index, requires_grad);
 
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, (int)device.type, device.index, requires_grad);
+                    handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 }
 
                 if (handle == IntPtr.Zero) { CheckForErrors(); }

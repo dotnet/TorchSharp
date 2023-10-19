@@ -1771,9 +1771,9 @@ void THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), co
 {
     CATCH(
         auto topk = tensor->topk(k, dim, largest, sorted);
-    Tensor * result = allocator(2);
-    result[0] = new torch::Tensor(std::get<0>(topk));
-    result[1] = new torch::Tensor(std::get<1>(topk));
+        Tensor * result = allocator(2);
+        result[0] = new torch::Tensor(std::get<0>(topk));
+        result[1] = new torch::Tensor(std::get<1>(topk));
     )
 }
 
@@ -1809,7 +1809,7 @@ Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, con
 {
     CATCH_RETURN_Tensor(
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
-    res = ResultTensor(tensor->to(device, at::ScalarType(scalar_type), false, copy));
+        res = ResultTensor(tensor->to(device, at::ScalarType(scalar_type), false, copy));
     );
 }
 
@@ -1879,10 +1879,10 @@ void THSTensor_unbind(const Tensor tensor, Tensor* (*allocator)(size_t length), 
 {
     CATCH(
         auto res = tensor->unbind(dim);
-    const size_t sz = res.size();
-    Tensor * result = allocator(sz);
-    for (size_t i = 0; i < sz; i++)
-        result[i] = new torch::Tensor(res[i]);
+        const size_t sz = res.size();
+        Tensor * result = allocator(sz);
+        for (size_t i = 0; i < sz; i++)
+            result[i] = new torch::Tensor(res[i]);
     )
 }
 

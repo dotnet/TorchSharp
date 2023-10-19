@@ -177,12 +177,14 @@ Tensor THSTensor_new(
     void (*deleter)(void*),
     const int64_t* sizes,
     const int szlength,
-    int8_t scalar_type,
+    int8_t scalar_type,         // The element type in the data array
+    int8_t dtype,               // The element type of the constructed tensor
     const int device_type,
     const int device_index,
     const bool requires_grad)
 {
     bool move = device_type != 0;
+    bool convert = scalar_type != dtype;
 
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
@@ -193,7 +195,13 @@ Tensor THSTensor_new(
         if (move) // Not CPU
         {
             auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
-            res = res.to(device, false, false).set_requires_grad(requires_grad);
+            res = convert
+                ? res.to(device, at::ScalarType(dtype), false, false).set_requires_grad(requires_grad)
+                : res.to(device, false, false).set_requires_grad(requires_grad);
+        }
+        else if (convert)
+        {
+            res = res.to(at::ScalarType(dtype), false, false);
         }
         return ResultTensor(res);
     );
@@ -205,12 +213,14 @@ Tensor THSTensor_frombuffer(
     void (*deleter)(void*),
     const int64_t count,
     const ptrdiff_t offset,
-    int8_t scalar_type,
+    int8_t scalar_type,         // The element type in the data array
+    int8_t dtype,               // The element type of the constructed tensor
     const int device_type,
     const int device_index,
     const bool requires_grad)
 {
     bool move = device_type != 0;
+    bool convert = scalar_type != dtype;
 
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
@@ -222,7 +232,13 @@ Tensor THSTensor_frombuffer(
         if (move) // Not CPU
         {
             auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
-            res = res.to(device, false, false).set_requires_grad(requires_grad);
+            res = convert
+                ? res.to(device, at::ScalarType(dtype), false, false).set_requires_grad(requires_grad)
+                : res.to(device, false, false).set_requires_grad(requires_grad);
+        }
+        else if (convert)
+        {
+            res = res.to(at::ScalarType(dtype), false, false);
         }
         return ResultTensor(res);
     );
