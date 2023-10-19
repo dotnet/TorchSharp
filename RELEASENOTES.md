@@ -9,6 +9,7 @@ __Bug Fixes__:
 ScriptModule: adding `forward` and the ability to hook.<br/>
 Update to SkiaSharp 2.88.6 to avoid the libwebp vulnerability.<br/>
 #1105: Dataset files get written to the wrong directory<br/>
+#1116: Gradient null for simple calculation<br/>
 
 ## NuGet Version 0.100.5
 
