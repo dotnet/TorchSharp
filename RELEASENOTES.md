@@ -16,6 +16,7 @@ __API Changes__:
 Adding an `IterableDataset` abstract class, and making `TensorDataset` derive from it.
 Moving the `DataLoader` class to `TorchSharp.Modules` and adding DataLoader factories.
 #1092: got error when using DataLoader 
+#1069: Implementation of torch.sparse_coo_tensor for sparse tensor creation 
 
 __Bug Fixes__:
 
