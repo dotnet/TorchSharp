@@ -1180,5 +1180,117 @@ namespace TorchSharp
             Assert.Equal(expectedShape, functional.max_pool3d(t, new long[] { 2, 2, 2 }).shape);
             Assert.Equal(expectedShape, functional.max_pool3d_with_indices(t, new long[] { 2, 2, 2 }).output.shape);
         }
+
+        [Fact]
+        public void Validate1116_1()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x1 = torch.tensor(new double[] { 1.0, 3.0 }, device: device, requires_grad: true);
+                Assert.True(x1.requires_grad);
+                Assert.Equal(device.type, x1.device.type);
+
+                var x2 = x1 * x1;
+                var example = x2.sum();
+
+                example.backward();
+
+                var grads = x1.grad();
+                Assert.True(x1.requires_grad);
+                Assert.NotNull(grads);
+            }
+        }
+
+        [Fact]
+        public void Validate1116_2()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x1 = torch.arange(1, 10, dtype: torch.float32, device: device, requires_grad: true);
+                Assert.True(x1.requires_grad);
+                Assert.Equal(device.type, x1.device.type);
+
+                var x2 = x1 * x1;
+                var example = x2.sum();
+
+                example.backward();
+
+                var grads = x1.grad();
+                Assert.True(x1.requires_grad);
+                Assert.NotNull(grads);
+            }
+        }
+
+        [Fact]
+        public void Validate1116_3()
+        {
+            var x1 = torch.frombuffer(new double[] { 1.0, 3.0 }, torch.float64, requires_grad: true);
+            Assert.True(x1.requires_grad);
+            Assert.Equal(DeviceType.CPU, x1.device.type);
+
+            var x2 = x1 * x1;
+            var example = x2.sum();
+
+            example.backward();
+
+            var grads = x1.grad();
+            Assert.True(x1.requires_grad);
+            Assert.NotNull(grads);
+        }
+
+        [Fact]
+        public void Validate1116_4()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x1 = torch.linspace(1, 10, 5, dtype: torch.float32, device: device, requires_grad: true);
+                Assert.True(x1.requires_grad);
+                Assert.Equal(device.type, x1.device.type);
+
+                var x2 = x1 * x1;
+                var example = x2.sum();
+
+                example.backward();
+
+                var grads = x1.grad();
+                Assert.True(x1.requires_grad);
+                Assert.NotNull(grads);
+            }
+        }
+
+        [Fact]
+        public void Validate1116_5()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x1 = torch.logspace(1, 10, 5, dtype: torch.float32, device: device, requires_grad: true);
+                Assert.True(x1.requires_grad);
+                Assert.Equal(device.type, x1.device.type);
+
+                var x2 = x1 * x1;
+                var example = x2.sum();
+
+                example.backward();
+
+                var grads = x1.grad();
+                Assert.True(x1.requires_grad);
+                Assert.NotNull(grads);
+            }
+        }
+
+        [Fact]
+        public void Validate1116_6()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x1 = torch.eye(1, 10, dtype: torch.float32, device: device, requires_grad: true);
+                Assert.True(x1.requires_grad);
+                Assert.Equal(device.type, x1.device.type);
+
+                var x2 = x1 * x1;
+                var example = x2.sum();
+
+                example.backward();
+
+                var grads = x1.grad();
+                Assert.True(x1.requires_grad);
+                Assert.NotNull(grads);
+            }
+        }
     }
 }

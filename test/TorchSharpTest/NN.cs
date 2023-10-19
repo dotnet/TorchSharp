@@ -1902,6 +1902,12 @@ namespace TorchSharp
             var x = torch.randn(new long[] { 64, 1000 }, requires_grad: true);
             var y = torch.randn(new long[] { 64, 10 }, requires_grad: true);
 
+            if (torch.cuda.is_available()) {
+                x = x.cuda();
+                y = y.cuda();
+                seq = seq.cuda();
+            }
+
             var eval = seq.call(x);
             var loss = MSELoss(Reduction.Sum);
             var output = loss.call(eval, y);
