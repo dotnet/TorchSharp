@@ -14,6 +14,10 @@ namespace TorchSharp
                 {
                 }
 
+                public abstract class IterableDataset : Dataset<IList<Tensor>>
+                {
+                }
+
                 /// <summary>
                 /// Interface for Dataloader
                 /// </summary>

@@ -60,7 +60,7 @@ namespace TorchVision
             Assert.Throws<InvalidDataException>(() => {
                 var my_transform = new MyTransform();
                 using (var dataset = CelebA(".", transform: my_transform)) {
-                    var loader = new DataLoader(dataset, 10, shuffle: true);
+                    var loader = DataLoader(dataset, 10, shuffle: true);
                     foreach (var batch in loader) {
                     }
                 }
