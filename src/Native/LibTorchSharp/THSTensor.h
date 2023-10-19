@@ -919,6 +919,8 @@ EXPORT_API(Tensor) THSTensor_new(
     const int64_t* sizes,
     const int szlength,
     int8_t scalar_type,
+    const int device_type,
+    const int device_index,
     const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_frombuffer(
@@ -927,6 +929,8 @@ EXPORT_API(Tensor) THSTensor_frombuffer(
     const int64_t count,
     const ptrdiff_t offset,
     int8_t scalar_type,
+    const int device_type,
+    const int device_index,
     const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_newInt64(
@@ -934,6 +938,8 @@ EXPORT_API(Tensor) THSTensor_newInt64(
     void (*deleter)(void*),
     const int64_t* sizes,
     const int szlength,
+    const int device_type,
+    const int device_index,
     const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_newFloat16(
@@ -942,6 +948,8 @@ EXPORT_API(Tensor) THSTensor_newFloat16(
     void (*deleter)(void*),
     const int64_t* sizes,
     const int szlength,
+    const int device_type,
+    const int device_index,
     const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_newBFloat16(
@@ -950,6 +958,8 @@ EXPORT_API(Tensor) THSTensor_newBFloat16(
     void (*deleter)(void*),
     const int64_t* sizes,
     const int szlength,
+    const int device_type,
+    const int device_index,
     const bool requires_grad);
 
 EXPORT_API(Tensor) THSTensor_newInt8Scalar(int8_t data, const int device_type, const int device_index, bool requires_grad);

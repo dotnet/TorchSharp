@@ -1796,7 +1796,7 @@ Tensor THSTensor_to_device(const Tensor tensor, const int device_type, const int
 {
     CATCH_RETURN_Tensor(
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
-    res = ResultTensor(tensor->to(device, false, copy));
+        res = ResultTensor(tensor->to(device, false, copy));
     );
 }
 
