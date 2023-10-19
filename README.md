@@ -118,6 +118,12 @@ binaries of LibTorch installed through other means (for example, by installing [
     NativeLibrary.Load("/home/gunes/anaconda3/lib/python3.8/site-packages/torch/lib/libtorch.so")
 ```
 
+**NOTE:** Some have reported that in order to use TorchSharp on Windows, the C++ redistributable needs to be installed. This will be the case where VS is installed, but it maybe necessary to install this version of the C++ redist on machines where TorchSharp is deployed:
+
+```
+Microsoft Visual C++ 2015-2022 ( 14.36.32532 )
+```
+
 # Code of Conduct
 This project has adopted the code of conduct defined by the Contributor Covenant to clarify expected behavior in our community.
 For more information see the [.NET Foundation Code of Conduct](https://dotnetfoundation.org/code-of-conduct).
