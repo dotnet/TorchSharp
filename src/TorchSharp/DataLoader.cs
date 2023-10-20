@@ -27,6 +27,7 @@ namespace TorchSharp
                 {
                     return new Modules.DataLoader(dataset,batchSize,shuffle, device, seed, num_worker,drop_last);
                 }
+
                 public static Modules.IterableDataLoader DataLoader(IterableDataset dataset, int batchSize, IEnumerable<long> shuffler, Device device = null, int num_worker = 1, bool drop_last = false)
                 {
                     return new Modules.IterableDataLoader(dataset, batchSize, shuffler, device, num_worker, drop_last);
@@ -46,8 +47,9 @@ namespace TorchSharp
         using static torch.utils.data;
 
         /// <summary>
-        /// This class makes easier to create batch. Data set must implement Dataset interface
+        /// Data loader. Combines a dataset and a sampler, and provides an enumerator over the given dataset.
         /// </summary>
+        /// <remarks>This class is used for map-style data sets</remarks>
         public class DataLoader : DataLoader<Dictionary<string, torch.Tensor>, Dictionary<string, torch.Tensor>>
         {
             /// <summary>
@@ -98,6 +100,10 @@ namespace TorchSharp
             }
         }
 
+        /// <summary>
+        /// Data loader. Combines a dataset and a sampler, and provides an enumerator over the given dataset.
+        /// </summary>
+        /// <remarks>This class is used for list-style data sets</remarks>
         public class IterableDataLoader : DataLoader<IList<torch.Tensor>, IList<torch.Tensor>>
         {
             /// <summary>
@@ -149,7 +155,7 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// This class makes easier to create batch. Data set must implement Dataset interface
+        /// This class supports creating batches from data sets.
         /// </summary>
         public class DataLoader<T, S> : IEnumerable<S>, IDisposable
         {

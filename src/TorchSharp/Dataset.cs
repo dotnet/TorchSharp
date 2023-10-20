@@ -10,16 +10,22 @@ namespace TorchSharp
         {
             public static partial class data
             {
+                /// <summary>
+                /// Map-style data set
+                /// </summary>
                 public abstract class Dataset : Dataset<Dictionary<string, torch.Tensor>>
                 {
                 }
 
+                /// <summary>
+                /// Iterable-style data sets
+                /// </summary>
                 public abstract class IterableDataset : Dataset<IList<Tensor>>
                 {
                 }
 
                 /// <summary>
-                /// Interface for Dataloader
+                /// The base nterface for all Datasets.
                 /// </summary>
                 public abstract class Dataset<T> : IDisposable
                 {
@@ -38,7 +44,7 @@ namespace TorchSharp
                     /// Get tensor according to index
                     /// </summary>
                     /// <param name="index">Index for tensor</param>
-                    /// <returns>Tensors of index. DataLoader will catenate these tensors.</returns>
+                    /// <returns>Tensors of index. DataLoader will catenate these tensors into batches.</returns>
                     public abstract T GetTensor(long index);
 
                     protected virtual void Dispose(bool disposing)
