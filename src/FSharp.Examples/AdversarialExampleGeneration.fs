@@ -63,7 +63,7 @@ let test (model:MNIST.Model) (eps:float) (data:Dataset) size =
 
     let mutable correct = 0
 
-    let dataLoader = new DataLoader(data, testBatchSize, false, device=device)
+    let dataLoader = torch.utils.data.DataLoader(data, testBatchSize, false, device=device)
     for dat in dataLoader do
 
         use d = torch.NewDisposeScope()

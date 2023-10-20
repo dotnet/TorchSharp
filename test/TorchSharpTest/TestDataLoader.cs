@@ -18,6 +18,15 @@ namespace TorchSharp
             }
         }
 
+        private class TestIterableDataset : torch.utils.data.IterableDataset
+        {
+            public override long Count { get; } = 10;
+            public override IList<torch.Tensor> GetTensor(long index)
+            {
+                return new[] { torch.tensor(index), torch.tensor(index) };
+            }
+        }
+
         [Fact]
         public void DatasetTest()
         {
@@ -38,7 +47,7 @@ namespace TorchSharp
             var x = torch.randn(4, 12);
             var y = torch.randn(4, 16);
             using var dataset = torch.utils.data.TensorDataset(x, y);
-            Assert.Equal(2, dataset.Count);
+            Assert.Equal(4, dataset.Count);
 
             var d = dataset.GetTensor(0);
 
@@ -47,12 +56,44 @@ namespace TorchSharp
             Assert.Equal(y[0], d[1]);
         }
 
+        [Fact]
+        public void TestIterableDataLoader()
+        {
+            var x = torch.randn(6, 12);
+            var y = torch.randn(6, 16);
+            using var dataset = torch.utils.data.TensorDataset(x, y);
+            Assert.Equal(6, dataset.Count);
+
+            using var dataloader = torch.utils.data.DataLoader(dataset, 2, false, torch.CPU);
+            var iterator = dataloader.GetEnumerator();
+            Assert.True(iterator.MoveNext());
+
+            Assert.Equal(x[0], iterator.Current[0][0]);
+            Assert.Equal(x[1], iterator.Current[0][1]);
+            Assert.Equal(y[0], iterator.Current[1][0]);
+            Assert.Equal(y[1], iterator.Current[1][1]);
+
+            Assert.True(iterator.MoveNext());
+
+            Assert.Equal(x[2], iterator.Current[0][0]);
+            Assert.Equal(x[3], iterator.Current[0][1]);
+            Assert.Equal(y[2], iterator.Current[1][0]);
+            Assert.Equal(y[3], iterator.Current[1][1]);
+
+            Assert.True(iterator.MoveNext());
+
+            Assert.Equal(x[4], iterator.Current[0][0]);
+            Assert.Equal(x[5], iterator.Current[0][1]);
+            Assert.Equal(y[4], iterator.Current[1][0]);
+            Assert.Equal(y[5], iterator.Current[1][1]);
+        }
+
         // Cannot assert index because ConcurrentBag append tensors randomly
         [Fact]
         public void DataLoaderTest1()
         {
             using var dataset = new TestDataset();
-            using var dataloader = new torch.utils.data.DataLoader(dataset, 2, false, torch.CPU);
+            using var dataloader = torch.utils.data.DataLoader(dataset, 2, false, torch.CPU);
             var iterator = dataloader.GetEnumerator();
             Assert.True(iterator.MoveNext());
             Assert.Equal(iterator.Current["data"], torch.tensor(rawArray: new[]{1L, 1L}, dimensions: new[]{2L}, dtype: torch.ScalarType.Int32));
@@ -65,7 +106,7 @@ namespace TorchSharp
         public void DataLoaderTest2()
         {
             using var dataset = new TestDataset();
-            using var dataloader = new torch.utils.data.DataLoader(dataset, 2, false, torch.CPU);
+            using var dataloader = torch.utils.data.DataLoader(dataset, 2, false, torch.CPU);
             long idx = 0;
                 foreach (var x in dataloader) {
                 Assert.Equal(x["data"], torch.tensor(new[]{1, 1}, new[]{2L}));
@@ -78,15 +119,15 @@ namespace TorchSharp
         {
             using var dataset = new TestDataset();
             {
-                using var dataloader = new torch.utils.data.DataLoader(dataset, 3, false, torch.CPU);
+                using var dataloader = torch.utils.data.DataLoader(dataset, 3, false, torch.CPU);
                 Assert.Equal(4, dataloader.Count);
             }
             {
-                using var dataloader = new torch.utils.data.DataLoader(dataset, 3, false, torch.CPU, drop_last: true);
+                using var dataloader = torch.utils.data.DataLoader(dataset, 3, false, torch.CPU, drop_last: true);
                 Assert.Equal(3, dataloader.Count);
             }
             {
-                using var dataloader = new torch.utils.data.DataLoader(dataset, 2, false, torch.CPU, drop_last: true);
+                using var dataloader = torch.utils.data.DataLoader(dataset, 2, false, torch.CPU, drop_last: true);
                 Assert.Equal(5, dataloader.Count);
             }
         }
@@ -106,7 +147,7 @@ namespace TorchSharp
         public void BigDataLoaderTest3()
         {
             using var dataset = new LargeTestDataset();
-            using var dataloader = new torch.utils.data.DataLoader(dataset, stressBatchSize, false, torch.CPU);
+            using var dataloader = torch.utils.data.DataLoader(dataset, stressBatchSize, false, torch.CPU);
             var iter = dataloader.GetEnumerator();
             iter.MoveNext();
             var x = iter.Current;
@@ -122,7 +163,7 @@ namespace TorchSharp
         public void MultiThreadDataLoaderTest1()
         {
             using var dataset = new TestDataset();
-            using var dataloader = new torch.utils.data.DataLoader(dataset, 4, false, torch.CPU, num_worker: 2);
+            using var dataloader = torch.utils.data.DataLoader(dataset, 4, false, torch.CPU, num_worker: 2);
             var iter = dataloader.GetEnumerator();
             iter.MoveNext();
             var x = iter.Current;
@@ -143,7 +184,7 @@ namespace TorchSharp
         public void MultiThreadDataLoaderTest2()
         {
             using var dataset = new TestDataset();
-            using var dataloader = new torch.utils.data.DataLoader(dataset, 5, false, torch.CPU, num_worker: 2);
+            using var dataloader = torch.utils.data.DataLoader(dataset, 5, false, torch.CPU, num_worker: 2);
             var iter = dataloader.GetEnumerator();
             iter.MoveNext();
             var x = iter.Current;
@@ -161,7 +202,7 @@ namespace TorchSharp
         public void MultiThreadDataLoaderTest3()
         {
             using var dataset = new TestDataset();
-            using var dataloader = new torch.utils.data.DataLoader(dataset, 5, false, torch.CPU, num_worker: 11);
+            using var dataloader = torch.utils.data.DataLoader(dataset, 5, false, torch.CPU, num_worker: 11);
             var iter = dataloader.GetEnumerator();
             iter.MoveNext();
             var x = iter.Current;
@@ -179,8 +220,8 @@ namespace TorchSharp
         public void CustomSeedTest()
         {
             using var dataset = new TestDataset();
-            using var dataloader = new torch.utils.data.DataLoader(dataset, 2, true, seed: 1);
-            using var dataloader2 = new torch.utils.data.DataLoader(dataset, 2, true, seed: 1);
+            using var dataloader = torch.utils.data.DataLoader(dataset, 2, true, seed: 1);
+            using var dataloader2 = torch.utils.data.DataLoader(dataset, 2, true, seed: 1);
             var iterator = dataloader.GetEnumerator();
             var iterator2 = dataloader2.GetEnumerator();
             iterator.MoveNext();
