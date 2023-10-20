@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Diagnostics;
+
+using TorchSharp.Modules;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 using static TorchSharp.torch.utils.data;
@@ -103,8 +105,8 @@ namespace TorchSharp.Examples
             using (Dataset train_data = torchvision.datasets.CIFAR100(datasetPath, true, download: true),
                            test_data = torchvision.datasets.CIFAR100(datasetPath, false, download: true))
             {
-                using var train = new DataLoader(train_data, _trainBatchSize, device: device, shuffle: true);
-                using var test = new DataLoader(test_data, _testBatchSize, device: device, shuffle: false);
+                using var train = DataLoader(train_data, _trainBatchSize, device: device, shuffle: true);
+                using var test = DataLoader(test_data, _testBatchSize, device: device, shuffle: false);
 
                 using (var optimizer = torch.optim.Adam(model.parameters(), 0.001)) {
 

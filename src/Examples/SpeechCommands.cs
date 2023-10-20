@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using static TorchSharp.torch;
 
+using TorchSharp.Modules;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 using static TorchSharp.torch.utils.data;

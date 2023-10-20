@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using static TorchSharp.torch;
 
+using TorchSharp.Modules;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.utils.data;
 
@@ -62,8 +63,8 @@ namespace TorchSharp.Examples
 
         internal static void TrainingLoop(string dataset, Device device, Model model, Dataset train_data, Dataset test_data)
         {
-            using var train = new DataLoader(train_data, _trainBatchSize, device: device, shuffle: true);
-            using var test = new DataLoader(test_data, _testBatchSize, device: device, shuffle: false);
+            using var train = DataLoader(train_data, _trainBatchSize, device: device, shuffle: true);
+            using var test = DataLoader(test_data, _testBatchSize, device: device, shuffle: false);
 
             if (device.type == DeviceType.CUDA) {
                 _epochs *= 4;
