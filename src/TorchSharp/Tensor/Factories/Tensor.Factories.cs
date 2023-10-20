@@ -357,9 +357,21 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Create a sparse tensor by indexing into an existing dense tensor.
+        /// Constructs a sparse tensor in COO(rdinate) format with specified values at the given indices.
         /// </summary>
-        public static Tensor sparse(Tensor indices, Tensor values, long[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
+        /// <param name="indices">
+        /// Initial data for the tensor. The indices are the coordinates of the non-zero values in the matrix,
+        /// and thus should be two-dimensional where the first dimension is the number of tensor dimensions
+        /// and the second dimension is the number of non-zero values.
+        /// </param>
+        /// <param name="values">nitial values for the tensor.</param>
+        /// <param name="size">Size of the sparse tensor.</param>
+        /// <param name="dtype">The element type to use in the created tensor. This can be different from the element type of the input.</param>
+        /// <param name="device">The device where the tensor is to be located. Defaults to 'cpu'.</param>
+        /// <param name="requires_grad">>Set <value>true</value> if gradients need to be computed for this Tensor; <value>false</value> otherwise.</param>
+        /// <param name="names">Names for the dimensions of the tensor.</param>
+        /// <returns></returns>
+        public static Tensor sparse_coo_tensor(Tensor indices, Tensor values, long[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
         {
             device = InitializeDevice(device);
             if (!dtype.HasValue) {
@@ -384,6 +396,24 @@ namespace TorchSharp
                 }
             }
         }
+
+        /// <summary>
+        /// Constructs a sparse tensor in COO(rdinate) format with specified values at the given indices.
+        /// </summary>
+        /// <param name="indices">
+        /// Initial data for the tensor. The indices are the coordinates of the non-zero values in the matrix,
+        /// and thus should be two-dimensional where the first dimension is the number of tensor dimensions
+        /// and the second dimension is the number of non-zero values.
+        /// </param>
+        /// <param name="values">nitial values for the tensor.</param>
+        /// <param name="size">Size of the sparse tensor.</param>
+        /// <param name="dtype">The element type to use in the created tensor. This can be different from the element type of the input.</param>
+        /// <param name="device">The device where the tensor is to be located. Defaults to 'cpu'.</param>
+        /// <param name="requires_grad">>Set <value>true</value> if gradients need to be computed for this Tensor; <value>false</value> otherwise.</param>
+        /// <param name="names">Names for the dimensions of the tensor.</param>
+        [Obsolete("This method had the wrong name when it was added. Use torch.sparse_coo_tensor instead.")]
+        public static Tensor sparse(Tensor indices, Tensor values, long[] size, ScalarType? dtype = null, Device? device = null, bool requires_grad = false, string[]? names = null)
+            => sparse(indices, values, size, dtype, device, requires_grad, names);
 
         /// <summary>
         /// Constructs a complex tensor with its real part equal to real and its imaginary part equal to imag.

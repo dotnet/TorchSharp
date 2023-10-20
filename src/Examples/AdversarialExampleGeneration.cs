@@ -121,7 +121,7 @@ namespace TorchSharp.Examples
             int correct = 0;
 
             using (var d = torch.NewDisposeScope()) {
-                using var dataLoader = new DataLoader(dataset, _testBatchSize, device: device, shuffle: true);
+                using var dataLoader = DataLoader(dataset, _testBatchSize, device: device, shuffle: true);
                 foreach (var dat in dataLoader) {
                     var data = dat["data"];
                     var label = dat["label"];

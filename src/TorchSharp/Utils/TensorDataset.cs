@@ -29,7 +29,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public class TensorDataset : torch.utils.data.Dataset<IList<torch.Tensor>>
+        public class TensorDataset : torch.utils.data.IterableDataset
         {
             internal TensorDataset(torch.Tensor[] tensors)
             {
@@ -51,10 +51,10 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// Length of the dataset
+            /// Length of the dataset, i.e. the size of the first dimension.
             /// </summary>
             public override long Count {
-                get { return _tensors.Count; }
+                get { return _tensors[0].size(0); }
             }
 
             public override IList<torch.Tensor> GetTensor(long index)

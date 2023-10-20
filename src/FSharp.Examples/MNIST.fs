@@ -86,7 +86,7 @@ let train (model:Model) (optimizer:Optimizer) (data: Dataset) epoch =
     let mutable batchID = 1
 
     printfn $"Epoch: {epoch}..."
-    let dataLoader = new DataLoader(data, trainBatchSize, true, device=device)
+    let dataLoader = torch.utils.data.DataLoader(data, trainBatchSize, true, device=device)
     for dat in dataLoader do
 
         use d = torch.NewDisposeScope()
@@ -112,7 +112,7 @@ let test (model:Model) (data:Dataset) =
     let mutable testLoss = 0.0f
     let mutable correct = 0
 
-    let dataLoader = new DataLoader(data, testBatchSize, false, device=device)
+    let dataLoader = torch.utils.data.DataLoader(data, testBatchSize, false, device=device)
 
     for dat in dataLoader do
 

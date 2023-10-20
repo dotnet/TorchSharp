@@ -6,6 +6,7 @@ open System.IO
 open System.Diagnostics
 
 open TorchSharp
+open TorchSharp.Modules
 
 open type TorchSharp.torch.nn
 open type TorchSharp.torch.optim
@@ -157,10 +158,10 @@ let test (model:Model) (dataLoader:DataLoader) (size:int) =
     printfn $"\rTest set: Average loss {avgLossString} | Accuracy {accString}"
 
 
-let trainingLoop (model:Model) epochs trainData testData =
+let trainingLoop (model:Model) epochs (trainData:Dataset) (testData:Dataset) =
 
-    use trainLoader = new DataLoader(trainData, trainBatchSize, device=device, shuffle=true)
-    use testLoader = new DataLoader(testData, testBatchSize, device=device, shuffle=false)
+    use trainLoader = torch.utils.data.DataLoader(trainData, trainBatchSize, device=device, shuffle=true)
+    use testLoader = torch.utils.data.DataLoader(testData, testBatchSize, device=device, shuffle=false)
 
     use optimizer = Adam(model.parameters(), 0.001)
 
