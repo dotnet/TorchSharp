@@ -401,19 +401,6 @@ namespace TorchSharp
                     return this;
                 }
 
-                public static Module Load(string filename)
-                {
-                    if (!System.IO.File.Exists(filename))
-                        throw new System.IO.FileNotFoundException(filename);
-
-                    var handle = THSNN_Module_load(filename);
-                    if (handle == IntPtr.Zero) { CheckForErrors(); }
-                    return new Module(handle, IntPtr.Zero);
-                }
-
-                public virtual void Save(string modelPath)
-                    => THSNN_Module_save(handle, modelPath);
-
                 /// <summary>
                 /// Sets the module in training mode.
                 /// </summary>

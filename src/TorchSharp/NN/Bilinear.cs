@@ -15,12 +15,6 @@ namespace TorchSharp
         {
             internal Bilinear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public new static Bilinear Load(string modelPath)
-            {
-                var res = Module<Tensor, Tensor>.Load(modelPath);
-                return new Bilinear(res.handle.DangerousGetHandle(), IntPtr.Zero);
-            }
-
             public override Tensor forward(Tensor input1, Tensor input2)
             {
                 var res = THSNN_Bilinear_forward(handle, input1.Handle, input2.Handle);
