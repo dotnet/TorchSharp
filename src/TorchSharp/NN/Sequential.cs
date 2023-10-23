@@ -17,6 +17,13 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Sequential module.
         /// </summary>
+        /// <remarks>
+        /// This version of Sequential accepts only modules with a `forward()` that takes a tensor and returns a tensor.
+        /// This allows `Sequential.forward` to be implemented directly in this class, and to do so efficiently.
+        /// For scenarios where customization via derivation is useful, use one of the type-parameterized versions of
+        /// Sequential and implement the `forward` method in the derived class, which do not assume that the submodules
+        /// have a uniform Module base class. 
+        /// </remarks>
         public class Sequential : torch.nn.Module<Tensor, Tensor>
         {
             public Sequential append(string name, torch.nn.IModule<Tensor, Tensor> module)

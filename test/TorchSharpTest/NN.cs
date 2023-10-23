@@ -1044,6 +1044,221 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void CreateGenericSequence()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Linear(100, 10, device: device);
+                var seq = new TestDerivedSequential(
+                    lin1,
+                    ReLU());
+
+                var s2 = seq.append(lin2);
+                Assert.Same(seq, s2);
+
+                var parameters = seq.parameters();
+                var parametersCount = parameters.Count();
+                Assert.Equal(4, parametersCount);
+
+                var namedParams = seq.named_parameters().ToArray();
+                var namedParamsCount = namedParams.Count();
+                Assert.Equal(4, namedParamsCount);
+
+                Assert.Equal("0.weight", namedParams[0].name);
+                Assert.Equal("0.bias", namedParams[1].name);
+                Assert.Equal("2.weight", namedParams[2].name);
+                Assert.Equal("2.bias", namedParams[3].name);
+            }
+        }
+
+        [Fact]
+        public void CreateInvalidGenericSequence1()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Bilinear(100, 10, 10, device: device);
+                Assert.Throws<ArgumentException>(() => new TestDerivedSequential(
+                    lin1,
+                    ReLU(),
+                    lin2));
+            }
+        }
+
+        [Fact]
+        public void SliceGenericSequence1()
+        {
+            var seq = new TestDerivedSequential(
+               ("lin1", Linear(10, 10)),
+               ("relu1", ReLU()),
+               ("lin2", Linear(10, 10)),
+               ("tanh1", Tanh()),
+               ("lin2", Linear(10, 10)));
+
+            Assert.Throws<NotImplementedException>(() => seq[(1, 3)].named_modules());
+        }
+
+        [Fact]
+        public void SliceGenericSequence2()
+        {
+            var seq = new TestDerivedSequentialWithSlice(
+               ("lin1", Linear(10, 10)),
+               ("relu1", ReLU()),
+               ("lin2", Linear(10, 10)),
+               ("tanh1", Tanh()),
+               ("lin2", Linear(10, 10)));
+
+            var slice = seq[(1, 3)].named_modules().ToArray();
+            Assert.Equal("relu1", slice[0].name);
+            Assert.Equal("lin2", slice[1].name);
+        }
+
+        [Fact]
+        public void CreateInvalidGenericSequence2()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Bilinear(100, 10, 10, device: device);
+                var seq = new TestDerivedSequential(
+                    lin1,
+                    ReLU());
+
+                // `append` does not do any type validation, so invalid Modules
+                // may slip in.
+                var s2 = seq.append(lin2);
+                Assert.Same(seq, s2);
+
+                Assert.Throws<InvalidCastException>(() => seq.forward(torch.zeros(8, 1000, device: device)));
+            }
+        }
+
+        class TestDerivedSequential : Sequential<Tensor, Tensor>
+        {
+            internal TestDerivedSequential(params (string name, torch.nn.Module)[] modules) : base(modules)
+            {
+                ValidateModules();
+            }
+
+            internal TestDerivedSequential(params torch.nn.Module[] modules) : base(modules)
+            {
+                ValidateModules();
+            }
+
+            private void ValidateModules()
+            {
+                foreach (var layer in modules()) {
+                    switch (layer) {
+                    case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                        break;
+                    default:
+                        throw new ArgumentException($"Invalid module type in {nameof(TestDerivedSequential)}: {layer.GetType().Name}.");
+                    }
+                }
+
+            }
+
+            public override torch.Tensor forward(torch.Tensor x)
+            {
+                using var _ = torch.NewDisposeScope();
+
+                var result = x.alias();
+
+                foreach (var layer in modules()) {
+                    switch (layer) {
+                    case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                        result = m.call(result);
+                        break;
+                    default:
+                        throw new InvalidCastException($"Invalid module type in {nameof(TestDerivedSequential)}: {layer.GetType().Name}.");
+                    }
+                }
+
+                return result.MoveToOuterDisposeScope();
+            }
+        }
+
+
+
+        class TestDerivedSequentialWithSlice : Sequential<Tensor, Tensor>
+        {
+            internal TestDerivedSequentialWithSlice(params (string name, torch.nn.Module)[] modules) : base(modules)
+            {
+                ValidateModules();
+            }
+
+            internal TestDerivedSequentialWithSlice(params torch.nn.Module[] modules) : base(modules)
+            {
+                ValidateModules();
+            }
+
+            private void ValidateModules()
+            {
+                foreach (var layer in modules()) {
+                    switch (layer) {
+                    case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                        break;
+                    default:
+                        throw new ArgumentException($"Invalid module type in {nameof(TestDerivedSequentialWithSlice)}: {layer.GetType().Name}.");
+                    }
+                }
+
+            }
+
+            public override torch.Tensor forward(torch.Tensor x)
+            {
+                using var _ = torch.NewDisposeScope();
+
+                var result = x.alias();
+
+                foreach (var layer in modules()) {
+                    switch (layer) {
+                    case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                        result = m.call(result);
+                        break;
+                    default:
+                        throw new InvalidCastException($"Invalid module type in {nameof(TestDerivedSequentialWithSlice)}: {layer.GetType().Name}.");
+                    }
+                }
+
+                return result.MoveToOuterDisposeScope();
+            }
+
+            protected override Sequential<Tensor, Tensor> Slice(int start, int end)
+            {
+                var modules = this.named_modules().ToArray();
+
+                if (start < 0 || start > modules.Length) throw new IndexOutOfRangeException($"{start} is not a valid index.");
+                if (end < 0 || end > modules.Length) throw new IndexOutOfRangeException($"{end} is not a valid index.");
+
+                var stop = Math.Min(modules.Length, end);
+
+                var result = new TestDerivedSequentialWithSlice(Array.Empty<torch.nn.Module>());
+
+                // This first module validation check is dependent on the custom Sequential
+                // and its logic. There is no boilerplace solution.
+                switch (modules[start].module) {
+                case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                    break;
+                default:
+                    throw new InvalidCastException($"Invalid first module type in {nameof(TestDerivedSequentialWithSlice)}: {modules[start].module.GetType().Name}.");
+                }
+
+                // This last module validation check is dependent on the custom Sequential
+                // and its logic. There is no boilerplace solution.
+                switch (modules[stop-1].module) {
+                case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                    break;
+                default:
+                    throw new InvalidCastException($"Invalid last module type in {nameof(TestDerivedSequentialWithSlice)}: {modules[stop - 1].module.GetType().Name}.");
+                }
+
+                for (var i = start; i < stop; i++) {
+                    result.Add(modules[i].name, modules[i].module);
+                }
+                return result;
+            }
+        }
+
+        [Fact]
         public void EvalLossSequence2()
         {
             foreach (var device in TestUtils.AvailableDevices()) {
