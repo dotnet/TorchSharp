@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
+using System;
 using System.Linq;
+using TorchSharp.Modules;
 using Xunit;
 
 namespace TorchSharp
@@ -131,7 +133,62 @@ namespace TorchSharp
             () => Assert.True(sz.Slice(0, 0).IsEmpty),
             () => Assert.True(sz.Slice(-2, 0).IsEmpty)
             );
+        }
 
+        [Fact]
+        public void HeterogeneousSequential()
+        {
+            var lin = torch.nn.Linear(20, 20);
+            var bl = torch.nn.Bilinear(20, 30, 40);
+
+            var input1 = torch.randn(new long[] { 128, 20 });
+            var input2 = torch.randn(new long[] { 128, 30 });
+
+            var x = lin.call(input1);
+            var y = bl.call(x, input2);
+
+            var hs = new HeterogeneousSeq(input2, ("lin",lin), ("bl", bl));
+
+            var z = hs.call(input1);
+
+            Assert.Equal(y, z);
+        }
+
+        class HeterogeneousSeq : SequentialAbstractBase
+        {
+            private torch.Tensor input2;
+
+            internal HeterogeneousSeq(torch.Tensor input2, params (string name, torch.nn.Module)[] modules) : base(modules)
+            {
+                this.input2 = input2;
+            }
+
+            public override torch.Tensor forward(torch.Tensor input)
+            {
+                var modules = this.modules().ToArray();
+
+                using var _ = torch.NewDisposeScope();
+
+                var result = input.alias();
+
+                for (var idx = 0; idx < modules.Length; idx++) {
+                    switch (modules[idx]) {
+                    case Bilinear bl:
+                        result = bl.call(result,input2);
+                        break;
+                    case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                        result = m.call(result);
+                        break;
+                    }
+                }
+
+                return result.MoveToOuterDisposeScope();
+            }
+
+            protected override SequentialAbstractBase Slice(int start, int end)
+            {
+                throw new System.NotImplementedException();
+            }
         }
     }
 }
