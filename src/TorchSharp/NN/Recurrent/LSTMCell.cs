@@ -15,12 +15,6 @@ namespace TorchSharp
         {
             internal LSTMCell(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public new static LSTMCell Load(string modelPath)
-            {
-                var res = Module<Tensor, Tensor>.Load(modelPath);
-                return new LSTMCell(res.handle.DangerousGetHandle(), IntPtr.Zero);
-            }
-
             /// <summary>
             /// Apply the RNN cell to an input tensor.
             /// </summary>

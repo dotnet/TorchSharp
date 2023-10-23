@@ -58,10 +58,13 @@ namespace TorchSharp
                 /// </summary>
                 /// <param name="x">The input tensor</param>
                 /// <param name="inplace">Do the operation in-place. Default: false</param>
-                public static Tensor SiLU(Tensor x, bool inplace = false)
+                public static Tensor silu(Tensor x, bool inplace = false)
                 {
                     return inplace ? x.silu_().alias() : x.silu();
                 }
+
+                [Obsolete("Incorrect name capitalization", false)]
+                public static Tensor SiLU(Tensor x, bool inplace = false) => silu(x, inplace);
             }
         }
     }
