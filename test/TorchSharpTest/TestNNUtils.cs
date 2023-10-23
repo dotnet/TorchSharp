@@ -150,38 +150,35 @@ namespace TorchSharp
             var x = lin.call(input1);
             var y = bl.call(x, input2);
 
-            var hs = new HeterogeneousSeq(input2, ("lin",lin), ("bl", bl));
+            var hs = new SwitchSequential(("lin",lin), ("bl", bl));
 
             var z = hs.call(input1, input2);
 
             Assert.Equal(y, z);
         }
 
-        class HeterogeneousSeq : Sequential<Tensor,Tensor,Tensor>
+        class SwitchSequential : Sequential<Tensor,Tensor,Tensor>
         {
-            private torch.Tensor input2;
-
-            internal HeterogeneousSeq(torch.Tensor input2, params (string name, torch.nn.Module)[] modules) : base(modules)
+            internal SwitchSequential(params (string name, torch.nn.Module)[] modules) : base(modules)
             {
-                this.input2 = input2;
             }
 
             public override torch.Tensor forward(torch.Tensor x, torch.Tensor y)
             {
-                var modules = this.modules().ToArray();
-
                 using var _ = torch.NewDisposeScope();
 
                 var result = x.alias();
 
-                for (var idx = 0; idx < modules.Length; idx++) {
-                    switch (modules[idx]) {
+                foreach (var layer in modules()) {
+                    switch (layer) {
                     case Bilinear bl:
                         result = bl.call(result,y);
                         break;
                     case torch.nn.Module<torch.Tensor, torch.Tensor> m:
                         result = m.call(result);
                         break;
+                    default:
+                        throw new InvalidCastException($"Invalid module type in {nameof(SwitchSequential)}.");
                     }
                 }
 
