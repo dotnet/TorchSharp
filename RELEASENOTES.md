@@ -18,6 +18,7 @@ Moving the `DataLoader` class to `TorchSharp.Modules` and adding DataLoader fact
 #1092: got error when using DataLoader <br/>
 #1069: Implementation of torch.sparse_coo_tensor for sparse tensor creation<br/>
 Renamed `torch.nn.functional.SiLU` -> `torch.nn.functional.silu`<br/>
+Added a set of generic `Sequential` classes.<br/>
 
 __Bug Fixes__:
 
