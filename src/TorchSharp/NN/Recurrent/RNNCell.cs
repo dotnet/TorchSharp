@@ -17,12 +17,6 @@ namespace TorchSharp
             {
             }
 
-            public new static RNNCell Load(string modelPath)
-            {
-                var res = Module<Tensor, Tensor>.Load(modelPath);
-                return new RNNCell(res.handle.DangerousGetHandle(), IntPtr.Zero);
-            }
-
             /// <summary>
             /// Apply the RNN cell to an input tensor.
             /// </summary>

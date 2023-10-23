@@ -15,12 +15,6 @@ namespace TorchSharp
         {
             internal GRUCell(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
-            public new static GRUCell Load(string modelPath)
-            {
-                var res = Module<Tensor, Tensor>.Load(modelPath);
-                return new GRUCell(res.handle.DangerousGetHandle(), IntPtr.Zero);
-            }
-
             /// <summary>
             /// Apply the GRU cell to an input tensor.
             /// </summary>
