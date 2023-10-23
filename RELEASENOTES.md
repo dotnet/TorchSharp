@@ -2,25 +2,24 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.100.6
+## NuGet Version 0.100.7
 
 __Breaking Changes__:
 
 DataLoader should no longer be created using `new` -- instead, the overall pattern is followed, placing the classes in `TorchSharp.Modules` and the factories in the static class. This will break any code that creates a DataLoader, but can be fixed by:
 
-1. Removing the `new` in `new torch.utils.data.DataLoader(...)`
-2. Adding a `using TorchSharp.Modules` (C#) or `open TorchSharp.Modules` (F#) to files where `DataLoader` is used as a type name.
+1. Removing the `new` in `new torch.utils.data.DataLoader(...)`<br/>
+2. Adding a `using TorchSharp.Modules` (C#) or `open TorchSharp.Modules` (F#) to files where `DataLoader` is used as a type name.<br/>
 
 __API Changes__:
 
-Adding an `IterableDataset` abstract class, and making `TensorDataset` derive from it.
-Moving the `DataLoader` class to `TorchSharp.Modules` and adding DataLoader factories.
-#1092: got error when using DataLoader 
-#1069: Implementation of torch.sparse_coo_tensor for sparse tensor creation 
+Adding an `IterableDataset` abstract class, and making `TensorDataset` derive from it.<br/>
+Moving the `DataLoader` class to `TorchSharp.Modules` and adding DataLoader factories.<br/>
+#1092: got error when using DataLoader <br/>
+#1069: Implementation of torch.sparse_coo_tensor for sparse tensor creation<br/>
+Renamed `torch.nn.functional.SiLU` -> `torch.nn.functional.silu`<br/>
 
 __Bug Fixes__:
-
-
 
 ## NuGet Version 0.100.6
 
