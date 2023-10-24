@@ -1292,5 +1292,60 @@ namespace TorchSharp
                 Assert.NotNull(grads);
             }
         }
+
+        [Fact]
+        public void Validate1073()
+        {
+            // We added multiple overloads of '*' and other operators for the benefit of F#.
+            // Just checking that it still works in C#.
+            {
+                var f = (Tensor x) => 2.0 + x;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 3.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x + 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 3.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => 2.0 - x;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 1.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x - 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, -1.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => 2.0 * x;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 2.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x * 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 2.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => 2.0 / x;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 2.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x / 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 0.5);
+                Assert.Equal(y, x);
+            }
+        }
     }
 }

@@ -22,6 +22,8 @@ Added a set of generic `Sequential` classes.<br/>
 
 __Bug Fixes__:
 
+#1083: Compiler rejects scalar operand due to ambiguous implicit conversion<br/>
+
 ## NuGet Version 0.100.6
 
 __Bug Fixes__:
