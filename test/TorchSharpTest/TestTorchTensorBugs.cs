@@ -1298,12 +1298,62 @@ namespace TorchSharp
         {
             // We added multiple overloads of '*' and other operators for the benefit of F#.
             // Just checking that it still works in C#.
-            var f = (Tensor x) => 2.0 * x;
-            var x = f(torch.ones(15));
-            var y = torch.empty(15);
-            y.fill_(2.0);
-
-            Assert.Equal(y, x);
+            {
+                var f = (Tensor x) => 2.0 + x;
+                var x = f(torch.ones(15));
+                var y = torch.empty(15);
+                y.fill_(3.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x + 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.empty(15);
+                y.fill_(3.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => 2.0 - x;
+                var x = f(torch.ones(15));
+                var y = torch.ones(15);
+                y.fill_(1.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x - 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.ones(15);
+                y.fill_(-1.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => 2.0 * x;
+                var x = f(torch.ones(15));
+                var y = torch.empty(15);
+                y.fill_(2.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x * 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.empty(15);
+                y.fill_(2.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => 2.0 / x;
+                var x = f(torch.ones(15));
+                var y = torch.empty(15);
+                y.fill_(2.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x / 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.empty(15);
+                y.fill_(0.5);
+                Assert.Equal(y, x);
+            }
         }
     }
 }
