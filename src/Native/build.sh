@@ -68,21 +68,21 @@ mkdir -p "$__BinDir"
 mkdir -p "$__IntermediatesDir"
 
 # Set up the environment to be used for building with clang.
-if command -v "clang-6.0" > /dev/null 2>&1; then
-    export CC="$(command -v clang-6.0)"
-    export CXX="$(command -v clang++-6.0)"
-elif command -v "clang-5.0" > /dev/null 2>&1; then
-    export CC="$(command -v clang-5.0)"
-    export CXX="$(command -v clang++-5.0)"
-elif command -v "clang-4.0" > /dev/null 2>&1; then
-    export CC="$(command -v clang-4.0)"
-    export CXX="$(command -v clang++-4.0)"
+if command -v "clang-15.0" > /dev/null 2>&1; then
+    export CC="$(command -v clang-15.0)"
+    export CXX="$(command -v clang++-15.0)"
+elif command -v "clang-14.0" > /dev/null 2>&1; then
+    export CC="$(command -v clang-14.0)"
+    export CXX="$(command -v clang++-14.0)"
+elif command -v "clang-13.0" > /dev/null 2>&1; then
+    export CC="$(command -v clang-13.0)"
+    export CXX="$(command -v clang++-13.0)"
 elif command -v clang > /dev/null 2>&1; then
     export CC="$(command -v clang)"
     export CXX="$(command -v clang++)"
 else
     echo "Unable to find Clang Compiler"
-    echo "Install clang-6.0, clang-5.0, or clang-4.0"
+    echo "Install clang-15.0, clang-14.0, or clang-13.0"
     exit 1
 fi
 
