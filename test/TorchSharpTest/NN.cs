@@ -1424,8 +1424,8 @@ namespace TorchSharp
         {
             var m = Sigmoid();
             foreach (var device in TestUtils.AvailableDevices()) {
-                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
-                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                using (Tensor input = torch.rand(new long[] { 3 }, device: device))
+                using (Tensor target = torch.rand(new long[] { 3 }, device: device)) {
                     var outTensor = BCELoss().call(m.call(input), target);
                     var values = outTensor.data<float>().ToArray();
                     Assert.Multiple(
@@ -1442,8 +1442,8 @@ namespace TorchSharp
         {
             var m = Sigmoid();
             foreach (var device in TestUtils.AvailableDevices()) {
-                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
-                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                using (Tensor input = torch.rand(new long[] { 3 }, device: device))
+                using (Tensor target = torch.rand(new long[] { 3 }, device: device)) {
                     var outTensor = binary_cross_entropy(m.call(input), target);
                     Assert.Equal(device.type, outTensor.device_type);
                     var values = outTensor.data<float>().ToArray();
