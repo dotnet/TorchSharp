@@ -70,10 +70,10 @@ mkdir -p "$__IntermediatesDir"
 # Set up the environment to be used for building with clang.
 if command -v "clang-6.0" > /dev/null 2>&1; then
     export CC="$(command -v clang-6.0)"
-    export CXX="$(command -v clang++-6.0 -std=c++17)"
+    export CXX="$(command -v clang++-6.0)"
 elif command -v "clang-5.0" > /dev/null 2>&1; then
     export CC="$(command -v clang-5.0)"
-    export CXX="$(command -v clang++-5.0 -std=c++17)"
+    export CXX="$(command -v clang++-5.0)"
 elif command -v clang > /dev/null 2>&1; then
     export CC="$(command -v clang)"
     export CXX="$(command -v clang++ -std=c++17)"
