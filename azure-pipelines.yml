@@ -9,7 +9,7 @@ variables:
 
   # Set this to 'true' to build the libtorch-* packages as part of main branch CI and
   # push them to the artifacts feed of the Azure CI project
-  BuildLibTorchPackages: false
+  BuildLibTorchPackages: true
   PushPackagesToFeed: false
 
 resources:

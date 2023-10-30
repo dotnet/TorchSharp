@@ -33,6 +33,7 @@
     <File Include= "libtorch\lib\cudart64_12.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\cublas64_12.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\nvrtc64_120_0.dll" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\nvJitLink_120_0.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\torch_global_deps.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\uv.dll" PackageSuffix="part1" />
     <File Include= "libtorch\lib\zlibwapi.dll" PackageSuffix="part1" />
@@ -59,6 +60,7 @@
     <File Include= "libtorch\lib\nvfuser_codegen.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\nvrtc-builtins64_121.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackageSuffix="part6" />
+    
     <File Include= "libtorch\lib\pytorch_jni.dll" PackageSuffix="part7" />
     <File Include= "libtorch\lib\torch.dll" PackageSuffix="part7" />
     <File Include= "libtorch\lib\torch_cpu.dll" PackageSuffix="part7" />
@@ -97,7 +99,7 @@
     <File Include= "libtorch\lib\libpytorch_jni.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part2" />
+    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part1" />
     <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
