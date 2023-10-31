@@ -76,7 +76,7 @@ elif command -v "clang-5.0" > /dev/null 2>&1; then
     export CXX="$(command -v clang++-5.0)"
 elif command -v clang > /dev/null 2>&1; then
     export CC="$(command -v clang)"
-    export CXX="$(command -v clang++ -std=c++17)"
+    export CXX="$(command -v clang++)"
 else
     echo "Unable to find Clang Compiler"
     echo "Install clang-6.0 or clang-5.0"
