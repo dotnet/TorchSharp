@@ -48,8 +48,8 @@
     <File Include= "libtorch\lib\cudnn_cnn_train64_8.dll" PackageSuffix="part4" />
     <File Include= "libtorch\lib\cudnn_ops_train64_8.dll" PackageSuffix="part4" />
 
-    <File Include= "libtorch\lib\cublasLt64_12.dll"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="175000000" />
-    <File Include= "libtorch\lib\cublasLt64_12.dll"  PackageSuffix="part5-fragment1" FileUnstitchIndex="1" FileUnstitchStart="175000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\cublasLt64_12.dll"  PackageSuffix="part5-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="225000000" />
+    <File Include= "libtorch\lib\cublasLt64_12.dll"  PackageSuffix="part5-fragment1" FileUnstitchIndex="1" FileUnstitchStart="225000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\cusolver64_11.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\cusolverMg64_11.dll" PackageSuffix="part6" />
@@ -72,10 +72,10 @@
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment1" FileUnstitchIndex="1" FileUnstitchStart="350000000" FileUnstitchSize="350000000" />
     <File Include= "libtorch\lib\torch_cuda.dll"  PackageSuffix="part9-fragment2" FileUnstitchIndex="2" FileUnstitchStart="700000000" FileUnstitchSize="-1" />
 
-    <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part10" />
     <File Include= "libtorch\lib\cufft64_11.dll" PackageSuffix="part10" />
-    <File Include= "libtorch\lib\cufftw64_11.dll" PackageSuffix="part10" />
     <File Include= "libtorch\lib\cupti64_2023.1.1.dll" PackageSuffix="part10" />
+    <File Include= "libtorch\lib\cufftw64_11.dll" PackageSuffix="part10" />
+    <File Include= "libtorch\lib\curand64_10.dll" PackageSuffix="part10" />
 
 
   </ItemGroup>
