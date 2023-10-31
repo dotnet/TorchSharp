@@ -69,7 +69,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test --blame /p:SkipCuda=true --blame -c
     pool:
-      vmImage: 'macos-12'
+      vmImage: 'macos-11'
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
@@ -176,7 +176,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'macos-12'
+    vmImage: 'macos-11'
   steps:
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /t:Build /p:IncludeLibTorchCpuPackages=true
     displayName: Download libtorch native binaries
