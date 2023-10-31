@@ -54,6 +54,7 @@ if(NOT WIN32)
     else()
         SET(CMAKE_MACOSX_RPATH TRUE)
     endif()
+
 endif()
 
 # Add libTorch bindings
@@ -68,5 +69,19 @@ set_property(TARGET LibTorchSharp PROPERTY CXX_STANDARD 14)
 if(APPLE)
     set_target_properties(LibTorchSharp PROPERTIES INSTALL_RPATH "@loader_path;@executable_path;")
 endif()
+
+if(NOT WIN32)
+    # Set C++ standard
+    set_target_properties(LibTorchSharp PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+    )
+
+    # Add C++ specific compile options
+    target_compile_options(LibTorchSharp PRIVATE
+        $<$<COMPILE_LANGUAGE:CXX>:-std=c++17>
+    )
+endif()
+
 
 install_library_and_symbols (LibTorchSharp)
