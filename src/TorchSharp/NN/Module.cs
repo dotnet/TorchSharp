@@ -936,20 +936,21 @@ namespace TorchSharp
                 /// leaving everything else alone.
                 /// </param>
                 /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
                 /// Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public virtual Module load(string location, bool strict = true, IList<string> skip = null)
+                public virtual Module load(string location, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
                 {
                     if (!System.IO.File.Exists(location))
                         throw new System.IO.FileNotFoundException(location);
 
                     using var stream = System.IO.File.OpenRead(location);
                     using var reader = new System.IO.BinaryReader(stream);
-                    load(reader, strict, skip);
+                    load(reader, strict, skip, loadedParameters);
 
                     return this;
                 }
@@ -964,13 +965,14 @@ namespace TorchSharp
                 /// leaving everything else alone.
                 /// </param>
                 /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
                 /// Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string> skip = null)
+                public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
                 {
                     skip ??= Array.Empty<string>();
 
@@ -997,6 +999,8 @@ namespace TorchSharp
                             if (found) {
                                 sd[key].Load(reader, skip: skip.Contains(key));
                             }
+
+                            loadedParameters?.Add(key, found);
                         }
                     } finally {
                         if (dt != DeviceType.CPU) _to(dt, di);
@@ -1015,16 +1019,17 @@ namespace TorchSharp
                 /// leaving everything else alone.
                 /// </param>
                 /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
                 /// Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public Module load(System.IO.Stream stream, bool strict = true, IList<string> skip = null)
+                public Module load(System.IO.Stream stream, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
                 {
                     using var reader = new System.IO.BinaryReader(stream);
-                    return load(reader, strict, skip);
+                    return load(reader, strict, skip, loadedParameters);
                 }
 
                 /// <summary>
