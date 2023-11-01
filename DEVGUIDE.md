@@ -213,19 +213,25 @@ version of PyTorch then quite a lot of careful work needs to be done.
    They must all be called either 'primary,' which should be the first fragment, or 'fragmentN' where 'N' is the ordinal number of the fragment, starting with '1'. The current logic allows for as many as 10 non-primary fragments. If more are needed, the code in [FileRestitcher.cs](pkg/FileRestitcher/FileRestitcher/FileRestitcher.cs) and [RestitchPackage.targets](pkg/common/RestitchPackage.targets) needs to be updated. Note that the size of each fragment is expressed in bytes, and that fragment start must be
    the sum of the size of all previous fragments. A '-1' should be used for the last fragment (and only for the last fragment): it means that the fragment size will be based on how much there is still left of the file.
 
-   Each part, whether singular or fragmented, should have its own .nupkgproj file in its own folder under pkg. The folder and file should have the same name as the part. If you need to add new fragments, it is straightforward to just copy an existing fragment folder and rename it as well as the project file to the new fragment. If you must fragment a previously singular part, it is best to rename the existing folder and file to '-fragment1' and then copy a '-primary' folder and rename with the right part name. This is because the primary .nupkgproj files look different from others. Specifically, they include different build targets:
+   Each part, whether singular or fragmented, should have its own .nupkgproj file in its own folder under pkg. The folder and file should have the same name as the part. If you need to add new fragments, it is straightforward to just copy an existing fragment folder and rename it as well as the project file to the new fragment. 
+   
+   __Important:__
 
-```
-<Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
-<Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
-```
-vs.
-```
-<Content Include="..\common\RestitchPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
-<Content Include="..\common\RestitchPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
-```
+   If you must fragment a previously singular part, it is best to rename the existing folder and file to '-fragment1' and then copy a '-primary' folder and rename with the right part name. This is because the primary .nupkgproj files look different from others. 
+   
+   Specifically, they include different build targets:
 
-   It is the 'RestitchPackage.targets' that will trigger restitching packages on first build after a download.
+    ```xml
+    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
+    ```
+    vs.
+    ```xml
+    <Content Include="..\common\RestitchPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\RestitchPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
+    ```
+
+   It is the 'RestitchPackage.targets' that will trigger restitching packages on first build after a download, and only a project that is a primary in a multiple-fragment package should use the latter version.
 
    Because file sizes change from release to release, it may be necessary to add or remove fragments. When you add a fragment, you also need to add a corresponding project folder under the `pkg/` top-level folder. The process of doing so is copy-paste-rename of existing folders. The same goes for adding parts (whether fragmented or not): you should add a corresponding folder and project file. If you remove a fragment (or part), you should remove the corresponding folder, or CI will end up building empty packages.
 
