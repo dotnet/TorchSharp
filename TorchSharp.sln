@@ -46,7 +46,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Redist", "Redist", "{D8C60CD8-8429-45F2-A755-47B6CD10FDF8}"
 	ProjectSection(SolutionItems) = preProject
 		src\Redist\libtorch-cpu\libtorch-cpu.proj = src\Redist\libtorch-cpu\libtorch-cpu.proj
-		src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj = src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj
+		src\Redist\libtorch-cuda-12.1\libtorch-cuda-12.1.proj = src\Redist\libtorch-cuda-12.1\libtorch-cuda-12.1.proj
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native-Release", "Native-Release", "{4DB9E84D-324C-408F-87A6-246E86205540}"
