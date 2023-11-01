@@ -9,6 +9,7 @@ using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
 using static TorchSharp.PInvoke.NativeMethods;
+using TorchSharp.Utils;
 
 namespace TorchSharp
 {
@@ -1083,7 +1084,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.GetCustomAttribute<ComponentNameAttribute>()?.Name ?? field.Name;
                         if (_internal_submodules.ContainsKey(fieldName) || _internal_params.ContainsKey(fieldName) || _internal_buffers.ContainsKey(fieldName)) continue;
 
                         var value = field.GetValue(this);
