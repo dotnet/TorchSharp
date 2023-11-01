@@ -9,10 +9,5 @@ namespace TorchSharp.Utils
     public class ComponentNameAttribute : Attribute
     {
         public string Name { get; set; }
-
-        public ComponentNameAttribute(string name)
-        {
-            Name = name;
-        }
     }
 }
