@@ -6,6 +6,9 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 This is an upgrade to libtorch 2.1.0. It also moves the underlying CUDA support to 12.1 from 11.7, which means that all the libtorch-cuda-* packages have been renamed. Please update your CUDA driver to one that support CUDA 12.1.
 
+__API Changes__:
+
+Enhanced `Module.load` function to return matching status of parameters in non-strict mode via an output dictionary.
 
 ## NuGet Version 0.100.7
 
