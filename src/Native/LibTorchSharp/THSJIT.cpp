@@ -159,6 +159,12 @@ JITMethod THSJIT_Module_get_method(const JITModule module, const char* name)
     return new std::shared_ptr<torch::jit::Method>(copy);
 }
 
+TensorOrScalar* validate(TensorOrScalar* ptr)
+{
+    if (ptr == nullptr)
+        torch_last_err = strdup("null returned from TorchSharp return value allocator.");
+    return ptr;
+}
 TensorOrScalar* ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(int32_t idx, size_t length), int8_t* typeCode, int32_t* idx)
 {
     // TypeCode:
@@ -177,7 +183,8 @@ TensorOrScalar* ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(in
 
     if (result.isNone())
     {
-        TensorOrScalar* output = allocator(idx[0]++, 1);
+        TensorOrScalar* output = validate(allocator(idx[0]++, 1));
+        if (output == nullptr) return output;
         output[0] = { 8, -1, (ptrdiff_t)0 };
         *typeCode = 8;
         return output;
@@ -185,14 +192,16 @@ TensorOrScalar* ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(in
 
     if (result.isScalar())
     {
-        TensorOrScalar* output = allocator(idx[0]++, 1);
+        TensorOrScalar* output = validate(allocator(idx[0]++, 1));
+        if (output == nullptr) return output;
         output[0] = { 0, -1, (ptrdiff_t)new torch::Scalar(result.toScalar()) };
         *typeCode = 4;
         return output;
     }
 
     if (result.isTensor()) {
-        TensorOrScalar* output = allocator(idx[0]++, 1);
+        TensorOrScalar* output = validate(allocator(idx[0]++, 1));
+        if (output == nullptr) return output;
         output[0] = { 0, -1, (ptrdiff_t)ResultTensor(result.toTensor()) };
         *typeCode = 1;
         return output;
@@ -201,7 +210,8 @@ TensorOrScalar* ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(in
     if (result.isTensorList()) {
         auto list = result.toTensorList();
         *typeCode = 3;
-        TensorOrScalar* output = allocator(idx[0]++, list.size());
+        TensorOrScalar* output = validate(allocator(idx[0]++, list.size()));
+        if (output == nullptr) return output;
         for (size_t i = 0; i < list.size(); i++)
             output[i] = { 0, -1, (ptrdiff_t)ResultTensor(list[i]) };
         return output;
@@ -215,7 +225,8 @@ TensorOrScalar* ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(in
         int foundListOrTuple = 0;
 
         auto list = result.toList();
-        TensorOrScalar* output = allocator(idx[0]++, list.size());
+        TensorOrScalar* output = validate(allocator(idx[0]++, list.size()));
+        if (output == nullptr) return output;
 
         for (int i = 0; i < list.size(); ++i)
         {
@@ -244,6 +255,7 @@ TensorOrScalar* ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(in
                 int8_t nestedTC = 0;
                 int64_t arrIdx = idx[0];
                 auto nested = ReturnHelper(value, allocator, &nestedTC, idx);
+                if (nested == nullptr) return nested;
                 foundListOrTuple += 1;
                 output[i] = { nestedTC, arrIdx, (ptrdiff_t)nested };
             }
@@ -269,7 +281,8 @@ TensorOrScalar* ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(in
         int foundListOrTuple = 0;
 
         auto& list = result.toTuple()->elements();
-        TensorOrScalar* output = allocator(idx[0]++, list.size());
+        TensorOrScalar* output = validate(allocator(idx[0]++, list.size()));
+        if (output == nullptr) return output;
 
         for (int i = 0; i < list.size(); ++i)
         {
@@ -298,6 +311,7 @@ TensorOrScalar* ReturnHelper(c10::IValue result, TensorOrScalar* (*allocator)(in
                 int8_t nestedTC = 0;
                 int64_t arrIdx = idx[0];
                 auto nested = ReturnHelper(value, allocator, &nestedTC, idx);
+                if (nested == nullptr) return nested;
                 foundListOrTuple += 1;
                 output[i] = { nestedTC, arrIdx, (ptrdiff_t)nested };
             }
@@ -567,4 +581,29 @@ JITType THSJIT_Module_getInputType(JITModule module, int8_t index)
 void THSJIT_typeDispose(const JITType type)
 {
     delete type;
+}
+
+
+TensorOrScalar* THSJIT_AllocateTensorOrScalarArray(int32_t size)
+{
+    auto result = new TensorOrScalar[size];
+    memset(result, 0, size * sizeof(TensorOrScalar));
+    return result;
+}
+
+void THSJIT_FreeTensorOrScalarArray(TensorOrScalar* ptr)
+{
+    delete ptr;
+}
+
+void THSJIT_SetTensorOrScalar(TensorOrScalar* array, int32_t index, int64_t type_code, int64_t array_index, ptrdiff_t handle)
+{
+    array[index].TypeCode = type_code;
+    array[index].ArrayIndex = array_index;
+    array[index].Handle = handle;
+}
+
+TensorOrScalar* THSJIT_GetTensorOrScalar(TensorOrScalar* array, int32_t index, int64_t type_code, int64_t array_index, ptrdiff_t handle)
+{
+    return array + index;
 }
