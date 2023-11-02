@@ -83,3 +83,8 @@ EXPORT_API(int) THSJIT_Method_num_inputs(const JITMethod method);
 EXPORT_API(void) THSJIT_Method_dispose(const JITMethod method);
 
 EXPORT_API(const char*) THSJIT_Method_name(const JITMethod method);
+
+EXPORT_API(TensorOrScalar*) THSJIT_AllocateTensorOrScalarArray(int32_t size);
+EXPORT_API(void) THSJIT_FreeTensorOrScalarArray(TensorOrScalar* ptr);
+EXPORT_API(void) THSJIT_SetTensorOrScalar(TensorOrScalar* array, int32_t index, int64_t type_code, int64_t array_index, ptrdiff_t handle);
+EXPORT_API(TensorOrScalar*) THSJIT_GetTensorOrScalar(TensorOrScalar* array, int32_t index);

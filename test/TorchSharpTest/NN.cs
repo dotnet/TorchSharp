@@ -1279,6 +1279,18 @@ namespace TorchSharp
                 var result = output.ToSingle();
             }
         }
+
+        [Fact]
+        public void SequenceModulesAndChildren()
+        {
+            var seq1 = new SequenceModel1();
+            var seq2 = new SequenceModel2();
+
+            var seq3 = Sequential(seq1, seq2);
+
+            Assert.Equal(2, seq3.children().Count());
+            Assert.Equal(6, seq3.modules().Count());
+        }
         #endregion
 
         #region Loss Functions

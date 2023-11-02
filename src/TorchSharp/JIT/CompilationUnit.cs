@@ -65,17 +65,17 @@ namespace TorchSharp
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
 
-                    using (var parray = new IndexedPinnedArrays<TensorOrScalar>()) {
+                    using (var ntosArray = new NativeTensorOrScalarIndexedArray()) {
 
-                        var tRefsHandle = ScriptModule.DetermineArgumentTypeRefs(objs, out var count, parray);
+                        var tRefsHandle = ScriptModule.DetermineArgumentTypeRefs(objs, out var count, ntosArray);
 
-                        var allocated = parray.Count;
+                        var allocated = ntosArray.Count;
 
-                        THSJIT_CompilationUnit_Invoke(handle, name, tRefsHandle, count, parray.CreateArray, out typeCode, allocated);
+                        THSJIT_CompilationUnit_Invoke(handle, name, tRefsHandle, count, ntosArray.CreateArray, out typeCode, allocated);
                         torch.CheckForErrors();
-                        ptrArray = parray[allocated];
+                        ptrArray = ntosArray.ToToSArray(allocated);
 
-                        return ScriptModule.ProcessReturnValue(name, parray, ptrArray, typeCode);
+                        return ScriptModule.ProcessReturnValue(name, ntosArray, ptrArray, typeCode);
                     }
                 }
 
