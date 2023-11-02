@@ -8,7 +8,8 @@ This is an upgrade to libtorch 2.1.0. It also moves the underlying CUDA support 
 
 __API Changes__:
 
-Enhanced `Module.load` function to return matching status of parameters in non-strict mode via an output dictionary.
+Enhanced `Module.load` function to return matching status of parameters in non-strict mode via an output dictionary.<br/>
+Introduced attribute-based parameter naming for module state dictionaries, allowing custom names to override default field names.<br/>
 
 ## NuGet Version 0.100.7
 

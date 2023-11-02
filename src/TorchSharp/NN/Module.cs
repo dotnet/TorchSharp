@@ -9,6 +9,7 @@ using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
 using static TorchSharp.PInvoke.NativeMethods;
+using TorchSharp.Utils;
 
 namespace TorchSharp
 {
@@ -170,7 +171,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         var value = field.GetValue(this);
 
                         switch (value) {
@@ -256,7 +257,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         var value = field.GetValue(this);
 
                         switch (value) {
@@ -330,7 +331,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         var value = field.GetValue(this);
 
                         switch (value) {
@@ -1088,7 +1089,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         if (_internal_submodules.ContainsKey(fieldName) || _internal_params.ContainsKey(fieldName) || _internal_buffers.ContainsKey(fieldName)) continue;
 
                         var value = field.GetValue(this);
@@ -1717,6 +1718,17 @@ namespace TorchSharp
         /// <param name="module">The module to move</param>
         /// <param name="deviceIndex">If specified, all parameters will be copied to that device</param>
         public static T cuda<T>(this T module, int deviceIndex = -1) where T : torch.nn.Module => (T)module._to(DeviceType.CUDA, deviceIndex);
+    }
+
+    public static class FieldInfoExtensionMethods
+    {
+        /// <summary>
+        /// Retrieves the custom component name defined by the ComponentNameAttribute for a given field,
+        /// or defaults to the field's own name if the attribute is not present.
+        /// </summary>
+        /// <param name="field">The field for which to retrieve the component name.</param>
+        /// <returns>The custom component name if specified, otherwise the field's name.</returns>
+        public static string ComponentName(this FieldInfo field) => field.GetCustomAttribute<ComponentNameAttribute>()?.Name ?? field.Name;
     }
 
     internal delegate IntPtr ForwardFunctionC(IntPtr tensor);
