@@ -28,9 +28,9 @@
     <NativeAssemblyReference Include="asmjit" Variant="cuda\" />
     <NativeAssemblyReference Include="c10_cuda" Variant="cuda\" />
     <NativeAssemblyReference Include="caffe2_nvrtc" Variant="cuda\" />
-    <NativeAssemblyReference Include="cublas64_11" Variant="cuda\" />
-    <NativeAssemblyReference Include="cublasLt64_11" Variant="cuda\" />
-    <NativeAssemblyReference Include="cudart64_110" Variant="cuda\" />
+    <NativeAssemblyReference Include="cublas64_12" Variant="cuda\" />
+    <NativeAssemblyReference Include="cublasLt64_12" Variant="cuda\" />
+    <NativeAssemblyReference Include="cudart64_12" Variant="cuda\" />
     <NativeAssemblyReference Include="cudnn_adv_infer64_8" Variant="cuda\" />
     <NativeAssemblyReference Include="cudnn_adv_train64_8" Variant="cuda\" />
     <NativeAssemblyReference Include="cudnn_cnn_infer64_8" Variant="cuda\" />
@@ -38,21 +38,22 @@
     <NativeAssemblyReference Include="cudnn_ops_infer64_8" Variant="cuda\" />
     <NativeAssemblyReference Include="cudnn_ops_train64_8" Variant="cuda\" />
     <NativeAssemblyReference Include="cudnn64_8" Variant="cuda\" />
-    <NativeAssemblyReference Include="cufft64_10" Variant="cuda\" />
-    <NativeAssemblyReference Include="cufftw64_10" Variant="cuda\" />
+    <NativeAssemblyReference Include="cufft64_11" Variant="cuda\" />
+    <NativeAssemblyReference Include="cufftw64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="curand64_10" Variant="cuda\" />
-    <NativeAssemblyReference Include="cupti64_2022.2.0" Variant="cuda\" />
+    <NativeAssemblyReference Include="cupti64_2023.1.1" Variant="cuda\" />
     <NativeAssemblyReference Include="cusolver64_11" Variant="cuda\" />
     <NativeAssemblyReference Include="cusolverMg64_11" Variant="cuda\" />
-    <NativeAssemblyReference Include="cusparse64_11" Variant="cuda\" />
+    <NativeAssemblyReference Include="cusparse64_12" Variant="cuda\" />
     <NativeAssemblyReference Include="fbgemm" Variant="cuda\" />
     <NativeAssemblyReference Include="fbjni" Variant="cuda\" />
     <NativeAssemblyReference Include="libiomp5md" Variant="cuda\" />
     <NativeAssemblyReference Include="libiompstubs5md" Variant="cuda\" />
     <NativeAssemblyReference Include="nvfuser_codegen" Variant="cuda\" />
-    <NativeAssemblyReference Include="nvrtc64_112_0" Variant="cuda\" />
-    <NativeAssemblyReference Include="nvrtc-builtins64_117" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvrtc64_120_0" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvrtc-builtins64_121" Variant="cuda\" />
     <NativeAssemblyReference Include="nvToolsExt64_1" Variant="cuda\" />
+    <NativeAssemblyReference Include="nvJitLink_120_0" Variant="cuda\" />
     <NativeAssemblyReference Include="pytorch_jni" Variant="cuda\" />
     <NativeAssemblyReference Include="torch" Variant="cuda\" />
     <NativeAssemblyReference Include="torch_cpu" Variant="cuda\" />

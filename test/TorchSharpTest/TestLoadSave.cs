@@ -6,6 +6,7 @@ using TorchSharp.Modules;
 using static TorchSharp.torch.nn;
 using Xunit;
 using System.Collections.Generic;
+using static TorchSharp.torch;
 
 #if false
 #nullable enable
@@ -2554,3 +2555,67 @@ namespace TorchSharp
     }
 }
 #endif
+
+namespace TorchSharp
+{
+    [Collection("Sequential")]
+    public class TestLoadSave
+    {
+        [Fact]
+        public void TestLoadNonStrictMode_MatchesParametersStatusCorrectly()
+        {
+            // This model has two fields: _linear1, _linear2
+            var twoModel = new TwoLinearModel("TwoLinearModel");
+            twoModel.save("twomodel.dat");
+
+            // This model has one field: _linear1
+            var oneModel = new OneLinearModel("OneLinearModel");
+
+            // Load in the two fields model in non strict mode, and make sure each field is matched correctly.
+            var loadedParameters = new Dictionary<string, bool>();
+            oneModel.load("twomodel.dat", strict: false, loadedParameters: loadedParameters);
+
+            // _linear1.weight should be matched, _linear2.weight should not be matched
+            Assert.True(loadedParameters["_linear1.weight"]);
+            Assert.False(loadedParameters["_linear2.weight"]);
+        }
+
+
+
+        class TwoLinearModel : nn.Module<Tensor, Tensor>
+        {
+            private readonly Linear _linear1;
+            private readonly Linear _linear2;
+            public TwoLinearModel(string name) : base(name)
+            {
+                _linear1 = Linear(2, 2, hasBias: false);
+                _linear2 = Linear(2, 2, hasBias: false);
+
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                return _linear2.forward(_linear1.forward(input));
+            }
+        }
+
+        class OneLinearModel : nn.Module<Tensor, Tensor>
+        {
+            private readonly Linear _linear1;
+            public OneLinearModel(string name) : base(name)
+            {
+                _linear1 = Linear(2, 2, hasBias: false);
+
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                return _linear1.forward(input);
+            }
+        }
+
+
+    }
+}
