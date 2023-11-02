@@ -8,7 +8,6 @@ using Xunit;
 using System.Collections.Generic;
 using static TorchSharp.torch;
 
-#if false
 #nullable enable
 
 namespace TorchSharp
@@ -23,6 +22,7 @@ namespace TorchSharp
             return $"_STR{rand.Next()}.{extension}";
         }
 
+#if false
         [Fact]
         public void TestSaveLoadLinear1()
         {
@@ -2552,15 +2552,8 @@ namespace TorchSharp
                 () => Assert.NotNull(state!.exp_inf)
             );
         }
-    }
-}
 #endif
 
-namespace TorchSharp
-{
-    [Collection("Sequential")]
-    public class TestLoadSave
-    {
         [Fact]
         public void TestLoadNonStrictMode_MatchesParametersStatusCorrectly()
         {
@@ -2615,7 +2608,5 @@ namespace TorchSharp
                 return _linear1.forward(input);
             }
         }
-
-
     }
 }
