@@ -9,7 +9,7 @@ variables:
 
   # Set this to 'true' to build the libtorch-* packages as part of main branch CI and
   # push them to the artifacts feed of the Azure CI project
-  BuildLibTorchPackages: false
+  BuildLibTorchPackages: true
   PushPackagesToFeed: false
 
 resources:
@@ -51,7 +51,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetFxBuild=true -c
     testScript: dotnet test /p:SkipCuda=true /p:SkipNetFxBuild=true --blame -c
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-latest'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -60,7 +60,7 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetCoreBuild=true -c
     testScript: dotnet test /p:SkipCuda=true /p:SkipNetCoreBuild=true --blame -c
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-latest'
 
 - template: /build/ci/job-template.yml
   parameters:
@@ -102,21 +102,21 @@ jobs:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     displayName: Install dependencies
 
-  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCpuPackages=true
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCpuPackages=true
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native binaries
 
-  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-11.7/libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=linux /t:Build /p:IncludeLibTorchCudaPackages=true
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native CUDA binaries
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build linux
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -133,7 +133,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-latest'
 
   steps:
 
@@ -144,22 +144,22 @@ jobs:
       version: 6.0.402
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCpuPackages=true
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCpuPackages=true
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native binaries
 
-  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-11.7/libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCudaPackages=true
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:SkipTests=true /p:TargetOS=windows /t:Build /p:IncludeLibTorchCudaPackages=true
     condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native CUDA binaries
 
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build Windows
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -178,16 +178,16 @@ jobs:
   pool:
     vmImage: 'macos-11'
   steps:
-  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=mac /t:Build /p:IncludeLibTorchCpuPackages=true
+  - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true  /p:TargetOS=mac /t:Build /p:IncludeLibTorchCpuPackages=true
     displayName: Download libtorch native binaries
 
-  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true
+  - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build mac
 
-  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true
+  - script: dotnet build -c $(BuildConfig) src/TorchVision/TorchVision.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build TorchVision
 
-  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true
+  - script: dotnet build -c $(BuildConfig) src/TorchAudio/TorchAudio.csproj /p:SkipCuda=true /p:SkipTests=true 
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
@@ -209,7 +209,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-latest'
   steps:
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -346,7 +346,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-latest'
   steps:
 
   # We are 10GB space-constrained on the Azure Pipelines CI system so clean up what we can
@@ -458,7 +458,7 @@ jobs:
   variables:
   - group: SignClient Credentials
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-latest'
   steps:
 
   - task: DotNetCoreCLI@2
@@ -507,7 +507,7 @@ jobs:
   variables:
   - group: SignClient Credentials
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-latest'
   steps:
 
   - task: DotNetCoreCLI@2
@@ -586,7 +586,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-latest'
   steps:
 
   # Push packages to feed
@@ -687,7 +687,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-latest'
   steps:
 
   # Push packages to feed
@@ -772,7 +772,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-latest'
   # container: UbuntuContainer
   # Exact copy of the dependency install above - TODO share this somewhere
   steps:

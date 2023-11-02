@@ -16,13 +16,13 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_2_0_1_1
-        const string libtorchPackageVersion = "2.0.1.1";
+#if LIBTORCH_2_1_0_1
+        const string libtorchPackageVersion = "2.1.0.1";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
-#if CUDA_11_7
-        const string cudaVersion = "11.7";
+#if CUDA_12_1
+        const string cudaVersion = "12.1";
 #else
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
@@ -95,6 +95,7 @@ namespace TorchSharp
 
                 // Workarounds for weird LibTorch native stuff
                 // See https://github.com/pytorch/pytorch/issues/33415
+
                 if (useCudaBackend) {
                     var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
                     if (isWindows) {
@@ -102,21 +103,22 @@ namespace TorchSharp
                         // Preloading these DLLs on windows seems to iron out problems where one native DLL
                         // requests a load of another through dynamic linking techniques.
                         //
-                        TryLoadNativeLibraryByName("cudnn_adv_infer64_8", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("cudnn_adv_train64_8", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("cudnn_cnn_infer64_8", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("nvfuser_codegen", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("nvrtc-builtins64_117", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
-                        TryLoadNativeLibraryByName("nvrtc64_112_0", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_adv_infer64_8", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_adv_train64_8", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_cnn_infer64_8", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("nvfuser_codegen", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("nvrtc-builtins64_121", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
+                        ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
                     }
-                    TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
+
+                    ok = TryLoadNativeLibraryByName("torch_cuda", typeof(torch).Assembly, trace);
                     ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
                 } else {
-                    TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly, trace);
+                    ok = TryLoadNativeLibraryByName("torch_cpu", typeof(torch).Assembly, trace);
                     ok = TryLoadNativeLibraryByName("LibTorchSharp", typeof(torch).Assembly, trace);
                 }
 

@@ -106,8 +106,8 @@ For this reason, we do the following
 1. The head, referenceable packages that deliver a functioning runtime are any of:
 
        libtorch-cpu
-       libtorch-cuda-11.7-linux-x64
-       libtorch-cuda-11.7-win-x64
+       libtorch-cuda-12.1-linux-x64
+       libtorch-cuda-12.1-win-x64
 
 2. These packages are combo packages that reference multiple parts.  The parts are **not** independently useful.
    Some parts deliver a single vast file via `primary` and `fragment` packages.  A build task is then used to "stitch" these files back together
@@ -116,7 +116,7 @@ For this reason, we do the following
    install/detect/link of PyTorch CUDA on all downstream systems, whcih is extremely problematic
    for many practical reasons).
 
-   For example, the CUDA package fragments are defined in [libtorch-cuda](src/Redist/libtorch-cuda-11.7/libtorch-cuda-11.7.proj). See more details later in this document.
+   For example, the CUDA package fragments are defined in [libtorch-cuda](src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj). See more details later in this document.
 
 3. The `libtorch-*` packages are built in Azure DevOps CI
    [using this build pipeline](https://donsyme.visualstudio.com/TorchSharp/_build?definitionId=1&_a=summary) but only in main
@@ -177,16 +177,16 @@ version of PyTorch then quite a lot of careful work needs to be done.
         dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCpuPackages=true 
         dotnet build src\Redist\libtorch-cpu\libtorch-cpu.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCpuPackages=true
 
-        dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
-        dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
-        dotnet build src\Redist\libtorch-cuda-11.7\libtorch-cuda-11.7.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src\Redist\libtorch-cuda-12.1\libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=linux /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src\Redist\libtorch-cuda-12.1\libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Release /t:Build /p:IncludeLibTorchCudaPackages=true
+        dotnet build src\Redist\libtorch-cuda-12.1\libtorch-cuda-12.1.proj /p:UpdateSHA=true /p:TargetOS=windows /p:Configuration=Debug /t:Build /p:IncludeLibTorchCudaPackages=true
 
    Each of these will take a **very very long time** depending on your broadband connection.  This can't currently be done in CI.
 
    If file names in the distribution have changed, or files have been removed, you will get errors saying that files cannot be found. That's okay and will be taken care of in the next step.
 
 3. At this point you must **very very carefully** update the `<File Include= ...` entries under src\Redist projects for
-   [libtorch-cpu](src/Redist/libtorch-cpu/libtorch-cpu.proj) and [libtorch-cuda](src/Redist/libtorch-cuda-11.7/libtorch-cuda-11.7.proj).
+   [libtorch-cpu](src/Redist/libtorch-cpu/libtorch-cpu.proj) and [libtorch-cuda](src/Redist/libtorch-cuda-12.1/libtorch-cuda-12.1.proj).
 
    This is the step in the upgrade process that takes the most effort and time. It requires extreme care.
 
@@ -213,19 +213,25 @@ version of PyTorch then quite a lot of careful work needs to be done.
    They must all be called either 'primary,' which should be the first fragment, or 'fragmentN' where 'N' is the ordinal number of the fragment, starting with '1'. The current logic allows for as many as 10 non-primary fragments. If more are needed, the code in [FileRestitcher.cs](pkg/FileRestitcher/FileRestitcher/FileRestitcher.cs) and [RestitchPackage.targets](pkg/common/RestitchPackage.targets) needs to be updated. Note that the size of each fragment is expressed in bytes, and that fragment start must be
    the sum of the size of all previous fragments. A '-1' should be used for the last fragment (and only for the last fragment): it means that the fragment size will be based on how much there is still left of the file.
 
-   Each part, whether singular or fragmented, should have its own .nupkgproj file in its own folder under pkg. The folder and file should have the same name as the part. If you need to add new fragments, it is straightforward to just copy an existing fragment folder and rename it as well as the project file to the new fragment. If you must fragment a previously singular part, it is best to rename the existing folder and file to '-fragment1' and then copy a '-primary' folder and rename with the right part name. This is because the primary .nupkgproj files look different from others. Specifically, they include different build targets:
+   Each part, whether singular or fragmented, should have its own .nupkgproj file in its own folder under pkg. The folder and file should have the same name as the part. If you need to add new fragments, it is straightforward to just copy an existing fragment folder and rename it as well as the project file to the new fragment. 
+   
+   __Important:__
 
-```
-<Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
-<Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
-```
-vs.
-```
-<Content Include="..\common\RestitchPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
-<Content Include="..\common\RestitchPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
-```
+   If you must fragment a previously singular part, it is best to rename the existing folder and file to '-fragment1' and then copy a '-primary' folder and rename with the right part name. This is because the primary .nupkgproj files look different from others. 
+   
+   Specifically, they include different build targets:
 
-   It is the 'RestitchPackage.targets' that will trigger restitching packages on first build after a download.
+    ```xml
+    <Content Include="..\common\NormalPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
+    ```
+    vs.
+    ```xml
+    <Content Include="..\common\RestitchPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
+    <Content Include="..\common\RestitchPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
+    ```
+
+   It is the 'RestitchPackage.targets' that will trigger restitching packages on first build after a download, and only a project that is a primary in a multiple-fragment package should use the latter version.
 
    Because file sizes change from release to release, it may be necessary to add or remove fragments. When you add a fragment, you also need to add a corresponding project folder under the `pkg/` top-level folder. The process of doing so is copy-paste-rename of existing folders. The same goes for adding parts (whether fragmented or not): you should add a corresponding folder and project file. If you remove a fragment (or part), you should remove the corresponding folder, or CI will end up building empty packages.
 
@@ -234,7 +240,7 @@ vs.
 4. Add the SHA files:
 
        git add src\Redist\libtorch-cpu\*.sha
-       git add src\Redist\libtorch-cuda-11.7\*.sha
+       git add src\Redist\libtorch-cuda-12.1\*.sha
 
    After this you may as well submit to CI just to see what happens, though keep going with the other steps below as well.
 

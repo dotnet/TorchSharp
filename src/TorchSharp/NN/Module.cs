@@ -9,6 +9,7 @@ using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
 using static TorchSharp.PInvoke.NativeMethods;
+using TorchSharp.Utils;
 
 namespace TorchSharp
 {
@@ -170,7 +171,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         var value = field.GetValue(this);
 
                         switch (value) {
@@ -256,7 +257,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         var value = field.GetValue(this);
 
                         switch (value) {
@@ -330,7 +331,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         var value = field.GetValue(this);
 
                         switch (value) {
@@ -936,20 +937,21 @@ namespace TorchSharp
                 /// leaving everything else alone.
                 /// </param>
                 /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
                 /// Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public virtual Module load(string location, bool strict = true, IList<string> skip = null)
+                public virtual Module load(string location, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
                 {
                     if (!System.IO.File.Exists(location))
                         throw new System.IO.FileNotFoundException(location);
 
                     using var stream = System.IO.File.OpenRead(location);
                     using var reader = new System.IO.BinaryReader(stream);
-                    load(reader, strict, skip);
+                    load(reader, strict, skip, loadedParameters);
 
                     return this;
                 }
@@ -964,13 +966,14 @@ namespace TorchSharp
                 /// leaving everything else alone.
                 /// </param>
                 /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
                 /// Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string> skip = null)
+                public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
                 {
                     skip ??= Array.Empty<string>();
 
@@ -997,6 +1000,8 @@ namespace TorchSharp
                             if (found) {
                                 sd[key].Load(reader, skip: skip.Contains(key));
                             }
+
+                            loadedParameters?.Add(key, found);
                         }
                     } finally {
                         if (dt != DeviceType.CPU) _to(dt, di);
@@ -1015,16 +1020,17 @@ namespace TorchSharp
                 /// leaving everything else alone.
                 /// </param>
                 /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
                 /// Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public Module load(System.IO.Stream stream, bool strict = true, IList<string> skip = null)
+                public Module load(System.IO.Stream stream, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
                 {
                     using var reader = new System.IO.BinaryReader(stream);
-                    return load(reader, strict, skip);
+                    return load(reader, strict, skip, loadedParameters);
                 }
 
                 /// <summary>
@@ -1083,7 +1089,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         if (_internal_submodules.ContainsKey(fieldName) || _internal_params.ContainsKey(fieldName) || _internal_buffers.ContainsKey(fieldName)) continue;
 
                         var value = field.GetValue(this);
@@ -1712,6 +1718,17 @@ namespace TorchSharp
         /// <param name="module">The module to move</param>
         /// <param name="deviceIndex">If specified, all parameters will be copied to that device</param>
         public static T cuda<T>(this T module, int deviceIndex = -1) where T : torch.nn.Module => (T)module._to(DeviceType.CUDA, deviceIndex);
+    }
+
+    public static class FieldInfoExtensionMethods
+    {
+        /// <summary>
+        /// Retrieves the custom component name defined by the ComponentNameAttribute for a given field,
+        /// or defaults to the field's own name if the attribute is not present.
+        /// </summary>
+        /// <param name="field">The field for which to retrieve the component name.</param>
+        /// <returns>The custom component name if specified, otherwise the field's name.</returns>
+        public static string ComponentName(this FieldInfo field) => field.GetCustomAttribute<ComponentNameAttribute>()?.Name ?? field.Name;
     }
 
     internal delegate IntPtr ForwardFunctionC(IntPtr tensor);
