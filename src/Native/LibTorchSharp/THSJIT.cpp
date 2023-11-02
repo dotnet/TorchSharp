@@ -603,7 +603,7 @@ void THSJIT_SetTensorOrScalar(TensorOrScalar* array, int32_t index, int64_t type
     array[index].Handle = handle;
 }
 
-TensorOrScalar* THSJIT_GetTensorOrScalar(TensorOrScalar* array, int32_t index, int64_t type_code, int64_t array_index, ptrdiff_t handle)
+TensorOrScalar* THSJIT_GetTensorOrScalar(TensorOrScalar* array, int32_t index)
 {
     return array + index;
 }
