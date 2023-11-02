@@ -13,7 +13,7 @@ namespace TorchSharp
     [Collection("Sequential")]
     public class TestJIT
     {
-#if false
+#if true
         [Fact]
         public void TestLoadJIT_1()
         {
@@ -395,6 +395,8 @@ namespace TorchSharp
     return (a, None)
   def tuple_tuple(a: Any, b: Any, c:Any):
     return (a, (b, None))
+  def list_list(a: Any, b: Any, c:Any):
+    return [a, [b, c]]
   def list_tuple(a: Any, b: Any, c:Any):
     return [a, (b, c)]
   def list_tuple_list(a: Any, b: Any, c:Any):
@@ -432,7 +434,7 @@ namespace TorchSharp
                 var zArr = cu.invoke<(object, object)>("tuple_tuple", x, y, w);
                 Assert.NotNull(zArr.Item1);
                 Assert.Equal(x, (Tensor)zArr.Item1);
-                //Assert.NotNull(zArr.Item2);
+                Assert.NotNull(zArr.Item2);
                 var (a,b) = ((object, object))zArr.Item2;
                 Assert.NotNull(a);
                 Assert.Null(b);
@@ -448,6 +450,15 @@ namespace TorchSharp
                 Assert.IsType<(Tensor,Tensor)>(zArr[1]);
             }
 
+            {
+                var zArr = cu.invoke<object[]>("list_list", x, y, w);
+                Assert.NotNull(zArr);
+                Assert.NotNull(zArr[0]);
+                Assert.IsType<Tensor>(zArr[0]);
+                Assert.Equal(x, zArr[0]);
+                Assert.NotNull(zArr[1]);
+                Assert.IsType<Tensor[]>(zArr[1]);
+            }
             {
                 var zArr = cu.invoke<object[]>("list_tuple_list", x, y, w);
                 Assert.NotNull(z);

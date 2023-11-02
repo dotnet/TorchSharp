@@ -243,17 +243,17 @@ namespace TorchSharp
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
 
-                    using (var parray = new IndexedPinnedArrays<TensorOrScalar>()) {
+                    using (var ntosArray = new NativeTensorOrScalarIndexedArray()) {
 
-                        var tRefsHandle = DetermineArgumentTypeRefs(input, out var count, parray);
+                        var tRefsHandle = DetermineArgumentTypeRefs(input, out var count, ntosArray);
 
-                        var allocated = parray.Count;
+                        var allocated = ntosArray.Count;
 
-                        THSJIT_Module_forward(handle, tRefsHandle, count, parray.CreateArray, out typeCode, allocated);
+                        THSJIT_Module_forward(handle, tRefsHandle, count, ntosArray.CreateArray, out typeCode, allocated);
                         torch.CheckForErrors();
-                        ptrArray = parray[allocated];
+                        ptrArray = ntosArray.ToToSArray(allocated);
 
-                        return ProcessReturnValue(name, parray, ptrArray, typeCode);
+                        return ProcessReturnValue(name, ntosArray, ptrArray, typeCode);
                     }
                 }
 
@@ -321,69 +321,57 @@ namespace TorchSharp
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
 
-                    using (var parray = new IndexedPinnedArrays<TensorOrScalar>()) {
+                    using (var ntosArray = new NativeTensorOrScalarIndexedArray()) {
 
-                        var tRefsHandle = DetermineArgumentTypeRefs(objs, out var count, parray);
+                        var tRefsHandle = DetermineArgumentTypeRefs(objs, out var count, ntosArray);
 
-                        var allocated = parray.Count;
+                        var allocated = ntosArray.Count;
 
-                        THSJIT_Module_invoke(handle, name, tRefsHandle, count, parray.CreateArray, out typeCode, allocated);
+                        THSJIT_Module_invoke(handle, name, tRefsHandle, count, ntosArray.CreateArray, out typeCode, allocated);
                         torch.CheckForErrors();
-                        ptrArray = parray[allocated];
+                        ptrArray = ntosArray.ToToSArray(allocated);
 
-                        return ProcessReturnValue(name, parray, ptrArray, typeCode);
+                        return ScriptModule.ProcessReturnValue(name, ntosArray, ptrArray, typeCode);
                     }
                 }
 
-                internal static IntPtr DetermineArgumentTypeRefs(object[] objs, out int count, IndexedPinnedArrays<TensorOrScalar> pinned)
+                internal static IntPtr DetermineArgumentTypeRefs(object[] objs, out int count, NativeTensorOrScalarIndexedArray allocator)
                 {
                     count = objs.Length;
-                    var tensorRefs = new TensorOrScalar[count];
-                    var result = pinned.CreateArray(pinned.Count, tensorRefs);
+                    var tensorRefs = allocator.CreateArray(allocator.Count, objs.Length);
 
                     for (var idx = 0; idx < objs.Length; idx++) {
                         switch (objs[idx]) {
                         case Tensor t:
-                            tensorRefs[idx].Handle = t.Handle;
-                            tensorRefs[idx].TypeCode = 0;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 0, 0, t.Handle);
                             break;
                         case Scalar s:
-                            tensorRefs[idx].Handle = s.Handle;
-                            tensorRefs[idx].TypeCode = 1;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 1, 0, s.Handle);
                             break;
                         case float f:
-                            tensorRefs[idx].Handle = ((Scalar)f).Handle;
-                            tensorRefs[idx].TypeCode = 1;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 1, 0, ((Scalar)f).Handle);
                             break;
                         case double d:
-                            tensorRefs[idx].Handle = ((Scalar)d).Handle;
-                            tensorRefs[idx].TypeCode = 1;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 1, 0, ((Scalar)d).Handle);
                             break;
                         case bool i:
-                            tensorRefs[idx].Handle = (IntPtr)(i ? 1L : 0L);
-                            tensorRefs[idx].TypeCode = 2;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 2, 0, (IntPtr)(i ? 1L : 0L));
                             break;
                         case int i:
-                            tensorRefs[idx].Handle = (IntPtr)i;
-                            tensorRefs[idx].TypeCode = 3;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 3, 0, (IntPtr)i);
                             break;
                         case long l:
-                            tensorRefs[idx].Handle = ((Scalar)l).Handle;
-                            tensorRefs[idx].TypeCode = 1;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 1, 0, ((Scalar)l).Handle);
                             // The MacOS version of Clang doesn't like the use of int64_t, so pass as a Scalar instance, instead.
-                            //tensorRefs[idx].Handle = (IntPtr)l;
-                            //tensorRefs[idx].TypeCode = 4;
+                            //THSJIT_SetTensorOrScalar(tensorRefs, idx, 4, 0, (IntPtr)l);
                             break;
                         case Tensor[] tensors: {
-                                tensorRefs[idx].Handle = DetermineArgumentTypeRefs(tensors, out var _, pinned);
-                                tensorRefs[idx].TypeCode = 5;
-                                tensorRefs[idx].ArrayIndex = tensors.Length;
+                                THSJIT_SetTensorOrScalar(tensorRefs, idx, 5, tensors.Length, DetermineArgumentTypeRefs(tensors, out var _, allocator));
                             }
                             break;
                         default:
                             if (objs[idx] is null) {
-                                tensorRefs[idx].Handle = IntPtr.Zero;
-                                tensorRefs[idx].TypeCode = 8;
+                                THSJIT_SetTensorOrScalar(tensorRefs, idx, 8, 0, IntPtr.Zero);
                             } else {
                                 throw new NotImplementedException($"Passing arguments of type {objs[idx].GetType().Name} to TorchScript.");
                             }
@@ -391,10 +379,10 @@ namespace TorchSharp
                         }
                     }
 
-                    return result;
+                    return tensorRefs;
                 }
 
-                internal static object ProcessReturnValue(string name, IndexedPinnedArrays<TensorOrScalar> pinned, TensorOrScalar[] ptrArray, long typeCode)
+                internal static object ProcessReturnValue(string name, NativeTensorOrScalarIndexedArray allocator, TensorOrScalar[] ptrArray, long typeCode)
                 {
                     switch (typeCode) {
                     default:
@@ -493,25 +481,25 @@ namespace TorchSharp
                     case 10: {
                             switch (ptrArray.Length) {
                             case 1:
-                                return ProcessReturnValue(name, pinned, ptrArray[0]);
+                                return ProcessReturnValue(name, allocator, ptrArray[0]);
                             case 2:
-                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
-                                    ProcessReturnValue(name, pinned, ptrArray[1]));
+                                return (ProcessReturnValue(name, allocator, ptrArray[0]),
+                                    ProcessReturnValue(name, allocator, ptrArray[1]));
                             case 3:
-                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
-                                    ProcessReturnValue(name, pinned, ptrArray[1]),
-                                    ProcessReturnValue(name, pinned, ptrArray[2]));
+                                return (ProcessReturnValue(name, allocator, ptrArray[0]),
+                                    ProcessReturnValue(name, allocator, ptrArray[1]),
+                                    ProcessReturnValue(name, allocator, ptrArray[2]));
                             case 4:
-                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
-                                    ProcessReturnValue(name, pinned, ptrArray[1]),
-                                    ProcessReturnValue(name, pinned, ptrArray[2]),
-                                    ProcessReturnValue(name, pinned, ptrArray[3]));
+                                return (ProcessReturnValue(name, allocator, ptrArray[0]),
+                                    ProcessReturnValue(name, allocator, ptrArray[1]),
+                                    ProcessReturnValue(name, allocator, ptrArray[2]),
+                                    ProcessReturnValue(name, allocator, ptrArray[3]));
                             case 5:
-                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
-                                    ProcessReturnValue(name, pinned, ptrArray[1]),
-                                    ProcessReturnValue(name, pinned, ptrArray[2]),
-                                    ProcessReturnValue(name, pinned, ptrArray[3]),
-                                    ProcessReturnValue(name, pinned, ptrArray[4]));
+                                return (ProcessReturnValue(name, allocator, ptrArray[0]),
+                                    ProcessReturnValue(name, allocator, ptrArray[1]),
+                                    ProcessReturnValue(name, allocator, ptrArray[2]),
+                                    ProcessReturnValue(name, allocator, ptrArray[3]),
+                                    ProcessReturnValue(name, allocator, ptrArray[4]));
                             default: {
                                     // Too long a tuple, return as a list, instead.
                                     var result = new Scalar[ptrArray.Length];
@@ -526,14 +514,14 @@ namespace TorchSharp
                             // List of anything
                             var result = new object[ptrArray.Length];
                             for (var i = 0; i < ptrArray.Length; i++) {
-                                result[i] = ProcessReturnValue(name, pinned, ptrArray[i]);
+                                result[i] = ProcessReturnValue(name, allocator, ptrArray[i]);
                             }
                             return result;
                         }
                     }
                 }
 
-                internal static object ProcessReturnValue(string name, IndexedPinnedArrays<TensorOrScalar> pinned, TensorOrScalar value)
+                internal static object ProcessReturnValue(string name, NativeTensorOrScalarIndexedArray allocator, TensorOrScalar value)
                 {
                     switch (value.TypeCode) {
                     case 0:
@@ -543,7 +531,7 @@ namespace TorchSharp
                     case 8:
                         return null;
                     default:
-                        return ProcessReturnValue(name, pinned, pinned[(int)value.ArrayIndex], value.TypeCode);
+                        return ProcessReturnValue(name, allocator, allocator.ToToSArray((int)value.ArrayIndex), value.TypeCode);
                     }
 
                     throw new NotImplementedException($"ScriptModule.{name}() returning something else than a tensor/scalar, a tuple of tensors/scalars, or list of tensors/scalars.");

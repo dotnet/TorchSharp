@@ -15,6 +15,8 @@ using static TorchSharp.torchvision.models;
 
 
 using System.Numerics;
+using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
 
 #nullable enable
 
@@ -1104,7 +1106,7 @@ namespace TorchSharp
             {
                 layer = nn.Linear(16, 2);
                 layer2 = new Test2_912((from l in Enumerable.Range(0, layernum)
-                                    select new Test3_912()).ToArray(),
+                                        select new Test3_912()).ToArray(),
                                     (from l in Enumerable.Range(0, layernum)
                                      select new Test3_912()).ToArray());
                 this.RegisterComponents();
@@ -1164,7 +1166,7 @@ namespace TorchSharp
 
             Assert.Multiple(
             () => Assert.Equal(expectedShape, functional.max_pool2d(t, 2).shape),
-            () => Assert.Equal(expectedShape, functional.max_pool2d(t, ( 2, 2 )).shape),
+            () => Assert.Equal(expectedShape, functional.max_pool2d(t, (2, 2)).shape),
             () => Assert.Equal(expectedShape, functional.max_pool2d(t, new long[] { 2, 2 }).shape)
             );
 
@@ -1346,6 +1348,50 @@ namespace TorchSharp
                 var y = torch.full(15, 0.5);
                 Assert.Equal(y, x);
             }
+        }
+
+
+        const int iterations_1047 = 100000;
+
+        [Fact]
+        public void Validate1047_1()
+        {
+            string script = @"
+  def add_i(x: Tensor, i: int) -> Tensor:
+    return x + i
+  def id(x: Tensor) -> Tensor:
+    return x
+";
+            using var cu = torch.jit.compile(script);
+
+            Assert.NotNull(cu);
+
+            var zeros = torch.zeros(3, 4);
+
+            int xx = 0;
+            while (xx < iterations_1047) {
+                var y = cu.invoke<Tensor>("add_i", zeros, 1);
+                var z = cu.invoke<Tensor>("id", y);
+                y.Dispose();
+                z.Dispose();
+                xx++;
+            }
+            Assert.Equal(iterations_1047, xx);
+        }
+
+        [Fact(Skip = "Takes too long to run.")]
+        public void Validate1047_2()
+        {
+            jit.ScriptModule<Tensor, Tensor> mx = torch.jit.load<Tensor, Tensor>("l1000_100_10.script.dat");
+            mx.eval();
+
+            int xx = 0;
+            while (xx < iterations_1047) {
+                using var input = torch.ones(1000);
+                using var output = mx.call(input);
+                xx++;
+            }
+            Assert.Equal(iterations_1047, xx);
         }
     }
 }
