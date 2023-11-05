@@ -18,6 +18,7 @@ namespace TorchSharp.Utils
         {
             Unpickler.registerConstructor("torch._utils", "_rebuild_tensor", new TensorObjectConstructor());
             Unpickler.registerConstructor("torch._utils", "_rebuild_tensor_v2", new TensorObjectConstructor());
+            Unpickler.registerConstructor("collections", "OrderedDict", new OrderedDictObjectConstructor());
         }
 
         /// <summary>
@@ -46,6 +47,7 @@ namespace TorchSharp.Utils
                 throw new NotImplementedException("The model being loaded was saved using the old PyTorch format and isn't supported in TorchSharp. Please re-save using the new PyTorch format.");
 
             // Open the archive, since we know it's a zip file
+            stream.Seek(0, SeekOrigin.Begin);
             using var archive = new ZipArchive(stream);
 
             // Find the data.pkl file, this is our main file
@@ -123,6 +125,23 @@ namespace TorchSharp.Utils
                     "ComplexFloatStorage" => torch.cfloat,
                     _ => throw new NotImplementedException()
                 };
+            }
+        }
+        class OrderedDictObjectConstructor : IObjectConstructor
+        {
+            public object construct(object[] args)
+            {
+                return new OrderedDict();
+            }
+        }
+        class OrderedDict : Hashtable
+        {
+            public void __setstate__(Hashtable arg)
+            {
+                foreach (string key in arg.Keys) {
+                    if (key != "_metadata")
+                        this[key] = arg[key];
+                }
             }
         }
         class TensorObjectConstructor : IObjectConstructor

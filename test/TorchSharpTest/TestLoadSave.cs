@@ -2608,5 +2608,21 @@ namespace TorchSharp
                 return _linear1.forward(input);
             }
         }
+
+        [Fact]
+        public void TestPythonModuleLoad()
+        {
+            // We already saved a python module using `torch.save` to the file `pyload_test.model`
+            // Load in that model and make sure that the results are the same
+            var model = Sequential(("lin1", Linear(5, 1, hasBias: false)), ("lin2", Linear(1, 2, hasBias: false)));
+            model.load_py("pyload_test.model");
+
+            // The weights are all ones, so make sure that if we give it an array of ones we get
+            // back as the result [5,5]
+            var res = model.forward(torch.tensor(new[] { 1, 1, 1, 1, 1 }).@float());
+
+            Assert.True(res[0].ToSingle() == 5);
+            Assert.True(res[1].ToSingle() == 5);
+        }
     }
 }

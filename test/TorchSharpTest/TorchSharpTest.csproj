@@ -21,6 +21,7 @@
     <None Remove="adamw1.dat" />
     <None Remove="asgd1.dat" />
     <None Remove="bug510.dat" />
+    <None Remove="pyload_test.model" />
     <None Remove="rmsprop1.dat" />
     <None Remove="sgd1.dat" />
   </ItemGroup>
@@ -39,6 +40,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="nadam1.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="pyload_test.model">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="radam1.dat">
