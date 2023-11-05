@@ -59,7 +59,7 @@ namespace TorchSharp.Utils
 
             var stateDict = new Dictionary<string, torch.Tensor>();
             foreach (string key in stateHash.Keys)
-                stateDict.Add(key[2..^2], (torch.Tensor)stateHash[key]);
+                stateDict.Add(key, (torch.Tensor)stateHash[key]);
 
             return stateDict;
         }
@@ -130,11 +130,14 @@ namespace TorchSharp.Utils
             public object construct(object[] args)
             {
                 // Arg0: (byte[] data, ScalarType dtype) // returned from our custom pickler
-                var arg0 = (object[])args[0];
-                // Arg 2: tensor_size
+                var arg0 = (TensorObject)args[0];
+                // Arg 1: storage_offset (not relevant here)
+                // Arg 2: tensor_size (the dimension, is important)
+                // Arg 3: stride (we aren't reconstructing from stride, just inserting the bytes)
                 // Arg 4: requires_grad
-                torch.Tensor t = torch.zeros(((object[])args[2]).Select(i => (long)(int)i).ToArray(), (torch.ScalarType)arg0[1], requires_grad: (bool)args[4]);
-                t.bytes = (byte[])arg0[0];
+                // Arg 5: backward_hooks, we don't support adding them in and it's not recommended in PyTorch to serialize them.
+                torch.Tensor t = torch.zeros(((object[])args[2]).Select(i => (long)(int)i).ToArray(), arg0.dtype, requires_grad: (bool)args[4]);
+                t.bytes = arg0.data;
                 return t;
             }
         }
