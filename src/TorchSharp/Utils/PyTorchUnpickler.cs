@@ -98,9 +98,16 @@ namespace TorchSharp.Utils
                 var dtype = GetScalarTypeFromStorageName(type);
                 var elemSize = (int)torch.empty(0, dtype).ElementSize;
 
+                int totalSize = numElem * elemSize;
+                //
+                // TODO: Fix this so that you can read large tensors. Right now, they are limited to 2GB
+                //
+                if (totalSize > int.MaxValue)
+                    throw new NotImplementedException("Loading tensors larger than 2GB");
+
                 // Read in the relevant bytes from the entry
-                var bytesBuffer = new byte[numElem * elemSize];
-                entry!.Open().Read(bytesBuffer, 0, numElem * elemSize);
+                var bytesBuffer = new byte[totalSize];
+                entry!.Open().Read(bytesBuffer, 0, totalSize);
 
                 // Send this back, so our TensorObjectConstructor can create our torch.tensor from the object.
                 return new TensorObject() {
