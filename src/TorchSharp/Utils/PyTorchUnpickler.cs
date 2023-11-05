@@ -12,12 +12,13 @@ using Razorvine.Pickle.Objects;
 
 namespace TorchSharp.Utils
 {
-    internal static class PyTorchUnpickler
+    static class PyTorchUnpickler
     {
         static PyTorchUnpickler()
         {
             Unpickler.registerConstructor("torch._utils", "_rebuild_tensor", new TensorObjectConstructor());
             Unpickler.registerConstructor("torch._utils", "_rebuild_tensor_v2", new TensorObjectConstructor());
+            Unpickler.registerConstructor("torch._utils", "_rebuild_parameter", new ParameterObjectConstructor());
             Unpickler.registerConstructor("collections", "OrderedDict", new OrderedDictObjectConstructor());
         }
 
@@ -68,7 +69,7 @@ namespace TorchSharp.Utils
 
         class CustomUnpickler : Unpickler
         {
-            private ZipArchive _archive;
+            readonly ZipArchive _archive;
 
             public CustomUnpickler(ZipArchive archive)
             {
@@ -108,7 +109,7 @@ namespace TorchSharp.Utils
                 };
             }
 
-            private static torch.ScalarType GetScalarTypeFromStorageName(string storage)
+            static torch.ScalarType GetScalarTypeFromStorageName(string storage)
             {
                 return storage switch {
                     "DoubleStorage" => torch.float64,
@@ -139,7 +140,7 @@ namespace TorchSharp.Utils
             public void __setstate__(Hashtable arg)
             {
                 foreach (string key in arg.Keys) {
-                    if (key != "_metadata")
+                    if (arg[key] is torch.Tensor)
                         this[key] = arg[key];
                 }
             }
@@ -158,6 +159,17 @@ namespace TorchSharp.Utils
                 torch.Tensor t = torch.zeros(((object[])args[2]).Select(i => (long)(int)i).ToArray(), arg0.dtype, requires_grad: (bool)args[4]);
                 t.bytes = arg0.data;
                 return t;
+            }
+        }
+        class ParameterObjectConstructor : IObjectConstructor
+        {
+            public object construct(object[] args)
+            {
+                // Arg0 = Tensor
+                // Arg1 = requires_grad
+                // If the user got here, that means that he saved the entire model and not the state dictionary
+                // And we only support loading the state dict
+                throw new NotImplementedException("The file trying to be load contains the entire model and not just the state_dict. Please resave use `torch.save(model.state_dict(), ...)`");
             }
         }
         class TensorObject
