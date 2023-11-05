@@ -50,7 +50,7 @@ namespace TorchSharp.Utils
             // Open the archive, since we know it's a zip file
             stream.Seek(0, SeekOrigin.Begin);
             using var archive = new ZipArchive(stream);
-
+            
             // Find the data.pkl file, this is our main file
             var pklEntry = archive.Entries.First(e => e.Name.EndsWith("data.pkl"));
 
@@ -158,12 +158,18 @@ namespace TorchSharp.Utils
             {
                 // Arg0: (byte[] data, ScalarType dtype) // returned from our custom pickler
                 var arg0 = (TensorObject)args[0];
-                // Arg 1: storage_offset (not relevant here)
-                // Arg 2: tensor_size (the dimension, is important)
-                // Arg 3: stride (we aren't reconstructing from stride, just inserting the bytes)
+                // Arg 1: storage_offset
+                int storageOffset = (int)args[1];
+                // Arg 2: tensor_shape
+                var shape = ((object[])args[2]).Select(i => (long)(int)i).ToArray();
+                // Arg 3: stride 
+                var stride = ((object[])args[3]).Select(i => (long)(int)i).ToArray();
                 // Arg 4: requires_grad
-                // Arg 5: backward_hooks, we don't support adding them in and it's not recommended in PyTorch to serialize them.
-                torch.Tensor t = torch.zeros(((object[])args[2]).Select(i => (long)(int)i).ToArray(), arg0.dtype, requires_grad: (bool)args[4]);
+                var requiresGrad = (bool)args[4];
+                // Arg 5: backward_hooks, we don't support adding them in and it's not recommended
+                // in PyTorch to serialize them.
+
+                torch.Tensor t = torch.zeros(shape, arg0.dtype).as_strided(shape, stride, storageOffset);
                 t.bytes = arg0.data;
                 return t;
             }
