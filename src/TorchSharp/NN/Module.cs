@@ -10,6 +10,7 @@ using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
 using static TorchSharp.PInvoke.NativeMethods;
 using TorchSharp.Utils;
+using Razorvine.Pickle;
 
 namespace TorchSharp
 {
@@ -901,6 +902,44 @@ namespace TorchSharp
                     using var writer = new System.IO.BinaryWriter(stream);
                     return save(writer, skip);
                 }
+
+
+                /// <summary>
+                /// Save the parameters and buffers of the module to a python-compatible file to be loaded using `torch.load`.
+                /// </summary>
+                /// <param name="location">The file path.</param>
+                /// <param name="skip">A list of keys not to consider when saving the weights.</param>
+                /// <returns></returns>
+                public Module save_py(string location, IList<string> skip = null)
+                {
+                    using var stream = System.IO.File.Create(location);
+                    save_py(stream, skip);
+
+                    return this;
+                }
+
+                /// <summary>
+                /// Save the parameters and buffers of the module to a python-compatible file to be loaded using `torch.load`.
+                /// </summary>
+                /// <param name="stream">A writable stream instance.</param>
+                /// <param name="skip">A list of keys not to consider when saving the weights.</param>
+                /// <returns></returns>
+                public Module save_py(System.IO.Stream stream, IList<string> skip = null)
+                {
+                    // Construct our state_dict, without the skip parameters
+                    var sd = this.state_dict();
+                    if (skip is not null) {
+                        foreach (string key in skip) {
+                            if (sd.ContainsKey(key))
+                                sd.Remove(key);
+                        }
+                    }
+
+                    PyTorchPickler.PickleStateDict(stream, sd);
+
+                    return this;
+                }
+
 
                 /// <summary>
                 ///
