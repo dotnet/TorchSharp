@@ -14,6 +14,13 @@ namespace TorchSharp.Utils
 {
     static class PyTorchPickler 
     {
+        static PyTorchPickler()
+        {
+            Pickler.registerCustomPickler(typeof(Storage), new StoragePickler());
+            Pickler.registerCustomDeconstructor(typeof(EmptyOrderedDict), new EmptyOrderedDictDeconstructor());
+            Pickler.registerCustomDeconstructor(typeof(TensorWrapper), new TensorWrapperDeconstructor());
+        }
+
         static byte MinProducedFileFormatVersion = 0x3;
         /// <summary>
         /// Pickle the state_dict to a python compatible file to be loaded using `torch.load`
@@ -42,8 +49,8 @@ namespace TorchSharp.Utils
             // using the persistentId
             var pickler = new CustomPickler(archive);
 
-            // Wrap our source state_dict in the TensorObject deconstructor
-            var wrappedSource = source.ToDictionary(kvp => kvp.Key, kvp => new TensorObjectDeconstructor(kvp.Value));
+            // Wrap the source tensors in a wrapper so that we can identify them during the deconstruction
+            var wrappedSource = source.ToDictionary(kvp => kvp.Key, kvp => new TensorWrapper(kvp.Value));
 
             // Create and dump our main data.pkl file
             using var ms = new MemoryStream();
@@ -96,7 +103,7 @@ namespace TorchSharp.Utils
                 // Start collecting the items
                 newpid = new object[] {
                     "storage",
-                    new BaseModuleDeconstructor("torch", GetStorageNameFromScalarType(tensor.dtype), null), // storage_type
+                    new Storage(GetStorageNameFromScalarType(tensor.dtype)), // storage_type
                     _tensorCount.ToString(), // key
                     "cpu", // location
                     tensor.NumberOfElements // numel
@@ -128,62 +135,68 @@ namespace TorchSharp.Utils
                 };
             }
         }
-        class BaseModuleDeconstructor : IObjectDeconstructor
+        class Storage
         {
-            readonly string _module;
-            readonly string _name;
-            readonly object _value;
-            public BaseModuleDeconstructor(string module, string name, object value)
-            {
-                _module = module;
-                _name = name;
-                _value = value;
-            }
+            public string Type { get; set; }
 
-            public string get_module()
+            public Storage(string type)
             {
-                return _module;
-            }
-
-            public string get_name()
-            {
-                return _name;
-            }
-
-            public object get_value()
-            {
-                return _value;
-            }
-
-            public bool has_value()
-            {
-                return _value is not null;
+                Type = type;
             }
         }
-        class TensorObjectDeconstructor : IObjectDeconstructor
+        class StoragePickler : IObjectPickler
         {
-            private readonly string _module;
-            private readonly string _name;
-            private readonly torch.Tensor _tensor;
-            public TensorObjectDeconstructor(torch.Tensor tensor)
+            public void pickle(object o, Stream outs, Pickler currentPickler)
             {
-                _module = "torch._utils";
-                _name = "_rebuild_tensor_v2";
-                _tensor = tensor;
+                outs.WriteByte(Opcodes.GLOBAL);
+                var nameBytes = Encoding.ASCII.GetBytes($"torch\n{((Storage)o).Type}\n");
+                outs.Write(nameBytes, 0, nameBytes.Length);
             }
+        }
 
+        class EmptyOrderedDict {
+            public static EmptyOrderedDict Instance => new EmptyOrderedDict();
+        }
+        class EmptyOrderedDictDeconstructor : IObjectDeconstructor
+        {
             public string get_module()
             {
-                return _module;
+                return "collections";
             }
 
             public string get_name()
             {
-                return _name;
+                return "OrderedDict";
             }
 
-            public object get_value()
+            public object[] deconstruct(object obj)
             {
+                return new[] { Array.Empty<object>() };
+            }
+        }
+        class TensorWrapper
+        {
+            public torch.Tensor Tensor { get; set; }
+            public TensorWrapper(torch.Tensor tensor)
+            {
+                Tensor = tensor;
+            }
+        }
+        class TensorWrapperDeconstructor : IObjectDeconstructor
+        {
+            public string get_module()
+            {
+                return "torch._utils";
+            }
+
+            public string get_name()
+            {
+                return "_rebuild_tensor_v2";
+            }
+
+            public object[] deconstruct(object obj)
+            {
+                var tensor = ((TensorWrapper)obj).Tensor;
                 // Arg0: Tensor
                 // Arg 1: storage_offset 0
                 // Arg 2: tensor_size (the dimension, is important)
@@ -191,18 +204,13 @@ namespace TorchSharp.Utils
                 // Arg 4: requires_grad
                 // Arg 5: backward_hooks, we don't support adding them in and it's not recommended in PyTorch to serialize them.
                 return new object[] {
-                    _tensor,
-                    _tensor.storage_offset(),
-                    _tensor.shape.Select(i => (object)i).ToArray(), // cast to object so it's stored as tuple not array
-                    _tensor.stride().Select(i => (object)i).ToArray(), // cast to object so it's stored as tuple not array
-                    _tensor.requires_grad,
-                    new BaseModuleDeconstructor("collections", "OrderedDict", Array.Empty<object>())
+                    tensor,
+                    tensor.storage_offset(),
+                    tensor.shape.Select(i => (object)i).ToArray(), // cast to object so it's stored as tuple not array
+                    tensor.stride().Select(i => (object)i).ToArray(), // cast to object so it's stored as tuple not array
+                    tensor.requires_grad,
+                    EmptyOrderedDict.Instance
                 };
-            }
-
-            public bool has_value()
-            {
-                return true;
             }
         }
     }
