@@ -83,6 +83,9 @@
     <Content Include="..\TorchSharpTest\nadam1.dat" Link="nadam1.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\TorchSharpTest\pyload_test.dat" Link="pyload_test.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\TorchSharpTest\radam1.dat" Link="radam1.dat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
