@@ -44,7 +44,9 @@ For efficient memory management, the model should be created on the CPU before l
 
 ### How to use the PyTorch format
 
-In C#, saving a model with the PyTorch format looks like this:
+There are two ways to share the model weights between PyTorch and TorchSharp. This section describes the first method, using a bulitin function to the Module object. 
+
+In TorchSharp, you can load save the model with the PyTorch pickle format, like this:
 
 ```C#
 model.save_py("model_weights.pth");
@@ -71,3 +73,27 @@ Two notes regarding loading a python model:
     ```
 
 2. TorchSharp only supports the newer PyTorch save format (which uses a ZipFile), so if you have a model that was saved using the old format, you need to resave it using the new format before using it with TorchSharp.
+
+The following two sections describe the second method for sharing weights between PyTorch and TorchSharp using a conversion script. 
+
+### Saving a TorchSharp format model in Python
+
+If the model starts out in Python, there's a simple script that allows you to use code that is very similar to the Pytorch API to save models to the TorchSharp format. Rather than placing this trivial script in a Python package and publishing it, we choose to just refer you to the script file itself, [exportsd.py](../../src/Python/exportsd.py), which has all the necessary code.
+
+```Python
+f = open("model_weights.dat", "wb")
+exportsd.save_state_dict(model.to("cpu").state_dict(), f)
+f.close()
+```
+
+### Loading a TorchSharp format model in Python
+
+If the model starts out in TorchSharp, there's also a simple script that allows you to load TorchSharp models in Python. All the necessary code can be found in [importsd.py](../../src/Python/importsd.py). And there is an example for using the script:
+
+```Python
+f = open("model_weights.dat", "rb")
+model.load_state_dict(importsd.load_state_dict(f))
+f.close()
+```
+
+Also, you can check [TestSaveSD.cs](../../test/TorchSharpTest/TestSaveSD.cs) and [pyimporttest.py](../../test/TorchSharpTest/pyimporttest.py) for more examples.
