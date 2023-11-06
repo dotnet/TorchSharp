@@ -75,11 +75,18 @@ namespace TorchSharp.Utils
                 }
 
                 var tensor = (torch.Tensor)pid;
+
+                bool copied = false;
+                if (tensor.device_type != DeviceType.CPU) {
+                    tensor = tensor.to(torch.CPU);
+                    copied = true;
+                }
+
                 // The persistentId function in pickler is a way of serializing an object using a different
                 // stream and then pickling just a key representing it.
                 // the data yourself from another source. The `torch.load` function uses this functionality
                 // and lists for the pid a tuple with the following items:
-                // ("storage", storage_type=classDict (e.g., torch.LongTensor), key, location numElements
+                // ("storage", storage_type=classDict (e.g., torch.LongTensor), key, location, numElements
 
                 // Start by serializing the object to a file in the archive
                 var entry = _archive.CreateEntry($"model/data/{_tensorCount}");
@@ -94,7 +101,10 @@ namespace TorchSharp.Utils
                     "cpu", // location
                     tensor.NumberOfElements // numel
                 };
+
+                // Post-cleanup items
                 _tensorCount++;
+                if (copied) tensor.Dispose();
 
                 return true;
             }
