@@ -63,6 +63,14 @@ namespace TorchSharp.Utils
             ms.CopyTo(dataStream);
         }
 
+        /// <summary>
+        /// This class implements custom behavior for pickling, specifically regarding persistent storage.
+        /// In the PyTorch library, instead of serializing the tensors using Pickle, they replace the tensor
+        /// objects in the pickle file with the metadata of the tensor, plus a link to an external file in the
+        /// archive which contains all the byte data of the tensor.
+        /// Therefore, our custom pickler does the same thing - whenever we pickle a tensor object, we break
+        /// it down and store the byte data in a file in the archive and return the persistent id.
+        /// </summary>
         class CustomPickler : Pickler
         {
             readonly ZipArchive _archive;
@@ -91,16 +99,20 @@ namespace TorchSharp.Utils
 
                 // The persistentId function in pickler is a way of serializing an object using a different
                 // stream and then pickling just a key representing it.
-                // the data yourself from another source. The `torch.load` function uses this functionality
+                // The data itself you store in another source. The `torch.load` function uses this functionality
                 // and lists for the pid a tuple with the following items:
-                // ("storage", storage_type=classDict (e.g., torch.LongTensor), key, location, numElements
+                // Tuple Item1: "storage"
+                // Tuple Item2: storage_type (e.g., torch.LongTensor)
+                // Tuple Item3: key (link to file with the byte data in the archive)
+                // Tuple Item4: location (cpu/gpu)
+                // Tuple Item5: numElements (number of elements in the tensor)
 
                 // Start by serializing the object to a file in the archive
                 var entry = _archive.CreateEntry($"model/data/{_tensorCount}");
                 using (var stream = entry.Open())
                     stream.Write(tensor.bytes.ToArray(), 0, tensor.bytes.Length);
 
-                // Start collecting the items
+                // Collect the items for our persistentId, as above.
                 newpid = new object[] {
                     "storage",
                     new Storage(GetStorageNameFromScalarType(tensor.dtype)), // storage_type
@@ -135,6 +147,17 @@ namespace TorchSharp.Utils
                 };
             }
         }
+
+        #region CustomPickleClasses
+        // This region contains private custom classes which are only used for the pickling process
+        // These classes are used so that we can register custom picklers/class deconstructors to them 
+        // specifically. 
+
+        /// <summary>
+        /// A class wrapper for a StorageType (e.g., FloatStorage, LongStorage) so that the pickler can 
+        /// assign the the storage object to our custom pickler, and we can serialize it as an python class 
+        /// without any arguments.
+        /// </summary>
         class Storage
         {
             public string Type { get; set; }
@@ -144,6 +167,46 @@ namespace TorchSharp.Utils
                 Type = type;
             }
         }
+
+        /// <summary>
+        /// A class representing an empty OrderedDict, which is used in the PyTorch serializing, for the
+        /// backward_hooks reconstructions. They recommend against serializing them, and we don't support
+        /// them.
+        /// </summary>
+        class EmptyOrderedDict
+        {
+            public static EmptyOrderedDict Instance => new EmptyOrderedDict();
+        }
+
+        /// <summary>
+        /// A wrapper class which just contains the tensor, in order for the pickler to be able to assign
+        /// the class to the TensorWrapper deconstructor
+        /// </summary>
+        class TensorWrapper
+        {
+            public torch.Tensor Tensor { get; set; }
+            public TensorWrapper(torch.Tensor tensor)
+            {
+                Tensor = tensor;
+            }
+        }
+
+        #endregion
+
+        #region CustomPicklersAndDeconstructors
+
+        // This region contains the custom picklers and class deconstructors.
+        // The way the pickle module serializes classes is by defining the name of the module, followed
+        // by the argument list for reconstructing the module. Since we use different classes in C#,
+        // we defined these deconstructor to recreate the structure of the Python classes/functions being used.
+
+        /// <summary>
+        /// A custom class pickler for pickling the Storage object the way PyTorch expects to recieve, as a 
+        /// class Module with no arguments for construction.
+        /// The reason we used a custom pickler instead of a class deconstructor, is because the name of the
+        /// module is dependent on the object being deconstructed, and using a custom pickler is more
+        /// efficient than defining a class deconstructor for each storage type. 
+        /// </summary>
         class StoragePickler : IObjectPickler
         {
             public void pickle(object o, Stream outs, Pickler currentPickler)
@@ -154,9 +217,11 @@ namespace TorchSharp.Utils
             }
         }
 
-        class EmptyOrderedDict {
-            public static EmptyOrderedDict Instance => new EmptyOrderedDict();
-        }
+        /// <summary>
+        /// A class deconstructor which given an EmptyOrderedDict, it deconstructs the object into the individual
+        /// members needed for reconstructing. The module in python is `collections.OrderedDict`, 
+        /// And the arguments for the constructor are what are returned by the `deconstruct` function.
+        /// </summary>
         class EmptyOrderedDictDeconstructor : IObjectDeconstructor
         {
             public string get_module()
@@ -171,17 +236,17 @@ namespace TorchSharp.Utils
 
             public object[] deconstruct(object obj)
             {
+                // Empty dictionary, so the argument will be an empty array. 
                 return new[] { Array.Empty<object>() };
             }
         }
-        class TensorWrapper
-        {
-            public torch.Tensor Tensor { get; set; }
-            public TensorWrapper(torch.Tensor tensor)
-            {
-                Tensor = tensor;
-            }
-        }
+
+        
+        /// <summary>
+        /// A class deconstructor which given a Tensor, it deconstructs the Tensor into the individual
+        /// members needed for reconstructing. The PyTorch reconstructor is a function `torch._utils._rebuild_tensor_v2`
+        /// And the arguments for that function are what are returned by the `deconstruct` function.
+        /// </summary>
         class TensorWrapperDeconstructor : IObjectDeconstructor
         {
             public string get_module()
@@ -197,8 +262,8 @@ namespace TorchSharp.Utils
             public object[] deconstruct(object obj)
             {
                 var tensor = ((TensorWrapper)obj).Tensor;
-                // Arg0: Tensor
-                // Arg 1: storage_offset 0
+                // Arg 0: Tensor
+                // Arg 1: storage_offset
                 // Arg 2: tensor_size (the dimension, is important)
                 // Arg 3: stride (we aren't reconstructing from stride, just inserting the bytes)
                 // Arg 4: requires_grad
@@ -213,5 +278,7 @@ namespace TorchSharp.Utils
                 };
             }
         }
+
+        #endregion
     }
 }
