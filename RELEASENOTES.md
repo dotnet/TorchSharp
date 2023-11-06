@@ -2,6 +2,12 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.101.2
+
+__Bug Fixes__:
+
+Fixed byte stream advancement issue in non-strict mode, ensuring proper skipping of non-existent parameters while loading models.
+
 ## NuGet Version 0.101.1
 
 This is a fast-follower bug fix release, addressing persistent issues with stability of using TorchScript from TorchSharp.
