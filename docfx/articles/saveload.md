@@ -15,17 +15,13 @@ model = [...]
 model.load_state_dict(torch.load('model_weights.pth'))
 ```
 
-This presents a couple of problems for a .NET implementation. 
-
-Python pickling is intimately coupled to Python and its runtime object model. It is a complex format that supports object graphs forming DAGs, faithfully maintaining all object state in the way necessary to restore the Python object later.
-
-In order to share models between .NET applications, Python pickling is not at all necessary, and even for moving model state from Python to .NET, it is overkill. The state of a model is a simple dictionary where the keys are strings and the values are tensors.
+The Python pickling system is intimately coupled to Python, so supporting it in .NET is complex. In order to share models between .NET applications, Python pickling is not at all necessary, as the state of a model is a simple dictionary where the keys are strings and the values are tensors.
 
 Therefore, TorchSharp, in its current form, implements its own very simple model serialization format, which allows models originating in either .NET or Python to be loaded using .NET, as long as the model was saved using the special format.
 
-The MNIST and AdversarialExampleGeneration examples in this repo rely on saving and restoring model state -- the latter example relies on a pre-trained model from MNST.
+That being said, TorchSharp does support loading and saving the model using the python format, described below.
 
-><br/>A future version of TorchSharp may include support for reading and writing Python pickle files directly.<br/><br/>
+The MNIST and AdversarialExampleGeneration examples in this repo rely on saving and restoring model state -- the latter example relies on a pre-trained model from MNST.
 
 ## How to use the TorchSharp format
 
@@ -46,24 +42,32 @@ For efficient memory management, the model should be created on the CPU before l
 
 ><br/>It is __critical__ that all submodules and buffers in a custom module or composed by a Sequential object have exactly the same name in the original and target models, since that is how persisted tensors are associated with the model into which they are loaded.<br/><br/>The CustomModule 'RegisterComponents' will automatically find all fields that are either modules or tensors, register the former as modules, and the latter as buffers. It registers all of these using the name of the field, just like the PyTorch Module base class does.<br/><br/>
 
-### Saving a TorchSharp format model in Python
+### How to use the PyTorch format
 
-If the model starts out in Python, there's a simple script that allows you to use code that is very similar to the Pytorch API to save models to the TorchSharp format. Rather than placing this trivial script in a Python package and publishing it, we choose to just refer you to the script file itself, [exportsd.py](../../src/Python/exportsd.py), which has all the necessary code.
+In C#, saving a model with the PyTorch format looks like this:
 
-```Python
-f = open("model_weights.dat", "wb")
-exportsd.save_state_dict(model.to("cpu").state_dict(), f)
-f.close()
+```C#
+model.save_py("model_weights.pth");
 ```
 
-### Loading a TorchSharp format model in Python
+And loading it again is done by:
 
-If the model starts out in TorchSharp, there's also a simple script that allows you to load TorchSharp models in Python. All the necessary code can be found in [importsd.py](../../src/Python/importsd.py). And there is an example for using the script:
-
-```Python
-f = open("model_weights.dat", "rb")
-model.load_state_dict(importsd.load_state_dict(f))
-f.close()
+```C#
+model = [...];
+model.load_py("model_weights.pth");
 ```
 
-Also, you can check [TestSaveSD.cs](../../test/TorchSharpTest/TestSaveSD.cs) and [pyimporttest.py](../../test/TorchSharpTest/pyimporttest.py) for more examples.
+Two notes regarding loading a python model:
+
+1. When loading in a PyTorch model, the command used for saving the model must be the same as above:
+    ```python
+    model = [...]
+    torch.save(model.state_dict(), 'model_weights.pth')
+    ```
+    If the model was saved differently then TorchSharp won't be able to load it in. For example:
+    ```python
+    model = [...]
+    torch.save(model, 'model.pth') # This won't work in TorchSharp
+    ```
+
+2. TorchSharp only supports the newer PyTorch save format (which uses a ZipFile), so if you have a model that was saved using the old format, you need to resave it using the new format before using it with TorchSharp.
