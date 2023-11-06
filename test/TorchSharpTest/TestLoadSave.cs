@@ -2553,60 +2553,31 @@ namespace TorchSharp
             );
         }
 #endif
-
         [Fact]
-        public void TestLoadNonStrictMode_MatchesParametersStatusCorrectly()
+        public void TestLoadNonStrictMode()
         {
-            // This model has two fields: _linear1, _linear2
-            var twoModel = new TwoLinearModel("TwoLinearModel");
-            twoModel.save("twomodel.dat");
+            // Create a model with multiple parameters, and then create another one with a subset
+            // of the parameters in a different order, to make sure that the non-strict load can handle it.
+            var model1 = Sequential(("linear1", Linear(2, 2)),
+                                    ("linear2", Linear(2, 2)),
+                                    ("linear3", Linear(2, 2)),
+                                    ("linear4", Linear(2, 2)),
+                                    ("linear5", Linear(2, 2)));
 
-            // This model has one field: _linear1
-            var oneModel = new OneLinearModel("OneLinearModel");
+            string filename = RandomFileName("dat");
+            model1.save(filename);
 
-            // Load in the two fields model in non strict mode, and make sure each field is matched correctly.
-            var loadedParameters = new Dictionary<string, bool>();
-            oneModel.load("twomodel.dat", strict: false, loadedParameters: loadedParameters);
+            var model2 = Sequential(("linear4", Linear(2, 2)),
+                                    ("linear2", Linear(2, 2)));
+            var loadedParams = new Dictionary<string, bool>();
+            model2.load(filename, strict: false, loadedParameters: loadedParams);
 
-            // _linear1.weight should be matched, _linear2.weight should not be matched
-            Assert.True(loadedParameters["_linear1.weight"]);
-            Assert.False(loadedParameters["_linear2.weight"]);
-        }
-
-
-
-        class TwoLinearModel : nn.Module<Tensor, Tensor>
-        {
-            private readonly Linear _linear1;
-            private readonly Linear _linear2;
-            public TwoLinearModel(string name) : base(name)
-            {
-                _linear1 = Linear(2, 2, hasBias: false);
-                _linear2 = Linear(2, 2, hasBias: false);
-
-                RegisterComponents();
-            }
-
-            public override Tensor forward(Tensor input)
-            {
-                return _linear2.forward(_linear1.forward(input));
-            }
-        }
-
-        class OneLinearModel : nn.Module<Tensor, Tensor>
-        {
-            private readonly Linear _linear1;
-            public OneLinearModel(string name) : base(name)
-            {
-                _linear1 = Linear(2, 2, hasBias: false);
-
-                RegisterComponents();
-            }
-
-            public override Tensor forward(Tensor input)
-            {
-                return _linear1.forward(input);
-            }
+            // Make sure that the loadedParams dictionary marks the loaded layers correctly
+            Assert.False(loadedParams["linear1.weight"]);
+            Assert.True(loadedParams["linear2.weight"]);
+            Assert.False(loadedParams["linear3.weight"]);
+            Assert.True(loadedParams["linear4.weight"]);
+            Assert.False(loadedParams["linear5.weight"]);
         }
     }
 }
