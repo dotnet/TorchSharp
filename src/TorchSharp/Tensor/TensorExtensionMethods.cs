@@ -421,7 +421,33 @@ namespace TorchSharp
             }
         }
 
-        public static void Load(ref Tensor tensor, System.IO.BinaryReader reader, bool skip = false)
+        /// <summary>
+        /// Load the tensor using a .NET-specific format.
+        /// </summary>
+        /// <param name="reader">A BinaryReader instance</param>
+        /// <param name="skip">If true, the data will be read from the stream, but not stored in the return tensor.</param>
+        /// <remarks>
+        /// Using skip returns an empty tensor with the dimensions of the tensor that was loaded.
+        /// </remarks>
+        public static Tensor Load(System.IO.BinaryReader reader, bool skip = false)
+        {
+            Tensor? t = null;
+            Load(ref t, reader, skip);
+            return t!;
+        }
+
+        /// <summary>
+        /// Load the tensor using a .NET-specific format.
+        /// </summary>
+        /// <param name="tensor">The tensor into which to load serialized data. If null, will create a new tensor.</param>
+        /// <param name="reader">A BinaryReader instance</param>
+        /// <param name="skip">If true, the data will be read from the stream, but not stored in the return tensor.</param>
+        /// <remarks>
+        /// Using skip returns an empty tensor with the dimensions of the tensor that was loaded.
+        /// </remarks>
+        /// <exception cref="NotImplementedException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public static void Load(ref Tensor? tensor, System.IO.BinaryReader reader, bool skip = false)
         {
             // First, read the type
             var type = (ScalarType)reader.Decode();

@@ -997,8 +997,13 @@ namespace TorchSharp
                             if (!found && strict)
                                 throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
 
-                            if (found) {
-                                sd[key].Load(reader, skip: skip.Contains(key));
+                            if (found && !skip.Contains(key)) {
+                                sd[key].Load(reader);
+                            }
+                            else {
+                                // Even if we are skipping this tensor, we need to load it in so that
+                                // the BinaryReader seeks forward in the input stream.
+                                TensorExtensionMethods.Load(reader, skip: true);
                             }
 
                             loadedParameters?.Add(key, found);
