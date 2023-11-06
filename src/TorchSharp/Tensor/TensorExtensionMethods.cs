@@ -413,10 +413,12 @@ namespace TorchSharp
             // This needs to be done even if the tensor is skipped, since we have to advance the input stream.
             var bytes = reader.ReadBytes((int)(totalSize * tensor.ElementSize));
 
-            var device = tensor.device;
-            if (device.type != DeviceType.CPU) tensor.to(CPU);
-            tensor.bytes = bytes;
-            tensor.to(device);
+            if (!skip) {
+                var device = tensor.device;
+                if (device.type != DeviceType.CPU) tensor.to(CPU);
+                tensor.bytes = bytes;
+                tensor.to(device);
+            }
         }
 
         /// <summary>
