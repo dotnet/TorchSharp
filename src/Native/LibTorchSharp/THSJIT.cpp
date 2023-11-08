@@ -58,10 +58,22 @@ void THSJIT_Module_to_device_dtype(JITModule module, int8_t dtype, int64_t devic
 
 void THSJIT_Module_to_device(JITModule module, int64_t device, int64_t index)
 {
-    c10::DeviceType dev = c10::kCPU;
-    if (device == 1)
-        dev = c10::kCUDA;
-    (*module)->to(torch::Device(dev, index));
+    c10::Device dev = (device == 1) ? torch::Device(c10::kCUDA, index) : torch::Device(c10::kCPU);
+
+    (*module)->to(dev);
+
+    auto attributes = (*module)->named_attributes();
+    int i = 0;
+    for (const auto& child : attributes) {
+        if (!child.name.empty() && child.value.isTensor())
+        {
+            auto& t = child.value.toTensor();
+            auto options = at::TensorOptions().device(dev).dtype(t.dtype());
+            auto moved = t.to(options);
+            (*module)->setattr(child.name, moved);
+        }
+    }
+
 }
 
 void THSJIT_Module_to_dtype(JITModule module, int8_t dtype)
@@ -149,6 +161,25 @@ void THSJIT_Module_named_buffers(const JITModule module,
         result[i] = new torch::Tensor(child.value);
         names[i] = make_sharable_string(child.name);
         i++;
+    }
+}
+
+void THSJIT_Module_named_attributes(const JITModule module,
+    Tensor* (*allocator)(size_t length),
+    const char** (*allocator2)(size_t length))
+{
+    auto attributes = (*module)->named_attributes();
+    Tensor* result = allocator(attributes.size());
+    const char** names = allocator2(attributes.size());
+    int i = 0;
+    for (const auto& child : attributes) {
+        if (!child.name.empty() && child.value.isTensor())
+        {
+            auto& t = child.value.toTensor();
+            result[i] = new torch::Tensor(child.value.toTensor());
+            names[i] = make_sharable_string(child.name);
+            i++;
+        }
     }
 }
 
