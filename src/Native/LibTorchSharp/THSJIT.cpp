@@ -53,7 +53,7 @@ void THSJIT_Module_to_device_dtype(JITModule module, int8_t dtype, int64_t devic
     c10::DeviceType dev = c10::kCPU;
     if (device == 1)
         dev = c10::kCUDA;
-    (*module)->to(torch::Device(dev, index), (at::ScalarType)dtype);
+    (*module)->to(torch::Device(dev, index));
 }
 
 void THSJIT_Module_to_device(JITModule module, int64_t device, int64_t index)
@@ -61,19 +61,6 @@ void THSJIT_Module_to_device(JITModule module, int64_t device, int64_t index)
     c10::Device dev = (device == 1) ? torch::Device(c10::kCUDA, index) : torch::Device(c10::kCPU);
 
     (*module)->to(dev);
-
-    auto attributes = (*module)->named_attributes();
-    int i = 0;
-    for (const auto& child : attributes) {
-        if (!child.name.empty() && child.value.isTensor())
-        {
-            auto& t = child.value.toTensor();
-            auto options = at::TensorOptions().device(dev).dtype(t.dtype());
-            auto moved = t.to(options);
-            (*module)->setattr(child.name, moved);
-        }
-    }
-
 }
 
 void THSJIT_Module_to_dtype(JITModule module, int8_t dtype)

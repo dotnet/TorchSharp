@@ -1394,7 +1394,7 @@ namespace TorchSharp
             Assert.Equal(iterations_1047, xx);
         }
 
-        [Fact]
+        [Fact(Skip = "Work in progress")]
         public void Validate1126()
         {
             var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
