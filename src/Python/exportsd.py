@@ -39,6 +39,11 @@ def _write_tensor(t, stream):
         stream.write(leb128.u.encode(s))
     stream.write(t.numpy().tobytes())
 
+def write_tensor(t, file_name):
+    f = open(file_name, "wb")
+    _write_tensor(t, f)
+    f.close()
+
 def save_state_dict(sd, stream):
     """
     Saves a PyToch state dictionary using the format that TorchSharp can
