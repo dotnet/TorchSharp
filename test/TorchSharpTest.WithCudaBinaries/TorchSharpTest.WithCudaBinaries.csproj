@@ -116,6 +116,9 @@
     <None Include="..\TorchSharpTest\shakespeare.pt.zip" Link="shakespeare.pt.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="..\TorchSharpTest\tensor2345.dat" Link="tensor2345.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\TorchSharpTest\tuple_out.dat" Link="tuple_out.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
