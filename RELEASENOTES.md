@@ -8,6 +8,7 @@ __API Changes__:
 
 Added extension method `ScalarType.ElementSize()` to get the size of each element of a given ScalarType.<br/>
 Added methods for loading and saving individual tensors with more overloads.<br/>
+Added 'persistent' flag to register_buffer()<br/>
 
 __Bug Fixes__:
 
