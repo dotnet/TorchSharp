@@ -4,6 +4,10 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.101.2
 
+__API Changes__:
+
+Added extension method `ScalarType.ElementSize()` to get the size of each element of a given ScalarType.
+
 __Bug Fixes__:
 
 Fixed byte stream advancement issue in non-strict mode, ensuring proper skipping of non-existent parameters while loading models.
