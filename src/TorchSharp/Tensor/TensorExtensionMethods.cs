@@ -283,6 +283,31 @@ namespace TorchSharp
         }
 
         /// <summary>
+        /// Get the size of each element of this ScalarType.
+        /// </summary>
+        /// <param name="type">The input type.</param>
+        /// <returns>The element size</returns>
+        /// <exception cref="NotImplementedException">Invalid ScalarType</exception>
+        public static int ElementSize(this ScalarType type)
+        {
+            return type switch {
+                ScalarType.Byte => 1,
+                ScalarType.Int8 => 1,
+                ScalarType.Int16 => 2,
+                ScalarType.Int32 => 4,
+                ScalarType.Int64 => 8,
+                ScalarType.Float16 => 2,
+                ScalarType.Float32 => 4,
+                ScalarType.Float64 => 8,
+                ScalarType.ComplexFloat32 => 8,
+                ScalarType.ComplexFloat64 => 16,
+                ScalarType.Bool => 1,
+                ScalarType.BFloat16 => 2,
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        /// <summary>
         /// Indicates whether a given element type is integral.
         /// </summary>
         /// <param name="type">The input type.</param>
