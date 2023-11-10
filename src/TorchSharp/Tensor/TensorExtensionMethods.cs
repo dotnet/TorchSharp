@@ -417,7 +417,7 @@ namespace TorchSharp
         /// <param name="location">A file path.</param>
         public static void Save(this Tensor tensor, string location)
         {
-            tensor.Save(System.IO.File.OpenWrite(location));
+            tensor.Save(System.IO.File.Create(location));
         }
 
         /// <summary>
