@@ -1243,7 +1243,7 @@ namespace TorchSharp
 
                 // This last module validation check is dependent on the custom Sequential
                 // and its logic. There is no boilerplace solution.
-                switch (modules[stop-1].module) {
+                switch (modules[stop - 1].module) {
                 case torch.nn.Module<torch.Tensor, torch.Tensor> m:
                     break;
                 default:
@@ -3099,6 +3099,31 @@ namespace TorchSharp
             private Parameter p1 = new Parameter(torch.zeros(5, 5, 5), true);
         }
 
+        [Fact]
+        public void TestNonPersistentBuffer1()
+        {
+            var model = new TestNonPersistentBufferModel1("TestNonPersistentBuffer");
+
+            var sd = model.state_dict();
+            // Make sure that it's saved in the state_dict correctly, with and without custom attribute
+            Assert.True(sd.ContainsKey("_linear1.weight"));
+            Assert.True(sd.ContainsKey("_linear2.weight"));
+            Assert.False(sd.ContainsKey("_buffer"));
+        }
+
+
+        [Fact]
+        public void TestNonPersistentBuffer2()
+        {
+            var model = new TestNonPersistentBufferModel2();
+
+            var sd = model.state_dict();
+            // Make sure that it's saved in the state_dict correctly, with and without custom attribute
+            Assert.True(sd.ContainsKey("0.weight"));
+            Assert.True(sd.ContainsKey("1.weight"));
+            Assert.False(sd.ContainsKey("_buffer"));
+        }
+
         private class TestCustomNameModel : nn.Module<Tensor, Tensor>
         {
             [ComponentName(Name = "custom_linear")]
@@ -3118,6 +3143,55 @@ namespace TorchSharp
                 return _linear2.forward(_linear1.forward(input));
             }
         }
+
+        private class TestNonPersistentBufferModel1 : nn.Module<Tensor, Tensor>
+        {
+            private Linear _linear1;
+            private Linear _linear2;
+
+            private Tensor _buffer;
+
+            public TestNonPersistentBufferModel1(string name) : base(name)
+            {
+                _linear1 = Linear(5, 5, hasBias: false);
+                _linear2 = Linear(5, 5, hasBias: false);
+
+                RegisterComponents();
+
+                _buffer = torch.zeros(5);
+
+                register_buffer("_buffer", _buffer, false);
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                return _linear2.forward(_linear1.forward(input));
+            }
+        }
+
+        private class TestNonPersistentBufferModel2 : Modules.Sequential<Tensor, Tensor>
+        {
+            private Tensor _buffer;
+
+            public TestNonPersistentBufferModel2() : base(Linear(5, 5, hasBias: false), Linear(5, 5, hasBias: false))
+            {
+                RegisterComponents();
+
+                _buffer = torch.zeros(5);
+
+                register_buffer("_buffer", _buffer, false);
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                foreach (var c in children()) {
+                    var m = c as Module<Tensor,Tensor>;
+                    input = m!.forward(input);
+                }
+                return input + _buffer;
+            }
+        }
+
         #endregion
 
         #region Pooling
@@ -5196,10 +5270,10 @@ namespace TorchSharp
             foreach (var device in TestUtils.AvailableDevices()) {
                 var data = torch.rand(new long[] { 1, 3 * 2 * 2, 12 }, device: device);
 
-                using (var flat = Fold((4,5), (2,2))) {
+                using (var flat = Fold((4, 5), (2, 2))) {
                     var output = flat.call(data);
                     Assert.Equal(device.type, output.device_type);
-                    Assert.Equal(new long[] { 1, 3, 4, 5}, output.shape);
+                    Assert.Equal(new long[] { 1, 3, 4, 5 }, output.shape);
                 }
                 {
                     var output = functional.fold(data, (4, 5), (2, 2));
@@ -5332,7 +5406,7 @@ namespace TorchSharp
                     Assert.Equal(values[4], values[2]);
                 }
 
-                using (var pad = ReflectionPad2d((3,3,3,3))) {
+                using (var pad = ReflectionPad2d((3, 3, 3, 3))) {
                     var output = pad.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);

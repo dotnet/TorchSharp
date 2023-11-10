@@ -22,6 +22,15 @@ namespace TorchSharp
             return $"_STR{rand.Next()}.{extension}";
         }
 
+        [Fact]
+        private void TestLoadSingleTensor()
+        {
+            using var tensor = Tensor.Load("tensor2345.dat");
+
+            Assert.NotNull(tensor);
+            Assert.Equal(new long[] { 2, 3, 4, 5 }, tensor.shape);
+        }
+
 #if false
         [Fact]
         public void TestSaveLoadLinear1()

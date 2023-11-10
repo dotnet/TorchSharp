@@ -46,6 +46,18 @@ namespace TorchSharp
                     return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
                 }
 
+                public (string name, Tensor buffer)[] named_attributes()
+                {
+                    using var pa = new PinnedArray<IntPtr>();
+                    using var sa = new PinnedArray<IntPtr>();
+                    THSJIT_Module_named_attributes(handle, pa.CreateArray, sa.CreateArray);
+                    CheckForErrors();
+                    var ptrArray = pa.Array;
+                    var strArray = sa.Array;
+
+                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
+                }
+
                 /// <summary>
                 /// Returns an enumerable of all modules in the network, yielding both the name of the module as well as the module itself.
                 /// </summary>

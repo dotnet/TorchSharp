@@ -27,6 +27,9 @@ namespace TorchSharp.PInvoke
         internal static extern void THSJIT_Module_named_buffers(torch.nn.Module.HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
         [DllImport("LibTorchSharp")]
+        internal static extern void THSJIT_Module_named_attributes(torch.nn.Module.HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
+
+        [DllImport("LibTorchSharp")]
         internal static extern void THSJIT_Module_named_modules(torch.nn.Module.HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
 
         [DllImport("LibTorchSharp")]

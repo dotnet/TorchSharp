@@ -492,6 +492,69 @@ namespace TorchSharp
             return new Tensor(handle);
         }
 
+        #region Loading a tensor from a stream
+        public partial class Tensor
+        {
+            /// <summary>
+            /// Load a tensor using a .NET-specific format.
+            /// </summary>
+            /// <param name="reader">A BinaryReader instance</param>
+            public static Tensor Load(System.IO.BinaryReader reader)
+            {
+                // First, read the type
+                var type = (ScalarType)reader.Decode();
+
+                // Then, the shape
+                var shLen = reader.Decode();
+                long[] loadedShape = new long[shLen];
+
+                long totalSize = 1;
+                for (int i = 0; i < shLen; ++i) {
+                    loadedShape[i] = reader.Decode();
+                    totalSize *= loadedShape[i];
+                }
+
+                //
+                // TODO: Fix this so that you can read large tensors. Right now, they are limited to 2GB
+                //
+                if (totalSize > int.MaxValue)
+                    throw new NotImplementedException("Loading tensors larger than 2GB");
+
+                var tensor = torch.empty(loadedShape, dtype: type);
+
+                var bytes = reader.ReadBytes((int)(totalSize * type.ElementSize()));
+
+                tensor.bytes = bytes;
+
+                return tensor;
+            }
+
+            /// <summary>
+            /// Load a tensor using a .NET-specific format.
+            /// </summary>
+            /// <param name="stream">A stream opened for reading binary data.</param>
+            public static Tensor Load(System.IO.Stream stream)
+            {
+                using var reader = new System.IO.BinaryReader(stream);
+                return Load(reader);
+            }
+
+            /// <summary>
+            /// Load a tensor using a .NET-specific format.
+            /// </summary>
+            /// <param name="location">A file name.</param>
+            public static Tensor Load(string location)
+            {
+                if (!System.IO.File.Exists(location))
+                    throw new System.IO.FileNotFoundException(location);
+
+                using var stream = System.IO.File.OpenRead(location);
+                return Load(stream);
+            }
+        }
+        #endregion
+
+        #region Private declarations
         private static void ValidateIntegerRange(long value, ScalarType dtype, string argument)
         {
             switch (dtype) {
@@ -523,5 +586,6 @@ namespace TorchSharp
         {
             deleters = new ConcurrentDictionary<TorchSharp.PInvoke.GCHandleDeleter, TorchSharp.PInvoke.GCHandleDeleter>();
         }
+        #endregion
     }
 }

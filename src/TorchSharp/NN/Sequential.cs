@@ -73,7 +73,7 @@ namespace TorchSharp
                 }
             }
 
-            public override IEnumerable<(string name, Tensor buffer)> named_buffers(bool recurse = true)
+            public override IEnumerable<(string name, Tensor buffer)> named_buffers(bool recurse = true, bool include_persistent = true)
             {
                 if (!recurse) yield break;
 
@@ -81,7 +81,7 @@ namespace TorchSharp
                 seen.Add(IntPtr.Zero);           // Ignore invalid buffers
 
                 for (var i = 0; i < _names.Count; i++) {
-                    foreach (var (n, p) in ((torch.nn.Module)_modules[i]).named_buffers(true)) {
+                    foreach (var (n, p) in ((torch.nn.Module)_modules[i]).named_buffers(true, include_persistent)) {
                         if (seen.Contains(p.handle)) continue;
                         seen.Add(p.handle);
                         yield return ($"{_names[i]}.{n}", p);

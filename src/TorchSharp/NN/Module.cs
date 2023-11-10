@@ -454,22 +454,23 @@ namespace TorchSharp
                 /// Returns an enumerable of module buffers, yielding both the name of the buffer as well as the buffer itself.
                 /// </summary>
                 /// <param name="recurse">If true, then yields buffers of this module and all submodules. Otherwise, yields only buffers that are direct members of this module.</param>
+                /// <param name="include_nonpersistent">Include buffers that are not persistent.</param>
                 /// <returns>(string, torch.Tensor) – Tuple containing the name and buffer</returns>
-                public virtual IEnumerable<(string name, Tensor buffer)> named_buffers(bool recurse = true)
+                public virtual IEnumerable<(string name, Tensor buffer)> named_buffers(bool recurse = true, bool include_nonpersistent = true)
                 {
                     var seen = new HashSet<IntPtr>();
                     seen.Add(IntPtr.Zero);              // Ignore invalid buffers.
 
                     foreach (var nsm in _internal_buffers) {
-                        if (seen.Contains(nsm.Item2.handle)) continue;
-                        seen.Add(nsm.Item2.handle);
-                        yield return nsm;
+                        if (seen.Contains(nsm.Item2.Item1.handle) || !nsm.Item2.Item2) continue;
+                        seen.Add(nsm.Item2.Item1.handle);
+                        yield return (nsm.Item1, nsm.Item2.Item1);
                     }
 
                     if (!recurse) yield break;
 
                     foreach (var (submoduleName, subModule) in _internal_submodules) {
-                        foreach (var (bufferName, buffer) in subModule.named_buffers(true)) {
+                        foreach (var (bufferName, buffer) in subModule.named_buffers(true, include_nonpersistent)) {
                             if (seen.Contains(buffer.handle)) continue;
                             seen.Add(buffer.handle);
                             yield return ($"{submoduleName}.{bufferName}", buffer);
@@ -481,7 +482,9 @@ namespace TorchSharp
                 /// <summary>
                 /// Returns an enumerable of buffers.
                 /// </summary>
-                public virtual IEnumerable<Tensor> buffers(bool recurse = true) => named_buffers(recurse).Select(np => np.buffer);
+                /// <param name="recurse">If true, then yields buffers of this module and all submodules. Otherwise, yields only buffers that are direct members of this module.</param>
+                /// <param name="include_nonpersistent">Include buffers that are not persistent.</param>
+                public virtual IEnumerable<Tensor> buffers(bool recurse = true, bool include_nonpersistent = true) => named_buffers(recurse, include_nonpersistent).Select(np => np.buffer);
 
                 /// <summary>
                 /// Returns an enumerable of immediate children modules, yielding both the name of the module as well as the module itself.
@@ -534,7 +537,7 @@ namespace TorchSharp
                         destination.TryAdd(key, p.Item2);
                     }
 
-                    foreach (var p in named_buffers()) {
+                    foreach (var p in named_buffers(include_nonpersistent: false) ) {
                         var key = string.IsNullOrEmpty(prefix) ? $"{p.name}" : $"{prefix}.{p.name}";
                         destination.TryAdd(key, p.Item2);
                     }
@@ -701,7 +704,7 @@ namespace TorchSharp
                 {
                     if (target is null) throw new ArgumentNullException("target");
                     if (_internal_buffers.TryGetValue(target, out var buffer)) {
-                        return buffer;
+                        return buffer.Item1;
                     }
 
                     var splits = target.Split('.');
@@ -744,15 +747,17 @@ namespace TorchSharp
                 /// <param name="name">Name of the buffer. The buffer can be accessed from this module using the given name</param>
                 /// <param name="tensor">
                 /// Buffer to be registered. If null, then operations that run on buffers, such as cuda(), are ignored.
-                /// If null, the buffer is not included in the module’s state_dict.</param>
+                /// If null, the buffer is not included in the module’s state_dict.
+                /// </param>
+                /// <param name="persistent">Whether the buffer is part of this module’s state_dict.</param>
                 /// <exception cref="ArgumentNullException"></exception>
                 /// <exception cref="InvalidOperationException"></exception>
-                public virtual void register_buffer(string name, Tensor tensor)
+                public virtual void register_buffer(string name, Tensor tensor, bool persistent = true)
                 {
                     if (tensor is null || tensor.handle == IntPtr.Zero)
                         throw new ArgumentNullException(nameof(tensor), "A null tensor cannot be registered as a buffer.");
 
-                    if (!_internal_buffers.TryAdd(name, tensor))
+                    if (!_internal_buffers.TryAdd(name, (tensor, persistent)))
                         throw new InvalidOperationException($"Tensor {name} is already registered.");
                 }
 
@@ -837,7 +842,7 @@ namespace TorchSharp
                     }
                 }
 
-                protected void ConditionallyRegisterBuffer(string name, Tensor value)
+                protected void ConditionallyRegisterBuffer(string name, Tensor value, bool persistent = true)
                 {
                     if (value is null) {
                         if (_internal_buffers.ContainsKey(name)) {
@@ -845,9 +850,9 @@ namespace TorchSharp
                         }
                     } else {
                         if (_internal_buffers.ContainsKey(name)) {
-                            _internal_buffers[name] = value;
+                            _internal_buffers[name] = (value, persistent);
                         } else {
-                            _internal_buffers.Add(name, value);
+                            _internal_buffers.Add(name, (value, persistent));
                         }
                     }
                 }
@@ -1140,7 +1145,7 @@ namespace TorchSharp
                 private bool _areComponentsRegistered;
 
                 protected Utils.OrderedDict<string, Module> _internal_submodules = new Utils.OrderedDict<string, Module>();
-                protected Utils.OrderedDict<string, Tensor> _internal_buffers = new Utils.OrderedDict<string, Tensor>();
+                protected Utils.OrderedDict<string, (Tensor, bool)> _internal_buffers = new Utils.OrderedDict<string, (Tensor, bool)>();
                 protected Utils.OrderedDict<string, Parameter> _internal_params = new Utils.OrderedDict<string, Parameter>();
 
                 /// Keeps the callback delegate alive
