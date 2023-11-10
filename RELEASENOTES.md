@@ -6,11 +6,13 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __API Changes__:
 
-Added extension method `ScalarType.ElementSize()` to get the size of each element of a given ScalarType.
+Added extension method `ScalarType.ElementSize()` to get the size of each element of a given ScalarType.<br/>
+Added methods for loading and saving individual tensors with more overloads.<br/>
+Added 'persistent' flag to register_buffer()<br/>
 
 __Bug Fixes__:
 
-Fixed byte stream advancement issue in non-strict mode, ensuring proper skipping of non-existent parameters while loading models.
+Fixed byte stream advancement issue in non-strict mode, ensuring proper skipping of non-existent parameters while loading models.<br/>
 
 ## NuGet Version 0.101.1
 

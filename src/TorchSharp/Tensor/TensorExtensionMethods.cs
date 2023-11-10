@@ -8,6 +8,7 @@ using static TorchSharp.Utils.LEB128Codec;
 
 namespace TorchSharp
 {
+    using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
     using static torch;
 
     public enum TensorStringStyle
@@ -370,8 +371,8 @@ namespace TorchSharp
         /// <summary>
         /// Save the tensor in a .NET-specific format.
         /// </summary>
-        /// <param name="tensor"></param>
-        /// <param name="writer"></param>
+        /// <param name="tensor">The tensor to save</param>
+        /// <param name="writer">A BinaryWriter instance.</param>
         public static void Save(this Tensor tensor, System.IO.BinaryWriter writer)
         {
             bool copied = false;
@@ -395,6 +396,28 @@ namespace TorchSharp
 #endif // NETSTANDARD2_0_OR_GREATER
 
             if (copied) tensor.Dispose();
+        }
+
+        /// <summary>
+        /// Save the tensor in a .NET-specific format.
+        /// </summary>
+        /// <param name="tensor">The tensor to save</param>
+        /// <param name="stream">A stream opened for writing binary data.</param>
+        public static void Save(this Tensor tensor, System.IO.Stream stream)
+        {
+            using var writer = new System.IO.BinaryWriter(stream);
+            tensor.Save(writer);
+            stream.Flush();
+        }
+
+        /// <summary>
+        /// Save the tensor in a .NET-specific format.
+        /// </summary>
+        /// <param name="tensor">The tensor to save</param>
+        /// <param name="location">A file path.</param>
+        public static void Save(this Tensor tensor, string location)
+        {
+            tensor.Save(System.IO.File.Create(location));
         }
 
         /// <summary>
