@@ -46,6 +46,18 @@ For efficient memory management, the model should be created on the CPU before l
 
 ><br/>It is __critical__ that all submodules and buffers in a custom module or composed by a Sequential object have exactly the same name in the original and target models, since that is how persisted tensors are associated with the model into which they are loaded.<br/><br/>The CustomModule 'RegisterComponents' will automatically find all fields that are either modules or tensors, register the former as modules, and the latter as buffers. It registers all of these using the name of the field, just like the PyTorch Module base class does.<br/><br/>
 
+### TorchSharp.PyBridge: An Alternate Approach
+
+For those seeking additional flexibility, especially in a mixed .NET and Python environment, TorchSharp.PyBridge offers an alternative approach. Developed by Shaltiel Shmidman, this extension library facilitates seamless interoperability between .NET and Python for model serialization, simplifying the process of saving and loading PyTorch models in a .NET environment.
+
+Key features include:
+
+- `load_py` Method: Easily load PyTorch models saved in the standard Python format directly into TorchSharp.
+
+- `save_py` Method: Save TorchSharp models in a format that can be directly loaded in PyTorch, offering cross-platform model compatibility.
+
+Please note that TorchSharp.PyBridge is not maintained by the TorchSharp team and is an independent extension package. For detailed usage instructions, limitations, and more information, visit [TorchSharp.PyBridge on GitHub](https://github.com/shaltielshmid/TorchSharp.PyBridge).
+
 ### Saving a TorchSharp format model in Python
 
 If the model starts out in Python, there's a simple script that allows you to use code that is very similar to the Pytorch API to save models to the TorchSharp format. Rather than placing this trivial script in a Python package and publishing it, we choose to just refer you to the script file itself, [exportsd.py](../../src/Python/exportsd.py), which has all the necessary code.
