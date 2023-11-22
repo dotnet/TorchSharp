@@ -149,11 +149,13 @@ namespace TorchSharp
 
                 public class StateDictionary
                 {
-                    internal StateDictionary() { Options = new List<OptimizerOptions>(); State = new List<OptimizerState>(); }
+                    internal StateDictionary() { Options = new List<OptimizerOptions>(); State = new List<OptimizerState>(); StateIndexRef = new List<List<int>>(); }
 
                     public List<OptimizerOptions> Options { get; private set; }
 
                     public List<OptimizerState> State { get; private set; }
+
+                    public List<List<int>> StateIndexRef { get; private set; }
                 }
 
                 public virtual IEnumerable<ILearningRateController> ParamGroups {
@@ -361,11 +363,15 @@ namespace TorchSharp
 
                     dict.Options.Add(pg.Options);
 
-                    foreach (var p in pg.Parameters) {
+                    var indexRef = new List<int>();
+                    dict.StateIndexRef.Add(indexRef);
 
+                    foreach (var p in pg.Parameters) {
+                        indexRef.Add(dict.State.Count);
                         dict.State.Add(_state[p.Handle]);
                         pridx++;
                     }
+
                     pgidx--;
                 }
                 return dict;
