@@ -244,6 +244,22 @@ namespace TorchSharp
                         square_avg.allclose(rhs.square_avg) &&
                         acc_delta.allclose(rhs.acc_delta);
                 }
+
+                /// <summary>
+                /// Initialize the values of the state to the initial values.
+                /// </summary>
+                /// <param name="p">The parameter the state is attached to</param>
+                /// <param name="options">The optimizer options</param>
+                public override void Initialize(Parameter p, OptimizerOptions options)
+                {
+                    // Dispose the old tensors, if this is a re-initialization.
+                    this.square_avg?.Dispose();
+                    this.acc_delta?.Dispose();
+
+                    this.step = 0;
+                    this.square_avg = torch.zeros_like(p).DetachFromDisposeScope();
+                    this.acc_delta = torch.zeros_like(p).DetachFromDisposeScope();
+                }
             }
 
             /// <summary>
@@ -274,9 +290,7 @@ namespace TorchSharp
                 foreach (var p in param_group.Parameters) {
                     var state = new State();
                     _state[p.Handle] = state;
-                    state.step = 0;
-                    state.square_avg = torch.zeros_like(p).DetachFromDisposeScope();
-                    state.acc_delta = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.Initialize(p, param_group.Options);
                 }
             }
 

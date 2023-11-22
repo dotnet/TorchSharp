@@ -282,6 +282,23 @@ namespace TorchSharp
                         exp_avg.allclose(rhs.exp_avg) &&
                         exp_avg_sq.allclose(rhs.exp_avg_sq);
                 }
+
+                /// <summary>
+                /// Initialize the values of the state to the initial values.
+                /// </summary>
+                /// <param name="p">The parameter the state is attached to</param>
+                /// <param name="options">The optimizer options</param>
+                public override void Initialize(Parameter p, OptimizerOptions options)
+                {
+                    // Dispose the old tensors, if this is a re-initialization.
+                    this.exp_avg?.Dispose();
+                    this.exp_avg_sq?.Dispose();
+
+                    this.step = 0;
+                    this.mu_product = 1;
+                    this.exp_avg = torch.zeros_like(p).DetachFromDisposeScope();
+                    this.exp_avg_sq = torch.zeros_like(p).DetachFromDisposeScope();
+                }
             }
 
             /// <summary>
@@ -313,9 +330,7 @@ namespace TorchSharp
                 foreach (var p in param_group.Parameters) {
                     var state = new State();
                     _state[p.Handle] = state;
-                    state.step = 0;
-                    state.exp_avg = torch.zeros_like(p).DetachFromDisposeScope();
-                    state.exp_avg_sq = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.Initialize(p, opt);
                 }
             }
 

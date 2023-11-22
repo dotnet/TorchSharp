@@ -292,6 +292,24 @@ namespace TorchSharp
                         grad_avg.allclose(rhs.grad_avg) &&
                         momentum_buffer.allclose(rhs.momentum_buffer);
                 }
+
+                /// <summary>
+                /// Initialize the values of the state to the initial values.
+                /// </summary>
+                /// <param name="p">The parameter the state is attached to</param>
+                /// <param name="options">The optimizer options</param>
+                public override void Initialize(Parameter p, OptimizerOptions options)
+                {
+                    // Dispose the old tensors, if this is a re-initialization.
+                    this.square_avg?.Dispose();
+                    this.grad_avg?.Dispose();
+                    this.momentum_buffer?.Dispose();
+
+                    this.step = 0;
+                    this.square_avg = torch.zeros_like(p).DetachFromDisposeScope();
+                    this.grad_avg = torch.zeros_like(p).DetachFromDisposeScope();
+                    this.momentum_buffer = torch.zeros_like(p).DetachFromDisposeScope();
+                }
             }
 
             /// <summary>
@@ -324,9 +342,7 @@ namespace TorchSharp
                 foreach (var p in param_group.Parameters) {
                     var state = new State();
                     _state[p.Handle] = state;
-                    state.square_avg = torch.zeros_like(p).DetachFromDisposeScope();
-                    state.grad_avg = torch.zeros_like(p).DetachFromDisposeScope();
-                    state.momentum_buffer = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.Initialize(p, opt);
                 }
             }
             public class Options : Modules.OptimizerOptions

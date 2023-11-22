@@ -536,6 +536,13 @@ namespace TorchSharp
             }
 
             /// <summary>
+            /// Initialize the values of the state to the initial values.
+            /// </summary>
+            /// <param name="p">The parameter the state is attached to</param>
+            /// <param name="options">The optimizer options</param>
+            public abstract void Initialize(Parameter p, OptimizerOptions options);
+            
+            /// <summary>
             /// Move all the state to the indicated device.
             /// </summary>
             /// <param name="device">The device to move all state to.</param>
