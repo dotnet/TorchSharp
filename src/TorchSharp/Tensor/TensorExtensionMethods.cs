@@ -699,9 +699,12 @@ namespace TorchSharp
             if (torch.ToScalarType(typeof(T)) != tensor.dtype)
                 throw new ArgumentException("Tensor type different from requested array type");
 
-            using torch.Tensor tmp = tensor.detach();
+            using var d = torch.NewDisposeScope();
+
+            // always move it to the cpu, we can't read gpu bytes
+            tensor = tensor.detach().cpu();
             // Convert the bytes to a float
-            return MemoryMarshal.Cast<byte, T>(tmp.bytes).ToArray();
+            return MemoryMarshal.Cast<byte, T>(tensor.bytes).ToArray();
         }
 
         /// <summary>
