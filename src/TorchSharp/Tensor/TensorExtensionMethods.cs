@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using static TorchSharp.Utils.LEB128Codec;
 
 namespace TorchSharp
@@ -683,6 +684,74 @@ namespace TorchSharp
         /// </summary>
         /// <param name="value">The input tensor</param>
         public static System.Numerics.Complex ToComplex64(this Tensor value) => value.ToScalar().ToComplexFloat64();
+
+
+
+        /// <summary>
+        /// Converts a given torch.Tensor to an native C# array.
+        /// </summary>
+        /// <param name="tensor">The torch.Tensor to convert.</param>
+        /// <returns>An array (T[]) representation of the tensor.</returns>
+        public static T[] ToArray<T>(this torch.Tensor tensor) where T : unmanaged
+        {
+            if (tensor.Dimensions != 1)
+                throw new ArgumentOutOfRangeException(nameof(tensor), "Cannot convert tensor of != 1 dimension to array");
+            if (torch.ToScalarType(typeof(T)) != tensor.dtype)
+                throw new ArgumentException("Tensor type different from requested array type");
+
+            using torch.Tensor tmp = tensor.detach();
+            // Convert the bytes to a float
+            return MemoryMarshal.Cast<byte, T>(tmp.bytes).ToArray();
+        }
+
+        /// <summary>
+        /// Converts a given torch.Tensor to a 2D jagged array (array of arrays).
+        /// </summary>
+        /// <param name="tensor">The torch.Tensor to convert.</param>
+        /// <returns>A jagged array (T[][]) representation of the tensor.</returns>
+        public static T[][] To2DJaggedArray<T>(this torch.Tensor tensor) where T : unmanaged
+        {
+            if (tensor.Dimensions != 2)
+                throw new ArgumentOutOfRangeException(nameof(tensor), "Cannot convert tensor of != 2 dimension to a 2d jagged array");
+            if (torch.ToScalarType(typeof(T)) != tensor.dtype)
+                throw new ArgumentException("Tensor type different from requested array type");
+            // For the temporaries created with indexing
+            using var d = torch.NewDisposeScope();
+
+            int dim0 = (int)tensor.size(0);
+            var ret = new T[dim0][];
+            for (int i = 0; i < dim0; i++)
+                ret[i] = tensor[i].ToArray<T>();
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Converts a given torch.Tensor to a 2D multi-dimensional array.
+        /// </summary>
+        /// <param name="tensor">The torch.Tensor to convert.</param>
+        /// <returns>A multi-dimensional array (T[,]) representation of the tensor.</returns>
+        public static T[,] To2DArray<T>(this torch.Tensor tensor) where T : unmanaged
+        {
+            if (tensor.Dimensions != 2)
+                throw new ArgumentOutOfRangeException(nameof(tensor), "Cannot convert tensor of != 2 dimension to a 2d array");
+            if (torch.ToScalarType(typeof(T)) != tensor.dtype)
+                throw new ArgumentException("Tensor type different from requested array type");
+            // For the temporaries created with indexing
+            using var d = torch.NewDisposeScope();
+
+            // Convert each row into an array and copy into the 2d array
+            int dim0 = (int)tensor.size(0);
+            int dim1 = (int)tensor.size(1);
+            int elemSize = tensor.dtype.ElementSize();
+            var ret = new T[dim0, dim1];
+            // The 2d array is stored in memory as row-major, so we just need to jump forward row*dim1
+            // BlockCopy works on the byte level, so specify that. 
+            for (int i = 0; i < dim0; i++)
+                Buffer.BlockCopy(tensor[i].ToArray<T>(), 0, ret, i * dim1 * elemSize, dim1 * elemSize);
+
+            return ret;
+        }
 
         /// <summary>
         /// Multiply the dimensions of a tensor shape to provide a complete size.

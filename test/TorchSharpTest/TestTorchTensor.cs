@@ -80,6 +80,138 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(TensorExtensionMethods.ToArray))]
+        public void Test1DToArray()
+        {
+            Tensor t = torch.arange(4);
+            // Run the test with int, bool, float
+            {
+                // int test: (0, 1, 2, 3)
+                using var tint = t.@int();
+                int[] arr = tint.ToArray<int>();
+
+                Assert.Equal(4, arr.Length);
+                Assert.Equal(0, arr[0]);
+                Assert.Equal(1, arr[1]);
+                Assert.Equal(2, arr[2]);
+                Assert.Equal(3, arr[3]);
+            }
+            {
+                // bool test: (F, T, T, T)
+                using var tbool = t.@bool();
+                bool[] arr = tbool.ToArray<bool>();
+
+                Assert.Equal(4, arr.Length);
+                Assert.False(arr[0]);
+                Assert.True(arr[1]);
+                Assert.True(arr[2]);
+                Assert.True(arr[3]);
+            }
+            {
+                // float test: multiply by 0.5 to get floating point values (0, 0.5, 1, 1.5)
+                using var tfloat = t.@float() * 0.5;
+                float[] arr = tfloat.ToArray<float>();
+
+                Assert.Equal(4, arr.Length);
+                Assert.Equal(0f, arr[0]);
+                Assert.Equal(0.5f, arr[1]);
+                Assert.Equal(1f, arr[2]);
+                Assert.Equal(1.5f, arr[3]);
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(TensorExtensionMethods.To2DArray))]
+        public void Test2DToArray()
+        {
+            Tensor t = torch.arange(4).reshape(2, 2);
+            // Run the test with int, bool, float
+            {
+                // int test: (0, 1), (2, 3)
+                using var tint = t.@int();
+                int[,] arr = tint.To2DArray<int>();
+
+                Assert.Equal(2, arr.GetLength(0));
+                Assert.Equal(2, arr.GetLength(1));
+                Assert.Equal(0, arr[0, 0]);
+                Assert.Equal(1, arr[0, 1]);
+                Assert.Equal(2, arr[1, 0]);
+                Assert.Equal(3, arr[1, 1]);
+            }
+            {
+                // bool test: (F, T), (T, T)
+                using var tbool = t.@bool();
+                bool[,] arr = tbool.To2DArray<bool>();
+
+                Assert.Equal(2, arr.GetLength(0));
+                Assert.Equal(2, arr.GetLength(1));
+                Assert.False(arr[0, 0]);
+                Assert.True(arr[0, 1]);
+                Assert.True(arr[1, 0]);
+                Assert.True(arr[1, 1]);
+            }
+            {
+                // float test: multiply by 0.5 to get floating point values (0, 0.5), (1, 1.5)
+                using var tfloat = t.@float() * 0.5;
+                float[,] arr = tfloat.To2DArray<float>();
+
+                Assert.Equal(2, arr.GetLength(0));
+                Assert.Equal(2, arr.GetLength(1));
+                Assert.Equal(0f, arr[0, 0]);
+                Assert.Equal(0.5f, arr[0, 1]);
+                Assert.Equal(1f, arr[1, 0]);
+                Assert.Equal(1.5f, arr[1, 1]);
+            }
+        }
+
+        [Fact]
+        [TestOf(nameof(TensorExtensionMethods.To2DJaggedArray))]
+        public void Test2DToJaggedArray()
+        {
+            Tensor t = torch.arange(4).reshape(2, 2);
+            // Run the test with int, bool, float
+            {
+                // int test: (0, 1), (2, 3)
+                using var tint = t.@int();
+                int[][] arr = tint.To2DJaggedArray<int>();
+
+                Assert.Equal(2, arr.Length);
+                Assert.Equal(2, arr[0].Length);
+                Assert.Equal(2, arr[1].Length);
+                Assert.Equal(0, arr[0][0]);
+                Assert.Equal(1, arr[0][1]);
+                Assert.Equal(2, arr[1][0]);
+                Assert.Equal(3, arr[1][1]);
+            }
+            {
+                // bool test: (F, T), (T, T)
+                using var tbool = t.@bool();
+                bool[][] arr = tbool.To2DJaggedArray<bool>();
+
+                Assert.Equal(2, arr.Length);
+                Assert.Equal(2, arr[0].Length);
+                Assert.Equal(2, arr[1].Length);
+                Assert.False(arr[0][0]);
+                Assert.True(arr[0][1]);
+                Assert.True(arr[1][0]);
+                Assert.True(arr[1][1]);
+            }
+            {
+                // float test: multiply by 0.5 to get floating point values (0, 0.5), (1, 1.5)
+                using var tfloat = t.@float() * 0.5;
+                float[][] arr = tfloat.To2DJaggedArray<float>();
+
+                Assert.Equal(2, arr.Length);
+                Assert.Equal(2, arr[0].Length);
+                Assert.Equal(2, arr[1].Length);
+                Assert.Equal(0f, arr[0][0]);
+                Assert.Equal(0.5f, arr[0][1]);
+                Assert.Equal(1f, arr[1][0]);
+                Assert.Equal(1.5f, arr[1][1]);
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.ToString))]
         [TestOf(nameof(TensorExtensionMethods.jlstr))]
         public void ScalarToString()
