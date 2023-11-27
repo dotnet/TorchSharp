@@ -2,6 +2,12 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.101.3
+
+__API Changes__:
+
+Added `Tensor.to_type()` conversion aliases for short, half, bfloat16, cfloat, and cdouble.<br/>
+
 ## NuGet Version 0.101.2
 
 __API Changes__:
