@@ -2,6 +2,12 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.101.3
+
+__API Changes__:
+
+Introduced `InferenceMode`, a block-based scoping class for optimizing TorchSharp model inference by disabling gradient computation and enhancing performance.<br/>
+
 ## NuGet Version 0.101.2
 
 __API Changes__:
