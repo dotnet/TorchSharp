@@ -31,15 +31,6 @@ namespace TorchSharp
                     {
                         this.bias = Parameter(torch.empty(normalized_shape, dtype, device));
                     }
-                    else
-                    {
-                        register_parameter("bias", null);
-                    }
-                }
-                else
-                {
-                    register_parameter("weight", null);
-                    register_parameter("bias", null);
                 }
 
 
