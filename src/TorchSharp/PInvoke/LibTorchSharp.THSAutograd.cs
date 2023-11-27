@@ -16,6 +16,16 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         [return: MarshalAs(UnmanagedType.U1)]
+        internal static extern bool THSAutograd_isInferenceModeEnabled();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSAutograd_getInferenceModeGuard([MarshalAs(UnmanagedType.U1)] bool mode);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSAutograd_deleteInferenceModeGuard(IntPtr guard);
+        
+        [DllImport("LibTorchSharp")]
+        [return: MarshalAs(UnmanagedType.U1)]
         internal static extern bool THSAutograd_isAnomalyEnabled();
 
         [DllImport("LibTorchSharp")]

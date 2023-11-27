@@ -37,11 +37,17 @@ namespace TorchSharp
         [Pure]public static bool is_grad_enabled() => AutoGradMode.IsEnabled;
 
         // https://pytorch.org/docs/stable/generated/torch.inference_mode
-        [Obsolete("not implemented", true)]
-        public static IDisposable inference_mode(bool mode = true) => throw new NotImplementedException();
+        /// <summary>
+        /// Context-manager that enables inference mode.
+        /// </summary>
+        /// <returns></returns>
+        public static IDisposable inference_mode(bool mode = true) => new InferenceMode(mode);
 
         // https://pytorch.org/docs/stable/generated/torch.is_inference_mode_enabled
-        [Obsolete("not implemented", true)]
-        [Pure]public static bool is_inference_mode_enabled() => throw new NotImplementedException();
+        /// <summary>
+        /// Returns true if inference mode mode is currently enabled.
+        /// </summary>
+        /// <returns></returns>
+        [Pure]public static bool is_inference_mode_enabled() => InferenceMode.IsEnabled;
     }
 }
