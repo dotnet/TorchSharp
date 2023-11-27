@@ -7,6 +7,7 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 __API Changes__:
 
 Added `Tensor.to_type()` conversion aliases for short, half, bfloat16, cfloat, and cdouble.<br/>
+Added `Module.to()` conversion aliases for all the scalar types.<br/>
 
 ## NuGet Version 0.101.2
 
