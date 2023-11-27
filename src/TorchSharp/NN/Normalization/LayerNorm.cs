@@ -42,7 +42,6 @@ namespace TorchSharp
                     register_parameter("bias", null);
                 }
 
-                RegisterComponents();
 
                 reset_parameters(elementwise_affine);
             }
