@@ -1728,6 +1728,78 @@ namespace TorchSharp
         /// <param name="module">The module to move</param>
         /// <param name="deviceIndex">If specified, all parameters will be copied to that device</param>
         public static T cuda<T>(this T module, int deviceIndex = -1) where T : torch.nn.Module => (T)module._to(DeviceType.CUDA, deviceIndex);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Bool`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @bool<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Bool);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Byte`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @byte<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Byte);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Int8`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @char<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int8);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Int16`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @short<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int16);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Int32`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @int<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int32);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Int64`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @long<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int64);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Float16`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T half<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Float16);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.BFloat16`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T bfloat16<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.BFloat16);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Float32`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @float<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Float32);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Float64`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @double<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Float64);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.ComplexFloat32`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T cfloat<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.ComplexFloat32);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.ComplexFloat64`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T cdouble<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.ComplexFloat64);
     }
 
     public static class FieldInfoExtensionMethods
