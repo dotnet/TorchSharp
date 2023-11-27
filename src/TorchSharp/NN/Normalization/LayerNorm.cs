@@ -63,7 +63,15 @@ namespace TorchSharp
                 return F.layer_norm(tensor, _normalized_shape, weight, bias, _eps);
             }
 
-            public Parameter? bias { get; set; }
+            public Parameter? bias {
+                get => _bias;
+                set {
+                    _bias?.Dispose();
+                    _bias = value?.DetachFromDisposeScope() as Parameter;
+                    ConditionallyRegisterParameter(nameof(bias), _bias);
+                }
+            }
+            private Parameter? _bias;
 
             public Parameter weight {
                 get => _weight!;
