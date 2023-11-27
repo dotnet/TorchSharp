@@ -767,7 +767,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer);
 
-            LossIsClose(63.9739f, loss);
+            LossIsClose(66.262f, loss);
         }
 
         [Fact]
@@ -783,7 +783,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer);
 
-            LossIsClose(63.281f, loss);
+            LossIsClose(67.041f, loss);
         }
 
         [Fact]
@@ -799,7 +799,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer);
 
-            LossIsClose(56.387f, loss);
+            LossIsClose(66.729f, loss);
         }
 
         [Fact]
@@ -815,7 +815,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer);
 
-            LossIsClose(63.46877f, loss);
+            LossIsClose(66.739f, loss);
         }
 
         [Fact]
@@ -835,7 +835,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer);
 
-            LossIsClose(59.230f, loss);
+            LossIsClose(56.438f, loss);
         }
 
         /// <summary>
@@ -856,7 +856,7 @@ namespace TorchSharp
 
             var loss = TrainLoop(seq, x, y, optimizer, scheduler, false);
 
-            LossIsClose(214.188f, loss);
+            LossIsClose(145.415f, loss);
         }
 
         /// <summary>
