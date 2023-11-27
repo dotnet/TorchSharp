@@ -2967,13 +2967,23 @@ namespace TorchSharp
 
             public Tensor @char() => this.to_type(ScalarType.Int8);
 
+            public Tensor @short() => this.to_type(ScalarType.Int16);
+
             public Tensor @int() => this.to_type(ScalarType.Int32);
 
             public Tensor @long() => this.to_type(ScalarType.Int64);
 
+            public Tensor half() => this.to_type(ScalarType.Float16);
+
+            public Tensor bfloat16() => this.to_type(ScalarType.BFloat16);
+
             public Tensor @float() => this.to_type(ScalarType.Float32);
 
             public Tensor @double() => this.to_type(ScalarType.Float64);
+
+            public Tensor cfloat() => this.to_type(ScalarType.ComplexFloat32);
+
+            public Tensor cdouble() => this.to_type(ScalarType.ComplexFloat64);
 
 
             /// <summary>
