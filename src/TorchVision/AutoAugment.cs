@@ -9,6 +9,7 @@ namespace TorchSharp
 {
     public static partial class torchvision
     {
+        // Namespace hack to make use of the baseclass as a namespace for torchvision.autoaugment.AutoAugmentPolicy 
         public abstract class autoaugment
         {
             protected enum opType {
@@ -29,6 +30,9 @@ namespace TorchSharp
                 Identity
             }
 
+            /// <summary>AutoAugment policies learned on different datasets.
+            /// Available policies are IMAGENET, CIFAR10 and SVHN.
+            /// </summary>
             public enum AutoAugmentPolicy {
                 ImageNet,
                 CIFAR10,
