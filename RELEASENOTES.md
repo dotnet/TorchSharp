@@ -17,6 +17,10 @@ Introduced `InferenceMode`, a block-based scoping class for optimizing TorchShar
 Added `Tensor.to_type()` conversion aliases for short, half, bfloat16, cfloat, and cdouble.<br/>
 Added `Module.to()` conversion aliases for all the scalar types.<br/>
 
+__Bug Fixes__:
+
+#1154 : `mu_product` was not initialized in `NAdam` optimizer
+
 ## NuGet Version 0.101.2
 
 __API Changes__:
