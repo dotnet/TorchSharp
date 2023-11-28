@@ -356,7 +356,6 @@ namespace TorchSharp
             public virtual StateDictionary state_dict()
             {
                 var dict = new StateDictionary();
-
                 int pgidx = -1;
                 int pridx = 0;
                 foreach (var pg in _parameter_groups) {
@@ -367,7 +366,7 @@ namespace TorchSharp
                     dict.StateIndexRef.Add(indexRef);
 
                     foreach (var p in pg.Parameters) {
-                        indexRef.Add(dict.State.Count);
+                        indexRef.Add(pridx);
                         dict.State.Add(_state[p.Handle]);
                         pridx++;
                     }
