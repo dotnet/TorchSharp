@@ -14,6 +14,23 @@ void THSAutograd_setGrad(bool enabled)
     torch::autograd::GradMode::set_enabled(enabled);
 }
 
+bool THSAutograd_isInferenceModeEnabled()
+{
+    bool result = torch::InferenceMode::is_enabled();
+    return result;
+}
+
+torch::InferenceMode* THSAutograd_getInferenceModeGuard(bool mode)
+{
+    auto ptr = new torch::InferenceMode(mode);
+    return ptr;
+}
+
+void THSAutograd_deleteInferenceModeGuard(torch::InferenceMode* ptr)
+{
+    delete ptr;
+}
+
 bool THSAutograd_isAnomalyEnabled()
 {
     bool result = torch::autograd::AnomalyMode::is_enabled();

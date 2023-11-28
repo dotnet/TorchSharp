@@ -17,7 +17,7 @@
     <Content Include="..\common\NormalPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
     <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netstandard2.0\_._" />
     <Content Include="$(RepoRoot)\LICENSE.txt" Pack="true" PackagePath="" />
-    <PackageReference Include="SkiaSharp" Version="2.88.3" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.3" />
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.6" />
   </ItemGroup>
 </Project>
