@@ -11,6 +11,15 @@ EXPORT_API(bool) THSAutograd_isGradEnabled();
 // Enables / disables grad.
 EXPORT_API(void) THSAutograd_setGrad(bool enabled);
 
+// Returns whether inference mode is enabled or not
+EXPORT_API(bool) THSAutograd_isInferenceModeEnabled();
+
+// Returns a pointer to an RAII guard for inference mode
+EXPORT_API(torch::InferenceMode*) THSAutograd_getInferenceModeGuard(bool mode);
+
+// Destroys the RAII guard and restores the original state
+EXPORT_API(void) THSAutograd_deleteInferenceModeGuard(torch::InferenceMode* ptr);
+
 // Returns whether the grad is enabled or not.
 EXPORT_API(bool) THSAutograd_isAnomalyEnabled();
 
