@@ -46,6 +46,18 @@ namespace TorchSharp
                     return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
                 }
 
+                public (string name, Tensor buffer)[] named_attributes()
+                {
+                    using var pa = new PinnedArray<IntPtr>();
+                    using var sa = new PinnedArray<IntPtr>();
+                    THSJIT_Module_named_attributes(handle, pa.CreateArray, sa.CreateArray);
+                    CheckForErrors();
+                    var ptrArray = pa.Array;
+                    var strArray = sa.Array;
+
+                    return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
+                }
+
                 /// <summary>
                 /// Returns an enumerable of all modules in the network, yielding both the name of the module as well as the module itself.
                 /// </summary>
@@ -220,8 +232,8 @@ namespace TorchSharp
                 /// <summary>
                 /// Invoke the 'forward' function of the script with any number of arguments.
                 /// </summary>
-                /// <param name="objs"></param>
-                /// <returns></returns>
+                /// <param name="input">Any number of parameters for the forward function.</param>
+                /// <returns>An object.</returns>
                 /// <remarks>
                 /// Only certain types can currently be passed:
                 /// 1. Tensor
@@ -238,24 +250,57 @@ namespace TorchSharp
                 /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
                 /// If a tuple contains both tensors and scalars, it is returned as an object[].
                 /// </remarks>
-                /// <exception cref="NotImplementedException"></exception>
-                public object call(params object[] objs)
+                public object forward(params object[] input)
                 {
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
 
-                    using (var parray = new IndexedPinnedArrays<TensorOrScalar>()) {
+                    using (var ntosArray = new NativeTensorOrScalarIndexedArray()) {
 
-                        var tRefsHandle = DetermineArgumentTypeRefs(objs, out var count, parray);
+                        var tRefsHandle = DetermineArgumentTypeRefs(input, out var count, ntosArray);
 
-                        var allocated = parray.Count;
+                        var allocated = ntosArray.Count;
 
-                        THSJIT_Module_forward(handle, tRefsHandle, count, parray.CreateArray, out typeCode, allocated);
+                        THSJIT_Module_forward(handle, tRefsHandle, count, ntosArray.CreateArray, out typeCode, allocated);
                         torch.CheckForErrors();
-                        ptrArray = parray[allocated];
+                        ptrArray = ntosArray.ToToSArray(allocated);
 
-                        return ProcessReturnValue(name, parray, ptrArray, typeCode);
+                        return ProcessReturnValue(name, ntosArray, ptrArray, typeCode);
                     }
+                }
+
+                /// <summary>
+                /// Synonym for `forward`
+                /// </summary>
+                /// <param name="input">Any number of parameters for the forward function.</param>
+                /// <returns>An object.</returns>
+                /// <remarks>
+                /// Only certain types can currently be passed:
+                /// 1. Tensor
+                /// 2. Scalar
+                /// 3. int/long
+                /// 4. double/float
+                /// 5. bool
+                ///
+                /// Only certain types can currently be returned:
+                /// 1. Tensor / Scalar
+                /// 2. Tuple of Tensor / Scalar
+                /// 3. Array (Python list) of Tensor / Scalar
+                ///
+                /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
+                /// If a tuple contains both tensors and scalars, it is returned as an object[].
+                ///
+                /// Note: this currently does not support hooking the module.
+                /// </remarks>
+                public object call(params object[] input)
+                {
+                    // TODO: Call pre-hooks, if available.
+
+                    var result = forward(input);
+
+                    // TODO: Call post-hooks, if available.
+
+                    return result;
                 }
 
                 /// <summary>
@@ -288,69 +333,57 @@ namespace TorchSharp
                     TensorOrScalar[] ptrArray = null;
                     sbyte typeCode = 0;
 
-                    using (var parray = new IndexedPinnedArrays<TensorOrScalar>()) {
+                    using (var ntosArray = new NativeTensorOrScalarIndexedArray()) {
 
-                        var tRefsHandle = DetermineArgumentTypeRefs(objs, out var count, parray);
+                        var tRefsHandle = DetermineArgumentTypeRefs(objs, out var count, ntosArray);
 
-                        var allocated = parray.Count;
+                        var allocated = ntosArray.Count;
 
-                        THSJIT_Module_invoke(handle, name, tRefsHandle, count, parray.CreateArray, out typeCode, allocated);
+                        THSJIT_Module_invoke(handle, name, tRefsHandle, count, ntosArray.CreateArray, out typeCode, allocated);
                         torch.CheckForErrors();
-                        ptrArray = parray[allocated];
+                        ptrArray = ntosArray.ToToSArray(allocated);
 
-                        return ProcessReturnValue(name, parray, ptrArray, typeCode);
+                        return ScriptModule.ProcessReturnValue(name, ntosArray, ptrArray, typeCode);
                     }
                 }
 
-                internal static IntPtr DetermineArgumentTypeRefs(object[] objs, out int count, IndexedPinnedArrays<TensorOrScalar> pinned)
+                internal static IntPtr DetermineArgumentTypeRefs(object[] objs, out int count, NativeTensorOrScalarIndexedArray allocator)
                 {
                     count = objs.Length;
-                    var tensorRefs = new TensorOrScalar[count];
-                    var result = pinned.CreateArray(pinned.Count, tensorRefs);
+                    var tensorRefs = allocator.CreateArray(allocator.Count, objs.Length);
 
                     for (var idx = 0; idx < objs.Length; idx++) {
                         switch (objs[idx]) {
                         case Tensor t:
-                            tensorRefs[idx].Handle = t.Handle;
-                            tensorRefs[idx].TypeCode = 0;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 0, 0, t.Handle);
                             break;
                         case Scalar s:
-                            tensorRefs[idx].Handle = s.Handle;
-                            tensorRefs[idx].TypeCode = 1;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 1, 0, s.Handle);
                             break;
                         case float f:
-                            tensorRefs[idx].Handle = ((Scalar)f).Handle;
-                            tensorRefs[idx].TypeCode = 1;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 1, 0, ((Scalar)f).Handle);
                             break;
                         case double d:
-                            tensorRefs[idx].Handle = ((Scalar)d).Handle;
-                            tensorRefs[idx].TypeCode = 1;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 1, 0, ((Scalar)d).Handle);
                             break;
                         case bool i:
-                            tensorRefs[idx].Handle = (IntPtr)(i ? 1L : 0L);
-                            tensorRefs[idx].TypeCode = 2;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 2, 0, (IntPtr)(i ? 1L : 0L));
                             break;
                         case int i:
-                            tensorRefs[idx].Handle = (IntPtr)i;
-                            tensorRefs[idx].TypeCode = 3;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 3, 0, (IntPtr)i);
                             break;
                         case long l:
-                            tensorRefs[idx].Handle = ((Scalar)l).Handle;
-                            tensorRefs[idx].TypeCode = 1;
+                            THSJIT_SetTensorOrScalar(tensorRefs, idx, 1, 0, ((Scalar)l).Handle);
                             // The MacOS version of Clang doesn't like the use of int64_t, so pass as a Scalar instance, instead.
-                            //tensorRefs[idx].Handle = (IntPtr)l;
-                            //tensorRefs[idx].TypeCode = 4;
+                            //THSJIT_SetTensorOrScalar(tensorRefs, idx, 4, 0, (IntPtr)l);
                             break;
                         case Tensor[] tensors: {
-                                tensorRefs[idx].Handle = DetermineArgumentTypeRefs(tensors, out var _, pinned);
-                                tensorRefs[idx].TypeCode = 5;
-                                tensorRefs[idx].ArrayIndex = tensors.Length;
+                                THSJIT_SetTensorOrScalar(tensorRefs, idx, 5, tensors.Length, DetermineArgumentTypeRefs(tensors, out var _, allocator));
                             }
                             break;
                         default:
                             if (objs[idx] is null) {
-                                tensorRefs[idx].Handle = IntPtr.Zero;
-                                tensorRefs[idx].TypeCode = 8;
+                                THSJIT_SetTensorOrScalar(tensorRefs, idx, 8, 0, IntPtr.Zero);
                             } else {
                                 throw new NotImplementedException($"Passing arguments of type {objs[idx].GetType().Name} to TorchScript.");
                             }
@@ -358,10 +391,10 @@ namespace TorchSharp
                         }
                     }
 
-                    return result;
+                    return tensorRefs;
                 }
 
-                internal static object ProcessReturnValue(string name, IndexedPinnedArrays<TensorOrScalar> pinned, TensorOrScalar[] ptrArray, long typeCode)
+                internal static object ProcessReturnValue(string name, NativeTensorOrScalarIndexedArray allocator, TensorOrScalar[] ptrArray, long typeCode)
                 {
                     switch (typeCode) {
                     default:
@@ -437,7 +470,7 @@ namespace TorchSharp
                             // List of scalars and tensors
                             var result = new object[ptrArray.Length];
                             for (var i = 0; i < ptrArray.Length; i++) {
-                                switch(ptrArray[i].TypeCode) {
+                                switch (ptrArray[i].TypeCode) {
                                 case 0:
                                     result[i] = new Tensor(ptrArray[i].Handle);
                                     break;
@@ -460,25 +493,25 @@ namespace TorchSharp
                     case 10: {
                             switch (ptrArray.Length) {
                             case 1:
-                                return ProcessReturnValue(name, pinned, ptrArray[0]);
+                                return ProcessReturnValue(name, allocator, ptrArray[0]);
                             case 2:
-                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
-                                    ProcessReturnValue(name, pinned, ptrArray[1]));
+                                return (ProcessReturnValue(name, allocator, ptrArray[0]),
+                                    ProcessReturnValue(name, allocator, ptrArray[1]));
                             case 3:
-                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
-                                    ProcessReturnValue(name, pinned, ptrArray[1]),
-                                    ProcessReturnValue(name, pinned, ptrArray[2]));
+                                return (ProcessReturnValue(name, allocator, ptrArray[0]),
+                                    ProcessReturnValue(name, allocator, ptrArray[1]),
+                                    ProcessReturnValue(name, allocator, ptrArray[2]));
                             case 4:
-                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
-                                    ProcessReturnValue(name, pinned, ptrArray[1]),
-                                    ProcessReturnValue(name, pinned, ptrArray[2]),
-                                    ProcessReturnValue(name, pinned, ptrArray[3]));
+                                return (ProcessReturnValue(name, allocator, ptrArray[0]),
+                                    ProcessReturnValue(name, allocator, ptrArray[1]),
+                                    ProcessReturnValue(name, allocator, ptrArray[2]),
+                                    ProcessReturnValue(name, allocator, ptrArray[3]));
                             case 5:
-                                return (ProcessReturnValue(name, pinned, ptrArray[0]),
-                                    ProcessReturnValue(name, pinned, ptrArray[1]),
-                                    ProcessReturnValue(name, pinned, ptrArray[2]),
-                                    ProcessReturnValue(name, pinned, ptrArray[3]),
-                                    ProcessReturnValue(name, pinned, ptrArray[4]));
+                                return (ProcessReturnValue(name, allocator, ptrArray[0]),
+                                    ProcessReturnValue(name, allocator, ptrArray[1]),
+                                    ProcessReturnValue(name, allocator, ptrArray[2]),
+                                    ProcessReturnValue(name, allocator, ptrArray[3]),
+                                    ProcessReturnValue(name, allocator, ptrArray[4]));
                             default: {
                                     // Too long a tuple, return as a list, instead.
                                     var result = new Scalar[ptrArray.Length];
@@ -493,14 +526,14 @@ namespace TorchSharp
                             // List of anything
                             var result = new object[ptrArray.Length];
                             for (var i = 0; i < ptrArray.Length; i++) {
-                                result[i] = ProcessReturnValue(name, pinned, ptrArray[i]);
+                                result[i] = ProcessReturnValue(name, allocator, ptrArray[i]);
                             }
                             return result;
                         }
                     }
                 }
 
-                internal static object ProcessReturnValue(string name, IndexedPinnedArrays<TensorOrScalar> pinned, TensorOrScalar value)
+                internal static object ProcessReturnValue(string name, NativeTensorOrScalarIndexedArray allocator, TensorOrScalar value)
                 {
                     switch (value.TypeCode) {
                     case 0:
@@ -510,7 +543,7 @@ namespace TorchSharp
                     case 8:
                         return null;
                     default:
-                        return ProcessReturnValue(name, pinned, pinned[(int)value.ArrayIndex], value.TypeCode);
+                        return ProcessReturnValue(name, allocator, allocator.ToToSArray((int)value.ArrayIndex), value.TypeCode);
                     }
 
                     throw new NotImplementedException($"ScriptModule.{name}() returning something else than a tensor/scalar, a tuple of tensors/scalars, or list of tensors/scalars.");
@@ -566,6 +599,62 @@ namespace TorchSharp
                 public TResult invoke<T, TResult>(string name, params T[] inputs) => (TResult)invoke(name, inputs);
             }
 
+
+
+            /// <summary>
+            /// Represents a module that accepts 'hook' to the module logic.
+            /// </summary>
+            public class HookableScriptModule<TPreHook, TPostHook> : ScriptModule
+            {
+                internal HookableScriptModule(IntPtr handle) : base(handle)
+                {
+                }
+
+                public HookRemover register_forward_hook(TPostHook hook)
+                {
+                    var key = Guid.NewGuid().ToString();
+                    post_hooks.Add(key, hook);
+                    return new HookRemover(this, key);
+                }
+
+                public HookRemover register_forward_pre_hook(TPreHook hook)
+                {
+                    var key = Guid.NewGuid().ToString();
+                    pre_hooks.Add(key, hook);
+                    return new HookRemover(this, key);
+                }
+
+                private void remove(string key)
+                {
+                    if (pre_hooks.ContainsKey(key)) pre_hooks.Remove(key);
+                    if (post_hooks.ContainsKey(key)) post_hooks.Remove(key);
+                }
+
+                protected Dictionary<string, TPreHook> pre_hooks = new Dictionary<string, TPreHook>();
+                protected Dictionary<string, TPostHook> post_hooks = new Dictionary<string, TPostHook>();
+
+                /// <summary>
+                /// Used to remove a specific hook, following the PyTorch API design.
+                /// </summary>
+                /// <remarks>The name and namespace of this class is not the same as in PyTorch, but serves the same purpose.</remarks>
+                public class HookRemover
+                {
+                    public HookRemover(HookableScriptModule<TPreHook, TPostHook> module, string key)
+                    {
+                        this.module = module;
+                        this.key = key;
+                    }
+
+                    public void remove()
+                    {
+                        module.remove(key);
+                    }
+
+                    private HookableScriptModule<TPreHook, TPostHook> module;
+                    private string key;
+                }
+            }
+
             /// <summary>
             /// A script module taking any number of tensors as input
             /// </summary>
@@ -593,10 +682,18 @@ namespace TorchSharp
                 /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
                 /// If a tuple contains both tensors and scalars, it is returned as an object[].
                 /// </remarks>
-                public TResult call(params Tensor[] tensor)
+                public TResult call(params Tensor[] input)
                 {
-                    return (TResult)base.call(tensor);
+                    // TODO: Call pre-hooks, if available.
+
+                    var result = forward(input);
+
+                    // TODO: Call post-hooks, if available.
+
+                    return result;
                 }
+
+                public TResult forward(params Tensor[] tensor) => (TResult)base.forward(tensor);
             }
 
             /// <summary>
@@ -604,7 +701,7 @@ namespace TorchSharp
             /// </summary>
             /// <typeparam name="T">The argument type.</typeparam>
             /// <typeparam name="TResult">The return type of the module.</typeparam>
-            public class ScriptModule<T, TResult> : ScriptModule, torch.nn.IModule<T, TResult>
+            public class ScriptModule<T, TResult> : HookableScriptModule<Func<ScriptModule<T, TResult>, T, T>, Func<ScriptModule<T, TResult>, T, TResult, TResult>>, torch.nn.IModule<T, TResult>
             {
                 internal ScriptModule(IntPtr handle) : base(handle) { }
 
@@ -627,10 +724,30 @@ namespace TorchSharp
                 /// For returned types, if the number of values returned in a tuple is greaterh than 5, it is returned as an array, instead.
                 /// If a tuple contains both tensors and scalars, it is returned as an object[].
                 /// </remarks>
-                public TResult call(T tensor)
+                public TResult call(T input)
                 {
-                    return (TResult)base.call(tensor);
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input);
+                        if (modified is not null)
+                            input = modified;
+                    }
+
+                    var result = forward(input);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
                 }
+
+                public TResult forward(T tensor) => (TResult)base.forward(tensor);
             }
 
             /// <summary>
@@ -639,7 +756,7 @@ namespace TorchSharp
             /// <typeparam name="T1">The first argument type.</typeparam>
             /// <typeparam name="T2">The second argument type.</typeparam>
             /// <typeparam name="TResult">The return type of the module.</typeparam>
-            public class ScriptModule<T1, T2, TResult> : ScriptModule, torch.nn.IModule<T1, T2, TResult>
+            public class ScriptModule<T1, T2, TResult> : HookableScriptModule<Func<ScriptModule<T1, T2, TResult>, T1, T2, (T1, T2)?>, Func<ScriptModule<T1, T2, TResult>, T1, T2, TResult, TResult>>, torch.nn.IModule<T1, T2, TResult>
             {
                 internal ScriptModule(IntPtr handle) : base(handle) { }
 
@@ -664,8 +781,30 @@ namespace TorchSharp
                 /// </remarks>
                 public TResult call(T1 input1, T2 input2)
                 {
-                    return (TResult)base.call(input1, input2);
+                    // Call pre-hooks, if available.
+
+                    foreach (var hook in pre_hooks.Values) {
+                        var modified = hook(this, input1, input2);
+                        if (modified.HasValue) {
+                            input1 = modified.Value.Item1;
+                            input2 = modified.Value.Item2;
+                        }
+                    }
+
+                    var result = forward(input1, input2);
+
+                    // Call post-hooks, if available.
+
+                    foreach (var hook in post_hooks.Values) {
+                        var modified = hook(this, input1, input2, result);
+                        if (modified is not null)
+                            result = modified;
+                    }
+
+                    return result;
                 }
+
+                public TResult forward(T1 input1, T2 input2) => (TResult)base.forward(input1, input2);
             }
 
             /// <summary>

@@ -11,6 +11,7 @@ using static TorchSharp.torch.nn.functional;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Xml.Schema;
+using TorchSharp.Utils;
 
 #nullable enable
 
@@ -1042,6 +1043,221 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void CreateGenericSequence()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Linear(100, 10, device: device);
+                var seq = new TestDerivedSequential(
+                    lin1,
+                    ReLU());
+
+                var s2 = seq.append(lin2);
+                Assert.Same(seq, s2);
+
+                var parameters = seq.parameters();
+                var parametersCount = parameters.Count();
+                Assert.Equal(4, parametersCount);
+
+                var namedParams = seq.named_parameters().ToArray();
+                var namedParamsCount = namedParams.Count();
+                Assert.Equal(4, namedParamsCount);
+
+                Assert.Equal("0.weight", namedParams[0].name);
+                Assert.Equal("0.bias", namedParams[1].name);
+                Assert.Equal("2.weight", namedParams[2].name);
+                Assert.Equal("2.bias", namedParams[3].name);
+            }
+        }
+
+        [Fact]
+        public void CreateInvalidGenericSequence1()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Bilinear(100, 10, 10, device: device);
+                Assert.Throws<ArgumentException>(() => new TestDerivedSequential(
+                    lin1,
+                    ReLU(),
+                    lin2));
+            }
+        }
+
+        [Fact]
+        public void SliceGenericSequence1()
+        {
+            var seq = new TestDerivedSequential(
+               ("lin1", Linear(10, 10)),
+               ("relu1", ReLU()),
+               ("lin2", Linear(10, 10)),
+               ("tanh1", Tanh()),
+               ("lin2", Linear(10, 10)));
+
+            Assert.Throws<NotImplementedException>(() => seq[(1, 3)].named_modules());
+        }
+
+        [Fact]
+        public void SliceGenericSequence2()
+        {
+            var seq = new TestDerivedSequentialWithSlice(
+               ("lin1", Linear(10, 10)),
+               ("relu1", ReLU()),
+               ("lin2", Linear(10, 10)),
+               ("tanh1", Tanh()),
+               ("lin2", Linear(10, 10)));
+
+            var slice = seq[(1, 3)].named_modules().ToArray();
+            Assert.Equal("relu1", slice[0].name);
+            Assert.Equal("lin2", slice[1].name);
+        }
+
+        [Fact]
+        public void CreateInvalidGenericSequence2()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var lin1 = Linear(1000, 100, device: device);
+                var lin2 = Bilinear(100, 10, 10, device: device);
+                var seq = new TestDerivedSequential(
+                    lin1,
+                    ReLU());
+
+                // `append` does not do any type validation, so invalid Modules
+                // may slip in.
+                var s2 = seq.append(lin2);
+                Assert.Same(seq, s2);
+
+                Assert.Throws<InvalidCastException>(() => seq.forward(torch.zeros(8, 1000, device: device)));
+            }
+        }
+
+        class TestDerivedSequential : Sequential<Tensor, Tensor>
+        {
+            internal TestDerivedSequential(params (string name, torch.nn.Module)[] modules) : base(modules)
+            {
+                ValidateModules();
+            }
+
+            internal TestDerivedSequential(params torch.nn.Module[] modules) : base(modules)
+            {
+                ValidateModules();
+            }
+
+            private void ValidateModules()
+            {
+                foreach (var layer in modules()) {
+                    switch (layer) {
+                    case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                        break;
+                    default:
+                        throw new ArgumentException($"Invalid module type in {nameof(TestDerivedSequential)}: {layer.GetType().Name}.");
+                    }
+                }
+
+            }
+
+            public override torch.Tensor forward(torch.Tensor x)
+            {
+                using var _ = torch.NewDisposeScope();
+
+                var result = x.alias();
+
+                foreach (var layer in modules()) {
+                    switch (layer) {
+                    case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                        result = m.call(result);
+                        break;
+                    default:
+                        throw new InvalidCastException($"Invalid module type in {nameof(TestDerivedSequential)}: {layer.GetType().Name}.");
+                    }
+                }
+
+                return result.MoveToOuterDisposeScope();
+            }
+        }
+
+
+
+        class TestDerivedSequentialWithSlice : Sequential<Tensor, Tensor>
+        {
+            internal TestDerivedSequentialWithSlice(params (string name, torch.nn.Module)[] modules) : base(modules)
+            {
+                ValidateModules();
+            }
+
+            internal TestDerivedSequentialWithSlice(params torch.nn.Module[] modules) : base(modules)
+            {
+                ValidateModules();
+            }
+
+            private void ValidateModules()
+            {
+                foreach (var layer in modules()) {
+                    switch (layer) {
+                    case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                        break;
+                    default:
+                        throw new ArgumentException($"Invalid module type in {nameof(TestDerivedSequentialWithSlice)}: {layer.GetType().Name}.");
+                    }
+                }
+
+            }
+
+            public override torch.Tensor forward(torch.Tensor x)
+            {
+                using var _ = torch.NewDisposeScope();
+
+                var result = x.alias();
+
+                foreach (var layer in modules()) {
+                    switch (layer) {
+                    case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                        result = m.call(result);
+                        break;
+                    default:
+                        throw new InvalidCastException($"Invalid module type in {nameof(TestDerivedSequentialWithSlice)}: {layer.GetType().Name}.");
+                    }
+                }
+
+                return result.MoveToOuterDisposeScope();
+            }
+
+            protected override Sequential<Tensor, Tensor> Slice(int start, int end)
+            {
+                var modules = this.named_modules().ToArray();
+
+                if (start < 0 || start > modules.Length) throw new IndexOutOfRangeException($"{start} is not a valid index.");
+                if (end < 0 || end > modules.Length) throw new IndexOutOfRangeException($"{end} is not a valid index.");
+
+                var stop = Math.Min(modules.Length, end);
+
+                var result = new TestDerivedSequentialWithSlice(Array.Empty<torch.nn.Module>());
+
+                // This first module validation check is dependent on the custom Sequential
+                // and its logic. There is no boilerplace solution.
+                switch (modules[start].module) {
+                case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                    break;
+                default:
+                    throw new InvalidCastException($"Invalid first module type in {nameof(TestDerivedSequentialWithSlice)}: {modules[start].module.GetType().Name}.");
+                }
+
+                // This last module validation check is dependent on the custom Sequential
+                // and its logic. There is no boilerplace solution.
+                switch (modules[stop - 1].module) {
+                case torch.nn.Module<torch.Tensor, torch.Tensor> m:
+                    break;
+                default:
+                    throw new InvalidCastException($"Invalid last module type in {nameof(TestDerivedSequentialWithSlice)}: {modules[stop - 1].module.GetType().Name}.");
+                }
+
+                for (var i = start; i < stop; i++) {
+                    result.Add(modules[i].name, modules[i].module);
+                }
+                return result;
+            }
+        }
+
+        [Fact]
         public void EvalLossSequence2()
         {
             foreach (var device in TestUtils.AvailableDevices()) {
@@ -1062,6 +1278,18 @@ namespace TorchSharp
 
                 var result = output.ToSingle();
             }
+        }
+
+        [Fact]
+        public void SequenceModulesAndChildren()
+        {
+            var seq1 = new SequenceModel1();
+            var seq2 = new SequenceModel2();
+
+            var seq3 = Sequential(seq1, seq2);
+
+            Assert.Equal(2, seq3.children().Count());
+            Assert.Equal(6, seq3.modules().Count());
         }
         #endregion
 
@@ -1209,8 +1437,8 @@ namespace TorchSharp
         {
             var m = Sigmoid();
             foreach (var device in TestUtils.AvailableDevices()) {
-                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
-                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                using (Tensor input = torch.rand(new long[] { 3 }, device: device))
+                using (Tensor target = torch.rand(new long[] { 3 }, device: device)) {
                     var outTensor = BCELoss().call(m.call(input), target);
                     var values = outTensor.data<float>().ToArray();
                     Assert.Multiple(
@@ -1227,8 +1455,8 @@ namespace TorchSharp
         {
             var m = Sigmoid();
             foreach (var device in TestUtils.AvailableDevices()) {
-                using (Tensor input = torch.randn(new long[] { 3 }, device: device))
-                using (Tensor target = torch.randn(new long[] { 3 }, device: device)) {
+                using (Tensor input = torch.rand(new long[] { 3 }, device: device))
+                using (Tensor target = torch.rand(new long[] { 3 }, device: device)) {
                     var outTensor = binary_cross_entropy(m.call(input), target);
                     Assert.Equal(device.type, outTensor.device_type);
                     var values = outTensor.data<float>().ToArray();
@@ -1899,6 +2127,12 @@ namespace TorchSharp
 
             var x = torch.randn(new long[] { 64, 1000 }, requires_grad: true);
             var y = torch.randn(new long[] { 64, 10 }, requires_grad: true);
+
+            if (torch.cuda.is_available()) {
+                x = x.cuda();
+                y = y.cuda();
+                seq = seq.cuda();
+            }
 
             var eval = seq.call(x);
             var loss = MSELoss(Reduction.Sum);
@@ -2799,6 +3033,27 @@ namespace TorchSharp
             }
         }
 
+
+        [Fact]
+        public void TestCustomComponentName()
+        {
+            var model = new TestCustomNameModel("TestCustomNameModel");
+
+            var sd = model.state_dict();
+            // Make sure that it's saved in the state_dict correctly, with and without custom attribute
+            Assert.True(sd.ContainsKey("custom_linear.weight"));
+            Assert.True(sd.ContainsKey("_linear2.weight"));
+
+            // The field names are also retrieved in the `_toEpilogue` function, so we want to make sure
+            // that everything works after calling a `.to` function. 
+            model = model.to(ScalarType.BFloat16);
+
+            sd = model.state_dict();
+            // Make sure that it's saved in the state_dict correctly, with and without custom attribute
+            Assert.True(sd.ContainsKey("custom_linear.weight"));
+            Assert.True(sd.ContainsKey("_linear2.weight"));
+        }
+
         private class TestModule3 : Module<Tensor, Tensor>
         {
             public TestModule3() : base(nameof(TestModule3)) { RegisterComponents(); }
@@ -2843,6 +3098,100 @@ namespace TorchSharp
             private Modules.Linear mod2 = Linear(10, 10);
             private Parameter p1 = new Parameter(torch.zeros(5, 5, 5), true);
         }
+
+        [Fact]
+        public void TestNonPersistentBuffer1()
+        {
+            var model = new TestNonPersistentBufferModel1("TestNonPersistentBuffer");
+
+            var sd = model.state_dict();
+            // Make sure that it's saved in the state_dict correctly, with and without custom attribute
+            Assert.True(sd.ContainsKey("_linear1.weight"));
+            Assert.True(sd.ContainsKey("_linear2.weight"));
+            Assert.False(sd.ContainsKey("_buffer"));
+        }
+
+
+        [Fact]
+        public void TestNonPersistentBuffer2()
+        {
+            var model = new TestNonPersistentBufferModel2();
+
+            var sd = model.state_dict();
+            // Make sure that it's saved in the state_dict correctly, with and without custom attribute
+            Assert.True(sd.ContainsKey("0.weight"));
+            Assert.True(sd.ContainsKey("1.weight"));
+            Assert.False(sd.ContainsKey("_buffer"));
+        }
+
+        private class TestCustomNameModel : nn.Module<Tensor, Tensor>
+        {
+            [ComponentName(Name = "custom_linear")]
+            private Linear _linear1;
+            private Linear _linear2;
+
+            public TestCustomNameModel(string name) : base(name)
+            {
+                _linear1 = Linear(5, 5, hasBias: false);
+                _linear2 = Linear(5, 5, hasBias: false);
+
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                return _linear2.forward(_linear1.forward(input));
+            }
+        }
+
+        private class TestNonPersistentBufferModel1 : nn.Module<Tensor, Tensor>
+        {
+            private Linear _linear1;
+            private Linear _linear2;
+
+            private Tensor _buffer;
+
+            public TestNonPersistentBufferModel1(string name) : base(name)
+            {
+                _linear1 = Linear(5, 5, hasBias: false);
+                _linear2 = Linear(5, 5, hasBias: false);
+
+                RegisterComponents();
+
+                _buffer = torch.zeros(5);
+
+                register_buffer("_buffer", _buffer, false);
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                return _linear2.forward(_linear1.forward(input));
+            }
+        }
+
+        private class TestNonPersistentBufferModel2 : Modules.Sequential<Tensor, Tensor>
+        {
+            private Tensor _buffer;
+
+            public TestNonPersistentBufferModel2() : base(Linear(5, 5, hasBias: false), Linear(5, 5, hasBias: false))
+            {
+                RegisterComponents();
+
+                _buffer = torch.zeros(5);
+
+                register_buffer("_buffer", _buffer, false);
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                foreach (var c in children()) {
+                    var m = c as Module<Tensor,Tensor>;
+                    input = m!.forward(input);
+                }
+                return input + _buffer;
+            }
+        }
+
         #endregion
 
         #region Pooling
@@ -4921,10 +5270,10 @@ namespace TorchSharp
             foreach (var device in TestUtils.AvailableDevices()) {
                 var data = torch.rand(new long[] { 1, 3 * 2 * 2, 12 }, device: device);
 
-                using (var flat = Fold((4,5), (2,2))) {
+                using (var flat = Fold((4, 5), (2, 2))) {
                     var output = flat.call(data);
                     Assert.Equal(device.type, output.device_type);
-                    Assert.Equal(new long[] { 1, 3, 4, 5}, output.shape);
+                    Assert.Equal(new long[] { 1, 3, 4, 5 }, output.shape);
                 }
                 {
                     var output = functional.fold(data, (4, 5), (2, 2));
@@ -5057,7 +5406,7 @@ namespace TorchSharp
                     Assert.Equal(values[4], values[2]);
                 }
 
-                using (var pad = ReflectionPad2d((3,3,3,3))) {
+                using (var pad = ReflectionPad2d((3, 3, 3, 3))) {
                     var output = pad.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32, 3, 10, 10 }, output.shape);

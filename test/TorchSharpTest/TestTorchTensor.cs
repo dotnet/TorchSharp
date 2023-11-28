@@ -3524,11 +3524,11 @@ namespace TorchSharp
 
         [Fact]
         [TestOf(nameof(torch.sparse))]
-        public void Sparse()
+        public void SparseCOOTensor()
         {
             using var i = torch.tensor(new long[] { 0, 1, 1, 2, 0, 2 }, new long[] { 2, 3 });
             using Tensor v = new float[] { 3, 4, 5 };
-            var sparse = torch.sparse(i, v, new long[] { 2, 3 });
+            var sparse = torch.sparse_coo_tensor(i, v, new long[] { 2, 3 });
 
             Assert.True(sparse.is_sparse);
             Assert.False(i.is_sparse);

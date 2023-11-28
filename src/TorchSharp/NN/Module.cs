@@ -9,6 +9,7 @@ using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.Utils.LEB128Codec;
 using static TorchSharp.PInvoke.NativeMethods;
+using TorchSharp.Utils;
 
 namespace TorchSharp
 {
@@ -170,7 +171,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         var value = field.GetValue(this);
 
                         switch (value) {
@@ -256,7 +257,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         var value = field.GetValue(this);
 
                         switch (value) {
@@ -330,7 +331,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         var value = field.GetValue(this);
 
                         switch (value) {
@@ -401,19 +402,6 @@ namespace TorchSharp
                     return this;
                 }
 
-                public static Module Load(string filename)
-                {
-                    if (!System.IO.File.Exists(filename))
-                        throw new System.IO.FileNotFoundException(filename);
-
-                    var handle = THSNN_Module_load(filename);
-                    if (handle == IntPtr.Zero) { CheckForErrors(); }
-                    return new Module(handle, IntPtr.Zero);
-                }
-
-                public virtual void Save(string modelPath)
-                    => THSNN_Module_save(handle, modelPath);
-
                 /// <summary>
                 /// Sets the module in training mode.
                 /// </summary>
@@ -466,22 +454,23 @@ namespace TorchSharp
                 /// Returns an enumerable of module buffers, yielding both the name of the buffer as well as the buffer itself.
                 /// </summary>
                 /// <param name="recurse">If true, then yields buffers of this module and all submodules. Otherwise, yields only buffers that are direct members of this module.</param>
+                /// <param name="include_nonpersistent">Include buffers that are not persistent.</param>
                 /// <returns>(string, torch.Tensor) – Tuple containing the name and buffer</returns>
-                public virtual IEnumerable<(string name, Tensor buffer)> named_buffers(bool recurse = true)
+                public virtual IEnumerable<(string name, Tensor buffer)> named_buffers(bool recurse = true, bool include_nonpersistent = true)
                 {
                     var seen = new HashSet<IntPtr>();
                     seen.Add(IntPtr.Zero);              // Ignore invalid buffers.
 
                     foreach (var nsm in _internal_buffers) {
-                        if (seen.Contains(nsm.Item2.handle)) continue;
-                        seen.Add(nsm.Item2.handle);
-                        yield return nsm;
+                        if (seen.Contains(nsm.Item2.Item1.handle) || !nsm.Item2.Item2) continue;
+                        seen.Add(nsm.Item2.Item1.handle);
+                        yield return (nsm.Item1, nsm.Item2.Item1);
                     }
 
                     if (!recurse) yield break;
 
                     foreach (var (submoduleName, subModule) in _internal_submodules) {
-                        foreach (var (bufferName, buffer) in subModule.named_buffers(true)) {
+                        foreach (var (bufferName, buffer) in subModule.named_buffers(true, include_nonpersistent)) {
                             if (seen.Contains(buffer.handle)) continue;
                             seen.Add(buffer.handle);
                             yield return ($"{submoduleName}.{bufferName}", buffer);
@@ -493,7 +482,9 @@ namespace TorchSharp
                 /// <summary>
                 /// Returns an enumerable of buffers.
                 /// </summary>
-                public virtual IEnumerable<Tensor> buffers(bool recurse = true) => named_buffers(recurse).Select(np => np.buffer);
+                /// <param name="recurse">If true, then yields buffers of this module and all submodules. Otherwise, yields only buffers that are direct members of this module.</param>
+                /// <param name="include_nonpersistent">Include buffers that are not persistent.</param>
+                public virtual IEnumerable<Tensor> buffers(bool recurse = true, bool include_nonpersistent = true) => named_buffers(recurse, include_nonpersistent).Select(np => np.buffer);
 
                 /// <summary>
                 /// Returns an enumerable of immediate children modules, yielding both the name of the module as well as the module itself.
@@ -546,7 +537,7 @@ namespace TorchSharp
                         destination.TryAdd(key, p.Item2);
                     }
 
-                    foreach (var p in named_buffers()) {
+                    foreach (var p in named_buffers(include_nonpersistent: false) ) {
                         var key = string.IsNullOrEmpty(prefix) ? $"{p.name}" : $"{prefix}.{p.name}";
                         destination.TryAdd(key, p.Item2);
                     }
@@ -713,7 +704,7 @@ namespace TorchSharp
                 {
                     if (target is null) throw new ArgumentNullException("target");
                     if (_internal_buffers.TryGetValue(target, out var buffer)) {
-                        return buffer;
+                        return buffer.Item1;
                     }
 
                     var splits = target.Split('.');
@@ -756,15 +747,17 @@ namespace TorchSharp
                 /// <param name="name">Name of the buffer. The buffer can be accessed from this module using the given name</param>
                 /// <param name="tensor">
                 /// Buffer to be registered. If null, then operations that run on buffers, such as cuda(), are ignored.
-                /// If null, the buffer is not included in the module’s state_dict.</param>
+                /// If null, the buffer is not included in the module’s state_dict.
+                /// </param>
+                /// <param name="persistent">Whether the buffer is part of this module’s state_dict.</param>
                 /// <exception cref="ArgumentNullException"></exception>
                 /// <exception cref="InvalidOperationException"></exception>
-                public virtual void register_buffer(string name, Tensor tensor)
+                public virtual void register_buffer(string name, Tensor tensor, bool persistent = true)
                 {
                     if (tensor is null || tensor.handle == IntPtr.Zero)
                         throw new ArgumentNullException(nameof(tensor), "A null tensor cannot be registered as a buffer.");
 
-                    if (!_internal_buffers.TryAdd(name, tensor))
+                    if (!_internal_buffers.TryAdd(name, (tensor, persistent)))
                         throw new InvalidOperationException($"Tensor {name} is already registered.");
                 }
 
@@ -849,7 +842,7 @@ namespace TorchSharp
                     }
                 }
 
-                protected void ConditionallyRegisterBuffer(string name, Tensor value)
+                protected void ConditionallyRegisterBuffer(string name, Tensor value, bool persistent = true)
                 {
                     if (value is null) {
                         if (_internal_buffers.ContainsKey(name)) {
@@ -857,9 +850,9 @@ namespace TorchSharp
                         }
                     } else {
                         if (_internal_buffers.ContainsKey(name)) {
-                            _internal_buffers[name] = value;
+                            _internal_buffers[name] = (value, persistent);
                         } else {
-                            _internal_buffers.Add(name, value);
+                            _internal_buffers.Add(name, (value, persistent));
                         }
                     }
                 }
@@ -949,20 +942,21 @@ namespace TorchSharp
                 /// leaving everything else alone.
                 /// </param>
                 /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
                 /// Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public virtual Module load(string location, bool strict = true, IList<string> skip = null)
+                public virtual Module load(string location, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
                 {
                     if (!System.IO.File.Exists(location))
                         throw new System.IO.FileNotFoundException(location);
 
                     using var stream = System.IO.File.OpenRead(location);
                     using var reader = new System.IO.BinaryReader(stream);
-                    load(reader, strict, skip);
+                    load(reader, strict, skip, loadedParameters);
 
                     return this;
                 }
@@ -977,13 +971,14 @@ namespace TorchSharp
                 /// leaving everything else alone.
                 /// </param>
                 /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
                 /// Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string> skip = null)
+                public virtual Module load(System.IO.BinaryReader reader, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
                 {
                     skip ??= Array.Empty<string>();
 
@@ -1007,9 +1002,16 @@ namespace TorchSharp
                             if (!found && strict)
                                 throw new ArgumentException($"Mismatched module state names: the target modules does not have a submodule or buffer named '{key}'");
 
-                            if (found) {
-                                sd[key].Load(reader, skip: skip.Contains(key));
+                            if (found && !skip.Contains(key)) {
+                                sd[key].Load(reader);
                             }
+                            else {
+                                // Even if we are skipping this tensor, we need to load it in so that
+                                // the BinaryReader seeks forward in the input stream.
+                                TensorExtensionMethods.Load(reader, skip: true);
+                            }
+
+                            loadedParameters?.Add(key, found);
                         }
                     } finally {
                         if (dt != DeviceType.CPU) _to(dt, di);
@@ -1028,16 +1030,17 @@ namespace TorchSharp
                 /// leaving everything else alone.
                 /// </param>
                 /// <param name="skip">A list of keys not to consider when loading the dictionary.</param>
+                /// <param name="loadedParameters">A dictionary to populate with the list of parameters loaded and whether they were matched/skipped. Useful when loading in non-strict mode.</param>
                 /// <returns>The module, with parameters and buffers loaded.</returns>
                 /// <remarks>
                 /// Using a skip list only prevents tensors in the target module from being modified, it
                 /// does not alter any logic related to checking for matching tensor element types or entries.
                 /// It may be necessary to also pass 'strict=false' to avoid exceptions.
                 /// </remarks>
-                public Module load(System.IO.Stream stream, bool strict = true, IList<string> skip = null)
+                public Module load(System.IO.Stream stream, bool strict = true, IList<string> skip = null, Dictionary<string, bool> loadedParameters = null)
                 {
                     using var reader = new System.IO.BinaryReader(stream);
-                    return load(reader, strict, skip);
+                    return load(reader, strict, skip, loadedParameters);
                 }
 
                 /// <summary>
@@ -1096,7 +1099,7 @@ namespace TorchSharp
 
                     foreach (var field in GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 
-                        var fieldName = field.Name;
+                        var fieldName = field.ComponentName();
                         if (_internal_submodules.ContainsKey(fieldName) || _internal_params.ContainsKey(fieldName) || _internal_buffers.ContainsKey(fieldName)) continue;
 
                         var value = field.GetValue(this);
@@ -1142,7 +1145,7 @@ namespace TorchSharp
                 private bool _areComponentsRegistered;
 
                 protected Utils.OrderedDict<string, Module> _internal_submodules = new Utils.OrderedDict<string, Module>();
-                protected Utils.OrderedDict<string, Tensor> _internal_buffers = new Utils.OrderedDict<string, Tensor>();
+                protected Utils.OrderedDict<string, (Tensor, bool)> _internal_buffers = new Utils.OrderedDict<string, (Tensor, bool)>();
                 protected Utils.OrderedDict<string, Parameter> _internal_params = new Utils.OrderedDict<string, Parameter>();
 
                 /// Keeps the callback delegate alive
@@ -1725,6 +1728,89 @@ namespace TorchSharp
         /// <param name="module">The module to move</param>
         /// <param name="deviceIndex">If specified, all parameters will be copied to that device</param>
         public static T cuda<T>(this T module, int deviceIndex = -1) where T : torch.nn.Module => (T)module._to(DeviceType.CUDA, deviceIndex);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Bool`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @bool<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Bool);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Byte`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @byte<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Byte);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Int8`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @char<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int8);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Int16`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @short<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int16);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Int32`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @int<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int32);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Int64`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @long<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Int64);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Float16`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T half<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Float16);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.BFloat16`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T bfloat16<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.BFloat16);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Float32`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @float<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Float32);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.Float64`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T @double<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.Float64);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.ComplexFloat32`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T cfloat<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.ComplexFloat32);
+
+        /// <summary>
+        /// Converts all model parameters and buffers to `ScalarType.ComplexFloat64`.
+        /// </summary>
+        /// <param name="module">The module to convert</param>
+        public static T cdouble<T>(this T module) where T : torch.nn.Module => module.to(ScalarType.ComplexFloat64);
+    }
+
+    public static class FieldInfoExtensionMethods
+    {
+        /// <summary>
+        /// Retrieves the custom component name defined by the ComponentNameAttribute for a given field,
+        /// or defaults to the field's own name if the attribute is not present.
+        /// </summary>
+        /// <param name="field">The field for which to retrieve the component name.</param>
+        /// <returns>The custom component name if specified, otherwise the field's name.</returns>
+        public static string ComponentName(this FieldInfo field) => field.GetCustomAttribute<ComponentNameAttribute>()?.Name ?? field.Name;
     }
 
     internal delegate IntPtr ForwardFunctionC(IntPtr tensor);

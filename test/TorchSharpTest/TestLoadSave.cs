@@ -6,8 +6,8 @@ using TorchSharp.Modules;
 using static TorchSharp.torch.nn;
 using Xunit;
 using System.Collections.Generic;
+using static TorchSharp.torch;
 
-#if false
 #nullable enable
 
 namespace TorchSharp
@@ -22,6 +22,16 @@ namespace TorchSharp
             return $"_STR{rand.Next()}.{extension}";
         }
 
+        [Fact]
+        private void TestLoadSingleTensor()
+        {
+            using var tensor = Tensor.Load("tensor2345.dat");
+
+            Assert.NotNull(tensor);
+            Assert.Equal(new long[] { 2, 3, 4, 5 }, tensor.shape);
+        }
+
+#if false
         [Fact]
         public void TestSaveLoadLinear1()
         {
@@ -2551,6 +2561,32 @@ namespace TorchSharp
                 () => Assert.NotNull(state!.exp_inf)
             );
         }
+#endif
+        [Fact]
+        public void TestLoadNonStrictMode()
+        {
+            // Create a model with multiple parameters, and then create another one with a subset
+            // of the parameters in a different order, to make sure that the non-strict load can handle it.
+            var model1 = Sequential(("linear1", Linear(2, 2)),
+                                    ("linear2", Linear(2, 2)),
+                                    ("linear3", Linear(2, 2)),
+                                    ("linear4", Linear(2, 2)),
+                                    ("linear5", Linear(2, 2)));
+
+            string filename = RandomFileName("dat");
+            model1.save(filename);
+
+            var model2 = Sequential(("linear4", Linear(2, 2)),
+                                    ("linear2", Linear(2, 2)));
+            var loadedParams = new Dictionary<string, bool>();
+            model2.load(filename, strict: false, loadedParameters: loadedParams);
+
+            // Make sure that the loadedParams dictionary marks the loaded layers correctly
+            Assert.False(loadedParams["linear1.weight"]);
+            Assert.True(loadedParams["linear2.weight"]);
+            Assert.False(loadedParams["linear3.weight"]);
+            Assert.True(loadedParams["linear4.weight"]);
+            Assert.False(loadedParams["linear5.weight"]);
+        }
     }
 }
-#endif

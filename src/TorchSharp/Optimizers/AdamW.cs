@@ -209,6 +209,10 @@ namespace TorchSharp
                 public Tensor exp_avg_sq;
                 public Tensor max_exp_avg_sq;
 
+                public State(Parameter parameter) : base(parameter)
+                {
+                }
+
                 public void Dispose()
                 {
                     Dispose(true);
@@ -300,6 +304,25 @@ namespace TorchSharp
                         exp_avg_sq.allclose(rhs.exp_avg_sq) &&
                         (max_exp_avg_sq is null || max_exp_avg_sq.allclose(rhs.max_exp_avg_sq));
                 }
+
+                /// <summary>
+                /// Initialize the values of the state to the initial values.
+                /// </summary>
+                /// <param name="options">The optimizer options</param>
+                public override void Initialize(OptimizerOptions options)
+                {
+                    // Dispose the old tensors, if this is a re-initialization.
+                    this.exp_avg?.Dispose();
+                    this.exp_avg_sq?.Dispose();
+                    this.max_exp_avg_sq?.Dispose();
+
+                    this.step = 0;
+                    this.exp_avg = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                    this.exp_avg_sq = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                    this.max_exp_avg_sq = null;
+                    if ((options as Options).amsgrad.Value) 
+                        this.max_exp_avg_sq = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                }
             }
 
             /// <summary>
@@ -330,14 +353,9 @@ namespace TorchSharp
                 _parameter_groups.Add(param_group);
 
                 foreach (var p in param_group.Parameters) {
-                    var state = new State();
+                    var state = new State(p);
                     _state[p.Handle] = state;
-                    state.step = 0;
-                    state.exp_avg = torch.zeros_like(p).DetachFromDisposeScope();
-                    state.exp_avg_sq = torch.zeros_like(p).DetachFromDisposeScope();
-                    if (opt.amsgrad.Value) {
-                        state.max_exp_avg_sq = torch.zeros_like(p).DetachFromDisposeScope();
-                    }
+                    state.Initialize(opt);
                 }
             }
 

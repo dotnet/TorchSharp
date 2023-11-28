@@ -60,11 +60,23 @@ namespace TorchVision
             Assert.Throws<InvalidDataException>(() => {
                 var my_transform = new MyTransform();
                 using (var dataset = CelebA(".", transform: my_transform)) {
-                    var loader = new DataLoader(dataset, 10, shuffle: true);
+                    var loader = DataLoader(dataset, 10, shuffle: true);
                     foreach (var batch in loader) {
                     }
                 }
             });
+        }
+
+        [Fact]
+
+        public void TestMNISTDownload()
+        {
+            var data = torchvision.datasets.MNIST("TestMNISTDownload", true, true);
+
+            Assert.True(File.Exists(Path.Combine("TestMNISTDownload", "mnist", "train-images-idx3-ubyte.gz")));
+            Assert.True(File.Exists(Path.Combine("TestMNISTDownload", "mnist", "test_data", "train-images-idx3-ubyte")));
+            Assert.True(File.Exists(Path.Combine("TestMNISTDownload", "mnist", "t10k-images-idx3-ubyte.gz")));
+            Assert.True(File.Exists(Path.Combine("TestMNISTDownload", "mnist", "test_data", "t10k-images-idx3-ubyte")));
         }
     }
 }

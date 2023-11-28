@@ -15,6 +15,8 @@ using static TorchSharp.torchvision.models;
 
 
 using System.Numerics;
+using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
 
 #nullable enable
 
@@ -1104,7 +1106,7 @@ namespace TorchSharp
             {
                 layer = nn.Linear(16, 2);
                 layer2 = new Test2_912((from l in Enumerable.Range(0, layernum)
-                                    select new Test3_912()).ToArray(),
+                                        select new Test3_912()).ToArray(),
                                     (from l in Enumerable.Range(0, layernum)
                                      select new Test3_912()).ToArray());
                 this.RegisterComponents();
@@ -1164,7 +1166,7 @@ namespace TorchSharp
 
             Assert.Multiple(
             () => Assert.Equal(expectedShape, functional.max_pool2d(t, 2).shape),
-            () => Assert.Equal(expectedShape, functional.max_pool2d(t, ( 2, 2 )).shape),
+            () => Assert.Equal(expectedShape, functional.max_pool2d(t, (2, 2)).shape),
             () => Assert.Equal(expectedShape, functional.max_pool2d(t, new long[] { 2, 2 }).shape)
             );
 
@@ -1179,6 +1181,235 @@ namespace TorchSharp
 
             Assert.Equal(expectedShape, functional.max_pool3d(t, new long[] { 2, 2, 2 }).shape);
             Assert.Equal(expectedShape, functional.max_pool3d_with_indices(t, new long[] { 2, 2, 2 }).output.shape);
+        }
+
+        [Fact]
+        public void Validate1116_1()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x1 = torch.tensor(new double[] { 1.0, 3.0 }, device: device, requires_grad: true);
+                Assert.True(x1.requires_grad);
+                Assert.Equal(device.type, x1.device.type);
+
+                var x2 = x1 * x1;
+                var example = x2.sum();
+
+                example.backward();
+
+                var grads = x1.grad();
+                Assert.True(x1.requires_grad);
+                Assert.NotNull(grads);
+            }
+        }
+
+        [Fact]
+        public void Validate1116_2()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x1 = torch.arange(1, 10, dtype: torch.float32, device: device, requires_grad: true);
+                Assert.True(x1.requires_grad);
+                Assert.Equal(device.type, x1.device.type);
+
+                var x2 = x1 * x1;
+                var example = x2.sum();
+
+                example.backward();
+
+                var grads = x1.grad();
+                Assert.True(x1.requires_grad);
+                Assert.NotNull(grads);
+            }
+        }
+
+        [Fact]
+        public void Validate1116_3()
+        {
+            var x1 = torch.frombuffer(new double[] { 1.0, 3.0 }, torch.float64, requires_grad: true);
+            Assert.True(x1.requires_grad);
+            Assert.Equal(DeviceType.CPU, x1.device.type);
+
+            var x2 = x1 * x1;
+            var example = x2.sum();
+
+            example.backward();
+
+            var grads = x1.grad();
+            Assert.True(x1.requires_grad);
+            Assert.NotNull(grads);
+        }
+
+        [Fact]
+        public void Validate1116_4()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x1 = torch.linspace(1, 10, 5, dtype: torch.float32, device: device, requires_grad: true);
+                Assert.True(x1.requires_grad);
+                Assert.Equal(device.type, x1.device.type);
+
+                var x2 = x1 * x1;
+                var example = x2.sum();
+
+                example.backward();
+
+                var grads = x1.grad();
+                Assert.True(x1.requires_grad);
+                Assert.NotNull(grads);
+            }
+        }
+
+        [Fact]
+        public void Validate1116_5()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x1 = torch.logspace(1, 10, 5, dtype: torch.float32, device: device, requires_grad: true);
+                Assert.True(x1.requires_grad);
+                Assert.Equal(device.type, x1.device.type);
+
+                var x2 = x1 * x1;
+                var example = x2.sum();
+
+                example.backward();
+
+                var grads = x1.grad();
+                Assert.True(x1.requires_grad);
+                Assert.NotNull(grads);
+            }
+        }
+
+        [Fact]
+        public void Validate1116_6()
+        {
+            foreach (var device in TestUtils.AvailableDevices()) {
+                var x1 = torch.eye(1, 10, dtype: torch.float32, device: device, requires_grad: true);
+                Assert.True(x1.requires_grad);
+                Assert.Equal(device.type, x1.device.type);
+
+                var x2 = x1 * x1;
+                var example = x2.sum();
+
+                example.backward();
+
+                var grads = x1.grad();
+                Assert.True(x1.requires_grad);
+                Assert.NotNull(grads);
+            }
+        }
+
+        [Fact]
+        public void Validate1073()
+        {
+            // We added multiple overloads of '*' and other operators for the benefit of F#.
+            // Just checking that it still works in C#.
+            {
+                var f = (Tensor x) => 2.0 + x;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 3.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x + 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 3.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => 2.0 - x;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 1.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x - 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, -1.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => 2.0 * x;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 2.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x * 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 2.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => 2.0 / x;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 2.0);
+                Assert.Equal(y, x);
+            }
+            {
+                var f = (Tensor x) => x / 2.0;
+                var x = f(torch.ones(15));
+                var y = torch.full(15, 0.5);
+                Assert.Equal(y, x);
+            }
+        }
+
+
+        const int iterations_1047 = 100000;
+
+        [Fact]
+        public void Validate1047_1()
+        {
+            string script = @"
+  def add_i(x: Tensor, i: int) -> Tensor:
+    return x + i
+  def id(x: Tensor) -> Tensor:
+    return x
+";
+            using var cu = torch.jit.compile(script);
+
+            Assert.NotNull(cu);
+
+            var zeros = torch.zeros(3, 4);
+
+            int xx = 0;
+            while (xx < iterations_1047) {
+                var y = cu.invoke<Tensor>("add_i", zeros, 1);
+                var z = cu.invoke<Tensor>("id", y);
+                y.Dispose();
+                z.Dispose();
+                xx++;
+            }
+            Assert.Equal(iterations_1047, xx);
+        }
+
+        [Fact(Skip = "Takes too long to run.")]
+        public void Validate1047_2()
+        {
+            jit.ScriptModule<Tensor, Tensor> mx = torch.jit.load<Tensor, Tensor>("l1000_100_10.script.dat");
+            mx.eval();
+
+            int xx = 0;
+            while (xx < iterations_1047) {
+                using var input = torch.ones(1000);
+                using var output = mx.call(input);
+                xx++;
+            }
+            Assert.Equal(iterations_1047, xx);
+        }
+
+        [Fact(Skip = "Work in progress")]
+        public void Validate1126()
+        {
+            var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+
+            const int vocabSize = 65;
+            const int blockSize = 32;
+
+            var model = torch.jit.load<torch.Tensor, torch.Tensor>("shakespeare.pt.zip").to(device);
+
+            var attributes = model.named_attributes().ToArray();
+
+            var xs = torch.tensor(new int[blockSize].Select(_ => new Random().Next(vocabSize)).ToArray(), device: device, dtype: torch.int64).unsqueeze(0);
+
+            var ys = model.forward(xs);
+
         }
     }
 }

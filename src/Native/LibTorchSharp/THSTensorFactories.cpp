@@ -153,7 +153,14 @@ Tensor THSTensor_logspace(const double start, const double end, const int64_t st
 }
 
 
-Tensor THSTensor_from_file(const char* filename, const int8_t shared, const int64_t size, const int8_t scalar_type, const int device_type, const int device_index, const bool requires_grad)
+Tensor THSTensor_from_file(
+    const char* filename,
+    const int8_t shared,
+    const int64_t size,
+    const int8_t scalar_type,
+    const int device_type,
+    const int device_index,
+    const bool requires_grad)
 {
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
@@ -170,14 +177,35 @@ Tensor THSTensor_new(
     void (*deleter)(void*),
     const int64_t* sizes,
     const int szlength,
-    int8_t scalar_type,
+    int8_t scalar_type,         // The element type in the data array
+    int8_t dtype,               // The element type of the constructed tensor
+    const int device_type,
+    const int device_index,
     const bool requires_grad)
 {
+    bool move = device_type != 0;
+    bool convert = scalar_type != dtype;
+
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
-        .requires_grad(requires_grad);
+        .requires_grad(requires_grad && !move);
 
-    CATCH_TENSOR(torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
+    CATCH(
+        auto res = torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options);
+        if (move) // Not CPU
+        {
+            auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
+            res = convert
+                ? res.to(device, at::ScalarType(dtype), false, false).set_requires_grad(requires_grad)
+                : res.to(device, false, false).set_requires_grad(requires_grad);
+        }
+        else if (convert)
+        {
+            res = res.to(at::ScalarType(dtype), false, false);
+        }
+        return ResultTensor(res);
+    );
+    return nullptr;
 }
 
 Tensor THSTensor_frombuffer(
@@ -185,15 +213,36 @@ Tensor THSTensor_frombuffer(
     void (*deleter)(void*),
     const int64_t count,
     const ptrdiff_t offset,
-    int8_t scalar_type,
+    int8_t scalar_type,         // The element type in the data array
+    int8_t dtype,               // The element type of the constructed tensor
+    const int device_type,
+    const int device_index,
     const bool requires_grad)
 {
+    bool move = device_type != 0;
+    bool convert = scalar_type != dtype;
+
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(scalar_type))
-        .requires_grad(requires_grad);
+        .requires_grad(requires_grad && !move);
 
     auto dataPtr = reinterpret_cast<char*>(data);
-    CATCH_TENSOR(torch::from_blob(dataPtr+offset, at::ArrayRef<int64_t>(count), deleter, options));
+    CATCH(
+        auto res = torch::from_blob(dataPtr + offset, at::ArrayRef<int64_t>(count), deleter, options);
+        if (move) // Not CPU
+        {
+            auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
+            res = convert
+                ? res.to(device, at::ScalarType(dtype), false, false).set_requires_grad(requires_grad)
+                : res.to(device, false, false).set_requires_grad(requires_grad);
+        }
+        else if (convert)
+        {
+            res = res.to(at::ScalarType(dtype), false, false);
+        }
+        return ResultTensor(res);
+    );
+    return nullptr;
 }
 
 Tensor THSTensor_newInt64(
@@ -201,12 +250,27 @@ Tensor THSTensor_newInt64(
     void (*deleter)(void*),
     const int64_t* sizes,
     const int szlength,
+    const int device_type,
+    const int device_index,
     const bool requires_grad)
 {
+    bool move = device_type != 0;
+
     auto options = at::TensorOptions()
         .dtype(at::ScalarType(at::kLong))
-        .requires_grad(requires_grad);
-    CATCH_TENSOR(torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
+        .requires_grad(requires_grad && !move);
+
+    auto dataPtr = reinterpret_cast<char*>(data);
+    CATCH(
+        auto res = torch::from_blob(data, at::ArrayRef<int64_t>(sizes, szlength), deleter, options);
+        if (move) // Not CPU
+        {
+            auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
+            res = res.to(device, false, false).set_requires_grad(requires_grad);
+        }
+        return ResultTensor(res);
+    );
+    return nullptr;
 }
 
 // The data is passed in as float and copied into the array of Half in the C++ code
@@ -217,18 +281,28 @@ Tensor THSTensor_newFloat16(
     void (*deleter)(void*),
     const int64_t* sizes,
     const int szlength,
+    const int device_type,
+    const int device_index,
     const bool requires_grad)
 {
+    bool move = device_type != 0;
     CATCH_RETURN_Tensor(
         int64_t sz = 1;
         for (int k = 0; k < szlength; k++)
             sz *= sizes[k];
         for (int64_t i = 0; i < sz; i++)
             dataArray[i] = (c10::Half)rawArray[i];
+
         auto options = at::TensorOptions()
-            .dtype(at::ScalarType(at::kHalf))
-            .requires_grad(requires_grad);
-        res = ResultTensor(torch::from_blob(dataArray, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
+            .dtype(at::ScalarType(at::kLong))
+            .requires_grad(requires_grad && !move);
+        auto r = torch::from_blob(dataArray, at::ArrayRef<int64_t>(sizes, szlength), deleter, options);
+        if (move) // Not CPU
+        {
+            auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
+            r = r.to(device, false, false).set_requires_grad(requires_grad);
+        }
+        res = ResultTensor(r);
     )
 }
 
@@ -240,19 +314,29 @@ Tensor THSTensor_newBFloat16(
     void (*deleter)(void*),
     const int64_t* sizes,
     const int szlength,
+    const int device_type,
+    const int device_index,
     const bool requires_grad)
 {
+    bool move = device_type != 0;
     CATCH_RETURN_Tensor(
         int64_t sz = 1;
         for (int k = 0; k < szlength; k++)
             sz *= sizes[k];
         for (int64_t i = 0; i < sz; i++)
             dataArray[i] = (c10::BFloat16)rawArray[i];
+
         auto options = at::TensorOptions()
-            .dtype(at::ScalarType(at::kBFloat16))
-            .requires_grad(requires_grad);
-        res = ResultTensor(torch::from_blob(dataArray, at::ArrayRef<int64_t>(sizes, szlength), deleter, options));
-    )
+            .dtype(at::ScalarType(at::kLong))
+            .requires_grad(requires_grad && !move);
+        auto r = torch::from_blob(dataArray, at::ArrayRef<int64_t>(sizes, szlength), deleter, options);
+        if (move) // Not CPU
+        {
+            auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
+            r = r.to(device, false, false).set_requires_grad(requires_grad);
+        }
+        res = ResultTensor(r);
+        )
 }
 
 Tensor THSTensor_newInt8Scalar(int8_t data, const int device_type, const int device_index, bool requires_grad)

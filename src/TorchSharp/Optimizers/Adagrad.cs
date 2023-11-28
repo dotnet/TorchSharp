@@ -186,6 +186,10 @@ namespace TorchSharp
                 public long step;
                 public Tensor sum;
 
+                public State(Parameter parameter) : base(parameter)
+                {
+                }
+
                 public void Dispose()
                 {
                     Dispose(true);
@@ -250,6 +254,22 @@ namespace TorchSharp
                     var rhs = other as State;
                     return (rhs is not null) && step == rhs.step && sum.allclose(rhs.sum);
                 }
+
+                /// <summary>
+                /// Initialize the values of the state to the initial values.
+                /// </summary>
+                /// <param name="options">The optimizer options</param>
+                public override void Initialize(OptimizerOptions options)
+                {
+                    // Dispose the old tensors, if this is a re-initialization.
+                    this.sum?.Dispose();
+
+                    this.step = 0;
+                    var init_value = torch.is_complex(_parameter.dtype)
+                        ? (Scalar)new System.Numerics.Complex((options as Options).initial_accumulator_value.Value, (options as Options).initial_accumulator_value.Value)
+                        : (Scalar)(options as Options).initial_accumulator_value.Value;
+                    this.sum = torch.full_like(_parameter, init_value).DetachFromDisposeScope();
+                }
             }
 
             /// <summary>
@@ -278,13 +298,9 @@ namespace TorchSharp
                 _parameter_groups.Add(param_group);
 
                 foreach (var p in param_group.Parameters) {
-                    var state = new State();
+                    var state = new State(p);
                     _state[p.Handle] = state;
-                    state.step = 0;
-                    var init_value = torch.is_complex(p.dtype)
-                        ? (Scalar)new System.Numerics.Complex((param_group.Options as Options).initial_accumulator_value.Value, (param_group.Options as Options).initial_accumulator_value.Value)
-                        : (Scalar)(param_group.Options as Options).initial_accumulator_value.Value;
-                    state.sum = torch.full_like(p, init_value).DetachFromDisposeScope();
+                    state.Initialize(param_group.Options);
                 }
             }
 

@@ -1410,6 +1410,18 @@ namespace TorchSharp
                 }
             }
 
+
+            /// <summary>
+            /// Tensor indexer.
+            /// </summary>
+            /// <param name="indices">A variable-lenght list of indices.</param>
+            /// <returns>A tensor, possbily singleton.</returns>
+            [IndexerName("TensorItems")]
+            public Tensor this[params long[] indices] {
+                get { return index(indices.Select(t => TensorIndex.Single(t)).ToArray()); }
+                set { index_put_(value, indices.Select(t => TensorIndex.Single(t)).ToArray()); }
+            }
+
             /// <summary>
             /// Index into the tensor using Python-like indexing expressions.
             /// </summary>
@@ -1427,7 +1439,6 @@ namespace TorchSharp
                         }
                     }
                 }
-
             }
 
             /// <summary>
@@ -2956,13 +2967,23 @@ namespace TorchSharp
 
             public Tensor @char() => this.to_type(ScalarType.Int8);
 
+            public Tensor @short() => this.to_type(ScalarType.Int16);
+
             public Tensor @int() => this.to_type(ScalarType.Int32);
 
             public Tensor @long() => this.to_type(ScalarType.Int64);
 
+            public Tensor half() => this.to_type(ScalarType.Float16);
+
+            public Tensor bfloat16() => this.to_type(ScalarType.BFloat16);
+
             public Tensor @float() => this.to_type(ScalarType.Float32);
 
             public Tensor @double() => this.to_type(ScalarType.Float64);
+
+            public Tensor cfloat() => this.to_type(ScalarType.ComplexFloat32);
+
+            public Tensor cdouble() => this.to_type(ScalarType.ComplexFloat64);
 
 
             /// <summary>

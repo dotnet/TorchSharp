@@ -17,12 +17,6 @@ namespace TorchSharp
             {
             }
 
-            public new static Linear Load(string modelPath)
-            {
-                var res = Module<Tensor, Tensor>.Load(modelPath);
-                return new Linear(res.handle.DangerousGetHandle(), IntPtr.Zero);
-            }
-
             public override Tensor forward(Tensor tensor)
             {
                 var res = THSNN_Linear_forward(handle, tensor.Handle);

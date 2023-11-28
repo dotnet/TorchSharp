@@ -6,14 +6,14 @@
 
 Tensor THSTensor_fft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm)
 {
-    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
+    auto nArg = (n == -1 ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(n));
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     CATCH_TENSOR(torch::fft::fft(*tensor, nArg, dim, normArg));
 }
 
 Tensor THSTensor_ifft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm)
 {
-    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
+    auto nArg = (n == -1 ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(n));
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     CATCH_TENSOR(torch::fft::ifft(*tensor, nArg, dim, normArg));
 }
@@ -56,7 +56,7 @@ Tensor THSTensor_ifftn(const Tensor tensor, const int64_t* s, const int s_length
 
 Tensor THSTensor_hfft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm)
 {
-    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
+    auto nArg = (n == -1 ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(n));
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     CATCH_TENSOR(torch::fft::hfft(*tensor, nArg, dim, normArg));
 }
@@ -80,7 +80,7 @@ Tensor THSTensor_hfftn(const Tensor tensor, const int64_t* s, const int s_length
 
 Tensor THSTensor_ihfft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm)
 {
-    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
+    auto nArg = (n == -1 ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(n));
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     CATCH_TENSOR(torch::fft::ihfft(*tensor, nArg, dim, normArg));
 }
@@ -104,14 +104,14 @@ Tensor THSTensor_ihfftn(const Tensor tensor, const int64_t* s, const int s_lengt
 
 Tensor THSTensor_rfft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm)
 {
-    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
+    auto nArg = (n == -1 ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(n));
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     CATCH_TENSOR(torch::fft::rfft(*tensor, nArg, dim, normArg));
 }
 
 Tensor THSTensor_irfft(const Tensor tensor, const int64_t n, const int64_t dim, int8_t norm)
 {
-    auto nArg = (n == -1 ? c10::optional<int64_t>() : c10::optional<int64_t>(n));
+    auto nArg = (n == -1 ? c10::optional<c10::SymInt>() : c10::optional<c10::SymInt>(n));
     auto normArg = (norm == 0) ? "backward" : (norm == 1) ? "forward" : "ortho";
     CATCH_TENSOR(torch::fft::irfft(*tensor, nArg, dim, normArg));
 }

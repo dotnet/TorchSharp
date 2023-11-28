@@ -175,7 +175,7 @@ namespace TorchSharp
                         var mu_next = beta1 * (1.0 - 0.5 * Math.Pow(0.96, (state.step + 1) * momentum_decay));
 
                         var mu_product = state.mu_product * mu;
-                        var mu_product_next = mu_product * mu * mu_next;
+                        var mu_product_next = mu_product * mu_next;
 
                         exp_avg.mul_(beta1).add_(grad, alpha: 1 - beta1);
                         exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value: 1 - beta2);
@@ -204,6 +204,10 @@ namespace TorchSharp
                 public double mu_product;
                 public Tensor exp_avg;
                 public Tensor exp_avg_sq;
+
+                public State(Parameter parameter) : base(parameter)
+                {
+                }
 
                 public void Dispose()
                 {
@@ -282,6 +286,22 @@ namespace TorchSharp
                         exp_avg.allclose(rhs.exp_avg) &&
                         exp_avg_sq.allclose(rhs.exp_avg_sq);
                 }
+
+                /// <summary>
+                /// Initialize the values of the state to the initial values.
+                /// </summary>
+                /// <param name="options">The optimizer options</param>
+                public override void Initialize(OptimizerOptions options)
+                {
+                    // Dispose the old tensors, if this is a re-initialization.
+                    this.exp_avg?.Dispose();
+                    this.exp_avg_sq?.Dispose();
+
+                    this.step = 0;
+                    this.mu_product = 1;
+                    this.exp_avg = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                    this.exp_avg_sq = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                }
             }
 
             /// <summary>
@@ -311,11 +331,9 @@ namespace TorchSharp
                 _parameter_groups.Add(param_group);
 
                 foreach (var p in param_group.Parameters) {
-                    var state = new State();
+                    var state = new State(p);
                     _state[p.Handle] = state;
-                    state.step = 0;
-                    state.exp_avg = torch.zeros_like(p).DetachFromDisposeScope();
-                    state.exp_avg_sq = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.Initialize(opt);
                 }
             }
 

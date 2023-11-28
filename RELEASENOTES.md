@@ -2,13 +2,90 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.101.3
+
+__Breaking Changes__:
+
+The base `OptimizerState` class was modified and includes two changes:
+
+1. Custom optimizer state objects derived from `OptimizerState` must now explicitly pass the related `torch.nn.Parameter` object to the `OptimizerState` base constructor to maintain correct linkage.
+2. Custom state objects must implement an Initialize function. This function is responsible for initializing the properties of the state. Note that this function can be called as a re-intialization, so proper disposal of the previous tensor objects should be handled.
+
+__API Changes__:
+
+Introduced `InferenceMode`, a block-based scoping class for optimizing TorchSharp model inference by disabling gradient computation and enhancing performance.<br/>
+Added `Tensor.to_type()` conversion aliases for short, half, bfloat16, cfloat, and cdouble.<br/>
+Added `Module.to()` conversion aliases for all the scalar types.<br/>
+
+__Bug Fixes__:
+
+#1154 : `mu_product` was not initialized in `NAdam` optimizer
+
+## NuGet Version 0.101.2
+
+__API Changes__:
+
+Added extension method `ScalarType.ElementSize()` to get the size of each element of a given ScalarType.<br/>
+Added methods for loading and saving individual tensors with more overloads.<br/>
+Added 'persistent' flag to register_buffer()<br/>
+
+__Bug Fixes__:
+
+Fixed byte stream advancement issue in non-strict mode, ensuring proper skipping of non-existent parameters while loading models.<br/>
+
+## NuGet Version 0.101.1
+
+This is a fast-follower bug fix release, addressing persistent issues with stability of using TorchScript from TorchSharp.
+
+__Bug Fixes__:
+
+#1047 Torchscript execution failures (hangs, access violation, Fatal error. Internal CLR fatal error. (0x80131506) )<br/>
+
+## NuGet Version 0.101.0
+
+This is an upgrade to libtorch 2.1.0. It also moves the underlying CUDA support to 12.1 from 11.7, which means that all the libtorch-cuda-* packages have been renamed. Please update your CUDA driver to one that support CUDA 12.1.
+
+__API Changes__:
+
+Enhanced `Module.load` function to return matching status of parameters in non-strict mode via an output dictionary.<br/>
+Introduced attribute-based parameter naming for module state dictionaries, allowing custom names to override default field names.<br/>
+
+## NuGet Version 0.100.7
+
+__Breaking Changes__:
+
+DataLoader should no longer be created using `new` -- instead, the overall pattern is followed, placing the classes in `TorchSharp.Modules` and the factories in the static class. This will break any code that creates a DataLoader, but can be fixed by:
+
+1. Removing the `new` in `new torch.utils.data.DataLoader(...)`<br/>
+2. Adding a `using TorchSharp.Modules` (C#) or `open TorchSharp.Modules` (F#) to files where `DataLoader` is used as a type name.<br/>
+
+__API Changes__:
+
+Adding an `IterableDataset` abstract class, and making `TensorDataset` derive from it.<br/>
+Moving the `DataLoader` class to `TorchSharp.Modules` and adding DataLoader factories.<br/>
+#1092: got error when using DataLoader <br/>
+#1069: Implementation of torch.sparse_coo_tensor for sparse tensor creation<br/>
+Renamed `torch.nn.functional.SiLU` -> `torch.nn.functional.silu`<br/>
+Added a set of generic `Sequential` classes.<br/>
+
+__Bug Fixes__:
+
+#1083: Compiler rejects scalar operand due to ambiguous implicit conversion<br/>
+
+## NuGet Version 0.100.6
+
+__Bug Fixes__:
+
+ScriptModule: adding `forward` and the ability to hook.<br/>
+Update to SkiaSharp 2.88.6 to avoid the libwebp vulnerability.<br/>
+#1105: Dataset files get written to the wrong directory<br/>
+#1116: Gradient null for simple calculation<br/>
+
 ## NuGet Version 0.100.5
 
 __Breaking Changes__:
 
 Inplace operators no longer create an alias, but instead return 'this'. This change will impact any code that explicitly calls `Dispose` on a tensor after the operation.
-
-__API Changes__:
 
 __Bug Fixes__:
 

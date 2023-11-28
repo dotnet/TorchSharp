@@ -103,12 +103,12 @@ To use TorchSharp, you also need one of the LibTorch backend packages: https://w
 
 * `libtorch-cpu` (CPU, references all three, larger download but simpler)
 
-* `libtorch-cuda-11.7-linux-x64` (CPU/CUDA 11.3, Linux)
+* `libtorch-cuda-12.1-linux-x64` (CPU/CUDA 11.3, Linux)
 
-  > NOTE: Due to the presence of very large native binaries, using the `libtorch-cuda-11.7-linux-x64` package requires
+  > NOTE: Due to the presence of very large native binaries, using the `libtorch-cuda-12.1-linux-x64` package requires
   > .NET 6, e.g. .NET SDK version `6.0.100-preview.5.21302.13` or greater.
 
-* `libtorch-cuda-11.7-win-x64` (CPU/CUDA 11.3, Windows)
+* `libtorch-cuda-12.1-win-x64` (CPU/CUDA 11.3, Windows)
 
 Alternatively you can access the libtorch native binaries via direct reference to existing local native
 binaries of LibTorch installed through other means (for example, by installing [PyTorch](https://pytorch.org/) using a Python package manager). You will have to add an explicit load of the relevant native library, for example:
@@ -116,6 +116,12 @@ binaries of LibTorch installed through other means (for example, by installing [
 ```csharp
     using System.Runtime.InteropServices;
     NativeLibrary.Load("/home/gunes/anaconda3/lib/python3.8/site-packages/torch/lib/libtorch.so")
+```
+
+**NOTE:** Some have reported that in order to use TorchSharp on Windows, the C++ redistributable needs to be installed. This will be the case where VS is installed, but it maybe necessary to install this version of the C++ redist on machines where TorchSharp is deployed:
+
+```
+Microsoft Visual C++ 2015-2022 ( 14.36.32532 )
 ```
 
 # Code of Conduct
