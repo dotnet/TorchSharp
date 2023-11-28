@@ -1,57 +1,82 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
 namespace TorchSharp
 {
     using Modules;
+    using F = TorchSharp.torch.nn.functional;
 
     namespace Modules
     {
-
         /// <summary>
         /// This class is used to represent a LayerNorm module.
         /// </summary>
         public sealed class LayerNorm : torch.nn.Module<Tensor, Tensor>
         {
-            internal LayerNorm(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            private long[] _normalized_shape;
+            private double _eps;
+
+            internal LayerNorm(long[] normalized_shape, double eps, bool elementwise_affine, bool bias, Device? device, ScalarType? dtype) : base(IntPtr.Zero, IntPtr.Zero)
             {
+                _normalized_shape = normalized_shape;
+                _eps = eps;
+                if (elementwise_affine)
+                {
+                    weight = Parameter(torch.empty(normalized_shape, dtype, device));
+                    if (bias)
+                    {
+                        this.bias = Parameter(torch.empty(normalized_shape, dtype, device));
+                    }
+                }
+
+
+                reset_parameters(elementwise_affine);
+            }
+
+            private void reset_parameters(bool elementwise_affine)
+            {
+                if (elementwise_affine)
+                {
+                    init.ones_(weight);
+                }
+                if (bias is not null)
+                {
+                    init.zeros_(bias);
+                }
             }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_LayerNorm_forward(handle.DangerousGetHandle(), tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return F.layer_norm(tensor, _normalized_shape, weight, bias, _eps);
             }
 
             public Parameter? bias {
-                get {
-                    var res = THSNN_LayerNorm_bias(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
-                }
+                get => _bias;
                 set {
-                    THSNN_LayerNorm_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("bias", value);
+                    _bias?.Dispose();
+                    _bias = value?.DetachFromDisposeScope() as Parameter;
+                    ConditionallyRegisterParameter(nameof(bias), _bias);
+                }
+            }
+            private Parameter? _bias;
+
+            public Parameter weight {
+                get => _weight!;
+                set {
+                    if (value is null) throw new ArgumentNullException(nameof(weight));
+                    if (value.Handle != _weight?.Handle) {
+                        _weight?.Dispose();
+                        _weight = (value.DetachFromDisposeScope() as Parameter)!;
+                        ConditionallyRegisterParameter(nameof(weight), _weight);
+                    }
                 }
             }
 
-            public Parameter? weight {
-                get {
-                    var res = THSNN_LayerNorm_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
-                }
-                set {
-                    THSNN_LayerNorm_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("weight", value);
-                }
-            }
+            private Parameter? _weight;
         }
     }
 
@@ -65,18 +90,13 @@ namespace TorchSharp
             /// <param name="normalized_shape">Input shape from an expected input.</param>
             /// <param name="eps">A value added to the denominator for numerical stability. Default: 1e-5</param>
             /// <param name="elementwise_affine">a boolean value that when set to true, this module has learnable per-element affine parameters initialized to ones (for weights) and zeros (for biases).</param>
+            /// <param name="bias">A boolean value that when set to true, this module has learnable per-element bias parameters initialized to zeros</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            public static LayerNorm LayerNorm(long[] normalized_shape, double eps = 1e-05, bool elementwise_affine = true, Device? device = null, ScalarType? dtype = null)
+            public static LayerNorm LayerNorm(long[] normalized_shape, double eps = 1e-05, bool elementwise_affine = true, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                unsafe {
-                    fixed (long* pNormShape = normalized_shape) {
-                        var handle = THSNN_LayerNorm_ctor((IntPtr)pNormShape, normalized_shape.Length, eps, elementwise_affine, out var boxedHandle);
-                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                        return new LayerNorm(handle, boxedHandle).MoveModule<LayerNorm>(device, dtype);
-                    }
-                }
+                return new LayerNorm(normalized_shape, eps, elementwise_affine, bias, device, dtype);
             }
 
             /// <summary>
@@ -85,12 +105,13 @@ namespace TorchSharp
             /// <param name="normalized_shape">Input shape from an expected input.</param>
             /// <param name="eps">A value added to the denominator for numerical stability. Default: 1e-5</param>
             /// <param name="elementwise_affine">a boolean value that when set to true, this module has learnable per-element affine parameters initialized to ones (for weights) and zeros (for biases).</param>
+            /// <param name="bias">A boolean value that when set to true, this module has learnable per-element bias parameters initialized to zeros</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns></returns>
-            public static LayerNorm LayerNorm(long normalized_shape, double eps = 1e-05, bool elementwise_affine = true, Device? device = null, ScalarType? dtype = null)
+            public static LayerNorm LayerNorm(long normalized_shape, double eps = 1e-05, bool elementwise_affine = true, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                return LayerNorm(new[] { normalized_shape }, eps, elementwise_affine, device, dtype);
+                return LayerNorm(new[] { normalized_shape }, eps, elementwise_affine, bias, device, dtype);
             }
         }
     }

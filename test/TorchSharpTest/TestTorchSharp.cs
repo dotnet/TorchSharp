@@ -259,6 +259,18 @@ namespace TorchSharp
             Assert.False(torch.backends.cuda.math_sdp_enabled());
         }
 
+        [Fact]
+        public void EnableInferenceMode()
+        {
+            Assert.False(torch.is_inference_mode_enabled());
+
+            using (var d = torch.inference_mode()) {
+                Assert.True(torch.is_inference_mode_enabled());
+            }
+
+            Assert.False(torch.is_inference_mode_enabled());
+        }
+
         [Fact(Skip ="Intermittently fails")]
         public void AllowFP16ReductionCuBLAS()
         {
