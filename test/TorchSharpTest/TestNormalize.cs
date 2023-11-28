@@ -45,7 +45,7 @@ namespace TorchSharp.Tests
 
             var layerNorm = torch.nn.LayerNorm(normalized_shape, eps, true, true);
 
-            output = layerNorm.forward(weight);
+            output = layerNorm.forward(input_data);
 
             Assert.True(torch.allclose(output, precomputedOutput, atol: 1e-4));
         }
