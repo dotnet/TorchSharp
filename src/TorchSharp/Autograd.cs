@@ -37,6 +37,40 @@ namespace TorchSharp
     }
 
     /// <summary>
+    /// Helper class, relying on IDisposable to implement block-based scoping of autograd settings.
+    /// </summary>
+    internal class InferenceMode : IDisposable
+    {
+        private IntPtr _guard;
+
+        public InferenceMode(bool mode)
+        {
+            _guard = THSAutograd_getInferenceModeGuard(mode);
+        }
+
+        /// <summary>
+        /// Finalize the inference mode. Releases the guard.
+        /// </summary>
+        ~InferenceMode() => Dispose(false);
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public void Dispose(bool disposing)
+        {
+            if (_guard != IntPtr.Zero) {
+                THSAutograd_deleteInferenceModeGuard(_guard);
+                _guard = IntPtr.Zero;
+            }
+        }
+
+        public static bool IsEnabled { get => THSAutograd_isInferenceModeEnabled(); }
+    }
+
+    /// <summary>
     /// Helper class, relying on IDisposable to implement block-based scoping of anomaly settings.
     /// </summary>
     public class AnomalyMode : IDisposable
