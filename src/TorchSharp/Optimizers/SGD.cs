@@ -200,6 +200,10 @@ namespace TorchSharp
             {
                 public Tensor momentum_buffer;
 
+                public State(Parameter parameter) : base(parameter)
+                {
+                }
+
                 public void Dispose()
                 {
                     Dispose(true);
@@ -267,9 +271,8 @@ namespace TorchSharp
                 /// <summary>
                 /// Initialize the values of the state to the initial values.
                 /// </summary>
-                /// <param name="p">The parameter the state is attached to</param>
                 /// <param name="options">The optimizer options</param>
-                public override void Initialize(Parameter p, OptimizerOptions options)
+                public override void Initialize(OptimizerOptions options)
                 {
                     this.momentum_buffer?.Dispose();
                     this.momentum_buffer = null;
@@ -303,9 +306,9 @@ namespace TorchSharp
                 _parameter_groups.Add(param_group);
 
                 foreach (var p in param_group.Parameters) {
-                    var state = new State();
+                    var state = new State(p);
                     _state[p.Handle] = state;
-                    state.Initialize(p, opt);
+                    state.Initialize(opt);
                 }
             }
 

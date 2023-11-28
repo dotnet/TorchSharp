@@ -507,6 +507,15 @@ namespace TorchSharp
         /// </summary>
         public abstract class OptimizerState
         {
+            protected Parameter _parameter;
+            /// <summary>
+            /// Create a new OptimizerState instance linked to a specific parameter
+            /// </summary>
+            /// <param name="parameter">The parameter linked to this state</param>
+            protected OptimizerState(Parameter parameter) {
+                _parameter = parameter;
+            }
+
             /// <summary>
             /// Save the optimizer parameter state to a stream.
             /// </summary>
@@ -538,9 +547,8 @@ namespace TorchSharp
             /// <summary>
             /// Initialize the values of the state to the initial values.
             /// </summary>
-            /// <param name="p">The parameter the state is attached to</param>
             /// <param name="options">The optimizer options</param>
-            public abstract void Initialize(Parameter p, OptimizerOptions options);
+            public abstract void Initialize(OptimizerOptions options);
             
             /// <summary>
             /// Move all the state to the indicated device.

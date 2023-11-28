@@ -186,6 +186,10 @@ namespace TorchSharp
                 public long step;
                 public Tensor sum;
 
+                public State(Parameter parameter) : base(parameter)
+                {
+                }
+
                 public void Dispose()
                 {
                     Dispose(true);
@@ -254,18 +258,17 @@ namespace TorchSharp
                 /// <summary>
                 /// Initialize the values of the state to the initial values.
                 /// </summary>
-                /// <param name="p">The parameter the state is attached to</param>
                 /// <param name="options">The optimizer options</param>
-                public override void Initialize(Parameter p, OptimizerOptions options)
+                public override void Initialize(OptimizerOptions options)
                 {
                     // Dispose the old tensors, if this is a re-initialization.
                     this.sum?.Dispose();
 
                     this.step = 0;
-                    var init_value = torch.is_complex(p.dtype)
+                    var init_value = torch.is_complex(_parameter.dtype)
                         ? (Scalar)new System.Numerics.Complex((options as Options).initial_accumulator_value.Value, (options as Options).initial_accumulator_value.Value)
                         : (Scalar)(options as Options).initial_accumulator_value.Value;
-                    this.sum = torch.full_like(p, init_value).DetachFromDisposeScope();
+                    this.sum = torch.full_like(_parameter, init_value).DetachFromDisposeScope();
                 }
             }
 
@@ -295,9 +298,9 @@ namespace TorchSharp
                 _parameter_groups.Add(param_group);
 
                 foreach (var p in param_group.Parameters) {
-                    var state = new State();
+                    var state = new State(p);
                     _state[p.Handle] = state;
-                    state.Initialize(p, param_group.Options);
+                    state.Initialize(param_group.Options);
                 }
             }
 

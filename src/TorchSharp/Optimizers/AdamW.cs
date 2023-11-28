@@ -209,6 +209,10 @@ namespace TorchSharp
                 public Tensor exp_avg_sq;
                 public Tensor max_exp_avg_sq;
 
+                public State(Parameter parameter) : base(parameter)
+                {
+                }
+
                 public void Dispose()
                 {
                     Dispose(true);
@@ -304,9 +308,8 @@ namespace TorchSharp
                 /// <summary>
                 /// Initialize the values of the state to the initial values.
                 /// </summary>
-                /// <param name="p">The parameter the state is attached to</param>
                 /// <param name="options">The optimizer options</param>
-                public override void Initialize(Parameter p, OptimizerOptions options)
+                public override void Initialize(OptimizerOptions options)
                 {
                     // Dispose the old tensors, if this is a re-initialization.
                     this.exp_avg?.Dispose();
@@ -314,11 +317,11 @@ namespace TorchSharp
                     this.max_exp_avg_sq?.Dispose();
 
                     this.step = 0;
-                    this.exp_avg = torch.zeros_like(p).DetachFromDisposeScope();
-                    this.exp_avg_sq = torch.zeros_like(p).DetachFromDisposeScope();
+                    this.exp_avg = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                    this.exp_avg_sq = torch.zeros_like(_parameter).DetachFromDisposeScope();
                     this.max_exp_avg_sq = null;
                     if ((options as Options).amsgrad.Value) 
-                        this.max_exp_avg_sq = torch.zeros_like(p).DetachFromDisposeScope();
+                        this.max_exp_avg_sq = torch.zeros_like(_parameter).DetachFromDisposeScope();
                 }
             }
 
@@ -350,9 +353,9 @@ namespace TorchSharp
                 _parameter_groups.Add(param_group);
 
                 foreach (var p in param_group.Parameters) {
-                    var state = new State();
+                    var state = new State(p);
                     _state[p.Handle] = state;
-                    state.Initialize(p, opt);
+                    state.Initialize(opt);
                 }
             }
 
