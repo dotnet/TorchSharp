@@ -192,6 +192,10 @@ namespace TorchSharp
                 public double mu;
                 public Tensor ax;
 
+                public State(Parameter parameter) : base(parameter)
+                {
+                }
+
                 public void Dispose()
                 {
                     Dispose(true);
@@ -262,6 +266,21 @@ namespace TorchSharp
                     var rhs = other as State;
                     return (rhs is not null) && step == rhs.step && eta == rhs.eta && mu == rhs.mu && ax.allclose(rhs.ax);
                 }
+
+                /// <summary>
+                /// Initialize the values of the state to the initial values.
+                /// </summary>
+                /// <param name="options">The optimizer options</param>
+                public override void Initialize(OptimizerOptions options)
+                {
+                    // Dispose the old tensors, if this is a re-initialization.
+                    this.ax?.Dispose();
+
+                    this.step = 0;
+                    this.eta = options.LearningRate.Value;
+                    this.mu = 1;
+                    this.ax = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                }
             }
 
             /// <summary>
@@ -291,12 +310,9 @@ namespace TorchSharp
                 _parameter_groups.Add(param_group);
 
                 foreach (var p in param_group.Parameters) {
-                    var state = new State();
+                    var state = new State(p);
                     _state[p.Handle] = state;
-                    state.step = 0;
-                    state.eta = param_group.LearningRate;
-                    state.mu = 1;
-                    state.ax = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.Initialize(opt);
                 }
             }
 

@@ -213,11 +213,9 @@ namespace TorchSharp
                 _parameter_groups.Add(param_group);
 
                 foreach (var p in param_group.Parameters) {
-                    var state = new State();
+                    var state = new State(p);
                     _state[p.Handle] = state;
-                    state.step = 0;
-                    state.prev = torch.zeros_like(p).DetachFromDisposeScope();
-                    state.step_size = p.new_empty(p.shape).fill_(opt.LearningRate).DetachFromDisposeScope();
+                    state.Initialize(opt);
                 }
             }
 
@@ -226,6 +224,10 @@ namespace TorchSharp
                 public long step;
                 public Tensor prev;
                 public Tensor step_size;
+
+                public State(Parameter parameter) : base(parameter)
+                {
+                }
 
                 public void Dispose()
                 {
@@ -296,6 +298,21 @@ namespace TorchSharp
                 {
                     var rhs = other as State;
                     return (rhs is not null) && step == rhs.step && prev.allclose(rhs.prev) && step_size.allclose(rhs.step_size);
+                }
+
+                /// <summary>
+                /// Initialize the values of the state to the initial values.
+                /// </summary>
+                /// <param name="options">The optimizer options</param>
+                public override void Initialize(OptimizerOptions options)
+                {
+                    // Dispose the old tensors, if this is a re-initialization.
+                    this.prev?.Dispose();
+                    this.step_size?.Dispose();
+
+                    this.step = 0;
+                    this.prev = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                    this.step_size = _parameter.new_empty(_parameter.shape).fill_((options as Options).LearningRate).DetachFromDisposeScope();
                 }
             }
 

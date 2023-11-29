@@ -213,6 +213,10 @@ namespace TorchSharp
                 public Tensor momentum_buffer;
                 public Tensor grad_avg;
 
+                public State(Parameter parameter) : base(parameter)
+                {
+                }
+
                 public void Dispose()
                 {
                     Dispose(true);
@@ -292,6 +296,23 @@ namespace TorchSharp
                         grad_avg.allclose(rhs.grad_avg) &&
                         momentum_buffer.allclose(rhs.momentum_buffer);
                 }
+
+                /// <summary>
+                /// Initialize the values of the state to the initial values.
+                /// </summary>
+                /// <param name="options">The optimizer options</param>
+                public override void Initialize(OptimizerOptions options)
+                {
+                    // Dispose the old tensors, if this is a re-initialization.
+                    this.square_avg?.Dispose();
+                    this.grad_avg?.Dispose();
+                    this.momentum_buffer?.Dispose();
+
+                    this.step = 0;
+                    this.square_avg = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                    this.grad_avg = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                    this.momentum_buffer = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                }
             }
 
             /// <summary>
@@ -322,11 +343,9 @@ namespace TorchSharp
                 _parameter_groups.Add(param_group);
 
                 foreach (var p in param_group.Parameters) {
-                    var state = new State();
+                    var state = new State(p);
                     _state[p.Handle] = state;
-                    state.square_avg = torch.zeros_like(p).DetachFromDisposeScope();
-                    state.grad_avg = torch.zeros_like(p).DetachFromDisposeScope();
-                    state.momentum_buffer = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.Initialize(opt);
                 }
             }
             public class Options : Modules.OptimizerOptions
