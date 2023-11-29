@@ -77,6 +77,13 @@ namespace TorchSharp
             }
 
             private Parameter? _weight;
+
+            protected override void Dispose(bool disposing)
+            {
+                _weight?.Dispose();
+                _bias?.Dispose();
+                base.Dispose(disposing);
+            }
         }
     }
 
