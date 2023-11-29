@@ -188,11 +188,15 @@ namespace TorchSharp
                 }
             }
 
-            public sealed class State : OptimizerState,IDisposable
+            public sealed class State : OptimizerState, IDisposable
             {
                 public long step;
                 public Tensor exp_avg;
                 public Tensor exp_inf;
+
+                public State(Parameter parameter) : base(parameter)
+                {
+                }
 
                 public void Dispose()
                 {
@@ -262,6 +266,21 @@ namespace TorchSharp
                         exp_avg.allclose(rhs.exp_avg) &&
                         exp_inf.allclose(rhs.exp_inf);
                 }
+
+                /// <summary>
+                /// Initialize the values of the state to the initial values.
+                /// </summary>
+                /// <param name="options">The optimizer options</param>
+                public override void Initialize(OptimizerOptions options)
+                {
+                    // Dispose the old tensors, if this is a re-initialization.
+                    this.exp_avg?.Dispose();
+                    this.exp_inf?.Dispose();
+
+                    this.step = 0;
+                    this.exp_avg = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                    this.exp_inf = torch.zeros_like(_parameter).DetachFromDisposeScope();
+                }
             }
 
             /// <summary>
@@ -290,11 +309,9 @@ namespace TorchSharp
                 _parameter_groups.Add(param_group);
 
                 foreach (var p in param_group.Parameters) {
-                    var state = new State();
+                    var state = new State(p);
                     _state[p.Handle] = state;
-                    state.step = 0;
-                    state.exp_avg = torch.zeros_like(p).DetachFromDisposeScope();
-                    state.exp_inf = torch.zeros_like(p).DetachFromDisposeScope();
+                    state.Initialize(param_group.Options);
                 }
             }
 

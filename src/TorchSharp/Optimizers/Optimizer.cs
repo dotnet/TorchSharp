@@ -149,11 +149,13 @@ namespace TorchSharp
 
                 public class StateDictionary
                 {
-                    internal StateDictionary() { Options = new List<OptimizerOptions>(); State = new List<OptimizerState>(); }
+                    internal StateDictionary() { Options = new List<OptimizerOptions>(); State = new List<OptimizerState>(); StateIndexRef = new List<List<int>>(); }
 
                     public List<OptimizerOptions> Options { get; private set; }
 
                     public List<OptimizerState> State { get; private set; }
+
+                    public List<List<int>> StateIndexRef { get; private set; }
                 }
 
                 public virtual IEnumerable<ILearningRateController> ParamGroups {
@@ -354,18 +356,21 @@ namespace TorchSharp
             public virtual StateDictionary state_dict()
             {
                 var dict = new StateDictionary();
-
                 int pgidx = -1;
                 int pridx = 0;
                 foreach (var pg in _parameter_groups) {
 
                     dict.Options.Add(pg.Options);
 
-                    foreach (var p in pg.Parameters) {
+                    var indexRef = new List<int>();
+                    dict.StateIndexRef.Add(indexRef);
 
+                    foreach (var p in pg.Parameters) {
+                        indexRef.Add(pridx);
                         dict.State.Add(_state[p.Handle]);
                         pridx++;
                     }
+
                     pgidx--;
                 }
                 return dict;
@@ -501,6 +506,15 @@ namespace TorchSharp
         /// </summary>
         public abstract class OptimizerState
         {
+            protected Parameter _parameter;
+            /// <summary>
+            /// Create a new OptimizerState instance linked to a specific parameter
+            /// </summary>
+            /// <param name="parameter">The parameter linked to this state</param>
+            protected OptimizerState(Parameter parameter) {
+                _parameter = parameter;
+            }
+
             /// <summary>
             /// Save the optimizer parameter state to a stream.
             /// </summary>
@@ -529,6 +543,12 @@ namespace TorchSharp
                 return false;
             }
 
+            /// <summary>
+            /// Initialize the values of the state to the initial values.
+            /// </summary>
+            /// <param name="options">The optimizer options</param>
+            public abstract void Initialize(OptimizerOptions options);
+            
             /// <summary>
             /// Move all the state to the indicated device.
             /// </summary>

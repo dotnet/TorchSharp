@@ -85,6 +85,10 @@ def _write_conditional_state_tensor(name, state, stream):
             _write_bool(True, stream)
             _write_tensor(buf, stream)
 
+def _check_state_existance(state, p):
+    if not p in state:
+        raise KeyError("Identified a parameter with no initalized state. Please make sure to run `optim.step()` for all the parameters at least once.")
+
 def save_sgd(optim, stream):
 
     sd = optim.state_dict()
@@ -110,6 +114,7 @@ def save_sgd(optim, stream):
     # Write state
     for group in optim.param_groups:
         for p in group['params']:
+            _check_state_existance(optim.state, p)
             st = optim.state[p]
             _write_conditional_state_tensor('momentum_buffer', st, stream)           
 
@@ -140,6 +145,7 @@ def save_asgd(optim, stream):
     # Write state
     for group in optim.param_groups:
         for p in group['params']:
+            _check_state_existance(optim.state, p)
             st = optim.state[p]
             _write_int64(int(st["step"].item()), stream)
             floats = np.empty(2,dtype=np.float64)
@@ -177,6 +183,7 @@ def save_rprop(optim, stream):
     # Write state
     for group in optim.param_groups:
         for p in group['params']:
+            _check_state_existance(optim.state, p)
             st = optim.state[p]
             _write_int64(st["step"], stream)
             _write_tensor(st['prev'], stream)
@@ -210,6 +217,7 @@ def save_rmsprop(optim, stream):
     # Write state
     for group in optim.param_groups:
         for p in group['params']:
+            _check_state_existance(optim.state, p)
             st = optim.state[p]
             _write_int64(st["step"], stream)
             _write_tensor(st['square_avg'], stream)
@@ -243,6 +251,7 @@ def save_adam(optim, stream):
     # Write state
     for group in optim.param_groups:
         for p in group['params']:
+            _check_state_existance(optim.state, p)
             st = optim.state[p]
             _write_int64(int(st["step"].item()), stream)
             _write_tensor(st['exp_avg'], stream)
@@ -276,6 +285,7 @@ def save_adamw(optim, stream):
     # Write state
     for group in optim.param_groups:
         for p in group['params']:
+            _check_state_existance(optim.state, p)
             st = optim.state[p]
             _write_int64(int(st["step"].item()), stream)
             _write_tensor(st['exp_avg'], stream)
@@ -308,6 +318,7 @@ def save_nadam(optim, stream):
     # Write state
     for group in optim.param_groups:
         for p in group['params']:
+            _check_state_existance(optim.state, p)
             st = optim.state[p]
             _write_int64(int(st["step"].item()), stream)
             floats = np.empty(1,dtype=np.float64)
@@ -341,6 +352,7 @@ def save_radam(optim, stream):
     # Write state
     for group in optim.param_groups:
         for p in group['params']:
+            _check_state_existance(optim.state, p)
             st = optim.state[p]
             _write_int64(int(st["step"].item()), stream)
             _write_tensor(st['exp_avg'], stream)
@@ -371,6 +383,7 @@ def save_adamax(optim, stream):
     # Write state
     for group in optim.param_groups:
         for p in group['params']:
+            _check_state_existance(optim.state, p)
             st = optim.state[p]
             _write_int64(int(st["step"].item()), stream)
             _write_tensor(st['exp_avg'], stream)
@@ -400,6 +413,7 @@ def save_adadelta(optim, stream):
     # Write state
     for group in optim.param_groups:
         for p in group['params']:
+            _check_state_existance(optim.state, p)
             st = optim.state[p]
             _write_int64(st["step"], stream)
             _write_tensor(st['square_avg'], stream)
@@ -429,6 +443,7 @@ def save_adagrad(optim, stream):
     # Write state
     for group in optim.param_groups:
         for p in group['params']:
+            _check_state_existance(optim.state, p)
             st = optim.state[p]
             _write_int64(int(st["step"].item()), stream)
             _write_tensor(st['sum'], stream)

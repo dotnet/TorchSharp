@@ -4,6 +4,13 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.101.3
 
+__Breaking Changes__:
+
+The base `OptimizerState` class was modified and includes two changes:
+
+1. Custom optimizer state objects derived from `OptimizerState` must now explicitly pass the related `torch.nn.Parameter` object to the `OptimizerState` base constructor to maintain correct linkage.
+2. Custom state objects must implement an Initialize function. This function is responsible for initializing the properties of the state. Note that this function can be called as a re-intialization, so proper disposal of the previous tensor objects should be handled.
+
 __API Changes__:
 
 Introduced `InferenceMode`, a block-based scoping class for optimizing TorchSharp model inference by disabling gradient computation and enhancing performance.<br/>
