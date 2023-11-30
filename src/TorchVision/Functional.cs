@@ -24,6 +24,19 @@ namespace TorchSharp
         {
             public static partial class functional
             {
+                /// <summary>
+                /// Get the image dimensions
+                /// </summary>
+                /// <param name="img">An image tensor.</param>
+                /// <returns>The number of channels, the height and width of the image</returns>
+                public static (long channels, long height, long width) get_dimensions(Tensor img)
+                {
+                    var d = img.Dimensions;
+                    var channels = d == 2 ? 1 : img.shape[d - 3];
+                    var height = img.shape[d - 2];
+                    var width = img.shape[d - 1];
+                    return (channels, height, width);
+                }
 
                 /// <summary>
                 /// Adjust the brightness of an image.
