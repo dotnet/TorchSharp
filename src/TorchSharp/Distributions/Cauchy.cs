@@ -49,6 +49,15 @@ namespace TorchSharp
             private Tensor scale;
             private Tensor _mean, _variance;
 
+            protected override void Dispose(bool disposing)
+            {
+                loc?.Dispose();
+                scale?.Dispose();
+                _mean?.Dispose();
+                _variance?.Dispose();
+                base.Dispose(disposing);
+            }
+
             /// <summary>
             ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
             ///  if the distribution parameters are batched.
