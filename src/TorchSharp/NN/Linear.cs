@@ -31,6 +31,7 @@ namespace TorchSharp
                     return ((res == IntPtr.Zero) ? null : new Parameter(res));
                 }
                 set {
+                    if (value is null) throw new ArgumentNullException("bias cannot be set to 'null'");
                     THSNN_Linear_set_bias(handle, value?.Handle ?? IntPtr.Zero);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("bias", value);
@@ -44,6 +45,7 @@ namespace TorchSharp
                     return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
+                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'");
                     THSNN_Linear_set_weight(handle, value!.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight", value);
