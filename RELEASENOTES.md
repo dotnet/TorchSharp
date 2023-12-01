@@ -16,6 +16,7 @@ __API Changes__:
 Introduced `InferenceMode`, a block-based scoping class for optimizing TorchSharp model inference by disabling gradient computation and enhancing performance.<br/>
 Added `Tensor.to_type()` conversion aliases for short, half, bfloat16, cfloat, and cdouble.<br/>
 Added `Module.to()` conversion aliases for all the scalar types.<br/>
+All distribution classes now implement IDisposable.<br/>
 
 __Bug Fixes__:
 
