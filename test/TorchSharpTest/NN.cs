@@ -265,6 +265,15 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestLinearNullBias()
+        {
+            var device = torch.CPU;
+
+            var lin = Linear(1000, 100, true, device: device);
+            Assert.Throws<ArgumentNullException>(() => lin.bias = null);
+        }
+
+        [Fact]
         public void TestBilinearWithBias()
         {
             foreach (var device in TestUtils.AvailableDevices()) {
@@ -3187,7 +3196,7 @@ namespace TorchSharp
             public override Tensor forward(Tensor input)
             {
                 foreach (var c in children()) {
-                    var m = c as Module<Tensor,Tensor>;
+                    var m = c as Module<Tensor, Tensor>;
                     input = m!.forward(input);
                 }
                 return input + _buffer;
