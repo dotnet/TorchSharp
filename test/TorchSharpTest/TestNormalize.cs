@@ -5,7 +5,7 @@ using System.Linq;
 using TorchSharp.Modules;
 using Xunit;
 
-namespace TorchSharp.Tests
+namespace TorchSharp
 {
     using static torch;
     using static torch.nn;

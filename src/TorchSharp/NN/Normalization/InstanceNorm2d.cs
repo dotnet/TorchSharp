@@ -35,6 +35,8 @@ namespace TorchSharp
                     return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("bias cannot be set to 'null'");
                     THSNN_InstanceNorm2d_set_bias(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("bias", value);
@@ -48,6 +50,8 @@ namespace TorchSharp
                     return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'");
                     THSNN_InstanceNorm2d_set_weight(handle, value is null ? IntPtr.Zero : value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight", value);
@@ -61,6 +65,8 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
                 set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("running_mean cannot be set to 'null'");
                     THSNN_InstanceNorm2d_set_mean(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
                     ConditionallyRegisterBuffer("running_mean", value);
@@ -74,6 +80,8 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
                 set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("running_var cannot be set to 'null'");
                     THSNN_InstanceNorm2d_set_var(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
                     ConditionallyRegisterBuffer("running_var", value);

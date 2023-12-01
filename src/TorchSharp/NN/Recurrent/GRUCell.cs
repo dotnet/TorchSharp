@@ -35,6 +35,8 @@ namespace TorchSharp
                     return ((res == IntPtr.Zero) ? null : new Parameter(res));
                 }
                 set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("bias_ih cannot be set to 'null'");
                     THSNN_GRUCell_set_bias_ih(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("bias_ih", value);
@@ -48,6 +50,8 @@ namespace TorchSharp
                     return ((res == IntPtr.Zero) ? null : new Parameter(res));
                 }
                 set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("bias_hh cannot be set to 'null'");
                     THSNN_GRUCell_set_bias_hh(handle, (value is null ? IntPtr.Zero : value.Handle));
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("bias_hh", value);
@@ -61,6 +65,8 @@ namespace TorchSharp
                     return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("weight_ih cannot be set to 'null'");
                     THSNN_GRUCell_set_weight_ih(handle, value is null ? IntPtr.Zero : value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight_ih", value);
@@ -74,6 +80,8 @@ namespace TorchSharp
                     return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
+                    // Please ignore, for now, that the litorch call thinks you *can* set it to null.
+                    if (value is null) throw new ArgumentNullException("weight_hh cannot be set to 'null'");
                     THSNN_GRUCell_set_weight_hh(handle, value is null ? IntPtr.Zero : value.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight_hh", value);
