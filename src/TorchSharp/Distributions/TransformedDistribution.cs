@@ -34,6 +34,12 @@ namespace TorchSharp
                 _init(base_distribution, transforms.ToArray());
             }
 
+            protected override void Dispose(bool disposing)
+            {
+                base_distribution?.Dispose();
+                base.Dispose(disposing);
+            }
+
             protected void _init(Distribution base_distribution, torch.distributions.transforms.Transform[] transforms)
             {
                 this.transforms = transforms;
