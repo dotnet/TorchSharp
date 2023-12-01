@@ -75,6 +75,14 @@ namespace TorchSharp
             private Tensor _logits;
             private Tensor total_count;
 
+            protected override void Dispose(bool disposing)
+            {
+                _probs?.Dispose();
+                _logits?.Dispose();
+                total_count?.Dispose();
+                base.Dispose(disposing);
+            }
+
             /// <summary>
             ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
             ///  if the distribution parameters are batched.

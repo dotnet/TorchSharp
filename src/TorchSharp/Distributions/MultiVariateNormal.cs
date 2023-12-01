@@ -97,8 +97,17 @@ namespace TorchSharp
             private Tensor scale_tril;
             private Tensor precision_matrix;
             private Tensor covariance_matrix;
-
             private Tensor _unbroadcasted_scale_tril;
+
+            protected override void Dispose(bool disposing)
+            {
+                loc?.Dispose();
+                scale_tril?.Dispose();
+                precision_matrix?.Dispose();
+                covariance_matrix?.Dispose();
+                _unbroadcasted_scale_tril?.Dispose();
+                base.Dispose(disposing);
+            }
 
             /// <summary>
             ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples

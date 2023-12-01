@@ -8,7 +8,7 @@ namespace TorchSharp
     {
         public static partial class distributions
         {
-            public abstract class Distribution
+            public abstract class Distribution : IDisposable
             {
                 public Distribution(torch.Generator generator, long[] batch_shape = null, long[] event_shape = null)
                 {
@@ -189,8 +189,29 @@ namespace TorchSharp
                 protected Tensor ClampByZero(Tensor x) => (x.clamp_min(0) + x - x.clamp_max(0)) / 2;
 
                 protected torch.Generator generator;
-
+                bool disposedValue;
                 protected const double euler_constant = 0.57721566490153286060; // Euler Mascheroni Constant
+
+                protected virtual void Dispose(bool disposing)
+                {
+                    if (!disposedValue) {
+                        generator?.Dispose();
+                        disposedValue = true;
+                    }
+                }
+
+                ~Distribution()
+                {
+                    // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+                    Dispose(disposing: false);
+                }
+
+                public void Dispose()
+                {
+                    // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+                    Dispose(disposing: true);
+                    GC.SuppressFinalize(this);
+                }
             }
         }
     }
