@@ -46,6 +46,13 @@ namespace TorchSharp
             /// </summary>
             public override Tensor entropy() => WrappedTensorDisposeScope(() => scale.log() + (1 + euler_constant));
 
+            protected override void Dispose(bool disposing)
+            {
+                loc?.Dispose();
+                scale?.Dispose();
+                base.Dispose(disposing);
+            }
+
             private readonly double pioversqrtsix = 1.282549830161864095544036359671; // Math.PI / Math.Sqrt(6);
         }
     }
