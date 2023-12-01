@@ -36,6 +36,7 @@ namespace TorchSharp
                     return (res == IntPtr.Zero) ? null : new Parameter(res);
                 }
                 set {
+                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'");
                     THSNN_PReLU_set_weight(handle, value!.Handle);
                     torch.CheckForErrors();
                     ConditionallyRegisterParameter("weight", value);
