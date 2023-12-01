@@ -34,6 +34,12 @@ namespace TorchSharp
 
             private Tensor rate;
 
+            protected override void Dispose(bool disposing)
+            {
+                rate?.Dispose();
+                base.Dispose(disposing);
+            }
+
             /// <summary>
             ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
             ///  if the distribution parameters are batched.

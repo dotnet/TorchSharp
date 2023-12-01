@@ -57,6 +57,15 @@ namespace TorchSharp
             private Gamma gamma1;
             private Gamma gamma2;
 
+            protected override void Dispose(bool disposing)
+            {
+                df1?.Dispose();
+                df2?.Dispose();
+                gamma1?.Dispose();
+                gamma2?.Dispose();
+                base.Dispose(disposing);
+            }
+
             /// <summary>
             ///  Generates a sample_shape shaped reparameterized sample or sample_shape shaped batch of reparameterized samples
             ///  if the distribution parameters are batched.

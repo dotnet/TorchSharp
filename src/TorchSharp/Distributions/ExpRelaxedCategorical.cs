@@ -37,6 +37,15 @@ namespace TorchSharp
             private Tensor _temperature;
             private Categorical _categorical;
 
+            protected override void Dispose(bool disposing)
+            {
+                _probs?.Dispose();
+                _logits?.Dispose();
+                _temperature?.Dispose();
+                _categorical?.Dispose();
+                base.Dispose(disposing);
+            }
+
             /// <summary>
             /// The probability of sampling 1
             /// </summary>
