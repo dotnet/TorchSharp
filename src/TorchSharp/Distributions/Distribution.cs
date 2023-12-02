@@ -195,7 +195,9 @@ namespace TorchSharp
                 protected virtual void Dispose(bool disposing)
                 {
                     if (!disposedValue) {
-                        generator?.Dispose();
+                        if (disposing) {
+                            generator?.Dispose();
+                        }
                         disposedValue = true;
                     }
                 }

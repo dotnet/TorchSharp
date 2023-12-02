@@ -36,7 +36,9 @@ namespace TorchSharp
 
             protected override void Dispose(bool disposing)
             {
-                base_distribution?.Dispose();
+                if (disposing) {
+                    base_distribution?.Dispose();
+                }
                 base.Dispose(disposing);
             }
 
