@@ -1240,15 +1240,6 @@ PackedSequence THSNN_pack_padded_sequence(Tensor input, Tensor lengths, bool bat
                 *input, *lengths, batch_first, enforce_sorted)));
 }
 
-void THSNN_pad_packed_sequence(PackedSequence sequence, bool batch_first, double padding_value, int64_t total_length, Tensor* res1_, Tensor* res2_)
-{
-    Tensor& res1 = *res1_;
-    Tensor& res2 = *res2_;
-    CATCH_TENSORS_2(
-        pad_packed_sequence_new(
-            *sequence, batch_first, padding_value,
-            total_length == -1 ? torch::nullopt : c10::optional<int64_t>(total_length)));
-}
 
 inline static std::tuple<at::Tensor, at::Tensor> pad_packed_sequence_new(
     torch::nn::utils::rnn::PackedSequence sequence,
@@ -1283,6 +1274,16 @@ inline static std::tuple<at::Tensor, at::Tensor> pad_packed_sequence_new(
             lengths.index({ unsorted_indices.cpu() }));
     }
     return std::make_tuple(padded_output, lengths);
+}
+
+void THSNN_pad_packed_sequence(PackedSequence sequence, bool batch_first, double padding_value, int64_t total_length, Tensor* res1_, Tensor* res2_)
+{
+    Tensor& res1 = *res1_;
+    Tensor& res2 = *res2_;
+    CATCH_TENSORS_2(
+        pad_packed_sequence_new(
+            *sequence, batch_first, padding_value,
+            total_length == -1 ? torch::nullopt : c10::optional<int64_t>(total_length)));
 }
 
 Tensor THSNN_pad_sequence(const Tensor* sequences, const int sequences_len, bool batch_first, double padding_value)
