@@ -1245,9 +1245,44 @@ void THSNN_pad_packed_sequence(PackedSequence sequence, bool batch_first, double
     Tensor& res1 = *res1_;
     Tensor& res2 = *res2_;
     CATCH_TENSORS_2(
-        torch::nn::utils::rnn::pad_packed_sequence(
+        pad_packed_sequence_new(
             *sequence, batch_first, padding_value,
             total_length == -1 ? torch::nullopt : c10::optional<int64_t>(total_length)));
+}
+
+inline static std::tuple<at::Tensor, at::Tensor> pad_packed_sequence_new(
+    torch::nn::utils::rnn::PackedSequence sequence,
+    bool batch_first = false,
+    double padding_value = 0.0,
+    c10::optional<int64_t> total_length = torch::nullopt) {
+    int64_t max_seq_length = sequence.batch_sizes().size(0);
+    if (total_length.has_value()) {
+        int64_t total_length_val = total_length.value();
+        TORCH_CHECK(
+            total_length_val >= max_seq_length,
+            "Expected total_length to be at least the length "
+            "of the longest sequence in input, but got "
+            "total_length=",
+            total_length_val,
+            " and max sequence length being ",
+            max_seq_length);
+        max_seq_length = total_length_val;
+    }
+    at::Tensor padded_output, lengths;
+    std::tie(padded_output, lengths) = torch::_pad_packed_sequence(
+        sequence.data(),
+        sequence.batch_sizes(),
+        batch_first,
+        padding_value,
+        max_seq_length);
+    const at::Tensor unsorted_indices = sequence.unsorted_indices();
+    if (unsorted_indices.defined()) {
+        int64_t batch_dim = batch_first ? 0 : 1;
+        return std::make_tuple(
+            padded_output.index_select(batch_dim, unsorted_indices),
+            lengths.index({ unsorted_indices.cpu() }));
+    }
+    return std::make_tuple(padded_output, lengths);
 }
 
 Tensor THSNN_pad_sequence(const Tensor* sequences, const int sequences_len, bool batch_first, double padding_value)
