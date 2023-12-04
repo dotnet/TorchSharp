@@ -15,6 +15,6 @@ Then, start by reading up on [creating your own modules](articles/modules.md).
 
 [Some thoughts](articles/memory.md) on how to manage memory well in your TorchSharp training code.
 
-An intruction on how to [share model](articles/saveload.md) weights between applications, whether in Python or .NET.
+Instructions on how to [share model weights](articles/saveload.md) between applications, whether in Python or .NET.
 
 Loading existing TorchScript files is now supported and described in [Loading TorchScript](articles/torchscript.md).

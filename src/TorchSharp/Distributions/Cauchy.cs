@@ -51,10 +51,12 @@ namespace TorchSharp
 
             protected override void Dispose(bool disposing)
             {
-                loc?.Dispose();
-                scale?.Dispose();
-                _mean?.Dispose();
-                _variance?.Dispose();
+                if (disposing) {
+                    loc?.Dispose();
+                    scale?.Dispose();
+                    _mean?.Dispose();
+                    _variance?.Dispose();
+                }
                 base.Dispose(disposing);
             }
 

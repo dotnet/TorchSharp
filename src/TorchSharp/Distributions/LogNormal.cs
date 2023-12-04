@@ -28,6 +28,15 @@ namespace TorchSharp
 
             public override Tensor variance => torch.WrappedTensorDisposeScope(() => (scale.pow(2).exp() - 1) * (2 * loc + scale.pow(2)).exp());
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    loc?.Dispose();
+                    scale?.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             public override Tensor entropy()
             {
                 return base_distribution.entropy() + loc;
