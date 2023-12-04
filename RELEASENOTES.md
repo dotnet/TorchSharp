@@ -21,6 +21,7 @@ All distribution classes now implement IDisposable.<br/>
 __Bug Fixes__:
 
 #1154 : `mu_product` was not initialized in `NAdam` optimizer
+#1170 : Calling `torch.nn.rnn.utils.pad_packed_sequence` with a CUDA tensor and unsorted_indices threw an error
 
 ## NuGet Version 0.101.2
 

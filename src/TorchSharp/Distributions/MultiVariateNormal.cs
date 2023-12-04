@@ -101,11 +101,13 @@ namespace TorchSharp
 
             protected override void Dispose(bool disposing)
             {
-                loc?.Dispose();
-                scale_tril?.Dispose();
-                precision_matrix?.Dispose();
-                covariance_matrix?.Dispose();
-                _unbroadcasted_scale_tril?.Dispose();
+                if (disposing) {
+                    loc?.Dispose();
+                    scale_tril?.Dispose();
+                    precision_matrix?.Dispose();
+                    covariance_matrix?.Dispose();
+                    _unbroadcasted_scale_tril?.Dispose();
+                }
                 base.Dispose(disposing);
             }
 

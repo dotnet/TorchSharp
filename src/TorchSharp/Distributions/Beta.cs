@@ -51,9 +51,11 @@ namespace TorchSharp
 
             protected override void Dispose(bool disposing)
             {
-                dirichlet?.Dispose();
-                concentration0?.Dispose();
-                concentration1?.Dispose();
+                if (disposing) {
+                    dirichlet?.Dispose();
+                    concentration0?.Dispose();
+                    concentration1?.Dispose();
+                }
                 base.Dispose(disposing);
             }
 

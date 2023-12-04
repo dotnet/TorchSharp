@@ -69,7 +69,9 @@ namespace TorchSharp
 
             protected override void Dispose(bool disposing)
             {
-                categorical?.Dispose();
+                if (disposing) {
+                    categorical?.Dispose();
+                }
                 base.Dispose(disposing);
             }
 

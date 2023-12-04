@@ -1411,5 +1411,17 @@ namespace TorchSharp
             var ys = model.forward(xs);
 
         }
+
+        [Fact]
+        public void Validate1170()
+        {
+            if (torch.cuda.is_available()) {
+                var input = torch.randn(new[] { 5L, 5L }).@float().cuda();
+                var lengths = torch.full(5, 5);
+
+                var packed = torch.nn.utils.rnn.pack_padded_sequence(input, lengths, enforce_sorted: false);
+                var error = torch.nn.utils.rnn.pad_packed_sequence(packed);
+            }
+        }
     }
 }
