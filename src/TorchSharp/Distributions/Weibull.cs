@@ -26,6 +26,16 @@ namespace TorchSharp
             private Tensor concentration;
             private Tensor concentration_reciprocal;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    scale?.Dispose();
+                    concentration?.Dispose();
+                    concentration_reciprocal?.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             public override Tensor mean =>
                 WrappedTensorDisposeScope(() => scale * torch.exp(torch.lgamma(1 + concentration_reciprocal)));
 

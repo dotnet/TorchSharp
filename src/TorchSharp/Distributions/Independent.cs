@@ -49,6 +49,14 @@ namespace TorchSharp
             private distributions.Distribution base_dist;
             private int reinterpreted_batch_ndims;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    base_dist?.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             /// <summary>
             /// Generates a sample_shape shaped sample or sample_shape shaped batch of samples if the distribution parameters are batched.
             /// </summary>

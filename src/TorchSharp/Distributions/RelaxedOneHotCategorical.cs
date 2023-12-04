@@ -34,6 +34,16 @@ namespace TorchSharp
 
             private ExpRelaxedCategorical base_dist => this.base_distribution as ExpRelaxedCategorical;
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    _probs?.Dispose();
+                    _logits?.Dispose();
+                    base_dist?.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             /// <summary>
             /// The probability of sampling 1
             /// </summary>
