@@ -40,6 +40,15 @@ namespace TorchSharp
                 }
             }
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    concentration0?.Dispose();
+                    concentration1?.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             public override Tensor variance => moments(concentration1, concentration0, 2) - torch.pow(mean, 2);
 
             public override Tensor entropy()

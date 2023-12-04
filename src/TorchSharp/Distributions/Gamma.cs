@@ -45,8 +45,10 @@ namespace TorchSharp
 
             protected override void Dispose(bool disposing)
             {
-                rate?.Dispose();
-                concentration?.Dispose();
+                if (disposing) {
+                    rate?.Dispose();
+                    concentration?.Dispose();
+                }
                 base.Dispose(disposing);
             }
 

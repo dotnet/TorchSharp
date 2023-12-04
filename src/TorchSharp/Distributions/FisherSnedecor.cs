@@ -59,10 +59,12 @@ namespace TorchSharp
 
             protected override void Dispose(bool disposing)
             {
-                df1?.Dispose();
-                df2?.Dispose();
-                gamma1?.Dispose();
-                gamma2?.Dispose();
+                if (disposing) {
+                    df1?.Dispose();
+                    df2?.Dispose();
+                    gamma1?.Dispose();
+                    gamma2?.Dispose();
+                }
                 base.Dispose(disposing);
             }
 
