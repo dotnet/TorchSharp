@@ -40,6 +40,15 @@ namespace TorchSharp
                 }
             }
 
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) {
+                    scale?.Dispose();
+                    alpha?.Dispose();
+                }
+                base.Dispose(disposing);
+            }
+
             public override Distribution expand(Size batch_shape, Distribution instance = null)
             {
                 var newDistribution = ((instance == null)

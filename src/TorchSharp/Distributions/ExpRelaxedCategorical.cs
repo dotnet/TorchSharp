@@ -39,10 +39,12 @@ namespace TorchSharp
 
             protected override void Dispose(bool disposing)
             {
-                _probs?.Dispose();
-                _logits?.Dispose();
-                _temperature?.Dispose();
-                _categorical?.Dispose();
+                if (disposing) {
+                    _probs?.Dispose();
+                    _logits?.Dispose();
+                    _temperature?.Dispose();
+                    _categorical?.Dispose();
+                }
                 base.Dispose(disposing);
             }
 
