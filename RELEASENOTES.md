@@ -22,6 +22,7 @@ __Bug Fixes__:
 
 #1154 : `mu_product` was not initialized in `NAdam` optimizer
 #1170 : Calling `torch.nn.rnn.utils.pad_packed_sequence` with a CUDA tensor and unsorted_indices threw an error
+#1172 : `optim.LoadStateDict` from an existing `StateDictionary` copied by reference instead of cloning.
 
 ## NuGet Version 0.101.2
 
