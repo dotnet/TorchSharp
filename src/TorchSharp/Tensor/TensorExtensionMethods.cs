@@ -466,7 +466,8 @@ namespace TorchSharp
                 if (device.type != DeviceType.CPU) {
                     using var copy = tensor.to(CPU);
                     copy.bytes = bytes;
-                    tensor.set_(copy.to(device));
+                    using var moved = copy.to(device);
+                    tensor.set_(moved);
                 }
                 else {
                     tensor.bytes = bytes;
