@@ -241,7 +241,7 @@ namespace TorchSharp
                     eta = st_state.eta;
                     mu = st_state.mu;
                     ax.Dispose();
-                    ax = st_state.ax;
+                    ax = st_state.ax.clone();
                 }
 
                 /// <summary>

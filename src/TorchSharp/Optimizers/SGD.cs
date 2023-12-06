@@ -251,10 +251,8 @@ namespace TorchSharp
                 public override void LoadStateDict(OptimizerState source)
                 {
                     var st_state = source as State;
-                    if (momentum_buffer is not null) {
-                        momentum_buffer.Dispose();
-                    }
-                    momentum_buffer = st_state.momentum_buffer;
+                    momentum_buffer?.Dispose();
+                    momentum_buffer = st_state.momentum_buffer.clone();
                 }
 
                 /// <summary>
