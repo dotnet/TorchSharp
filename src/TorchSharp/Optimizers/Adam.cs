@@ -253,6 +253,7 @@ namespace TorchSharp
                     var hasMax = reader.ReadBoolean();
                     if (hasMax) {
                         LoadConditionalStateTensor(reader, ref max_exp_avg_sq);
+                        max_exp_avg_sq = max_exp_avg_sq.to(_parameter.device);
                     } else {
                         max_exp_avg_sq?.Dispose();
                         max_exp_avg_sq = null;
