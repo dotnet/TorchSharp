@@ -22,6 +22,7 @@ __Bug Fixes__:
 
 #1154 : `mu_product` was not initialized in `NAdam` optimizer
 #1170 : Calling `torch.nn.rnn.utils.pad_packed_sequence` with a CUDA tensor and unsorted_indices threw an error
+#1174 : Loading CUDA tensor from stream threw an error
 
 ## NuGet Version 0.101.2
 
