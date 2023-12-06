@@ -561,7 +561,7 @@ namespace TorchSharp
 
                 if (hasTensor) {
                     TensorExtensionMethods.Load(ref result, reader);
-                    result = result.to(device);
+                    result = result.to(device, disposeAfter: true);
                 } else {
                     if (result is not null)
                         result.Dispose();
