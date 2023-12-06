@@ -1435,7 +1435,7 @@ namespace TorchSharp
                 tensor1.Save(new BinaryWriter(ms, System.Text.Encoding.UTF8, true));
                 ms.Position = 0;
 
-                var tensor2 = torch.zeros(10, device: torch.CUDA);
+                var tensor2 = torch.zeros(10, ScalarType.Int32, device: torch.CUDA);
                 // This used to throw an error, trying to load bytes onto a cuda tensor
                 tensor2.Load(new BinaryReader(ms));
 
