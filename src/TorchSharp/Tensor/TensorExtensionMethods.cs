@@ -463,9 +463,14 @@ namespace TorchSharp
 
             if (!skip) {
                 var device = tensor.device;
-                if (device.type != DeviceType.CPU) tensor.to(CPU);
-                tensor.bytes = bytes;
-                tensor.to(device);
+                if (device.type != DeviceType.CPU) {
+                    using var copy = tensor.to(CPU);
+                    copy.bytes = bytes;
+                    tensor.set_(copy.to(device));
+                }
+                else {
+                    tensor.bytes = bytes;
+                }
             }
         }
 
@@ -532,9 +537,9 @@ namespace TorchSharp
 
             if (!skip) {
                 var device = tensor.device;
-                if (device.type != DeviceType.CPU) tensor.to(CPU);
+                if (device.type != DeviceType.CPU) tensor = tensor.to(CPU); 
                 tensor.bytes = bytes;
-                tensor.to(device);
+                tensor = tensor.to(device);
             }
         }
 
