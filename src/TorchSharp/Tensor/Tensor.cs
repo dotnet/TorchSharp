@@ -770,8 +770,10 @@ namespace TorchSharp
             /// <summary>
             /// Cast the tensor to the given element type.
             /// </summary>
+            /// <param name="type">The target type</param>
+            /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
             /// <remarks>Alias for to_type</remarks>
-            public Tensor to(ScalarType type) => to_type(type);
+            public Tensor to(ScalarType type, bool copy = false) => to_type(type, copy);
 
             /// <summary>
             /// Moves the tensor data.
