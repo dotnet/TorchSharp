@@ -777,13 +777,15 @@ namespace TorchSharp
             /// Moves the tensor data.
             /// </summary>
             /// <param name="device">A string denoting the target device.</param>
-            public Tensor to(string device) => to(new torch.Device(device));
+            /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
+            public Tensor to(string device, bool copy = false) => to(new torch.Device(device), copy);
 
             /// <summary>
             /// Moves the tensor data.
             /// </summary>
             /// <param name="device">The target device</param>
-            public Tensor to(torch.Device device) => to(device.type, device.index);
+            /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
+            public Tensor to(torch.Device device, bool copy = false) => to(device.type, device.index, copy);
 
             /// <summary>
             /// Moves the tensor data.
