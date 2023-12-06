@@ -1423,5 +1423,26 @@ namespace TorchSharp
                 var error = torch.nn.utils.rnn.pad_packed_sequence(packed);
             }
         }
+
+        [Fact]
+        public void Validate1174()
+        {
+            if (torch.cuda.is_available()) {
+                var tensor1 = torch.ones(10, ScalarType.Int32, device: torch.CUDA);
+
+                // Save to memory stream
+                using var ms = new MemoryStream();
+                tensor1.Save(new BinaryWriter(ms, System.Text.Encoding.UTF8, true));
+                ms.Position = 0;
+
+                var tensor2 = torch.zeros(10, device: torch.CUDA);
+                // This used to throw an error, trying to load bytes onto a cuda tensor
+                tensor2.Load(new BinaryReader(ms));
+
+                // Make sure tensor 2 is still on CUDA with the right values
+                Assert.Equal(DeviceType.CUDA, tensor2.device.type);
+                Assert.True(Enumerable.SequenceEqual(tensor2.data<int>(), Enumerable.Repeat(1, 10)));
+            }
+        }
     }
 }
