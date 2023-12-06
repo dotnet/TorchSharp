@@ -233,6 +233,7 @@ namespace TorchSharp
                 public override void LoadStateDict(BinaryReader reader)
                 {
                     LoadConditionalStateTensor(reader, ref momentum_buffer);
+                    momentum_buffer = momentum_buffer.to(_parameter.device); 
                 }
 
                 /// <summary>

@@ -253,6 +253,9 @@ namespace TorchSharp
                     square_avg.Load(reader);
                     LoadConditionalStateTensor(reader, ref momentum_buffer);
                     LoadConditionalStateTensor(reader, ref grad_avg);
+
+                    momentum_buffer = momentum_buffer.to(_parameter.device);
+                    grad_avg = grad_avg.to(_parameter.device);
                 }
                 /// <summary>
                 /// Save the optimizer parameter state to a stream.
