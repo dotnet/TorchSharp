@@ -1426,7 +1426,7 @@ namespace TorchSharp
         }
 
         [Fact]
-        public void Validate1172()
+        public void Validate1172_Clone()
         {
             var lin1 = torch.nn.Linear(10, 10);
 
@@ -1438,6 +1438,23 @@ namespace TorchSharp
             var state = (optim2.state_dict().State[0] as Adam.State)!;
             Assert.False(state.exp_avg.IsInvalid);
             Assert.False(state.exp_avg_sq.IsInvalid);
+        }
+
+        [Fact]
+        public void Validate1172_Device()
+        {
+            if (torch.cuda.is_available()) {
+                var lin1 = torch.nn.Linear(10, 10);
+                var optim1 = torch.optim.Adam(lin1.parameters());
+                var sd = optim1.state_dict();
+
+                lin1.cuda();
+                var optim2 = torch.optim.Adam(lin1.parameters());
+                Assert.Equal(DeviceType.CUDA, (optim2.state_dict().State[0] as Adam.State)!.exp_avg.device.type);
+
+                optim2.load_state_dict(sd);
+                Assert.Equal(DeviceType.CUDA, (optim2.state_dict().State[0] as Adam.State)!.exp_avg.device.type);
+            }
         }
     }
 }
