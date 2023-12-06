@@ -17,6 +17,7 @@ using static TorchSharp.torchvision.models;
 using System.Numerics;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
+using TorchSharp.Modules;
 
 #nullable enable
 
@@ -1422,6 +1423,21 @@ namespace TorchSharp
                 var packed = torch.nn.utils.rnn.pack_padded_sequence(input, lengths, enforce_sorted: false);
                 var error = torch.nn.utils.rnn.pad_packed_sequence(packed);
             }
+        }
+
+        [Fact]
+        public void Validate1172()
+        {
+            var lin1 = torch.nn.Linear(10, 10);
+
+            var optim1 = torch.optim.Adam(lin1.parameters());
+            var optim2 = torch.optim.Adam(lin1.parameters());
+            optim2.load_state_dict(optim1.state_dict());
+            optim1.Dispose();
+
+            var state = (optim2.state_dict().State[0] as Adam.State)!;
+            Assert.False(state.exp_avg.IsInvalid);
+            Assert.False(state.exp_avg_sq.IsInvalid);
         }
     }
 }
