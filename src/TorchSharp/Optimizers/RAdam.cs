@@ -262,8 +262,8 @@ namespace TorchSharp
                     exp_avg_sq.Dispose();
 
                     step = st_state.step;
-                    exp_avg = st_state.exp_avg.clone();
-                    exp_avg_sq = st_state.exp_avg_sq.clone();
+                    exp_avg = st_state.exp_avg.to(_parameter.device, copy: true);
+                    exp_avg_sq = st_state.exp_avg_sq.to(_parameter.device, copy: true);
                 }
 
                 /// <summary>

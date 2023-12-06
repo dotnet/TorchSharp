@@ -269,8 +269,8 @@ namespace TorchSharp
 
                     step = st_state.step;
                     mu_product = st_state.mu_product;
-                    exp_avg = st_state.exp_avg.clone();
-                    exp_avg_sq = st_state.exp_avg_sq.clone();
+                    exp_avg = st_state.exp_avg.to(_parameter.device, copy: true);
+                    exp_avg_sq = st_state.exp_avg_sq.to(_parameter.device, copy: true);
                 }
 
                 /// <summary>

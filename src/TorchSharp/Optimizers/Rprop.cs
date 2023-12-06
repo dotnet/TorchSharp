@@ -285,8 +285,8 @@ namespace TorchSharp
                     prev.Dispose();
                     step_size.Dispose();
                     step = st_state.step;
-                    prev = st_state.prev.clone();
-                    step_size = st_state.step_size.clone();
+                    prev = st_state.prev.to(_parameter.device, copy: true);
+                    step_size = st_state.step_size.to(_parameter.device, copy: true);
                 }
 
                 /// <summary>

@@ -281,9 +281,9 @@ namespace TorchSharp
                     momentum_buffer.Dispose();
 
                     step = st_state.step;
-                    square_avg = st_state.square_avg.clone();
-                    grad_avg = st_state.grad_avg.clone();
-                    momentum_buffer = st_state.momentum_buffer.clone();
+                    square_avg = st_state.square_avg.to(_parameter.device, copy: true);
+                    grad_avg = st_state.grad_avg.to(_parameter.device, copy: true);
+                    momentum_buffer = st_state.momentum_buffer.to(_parameter.device, copy: true);
                 }
 
                 /// <summary>

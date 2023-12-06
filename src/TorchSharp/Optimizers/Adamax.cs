@@ -255,8 +255,8 @@ namespace TorchSharp
                     exp_inf.Dispose();
 
                     step = st_state.step;
-                    exp_avg = st_state.exp_avg.clone();
-                    exp_inf = st_state.exp_inf.clone();
+                    exp_avg = st_state.exp_avg.to(_parameter.device, copy: true);
+                    exp_inf = st_state.exp_inf.to(_parameter.device, copy: true);
                 }
 
                 public override bool ApproximatelyEquals(OptimizerState other)

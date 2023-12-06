@@ -253,7 +253,7 @@ namespace TorchSharp
                 {
                     var st_state = source as State;
                     momentum_buffer?.Dispose();
-                    momentum_buffer = st_state.momentum_buffer.clone();
+                    momentum_buffer = st_state.momentum_buffer.to(_parameter.device, copy: true);
                 }
 
                 /// <summary>
