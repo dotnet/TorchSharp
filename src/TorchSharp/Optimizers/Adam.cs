@@ -250,13 +250,7 @@ namespace TorchSharp
                     step = reader.ReadInt64();
                     exp_avg.Load(reader);
                     exp_avg_sq.Load(reader);
-                    var hasMax = reader.ReadBoolean();
-                    if (hasMax) {
-                        TensorExtensionMethods.Load(ref max_exp_avg_sq, reader);
-                    } else {
-                        max_exp_avg_sq?.Dispose();
-                        max_exp_avg_sq = null;
-                    }
+                    LoadConditionalStateTensor(reader, ref max_exp_avg_sq, _parameter.device);
                 }
 
                 /// <summary>
@@ -285,14 +279,12 @@ namespace TorchSharp
                     var st_state = source as State;
                     exp_avg.Dispose();
                     exp_avg_sq.Dispose();
-                    if (max_exp_avg_sq is not null) {
-                        max_exp_avg_sq.Dispose();
-                    }
-
+                    max_exp_avg_sq?.Dispose();
+                    
                     step = st_state.step;
-                    exp_avg = st_state.exp_avg;
-                    exp_avg_sq = st_state.exp_avg_sq;
-                    max_exp_avg_sq = st_state.max_exp_avg_sq;
+                    exp_avg = st_state.exp_avg.to(_parameter.device, copy: true);
+                    exp_avg_sq = st_state.exp_avg_sq.to(_parameter.device, copy: true);
+                    max_exp_avg_sq = st_state.max_exp_avg_sq?.to(_parameter.device, copy: true);
                 }
 
                 public override bool ApproximatelyEquals(OptimizerState other)
