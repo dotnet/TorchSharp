@@ -538,9 +538,10 @@ namespace TorchSharp
 
             if (!skip) {
                 var device = tensor.device;
-                if (device.type != DeviceType.CPU) tensor = tensor.to(CPU); 
+                if (device.type != DeviceType.CPU)
+                    tensor = tensor.to(CPU, disposeAfter: true); 
                 tensor.bytes = bytes;
-                tensor = tensor.to(device);
+                tensor = tensor.to(device, disposeAfter: true);
             }
         }
 
