@@ -3960,6 +3960,59 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(Tensor.to))]
+        public void CastMoveAndDisposeAfter()
+        {
+            {
+                // Cast the input on the same device
+                using var input = torch.ones(10, float32, torch.CPU);
+                using var cast = input.to(int32, disposeAfter: true);
+                Assert.True(input.IsInvalid);
+                Assert.False(cast.IsInvalid);
+                // make sure we can access the values
+                Assert.Equal(1, cast[0].ToInt32()); 
+            }
+            if (torch.cuda.is_available()) {
+                {
+                    // Move the input to a different device
+                    using var input = torch.ones(10, float32, torch.CPU);
+                    using var moved = input.to(torch.CUDA, disposeAfter: true);
+                    Assert.True(input.IsInvalid);
+                    Assert.False(moved.IsInvalid);
+                    // make sure we can access the values
+                    Assert.Equal(1, moved[0].ToSingle());
+                }
+                {
+                    // Cast and move the input to a different device
+                    using var input = torch.ones(10, float32, torch.CPU);
+                    using var moved = input.to(int32, torch.CUDA, disposeAfter: true);
+                    Assert.True(input.IsInvalid);
+                    Assert.False(moved.IsInvalid);
+                    // make sure we can access the values
+                    Assert.Equal(1, moved[0].ToInt32());
+                }
+            }
+            {
+                // Sanity: If we cast to the same type, values should still be accessible
+                using var input = torch.ones(10, float32, torch.CPU);
+                using var cast = input.to(float32, disposeAfter: true);
+                Assert.True(input.IsInvalid);
+                Assert.False(cast.IsInvalid);
+                // make sure we can access the values
+                Assert.Equal(1, cast[0].ToSingle());
+            }
+            {
+                // Sanity: If we move to the same device, values should still be accessible
+                using var input = torch.ones(10, float32, torch.CPU);
+                using var moved = input.to(torch.CPU, disposeAfter: true);
+                Assert.True(input.IsInvalid);
+                Assert.False(moved.IsInvalid);
+                // make sure we can access the values
+                Assert.Equal(1, moved[0].ToSingle());
+            }
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.masked_scatter))]
         [TestOf(nameof(Tensor.masked_scatter_))]
         public void MaskedScatter()

@@ -231,7 +231,7 @@ namespace TorchSharp
                     var st_state = source as State;
                     sum.Dispose();
                     step = st_state.step;
-                    sum = st_state.sum;
+                    sum = st_state.sum.to(_parameter.device, copy: true);
                 }
 
                 /// <summary>
