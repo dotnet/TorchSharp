@@ -232,7 +232,7 @@ namespace TorchSharp
                 /// <param name="reader">A binary reader connected to a stream open for reading.</param>
                 public override void LoadStateDict(BinaryReader reader)
                 {
-                    LoadConditionalStateTensor(reader, ref momentum_buffer);
+                    LoadConditionalStateTensor(reader, ref momentum_buffer, _parameter.device);
                 }
 
                 /// <summary>
@@ -251,10 +251,8 @@ namespace TorchSharp
                 public override void LoadStateDict(OptimizerState source)
                 {
                     var st_state = source as State;
-                    if (momentum_buffer is not null) {
-                        momentum_buffer.Dispose();
-                    }
-                    momentum_buffer = st_state.momentum_buffer;
+                    momentum_buffer?.Dispose();
+                    momentum_buffer = st_state.momentum_buffer.to(_parameter.device, copy: true);
                 }
 
                 /// <summary>

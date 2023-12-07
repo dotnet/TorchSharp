@@ -555,12 +555,13 @@ namespace TorchSharp
             /// <param name="device">The device to move all state to.</param>
             public virtual void to(Device device) { }
 
-            protected static void LoadConditionalStateTensor(BinaryReader reader, ref Tensor result)
+            protected static void LoadConditionalStateTensor(BinaryReader reader, ref Tensor result, Device device)
             {
                 var hasTensor = reader.ReadBoolean();
 
                 if (hasTensor) {
                     TensorExtensionMethods.Load(ref result, reader);
+                    result = result.to(device, disposeAfter: true);
                 } else {
                     if (result is not null)
                         result.Dispose();

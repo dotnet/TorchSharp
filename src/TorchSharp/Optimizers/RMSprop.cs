@@ -251,8 +251,8 @@ namespace TorchSharp
                 {
                     step = reader.ReadInt64();
                     square_avg.Load(reader);
-                    LoadConditionalStateTensor(reader, ref momentum_buffer);
-                    LoadConditionalStateTensor(reader, ref grad_avg);
+                    LoadConditionalStateTensor(reader, ref momentum_buffer, _parameter.device);
+                    LoadConditionalStateTensor(reader, ref grad_avg, _parameter.device);
                 }
                 /// <summary>
                 /// Save the optimizer parameter state to a stream.
@@ -278,9 +278,9 @@ namespace TorchSharp
                     momentum_buffer.Dispose();
 
                     step = st_state.step;
-                    square_avg = st_state.square_avg;
-                    grad_avg = st_state.grad_avg;
-                    momentum_buffer = st_state.momentum_buffer;
+                    square_avg = st_state.square_avg.to(_parameter.device, copy: true);
+                    grad_avg = st_state.grad_avg.to(_parameter.device, copy: true);
+                    momentum_buffer = st_state.momentum_buffer.to(_parameter.device, copy: true);
                 }
 
                 /// <summary>
