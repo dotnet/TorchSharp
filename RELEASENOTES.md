@@ -24,6 +24,7 @@ __Bug Fixes__:
 #1170 : Calling `torch.nn.rnn.utils.pad_packed_sequence` with a CUDA tensor and unsorted_indices threw an error
 #1172 : `optim.LoadStateDict` from an existing `StateDictionary` updated to make sure to copy value and to the right device.
 #1176 : When specific `Optimizers` load in a conditional tensor, made sure to copy to the right device.
+#1174 : Loading CUDA tensor from stream threw an error
 
 ## NuGet Version 0.101.2
 
