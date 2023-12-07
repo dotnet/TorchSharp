@@ -713,11 +713,15 @@ namespace TorchSharp
             /// </summary>
             /// <param name="type">The target type</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
-            public Tensor to_type(ScalarType type, bool copy = false)
+            /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
+            public Tensor to_type(ScalarType type, bool copy = false, bool disposeAfter = false)
             {
                 var res = NativeMethods.THSTensor_to_type(Handle, (sbyte)type, copy);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                if (disposeAfter)
+                    this.Dispose();
+
                 return new Tensor(res);
             }
 
@@ -743,12 +747,16 @@ namespace TorchSharp
             /// <param name="deviceType">The device type, e.g. 'CPU' or 'CUDA'.</param>
             /// <param name="deviceIndex">The optional device index.</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
-            public Tensor to(DeviceType deviceType, int deviceIndex = -1, bool copy = false)
+            /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
+            public Tensor to(DeviceType deviceType, int deviceIndex = -1, bool copy = false, bool disposeAfter = false)
             {
                 torch.InitializeDeviceType(deviceType);
                 var res = NativeMethods.THSTensor_to_device(Handle, (int)deviceType, deviceIndex, copy);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                if (disposeAfter)
+                    this.Dispose();
+
                 return new Tensor(res);
             }
 
@@ -758,32 +766,42 @@ namespace TorchSharp
             /// <param name="type">The target type</param>
             /// <param name="device">The target device</param>
             /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
-            public Tensor to(ScalarType type, torch.Device device, bool copy = false)
+            /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
+            public Tensor to(ScalarType type, torch.Device device, bool copy = false, bool disposeAfter = false)
             {
                 torch.InitializeDevice(device);
                 var res = NativeMethods.THSTensor_to_type_and_device(Handle, (sbyte)type, (int)device.type, device.index, copy);
                 if (res == IntPtr.Zero)
                     CheckForErrors();
+                if (disposeAfter)
+                    this.Dispose();
                 return new Tensor(res);
             }
 
             /// <summary>
             /// Cast the tensor to the given element type.
             /// </summary>
+            /// <param name="type">The target type</param>
+            /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
+            /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
             /// <remarks>Alias for to_type</remarks>
-            public Tensor to(ScalarType type) => to_type(type);
+            public Tensor to(ScalarType type, bool copy = false, bool disposeAfter = false) => to_type(type, copy, disposeAfter);
 
             /// <summary>
             /// Moves the tensor data.
             /// </summary>
             /// <param name="device">A string denoting the target device.</param>
-            public Tensor to(string device) => to(new torch.Device(device));
+            /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
+            /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
+            public Tensor to(string device, bool copy = false, bool disposeAfter = false) => to(new torch.Device(device), copy, disposeAfter);
 
             /// <summary>
             /// Moves the tensor data.
             /// </summary>
             /// <param name="device">The target device</param>
-            public Tensor to(torch.Device device) => to(device.type, device.index);
+            /// <param name="copy">When copy is set, a new Tensor is created even when the Tensor already matches the desired conversion.</param>
+            /// <param name="disposeAfter">When disposeAfter is set, the current Tensor will be disposed after creating the new one</param>
+            public Tensor to(torch.Device device, bool copy = false, bool disposeAfter = false) => to(device.type, device.index, copy, disposeAfter);
 
             /// <summary>
             /// Moves the tensor data.

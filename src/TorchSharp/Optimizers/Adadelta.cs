@@ -237,8 +237,8 @@ namespace TorchSharp
                     acc_delta.Dispose();
 
                     step = st_state.step;
-                    square_avg = st_state.square_avg;
-                    acc_delta = st_state.acc_delta;
+                    square_avg = st_state.square_avg.to(_parameter.device, copy: true);
+                    acc_delta = st_state.acc_delta.to(_parameter.device, copy: true);
                 }
 
                 public override bool ApproximatelyEquals(OptimizerState other)
