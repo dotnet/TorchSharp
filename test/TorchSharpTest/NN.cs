@@ -3079,9 +3079,9 @@ namespace TorchSharp
             var module = new TestModule1(torch.randn(2, 2), true);
 
             // Move the module to 16-bit floats, and make sure gradients are calculated for all the parameters
-            module.half();
-            var x = torch.randn(2, 2, float16);
-            var y = torch.randn(2, float16);
+            module.@double();
+            var x = torch.randn(2, 2, float64);
+            var y = torch.randn(2, float64);
             torch.nn.functional.mse_loss(module.call(x), y).backward();
             foreach (var (pName, parm) in module.named_parameters()) {
                 var grad = parm.grad();
