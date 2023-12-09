@@ -26,7 +26,7 @@ __Bug Fixes__:
 #1176 : When specific `Optimizers` load in a conditional tensor, made sure to copy to the right device.
 #1174 : Loading CUDA tensor from stream threw an error
 #1179 : Calling `Module.to()` with the `ParameterList` and `ParameterDict` module didn't move the parameters stored in the field.
-
+#1148 : Calling `Module.to()` shouldn't be differentiable
 
 ## NuGet Version 0.101.2
 
