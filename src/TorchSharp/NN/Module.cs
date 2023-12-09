@@ -268,6 +268,10 @@ namespace TorchSharp
                             field.SetValue(this, t);
                     }
 
+                    if (device is not null) {
+                        _deviceType = device.type;
+                        _deviceIndex = device.index;
+                    }
                 }
 
                 /// <summary>
