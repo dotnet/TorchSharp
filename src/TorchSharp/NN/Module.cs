@@ -229,19 +229,12 @@ namespace TorchSharp
                         else sm._to(device, dtype.Value);
                     }
 
-                    // Define our validation function once
-                    bool willMove(Tensor tensor)
-                    {
-                        return (dtype is not null && dtype.Value != tensor.dtype) ||
-                            (device is not null && (device.type != tensor.device_type || device.index != tensor.device_index));
-                    }
-
                     var fieldsByComponentName = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
                                                             .ToDictionary(field => field.ComponentName());
 
                     foreach (var (name, param) in named_parameters(false).ToList()) {
-                        if (!willMove(param)) continue;
-                        
+                        if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device)) continue;
+
                         // Store the requires_grad flag ahead, since we dispose the parameter after moving
                         bool requiresGrad = param.requires_grad;
                         Parameter p;
@@ -258,8 +251,8 @@ namespace TorchSharp
                     }
 
                     foreach (var (name, buffer) in named_buffers(false).ToList()) {
-                        if (!willMove(buffer)) continue;
-                        
+                        if (!buffer.toWillCopy(dtype ?? buffer.dtype, device ?? buffer.device)) continue;
+
                         // Buffers don't get grads so we don't need to detach them afterwards
                         var t = buffer.to(dtype ?? buffer.dtype, device ?? buffer.device, disposeAfter: true);
                         ConditionallyRegisterBuffer(name, t);
