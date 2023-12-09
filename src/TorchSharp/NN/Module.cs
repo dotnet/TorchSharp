@@ -229,20 +229,11 @@ namespace TorchSharp
                         else sm._to(device, dtype.Value);
                     }
 
-                    // Define our validation function
+                    // Define our validation function once
                     bool willMove(Tensor tensor)
                     {
                         return (dtype is not null && dtype.Value != tensor.dtype) ||
                             (device is not null && (device.type != tensor.device_type || device.index != tensor.device_index));
-                    }
-                    // Define our to function
-                    Tensor toFunc(Tensor tensor)
-                    {
-                        if (device is null)
-                            return tensor.to(dtype.Value, disposeAfter: true);
-                        else if (dtype is null)
-                            return tensor.to(device.type, device.index, disposeAfter: true);
-                        else return tensor.to(dtype.Value, device, disposeAfter: true);
                     }
 
                     var fieldsByComponentName = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
@@ -258,7 +249,7 @@ namespace TorchSharp
                         // In addition, we need the new tensor to be a leaf to accumulate gradients, so if we didn't
                         // disable grad we would need to call .detach() on the moved tensor.
                         using (var d = torch.no_grad())
-                            p = new Parameter(toFunc(param), requiresGrad);
+                            p = new Parameter(param.to(dtype ?? param.dtype, device ?? param.device, disposeAfter: true), requiresGrad);
                         ConditionallyRegisterParameter(name, p);
 
                         // If this parameter is a field, set it
@@ -270,7 +261,7 @@ namespace TorchSharp
                         if (!willMove(buffer)) continue;
                         
                         // Buffers don't get grads so we don't need to detach them afterwards
-                        var t = toFunc(buffer);
+                        var t = buffer.to(dtype ?? buffer.dtype, device ?? buffer.device, disposeAfter: true);
                         ConditionallyRegisterBuffer(name, t);
 
                         if (fieldsByComponentName.TryGetValue(name, out var field))
