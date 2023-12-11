@@ -60,6 +60,37 @@ namespace TorchSharp
 
             private bool _registered = false;
 
+            protected internal override Module _to(DeviceType deviceType, int deviceIndex = -1)
+            {
+                base._to(deviceType, deviceIndex);
+                _toEpilog();
+                return this;
+            }
+
+            protected internal override Module _to(torch.Device device, torch.ScalarType dtype)
+            {
+                base._to(device, dtype);
+                _toEpilog();
+                return this;
+            }
+
+            protected internal override Module _to(torch.ScalarType dtype)
+            {
+                base._to(dtype);
+                _toEpilog();
+                return this;
+            }
+
+            void _toEpilog()
+            {
+                for (int i = 0; i < _list.Count; i++) {
+                    string name = _list[i].Item1;
+                    var param = base.get_parameter(name);
+                    _list[i] = (name, param);
+                    _dict[name] = param;
+                }
+            }
+
             /// <summary>
             /// Return the ParameterDict values.
             /// </summary>

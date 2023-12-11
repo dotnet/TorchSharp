@@ -33,6 +33,35 @@ namespace TorchSharp
                 _registered = true;
             }
 
+
+            protected internal override Module _to(DeviceType deviceType, int deviceIndex = -1)
+            {
+                base._to(deviceType, deviceIndex);
+                _toEpilog();
+                return this;
+            }
+
+            protected internal override Module _to(torch.Device device, torch.ScalarType dtype)
+            {
+                base._to(device, dtype);
+                _toEpilog();
+                return this;
+            }
+
+            protected internal override Module _to(torch.ScalarType dtype)
+            {
+                base._to(dtype);
+                _toEpilog();
+                return this;
+            }
+
+            void _toEpilog()
+            {
+                for (int i = 0; i < _list.Count; i++) {
+                    _list[i] = base.get_parameter($"{i}");
+                }
+            }
+
             public override IEnumerable<(string name, Parameter parameter)> named_parameters(bool recurse = true)
             {
                 return Enumerable.Range(0, _list.Count).Select(i => ($"{i}", _list[i]));
