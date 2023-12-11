@@ -704,5 +704,66 @@ namespace TorchSharp
             }
             return result;
         }
+
+        /// <summary>
+        /// Checks if calling `Tensor.to()` with the parameters will result in actually copying the tensor.
+        /// </summary>
+        /// <param name="tensor">The tensor</param>
+        /// <param name="device">The device to move to</param>
+        /// <returns>True if the tensor will be copied</returns>
+        internal static bool toWillCopy(this Tensor tensor, Device device)
+        {
+            return tensor.toWillCopy(device.type, device.index);
+        }
+
+        /// <summary>
+        /// Checks if calling `Tensor.to()` with the parameters will result in actually copying the tensor.
+        /// </summary>
+        /// <param name="tensor">The tensor</param>
+        /// <param name="deviceType">The device type to move to</param>
+        /// <param name="deviceIndex">The device index to move to</param>
+        /// <returns>True if the tensor will be copied</returns>
+        internal static bool toWillCopy(this Tensor tensor, DeviceType deviceType, int deviceIndex)
+        {
+            return tensor.device_index != deviceIndex || tensor.device_type != deviceType;
+        }
+
+        /// <summary>
+        /// Checks if calling `Tensor.to()` with the parameters will result in actually copying the tensor.
+        /// </summary>
+        /// <param name="tensor">The tensor</param>
+        /// <param name="dtype">The dtype to move to</param>
+        /// <returns>True if the tensor will be copied</returns>
+        internal static bool toWillCopy(this Tensor tensor, ScalarType dtype)
+        {
+            return tensor.dtype != dtype;
+        }
+
+        /// <summary>
+        /// Checks if calling `Tensor.to()` with the parameters will result in actually copying the tensor.
+        /// </summary>
+        /// <param name="tensor">The tensor</param>
+        /// <param name="dtype">The dtype to move to</param>
+        /// <param name="device">The device to move to</param>
+        /// <returns>True if the tensor will be copied</returns>
+        internal static bool toWillCopy(this Tensor tensor, ScalarType dtype, Device device)
+        {
+            return tensor.toWillCopy(dtype, device.type, device.index);
+        }
+
+        /// <summary>
+        /// Checks if calling `Tensor.to()` with the parameters will result in actually copying the tensor.
+        /// </summary>
+        /// <param name="tensor">The tensor</param>
+        /// <param name="dtype">The dtype to move to</param>
+        /// <param name="deviceType">The device type to move to</param>
+        /// <param name="deviceIndex">The device index to move to</param>
+        /// <returns>True if the tensor will be copied</returns>
+        internal static bool toWillCopy(this Tensor tensor, ScalarType dtype, DeviceType deviceType, int deviceIndex)
+        {
+            return tensor.device_index != deviceIndex || tensor.device_type != deviceType || tensor.dtype != dtype;
+        }
+
+
     }
 }
