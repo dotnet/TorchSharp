@@ -150,6 +150,9 @@ namespace TorchSharp
                 /// <param name="dtype">The target element type.</param>
                 protected internal virtual Module _to(Device device, ScalarType dtype)
                 {
+                    if (!dtype.IsFloatingPoint() && !dtype.IsComplex())
+                        throw new ArgumentException($"nn.Module.to only accepts floating point or complex types, but got desired dtype={dtype.ToString()}");
+
                     if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
 
                     if (device.type == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
@@ -198,6 +201,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 protected internal virtual Module _to(ScalarType dtype)
                 {
+                    if (!dtype.IsFloatingPoint() && !dtype.IsComplex())
+                        throw new ArgumentException($"nn.Module.to only accepts floating point or complex types, but got desired dtype={dtype.ToString()}");
+
                     THSNN_Module_to_dtype(handle, (sbyte)dtype);
                     CheckForErrors();
 
