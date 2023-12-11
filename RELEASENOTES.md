@@ -20,11 +20,13 @@ All distribution classes now implement IDisposable.<br/>
 
 __Bug Fixes__:
 
-#1154 : `mu_product` was not initialized in `NAdam` optimizer
-#1170 : Calling `torch.nn.rnn.utils.pad_packed_sequence` with a CUDA tensor and unsorted_indices threw an error
-#1172 : `optim.LoadStateDict` from an existing `StateDictionary` updated to make sure to copy value and to the right device.
-#1176 : When specific `Optimizers` load in a conditional tensor, made sure to copy to the right device.
-#1174 : Loading CUDA tensor from stream threw an error
+#1154 : `mu_product` was not initialized in `NAdam` optimizer<br/>
+#1170 : Calling `torch.nn.rnn.utils.pad_packed_sequence` with a CUDA tensor and unsorted_indices threw an error<br/>
+#1172 : `optim.LoadStateDict` from an existing `StateDictionary` updated to make sure to copy value and to the right device.<br/>
+#1176 : When specific `Optimizers` load in a conditional tensor, made sure to copy to the right device.<br/>
+#1174 : Loading CUDA tensor from stream threw an error<br/>
+#1179 : Calling `Module.to()` with the `ParameterList` and `ParameterDict` module didn't move the parameters stored in the field.<br/>
+#1148 : Calling `Module.to()` shouldn't be differentiable<br/>
 
 ## NuGet Version 0.101.2
 

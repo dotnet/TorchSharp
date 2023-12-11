@@ -163,66 +163,6 @@ namespace TorchSharp
                     return this;
                 }
 
-                protected void _toEpilog(Device device, ScalarType dtype)
-                {
-                    foreach (var (_, sm) in named_children()) sm._to(device, dtype);
-
-                    var alreadyHandled = new HashSet<IntPtr>();
-
-                    foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
-
-                        var fieldName = field.ComponentName();
-                        var value = field.GetValue(this);
-
-                        switch (value) {
-                        // This order in which these cases are arranged is significant.
-                        case Parameter param when dtype == param.dtype && device.type == param.device_type && device.index == param.device_index:
-                            alreadyHandled.Add(param.handle);
-                            continue;
-
-                        case Parameter param: {
-                                var t = param.to(dtype, device);
-                                t.retain_grad();
-                                var p = new Parameter(t, param.requires_grad);
-                                field.SetValue(this, p);
-                                ConditionallyRegisterParameter(fieldName, p);
-                                alreadyHandled.Add(p.handle);
-                                break;
-                            }
-
-                        case Tensor tensor when (device.type != tensor.device_type || device.index != tensor.device_index): {
-                                var t = tensor.to(dtype, device);
-                                field.SetValue(this, t);
-                                ConditionallyRegisterBuffer(fieldName, t);
-                                alreadyHandled.Add(t.handle);
-                                break;
-                            }
-
-                        case Tensor tensor:
-                            alreadyHandled.Add(tensor.handle);
-                            break;
-                        }
-                    }
-
-                    foreach (var (name, param) in named_parameters(false).ToList()) {
-                        if (alreadyHandled.Contains(param.handle)) continue;
-                        var t = param.to(dtype, device);
-                        ConditionallyRegisterParameter(name, t);
-                    }
-
-                    foreach (var (name, buffer) in named_buffers(false).ToList()) {
-                        if (alreadyHandled.Contains(buffer.handle)) continue;
-                        var t = buffer.to(dtype, device);
-                        ConditionallyRegisterBuffer(name, t);
-                    }
-
-                    _deviceType = device.type;
-                    _deviceIndex = device.index;
-
-                    Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
-                }
-
-
                 /// <summary>
                 /// Moves the parameters and buffers.
                 /// </summary>
@@ -249,63 +189,6 @@ namespace TorchSharp
                     return this;
                 }
 
-                protected void _toEpilog(DeviceType deviceType, int deviceIndex)
-                {
-                    foreach (var (_, sm) in named_children()) sm._to(deviceType, deviceIndex);
-
-                    var alreadyHandled = new HashSet<IntPtr>();
-
-                    foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
-
-                        var fieldName = field.ComponentName();
-                        var value = field.GetValue(this);
-
-                        switch (value) {
-                        // This order in which these cases are arranged is significant.
-                        case Parameter param when deviceType == param.device_type && deviceIndex == param.device_index:
-                            alreadyHandled.Add(param.handle);
-                            continue;
-
-                        case Parameter param: {
-                                var t = param.to(deviceType, deviceIndex);
-                                t.retain_grad();
-                                var p = new Parameter(t, param.requires_grad);
-                                field.SetValue(this, p);
-                                ConditionallyRegisterParameter(fieldName, p);
-                                alreadyHandled.Add(p.handle);
-                                break;
-                            }
-
-                        case Tensor tensor when (deviceType != tensor.device_type || deviceIndex != tensor.device_index): {
-                                var t = tensor.to(deviceType, deviceIndex);
-                                field.SetValue(this, t);
-                                ConditionallyRegisterBuffer(fieldName, t);
-                                alreadyHandled.Add(t.handle);
-                                break;
-                            }
-
-                        case Tensor tensor:
-                            alreadyHandled.Add(tensor.handle);
-                            break;
-                        }
-                    }
-
-                    foreach (var (name, param) in named_parameters(false).ToList()) {
-                        if (alreadyHandled.Contains(param.handle)) continue;
-                        var t = param.to(deviceType, deviceIndex);
-                        ConditionallyRegisterParameter(name, t);
-                    }
-
-                    foreach (var (name, buffer) in named_buffers(false).ToList()) {
-                        if (alreadyHandled.Contains(buffer.handle)) continue;
-                        var t = buffer.to(deviceType, deviceIndex);
-                        ConditionallyRegisterBuffer(name, t);
-                    }
-
-                    _deviceType = deviceType;
-                    _deviceIndex = deviceIndex;
-                }
-
                 private DeviceType _deviceType = DeviceType.CPU;
                 private int _deviceIndex = -1;
 
@@ -325,55 +208,62 @@ namespace TorchSharp
 
                 protected void _toEpilog(ScalarType dtype)
                 {
-                    foreach (var (_, sm) in named_children()) sm._to(dtype);
+                    _toEpilog(dtype, null);
+                }
 
-                    var alreadyHandled = new HashSet<IntPtr>();
+                protected void _toEpilog(Device device, ScalarType dtype)
+                {
+                    _toEpilog(dtype, device);
+                }
 
-                    foreach (var field in GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)) {
+                protected void _toEpilog(DeviceType deviceType, int deviceIndex)
+                {
+                    _toEpilog(null, new Device(deviceType, deviceIndex));
+                }
 
-                        var fieldName = field.ComponentName();
-                        var value = field.GetValue(this);
-
-                        switch (value) {
-                        // This order in which these cases are arranged is significant.
-                        case Parameter param when dtype == param.dtype:
-                            alreadyHandled.Add(param.handle);
-                            continue;
-
-                        case Parameter param: {
-                                var t = param.to(dtype);
-                                t.retain_grad();
-                                var p = new Parameter(t, param.requires_grad);
-                                field.SetValue(this, p);
-                                ConditionallyRegisterParameter(fieldName, p);
-                                alreadyHandled.Add(p.handle);
-                                break;
-                            }
-
-                        case Tensor tensor when dtype == tensor.dtype:
-                            alreadyHandled.Add(tensor.handle);
-                            continue;
-
-                        case Tensor tensor: {
-                                var t = tensor.to(dtype);
-                                field.SetValue(this, t);
-                                ConditionallyRegisterBuffer(fieldName, t);
-                                alreadyHandled.Add(t.handle);
-                                break;
-                            }
-                        }
+                private void _toEpilog(ScalarType? dtype, Device device)
+                {
+                    foreach (var (_, sm) in named_children()) {
+                        if (device is null) sm._to(dtype.Value);
+                        else if (dtype is null) sm._to(device.type, device.index);
+                        else sm._to(device, dtype.Value);
                     }
 
+                    var fieldsByComponentName = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+                                                            .ToDictionary(field => field.ComponentName());
+
                     foreach (var (name, param) in named_parameters(false).ToList()) {
-                        if (alreadyHandled.Contains(param.handle)) continue;
-                        var t = param.to(dtype);
-                        ConditionallyRegisterParameter(name, t);
+                        if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device)) continue;
+
+                        // Store the requires_grad flag ahead, since we dispose the parameter after moving
+                        bool requiresGrad = param.requires_grad;
+                        Parameter p;
+                        // When moving the parameter, we don't want the autograd to track this movement on the graph.
+                        // In addition, we need the new tensor to be a leaf to accumulate gradients, so if we didn't
+                        // disable grad we would need to call .detach() on the moved tensor.
+                        using (var d = torch.no_grad())
+                            p = new Parameter(param.to(dtype ?? param.dtype, device ?? param.device, disposeAfter: true), requiresGrad);
+                        ConditionallyRegisterParameter(name, p);
+
+                        // If this parameter is a field, set it
+                        if (fieldsByComponentName.TryGetValue(name, out var field))
+                            field.SetValue(this, p);
                     }
 
                     foreach (var (name, buffer) in named_buffers(false).ToList()) {
-                        if (alreadyHandled.Contains(buffer.handle)) continue;
-                        var t = buffer.to(dtype);
+                        if (!buffer.toWillCopy(dtype ?? buffer.dtype, device ?? buffer.device)) continue;
+
+                        // Buffers don't get grads so we don't need to detach them afterwards
+                        var t = buffer.to(dtype ?? buffer.dtype, device ?? buffer.device, disposeAfter: true);
                         ConditionallyRegisterBuffer(name, t);
+
+                        if (fieldsByComponentName.TryGetValue(name, out var field))
+                            field.SetValue(this, t);
+                    }
+
+                    if (device is not null) {
+                        _deviceType = device.type;
+                        _deviceIndex = device.index;
                     }
                 }
 
