@@ -3044,6 +3044,117 @@ namespace TorchSharp
             }
         }
 
+        [Fact]
+        public void TestCustomModuleWithDeviceMove()
+        {
+            if (torch.cuda.is_available()) {
+                var module = new TestModule1(torch.randn(2, 2), true);
+
+                // Move the device to cuda, and make sure gradients are calculated for all the parameters
+                module.to(torch.CUDA);
+                var x = torch.randn(2, 2, device: torch.CUDA);
+                var y = torch.randn(2, device: torch.CUDA);
+                torch.nn.functional.mse_loss(module.call(x), y).backward();
+                foreach (var (pName, parm) in module.named_parameters()) {
+                    var grad = parm.grad();
+                    Assert.NotNull(grad);
+                }
+
+                // Reset and then try again with moving back to CPU
+                module.zero_grad();
+
+                // Try moving back to CPU
+                module.to(torch.CPU);
+                x = torch.randn(2, 2);
+                y = torch.randn(2);
+                torch.nn.functional.mse_loss(module.call(x), y).backward();
+                foreach (var (pName, parm) in module.named_parameters()) {
+                    var grad = parm.grad();
+                    Assert.NotNull(grad);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestCustomModuleWithTypeMove()
+        {
+            var module = new TestModule1(torch.randn(2, 2), true);
+
+            // Move the module to 16-bit floats, and make sure gradients are calculated for all the parameters
+            module.@double();
+            var x = torch.randn(2, 2, float64);
+            var y = torch.randn(2, float64);
+            torch.nn.functional.mse_loss(module.call(x), y).backward();
+            foreach (var (pName, parm) in module.named_parameters()) {
+                var grad = parm.grad();
+                Assert.NotNull(grad);
+            }
+
+            // Reset and then try again with moving back to float 32
+            module.zero_grad();
+
+            // Try moving back to float 32
+            module.@float();
+            x = torch.randn(2, 2);
+            y = torch.randn(2);
+            torch.nn.functional.mse_loss(module.call(x), y).backward();
+            foreach (var (pName, parm) in module.named_parameters()) {
+                var grad = parm.grad();
+                Assert.NotNull(grad);
+            }
+        }
+        [Fact]
+        public void TestCustomModuleWithDeviceAndTypeMove()
+        {
+            if (torch.cuda.is_available()) {
+                var module = new TestModule1(torch.randn(2, 2), true);
+
+                // Move the device to cuda & float 16, and make sure gradients are calculated for all the parameters
+                module.to(torch.CUDA, float16);
+                var x = torch.randn(2, 2, float16, torch.CUDA);
+                var y = torch.randn(2, float16, torch.CUDA);
+                torch.nn.functional.mse_loss(module.call(x), y).backward();
+                foreach (var (pName, parm) in module.named_parameters()) {
+                    var grad = parm.grad();
+                    Assert.NotNull(grad);
+                }
+
+                // Reset and then try again with moving back to CPU & float 32
+                module.zero_grad();
+
+                // Try moving back to CPU & float 32
+                module.to(torch.CPU, float32);
+                x = torch.randn(2, 2);
+                y = torch.randn(2);
+                torch.nn.functional.mse_loss(module.call(x), y).backward();
+                foreach (var (pName, parm) in module.named_parameters()) {
+                    var grad = parm.grad();
+                    Assert.NotNull(grad);
+                }
+            }
+        }
+
+        [Fact]
+        public void TestCustomModuleWithMoveAndDisabledGradOnParameter()
+        {
+            var module = new TestModule1(torch.randn(2, 2), true);
+            // Disable grad on test, and make sure that it is able to move and retains the gradient state
+            module.get_parameter("test").requires_grad = false;
+
+            // Move the module to 16-bit floats
+            module.half();
+            Assert.False(module.get_parameter("test").requires_grad);
+
+            // Move to a different device
+            if (torch.cuda.is_available()) {
+                module.cuda();
+                Assert.False(module.get_parameter("test").requires_grad);
+
+                // Try a different device & type
+                module.to(torch.CPU, float32);
+                Assert.False(module.get_parameter("test").requires_grad);
+            }
+        }
 
         [Fact]
         public void TestCustomComponentName()
