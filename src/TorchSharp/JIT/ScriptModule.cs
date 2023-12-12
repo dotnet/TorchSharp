@@ -46,16 +46,22 @@ namespace TorchSharp
                     return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
                 }
 
-                public (string name, Tensor buffer)[] named_attributes()
+                public (string name, Tensor buffer)[] named_attributes(bool recurse = true)
                 {
                     using var pa = new PinnedArray<IntPtr>();
                     using var sa = new PinnedArray<IntPtr>();
-                    THSJIT_Module_named_attributes(handle, pa.CreateArray, sa.CreateArray);
+                    THSJIT_Module_named_attributes(handle, recurse, pa.CreateArray, sa.CreateArray);
                     CheckForErrors();
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
 
                     return ptrArray.Select((x, i) => (Marshal.PtrToStringAnsi(strArray[i]), new Tensor(x))).ToArray();
+                }
+
+                public void set_attribute(string name, Tensor buffer)
+                {
+                    THSJIT_Module_set_attribute(handle, name, buffer.Handle);
+                    CheckForErrors();
                 }
 
                 /// <summary>
@@ -149,7 +155,7 @@ namespace TorchSharp
                     CheckForErrors();
 
                     _toEpilog(device, dtype);
-
+                    _toScriptEpilog(device, dtype);
                     return this;
                 }
 
@@ -172,6 +178,7 @@ namespace TorchSharp
                         CheckForErrors();
 
                         _toEpilog(deviceType, deviceIndex);
+                        _toScriptEpilog(deviceType, deviceIndex);
                     }
 
                     Debug.Assert(_deviceType == DeviceType.CUDA || _deviceIndex == -1);
@@ -192,8 +199,33 @@ namespace TorchSharp
                     CheckForErrors();
 
                     _toEpilog(dtype);
+                    _toScriptEpilog(dtype);
 
                     return this;
+                }
+
+                protected void _toScriptEpilog(ScalarType dtype)
+                {
+                    _toScriptEpilog(dtype, null);
+                }
+
+                protected void _toScriptEpilog(Device device, ScalarType dtype)
+                {
+                    _toScriptEpilog(dtype, device);
+                }
+
+                protected void _toScriptEpilog(DeviceType deviceType, int deviceIndex)
+                {
+                    _toScriptEpilog(null, new Device(deviceType, deviceIndex));
+                }
+
+                private void _toScriptEpilog(ScalarType? dtype, Device device)
+                {
+                    foreach (var (name, buffer) in named_attributes(recurse: false)) {
+                        if (name is null || !buffer.toWillCopy(dtype ?? buffer.dtype, device ?? buffer.device)) continue;
+
+                        set_attribute(name, buffer.to(dtype ?? buffer.dtype, device ?? buffer.device, disposeAfter: true));
+                    }
                 }
 
 #if false   // These functions "work," but the native code doesn't seem to find any interesting information.
