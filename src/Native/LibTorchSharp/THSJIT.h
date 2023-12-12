@@ -78,9 +78,11 @@ EXPORT_API(void) THSJIT_Module_named_buffers(const JITModule module,
     Tensor* (*allocator)(size_t length),
     const char** (*allocator2)(size_t length));
 
-EXPORT_API(void) THSJIT_Module_named_attributes(const JITModule module,
+EXPORT_API(void) THSJIT_Module_named_attributes(const JITModule module, bool recurse,
     Tensor* (*allocator)(size_t length),
     const char** (*allocator2)(size_t length));
+
+EXPORT_API(void) THSJIT_Module_set_attribute(const JITModule module, const char* name, Tensor tensor);
 
 EXPORT_API(int) THSJIT_Method_num_inputs(const JITMethod method);
 

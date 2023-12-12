@@ -151,11 +151,11 @@ void THSJIT_Module_named_buffers(const JITModule module,
     }
 }
 
-void THSJIT_Module_named_attributes(const JITModule module,
+void THSJIT_Module_named_attributes(const JITModule module, bool recurse,
     Tensor* (*allocator)(size_t length),
     const char** (*allocator2)(size_t length))
 {
-    auto attributes = (*module)->named_attributes();
+    auto attributes = (*module)->named_attributes(recurse);
     Tensor* result = allocator(attributes.size());
     const char** names = allocator2(attributes.size());
     int i = 0;
@@ -168,6 +168,11 @@ void THSJIT_Module_named_attributes(const JITModule module,
             i++;
         }
     }
+}
+
+void THSJIT_Module_set_attribute(const JITModule module, const char *name, Tensor tensor)
+{
+    CATCH((*module)->setattr(name, *tensor););
 }
 
 JITMethod THSJIT_Module_get_method(const JITModule module, const char* name)
