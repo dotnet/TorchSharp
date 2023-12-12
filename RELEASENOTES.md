@@ -28,6 +28,7 @@ __Bug Fixes__:
 #1179 : Calling `Module.to()` with the `ParameterList` and `ParameterDict` module didn't move the parameters stored in the field.<br/>
 #1148 : Calling `Module.to()` shouldn't be differentiable<br/>
 #1126 : Calling `ScriptModule.to()` doesn't move attributes<br/>
+#1180 : Module.to(ScalarType) has restrictions in PyTorch which aren't restricted in TorchSharp.<br/>
 
 ## NuGet Version 0.101.2
 

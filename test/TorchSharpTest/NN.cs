@@ -3015,6 +3015,20 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestDatatypeToFail()
+        {
+            var mod = new TestModule3();
+            mod.ValidateDtype(torch.float32);
+            Assert.Multiple(
+            () => Assert.Throws<ArgumentException>(() => mod.to(torch.uint8)),
+            () => Assert.Throws<ArgumentException>(() => mod.to(torch.int8)),
+            () => Assert.Throws<ArgumentException>(() => mod.to(torch.int16)),
+            () => Assert.Throws<ArgumentException>(() => mod.to(torch.int32)),
+            () => Assert.Throws<ArgumentException>(() => mod.to(torch.int64))
+            );
+        }
+
+        [Fact]
         public void TestDeviceTo()
         {
             if (torch.cuda.is_available()) {

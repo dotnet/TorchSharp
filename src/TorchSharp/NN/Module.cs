@@ -150,6 +150,9 @@ namespace TorchSharp
                 /// <param name="dtype">The target element type.</param>
                 protected internal virtual Module _to(Device device, ScalarType dtype)
                 {
+                    if (!dtype.IsFloatingPoint() && !dtype.IsComplex())
+                        throw new ArgumentException($"nn.Module.to only accepts floating point or complex types, but got desired dtype={dtype.ToString()}");
+
                     if (device.type != DeviceType.CUDA) { device = new Device(device.type, -1); };
 
                     if (device.type == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
@@ -198,6 +201,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 protected internal virtual Module _to(ScalarType dtype)
                 {
+                    if (!dtype.IsFloatingPoint() && !dtype.IsComplex())
+                        throw new ArgumentException($"nn.Module.to only accepts floating point or complex types, but got desired dtype={dtype.ToString()}");
+
                     THSNN_Module_to_dtype(handle, (sbyte)dtype);
                     CheckForErrors();
 
@@ -238,11 +244,14 @@ namespace TorchSharp
                         // Store the requires_grad flag ahead, since we dispose the parameter after moving
                         bool requiresGrad = param.requires_grad;
                         Parameter p;
+                        ScalarType paramType =
+                            dtype != null && (param.dtype.IsFloatingPoint() || param.dtype.IsComplex()) ? dtype.Value : param.dtype;
+
                         // When moving the parameter, we don't want the autograd to track this movement on the graph.
                         // In addition, we need the new tensor to be a leaf to accumulate gradients, so if we didn't
                         // disable grad we would need to call .detach() on the moved tensor.
                         using (var d = torch.no_grad())
-                            p = new Parameter(param.to(dtype ?? param.dtype, device ?? param.device, disposeAfter: true), requiresGrad);
+                            p = new Parameter(param.to(paramType, device ?? param.device, disposeAfter: true), requiresGrad);
                         ConditionallyRegisterParameter(name, p);
 
                         // If this parameter is a field, set it
@@ -253,8 +262,11 @@ namespace TorchSharp
                     foreach (var (name, buffer) in named_buffers(false).ToList()) {
                         if (!buffer.toWillCopy(dtype ?? buffer.dtype, device ?? buffer.device)) continue;
 
+                        ScalarType bufferType =
+                            dtype != null && (buffer.dtype.IsFloatingPoint() || buffer.dtype.IsComplex()) ? dtype.Value : buffer.dtype;
+
                         // Buffers don't get grads so we don't need to detach them afterwards
-                        var t = buffer.to(dtype ?? buffer.dtype, device ?? buffer.device, disposeAfter: true);
+                        var t = buffer.to(bufferType, device ?? buffer.device, disposeAfter: true);
                         ConditionallyRegisterBuffer(name, t);
 
                         if (fieldsByComponentName.TryGetValue(name, out var field))
