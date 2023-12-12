@@ -1395,7 +1395,7 @@ namespace TorchSharp
             Assert.Equal(iterations_1047, xx);
         }
 
-        [Fact(Skip = "Work in progress")]
+        [Fact]
         public void Validate1126()
         {
             var device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
@@ -1405,12 +1405,9 @@ namespace TorchSharp
 
             var model = torch.jit.load<torch.Tensor, torch.Tensor>("shakespeare.pt.zip").to(device);
 
-            var attributes = model.named_attributes().ToArray();
-
             var xs = torch.tensor(new int[blockSize].Select(_ => new Random().Next(vocabSize)).ToArray(), device: device, dtype: torch.int64).unsqueeze(0);
 
             var ys = model.forward(xs);
-
         }
 
         [Fact]
