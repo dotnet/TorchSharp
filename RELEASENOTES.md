@@ -2,6 +2,14 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+## NuGet Version 0.101.4
+
+A fast-follow release addressing a regression in v0.101.3
+
+__Bug Fixes__:
+
+#1185 : Incomplete transfer of module to device (only with 0.101.3)<br/>
+
 ## NuGet Version 0.101.3
 
 __Breaking Changes__:

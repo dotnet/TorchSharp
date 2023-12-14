@@ -251,7 +251,9 @@ namespace TorchSharp
                         // In addition, we need the new tensor to be a leaf to accumulate gradients, so if we didn't
                         // disable grad we would need to call .detach() on the moved tensor.
                         using (var d = torch.no_grad())
-                            p = new Parameter(param.to(paramType, device ?? param.device, disposeAfter: true), requiresGrad);
+                            p = new Parameter(
+                                param.to(paramType, device ?? param.device, disposeAfter: true).DetachFromDisposeScope(), requiresGrad)
+                                .DetachFromDisposeScope() as Parameter;
                         ConditionallyRegisterParameter(name, p);
 
                         // If this parameter is a field, set it
@@ -266,7 +268,7 @@ namespace TorchSharp
                             dtype != null && (buffer.dtype.IsFloatingPoint() || buffer.dtype.IsComplex()) ? dtype.Value : buffer.dtype;
 
                         // Buffers don't get grads so we don't need to detach them afterwards
-                        var t = buffer.to(bufferType, device ?? buffer.device, disposeAfter: true);
+                        var t = buffer.to(bufferType, device ?? buffer.device, disposeAfter: true).DetachFromDisposeScope();
                         ConditionallyRegisterBuffer(name, t);
 
                         if (fieldsByComponentName.TryGetValue(name, out var field))

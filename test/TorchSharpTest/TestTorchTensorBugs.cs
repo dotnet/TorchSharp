@@ -1474,5 +1474,18 @@ namespace TorchSharp
                 Assert.True(Enumerable.SequenceEqual(tensor2.data<int>(), Enumerable.Repeat(1, 10)));
             }
         }
+
+        [Fact]
+        public void Validate_1187()
+        {
+            var target = 1.5f;
+            using var h = torch.rand(10);
+            using var expected = h.clone();
+
+            // This should do nothing, including blow up.
+            h[h > target] = 1.0f;
+
+            Assert.Equal(expected, h);
+        }
     }
 }

@@ -4714,6 +4714,12 @@ namespace TorchSharp
                     Assert.Equal(ones.shape, pooled.shape);
                 }
             }
+            if (torch.cuda.is_available()) {
+                using var pool = LayerNorm(new long[] { 12, 28, 28 }, device: torch.CPU);
+
+                using var pool1 = pool.to(torch.CUDA);
+                Assert.Equal(DeviceType.CUDA, pool1.weight.device_type);
+            }
         }
 
         [Fact]
