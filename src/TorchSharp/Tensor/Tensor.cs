@@ -1246,6 +1246,17 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            /// <summary>
+            /// This function will set the `tensor.grad()` attribute to a custom tensor. Make sure to detach the tensor from
+            /// the dispose scope so it doesn't get disposed early.
+            /// </summary>
+            /// <param name="grad">The new gradient tensor</param>
+            public void set_grad(Tensor grad)
+            {
+                NativeMethods.THSTensor_set_grad(Handle, grad.Handle);
+                CheckForErrors();
+            }
+
             internal void EncodeIndices(TensorIndex[] indices,
                 out long[] arrKindAndStarts,
                 out long[]? arrStops,

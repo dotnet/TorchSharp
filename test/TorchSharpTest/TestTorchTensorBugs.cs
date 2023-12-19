@@ -1487,5 +1487,102 @@ namespace TorchSharp
 
             Assert.Equal(expected, h);
         }
+
+        class CustomModule1191 : Module<Tensor, Tensor>
+        {
+            public Modules.Parameter p;
+            public Linear ln;
+            public CustomModule1191() : base(nameof(CustomModule1191))
+            {
+                p = torch.nn.Parameter(torch.rand(10, 10));
+                ln = torch.nn.Linear(10, 10);
+                RegisterComponents();
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                return ln.forward(p.matmul(input));
+            }
+        }
+
+        [Fact]
+        public void Validate_1191_1()
+        {
+            if (torch.cuda.is_available()) {
+                // Custom module includes both a module where the parameters are stored in C++ and a parameter stored
+                // locally in c#.
+                var module = new CustomModule1191();
+
+                // Build graph 1 on CUDA
+                torch.nn.functional.mse_loss(module.forward(torch.rand(10).cuda()), torch.rand(10).cuda()).backward();
+
+                Assert.Equal(DeviceType.CUDA, module.ln.weight!.grad()!.device_type);
+                Assert.Equal(DeviceType.CUDA, module.p.grad()!.device_type);
+
+                // Move to CPU
+                module.to(torch.CPU);
+
+                Assert.Equal(DeviceType.CPU, module.ln.weight!.grad()!.device_type);
+                Assert.Equal(DeviceType.CPU, module.p.grad()!.device_type);
+
+                // Build graph 2 on CPU.
+                // This should've crashed, saying something about the gradients being on the wrong device.
+                torch.nn.functional.mse_loss(module.forward(torch.rand(10)), torch.rand(10)).backward();
+            }
+        }
+
+        [Fact]
+        public void Validate_1191_2()
+        {
+            // Make sure this doesn't crash
+            var aModule = Sequential(
+                Linear(1000, 1), Softsign());
+            {
+                Device aDevice = torch.device("cuda:0");
+                var dataBatch = rand(32, 1000).to(aDevice);
+                var resultBatch = rand(32, 1).to(aDevice);
+                aModule.to(aDevice);
+                foreach (var (name, p) in aModule.named_parameters()) {
+                    Console.WriteLine($"{name} {p.device} {p.grad()}");
+                }
+                var aMseLoss = nn.MSELoss();
+                var optimizer = torch.optim.AdamW(aModule.parameters());
+                // Compute the loss
+                using var output = aMseLoss.forward(aModule.forward(dataBatch), resultBatch);
+
+                // Clear the gradients before doing the back-propagation
+                aModule.zero_grad();
+
+                // Do back-progatation, which computes all the gradients.
+                output.backward();
+
+                optimizer.step();
+                aModule.zero_grad();
+                aModule.to(torch.CPU);
+            }
+            {
+                aModule.zero_grad();
+                Device aDevice = torch.device("cuda:1");
+                var dataBatch = rand(32, 1000).to(aDevice);
+                var resultBatch = rand(32, 1).to(aDevice);
+                aModule.to(aDevice);
+                aModule.zero_grad();
+                foreach (var (name, p) in aModule.named_parameters()) {
+                    Console.WriteLine($"{name} {p.device} {p.grad()}");
+                }
+                var aMseLoss = nn.MSELoss();
+                var optimizer = torch.optim.AdamW(aModule.parameters());
+                // Compute the loss
+                using var output = aMseLoss.forward(aModule.forward(dataBatch), resultBatch);
+
+                // Clear the gradients before doing the back-propagation
+                aModule.zero_grad();
+
+                // Do back-progatation, which computes all the gradients.
+                output.backward();
+
+                optimizer.step();
+            }
+        }
     }
 }
