@@ -221,7 +221,7 @@ namespace TorchSharp
         {
             if (disposable is torch.Tensor tensor) {
                 if (tensor.OwningDisposeScope == null && !tensor.IsInvalid) {
-                    _disposeScopeManager.StatisticsInstance.DisposedInScopeCount--;
+                    _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
                 }
             }
             AddToOther(this, disposable);
