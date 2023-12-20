@@ -8,6 +8,7 @@ using static TorchSharp.PInvoke.NativeMethods;
 namespace TorchSharp
 {
     using Modules;
+    using TorchSharp.Utils;
     using F = TorchSharp.torch.nn.functional;
 
     namespace Modules
@@ -20,7 +21,7 @@ namespace TorchSharp
             private long[] _normalized_shape;
             private double _eps;
 
-            internal LayerNorm(long[] normalized_shape, double eps, bool elementwise_affine, bool bias, Device? device, ScalarType? dtype) : base(IntPtr.Zero, IntPtr.Zero)
+            internal LayerNorm(long[] normalized_shape, double eps, bool elementwise_affine, bool bias, Device? device, ScalarType? dtype) : base(nameof(LayerNorm))
             {
                 _normalized_shape = normalized_shape;
                 _eps = eps;
@@ -62,7 +63,6 @@ namespace TorchSharp
                     ConditionallyRegisterParameter(nameof(bias), _bias);
                 }
             }
-            private Parameter? _bias;
 
             public Parameter weight {
                 get => _weight!;
@@ -76,6 +76,9 @@ namespace TorchSharp
                 }
             }
 
+            [ComponentName(Name = "bias")]
+            private Parameter? _bias;
+            [ComponentName(Name = "weight")]
             private Parameter? _weight;
 
             protected override void Dispose(bool disposing)
