@@ -20,9 +20,9 @@ const char* THSNN_Module_name(const NNModule module)
     return make_sharable_string((*module)->name());
 }
 
-void THSNN_Module_zero_grad(const NNModule module)
+void THSNN_Module_zero_grad(const NNModule module, bool set_to_none)
 {
-    (*module)->zero_grad();
+    (*module)->zero_grad(set_to_none);
 }
 
 void THSNN_Module_to_device(NNModule module, int64_t device, int64_t index)

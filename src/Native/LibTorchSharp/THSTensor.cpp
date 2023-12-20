@@ -614,7 +614,9 @@ Tensor THSTensor_grad(const Tensor tensor)
 void THSTensor_set_grad(const Tensor tensor, const Tensor grad)
 {
     CATCH(
-        tensor->mutable_grad() = *grad;
+        if (grad == nullptr)
+            tensor->mutable_grad().reset();
+        else tensor->mutable_grad() = *grad;
     )
 }
 

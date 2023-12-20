@@ -1253,7 +1253,7 @@ namespace TorchSharp
             /// <param name="grad">The new gradient tensor</param>
             public void set_grad(Tensor grad)
             {
-                NativeMethods.THSTensor_set_grad(Handle, grad.Handle);
+                NativeMethods.THSTensor_set_grad(Handle, grad?.Handle ?? IntPtr.Zero);
                 CheckForErrors();
             }
 

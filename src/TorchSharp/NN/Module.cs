@@ -354,15 +354,20 @@ namespace TorchSharp
                     }
                 }
 
-                public virtual void zero_grad()
+                public virtual void zero_grad(bool set_to_none = true)
                 {
-                    THSNN_Module_zero_grad(handle);
+                    THSNN_Module_zero_grad(handle, set_to_none);
                     CheckForErrors();
 
                     foreach (var (_, p) in named_parameters()) {
                         var grad = p.grad();
                         if (grad is not null) {
-                            grad.zero_();
+                            if (set_to_none) {
+                                p.set_grad(null);
+                                grad.Dispose();
+                            } else {
+                                grad.zero_();
+                            }
                         }
                     }
                 }
