@@ -611,6 +611,15 @@ Tensor THSTensor_grad(const Tensor tensor)
     return res;
 }
 
+void THSTensor_set_grad(const Tensor tensor, const Tensor grad)
+{
+    CATCH(
+        if (grad == nullptr)
+            tensor->mutable_grad().reset();
+        else tensor->mutable_grad() = *grad;
+    )
+}
+
 Tensor THSTensor_hardsigmoid(const Tensor tensor)
 {
     CATCH_TENSOR(torch::hardsigmoid(*tensor));

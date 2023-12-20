@@ -368,6 +368,9 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_grad(IntPtr handle);
 
         [DllImport("LibTorchSharp")]
+        internal static extern void THSTensor_set_grad(IntPtr handle, IntPtr grad);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_index(IntPtr tensor, IntPtr indexStarts, IntPtr indexEnds, IntPtr indexSteps, IntPtr indexTensors, int indicesLength);
 
         [DllImport("LibTorchSharp")]

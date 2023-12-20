@@ -239,10 +239,10 @@ namespace TorchSharp
                                                             .ToDictionary(field => field.ComponentName());
 
                     foreach (var (name, param) in named_parameters(false).ToList()) {
-                        if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device)) continue;
+                        if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device) &&
+                            (param.grad() is null || !param.grad().toWillCopy(dtype ?? param.dtype, device ?? param.device)))
+                            continue;
 
-                        // Store the requires_grad flag ahead, since we dispose the parameter after moving
-                        bool requiresGrad = param.requires_grad;
                         Parameter p;
                         ScalarType paramType =
                             dtype != null && (param.dtype.IsFloatingPoint() || param.dtype.IsComplex()) ? dtype.Value : param.dtype;
@@ -250,10 +250,23 @@ namespace TorchSharp
                         // When moving the parameter, we don't want the autograd to track this movement on the graph.
                         // In addition, we need the new tensor to be a leaf to accumulate gradients, so if we didn't
                         // disable grad we would need to call .detach() on the moved tensor.
-                        using (var d = torch.no_grad())
+                        using (var d = torch.no_grad()) {
                             p = new Parameter(
-                                param.to(paramType, device ?? param.device, disposeAfter: true).DetachFromDisposeScope(), requiresGrad)
+                                param.to(paramType, device ?? param.device).DetachFromDisposeScope(), param.requires_grad)
                                 .DetachFromDisposeScope() as Parameter;
+
+                            // Copy the gradient over as well, if it exists
+                            var grad = param.grad();
+                            if (grad is not null) {
+                                p.set_grad(grad.to(paramType, device ?? param.device)
+                                                .with_requires_grad(grad.requires_grad)
+                                                .DetachFromDisposeScope());
+                            }
+
+                            // Dispose the param and gradient
+                            param.Dispose();
+                            grad?.Dispose();
+                        }
                         ConditionallyRegisterParameter(name, p);
 
                         // If this parameter is a field, set it
@@ -341,15 +354,20 @@ namespace TorchSharp
                     }
                 }
 
-                public virtual void zero_grad()
+                public virtual void zero_grad(bool set_to_none = true)
                 {
-                    THSNN_Module_zero_grad(handle);
+                    THSNN_Module_zero_grad(handle, set_to_none);
                     CheckForErrors();
 
                     foreach (var (_, p) in named_parameters()) {
                         var grad = p.grad();
                         if (grad is not null) {
-                            grad.zero_();
+                            if (set_to_none) {
+                                p.set_grad(null);
+                                grad.DetachFromDisposeScope().Dispose();
+                            } else {
+                                grad.zero_();
+                            }
                         }
                     }
                 }

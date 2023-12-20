@@ -574,6 +574,8 @@ EXPORT_API(void) THSTensor_gcd_(const Tensor tensor, const Tensor other);
 
 EXPORT_API(Tensor) THSTensor_grad(const Tensor tensor);
 
+EXPORT_API(void) THSTensor_set_grad(const Tensor tensor, const Tensor grad);
+
 EXPORT_API(Tensor) THSTensor_gt(const Tensor left, const Tensor right);
 
 EXPORT_API(void) THSTensor_gt_(const Tensor left, const Tensor right);
