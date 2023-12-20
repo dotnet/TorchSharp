@@ -264,7 +264,7 @@ namespace TorchSharp.PInvoke
         internal static extern bool THSNN_Module_is_training(torch.nn.Module.HType module);
 
         [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Module_zero_grad(torch.nn.Module.HType module);
+        internal static extern void THSNN_Module_zero_grad(torch.nn.Module.HType module, [MarshalAs(UnmanagedType.U1)] bool set_to_none);
 
         [DllImport("LibTorchSharp")]
         internal static extern void THSNN_Module_get_named_parameters(torch.nn.Module.HType module, AllocatePinnedArray allocator1, AllocatePinnedArray allocator2);
