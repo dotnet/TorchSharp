@@ -2,7 +2,7 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.101.4
+## NuGet Version 0.101.5
 
 __Bug Fixes__:
 

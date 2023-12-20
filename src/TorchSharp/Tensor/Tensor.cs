@@ -1247,13 +1247,12 @@ namespace TorchSharp
             }
 
             /// <summary>
-            /// This function will set the `tensor.grad()` attribute to a custom tensor. Make sure to detach the tensor from
-            /// the dispose scope so it doesn't get disposed early.
+            /// This function will set the `tensor.grad()` attribute to a custom tensor. 
             /// </summary>
             /// <param name="grad">The new gradient tensor</param>
             public void set_grad(Tensor grad)
             {
-                NativeMethods.THSTensor_set_grad(Handle, grad?.Handle ?? IntPtr.Zero);
+                NativeMethods.THSTensor_set_grad(Handle, grad?.DetachFromDisposeScope().Handle ?? IntPtr.Zero);
                 CheckForErrors();
             }
 
