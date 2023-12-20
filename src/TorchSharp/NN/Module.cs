@@ -364,7 +364,7 @@ namespace TorchSharp
                         if (grad is not null) {
                             if (set_to_none) {
                                 p.set_grad(null);
-                                grad.Dispose();
+                                grad.DetachFromDisposeScope().Dispose();
                             } else {
                                 grad.zero_();
                             }
