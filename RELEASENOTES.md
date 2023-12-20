@@ -4,6 +4,13 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.101.4
 
+__Bug Fixes__:
+
+#1191 : Having trouble moving a module from one GPU to another with gradients.<br/>
+
+
+## NuGet Version 0.101.4
+
 A fast-follow release addressing a regression in v0.101.3
 
 __Bug Fixes__:
