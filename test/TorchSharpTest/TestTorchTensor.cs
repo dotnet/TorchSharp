@@ -3755,7 +3755,7 @@ namespace TorchSharp
                     Assert.Equal(1, data[i]);
                 }
             } else {
-                Assert.Null(torch.CUDA);
+                Assert.Throws<InvalidOperationException>((Action)(() => { torch.ones(new long[] { 2, 2 }, device: torch.CUDA); }));
             }
         }
 
