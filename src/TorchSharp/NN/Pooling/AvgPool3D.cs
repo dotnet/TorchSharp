@@ -72,9 +72,9 @@ namespace TorchSharp
                 long svalue2 = (stride == null) ? kernel_size.Item2 : stride.Value.Item2;
                 long svalue3 = (stride == null) ? kernel_size.Item3 : stride.Value.Item3;
 
-                long pvalue1 = (padding == null) ? 0 : stride.Value.Item1;
-                long pvalue2 = (padding == null) ? 0 : stride.Value.Item2;
-                long pvalue3 = (padding == null) ? 0 : stride.Value.Item3;
+                long pvalue1 = (padding == null) ? 0 : padding.Value.Item1;
+                long pvalue2 = (padding == null) ? 0 : padding.Value.Item2;
+                long pvalue3 = (padding == null) ? 0 : padding.Value.Item3;
 
                 long* pkernelSize = stackalloc long[3] { kernel_size.Item1, kernel_size.Item2, kernel_size.Item3 };
                 long* pstrides = stackalloc long[3] { svalue1, svalue2, svalue3 };
@@ -97,7 +97,7 @@ namespace TorchSharp
             public static unsafe AvgPool3d AvgPool3d(long kernel_size, long? stride = null, long? padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
             {
                 long svalue = (stride == null) ? kernel_size : stride.Value;
-                long pvalue = (stride == null) ? 0 : padding.Value;
+                long pvalue = (padding == null) ? 0 : padding.Value;
 
                 long* pkernelSize = stackalloc long[3] { kernel_size, kernel_size, kernel_size };
                 long* pstrides = stackalloc long[3] { svalue, svalue, svalue };
