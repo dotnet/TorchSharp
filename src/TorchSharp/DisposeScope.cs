@@ -108,11 +108,57 @@ namespace TorchSharp
         /// dispose scope, if one exists. See overloaded methods. If you wish to exclude a tensor from all sccopes,
         /// use Detach.
         /// </summary>
-        public void MoveToOuter(IEnumerable<IDisposable> disposables)
+        public void MoveToOuter(IEnumerable<IDisposable> disposables) =>
+            MoveToOther(OuterScope, disposables);
+
+        /// <summary>
+        /// Excludes a set of tensors/disposables from the current dispose scope, and moves it to another
+        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all sccopes, use Detach.
+        /// </summary>
+        public T MoveToOther<T>(DisposeScope? scope, T disposable) where T : IDisposable
+        {
+            MoveToOther(scope, new IDisposable[] { disposable });
+            return disposable;
+        }
+
+        /// <summary>
+        /// Excludes a set of tensors/disposables from the current dispose scope, and moves it to another
+        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all sccopes, use Detach.
+        /// </summary>
+        public (T1 first, T2 second) MoveToOther<T1, T2>(DisposeScope? scope, T1 first, T2 second)
+            where T1 : IDisposable where T2 : IDisposable
+        {
+            MoveToOther(scope, new IDisposable[] { first, second });
+            return (first, second);
+        }
+
+        /// <summary>
+        /// Excludes a set of tensors/disposables from the current dispose scope, and moves it to another
+        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all sccopes, use Detach.
+        /// </summary>
+        public (T1 first, T2 second, T3 third) MoveToOther<T1, T2, T3>(DisposeScope? scope, T1 first, T2 second, T3 third)
+            where T1 : IDisposable where T2 : IDisposable where T3 : IDisposable
+        {
+            MoveToOther(scope, new IDisposable[] { first, second, third });
+            return (first, second, third);
+        }
+
+        /// <summary>
+        /// Excludes a set of tensors/disposables from the current dispose scope, and moves it to another
+        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all sccopes, use Detach.
+        /// </summary>
+        public void MoveToOther(DisposeScope? scope, params IDisposable[] disposables) =>
+            MoveToOther(scope, (IEnumerable<IDisposable>)disposables);
+
+        /// <summary>
+        /// Excludes a set of tensors/disposables from the current dispose scope, and moves it to another
+        /// dispose scope. See overloaded methods. If you wish to exclude a tensor from all sccopes, use Detach.
+        /// </summary>
+        public void MoveToOther(DisposeScope? scope, IEnumerable<IDisposable> disposables)
         {
             foreach (var disposable in disposables) {
                 if (Disposables.Remove(disposable)) {
-                    AddToParent(disposable);
+                    AddToOther(scope, disposable);
                 }
             }
         }
@@ -169,6 +215,16 @@ namespace TorchSharp
                     }
                 }
             }
+        }
+
+        public void Attach(IDisposable disposable)
+        {
+            if (disposable is torch.Tensor tensor) {
+                if (tensor.OwningDisposeScope == null && !tensor.IsInvalid) {
+                    _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount--;
+                }
+            }
+            AddToOther(this, disposable);
         }
 
         /// <summary>
@@ -286,16 +342,16 @@ namespace TorchSharp
         /// <returns></returns>
         public bool Contains(IDisposable disposable) => Disposables.Contains(disposable);
 
-        private void AddToParent(IDisposable disposable)
+        private void AddToOther(DisposeScope? scope, IDisposable disposable)
         {
-            if (OuterScope != null) {
-                OuterScope.Disposables.Add(disposable);
+            if (scope != null) {
+                scope.Disposables.Add(disposable);
             } else {
                 _disposeScopeManager.StatisticsInstance.DetachedFromScopeCount++;
             }
 
             if (disposable is torch.Tensor tensor) {
-                tensor.OwningDisposeScope = OuterScope;
+                tensor.OwningDisposeScope = scope;
             }
         }
     }

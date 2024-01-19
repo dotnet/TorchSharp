@@ -69,8 +69,8 @@ namespace TorchSharp
                 long svalue1 = (stride == null) ? kernel_size.Item1 : stride.Value.Item1;
                 long svalue2 = (stride == null) ? kernel_size.Item2 : stride.Value.Item2;
 
-                long pvalue1 = (padding == null) ? 0 : stride.Value.Item1;
-                long pvalue2 = (padding == null) ? 0 : stride.Value.Item2;
+                long pvalue1 = (padding == null) ? 0 : padding.Value.Item1;
+                long pvalue2 = (padding == null) ? 0 : padding.Value.Item2;
 
                 long* pkernelSize = stackalloc long[2] { kernel_size.Item1, kernel_size.Item2 };
                 long* pstrides = stackalloc long[2] { svalue1, svalue2 };

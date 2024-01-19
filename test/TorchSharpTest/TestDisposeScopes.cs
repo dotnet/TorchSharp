@@ -224,6 +224,55 @@ namespace TorchSharp
             DisposeScopeManager.Statistics.Reset();
         }
 
+        [Fact]
+        public void TestMoveDisposeScope()
+        {
+            // t0a: Detached, going to test moving t3_0a to t0a
+            // t0b: Detached, going to try to move to t3_0b, and make sure it gets dispose
+            // t1: Placeholder for moving t3_1 to it.
+            // t2: Placeholder for moving t3_2 to it.
+            torch.Tensor t0a, t0b, t1, t2, t3_0a, t3_0b, t3_1, t3_2;
+
+            t0a = torch.rand(10).DetachFromDisposeScope();
+            t0b = torch.rand(10).DetachFromDisposeScope();
+
+            // This should do nothing
+            t0a.MoveToOtherDisposeScope(t0b);
+
+            // Create a 3 layered dispose scope, and move one from the inside to the outside one
+            using (var d1 = torch.NewDisposeScope()) {
+                t1 = torch.rand(10);
+                using (var d2 = torch.NewDisposeScope()) {
+                    t2 = torch.rand(20);
+                    using (var d3 = torch.NewDisposeScope()) {
+                        t3_0a = torch.rand(20);
+                        t3_0b = torch.rand(20);
+                        t3_1 = torch.rand(20);
+                        t3_2 = torch.rand(20);
+
+                        // Shouldn't be disposed
+                        t3_0a.MoveToOtherDisposeScope(t0a);
+                        // Should be disposed after this scope
+                        t0b.MoveToOtherDisposeScope(t3_0b);
+                        // Should be disposed after d1/d2
+                        t3_1.MoveToOtherDisposeScope(t1);
+                        t3_2.MoveToOtherDisposeScope(t2);
+                    }
+
+                    Assert.True(t3_0b.IsInvalid);
+                    Assert.True(t0b.IsInvalid);
+                    Assert.False(t3_2.IsInvalid);
+                }
+
+                Assert.True(t3_2.IsInvalid);
+                Assert.False(t3_1.IsInvalid);
+            }
+
+            Assert.True(t3_1.IsInvalid);
+            Assert.False(t3_0a.IsInvalid);
+            Assert.False(t0a.IsInvalid);
+        }
+
         // Assert Contains causes problems!
         private bool Contains<T>(IReadOnlyList<T> list, T item) => list.Any(x => ReferenceEquals(x, item));
     }

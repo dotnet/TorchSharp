@@ -118,6 +118,22 @@ namespace TorchSharp
                 return this;
             }
 
+            public torch.Tensor MoveToOtherDisposeScope(torch.Tensor other)
+            {
+                return MoveToOtherDisposeScope(other.OwningDisposeScope);
+            }
+
+            public torch.Tensor MoveToOtherDisposeScope(DisposeScope? other)
+            {
+                if (OwningDisposeScope == null && other != null) {
+                    other.Attach(this);
+                }
+                else {
+                    OwningDisposeScope?.MoveToOther(other, this);
+                }
+                return this;
+            }
+
             /// <summary>
             /// Detaches the tensor completely from the DisposeScope system.
             /// </summary>
