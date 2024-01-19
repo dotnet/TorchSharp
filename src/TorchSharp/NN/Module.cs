@@ -260,7 +260,7 @@ namespace TorchSharp
                             if (grad is not null) {
                                 p.set_grad(grad.to(paramType, device ?? param.device)
                                                 .with_requires_grad(grad.requires_grad)
-                                                .DetachFromDisposeScope());
+                                                .MoveToOtherDisposeScope(p));
                             }
 
                             // Dispose the param and gradient
