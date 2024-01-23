@@ -9,8 +9,25 @@ JITModule THSJIT_load(const char* filename, int64_t device, int64_t index)
 
     CATCH(
         auto res = torch::jit::load(filename, torch::Device(dev, index));
-    auto copy = new torch::jit::Module(res);
-    return new std::shared_ptr<torch::jit::Module>(copy);
+        auto copy = new torch::jit::Module(res);
+        return new std::shared_ptr<torch::jit::Module>(copy);
+    );
+
+    return nullptr;
+}
+
+JITModule THSJIT_load_byte_array(char* bytes, ptrdiff_t size, int64_t device, int64_t index)
+{
+    c10::DeviceType dev = c10::kCPU;
+    if (device == 1)
+        dev = c10::kCUDA;
+
+    CATCH(
+        std::istringstream stream(std::string(bytes, size));
+
+        auto res = torch::jit::load(stream, torch::Device(dev, index));
+        auto copy = new torch::jit::Module(res);
+        return new std::shared_ptr<torch::jit::Module>(copy);
     );
 
     return nullptr;
@@ -20,7 +37,7 @@ JITCompilationUnit THSJIT_compile(const char* script)
 {
     CATCH(
         auto res = torch::jit::compile(script);
-    return new std::shared_ptr<torch::jit::CompilationUnit>(res);
+        return new std::shared_ptr<torch::jit::CompilationUnit>(res);
     );
 
     return nullptr;
@@ -30,6 +47,15 @@ void THSJIT_save(JITModule module, const char* filename)
 {
     CATCH(
         (*module)->save(filename);
+    );
+}
+
+void THSJIT_save_byte_array(JITModule module, char* bytes, ptrdiff_t size)
+{
+    CATCH(
+        std::ostringstream stream(std::string(bytes, size));
+
+        (*module)->save(stream);
     );
 }
 
