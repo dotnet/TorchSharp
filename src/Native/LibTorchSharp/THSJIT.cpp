@@ -16,7 +16,7 @@ JITModule THSJIT_load(const char* filename, int64_t device, int64_t index)
     return nullptr;
 }
 
-JITModule THSJIT_load_byte_array(char* bytes, ptrdiff_t size, int64_t device, int64_t index)
+JITModule THSJIT_load_byte_array(char* bytes, int64_t size, int64_t device, int64_t index)
 {
     c10::DeviceType dev = c10::kCPU;
     if (device == 1)
@@ -50,7 +50,7 @@ void THSJIT_save(JITModule module, const char* filename)
     );
 }
 
-void THSJIT_save_byte_array(JITModule module, char* bytes, ptrdiff_t size)
+void THSJIT_save_byte_array(JITModule module, char* bytes, int64_t size)
 {
     CATCH(
         std::ostringstream stream(std::string(bytes, size));
