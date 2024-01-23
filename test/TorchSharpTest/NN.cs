@@ -6381,6 +6381,7 @@ namespace TorchSharp
             foreach (var device in TestUtils.AvailableDevices()) {
                 using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
                 using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Nearest)) {
+                    Assert.Equal(UpsampleMode.Nearest, layer.mode);
                     var res = layer.call(input);
                     Assert.Equal(device.type, res.device_type);
                     Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -6394,6 +6395,7 @@ namespace TorchSharp
             foreach (var device in TestUtils.AvailableDevices()) {
                 using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 4))
                 using (var layer = Upsample(scale_factor: new double[] { 2 }, mode: UpsampleMode.Linear)) {
+                    Assert.Equal(UpsampleMode.Linear, layer.mode);
                     var res = layer.call(input);
                     Assert.Equal(device.type, res.device_type);
                     Assert.Equal(new long[] { 1, 1, 8 }, res.shape);
@@ -6407,6 +6409,8 @@ namespace TorchSharp
             foreach (var device in TestUtils.AvailableDevices()) {
                 using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
                 using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear)) {
+                    Assert.Equal(UpsampleMode.Bilinear, layer.mode);
+                    Assert.Null(layer.align_corners);
                     var res = layer.call(input);
                     Assert.Equal(device.type, res.device_type);
                     Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -6419,7 +6423,9 @@ namespace TorchSharp
         {
             foreach (var device in TestUtils.AvailableDevices()) {
                 using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
-                using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear, alignCorners: true)) {
+                using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bilinear, align_corners: true)) {
+                    Assert.Equal(UpsampleMode.Bilinear, layer.mode);
+                    Assert.True(layer.align_corners);
                     var res = layer.call(input);
                     Assert.Equal(device.type, res.device_type);
                     Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -6433,6 +6439,7 @@ namespace TorchSharp
             foreach (var device in TestUtils.AvailableDevices()) {
                 using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
                 using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic)) {
+                    Assert.Equal(UpsampleMode.Bicubic, layer.mode);
                     var res = layer.call(input);
                     Assert.Equal(device.type, res.device_type);
                     Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -6445,7 +6452,8 @@ namespace TorchSharp
         {
             foreach (var device in TestUtils.AvailableDevices()) {
                 using (Tensor input = torch.arange(1, 5, float32, device: device).view(1, 1, 2, 2))
-                using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic, alignCorners: true)) {
+                using (var layer = Upsample(scale_factor: new double[] { 2, 2 }, mode: UpsampleMode.Bicubic, align_corners: true)) {
+                    Assert.True(layer.align_corners);
                     var res = layer.call(input);
                     Assert.Equal(device.type, res.device_type);
                     Assert.Equal(new long[] { 1, 1, 4, 4 }, res.shape);
@@ -6459,6 +6467,7 @@ namespace TorchSharp
             foreach (var device in TestUtils.AvailableDevices()) {
                 using (Tensor input = torch.arange(1, 9, float32, device: device).view(1, 1, 2, 2, 2))
                 using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear)) {
+                    Assert.Equal(UpsampleMode.Trilinear, layer.mode);
                     var res = layer.call(input);
                     Assert.Equal(device.type, res.device_type);
                     Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
@@ -6471,7 +6480,9 @@ namespace TorchSharp
         {
             foreach (var device in TestUtils.AvailableDevices()) {
                 using (Tensor input = torch.arange(1, 9, float32, device: device).view(1, 1, 2, 2, 2))
-                using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear, alignCorners: true)) {
+                using (var layer = Upsample(scale_factor: new double[] { 2, 2, 2 }, mode: UpsampleMode.Trilinear, align_corners: true)) {
+                    Assert.Equal(UpsampleMode.Trilinear, layer.mode);
+                    Assert.True(layer.align_corners);
                     var res = layer.call(input);
                     Assert.Equal(device.type, res.device_type);
                     Assert.Equal(new long[] { 1, 1, 4, 4, 4 }, res.shape);
