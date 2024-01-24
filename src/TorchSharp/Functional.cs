@@ -74,39 +74,45 @@ namespace TorchSharp
                 public static IEnumerable<Tensor> jacobian(Func<Tensor[], Tensor[]> function, params Tensor[] inputs)
                 {
                     List<Tensor> jacobians = new List<Tensor>();
-                    using (enable_grad())
-                    {
-                        inputs = _grad_preprocess(need_graph: true, inputs);
-                        var output = function(inputs);
-                        for (int i = 0; i < output.Length; i++) // i is output variable
-                        {
-                            var jacobian_i = new List<Tensor>[inputs.Length]; // going to have as many elements as there are input variables
-                            for (int k = 0; k < inputs.Length; k++)
-                                jacobian_i[k] = new List<Tensor>();
-                            
-                            for (int j = 0; j < output[i].NumberOfElements; j++)
+                    using (var d0 = torch.NewDisposeScope()) {
+                        using (enable_grad()) {
+                            inputs = _grad_preprocess(need_graph: true, inputs);
+                            var output = function(inputs);
+                            for (int i = 0; i < output.Length; i++) // i is output variable
                             {
-                                var vj = _autograd_grad(output[i].reshape(-1)[j], retain_graph: true, inputs);
-                                foreach ((List<Tensor> jac_i_el, Tensor vj_el, Tensor inp_el) combi in jacobian_i.Zip(vj, inputs))
-                                {
-                                    if (ReferenceEquals(combi.vj_el, null))
-                                        combi.jac_i_el.Add(zeros_like(combi.inp_el));
-                                    else
-                                        combi.jac_i_el.Add(combi.vj_el);
+                                var jacobian_i = new List<Tensor>[inputs.Length]; // going to have as many elements as there are input variables
+                                for (int k = 0; k < inputs.Length; k++)
+                                    jacobian_i[k] = new List<Tensor>();
+
+                                for (int j = 0; j < output[i].NumberOfElements; j++) {
+                                    var vj = _autograd_grad(output[i].reshape(-1)[j], retain_graph: true, inputs);
+                                    foreach ((List<Tensor> jac_i_el, Tensor vj_el, Tensor inp_el) combi in jacobian_i.Zip(vj, inputs)) {
+                                        if (ReferenceEquals(combi.vj_el, null))
+                                            combi.jac_i_el.Add(zeros_like(combi.inp_el));
+                                        else
+                                            combi.jac_i_el.Add(combi.vj_el);
+                                    }
                                 }
+                                foreach ((List<Tensor> jac_i_el, Tensor inp_el) row in jacobian_i.Zip(inputs)) {
+                                    jacobians.Add(
+                                        stack(row.jac_i_el, dim: 0)
+                                                .view(output[i].size().Concat(row.inp_el.size()).ToArray())
+                                                .detach() // this is from the _grad_postprocess because create_graph is always false in this implementation
+                                    );
+                                }
+
                             }
-                            foreach ((List<Tensor> jac_i_el, Tensor inp_el) row in jacobian_i.Zip(inputs))
-                            {
-                                jacobians.Add(
-                                    stack(row.jac_i_el, dim: 0)
-                                            .view(output[i].size().Concat(row.inp_el.size()).ToArray())
-                                            .detach() // this is from the _grad_postprocess because create_graph is always false in this implementation
-                                );
-                            }
-                            
                         }
+                        return jacobians;
                     }
-                    return jacobians;
+                }
+
+                public static IENumerable<Tensor> jacobian(functional<Tensor, Tensor[]> function, params Tensor[] inputs)
+                {
+                    var wrapper = (Tensor[] x) => {
+                        return new Tensor[] { function(x) }
+                    };
+                    return jacobian(wrapper, inputs);
                 }
             }
         }
