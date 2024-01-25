@@ -4,7 +4,7 @@ using System;
 namespace TorchSharp
 {
     public static partial class torch
-    {
+    {        
         /// <summary>
         /// A torch.Device is an object representing the device on which a torch.Tensor is or will be allocated.
         /// </summary>
@@ -77,20 +77,21 @@ namespace TorchSharp
             }
         }
 
+        private static Device _CUDA;
         /// <summary>
         /// Convenience declaration of a CUDA device accessible everywhere.
         /// </summary>
-        public static Device CUDA => InitializeDevice(new Device(DeviceType.CUDA, -1));
+        public static Device CUDA => _CUDA ??= InitializeDevice(new Device(DeviceType.CUDA, -1)); 
 
         /// <summary>
         /// Convenience declaration of a CPU device accessible everywhere.
         /// </summary>
-        public static Device CPU = InitializeDevice(new Device(DeviceType.CPU, -1));
+        public static readonly Device CPU = InitializeDevice(new Device(DeviceType.CPU, -1));
 
         /// <summary>
         /// Convenience declaration of a META device accessible everywhere.
         /// </summary>
-        public static Device META = InitializeDevice(new Device(DeviceType.META, -1));
+        public static readonly Device META = InitializeDevice(new Device(DeviceType.META, -1));
 
         /// <summary>
         /// Factory for a device object, following the Pytorch API.

@@ -6,6 +6,18 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __Bug Fixes__:
 
+#1198: CUDA not available when calling backwards before using CUDA<br/>
+#1200: Bugs in torch.nn.AvgPool2d and torch.nn.AvgPool3d methods.<br/>
+
+__API Changes__:
+
+#1201: How to access the attributes of a model?<br/>
+#1094: ScriptModule from Stream / ByteArray<br/>
+
+## NuGet Version 0.101.5
+
+__Bug Fixes__:
+
 #1191 : Having trouble moving a module from one GPU to another with gradients.<br/>
 
 

@@ -511,5 +511,25 @@ namespace TorchSharp
             }
         }
 #endif
+        [Fact]
+        public void TestLoadJIT_Func_Stream()
+        {
+            var bytes = File.ReadAllBytes(@"func.script.dat");
+
+            // One linear layer followed by ReLU.
+            using var m = torch.jit.load<Tensor, Tensor, Tensor>(bytes);
+
+            var sms = m.named_modules().ToArray();
+            Assert.Empty(sms);
+
+            var kids = m.named_children().ToArray();
+            Assert.Empty(kids);
+
+            var t = m.call(torch.ones(10), torch.ones(10));
+
+            Assert.Equal(new long[] { 10 }, t.shape);
+            Assert.Equal(torch.float32, t.dtype);
+            Assert.True(torch.tensor(new float[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }).allclose(t));
+        }
     }
 }
