@@ -106,6 +106,40 @@ namespace TorchSharp
                     }
                 }
 
+                /// <summary>
+                /// Computes the jacobian of a given function with one input and one output.
+                /// </summary>
+                /// <param name="function">The function to compute the jacobian for. It has a single input and single output.</param>
+                /// <param name="inputs">The value for the input at which to compute the jacobian.</param>
+                /// <returns>A single tensor containing the jacobian.</returns>
+                public static Tensor jacobian(Func<Tensor, Tensor> function, Tensor inputs)
+                {
+                    var wrapper = new Func<Tensor[], Tensor[]>((Tensor[] x) => {
+                        return new Tensor[] { function(x.Single()) };
+                    });
+                    return jacobian(wrapper, new Tensor[] { inputs }).Single();
+                }
+
+                /// <summary>
+                /// Computes the jacobian of a given function with one input and multiple outputs.
+                /// </summary>
+                /// <param name="function">The function to compute the jacobian for. It has a single input and multiple outputs.</param>
+                /// <param name="inputs">The value for the input at which to compute the jacobian.</param>
+                /// <returns>A list of tensors containing the jacobian for each output.</returns>
+                public static IEnumerable<Tensor> jacobian(Func<Tensor, Tensor[]> function, Tensor inputs)
+                {
+                    var wrapper = new Func<Tensor[], Tensor[]>((Tensor[] x) => {
+                        return function(x.Single());
+                    });
+                    return jacobian(wrapper, new Tensor[] { inputs });
+                }
+
+                /// <summary>
+                /// Computes the jacobian of a given function with multiple inputs and one output.
+                /// </summary>
+                /// <param name="function">The function to compute the jacobian for. It has multiple inputs and single output.</param>
+                /// <param name="inputs">The values for the inputs at which to compute the jacobian.</param>
+                /// <returns>A list of tensors containing the jacobian for the output with respect to each input.</returns>
                 public static IEnumerable<Tensor> jacobian(Func<Tensor[], Tensor> function, params Tensor[] inputs)
                 {
                     var wrapper = new Func<Tensor[], Tensor[]>((Tensor[] x) => {

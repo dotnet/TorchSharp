@@ -13,16 +13,15 @@ namespace TorchSharp
         {
             torch.Tensor x1 = torch.tensor(new double[,] { { 1.0, 3.0 }, { 2.0, 4.0 } }, requires_grad: true);
 
-            torch.Tensor jacFunc(torch.Tensor[] inputs)
+            torch.Tensor jacFunc(torch.Tensor inputs)
             {
-                return torch.sum(inputs[0] * inputs[0]);
+                return torch.sum(inputs * inputs);
             }
 
-            torch.Tensor[] jacobian = torch.autograd.functional.jacobian(jacFunc, x1).ToArray();
+            torch.Tensor jacobian = torch.autograd.functional.jacobian(jacFunc, x1);
 
-            Assert.Single(jacobian);
-            Assert.Equal(new long[] { 2, 2 }, jacobian[0].shape);
-            Assert.Equal(new double[] { 2.0, 6.0, 4.0, 8.0 }, jacobian[0].data<double>());
+            Assert.Equal(new long[] { 2, 2 }, jacobian.shape);
+            Assert.Equal(new double[] { 2.0, 6.0, 4.0, 8.0 }, jacobian.data<double>());
 
         }
 
@@ -31,9 +30,9 @@ namespace TorchSharp
         {
             torch.Tensor x1 = torch.tensor(new double[,] { { 1.0, 3.0 }, { 2.0, 4.0 } }, requires_grad: true);
 
-            torch.Tensor[] jacFunc(torch.Tensor[] inputs)
+            torch.Tensor[] jacFunc(torch.Tensor inputs)
             {
-                return new torch.Tensor[] { torch.sum(inputs[0]), torch.sum(inputs[0] * inputs[0]) };
+                return new torch.Tensor[] { torch.sum(inputs), torch.sum(inputs * inputs) };
             }
 
             torch.Tensor[] jacobian = torch.autograd.functional.jacobian(jacFunc, x1).ToArray();
