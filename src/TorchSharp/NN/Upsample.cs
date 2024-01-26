@@ -20,18 +20,18 @@ namespace TorchSharp
             /// <param name="size">Output spatial sizes</param>
             /// <param name="scale_factor">Multiplier for spatial size. Has to match input size</param>
             /// <param name="mode">The upsampling algorithm: one of 'nearest', 'linear', 'bilinear', 'bicubic' and 'trilinear'. Default: 'nearest'</param>
-            /// <param name="alignCorners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
+            /// <param name="align_corners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
             /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
             /// <returns></returns>
-            public static Upsample Upsample(long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool? alignCorners = null)
+            public static Upsample Upsample(long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool? align_corners = null)
             {
                 unsafe {
                     fixed (long* psize = size) {
                         fixed (double* pSF = scale_factor) {
-                            byte ac = (byte)((alignCorners.HasValue) ? (alignCorners.Value ? 1 : 2) : 0);
+                            byte ac = (byte)((align_corners.HasValue) ? (align_corners.Value ? 1 : 2) : 0);
                             var res = THSNN_Upsample_ctor((IntPtr)psize, size is null ? 0 : size.Length, (IntPtr)pSF, scale_factor is null ? 0 : scale_factor.Length, (byte)mode, ac, out var boxedHandle);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Upsample(res, boxedHandle);
+                            return new Upsample(res, boxedHandle, size, scale_factor, mode, align_corners);
                         }
                     }
                 }
@@ -48,12 +48,12 @@ namespace TorchSharp
                 /// <param name="size">Output spatial sizes</param>
                 /// <param name="scale_factor">Multiplier for spatial size. Has to match input size</param>
                 /// <param name="mode">The upsampling algorithm: one of 'nearest', 'linear', 'bilinear', 'bicubic' and 'trilinear'. Default: 'nearest'</param>
-                /// <param name="alignCorners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
+                /// <param name="align_corners">If true, the corner pixels of the input and output tensors are aligned, and thus preserving the values at those pixels.
                 /// This only has effect when mode is 'linear', 'bilinear', or 'trilinear'. Default: false</param>
                 /// <returns></returns>
-                public static Tensor upsample(Tensor x, long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool alignCorners = false)
+                public static Tensor upsample(Tensor x, long[]? size = null, double[]? scale_factor = null, UpsampleMode mode = UpsampleMode.Nearest, bool align_corners = false)
                 {
-                    using (var d = nn.Upsample(size, scale_factor, mode, alignCorners)) {
+                    using (var d = nn.Upsample(size, scale_factor, mode, align_corners)) {
                         return d.call(x);
                     }
                 }
@@ -206,7 +206,13 @@ namespace TorchSharp
         /// </summary>
         public sealed class Upsample : torch.nn.Module<Tensor, Tensor>
         {
-            internal Upsample(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal Upsample(IntPtr handle, IntPtr boxedHandle, long[]? size, double[]? scale_factor, UpsampleMode mode, bool? align_corners) : base(handle, boxedHandle)
+            {
+                this._size = size;
+                this._scale_factor = scale_factor;
+                this.mode = mode;
+                this.align_corners = align_corners;
+            }
 
             /// <summary>
             /// Forward pass.
@@ -219,6 +225,21 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
+
+            public UpsampleMode mode { get; private set; }
+
+            public bool? align_corners { get; private set; }
+
+            public ReadOnlySpan<long> size {
+                get { return _size is null ? null : new ReadOnlySpan<long>(_size!); }
+            }
+
+            public ReadOnlySpan<double> scale_factor {
+                get { return _scale_factor is null ? null : new ReadOnlySpan<double>(_scale_factor!); }
+            }
+
+            private long[]? _size;
+            private double[]? _scale_factor;
 
             // Rather than spending cycles only to discover that this module has neither
             // parameters nor buffers, just shortcut the move completely.

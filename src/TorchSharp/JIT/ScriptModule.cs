@@ -858,15 +858,16 @@ namespace TorchSharp
             /// <summary>
             /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
             /// </summary>
-            /// <param name="filename">The file name of the module.</param>
-            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="device_type">The device type, e.g. 'CPU' or 'CUDA'.</param>
+            /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
             /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
             /// </remarks>
-            public static ScriptModule load(string filename, Device map_location)
+            public static ScriptModule load(byte[] bytes, DeviceType device_type = DeviceType.CPU, long device_index = -1)
             {
-                return new ScriptModule(_load(filename, map_location.type, map_location.index));
+                return new ScriptModule(_load(bytes, device_type, device_index));
             }
 
             /// <summary>
@@ -878,9 +879,52 @@ namespace TorchSharp
             /// <remarks>
             /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
             /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
+            public static ScriptModule load(string filename, Device map_location)
+            {
+                return new ScriptModule(_load(filename, map_location.type, map_location.index));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            public static ScriptModule load(byte[] bytes, Device map_location)
+            {
+                return new ScriptModule(_load(bytes, map_location.type, map_location.index));
+            }
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <param name="filename">The file name of the module.</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule load(string filename, string map_location)
             {
                 return load(filename, new Device(map_location));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            public static ScriptModule load(byte[] bytes, string map_location)
+            {
+                return load(bytes, new Device(map_location));
             }
 
             /// <summary>
@@ -904,15 +948,16 @@ namespace TorchSharp
             /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
             /// </summary>
             /// <typeparam name="TResult">The return type of the module.</typeparam>
-            /// <param name="filename">The file name of the module.</param>
-            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="device_type">The device type, e.g. 'CPU' or 'CUDA'.</param>
+            /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
             /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
             /// </remarks>
-            public static ScriptModule<TResult> load<TResult>(string filename, Device map_location)
+            public static ScriptModule<TResult> load<TResult>(byte[] bytes, DeviceType device_type = DeviceType.CPU, long device_index = -1)
             {
-                return new ScriptModule<TResult>(_load(filename, map_location.type, map_location.index));
+                return new ScriptModule<TResult>(_load(bytes, device_type, device_index));
             }
 
             /// <summary>
@@ -925,9 +970,56 @@ namespace TorchSharp
             /// <remarks>
             /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
             /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
+            public static ScriptModule<TResult> load<TResult>(string filename, Device map_location)
+            {
+                return new ScriptModule<TResult>(_load(filename, map_location.type, map_location.index));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            public static ScriptModule<TResult> load<TResult>(byte[] bytes, Device map_location)
+            {
+                return new ScriptModule<TResult>(_load(bytes, map_location.type, map_location.index));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="filename">The file name of the module.</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<TResult> load<TResult>(string filename, string map_location)
             {
                 return load<TResult>(filename, new Device(map_location));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            public static ScriptModule<TResult> load<TResult>(byte[] bytes, string map_location)
+            {
+                return load<TResult>(bytes, new Device(map_location));
             }
 
             /// <summary>
@@ -953,15 +1045,16 @@ namespace TorchSharp
             /// </summary>
             /// <typeparam name="T1">The argument type.</typeparam>
             /// <typeparam name="TResult">The return type of the module.</typeparam>
-            /// <param name="filename">The file name of the module.</param>
-            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="device_type">The device type, e.g. 'CPU' or 'CUDA'.</param>
+            /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
             /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
             /// </remarks>
-            public static ScriptModule<T1, TResult> load<T1, TResult>(string filename, Device map_location)
+            public static ScriptModule<T1, TResult> load<T1, TResult>(byte[] bytes, DeviceType device_type = DeviceType.CPU, long device_index = -1)
             {
-                return new ScriptModule<T1, TResult>(_load(filename, map_location.type, map_location.index));
+                return new ScriptModule<T1, TResult>(_load(bytes, device_type, device_index));
             }
 
             /// <summary>
@@ -975,9 +1068,59 @@ namespace TorchSharp
             /// <remarks>
             /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
             /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
+            public static ScriptModule<T1, TResult> load<T1, TResult>(string filename, Device map_location)
+            {
+                return new ScriptModule<T1, TResult>(_load(filename, map_location.type, map_location.index));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            public static ScriptModule<T1, TResult> load<T1, TResult>(byte[] bytes, Device map_location)
+            {
+                return new ScriptModule<T1, TResult>(_load(bytes, map_location.type, map_location.index));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="filename">The file name of the module.</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<T1, TResult> load<T1, TResult>(string filename, string map_location)
             {
                 return load<T1, TResult>(filename, new Device(map_location));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            public static ScriptModule<T1, TResult> load<T1, TResult>(byte[] bytes, string map_location)
+            {
+                return load<T1, TResult>(bytes, new Device(map_location));
             }
 
             /// <summary>
@@ -1005,15 +1148,16 @@ namespace TorchSharp
             /// <typeparam name="T1">The first argument type.</typeparam>
             /// <typeparam name="T2">The second argument type.</typeparam>
             /// <typeparam name="TResult">The return type of the module.</typeparam>
-            /// <param name="filename">The file name of the module.</param>
-            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="device_type">The device type, e.g. 'CPU' or 'CUDA'.</param>
+            /// <param name="device_index">The optional device index.</param>
             /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
             /// <remarks>
             /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
             /// </remarks>
-            public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(string filename, Device map_location)
+            public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(byte[] bytes, DeviceType device_type = DeviceType.CPU, long device_index = -1)
             {
-                return new ScriptModule<T1, T2, TResult>(_load(filename, map_location.type, map_location.index));
+                return new ScriptModule<T1, T2, TResult>(_load(bytes, device_type, device_index));
             }
 
             /// <summary>
@@ -1028,9 +1172,62 @@ namespace TorchSharp
             /// <remarks>
             /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
             /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
+            public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(string filename, Device map_location)
+            {
+                return new ScriptModule<T1, T2, TResult>(_load(filename, map_location.type, map_location.index));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The first argument type.</typeparam>
+            /// <typeparam name="T2">The second argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(byte[] bytes, Device map_location)
+            {
+                return new ScriptModule<T1, T2, TResult>(_load(bytes, map_location.type, map_location.index));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The first argument type.</typeparam>
+            /// <typeparam name="T2">The second argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="filename">The file name of the module.</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            /// <exception cref="System.IO.FileNotFoundException">Raised if the file is not found.</exception>
             public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(string filename, string map_location)
             {
                 return load<T1, T2, TResult>(filename, new Device(map_location));
+            }
+
+            /// <summary>
+            /// Load a ScriptModule or ScriptFunction previously saved with torch.jit.save
+            /// </summary>
+            /// <typeparam name="T1">The first argument type.</typeparam>
+            /// <typeparam name="T2">The second argument type.</typeparam>
+            /// <typeparam name="TResult">The return type of the module.</typeparam>
+            /// <param name="bytes">A byte array holding a serialized module</param>
+            /// <param name="map_location">The device type where the script module should be loaded.</param>
+            /// <returns>A ScriptModule instance, whether the script originated as a module or function.</returns>
+            /// <remarks>
+            /// All previously saved modules, no matter their device, are first loaded onto CPU, and then are moved to the devices they were saved from.If this fails (e.g.because the run time system doesn’t have certain devices), an exception is raised.
+            /// </remarks>
+            public static ScriptModule<T1, T2, TResult> load<T1, T2, TResult>(byte[] bytes, string map_location)
+            {
+                return load<T1, T2, TResult>(bytes, new Device(map_location));
             }
 
             private static IntPtr _load(string filename, DeviceType device_type, long device_index)
@@ -1048,6 +1245,20 @@ namespace TorchSharp
                 return result;
             }
 
+            private unsafe static IntPtr _load(byte[] bytes, DeviceType device_type, long device_index)
+            {
+                if (device_type != DeviceType.CUDA) device_index = -1;
+
+                if (device_type == DeviceType.CUDA && !torch.cuda.is_available()) throw new InvalidOperationException("CUDA is not available.");
+
+                fixed (byte* inputs = bytes) {
+                    var result = THSJIT_load_byte_array((IntPtr)inputs, bytes.LongLength, (long)device_type, device_index);
+                    if (result == IntPtr.Zero)
+                        CheckForErrors();
+                    return result;
+                }
+            }
+
             /// <summary>
             /// Save an offline version of a previously loaded script module.
             ///
@@ -1060,6 +1271,22 @@ namespace TorchSharp
             {
                 THSJIT_save(module.handle, filename);
                 CheckForErrors();
+            }
+
+            /// <summary>
+            /// Save an offline version of a previously loaded script module.
+            ///
+            /// The saved module serializes all of the methods, submodules, parameters, and attributes of this module.
+            /// It can be loaded into the C++ API using torch::jit::load(filename) or into the .NET API with torch.jit.load().
+            /// </summary>
+            /// <param name="module">The script module to save.</param>
+            /// <param name="bytes">A byte array where the serialized module should be stored.</param>
+            public unsafe static void save(ScriptModule module, byte[] bytes)
+            {
+                fixed (byte* inputs = bytes) {
+                    THSJIT_save_byte_array(module.handle, (IntPtr)inputs, bytes.LongLength);
+                    CheckForErrors();
+                }
             }
 
         }
