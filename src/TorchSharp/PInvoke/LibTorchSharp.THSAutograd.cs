@@ -66,7 +66,7 @@ namespace TorchSharp.PInvoke
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate ArrayWithSize ApplyFunc([In] IntPtr[] tensors);
+        internal delegate ArrayWithSize ApplyFunc([MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] IntPtr[] array, int size);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void ManagedDeleteNode();

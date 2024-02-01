@@ -44,10 +44,10 @@ EXPORT_API(void) THSAutograd_backward(
 
 using variable_list = torch::autograd::variable_list;
 struct CSharpNode : public torch::autograd::Node {
-    CSharpNode(std::function<TensorArray (Tensor*)> applyFunc, std::function<void()> managedDeleteNode)
+    CSharpNode(std::function<TensorArray (Tensor*, int)> applyFunc, std::function<void()> managedDeleteNode)
         : applyFunc(applyFunc), managedDeleteNode(managedDeleteNode) {}
 
-    std::function<TensorArray (Tensor*)> applyFunc;
+    std::function<TensorArray (Tensor*, int)> applyFunc;
     std::function<void()> managedDeleteNode;
 
     variable_list apply(variable_list&& inputs) override;
@@ -58,7 +58,7 @@ struct CSharpNodePtr {
     std::weak_ptr<CSharpNode> *weak_ptr;
 };
 
-EXPORT_API(CSharpNodePtr) THSAutograd_CSharpNode_ctor(TensorArray(*applyFunc)(Tensor*), void (*managedDeleteNode)());
+EXPORT_API(CSharpNodePtr) THSAutograd_CSharpNode_ctor(TensorArray(*applyFunc)(Tensor*, int), void (*managedDeleteNode)());
 
 EXPORT_API(void) THSAutograd_CSharpNode_disposeSharedPtr(CSharpNodePtr node);
 

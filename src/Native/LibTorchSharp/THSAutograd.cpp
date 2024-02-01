@@ -91,7 +91,7 @@ variable_list CSharpNode::apply(variable_list&& inputs) {
     for (const auto t : inputs)
         converted_inputs.push_back(ResultTensor(t));
 
-    auto res = applyFunc(converted_inputs.data());
+    auto res = applyFunc(converted_inputs.data(), converted_inputs.size());
     return toTensors<at::Tensor>(res.array, res.size);
 }
 
@@ -101,7 +101,7 @@ void deleteNode(CSharpNode* node) {
 }
 
 
-CSharpNodePtr THSAutograd_CSharpNode_ctor(TensorArray(*applyFunc)(Tensor*), void (*managedDeleteNode)())
+CSharpNodePtr THSAutograd_CSharpNode_ctor(TensorArray(*applyFunc)(Tensor*, int size), void (*managedDeleteNode)())
 {
     CATCH_RETURN_RES(CSharpNodePtr, CSharpNodePtr(),
         res.shared_ptr = new std::shared_ptr<CSharpNode>(new CSharpNode(applyFunc, managedDeleteNode), deleteNode);

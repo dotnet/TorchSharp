@@ -7,6 +7,7 @@ using System.Net;
 using TorchSharp.PInvoke;
 using SkiaSharp;
 using System.Security.Authentication.ExtendedProtection;
+using System.Runtime.InteropServices;
 
 namespace TorchSharp
 {
@@ -200,9 +201,8 @@ namespace TorchSharp
                 /// to call the custom backward function and compute the gradients. This function wraps around the Function.backward
                 /// implementation converting between unmanaged and managed objects. 
                 /// </summary>
-                /// <param name="tensors">The array of tensor pointers to pass to the backwards call</param>
                 /// <returns>A pointer to an array of tensors with the size</returns>
-                private ArrayWithSize ApplyFunc(IntPtr[] tensors)
+                private ArrayWithSize ApplyFunc(IntPtr[] tensors, int size)
                 {
                     lock (_mutex) {
                         // Go through the input tensors and build the input to the backward.
