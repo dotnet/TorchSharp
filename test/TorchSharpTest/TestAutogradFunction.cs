@@ -4,6 +4,7 @@ using Xunit;
 
 using static TorchSharp.torch;
 using System;
+using System.Threading;
 
 namespace TorchSharp
 {
@@ -115,6 +116,23 @@ namespace TorchSharp
                 float loss = TrainXOR(torch.CPU);
                 LossIsClose(loss, 0.4513f);
             });
+        }
+
+        [Fact]
+        private void TestCustomLinearFunctionWithGC()
+        {
+            var x = torch.randn([2, 3]).requires_grad_();
+            var weight = torch.randn([4, 3]).requires_grad_();
+            var y = LinearFunction.apply(x, weight);
+
+            // Try to force objects to be cleaned up by giving them a timer + explicitly calling the GC
+            Thread.Sleep(2000);
+            GC.Collect();
+
+            y.sum().backward();
+
+            Assert.NotNull(x.grad());
+            Assert.NotNull(weight.grad());
         }
 
 
