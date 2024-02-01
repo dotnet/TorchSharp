@@ -67,7 +67,7 @@ namespace TorchSharp
 
                 ~SavedVariable()
                 {
-                    Dispose(true);
+                    Dispose(false);
                 }
             }
 
@@ -270,15 +270,15 @@ namespace TorchSharp
 
                 public void Dispose(bool disposing)
                 {
-                    if (disposing) {
-                        if (handle.sharedPtr != IntPtr.Zero) 
-                            DisposeSharedPtr();
-                        if (handle.weakPtr != IntPtr.Zero) {
-                            THSAutograd_CSharpNode_disposeWeakPtr(handle);
-                            CheckForErrors();
-                            handle.weakPtr = IntPtr.Zero;
-                        }
+                    if (handle.sharedPtr != IntPtr.Zero) 
+                        DisposeSharedPtr();
+                    if (handle.weakPtr != IntPtr.Zero) {
+                        THSAutograd_CSharpNode_disposeWeakPtr(handle);
+                        CheckForErrors();
+                        handle.weakPtr = IntPtr.Zero;
+                    }
 
+                    if (disposing) {
                         _context?.Dispose();
                         _context = null;
                         _applyFuncReturnArray?.Dispose();
@@ -290,7 +290,7 @@ namespace TorchSharp
 
                 ~Node()
                 {
-                    Dispose(true);
+                    Dispose(false);
                 }
             }
 
