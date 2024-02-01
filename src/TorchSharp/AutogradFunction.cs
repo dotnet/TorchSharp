@@ -6,6 +6,7 @@ using static TorchSharp.PInvoke.NativeMethods;
 using System.Net;
 using TorchSharp.PInvoke;
 using SkiaSharp;
+using System.Security.Authentication.ExtendedProtection;
 
 namespace TorchSharp
 {
@@ -68,22 +69,45 @@ namespace TorchSharp
                     Dispose(true);
                 }
             }
+
+            // An simplified version of node which doesn't have a type template, for use in other functions which just
+            // need access to the handle.
             internal abstract class Node
             {
-                protected static List<Node> AliveNodes = new();
-
                 public NodeUnmanagedPtr handle;
+
+                private static List<Node> AliveNodes = new();
+                protected static void AddNode(Node node)
+                {
+                    lock (AliveNodes) {
+                        AliveNodes.Add(node);
+                    }
+                }
+
+                protected static void DeleteNode(Node node)
+                {
+                    lock (AliveNodes) {
+                        AliveNodes.Remove(node);
+                    }
+                }
             }
 
             internal class Node<T> : Node, IDisposable where T : Function<T>, new()
             {
-                private AutogradContext _context;
-                private PinnedArray<IntPtr> _ptrArray;
-                private List<bool> _isVariableInput;
-                private List<Tensor> _outputCache;
+                // Store delegate refs to the functions, so that the garbage collector doesn't clear them up
                 private ApplyFunc _applyFuncRef;
                 private ManagedDeleteNode _managedDeleteNode;
+
+                // Store the state of the node
+                private AutogradContext _context;
+                private List<bool> _isVariableInput;
+                private List<Tensor> _outputCache;
                 private object _mutex;
+
+                // Store a copy of a PinnedArray object which is used to return a list of tensors to the C++ code
+                // since this function is passed as a delegate, we don't know when to dispose the array created as the
+                // return value from the function. Therefore, store this object here and dispose it with the object. 
+                private PinnedArray<IntPtr> _applyFuncReturnArray;
 
                 internal Node()
                 {
@@ -91,14 +115,20 @@ namespace TorchSharp
                     _managedDeleteNode = DeleteNode;
                     handle = THSAutograd_CSharpNode_ctor(_applyFuncRef, _managedDeleteNode);
                     CheckForErrors();
-                    AliveNodes.Add(this);
+                    AddNode(this);
 
-                    _ptrArray = new();
+                    _applyFuncReturnArray = new();
                     _isVariableInput = new List<bool>();
                     _context = new AutogradContext(this);
                     _mutex = new();
                 }
 
+                /// <summary>
+                /// Given a list of arguments passed to the forward function, check which of the inputs are Tensors and which
+                /// are objects of non-tensor types.
+                /// </summary>
+                /// <param name="args">The arguments passed to the Function.forward implementtation</param>
+                /// <returns>A list of only the tensor objects from the args</returns>
                 internal List<Tensor> ComputeVariableInput(object[] args)
                 {
                     _isVariableInput.Clear();
@@ -165,6 +195,13 @@ namespace TorchSharp
 
                 internal AutogradContext Context => _context;
 
+                /// <summary>
+                /// This is the function which gets passed back to the unmanaged code, which is used in the autograd graph
+                /// to call the custom backward function and compute the gradients. This function wraps around the Function.backward
+                /// implementation converting between unmanaged and managed objects. 
+                /// </summary>
+                /// <param name="tensors">The array of tensor pointers to pass to the backwards call</param>
+                /// <returns>A pointer to an array of tensors with the size</returns>
                 private ArrayWithSize ApplyFunc(IntPtr[] tensors)
                 {
                     lock (_mutex) {
@@ -198,16 +235,26 @@ namespace TorchSharp
                         }
 
                         // Convert back to C++ array
-                        return _ptrArray.CreateArrayWithSize(output.Select(p => p?.handle ?? IntPtr.Zero).ToArray());
+                        return _applyFuncReturnArray.CreateArrayWithSize(output.Select(p => p?.handle ?? IntPtr.Zero).ToArray());
                     }
                 }
 
+                /// <summary>
+                /// This function is also passed as a parameter to the unmanaged object, so that when the unmanaged object
+                /// is destroyed, then we will remove the hard reference we have of this node so that the GC can collect it. 
+                /// </summary>
                 private void DeleteNode()
                 {
-                    AliveNodes.Remove(this);
+                    DeleteNode(this);
                     Dispose();
                 }
 
+                /// <summary>
+                /// When we create the unmanaged object we need to hold a strong reference to it while we apply the whole process
+                /// of populating it with information, but then once we've attached it to the graph we want to still maintain a reference
+                /// to it so that we can call into it, but not a strong reference so that it will be destroyed. Therefore, we store
+                /// both a shared and a weak pointer to the object, and so once we attach it to a graph, we will dispose the shared ptr.
+                /// </summary>
                 public void DisposeSharedPtr()
                 {
                     THSAutograd_CSharpNode_disposeSharedPtr(handle);
@@ -234,8 +281,8 @@ namespace TorchSharp
 
                         _context?.Dispose();
                         _context = null;
-                        _ptrArray?.Dispose();
-                        _ptrArray = null;
+                        _applyFuncReturnArray?.Dispose();
+                        _applyFuncReturnArray = null;
                         _outputCache?.ForEach(t => t.Dispose());
                         _outputCache = null;
                     }
@@ -248,25 +295,68 @@ namespace TorchSharp
             }
 
 
+            /// <summary>
+            /// Context to save information during `forward` that can be accessed in
+            /// `backward` in custom autograd operations (see `torch::autograd::Function` for details).
+            /// </summary>
             public class AutogradContext : IDisposable
             {
                 private Node _node;
-                private List<Tensor> _toSave = new();
+                private bool _materializeGrads = true;
+                private List<Tensor> _tensorsToSave = new();
                 private HashSet<IntPtr> _dirtyTensors = new();
                 private HashSet<IntPtr> _nonDifferentiableTensors = new();
                 private List<SavedVariable> _savedVariables = new();
-                private bool _materializeGrads = true;
-
+                private Dictionary<string, object> _savedData = new();
+                
                 internal AutogradContext(Node node)
                 {
                     _node = node;
                 }
 
-                public void save_for_backward(List<Tensor> tensors) => _toSave = tensors;
+                /// <summary>
+                /// Saves the list of variables for a future call to `backward`. This
+                /// should be called at most once from inside of `forward`.
+                /// </summary>
+                public void save_for_backward(List<Tensor> tensors) => _tensorsToSave = tensors;
+
+                /// <summary>
+                /// Saves a non tensor object in the data field for a future call to `backward`.
+                /// </summary>
+                public void save_data(string key, object value)
+                {
+                    if (value is Tensor)
+                        Console.WriteLine("Attempted to save a tensor object in the data object. Please store tensors by calling `save_for_backward()`");
+                    _savedData[key] = value;
+                }
+
+                /// <summary>
+                /// Marks variables in the list as modified in an in-place operation. This
+                /// should be called at most once from inside of `forward` and all arguments
+                /// should be inputs.
+                /// </summary>
                 public void mark_dirty(List<Tensor> tensors) => _dirtyTensors = tensors.Select(t => t?.handle ?? IntPtr.Zero).ToHashSet();
+
+                /// <summary>
+                /// Marks outputs in the list as not requiring gradients. This should be
+                /// called at most once from inside of `forward` and all arguments should be
+                /// outputs.
+                /// </summary>
                 public void mark_non_differentiable(List<Tensor> tensors) => _nonDifferentiableTensors = tensors.Select(t => t?.handle ?? IntPtr.Zero).ToHashSet();
+
+                /// <summary>
+                /// Sets whether undefined output grad tensors should be expanded to tensors
+                /// full of zeros before calling backward function. Default value is true.
+                /// </summary>
                 public void set_materialize_grads(bool value) => _materializeGrads = value;
 
+                public bool MaterializeGrads => _materializeGrads;
+
+                /// <summary>
+                /// Get the list of variables that were saved in `forward` using
+                /// `save_for_backward()`. Before returning them to the user, a check is made
+                /// to ensure that they were not modified by any in-place operations.
+                /// </summary>
                 public List<Tensor> get_saved_variables()
                 {
                     lock (_node) {
@@ -274,16 +364,24 @@ namespace TorchSharp
                     }
                 }
 
+                /// <summary>
+                /// Retrieve a non-tensor value stored in the context in the `forward` function.
+                /// </summary>
+                public object get_data(string key) => _savedData.TryGetValue(key, out var value) ? value : default;
+
+                /// <summary>
+                /// Internal function called during the construction of the node on the graph to commit the tensors
+                /// to memory as SavedVariable unmanaged objects. 
+                /// </summary>
                 internal void save_variables()
                 {
                     _savedVariables.Clear();
                     lock (_node) {
-                        foreach (var tensor in _toSave)
+                        foreach (var tensor in _tensorsToSave)
                             _savedVariables.Add(tensor is null || tensor.IsInvalid ? new() : new(tensor, _node.handle));
                     }
                 }
 
-                internal bool MaterializeGrads => _materializeGrads;
                 internal HashSet<IntPtr> DirtyTensors => _dirtyTensors;
                 internal HashSet<IntPtr> NonDifferentiableTensors => _nonDifferentiableTensors;
 
@@ -301,11 +399,33 @@ namespace TorchSharp
                     }
                 }
             }
+
+            /// <summary>
+            /// To use custom autograd operations, implement a Function subclass implementing tthe
+            /// forward and backward functions:
+            /// `forward` can take as many arguments as you want, passed an object[], and will return either
+            /// a list of tensors or a single tensor (depending which subclass you inherit).
+            /// Use of any direct Variable arguments will be registered in the graph but no vectors/sets or any
+            /// other data structures will be traversed. You can pass null tensors as one of the arguments
+            /// and it will be registered as a variable in the graph if the argument has a
+            /// value. It should take a pointer to `torch::autograd::AutogradContext` as the
+            /// first argument. Tensors can be saved in the `ctx` using `ctx->save_for_backward`
+            /// (see `torch::autograd::AutogradContext::save_for_backward`) and other data
+            /// can be saved using the `ctx->save_data` function (see `torch::autograd::AutogradContext::save_data`)
+            /// in the form of `(string, object)` pairs.
+            /// Variables saved in `forward` can be accessed with `ctx->get_saved_variables` (see
+            /// `torch::autograd::AutogradContext::get_saved_variables`) and other saved
+            /// data can be accessed using `ctx->get_data()`.
+            /// </summary>
             public abstract class Function<T> where T : Function<T>, new()
             {
                 internal static T Instance { get; set; } = new();
 
-                public static List<Tensor> apply(params object[] vars)
+                /// <summary>
+                /// When calling the function, the user should call Function.apply and not the forward function, so that
+                /// the computation graph is built correctly.
+                /// </summary>
+                public static List<Tensor> apply_internal(params object[] vars)
                 {
                     var node = new Node<T>();
 
@@ -320,7 +440,7 @@ namespace TorchSharp
                     // Call the forward function and then wrap the outputs
                     List<Tensor> outputs;
                     using (var d = new AutoGradMode(false))
-                        outputs = Instance.forward(node.Context, vars);
+                        outputs = Instance.forward_internal(node.Context, vars);
                     outputs = node.WrapOutputs(inputVars, outputs, isExecutable);
                     
                     if (isExecutable)
@@ -332,13 +452,40 @@ namespace TorchSharp
 
                 }
 
-                public abstract List<Tensor> forward(AutogradContext ctx, params object[] vars);
-
+                internal abstract List<Tensor> forward_internal(AutogradContext ctx, params object[] vars);
                 public abstract List<Tensor> backward(AutogradContext ctx, List<Tensor> grad_outputs);
-
                 public abstract string Name { get; }
             }
 
+            public abstract class SingleTensorFunction<T> : Function<T> where T : SingleTensorFunction<T>, new()
+            {
+                public static Tensor apply(params object[] vars)
+                {
+                    return apply_internal(vars)[0];
+                }
+
+                internal override List<Tensor> forward_internal(AutogradContext ctx, params object[] vars)
+                {
+                    return new List<Tensor>() { forward(ctx, vars) };
+                }
+
+                public abstract Tensor forward(AutogradContext ctx, params object[] vars);
+            }
+
+            public abstract class MultiTensorFunction<T> : Function<T> where T : MultiTensorFunction<T>, new()
+            {
+                public static List<Tensor> apply(params object[] vars)
+                {
+                    return apply_internal(vars);
+                }
+
+                internal override List<Tensor> forward_internal(AutogradContext ctx, params object[] vars)
+                {
+                    return forward(ctx, vars);
+                }
+
+                public abstract List<Tensor> forward(AutogradContext ctx, params object[] vars);
+            }
         }
     }
 
