@@ -81,3 +81,23 @@ void THSAutograd_backward(
             toTensors<at::Tensor>((torch::Tensor**)inputs, iLength));
     );
 }
+
+variable_list CSharpNode::apply(variable_list&& inputs) {
+    at::OptionalDeviceGuard _device_guard;
+
+    std::vector<Tensor> converted_inputs;
+    converted_inputs.reserve(inputs.size());
+    for (const auto t : inputs)
+        converted_inputs.push_back(ResultTensor(t));
+
+    return toTensors<at::Tensor>(apply_func(converted_inputs.data()), inputs.size());
+}
+
+void CSharpNode::release_variables() {
+    release_variables_func();
+}
+
+std::shared_ptr<CSharpNode>* THSAutograd_CSharpNode_ctor(void (*releaseFunc)(), Tensor* (*applyFunc)(Tensor*))
+{
+    CATCH_RETURN_RES(std::shared_ptr<CSharpNode>*, nullptr, res = new std::shared_ptr<CSharpNode>(new CSharpNode(releaseFunc, applyFunc), torch::autograd::deleteNode))
+}

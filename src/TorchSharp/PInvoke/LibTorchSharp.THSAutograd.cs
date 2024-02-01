@@ -53,5 +53,13 @@ namespace TorchSharp.PInvoke
             [MarshalAs(UnmanagedType.U1)] bool create_graph,
             IntPtr inputs, long iLength);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void ReleaseVariablesFunc();
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate IntPtr ApplyFunc([In] IntPtr[] tensors);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSAutograd_CSharpNode_ctor(ReleaseVariablesFunc releaseFunc, ApplyFunc applyFunc);
     }
 }

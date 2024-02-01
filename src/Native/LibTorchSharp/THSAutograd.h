@@ -40,3 +40,18 @@ EXPORT_API(void) THSAutograd_backward(
     Tensor* grad_tensors, const int64_t gtLength,
     bool retain_graph, bool create_graph,
     Tensor* inputs, const int64_t iLength);
+
+
+using variable_list = torch::autograd::variable_list;
+struct CSharpNode : public torch::autograd::Node {
+    CSharpNode(std::function<void()> releaseFunc, std::function<Tensor* (Tensor*)> applyFunc)
+        : release_variables_func(releaseFunc), apply_func(applyFunc) {}
+
+    std::function<void()> release_variables_func;
+    std::function<Tensor* (Tensor*)> apply_func;
+
+    variable_list apply(variable_list&& inputs) override;
+    void release_variables() override;
+};
+
+EXPORT_API(std::shared_ptr<CSharpNode>*) THSAutograd_CSharpNode_ctor(void (*releaseFunc)(), Tensor* (*applyFunc)(Tensor*));
