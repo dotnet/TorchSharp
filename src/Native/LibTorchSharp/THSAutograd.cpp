@@ -2,6 +2,7 @@
 #include "THSAutograd.h"
 
 #include "torch/torch.h"
+#include "torch/autograd.h"
 
 bool THSAutograd_isGradEnabled()
 {
@@ -90,14 +91,107 @@ variable_list CSharpNode::apply(variable_list&& inputs) {
     for (const auto t : inputs)
         converted_inputs.push_back(ResultTensor(t));
 
-    return toTensors<at::Tensor>(apply_func(converted_inputs.data()), inputs.size());
+    auto res = applyFunc(converted_inputs.data());
+    return toTensors<at::Tensor>(res.array, res.size);
 }
 
-void CSharpNode::release_variables() {
-    release_variables_func();
+void deleteNode(CSharpNode* node) {
+    node->managedDeleteNode();
+    torch::autograd::deleteNode(node);
 }
 
-std::shared_ptr<CSharpNode>* THSAutograd_CSharpNode_ctor(void (*releaseFunc)(), Tensor* (*applyFunc)(Tensor*))
+
+CSharpNodePtr THSAutograd_CSharpNode_ctor(TensorArray(*applyFunc)(Tensor*), void (*managedDeleteNode)())
 {
-    CATCH_RETURN_RES(std::shared_ptr<CSharpNode>*, nullptr, res = new std::shared_ptr<CSharpNode>(new CSharpNode(releaseFunc, applyFunc), torch::autograd::deleteNode))
+    CATCH_RETURN_RES(CSharpNodePtr, CSharpNodePtr(),
+        res.shared_ptr = new std::shared_ptr<CSharpNode>(new CSharpNode(applyFunc, managedDeleteNode), deleteNode);
+        res.weak_ptr = new std::weak_ptr<CSharpNode>(*res.shared_ptr);
+    )
+}
+
+void THSAutograd_CSharpNode_disposeSharedPtr(CSharpNodePtr node) {
+    CATCH(
+        delete node.shared_ptr;
+    )
+}
+
+void THSAutograd_CSharpNode_disposeWeakPtr(CSharpNodePtr node) {
+    CATCH(
+        delete node.weak_ptr;
+    )
+}
+
+void THSAutograd_CSharpNode_setNextEdges(CSharpNodePtr node, TensorArray vars_, bool is_executable) {
+    CATCH(
+        auto next_edges = is_executable ? torch::autograd::collect_next_edges(toTensors<at::Tensor>(vars_.array, vars_.size)) : torch::autograd::edge_list();
+        node.weak_ptr->lock()->set_next_edges(std::move(next_edges));
+    )
+}
+
+void THSAutograd_CSharpNode_clearInputMetadata(CSharpNodePtr node) {
+    CATCH(
+        node.weak_ptr->lock()->clear_input_metadata();
+    )
+}
+
+void THSAutograd_Function_wrapOutputs(TensorArray vars_, TensorArray nonDiff_, TensorArray dirty_, TensorArray outputs_, CSharpNodePtr node, Tensor* (*allocator)(size_t length)) {
+    CATCH(
+    auto vars = toTensors<at::Tensor>(vars_.array, vars_.size);
+    auto outputs = torch::autograd::to_optional(toTensors<at::Tensor>(outputs_.array, outputs_.size));
+
+    // Convert the list of Tensor to a set of unsafe impl
+    std::unordered_set<at::TensorImpl*> nonDiff;
+    nonDiff.reserve(nonDiff_.size);
+    for (int i = 0; i < nonDiff_.size; i++)
+        nonDiff.insert(nonDiff_.array[i]->unsafeGetTensorImpl());
+
+    // Convert the list of Tensors to a set of unsafe impl, and then apply the behavior of AutogradContext::get_and_bump_dirty()
+    std::unordered_set<at::TensorImpl*> dirty;
+    dirty.reserve(dirty_.size);
+    for (int i = 0; i < dirty_.size; i++) {
+        auto t = dirty_.array[i]->unsafeGetTensorImpl();
+        t->bump_version();
+        dirty.insert(t);
+    }
+
+    // Copied this function from custom_function.h
+    torch::autograd::_jvp_fn_t jvp_fn = [](const variable_list& inputs,
+        const variable_list& gI) -> variable_list {
+            TORCH_CHECK(
+                false,
+                "jvp is not implemented for the c++ API of custom Function yet.",
+                "Please open a feature request on GitHub if you need this.");
+        };
+
+    auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {});
+    auto sz = res.size();
+
+    Tensor* result = allocator(sz);
+    for (size_t i = 0; i < sz; i++)
+        result[i] = res[i].has_value() ? ResultTensor(res[i].value()) : nullptr;
+    )
+}
+
+SavedVariable THSAutograd_SavedVariable_ctor(Tensor variable, CSharpNodePtr node, bool is_inplace_on_view)
+{
+    CATCH_RETURN_RES(SavedVariable, nullptr,
+        bool is_output = node.weak_ptr->lock().get() == variable->grad_fn().get();
+        res = new std::shared_ptr<torch::autograd::SavedVariable>(new torch::autograd::SavedVariable(*variable, is_output, is_inplace_on_view))
+    );
+}
+
+void THSAutograd_SavedVariable_dispose(SavedVariable var) {
+    CATCH(
+        delete var;
+    )
+}
+
+Tensor THSAutograd_SavedVariable_unpack(SavedVariable saved_variable, CSharpNodePtr saved_for) {
+    CATCH_RETURN_Tensor(
+        res = ResultTensor((*saved_variable)->unpack(saved_for.weak_ptr->expired() ? nullptr : saved_for.weak_ptr->lock()));
+    )
+}
+
+void THSAutograd_SavedVariable_reset_data(SavedVariable saved_variable) {
+    CATCH((*saved_variable)->reset_data();)
 }
