@@ -2,7 +2,6 @@
 #include "THSAutograd.h"
 
 #include "torch/torch.h"
-#include "torch/autograd.h"
 
 bool THSAutograd_isGradEnabled()
 {
