@@ -136,7 +136,8 @@ void THSAutograd_CSharpNode_clearInputMetadata(CSharpNodePtr node) {
 void THSAutograd_Function_wrapOutputs(TensorArray vars_, TensorArray nonDiff_, TensorArray dirty_, TensorArray outputs_, CSharpNodePtr node, Tensor* (*allocator)(size_t length)) {
     CATCH(
     auto vars = toTensors<at::Tensor>(vars_.array, vars_.size);
-    auto outputs = torch::autograd::to_optional(toTensors<at::Tensor>(outputs_.array, outputs_.size));
+    auto output_tensors = toTensors<at::Tensor>(outputs_.array, outputs_.size);
+    auto outputs = torch::autograd::to_optional(output_tensors);
 
     // Convert the list of Tensor to a set of unsafe impl
     std::unordered_set<at::TensorImpl*> nonDiff;
