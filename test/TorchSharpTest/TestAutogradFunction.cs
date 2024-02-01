@@ -13,8 +13,8 @@ namespace TorchSharp
 
         private void TestCustomLinearFunction(Device device)
         {
-            var x = torch.randn([2, 3], device: device).requires_grad_();
-            var weight = torch.randn([4, 3], device: device).requires_grad_();
+            var x = torch.randn(new long[] { 2, 3 }, device: device).requires_grad_();
+            var weight = torch.randn(new long[] { 4, 3 }, device: device).requires_grad_();
             var y = LinearFunction.apply(x, weight);
             y.sum().backward();
 
@@ -25,9 +25,9 @@ namespace TorchSharp
 
         private void TestCustomTwoInputLinearFunction(Device device)
         {
-            var x1 = torch.randn([2, 3], device: device).requires_grad_();
-            var x2 = torch.randn([5, 3], device: device).requires_grad_();
-            var weight = torch.randn([4, 3], device: device).requires_grad_();
+            var x1 = torch.randn(new long[] { 2, 3 }, device: device).requires_grad_();
+            var x2 = torch.randn(new long[] { 5, 3 }, device: device).requires_grad_();
+            var weight = torch.randn(new long[] { 4, 3 }, device: device).requires_grad_();
             var y = TwoInputLinearFunction.apply(x1, x2, weight);
             (y[0].sum() + y[1].sum()).backward();
 
@@ -39,9 +39,9 @@ namespace TorchSharp
         private float TrainXOR(Device device)
         {
             Generator gen = new torch.Generator();
-            var weight1 = torch.nn.Parameter(torch.randn([2, 2], generator: gen).to(device));
-            var weight2 = torch.nn.Parameter(torch.randn([1, 2], generator: gen).to(device));
-            var optim = torch.optim.SGD([weight1, weight2], 0.01);
+            var weight1 = torch.nn.Parameter(torch.randn(new long[] { 2, 2 }, generator: gen).to(device));
+            var weight2 = torch.nn.Parameter(torch.randn(new long[] { 1, 2 }, generator: gen).to(device));
+            var optim = torch.optim.SGD(new[] { weight1, weight2 }, 0.01);
 
             float lastLoss = 0;
             for (int epoch = 0; epoch < 5000; epoch++) {
@@ -121,8 +121,8 @@ namespace TorchSharp
         [Fact]
         private void TestCustomLinearFunctionWithGC()
         {
-            var x = torch.randn([2, 3]).requires_grad_();
-            var weight = torch.randn([4, 3]).requires_grad_();
+            var x = torch.randn(new long[] { 2, 3 }).requires_grad_();
+            var weight = torch.randn(new long[] { 4, 3 }).requires_grad_();
             var y = LinearFunction.apply(x, weight);
 
             // Try to force objects to be cleaned up by giving them a timer + explicitly calling the GC
@@ -146,14 +146,14 @@ namespace TorchSharp
                 var input1 = saved[0];
                 var input2 = saved[1];
                 var weight = saved[2];
-                
+
                 var grad_output1 = grad_outputs[0];
                 var grad_output2 = grad_outputs[1];
                 var grad_input1 = grad_output1.mm(weight);
                 var grad_input2 = grad_output2.mm(weight);
                 var grad_weight = grad_output1.t().mm(input1) + grad_output2.t().mm(input2);
-                
-                return [grad_input1, grad_input2, grad_weight];
+
+                return new List<Tensor>() { grad_input1, grad_input2, grad_weight };
 
             }
 
@@ -163,7 +163,7 @@ namespace TorchSharp
                 var input2 = (Tensor)vars[1];
                 var weight = (Tensor)vars[2];
                 
-                ctx.save_for_backward([input1, input2, weight]);
+                ctx.save_for_backward(new() { input1, input2, weight });
 
                 var output1 = input1.mm(weight.t());
                 var output2 = input2.mm(weight.t());
@@ -188,7 +188,7 @@ namespace TorchSharp
                 var grad_weight = grad_output.t().mm(input);
                 var grad_bias = bias is null || bias.IsInvalid ? null : grad_output.sum(0);
 
-                return [grad_input, grad_weight, grad_bias];
+                return new List<Tensor>() { grad_input, grad_weight, grad_bias };
             }
 
             public override Tensor forward(autograd.AutogradContext ctx, params object[] vars)
@@ -197,7 +197,7 @@ namespace TorchSharp
                 var weight = (Tensor)vars[1];
                 var bias = vars.Length == 2 ? null : (Tensor)vars[2];
 
-                ctx.save_for_backward([input, weight, bias]);
+                ctx.save_for_backward(new() { input, weight, bias });
 
                 var output = input.mm(weight.t());
                 if (bias is not null && !bias.IsInvalid)
