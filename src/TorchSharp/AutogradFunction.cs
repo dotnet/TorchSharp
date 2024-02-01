@@ -165,8 +165,8 @@ namespace TorchSharp
                     using var resultsArr = new PinnedArray<IntPtr>();
 
                     var varsPtr = varsArr.CreateArrayWithSize(inputVars.Select(v => v?.handle ?? IntPtr.Zero).ToArray());
-                    var diffsPtr = diffArr.CreateArrayWithSize(_context.NonDifferentiableTensors.ToArray());
-                    var dirtyPtr = diffArr.CreateArrayWithSize(_context.DirtyTensors.ToArray());
+                    var diffsPtr = diffArr.CreateArrayWithSize(_context.NonDifferentiableTensors.Select(v => v?.handle ?? IntPtr.Zero).ToArray());
+                    var dirtyPtr = diffArr.CreateArrayWithSize(_context.DirtyTensors.Select(v => v?.handle ?? IntPtr.Zero).ToArray());
                     var outputPtr = outputArr.CreateArrayWithSize(outputs.Select(v => v?.handle ?? IntPtr.Zero).ToArray());
 
                     THSAutograd_Function_wrapOutputs(varsPtr, diffsPtr, dirtyPtr, outputPtr, isExecutable ? handle : new(), resultsArr.CreateArray);
@@ -283,7 +283,7 @@ namespace TorchSharp
                         _context = null;
                         _applyFuncReturnArray?.Dispose();
                         _applyFuncReturnArray = null;
-                        _outputCache?.ForEach(t => t.Dispose());
+                        _outputCache?.ForEach(t => t?.Dispose());
                         _outputCache = null;
                     }
                 }
@@ -304,8 +304,8 @@ namespace TorchSharp
                 private Node _node;
                 private bool _materializeGrads = true;
                 private List<Tensor> _tensorsToSave = new();
-                private HashSet<IntPtr> _dirtyTensors = new();
-                private HashSet<IntPtr> _nonDifferentiableTensors = new();
+                private List<Tensor> _dirtyTensors = new();
+                private List<Tensor> _nonDifferentiableTensors = new();
                 private List<SavedVariable> _savedVariables = new();
                 private Dictionary<string, object> _savedData = new();
                 
@@ -335,14 +335,14 @@ namespace TorchSharp
                 /// should be called at most once from inside of `forward` and all arguments
                 /// should be inputs.
                 /// </summary>
-                public void mark_dirty(List<Tensor> tensors) => _dirtyTensors = tensors.Select(t => t?.handle ?? IntPtr.Zero).ToHashSet();
+                public void mark_dirty(List<Tensor> tensors) => _dirtyTensors = tensors.ToList();
 
                 /// <summary>
                 /// Marks outputs in the list as not requiring gradients. This should be
                 /// called at most once from inside of `forward` and all arguments should be
                 /// outputs.
                 /// </summary>
-                public void mark_non_differentiable(List<Tensor> tensors) => _nonDifferentiableTensors = tensors.Select(t => t?.handle ?? IntPtr.Zero).ToHashSet();
+                public void mark_non_differentiable(List<Tensor> tensors) => _nonDifferentiableTensors = tensors.ToList();
 
                 /// <summary>
                 /// Sets whether undefined output grad tensors should be expanded to tensors
@@ -382,8 +382,8 @@ namespace TorchSharp
                     }
                 }
 
-                internal HashSet<IntPtr> DirtyTensors => _dirtyTensors;
-                internal HashSet<IntPtr> NonDifferentiableTensors => _nonDifferentiableTensors;
+                internal List<Tensor> DirtyTensors => _dirtyTensors;
+                internal List<Tensor> NonDifferentiableTensors => _nonDifferentiableTensors;
 
                 public void Dispose()
                 {
