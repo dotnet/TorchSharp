@@ -13,6 +13,7 @@ typedef torch::Generator* Generator;
 typedef c10::Storage* Storage;
 typedef torch::nn::utils::rnn::PackedSequence* PackedSequence;
 
+typedef std::shared_ptr<torch::autograd::SavedVariable> * SavedVariable;
 typedef std::shared_ptr<torch::nn::Module> * NNModule;
 typedef std::shared_ptr<torch::nn::AnyModule> * NNAnyModule;
 typedef std::shared_ptr<torch::optim::Optimizer> * Optimizer;
@@ -22,6 +23,13 @@ typedef std::shared_ptr<torch::jit::Method>* JITMethod;
 typedef std::shared_ptr<torch::jit::Function> * JITFunction;
 typedef std::shared_ptr<c10::Type> * JITType;
 typedef std::shared_ptr<c10::TensorType>* JITTensorType;
+
+struct TensorArray {
+    Tensor *array;
+    int64_t size;
+};
+
+
 
 //typedef std::shared_ptr<torch::jit::DimensionedTensorType>* JITDimensionedTensorType;
 
