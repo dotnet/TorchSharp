@@ -40,3 +40,40 @@ EXPORT_API(void) THSAutograd_backward(
     Tensor* grad_tensors, const int64_t gtLength,
     bool retain_graph, bool create_graph,
     Tensor* inputs, const int64_t iLength);
+
+
+using variable_list = torch::autograd::variable_list;
+struct CSharpNode : public torch::autograd::Node {
+    CSharpNode(std::function<TensorArray (Tensor*, int)> applyFunc, std::function<void()> managedDeleteNode)
+        : applyFunc(applyFunc), managedDeleteNode(managedDeleteNode) {}
+
+    std::function<TensorArray (Tensor*, int)> applyFunc;
+    std::function<void()> managedDeleteNode;
+
+    variable_list apply(variable_list&& inputs) override;
+};
+
+struct CSharpNodePtr {
+    std::shared_ptr<CSharpNode> *shared_ptr;
+    std::weak_ptr<CSharpNode> *weak_ptr;
+};
+
+EXPORT_API(CSharpNodePtr) THSAutograd_CSharpNode_ctor(TensorArray(*applyFunc)(Tensor*, int), void (*managedDeleteNode)());
+
+EXPORT_API(void) THSAutograd_CSharpNode_disposeSharedPtr(CSharpNodePtr node);
+
+EXPORT_API(void) THSAutograd_CSharpNode_disposeWeakPtr(CSharpNodePtr node);
+
+EXPORT_API(void) THSAutograd_CSharpNode_setNextEdges(CSharpNodePtr node, TensorArray vars_, bool is_executable);
+
+EXPORT_API(void) THSAutograd_CSharpNode_clearInputMetadata(CSharpNodePtr node);
+
+EXPORT_API(void) THSAutograd_Function_wrapOutputs(TensorArray vars_, TensorArray nonDiff_, TensorArray dirty_, TensorArray outputs_, CSharpNodePtr node, Tensor* (*allocator)(size_t length));
+
+EXPORT_API(SavedVariable) THSAutograd_SavedVariable_ctor(Tensor variable, CSharpNodePtr node, bool is_inplace_on_view);
+
+EXPORT_API(void) THSAutograd_SavedVariable_dispose(SavedVariable var);
+
+EXPORT_API(Tensor) THSAutograd_SavedVariable_unpack(SavedVariable saved_variable, CSharpNodePtr saved_for);
+
+EXPORT_API(void) THSAutograd_SavedVariable_reset_data(SavedVariable saved_variable);

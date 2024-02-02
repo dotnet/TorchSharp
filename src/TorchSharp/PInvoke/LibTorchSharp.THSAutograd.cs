@@ -53,5 +53,52 @@ namespace TorchSharp.PInvoke
             [MarshalAs(UnmanagedType.U1)] bool create_graph,
             IntPtr inputs, long iLength);
 
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct ArrayWithSize {
+            public IntPtr Array;
+            public long Size;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct NodeUnmanagedPtr {
+            public IntPtr sharedPtr;
+            public IntPtr weakPtr;
+        }
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate ArrayWithSize ApplyFunc([MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] IntPtr[] array, int size);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void ManagedDeleteNode();
+
+        [DllImport("LibTorchSharp")]
+        internal static extern NodeUnmanagedPtr THSAutograd_CSharpNode_ctor(ApplyFunc applyFunc, ManagedDeleteNode managedDeleteNode);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSAutograd_CSharpNode_disposeSharedPtr(NodeUnmanagedPtr node);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSAutograd_CSharpNode_disposeWeakPtr(NodeUnmanagedPtr node);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSAutograd_CSharpNode_setNextEdges(NodeUnmanagedPtr node, ArrayWithSize vars, [MarshalAs(UnmanagedType.U1)] bool is_executable);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSAutograd_CSharpNode_clearInputMetadata(NodeUnmanagedPtr node);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSAutograd_Function_wrapOutputs(ArrayWithSize vars, ArrayWithSize nonDiff, ArrayWithSize dirty, ArrayWithSize outputs, NodeUnmanagedPtr node, AllocatePinnedArray allocator);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSAutograd_SavedVariable_ctor(IntPtr variable, NodeUnmanagedPtr nodeRef, [MarshalAs(UnmanagedType.U1)] bool is_inplace_on_view);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSAutograd_SavedVariable_dispose(IntPtr saved_variable);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSAutograd_SavedVariable_unpack(IntPtr saved_variable, NodeUnmanagedPtr node_saved_for);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSAutograd_SavedVariable_reset_data(IntPtr saved_variable);
     }
 }
