@@ -215,7 +215,7 @@ namespace TorchSharp
                             else backwardInputs.Add(torch.zeros_like(_outputCache[i]));
                         }
 
-                        var output = Function<T>.Instance.backward(_context, backwardInputs);
+                        var output = Function<T>.Instance.backward_internal(_context, backwardInputs);
 
                         // Returning too many results is ok, but only as long as they're all
                         // undefined. Truncate the result vector in that case.
@@ -453,7 +453,7 @@ namespace TorchSharp
                 }
 
                 internal abstract List<Tensor> forward_internal(AutogradContext ctx, params object[] vars);
-                public abstract List<Tensor> backward(AutogradContext ctx, List<Tensor> grad_outputs);
+                internal abstract List<Tensor> backward_internal(AutogradContext ctx, List<Tensor> grad_outputs);
                 public abstract string Name { get; }
             }
 
@@ -464,12 +464,18 @@ namespace TorchSharp
                     return apply_internal(vars)[0];
                 }
 
-                internal override List<Tensor> forward_internal(AutogradContext ctx, params object[] vars)
+                internal sealed override List<Tensor> forward_internal(AutogradContext ctx, params object[] vars)
                 {
                     return new List<Tensor>() { forward(ctx, vars) };
                 }
 
+                internal sealed override List<Tensor> backward_internal(AutogradContext ctx, List<Tensor> grad_outputs)
+                {
+                    return backward(ctx, grad_outputs[0]);
+                }
+
                 public abstract Tensor forward(AutogradContext ctx, params object[] vars);
+                public abstract List<Tensor> backward(AutogradContext ctx, Tensor grad_output);
             }
 
             public abstract class MultiTensorFunction<T> : Function<T> where T : MultiTensorFunction<T>, new()
@@ -479,12 +485,19 @@ namespace TorchSharp
                     return apply_internal(vars);
                 }
 
-                internal override List<Tensor> forward_internal(AutogradContext ctx, params object[] vars)
+                internal sealed override List<Tensor> forward_internal(AutogradContext ctx, params object[] vars)
                 {
                     return forward(ctx, vars);
                 }
 
+                internal sealed override List<Tensor> backward_internal(AutogradContext ctx, List<Tensor> grad_outputs)
+                {
+                    return backward(ctx, grad_outputs);
+                }
+
                 public abstract List<Tensor> forward(AutogradContext ctx, params object[] vars);
+
+                public abstract List<Tensor> backward(AutogradContext ctx, List<Tensor> grad_outputs);
             }
         }
     }

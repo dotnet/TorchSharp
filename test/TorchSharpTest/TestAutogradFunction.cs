@@ -176,14 +176,13 @@ namespace TorchSharp
         {
             public override string Name => nameof(LinearFunction);
 
-            public override List<Tensor> backward(autograd.AutogradContext ctx, List<Tensor> grad_outputs)
+            public override List<Tensor> backward(autograd.AutogradContext ctx, Tensor grad_output)
             {
                 var saved = ctx.get_saved_variables();
                 var input = saved[0];
                 var weight = saved[1];
                 var bias = saved.Count == 2 ? null : saved[2];
 
-                var grad_output = grad_outputs[0];
                 var grad_input = grad_output.mm(weight);
                 var grad_weight = grad_output.t().mm(input);
                 var grad_bias = bias is null || bias.IsInvalid ? null : grad_output.sum(0);
