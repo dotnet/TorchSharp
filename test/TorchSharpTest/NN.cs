@@ -269,8 +269,10 @@ namespace TorchSharp
         {
             var device = torch.CPU;
 
-            var lin = Linear(1000, 100, true, device: device);
-            Assert.Throws<ArgumentNullException>(() => lin.bias = null);
+            var lin = Linear(100, 100, true, device: device);
+            // This should not throw:
+            lin.bias = null;
+            lin.call(torch.rand(100));
         }
 
         [Fact]

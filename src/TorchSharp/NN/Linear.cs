@@ -62,6 +62,27 @@ namespace TorchSharp
                 }
             }
 
+            protected internal override nn.Module _to(Device device, ScalarType dtype)
+            {
+                weight = new Parameter(_weight!.to(dtype, device));
+                if (bias is not null) bias = new Parameter(_bias!.to(dtype, device));
+                return this;
+            }
+
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+            {
+                weight = new Parameter(_weight!.to(deviceType, deviceIndex));
+                if (bias is not null) bias = new Parameter(_bias!.to(deviceType, deviceIndex));
+                return this;
+            }
+
+            protected internal override nn.Module _to(ScalarType dtype)
+            {
+                weight = new Parameter(_weight!.to(dtype));
+                if (bias is not null) bias = new Parameter(_bias!.to(dtype));
+                return this;
+            }
+
             private Parameter? _weight;
             private static readonly double _sqrt5 = Math.Sqrt(5);
         }
