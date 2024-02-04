@@ -188,7 +188,7 @@ void THSAutograd_SavedVariable_dispose(SavedVariable var) {
 
 Tensor THSAutograd_SavedVariable_unpack(SavedVariable saved_variable, CSharpNodePtr saved_for) {
     CATCH_RETURN_Tensor(
-        res = ResultTensor((*saved_variable)->unpack(saved_for.weak_ptr->expired() ? nullptr : saved_for.weak_ptr->lock()));
+        res = ResultTensor((*saved_variable)->unpack(saved_for.weak_ptr == nullptr || saved_for.weak_ptr->expired() ? nullptr : saved_for.weak_ptr->lock()));
     )
 }
 
