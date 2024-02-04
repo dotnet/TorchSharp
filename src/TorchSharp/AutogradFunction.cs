@@ -237,7 +237,7 @@ namespace TorchSharp
                         }
 
                         // Convert back to C++ array
-                        return _applyFuncReturnArray.CreateArrayWithSize(output.Select(p => p?.handle ?? IntPtr.Zero).ToArray());
+                        return _applyFuncReturnArray.CreateArrayWithSize(output.Where(t => t is not null).Select(p => p.handle).ToArray());
                     }
                 }
 

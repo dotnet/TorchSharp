@@ -177,7 +177,35 @@ namespace TorchSharp
             Assert.NotNull(weight.grad());
         }
 
+        [Fact]
+        private void TestBackwardWithPartialGradInput()
+        {
+            var x = torch.randn(new long[] { 2, 3 }).requires_grad_();
+            var y = MulConstantFunction.apply(x, 2.0);
+            y.sum().backward();
 
+            Assert.NotNull(x.grad());
+        }
+
+        class MulConstantFunction : torch.autograd.SingleTensorFunction<MulConstantFunction>
+        {
+            public override string Name => nameof(MulConstantFunction);
+
+            public override List<Tensor> backward(autograd.AutogradContext ctx, Tensor grad_output)
+            {
+                return new() { grad_output * (double)ctx.get_data("constant"), null };
+            }
+
+            public override Tensor forward(autograd.AutogradContext ctx, params object[] vars)
+            {
+                var tensor = (Tensor)vars[0];
+                double constant = (double)vars[1];
+
+                ctx.save_data("constant", constant);
+
+                return tensor * constant;
+            }
+        }
         class TwoInputLinearFunction : torch.autograd.MultiTensorFunction<TwoInputLinearFunction>
         {
             public override string Name => nameof(TwoInputLinearFunction);
