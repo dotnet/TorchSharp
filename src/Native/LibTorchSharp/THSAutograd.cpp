@@ -163,7 +163,7 @@ void THSAutograd_Function_wrapOutputs(TensorArray vars_, TensorArray nonDiff_, T
                 "Please open a feature request on GitHub if you need this.");
         };
 
-    auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {});
+    auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {});
     auto sz = res.size();
 
     Tensor* result = allocator(sz);
@@ -188,7 +188,7 @@ void THSAutograd_SavedVariable_dispose(SavedVariable var) {
 
 Tensor THSAutograd_SavedVariable_unpack(SavedVariable saved_variable, CSharpNodePtr saved_for) {
     CATCH_RETURN_Tensor(
-        res = ResultTensor((*saved_variable)->unpack(saved_for.weak_ptr->expired() ? nullptr : saved_for.weak_ptr->lock()));
+        res = ResultTensor((*saved_variable)->unpack(saved_for.weak_ptr == nullptr || saved_for.weak_ptr->expired() ? nullptr : saved_for.weak_ptr->lock()));
     )
 }
 
