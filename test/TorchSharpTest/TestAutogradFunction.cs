@@ -11,11 +11,14 @@ namespace TorchSharp
     public class TestAutogradFunction
     {
 
-        private void TestCustomLinearFunction(Device device)
+        private void TestCustomLinearFunction(Device device, bool requires_grad)
         {
-            var x = torch.randn(new long[] { 2, 3 }, device: device).requires_grad_();
-            var weight = torch.randn(new long[] { 4, 3 }, device: device).requires_grad_();
+            var x = torch.randn(new long[] { 2, 3 }, device: device).requires_grad_(requires_grad);
+            var weight = torch.randn(new long[] { 4, 3 }, device: device).requires_grad_(requires_grad);
             var y = LinearFunction.apply(x, weight);
+
+            if (!requires_grad) return;
+
             y.sum().backward();
 
             Assert.NotNull(x.grad());
@@ -23,12 +26,15 @@ namespace TorchSharp
         }
 
 
-        private void TestCustomTwoInputLinearFunction(Device device)
+        private void TestCustomTwoInputLinearFunction(Device device, bool requires_grad)
         {
-            var x1 = torch.randn(new long[] { 2, 3 }, device: device).requires_grad_();
-            var x2 = torch.randn(new long[] { 5, 3 }, device: device).requires_grad_();
-            var weight = torch.randn(new long[] { 4, 3 }, device: device).requires_grad_();
+            var x1 = torch.randn(new long[] { 2, 3 }, device: device).requires_grad_(requires_grad);
+            var x2 = torch.randn(new long[] { 5, 3 }, device: device).requires_grad_(requires_grad);
+            var weight = torch.randn(new long[] { 4, 3 }, device: device).requires_grad_(requires_grad);
             var y = TwoInputLinearFunction.apply(x1, x2, weight);
+
+            if (!requires_grad) return;
+
             (y[0].sum() + y[1].sum()).backward();
 
             Assert.NotNull(x1.grad());
@@ -68,28 +74,56 @@ namespace TorchSharp
         [Fact]
         public void TestCustomLinearFunction_CPU()
         {
-            TestCustomLinearFunction(torch.CPU);
+            TestCustomLinearFunction(torch.CPU, true);
+        }
+
+        [Fact]
+        public void TestCustomLinearFunction_CPU_NoRequiresGrad()
+        {
+            TestCustomLinearFunction(torch.CPU, false);
         }
 
         [Fact]
         public void TestCustomLinearFunction_CUDA()
         {
             if (torch.cuda.is_available()) {
-                TestCustomLinearFunction(torch.CUDA);
+                TestCustomLinearFunction(torch.CUDA, true);
+            }
+        }
+
+        [Fact]
+        public void TestCustomLinearFunction_CUDA_NoRequiresGrad()
+        {
+            if (torch.cuda.is_available()) {
+                TestCustomLinearFunction(torch.CUDA, false);
             }
         }
 
         [Fact]
         public void TestCustomTwoInputLinearFunction_CPU()
         {
-            TestCustomTwoInputLinearFunction(torch.CPU);
+            TestCustomTwoInputLinearFunction(torch.CPU, true);
+        }
+
+        [Fact]
+        public void TestCustomTwoInputLinearFunction_CPU_NoRequiresGrad()
+        {
+            TestCustomTwoInputLinearFunction(torch.CPU, false);
         }
 
         [Fact]
         public void TestCustomTwoInputLinearFunction_CUDA()
         {
             if (torch.cuda.is_available()) {
-                TestCustomTwoInputLinearFunction(torch.CUDA);
+                TestCustomTwoInputLinearFunction(torch.CUDA, true);
+            }
+        }
+
+        [Fact]
+        public void TestCustomTwoInputLinearFunction_CUDA_NoRequiresGrad()
+        {
+            if (torch.cuda.is_available()) {
+                TestCustomTwoInputLinearFunction(torch.CUDA, false);
             }
         }
 
@@ -119,6 +153,14 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestCustomLinearFunction_Parallel_CPU_NoRequiresGrad()
+        {
+            Enumerable.Range(0, 50).AsParallel().ForAll(i => {
+                TestCustomLinearFunction(torch.CPU, false);
+            });
+        }
+
+        [Fact]
         private void TestCustomLinearFunctionWithGC()
         {
             var x = torch.randn(new long[] { 2, 3 }).requires_grad_();
@@ -135,7 +177,35 @@ namespace TorchSharp
             Assert.NotNull(weight.grad());
         }
 
+        [Fact]
+        private void TestBackwardWithPartialGradInput()
+        {
+            var x = torch.randn(new long[] { 2, 3 }).requires_grad_();
+            var y = MulConstantFunction.apply(x, 2.0);
+            y.sum().backward();
 
+            Assert.NotNull(x.grad());
+        }
+
+        class MulConstantFunction : torch.autograd.SingleTensorFunction<MulConstantFunction>
+        {
+            public override string Name => nameof(MulConstantFunction);
+
+            public override List<Tensor> backward(autograd.AutogradContext ctx, Tensor grad_output)
+            {
+                return new() { grad_output * (double)ctx.get_data("constant"), null };
+            }
+
+            public override Tensor forward(autograd.AutogradContext ctx, params object[] vars)
+            {
+                var tensor = (Tensor)vars[0];
+                double constant = (double)vars[1];
+
+                ctx.save_data("constant", constant);
+
+                return tensor * constant;
+            }
+        }
         class TwoInputLinearFunction : torch.autograd.MultiTensorFunction<TwoInputLinearFunction>
         {
             public override string Name => nameof(TwoInputLinearFunction);

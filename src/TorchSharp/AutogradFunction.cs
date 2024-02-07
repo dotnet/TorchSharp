@@ -8,6 +8,7 @@ using TorchSharp.PInvoke;
 using SkiaSharp;
 using System.Security.Authentication.ExtendedProtection;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace TorchSharp
 {
@@ -104,6 +105,7 @@ namespace TorchSharp
                 private List<bool> _isVariableInput;
                 private List<Tensor> _outputCache;
                 private object _mutex;
+                private bool _disposedSharedPtr;
 
                 // Store a copy of a PinnedArray object which is used to return a list of tensors to the C++ code
                 // since this function is passed as a delegate, we don't know when to dispose the array created as the
@@ -235,7 +237,7 @@ namespace TorchSharp
                         }
 
                         // Convert back to C++ array
-                        return _applyFuncReturnArray.CreateArrayWithSize(output.Select(p => p?.handle ?? IntPtr.Zero).ToArray());
+                        return _applyFuncReturnArray.CreateArrayWithSize(output.Where(t => t is not null).Select(p => p.handle).ToArray());
                     }
                 }
 
@@ -257,9 +259,24 @@ namespace TorchSharp
                 /// </summary>
                 public void DisposeSharedPtr()
                 {
-                    THSAutograd_CSharpNode_disposeSharedPtr(handle);
-                    CheckForErrors();
-                    handle.sharedPtr = IntPtr.Zero;
+                    lock (_mutex) {
+                        if (!_disposedSharedPtr) {
+                            // The lock only holds while we are in managed code, but as soon as we call into the native
+                            // function the lock releases, and so we have a situation where we might call dispose twice
+                            // on the same pointer. Therefore, it's important to set the dispose flag *before* the call to
+                            // the native code. Therefore, we will catch and throw the error, flipping the flag back if it
+                            // crashed, so that the future dispose can try again.
+                            _disposedSharedPtr = true;
+                            THSAutograd_CSharpNode_disposeSharedPtr(handle);
+                            try {
+                                CheckForErrors();
+                            } catch {
+                                _disposedSharedPtr = false;
+                                throw;
+                            }
+                            handle.sharedPtr = IntPtr.Zero;
+                        }
+                    }
                 }
 
                 public void Dispose()
