@@ -11,6 +11,7 @@ __Bug Fixes__:
 
 __API Changes__:
 
+#1223: Missing prod function torch.prod or a.prod() where a is Tensor<br/>
 #1201: How to access the attributes of a model?<br/>
 #1094: ScriptModule from Stream / ByteArray<br/>
 #1149: Implementation for `torch.autograd.functional.jacobian` to compute Jacobian of a function<br/>

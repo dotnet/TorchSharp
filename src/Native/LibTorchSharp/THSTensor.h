@@ -1194,6 +1194,10 @@ EXPORT_API(Tensor) THSTensor_sum(const Tensor tensor, bool has_type, const int8_
 
 EXPORT_API(Tensor) THSTensor_sum_along_dimensions(const Tensor tensor, const int64_t * dimensions, int length, bool keepdim, bool has_type, const int8_t dtype);
 
+EXPORT_API(Tensor) THSTensor_prod(const Tensor tensor, bool has_type, const int8_t dtype);
+
+EXPORT_API(Tensor) THSTensor_prod_along_dimensions(const Tensor tensor, const int64_t dimension, bool keepdim, bool has_type, const int8_t dtype);
+
 EXPORT_API(void) THSTensor_save(const Tensor tensor, const char* location);
 
 EXPORT_API(Tensor) THSTensor_scatter(const Tensor tensor, const int64_t dim, const Tensor index, const Tensor source);

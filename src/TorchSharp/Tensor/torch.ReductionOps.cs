@@ -244,6 +244,18 @@ namespace TorchSharp
         [Pure]public static Tensor nanquantile(Tensor input, Tensor q, long dim = -1, bool keepdim = false)
             => input.nanquantile(q, dim, keepdim);
 
+        // https://pytorch.org/docs/stable/generated/torch.prod
+        /// <summary>
+        ///  Returns the product of each row of the input tensor in the given dimensions.
+        /// </summary>
+        [Pure] public static Tensor prod(Tensor input, ScalarType? type = null) => input.prod(type);
+
+        // https://pytorch.org/docs/stable/generated/torch.prod
+        /// <summary>
+        /// Returns the product of each row of the input tensor in the given dimension.
+        /// </summary>
+        [Pure] public static Tensor prod(Tensor input, long dim, bool keepdim = false, ScalarType? type = null) => input.prod(dim, keepdim, type);
+
         // https://pytorch.org/docs/stable/generated/torch.std
         /// <summary>
         /// Calculates the standard deviation of all elements in the tensor.
