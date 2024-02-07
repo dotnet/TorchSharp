@@ -1755,6 +1755,20 @@ Tensor THSTensor_sum_along_dimensions(const Tensor tensor, const int64_t* dimens
         tensor->sum(at::ArrayRef<int64_t>(dimensions, length), keepdim))
 }
 
+Tensor THSTensor_prod(const Tensor tensor, bool has_type, const int8_t dtype)
+{
+    CATCH_TENSOR(has_type ? tensor->prod((c10::ScalarType)dtype) : tensor->prod())
+}
+
+Tensor THSTensor_prod_along_dimensions(const Tensor tensor, const int64_t dimension, bool keepdim, bool has_type, const int8_t dtype)
+{
+    CATCH_TENSOR(
+        has_type ?
+        tensor->prod(dimension, keepdim, (c10::ScalarType)dtype)
+        :
+        tensor->prod(dimension, keepdim))
+}
+
 Tensor THSTensor_take(const Tensor tensor, const Tensor indices)
 {
     CATCH_TENSOR(tensor->take(*indices));

@@ -5166,6 +5166,17 @@ namespace TorchSharp
         }
 
         [Fact]
+        [TestOf(nameof(torch.prod))]
+        public void ProdFuncTest()
+        {
+            var a = torch.arange(1, 11).reshape(2, 5);
+            var b = torch.prod(a);
+            Assert.Equal(3628800, b.item<long>());
+            var c = torch.prod(a, dim: 1);
+            Assert.Equal(new long[] { 120, 30240 }, c.data<long>());
+        }
+
+        [Fact]
         [TestOf(nameof(Tensor.std))]
         public void StdTest()
         {

@@ -4786,8 +4786,28 @@ namespace TorchSharp
                 => var_mean(stackalloc[] { dim.Item1, dim.Item2, dim.Item3 }, unbiased, keepdim, type);
 
             /// <summary>
-            /// Returns the sum of all elements in the :attr:`input` tensor.
+            /// Returns the product of all elements in the :attr:`input` tensor.
             /// </summary>
+            public Tensor prod(ScalarType? type = null)
+            {
+                var res = NativeMethods.THSTensor_prod(Handle, type.HasValue, (sbyte)type.GetValueOrDefault());
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+            /// Returns the product of each row of the input tensor in the given dimension.
+            /// </summary>
+            public Tensor prod(long dim, bool keepdim = false, ScalarType? type = null)
+            {
+                var res = NativeMethods.THSTensor_prod_along_dimensions(Handle, dim, keepdim, type.HasValue, (sbyte)type.GetValueOrDefault());
+                if (res == IntPtr.Zero) { CheckForErrors(); }
+                return new Tensor(res);
+            }
+
+            /// <summary>
+              /// Returns the sum of all elements in the :attr:`input` tensor.
+              /// </summary>
             public Tensor sum(ScalarType? type = null)
             {
                 var res = NativeMethods.THSTensor_sum(Handle, type.HasValue, (sbyte)type.GetValueOrDefault());
