@@ -1084,6 +1084,12 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSTensor_sum_along_dimensions(IntPtr tensor, IntPtr dimensions, int length, [MarshalAs(UnmanagedType.U1)] bool keepdim, [MarshalAs(UnmanagedType.U1)] bool has_type, sbyte scalar_type);
 
         [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_prod(IntPtr tensor, [MarshalAs(UnmanagedType.U1)] bool has_type, sbyte scalar_type);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern IntPtr THSTensor_prod_along_dimensions(IntPtr tensor, long dimension, [MarshalAs(UnmanagedType.U1)] bool keepdim, [MarshalAs(UnmanagedType.U1)] bool has_type, sbyte scalar_type);
+
+        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSTensor_expand(IntPtr tensor, IntPtr psizes, int length, [MarshalAs(UnmanagedType.U1)] bool isImplicit);
 
         [DllImport("LibTorchSharp")]
