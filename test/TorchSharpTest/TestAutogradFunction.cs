@@ -42,6 +42,22 @@ namespace TorchSharp
             Assert.NotNull(weight.grad());
         }
 
+        private void TestCustomTwoInputOneGradientLinearFunction(Device device, bool requires_grad)
+        {
+            var x1 = torch.randn(new long[] { 2, 3 }, device: device).requires_grad_(requires_grad);
+            var x2 = torch.randn(new long[] { 5, 3 }, device: device).requires_grad_(requires_grad);
+            var weight = torch.randn(new long[] { 4, 3 }, device: device).requires_grad_(requires_grad);
+            var y = TwoInputOneGradientLinearFunction.apply(x1, x2, weight);
+
+            if (!requires_grad) return;
+
+            (y[0].sum() + y[1].sum()).backward();
+
+            Assert.NotNull(x1.grad());
+            Assert.NotNull(x2.grad());
+            Assert.Null(weight.grad());
+        }
+
         private float TrainXOR(Device device)
         {
             Generator gen = new torch.Generator();
@@ -128,6 +144,20 @@ namespace TorchSharp
         }
 
         [Fact]
+        public void TestCustomTwoInputOneGradientLinearFunction_CPU()
+        {
+            TestCustomTwoInputOneGradientLinearFunction(torch.CPU, true);
+        }
+
+        [Fact]
+        public void TestCustomTwoInputOneGradientLinearFunction_CUDA()
+        {
+            if (torch.cuda.is_available()) {
+                TestCustomTwoInputOneGradientLinearFunction(torch.CUDA, true);
+            }
+        }
+
+        [Fact]
         public void TestCustomLinearXORLearn_CPU()
         {
             float loss = TrainXOR(torch.CPU);
@@ -204,6 +234,41 @@ namespace TorchSharp
                 ctx.save_data("constant", constant);
 
                 return tensor * constant;
+            }
+        }
+        class TwoInputOneGradientLinearFunction : torch.autograd.MultiTensorFunction<TwoInputOneGradientLinearFunction>
+        {
+            public override string Name => nameof(TwoInputOneGradientLinearFunction);
+
+            public override List<Tensor> backward(autograd.AutogradContext ctx, List<Tensor> grad_outputs)
+            {
+                var saved = ctx.get_saved_variables();
+                var input1 = saved[0];
+                var input2 = saved[1];
+                var weight = saved[2];
+
+                var grad_output1 = grad_outputs[0];
+                var grad_output2 = grad_outputs[1];
+                var grad_input1 = grad_output1.mm(weight);
+                var grad_input2 = grad_output2.mm(weight);
+                var grad_weight = grad_output1.t().mm(input1) + grad_output2.t().mm(input2);
+
+                return new List<Tensor>() { grad_input1, grad_input2, null };
+
+            }
+
+            public override List<Tensor> forward(autograd.AutogradContext ctx, params object[] vars)
+            {
+                var input1 = (Tensor)vars[0];
+                var input2 = (Tensor)vars[1];
+                var weight = (Tensor)vars[2];
+
+                ctx.save_for_backward(new() { input1, input2, weight });
+
+                var output1 = input1.mm(weight.t());
+                var output2 = input2.mm(weight.t());
+
+                return new() { output1, output2 };
             }
         }
         class TwoInputLinearFunction : torch.autograd.MultiTensorFunction<TwoInputLinearFunction>
