@@ -91,7 +91,16 @@ variable_list CSharpNode::apply(variable_list&& inputs) {
         converted_inputs.push_back(ResultTensor(t));
 
     auto res = applyFunc(converted_inputs.data(), converted_inputs.size());
-    return toTensors<at::Tensor>(res.array, res.size);
+
+    variable_list output;
+    output.reserve(res.size);
+    for (int i = 0; i < res.size; i++) {
+        if (res.array[i] == nullptr)
+            output.emplace_back();
+        else output.emplace_back(*res.array[i]);
+    }
+
+    return output;
 }
 
 void deleteNode(CSharpNode* node) {
