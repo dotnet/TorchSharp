@@ -2,12 +2,7 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.101.5
-
-__Bug Fixes__:
-
-#1198: CUDA not available when calling backwards before using CUDA<br/>
-#1200: Bugs in torch.nn.AvgPool2d and torch.nn.AvgPool3d methods.<br/>
+## NuGet Version 0.101.6
 
 __API Changes__:
 
@@ -15,6 +10,12 @@ __API Changes__:
 #1201: How to access the attributes of a model?<br/>
 #1094: ScriptModule from Stream / ByteArray<br/>
 #1149: Implementation for `torch.autograd.functional.jacobian` to compute Jacobian of a function<br/>
+Implemenation for a custom `torch.autograd.Function` class<br/>
+
+__Bug Fixes__:
+
+#1198: CUDA not available when calling backwards before using CUDA<br/>
+#1200: Bugs in torch.nn.AvgPool2d and torch.nn.AvgPool3d methods.<br/>
 
 ## NuGet Version 0.101.5
 
