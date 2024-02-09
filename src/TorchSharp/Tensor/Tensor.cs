@@ -6507,6 +6507,9 @@ namespace TorchSharp
                 switch (t.dtype) {
                 default:
                     return t.ToMetadataString();
+                case ScalarType.Bool:
+                    if (top) sb.Append("bool ");
+                    break;
                 case ScalarType.Byte:
                     if (top) sb.Append("byte ");
                     break;
