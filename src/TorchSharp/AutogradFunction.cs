@@ -148,7 +148,7 @@ namespace TorchSharp
                 internal void SetNextEdges(List<Tensor> inputVars, bool isExecutable)
                 {
                     using var l = new PinnedArray<IntPtr>();
-                    THSAutograd_CSharpNode_setNextEdges(handle, l.CreateArrayWithSize(inputVars.Select(v => v?.handle ?? IntPtr.Zero).ToArray()), isExecutable);
+                    THSAutograd_CSharpNode_setNextEdges(handle, l.CreateArrayWithSize(inputVars.Select(v => v.Handle).ToArray()), isExecutable);
                     CheckForErrors();
                 }
 
@@ -166,10 +166,10 @@ namespace TorchSharp
                     using var outputArr = new PinnedArray<IntPtr>();
                     using var resultsArr = new PinnedArray<IntPtr>();
 
-                    var varsPtr = varsArr.CreateArrayWithSize(inputVars.Select(v => v?.handle ?? IntPtr.Zero).ToArray());
-                    var diffsPtr = diffArr.CreateArrayWithSize(_context.NonDifferentiableTensors.Select(v => v?.handle ?? IntPtr.Zero).ToArray());
-                    var dirtyPtr = diffArr.CreateArrayWithSize(_context.DirtyTensors.Select(v => v?.handle ?? IntPtr.Zero).ToArray());
-                    var outputPtr = outputArr.CreateArrayWithSize(outputs.Select(v => v?.handle ?? IntPtr.Zero).ToArray());
+                    var varsPtr = varsArr.CreateArrayWithSize(inputVars.Select(v => v.Handle).ToArray());
+                    var diffsPtr = diffArr.CreateArrayWithSize(_context.NonDifferentiableTensors.Select(v => v.Handle).ToArray());
+                    var dirtyPtr = diffArr.CreateArrayWithSize(_context.DirtyTensors.Select(v => v.Handle).ToArray());
+                    var outputPtr = outputArr.CreateArrayWithSize(outputs.Select(v => v.Handle).ToArray());
 
                     THSAutograd_Function_wrapOutputs(varsPtr, diffsPtr, dirtyPtr, outputPtr, isExecutable ? handle : new(), resultsArr.CreateArray);
                     CheckForErrors();
@@ -230,14 +230,20 @@ namespace TorchSharp
                         // 1] The number of returned output items must be the same as the input
                         if (output.Count != _isVariableInput.Count)
                             throw new NotImplementedException($"Function {Function<T>.Instance.Name} returned an incorrect number of gradients (expected {_isVariableInput.Count}), got {output.Count}");
-                        // 2] The valid tensors positions should match the variable inputs
-                        for (int i = 0; i < output.Count; i++) {
-                            if (!_isVariableInput[i] && output[i] is not null && !output[i].IsInvalid)
-                                throw new NotImplementedException($"Function {Function<T>.Instance.Name} returned a gradient different that is defined at position {i + 1}, but the corresponding forward input was not a Tensor");
-                        }
 
+                        // 2] The valid tensors positions should match the variable inputs
+                        var returnValue = new List<Tensor>();
+                        for (int i = 0; i < output.Count; i++) {
+                            if (!_isVariableInput[i]) {
+                                if (output[i] is not null && !output[i].IsInvalid)
+                                    throw new NotImplementedException($"Function {Function<T>.Instance.Name} returned a gradient different that is defined at position {i + 1}, but the corresponding forward input was not a Tensor");
+                                continue;
+                            }
+                            returnValue.Add(output[i]);
+                        }
+                        
                         // Convert back to C++ array
-                        return _applyFuncReturnArray.CreateArrayWithSize(output.Where(t => t is not null).Select(p => p.handle).ToArray());
+                        return _applyFuncReturnArray.CreateArrayWithSize(returnValue.Select(p => p?.handle ?? IntPtr.Zero).ToArray());
                     }
                 }
 
