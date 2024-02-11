@@ -48,7 +48,8 @@ namespace TorchSharp
             /// <param name="data">One dimensional <c>uint8</c> <cref>Tensor</cref>.</param>
             public static void write_file(string filename, Tensor data)
             {
-                File.WriteAllBytes(filename, data.bytes.ToArray());
+                using var stream = File.OpenWrite(filename);
+                data.WriteBytesToStream(stream);
             }
 
             /// <summary>
@@ -58,6 +59,7 @@ namespace TorchSharp
             /// <param name="data">One dimensional <c>uint8</c> <cref>Tensor</cref>.</param>
             public static async void write_file_async(string filename, Tensor data)
             {
+                // Currently limited to 2GB - should we duplicate the code for WriteBytesToStream using async ops?
                 using (FileStream stream = File.Open(filename, FileMode.OpenOrCreate)) {
                     await stream.WriteAsync(data.bytes.ToArray(), 0, (int)data.shape[0]);
                 }

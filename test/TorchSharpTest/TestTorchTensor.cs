@@ -8269,5 +8269,111 @@ namespace TorchSharp
                 }
             }
         }
+
+
+        [Fact(Skip = "Very heavy on the compute")]
+        public void TestSaveAndLoadLarger2GBTensor()
+        {
+            var tensor = torch.rand((long)int.MaxValue + 128, device: torch.CPU);
+
+            var tempFile = Path.GetTempFileName();
+            try {
+                // Save to memory
+                using (var fs = File.OpenWrite(tempFile))
+                    tensor.Save(fs);
+
+                // Create a new copy of zeros
+                var copyTensor = torch.zeros_like(tensor, device: torch.CPU);
+
+                // Read it in
+                using (var fs = File.OpenRead(tempFile))
+                    copyTensor.Load(new BinaryReader(fs));
+
+                Assert.Equal(tensor.npstr(), copyTensor.npstr());
+            } finally {
+                File.Delete(tempFile);
+            }
+        }
+
+        [Fact(Skip = "Very heavy on the compute")]
+        public void TestSaveAndLoadLarger2GBTensorCUDA()
+        {
+            if (torch.cuda.is_available()) {
+                var tensor = torch.rand((long)int.MaxValue + 128, device: torch.CUDA);
+
+                var tempFile = Path.GetTempFileName();
+                try {
+                    // Save to memory
+                    using (var fs = File.OpenWrite(tempFile))
+                        tensor.Save(fs);
+
+                    // Create a new copy of zeros
+                    var copyTensor = torch.zeros_like(tensor, device: torch.CUDA);
+
+                    // Read it in
+                    using (var fs = File.OpenRead(tempFile))
+                        copyTensor.Load(new BinaryReader(fs));
+
+                    Assert.Equal(tensor.npstr(), copyTensor.npstr());
+                } finally {
+                    File.Delete(tempFile);
+                }
+            }
+        }
+
+
+        [Fact(Skip = "Very heavy on the compute")]
+        public void TestSaveAndLoadModuleWithLarger2GBTensor()
+        {
+            // Create a sequential with a parameter slightly larger than 2GB
+            var seq = nn.Sequential(("lin1", torch.nn.Linear(int.MaxValue / 2048, 2049, false)));
+
+            var tempFile = Path.GetTempFileName();
+            try {
+                // Save to memory
+                using (var fs = File.OpenWrite(tempFile))
+                    seq.save(fs);
+
+                // Create a new sequence, and make sure it is equal
+                var copySeq = nn.Sequential(("lin1", torch.nn.Linear(int.MaxValue / 2048, 2049, false)));
+
+                // Read it in
+                using (var fs = File.OpenRead(tempFile))
+                    copySeq.load(fs);
+
+                // Compare results
+                Assert.Equal(copySeq.parameters().First().npstr(), seq.parameters().First().npstr());
+            } finally {
+                File.Delete(tempFile);
+            }
+        }
+
+        [Fact(Skip = "Very heavy on the compute")]
+        public void TestSaveAndLoadModuleWithLarger2GBTensorCUDA()
+        {
+            if (torch.cuda.is_available()) {
+                // Create a sequential with a parameter slightly larger than 2GB
+                var seq = nn.Sequential(("lin1", torch.nn.Linear(int.MaxValue / 2048, 2049, false))).cuda();
+
+                var tempFile = Path.GetTempFileName();
+                try {
+                    // Save to memory
+                    using (var fs = File.OpenWrite(tempFile))
+                        seq.save(fs);
+
+                    // Create a new sequence, and make sure it is equal
+                    var copySeq = nn.Sequential(("lin1", torch.nn.Linear(int.MaxValue / 2048, 2049, false))).cuda();
+
+                    // Read it in
+                    using (var fs = File.OpenRead(tempFile))
+                        copySeq.load(fs);
+
+                    // Compare results
+                    Assert.Equal(copySeq.parameters().First().npstr(), seq.parameters().First().npstr());
+                } finally {
+                    File.Delete(tempFile);
+                }
+            }
+        }
     }
 }

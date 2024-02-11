@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -401,6 +402,76 @@ namespace TorchSharp
                     if (dotnetType != typeof(System.Numerics.Complex))
                         throw new ArgumentException($"{dotnetType.Name} is not compatible with {dtype.ToString()}");
                     break;
+                }
+            }
+
+
+            /// <summary>
+            /// Writes the bytes of the tensor to a stream. Useful for when tensors are >2GB.
+            /// </summary>
+            /// <param name="stream">Stream to write the bytes to</param>
+            /// <param name="bufferSize">The buffer size to use when writing to the stream</param>
+            public void WriteBytesToStream(Stream stream, int bufferSize = 65_536)
+            {
+                // Validate, but passing 0 as the total size, since we don't need to validate the size
+                _validate(0);
+
+                long totalSize = NumberOfElements * ElementSize;
+                
+                unsafe {
+                    var ptr = NativeMethods.THSTensor_data(handle);
+                    if (ptr == IntPtr.Zero) { CheckForErrors(); }
+
+                    // NOTE: there is no safety here in this loop.
+                    // Read in the buffer N bytes at a time, and write them out
+                    byte[] buffer = new byte[bufferSize];
+                    while (totalSize > 0) {
+                    // Read in the current buffer size
+                    int curBufferSize = (int)Math.Min(totalSize, bufferSize);
+                        var span = new Span<byte>((void*)ptr, curBufferSize);
+                        span.CopyTo(buffer);
+
+                        // Write it out
+                        stream.Write(buffer, 0, curBufferSize);
+
+                        // Increment our pointer and decrease the total size of elements we have to write
+                        ptr += curBufferSize;
+                        totalSize -= curBufferSize;
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Reads the bytes of the tensor from a stream.
+            /// </summary>
+            /// <param name="stream">Stream to read the bytes from</param>
+            /// <param name="bufferSize">The buffer size to use when reading from the stream</param>
+            public void ReadBytesFromStream(Stream stream, int bufferSize = 65_536)
+            {
+                long totalSize = NumberOfElements * ElementSize;
+
+                if (!is_contiguous()) throw new InvalidOperationException("SetBytes() called on non-contiguous tensor.");
+
+                unsafe {
+                    var ptr = NativeMethods.THSTensor_data(handle);
+                    if (ptr == IntPtr.Zero) { CheckForErrors(); }
+
+                    // NOTE: there is no safety here in this loop.
+                    // Read in the buffer N bytes at a time, and write them out
+                    byte[] buffer = new byte[bufferSize];
+                    while (totalSize > 0) {
+                        // Read in the current buffer size
+                        int curBufferSize = (int)Math.Min(totalSize, bufferSize);
+                        stream.Read(buffer, 0, curBufferSize);
+
+                        // Copy the contents over to the span
+                        var span = new Span<byte>((void*)ptr, curBufferSize);
+                        buffer.AsSpan(0, curBufferSize).CopyTo(span);
+                        
+                        // Increment our pointer and decrease the total size of elements we have to write
+                        ptr += curBufferSize;
+                        totalSize -= curBufferSize;
+                    }
                 }
             }
 

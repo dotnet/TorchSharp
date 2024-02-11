@@ -387,13 +387,9 @@ namespace TorchSharp
                                               // Then, the shape.
             writer.Encode(tensor.shape.Length); // 4 bytes
             foreach (var s in tensor.shape) writer.Encode(s); // n * 8 bytes
-                                                              // Then, the data
-#if NETSTANDARD2_0_OR_GREATER
-            // TODO: NETSTANDARD2_0_OR_GREATER Try to optimize to avoid the allocation
-            writer.Write(tensor.bytes.ToArray()); // ElementSize * NumberOfElements
-#else
-            writer.Write(tensor.bytes); // ElementSize * NumberOfElements
-#endif // NETSTANDARD2_0_OR_GREATER
+
+            // Then, the data
+            tensor.WriteBytesToStream(writer.BaseStream);
 
             if (copied) tensor.Dispose();
         }
@@ -441,37 +437,28 @@ namespace TorchSharp
             // Then, the shape
             var shLen = reader.Decode();
             long[] loadedShape = new long[shLen];
-
-            long totalSize = 1;
             for (int i = 0; i < shLen; ++i) {
                 loadedShape[i] = reader.Decode();
-                totalSize *= loadedShape[i];
             }
 
             if (!skip && !loadedShape.SequenceEqual(tensor.shape))
                 // We only care about this if the bytes will be written to the tensor.
                 throw new ArgumentException("Mismatched tensor shape while loading. Make sure that the model you are loading into is exactly the same as the origin.");
 
-            //
-            // TODO: Fix this so that you can read large tensors. Right now, they are limited to 2GB
-            //
-            if (totalSize > int.MaxValue)
-                throw new NotImplementedException("Loading tensors larger than 2GB");
-
-            // This needs to be done even if the tensor is skipped, since we have to advance the input stream.
-            var bytes = reader.ReadBytes((int)(totalSize * tensor.ElementSize));
-
             if (!skip) {
+                using var d = torch.no_grad(); // so that we can perform operations on leaf tensors
+
                 var device = tensor.device;
                 if (device.type != DeviceType.CPU) {
-                    using var copy = tensor.to(CPU);
-                    copy.bytes = bytes;
-                    using var moved = copy.to(device);
-                    tensor.set_(moved);
-                }
-                else {
-                    tensor.bytes = bytes;
-                }
+                    using var temp = torch.zeros_like(tensor, device: torch.CPU);
+                    temp.ReadBytesFromStream(reader.BaseStream);
+
+                    tensor.copy_(temp);
+                } else {
+                    tensor.ReadBytesFromStream(reader.BaseStream);
+                }                
+            } else {
+                reader.BaseStream.Seek(tensor.NumberOfElements * tensor.ElementSize, System.IO.SeekOrigin.Current);
             }
         }
 
@@ -510,17 +497,9 @@ namespace TorchSharp
             var shLen = reader.Decode();
             long[] loadedShape = new long[shLen];
 
-            long totalSize = 1;
             for (int i = 0; i < shLen; ++i) {
                 loadedShape[i] = reader.Decode();
-                totalSize *= loadedShape[i];
             }
-
-            //
-            // TODO: Fix this so that you can read large tensors. Right now, they are limited to 2GB
-            //
-            if (totalSize > int.MaxValue)
-                throw new NotImplementedException("Loading tensors larger than 2GB");
 
             if (tensor is null) {
                 // If the tensor doesn't exist, initialize by zeros unless
@@ -533,15 +512,19 @@ namespace TorchSharp
                 throw new ArgumentException("Mismatched tensor shape while loading. Make sure that the model you are loading into is exactly the same as the origin.");
             }
 
-            // This needs to be done even if the tensor is skipped, since we have to advance the input stream.
-            var bytes = reader.ReadBytes((int)(totalSize * tensor.ElementSize));
-
             if (!skip) {
+                using var d = torch.no_grad(); // so that we can perform operations on leaf tensors
+
                 var device = tensor.device;
-                if (device.type != DeviceType.CPU)
-                    tensor = tensor.to(CPU, disposeAfter: true); 
-                tensor.bytes = bytes;
-                tensor = tensor.to(device, disposeAfter: true);
+                if (device.type != DeviceType.CPU) {
+                    using var temp = torch.zeros_like(tensor, device: torch.CPU);
+                    temp.ReadBytesFromStream(reader.BaseStream);
+                    tensor.copy_(temp);
+                } else {
+                    tensor.ReadBytesFromStream(reader.BaseStream);
+                }
+            } else {
+                reader.BaseStream.Seek(tensor.NumberOfElements * tensor.ElementSize, System.IO.SeekOrigin.Current);
             }
         }
 
