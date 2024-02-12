@@ -450,7 +450,9 @@ namespace TorchSharp
             {
                 long totalSize = NumberOfElements * ElementSize;
 
-                if (!is_contiguous()) throw new InvalidOperationException("SetBytes() called on non-contiguous tensor.");
+                // Validate that this tensor matches the conditions for reading the bytes - pass 0 as total size
+                // since we don't need to check that condition. 
+                _validate(0);
 
                 unsafe {
                     var ptr = NativeMethods.THSTensor_data(handle);
