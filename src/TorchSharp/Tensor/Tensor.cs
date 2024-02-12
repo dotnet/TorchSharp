@@ -411,7 +411,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="stream">Stream to write the bytes to</param>
             /// <param name="bufferSize">The buffer size to use when writing to the stream</param>
-            public void WriteBytesToStream(Stream stream, int bufferSize = 65_536)
+            public void WriteBytesToStream(Stream stream, int bufferSize = 1024)
             {
                 // Validate, but passing 0 as the total size, since we don't need to validate the size
                 _validate(0);
@@ -446,7 +446,7 @@ namespace TorchSharp
             /// </summary>
             /// <param name="stream">Stream to read the bytes from</param>
             /// <param name="bufferSize">The buffer size to use when reading from the stream</param>
-            public void ReadBytesFromStream(Stream stream, int bufferSize = 65_536)
+            public void ReadBytesFromStream(Stream stream, int bufferSize = 1024)
             {
                 long totalSize = NumberOfElements * ElementSize;
 
