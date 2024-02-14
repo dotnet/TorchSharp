@@ -509,7 +509,7 @@ namespace TorchSharp
                     foreach (var key in source.Keys) {
                         if (skip.Contains(key)) continue;
                         if (destination.ContainsKey(key)) {
-                            destination[key].bytes = source[key].bytes;
+                            destination[key].copy_(source[key]);
                         }
                     }
 
