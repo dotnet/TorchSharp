@@ -521,11 +521,8 @@ namespace TorchSharp
                     throw new NotImplementedException("Loading tensors larger than 2GB");
 
                 var tensor = torch.empty(loadedShape, dtype: type);
-
-                var bytes = reader.ReadBytes((int)(totalSize * type.ElementSize()));
-
-                tensor.bytes = bytes;
-
+                tensor.ReadBytesFromStream(reader.BaseStream);
+                
                 return tensor;
             }
 
