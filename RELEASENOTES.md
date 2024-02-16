@@ -6,7 +6,7 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __API Changes__:
 
-#1219: Added support for loading and saving tensors that are >2GB. 
+#1219: Added support for loading and saving tensors that are >2GB.<br/> 
 
 ## NuGet Version 0.101.6
 
