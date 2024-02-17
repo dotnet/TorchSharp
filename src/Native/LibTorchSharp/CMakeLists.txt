@@ -64,7 +64,7 @@ add_library(LibTorchSharp SHARED ${SOURCES} ${RESOURCES})
 
 target_link_libraries(LibTorchSharp ${TORCH_LIBRARIES})
 
-set_property(TARGET LibTorchSharp PROPERTY CXX_STANDARD 14)
+set_property(TARGET LibTorchSharp PROPERTY CXX_STANDARD 17)
 
 if(APPLE)
     set_target_properties(LibTorchSharp PROPERTIES INSTALL_RPATH "@loader_path;@executable_path;")

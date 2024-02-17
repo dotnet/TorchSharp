@@ -794,6 +794,15 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+            public Tensor to(torch.Device device, ScalarType type, bool non_blocking)
+            {
+                torch.InitializeDevice(device);
+                var res = NativeMethods.THSTensor_to_type_and_device_and_non_blocking(Handle, (sbyte)type, (int)device.type, device.index, non_blocking);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+                return new Tensor(res);
+            }
+
             /// <summary>
             /// Cast the tensor to the given element type.
             /// </summary>

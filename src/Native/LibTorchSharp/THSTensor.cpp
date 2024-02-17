@@ -1836,6 +1836,21 @@ Tensor THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, con
     );
 }
 
+/*Tensor THSTensor_device_and_non_blocking(const Tensor tensor, const int device_type, const int device_index, const bool non_blocking)
+{
+    CATCH_RETURN_Tensor(
+        auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
+    res = ResultTensor(tensor->to(device, non_blocking, at::ScalarType(scalar_type), false));
+    );
+}*/
+Tensor THSTensor_to_type_and_device_and_non_blocking(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index,const bool non_blocking)
+{
+    CATCH_RETURN_Tensor(
+        auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
+    res = ResultTensor(tensor->to(device, non_blocking, at::ScalarType(scalar_type), false));
+    );
+}
+
 Tensor THSTensor_triu(const Tensor tensor, const int64_t diagonal, const bool inplace)
 {
     CATCH_TENSOR(inplace ? tensor->triu_(diagonal) : tensor->triu(diagonal));

@@ -406,7 +406,6 @@ namespace TorchSharp
 
         public static partial class cuda
         {
-
             /// This must be a separate method to the failure to bind DllImport THSTorchCuda_is_available
             /// is not raised as early as a DllImportException
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
@@ -475,6 +474,30 @@ namespace TorchSharp
             {
                 TryInitializeDeviceType(device?.type ?? DeviceType.CUDA);
                 THSTorchCuda_synchronize(device?.index ?? -1);
+            }
+
+            public static bool is_bf16_supported()
+            {
+                //TODO IMPLEMENT: torch.cuda.current_device() https://github.com/pytorch/pytorch/blob/a4cc6b85dc14d5895499f89f39181c00196d336e/torch/cuda/__init__.py#L153
+                if (int.TryParse(cudaVersion.Split('.')[0], out int res)){
+
+                    //TODO: Implement get device properties
+                    //WARNING: Need Major compute capability version https://github.com/pytorch/pytorch/blob/a4cc6b85dc14d5895499f89f39181c00196d336e/torch/cuda/__init__.py#L161
+                    if (res >= 11)
+                        return true;
+                }
+
+                return check_bf16_tensor_supported(torch.CUDA);
+            }
+
+            private static bool check_bf16_tensor_supported(torch.Device dev)
+            {
+                try {
+                    var va = torch.tensor(new float[] { 1.0f }, dtype: torch.bfloat16, device: dev);
+                    return true;
+                } catch {
+                    return false;
+                }
             }
         }
 
