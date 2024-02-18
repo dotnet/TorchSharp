@@ -9,6 +9,15 @@ namespace TorchSharp
         {
             return THSTorch_is_autocast_cache_enabled();
         }
+
+        public static bool is_autocast_enabled(Device device)
+        {
+            if(device.type == DeviceType.CPU)
+                return THSTorch_is_autocast_cpu_enabled();
+            if(device.type == DeviceType.CUDA)
+                return THSTorch_is_autocast_gpu_enabled();
+            return THSTorch_is_autocast_cache_enabled();
+        }
         public static bool is_autocast_cpu_enabled()
         {
             return THSTorch_is_autocast_cpu_enabled();
@@ -26,6 +35,14 @@ namespace TorchSharp
             return THSTorch_is_autocast_hpu_enabled();
         }
 
+        public static ScalarType get_autocast_dtype(Device device)
+        {
+            if (device.type == DeviceType.CPU)
+                return get_autocast_cpu_dtype();
+            if (device.type == DeviceType.CUDA)
+                return get_autocast_gpu_dtype();
+            return ScalarType.Float32;
+        }
         public static ScalarType get_autocast_cpu_dtype()
         {
             return (ScalarType)THSTorch_get_autocast_cpu_dtype();

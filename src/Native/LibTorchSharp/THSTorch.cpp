@@ -375,7 +375,7 @@ int8_t THSTorch_get_autocast_gpu_dtype()
 {
     //TODO: Implement AUTOCAST AMP AND GRADSCALER
 
-    //INFO: Enter/Exit function of autocast_mode not need to do in C/C++ only in C# with Disposable C# Can handle all of that function (if exists)
+    //INFO: Enter/Exit function of autocast_mode not need to do in C/C++ only in C# with Disposable can handle all of that function (if exists)
     //https://github.com/pytorch/pytorch/blob/main/torch/amp/autocast_mode.py
 
 
@@ -395,7 +395,7 @@ int THSTorch_autocast_increment_nesting()
     return at::autocast::increment_nesting();
 }
 
-int THSTorch_autocast_decremental_nesting()
+int THSTorch_autocast_decrement_nesting()
 {
     return at::autocast::decrement_nesting();
 }

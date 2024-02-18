@@ -4,7 +4,7 @@
 #include <string>
 
 #include "torch/torch.h"
-
+#include <ATen/autocast_mode.h>
 extern thread_local char *torch_last_err;
 
 typedef torch::Tensor *Tensor;
@@ -59,8 +59,21 @@ struct TensorArray {
 // Return undefined tensors as nullptr to C#
 inline Tensor ResultTensor(const at::Tensor & res)
 {
-    if (res.defined())
+    if (res.defined()) {
+        /*at::Tensor* resT = new torch::Tensor(res);
+        if (at::autocast::is_autocast_cache_enabled()){
+            if (res.is_cuda()) {
+                ::std::cout << "IS CUDA" << std::endl;
+                resT->to(at::autocast::get_autocast_gpu_dtype());
+            }
+            if (res.is_cpu()) {
+                ::std::cout << "IS CPU" << std::endl;
+                resT->to(at::autocast::get_autocast_cpu_dtype());
+            }
+        }
+        return resT;*/
         return new torch::Tensor(res);
+    }
     else
         return nullptr;
 }
