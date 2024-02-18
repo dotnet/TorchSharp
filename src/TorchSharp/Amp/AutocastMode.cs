@@ -9,9 +9,9 @@ namespace TorchSharp.Amp
     public class AutocastMode : IDisposable
     {
         private bool Enabled, Prev;
-        private torch.ScalarType Dtype;
-        private torch.ScalarType fast_dtype;
-        private torch.Device Device;
+        //private torch.ScalarType Dtype = torch.ScalarType.Float32;
+        private torch.ScalarType fast_dtype = torch.ScalarType.Float32;
+        private torch.Device Device = new torch.Device(DeviceType.CUDA);
         public AutocastMode(torch.Device dev, torch.ScalarType? dtype = null, bool enabled=true, bool? cache_enabled = null)
         {
             fast_dtype = dtype.Value;

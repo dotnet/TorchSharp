@@ -272,4 +272,3 @@ packages/
 *.code-workspace
 /.idea
 /test/TorchSharpTest/exportsd.py
-/src/TorchSharp/TorchSharp.csproj

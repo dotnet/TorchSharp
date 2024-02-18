@@ -1,0 +1,88 @@
+<Project>
+  <!-- Implicit top import -->
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+      <TargetFrameworks>netstandard2.0</TargetFrameworks>
+      <LangVersion>9.0</LangVersion>
+      <IncludeInPackage>TorchSharp</IncludeInPackage>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+      <UseMLCodeAnalyzer>false</UseMLCodeAnalyzer>
+      <UseStyleCopAnalyzer>false</UseStyleCopAnalyzer>
+      <IsPackable>false</IsPackable>
+      <DefineConstants>$(DefineConstants);LIBTORCH_$(LibTorchPackageVersion.Replace('.', '_'));CUDA_$(CudaVersionDot.Replace('.', '_'))</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="TorchVision\**" />
+    <EmbeddedResource Remove="TorchVision\**" />
+    <None Remove="TorchVision\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Tensor\TensorTyped.tt" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
+    <Compile Remove="netstandard.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.21.9" />
+    <PackageReference Include="SharpZipLib" Version="1.4.0" />
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.6" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Tensor\TensorTyped.generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TensorTyped.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+
+  <PropertyGroup>
+      <PackDependsOn>
+          $(PackDependsOn);
+          RealPack
+      </PackDependsOn>
+      <SignAssembly>True</SignAssembly>
+      <AssemblyOriginatorKeyFile>..\..\build\TorchSharp.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <!-- Trigger the download+placement of the redist bits and the build of the C++ project -->
+  <Target Name="BuildNativeLibTorch" BeforeTargets="BeforeBuild">
+    <Message Importance="High" Text="Using VersionSuffix = $(VersionSuffix)" />
+    <Message Importance="High" Text="Using Version = $(Version)" />
+    <MSBuild Projects="..\Redist\libtorch-cuda-$(CudaVersionDot)\libtorch-cuda-$(CudaVersionDot).proj" Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'  AND '$(SkipCuda)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
+
+    <MSBuild Projects="..\Redist\libtorch-cpu\libtorch-cpu.proj" Condition="'$(BuildingInsideVisualStudio)'!='true' AND '$(SkipNative)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
+
+    <MSBuild Projects="..\Native\build.proj" Condition="'$(SkipNative)' != 'true'" RemoveProperties="TargetFramework" Targets="Build" />
+  </Target>
+
+  <Target Name="RealPack">
+    <MSBuild Projects="..\..\pkg\pack.proj" Targets="Pack" />
+  </Target>
+
+</Project>

@@ -1847,7 +1847,7 @@ Tensor THSTensor_to_type_and_device_and_non_blocking(const Tensor tensor, int8_t
 {
     CATCH_RETURN_Tensor(
         auto device = c10::Device((c10::DeviceType)device_type, (c10::DeviceIndex)device_index);
-    res = ResultTensor(tensor->to(device, non_blocking, at::ScalarType(scalar_type), false));
+        res = ResultTensor(tensor->to(device, at::ScalarType(scalar_type),non_blocking, false));
     );
 }
 
