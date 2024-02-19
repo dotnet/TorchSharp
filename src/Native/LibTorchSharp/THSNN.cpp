@@ -1337,13 +1337,48 @@ Tensor THSNN_scaled_dot_product_attention(const Tensor query, const Tensor key, 
 }
 
 void THSNN_Print_Module(const NNModule module) {
-    if (auto* conv = (*module)->as<torch::nn::Conv2d>())
+    std::ostringstream oss;
+    const std::string name = module->get()->name();
+    oss << name << "(";
+    if (auto* conv2 = (*module)->as<torch::nn::Conv2d>())
     {
-        auto opt = conv->options;
-        ::std::cout << conv->name() << "(" << opt.in_channels() << "," << opt.out_channels() << ", K=" << opt.kernel_size() <<", S=" << opt.stride() << ")" << std::endl; //TODO: Add padding
+        const auto opt = &conv2->options;
+        oss << opt->in_channels() << "," << opt->out_channels() << ", K=" << opt->kernel_size();
+        oss << ", S=" << opt->stride() << ", P=" << opt->padding().index() << ", D=" << opt->dilation();
+        oss << ", G=" << opt->groups() << ", B=" << opt->bias();
     }
-    if (auto* bn = (*module)->as<torch::nn::BatchNorm2d>()) {
-        auto opt = bn->options;
-        ::std::cout << bn->name() << "(" << opt.num_features() << ", Eps=" << opt.eps() << ", M=" << (opt.momentum().has_value() ? opt.momentum().value() : 0) << ")" << std::endl; //TODO: Add another data
+    if (auto* bn2 = (*module)->as<torch::nn::BatchNorm2d>()) {
+        const auto opt = &bn2->options;
+        oss << opt->num_features() << ", Eps=" << opt->eps() << ", M=" << (opt->momentum().has_value() ? std::to_string(opt->momentum().value()) : "NaN");
+        oss << ", A=" << opt->affine() << ", T=" << opt->track_running_stats();
     }
+    if(auto* ln = (*module)->as<torch::nn::LayerNorm>()) //This not printed because the TorchSharp not have a ctor of LayerNorm
+    {
+        const auto opt = ln->options;
+        oss << opt.eps() << ", Elem=" << opt.elementwise_affine() << ", N=[";
+        for(int64_t i=0;i< static_cast<int64_t>(opt.normalized_shape().size());i++)
+            oss << opt.normalized_shape()[i] << ((i == static_cast<int64_t>(opt.normalized_shape().size()-1)) ? "]" : ",");
+    }
+    if (const auto* d2 = (*module)->as<torch::nn::Dropout2d>()) //This not printed because the TorchSharp not have a ctor of Dropout2d
+    {
+        auto opt = d2->options;
+        oss << opt.p() << ", Inplace=" << opt.inplace();
+    }
+    if(auto* avp2 = (*module)->as<torch::nn::AdaptiveAvgPool2d>())
+    {
+        const auto opt = &avp2->options;
+        oss << "[";
+        for (int64_t i = 0; i < opt->output_size().size(); i++)
+            oss << opt->output_size()->at(i).value() << ((i == opt->output_size().size() - 1) ? "]" : ",");
+    }
+    if (auto* amp2 = (*module)->as<torch::nn::AdaptiveMaxPool2d>())
+    {
+        const auto opt = &amp2->options;
+        oss << "[";
+        for (int64_t i = 0; i < opt->output_size().size(); i++)
+            oss << opt->output_size()->at(i).value() << ((i == opt->output_size().size() - 1) ? "]" : ",");
+    }
+
+    oss << ")";
+    std::cout << oss.str() << std::endl;
 }

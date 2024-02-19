@@ -18,8 +18,8 @@ namespace TorchSharp
         /// </summary>
         public sealed class LayerNorm : torch.nn.Module<Tensor, Tensor>
         {
-            private long[] _normalized_shape;
-            private double _eps;
+            internal long[] _normalized_shape;
+            internal double _eps;
 
             internal LayerNorm(long[] normalized_shape, double eps, bool elementwise_affine, bool bias, Device? device, ScalarType? dtype) : base(nameof(LayerNorm))
             {
