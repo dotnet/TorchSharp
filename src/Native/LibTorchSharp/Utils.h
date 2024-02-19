@@ -2,7 +2,6 @@
 #pragma once
 
 #include <string>
-
 #include "torch/torch.h"
 #include <ATen/autocast_mode.h>
 extern thread_local char *torch_last_err;

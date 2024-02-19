@@ -1335,3 +1335,15 @@ Tensor THSNN_scaled_dot_product_attention(const Tensor query, const Tensor key, 
 
     CATCH_TENSOR(torch::scaled_dot_product_attention(*query, *key, *value, mask, p, casual));
 }
+
+void THSNN_Print_Module(const NNModule module) {
+    if (auto* conv = (*module)->as<torch::nn::Conv2d>())
+    {
+        auto opt = conv->options;
+        ::std::cout << conv->name() << "(" << opt.in_channels() << "," << opt.out_channels() << ", K=" << opt.kernel_size() <<", S=" << opt.stride() << ")" << std::endl; //TODO: Add padding
+    }
+    if (auto* bn = (*module)->as<torch::nn::BatchNorm2d>()) {
+        auto opt = bn->options;
+        ::std::cout << bn->name() << "(" << opt.num_features() << ", Eps=" << opt.eps() << ", M=" << (opt.momentum().has_value() ? opt.momentum().value() : 0) << ")" << std::endl; //TODO: Add another data
+    }
+}

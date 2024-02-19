@@ -1318,6 +1318,9 @@ namespace TorchSharp.PInvoke
 
         [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_MaxUnpool2d_ctor(IntPtr pkernelSize, int kernelSizeLength, IntPtr pstrides, int stridesLength, IntPtr pPadding, int paddingLength, out IntPtr pBoxedModule);
+
+        [DllImport("LibTorchSharp")]
+        internal static extern void THSNN_Print_Module(torch.nn.Module.HType module);
     }
 #pragma warning restore CA2101
 }

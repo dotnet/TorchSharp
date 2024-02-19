@@ -2,6 +2,7 @@
 #nullable enable
 using System;
 using System.Diagnostics.Contracts;
+using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
@@ -79,5 +80,10 @@ namespace TorchSharp
 
         [Obsolete("not implemented", true)]
         public static void _assert(Func<bool> condition, string message) => throw new NotImplementedException();
+
+        public static void PrintModule(torch.nn.Module module)
+        {
+            NativeMethods.THSNN_Print_Module(module.handle);
+        }
     }
 }
