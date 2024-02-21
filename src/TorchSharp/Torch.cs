@@ -16,8 +16,8 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_2_1_0_1
-        const string libtorchPackageVersion = "2.1.0.1";
+#if LIBTORCH_2_2_0_1
+        const string libtorchPackageVersion = "2.2.0.1";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -27,10 +27,12 @@ namespace TorchSharp
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
 
+        static string archSuffix = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
+
         static string nativeRid =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "win-x64" :
-            RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "linux-x64" :
-            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "osx-x64" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"win-{archSuffix}" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? $"linux-{archSuffix}" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? $"osx-{archSuffix}" :
             "any";
 
         static string nativeGlob =>
@@ -109,7 +111,6 @@ namespace TorchSharp
                         ok = TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("nvfuser_codegen", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc-builtins64_121", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);

@@ -19,7 +19,7 @@
     <SourceDir>$(RepoRoot)src/</SourceDir>
     <PkgDir>$(RepoRoot)pkg/</PkgDir>
 
-    <LibTorchPackageVersion>2.1.0.1</LibTorchPackageVersion>
+    <LibTorchPackageVersion>2.2.0.1</LibTorchPackageVersion>
 
     <!-- when building on local machines the massive downloads get placed up one directory -->
     <!-- so we can clean without triggering a re-download-->
@@ -52,7 +52,7 @@
 
     <TargetRuntimeID Condition="'$(TargetOS)' == 'windows'">win-x64</TargetRuntimeID>
     <TargetRuntimeID Condition="'$(TargetOS)' == 'linux'">linux-x64</TargetRuntimeID>
-    <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">osx-x64</TargetRuntimeID>
+    <TargetRuntimeID Condition="'$(TargetOS)' == 'mac'">osx-$(TargetArchitecture)</TargetRuntimeID>
 
     <!-- on windows separate debug binaries of LibTorch are available-->
     <LibTorchDebug Condition="('$(NativeConfiguration)' == 'Debug') AND '$(TargetOS)' == 'windows'">-debug</LibTorchDebug>
@@ -78,7 +78,7 @@
   <!-- use stable versions for libtorch packages based on LibTorch version number scheme-->
   <!-- we manually update these -->
   <PropertyGroup Condition="'$(MSBuildProjectName.IndexOf(`libtorch-`))' != '-1'">
-    <LibTorchPackageVersion>2.1.0.1</LibTorchPackageVersion>
+    <LibTorchPackageVersion>2.2.0.1</LibTorchPackageVersion>
     <VersionPrefix>$(LibTorchPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
   </PropertyGroup>
@@ -131,7 +131,8 @@
     <LibTorchCudaLocalNameSuffix>cu$(CudaVersionNoDot)</LibTorchCudaLocalNameSuffix>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'windows'">libtorch-win-shared-with-deps$(LibTorchDebug)</LibTorchArchiveCoreName>
     <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'linux'">libtorch-shared-with-deps</LibTorchArchiveCoreName>
-    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac'">libtorch-macos</LibTorchArchiveCoreName>
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac' and '$(TargetArchitecture)' == 'arm64'">libtorch-macos-arm64</LibTorchArchiveCoreName>
+    <LibTorchArchiveCoreName Condition="'$(TargetOS)' == 'mac' and '$(TargetArchitecture)' == 'x64'">libtorch-macos-x86_64</LibTorchArchiveCoreName>
     <LibTorchCpuArchiveBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCpuArchiveNameSuffix)</LibTorchCpuArchiveBase>
     <LibTorchCudaArchiveBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCudaArchiveNameSuffix)</LibTorchCudaArchiveBase>
     <LibTorchCpuLocalBase>$(LibTorchArchiveCoreName)-$(LibTorchVersion)$(LibTorchCpuLocalNameSuffix)</LibTorchCpuLocalBase>

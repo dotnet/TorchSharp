@@ -38,7 +38,7 @@
     <File Include="libtorch\lib\torch_global_deps.dll" />
     <File Include="libtorch\lib\uv.dll" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetOS)' == 'mac'">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(TargetOS)' == 'mac'">
     <File Include="libtorch\lib\libbackend_with_compiler.dylib" />
     <File Include="libtorch\lib\libc10.dylib" />
     <File Include="libtorch\lib\libfbjni.dylib" />
@@ -47,25 +47,35 @@
     <File Include="libtorch\lib\libpytorch_jni.dylib" />
     <File Include="libtorch\lib\libshm.dylib" />
     <File Include="libtorch\lib\libtorch.dylib" />
+    <File Include="libtorch\lib\libtorchbind_test.dylib" />
     <File Include="libtorch\lib\libtorch_cpu.dylib" />
     <File Include="libtorch\lib\libtorch_global_deps.dylib" />
     <File Include="libtorch\lib\libtorch_python.dylib" />
-    <File Include="libtorch\lib\libtorchbind_test.dylib" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and '$(TargetOS)' == 'mac'">
+    <File Include="libtorch\lib\libc10.dylib" />
+    <File Include="libtorch\lib\libfbjni.dylib" />
+    <File Include="libtorch\lib\libpytorch_jni.dylib" />
+    <File Include="libtorch\lib\libshm.dylib" />
+    <File Include="libtorch\lib\libtorch.dylib" />
+    <File Include="libtorch\lib\libtorch_cpu.dylib" />
+    <File Include="libtorch\lib\libtorch_global_deps.dylib" />
+    <File Include="libtorch\lib\libtorch_python.dylib" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
     <File Include="libtorch\lib\libbackend_with_compiler.so" />
     <File Include="libtorch\lib\libc10.so" />
     <File Include="libtorch\lib\libfbjni.so" />
+    <File Include="libtorch\lib\libgomp-a34b3233.so.1" />
     <File Include="libtorch\lib\libjitbackend_test.so" />
     <File Include="libtorch\lib\libnnapi_backend.so" />
     <File Include="libtorch\lib\libpytorch_jni.so" />
     <File Include="libtorch\lib\libshm.so" />
     <File Include="libtorch\lib\libtorch.so" />
+    <File Include="libtorch\lib\libtorchbind_test.so" />
     <File Include="libtorch\lib\libtorch_cpu.so" />
     <File Include="libtorch\lib\libtorch_global_deps.so" />
     <File Include="libtorch\lib\libtorch_python.so" />
-    <File Include="libtorch\lib\libtorchbind_test.so" />
-    <File Include="libtorch\lib\libgomp-a34b3233.so.1" />
   </ItemGroup>
 
   <Target Name="DownloadArchive" Inputs="..\..\..\LICENSE" Outputs="$(DownloadedArchive);$(DownloadedLicenseFile)">

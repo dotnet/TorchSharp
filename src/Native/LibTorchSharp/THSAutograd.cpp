@@ -163,7 +163,7 @@ void THSAutograd_Function_wrapOutputs(TensorArray vars_, TensorArray nonDiff_, T
         dirty.insert(t);
     }
 
-    // Copied this function from custom_function.h
+    // Copied these functions from custom_function.h
     torch::autograd::_jvp_fn_t jvp_fn = [](const variable_list& inputs,
         const variable_list& gI) -> variable_list {
             TORCH_CHECK(
@@ -172,7 +172,11 @@ void THSAutograd_Function_wrapOutputs(TensorArray vars_, TensorArray nonDiff_, T
                 "Please open a feature request on GitHub if you need this.");
         };
 
-    auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {});
+    auto view_as_self_fn = [](const at::Tensor& x) -> at::Tensor {
+        return x.view_as(x);
+        };
+
+    auto res = torch::autograd::_wrap_outputs(vars, nonDiff, dirty, outputs, node.weak_ptr == nullptr || node.weak_ptr->expired() ? nullptr : node.weak_ptr->lock(), jvp_fn, {}, view_as_self_fn);
     auto sz = res.size();
 
     Tensor* result = allocator(sz);

@@ -49,7 +49,6 @@
     <NativeAssemblyReference Include="fbjni" Variant="cuda\" />
     <NativeAssemblyReference Include="libiomp5md" Variant="cuda\" />
     <NativeAssemblyReference Include="libiompstubs5md" Variant="cuda\" />
-    <NativeAssemblyReference Include="nvfuser_codegen" Variant="cuda\" />
     <NativeAssemblyReference Include="nvrtc64_120_0" Variant="cuda\" />
     <NativeAssemblyReference Include="nvrtc-builtins64_121" Variant="cuda\" />
     <NativeAssemblyReference Include="nvToolsExt64_1" Variant="cuda\" />
@@ -64,7 +63,19 @@
   </ItemGroup>
 
   <!-- Mac libtorch binary list used for examples and testing -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64'and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
+    <NativeAssemblyReference Include="c10" />
+    <NativeAssemblyReference Include="fbjni" />
+    <NativeAssemblyReference Include="pytorch_jni" />
+    <NativeAssemblyReference Include="shm" />
+    <NativeAssemblyReference Include="torch" />
+    <NativeAssemblyReference Include="torch_cpu" />
+    <NativeAssemblyReference Include="torch_global_deps" />
+    <NativeAssemblyReference Include="torch_python" />
+  </ItemGroup>
+
+  <!-- Mac libtorch binary list used for examples and testing -->
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="backend_with_compiler" />
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="fbjni" />
