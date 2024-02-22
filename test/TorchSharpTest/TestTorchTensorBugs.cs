@@ -1613,5 +1613,25 @@ namespace TorchSharp
             Assert.NotNull(module.ln.bias!.grad());
             
         }
+
+        [Fact]
+        public void ValidateLinearLR()
+        {
+            var lin = Linear(5, 5, hasBias: false);
+            var optim = torch.optim.SGD(lin.parameters(), 0.05);
+            var scheduler = torch.optim.lr_scheduler.LinearLR(optim, 0.5, 1.0, 4);
+
+            Assert.Equal(0.025, Math.Round(scheduler.get_last_lr().First(), 3));
+            scheduler.step();
+            Assert.Equal(0.03125, Math.Round(scheduler.get_last_lr().First(), 5));
+            scheduler.step();
+            Assert.Equal(0.0375, Math.Round(scheduler.get_last_lr().First(), 4));
+            scheduler.step();
+            Assert.Equal(0.04375, Math.Round(scheduler.get_last_lr().First(), 5));
+            scheduler.step();
+            Assert.Equal(0.05, Math.Round(scheduler.get_last_lr().First(), 2));
+            scheduler.step();
+            Assert.Equal(0.05, Math.Round(scheduler.get_last_lr().First(), 2));
+        }
     }
 }
