@@ -94,10 +94,8 @@
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="backend_with_compiler" />
     <NativeAssemblyReference Include="c10" />
-    <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="jitbackend_test" />
     <NativeAssemblyReference Include="nnapi_backend" />
-    <NativeAssemblyReference Include="pytorch_jni" />
     <NativeAssemblyReference Include="shm" />
     <NativeAssemblyReference Include="torch" />
     <NativeAssemblyReference Include="torch_cpu" />
