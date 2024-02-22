@@ -28,12 +28,12 @@ jobs:
     name: Ubuntu_x64
     # This reports the GLIB_ and GLIBCXX_ dependencies on the system which ends up getting baked into
     # the generated libTorchSharp.so (and partly determines which Linux systems that binary will
-    # be usable on), then installs clang-6.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
+    # be usable on), then installs clang-7.0 (LibTorch likes this for building C++ 14), then installs .NET 6.0
     prepScript:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
         sudo apt-get -y update &&
-        sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
+        sudo apt-get -y install clang-7.0 git cmake libunwind8 curl libomp-dev libomp5 &&
         wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
         sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&

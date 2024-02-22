@@ -102,7 +102,7 @@
     <NativeAssemblyReference Include="torch_global_deps" />
     <NativeAssemblyReference Include="torch_python" />
     <NativeAssemblyReference Include="torchbind_test" />
-    <NativeAssemblyReference Include="gomp-a34b3233" ExtraExtension=".1" />
+    <NativeAssemblyReference Include="gomp-98b21ff3" ExtraExtension=".1" />
   </ItemGroup>
 
   <Target Name="CopyNativeAssemblies"
