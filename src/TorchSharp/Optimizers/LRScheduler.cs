@@ -33,12 +33,6 @@ namespace TorchSharp
                         _verbose = verbose;
                         _base_lrs = optimizer.ParamGroups.Select(pg => pg.InitialLearningRate).ToList();
                         _last_lrs = optimizer.ParamGroups.Select(pg => pg.LearningRate).ToList();
-
-                        if (last_epoch == -1) {
-                            foreach (var pg in optimizer.ParamGroups) {
-                                pg.InitialLearningRate = pg.LearningRate;
-                            }
-                        }
                     }
 
                     /// <summary>
@@ -62,7 +56,7 @@ namespace TorchSharp
                         // NOTE: It is super-important to use the 'get_lr()' method no more than once per step(), since
                         //       for many LR schedulers, it will modify the internal state of the scheduler,
                         //       as well as that of the controlled optimizer.
-                        var lr = get_lr().ToList();
+                        var lr = (epoch.HasValue ? get_closed_form_lr() : get_lr()).ToList();
                         var pgs = _optimizer.ParamGroups.ToList();
 
                         for (int i = 0; i < _base_lrs.Count; i++) {
@@ -90,6 +84,11 @@ namespace TorchSharp
                     /// Compute the current learning rate for the scheduler.
                     /// </summary>
                     protected virtual IEnumerable<double> get_lr() => _optimizer.ParamGroups.Select(pg => pg.LearningRate);
+
+                    /// <summary>
+                    /// Computes the current closed-form learning rate.
+                    /// </summary>
+                    protected virtual IEnumerable<double> get_closed_form_lr() => get_lr();
 
                     /// <summary>
                     /// Return last computed learning rate by current scheduler.
@@ -243,6 +242,14 @@ namespace TorchSharp
                                     : _optimizer.ParamGroups.Select(pg => pg.LearningRate * _gamma);
                         }
 
+                        /// <summary>
+                        /// Computes the current closed-form learning rate.
+                        /// </summary>
+                        protected override IEnumerable<double> get_closed_form_lr()
+                        {
+                            return _base_lrs.Select(lr => lr * Math.Pow(_gamma, _last_epoch / _step_size));
+                        }
+
                         private int _step_size;
                         private double _gamma;
                     }
@@ -267,6 +274,7 @@ namespace TorchSharp
                         {
                             if (optimizer == null) throw new ArgumentNullException("optimizer");
                             _milestones = milestones;
+                            _sortedMilestones = _milestones.Distinct().OrderBy(v => v).ToList();
                             _gamma = gamma;
 
                             step();
@@ -283,7 +291,22 @@ namespace TorchSharp
                                 : _optimizer.ParamGroups.Select(pg => pg.LearningRate * _gamma);
                         }
 
+                        /// <summary>
+                        /// Computes the current closed-form learning rate.
+                        /// </summary>
+                        protected override IEnumerable<double> get_closed_form_lr()
+                        {
+                            var idx = _sortedMilestones.Count;
+                            for (; idx > 0;) {
+                                if (_sortedMilestones[idx - 1] <= _last_epoch) break;
+                                idx -= 1;
+                            }
+
+                            return _base_lrs.Select(lr => lr * Math.Pow(_gamma, idx));
+                        }
+
                         private IList<int> _milestones;
+                        private IList<int> _sortedMilestones;
                         private double _gamma;
                     }
 
@@ -327,6 +350,14 @@ namespace TorchSharp
                             }
                         }
 
+                        /// <summary>
+                        /// Computes the current closed-form learning rate.
+                        /// </summary>
+                        protected override IEnumerable<double> get_closed_form_lr()
+                        {
+                            return _base_lrs.Select(lr => lr * Math.Pow(1 - Math.Min(_total_iters, _last_epoch) / _total_iters, _power));
+                        }
+
                         private double _total_iters;
                         private int _power;
                     }
@@ -362,6 +393,14 @@ namespace TorchSharp
                             return (_last_epoch == 0)
                                     ? _optimizer.ParamGroups.Select(pg => pg.LearningRate)
                                     : _optimizer.ParamGroups.Select(pg => pg.LearningRate * _gamma);
+                        }
+
+                        /// <summary>
+                        /// Computes the current closed-form learning rate.
+                        /// </summary>
+                        protected override IEnumerable<double> get_closed_form_lr()
+                        {
+                            return _base_lrs.Select(lr => lr * Math.Pow(_gamma, _last_epoch));
                         }
 
                         private double _gamma;
@@ -406,6 +445,14 @@ namespace TorchSharp
                             }
                         }
 
+                        /// <summary>
+                        /// Computes the current closed-form learning rate.
+                        /// </summary>
+                        protected override IEnumerable<double> get_closed_form_lr()
+                        {
+                            return _base_lrs.Select(lr => lr * (_last_epoch >= _total_iters ? 1 : _factor));
+                        }
+
                         private double _factor;
                         private int _total_iters;
                     }
@@ -428,7 +475,7 @@ namespace TorchSharp
                         /// <param name="last_epoch">The index of last epoch. Default: -1.</param>
                         /// <param name="verbose"> If true, prints a message to stdout for each update. Default: false.</param>
                         /// <returns>A scheduler</returns>
-                        public LinearLR(Optimizer optimizer, double start_factor = 1.0 / 3, double end_factor = 5, int total_iters = 5, int last_epoch = -1, bool verbose = false) : base(optimizer, last_epoch, verbose)
+                        public LinearLR(Optimizer optimizer, double start_factor = 1.0 / 3, double end_factor = 1.0, int total_iters = 5, int last_epoch = -1, bool verbose = false) : base(optimizer, last_epoch, verbose)
                         {
                             if (optimizer == null) throw new ArgumentNullException("optimizer");
                             _start_factor = start_factor;
@@ -448,9 +495,17 @@ namespace TorchSharp
                             } else if (_last_epoch > _total_iters) {
                                 return _optimizer.ParamGroups.Select(pg => pg.LearningRate);
                             } else {
-                                var factor = (1 + (_end_factor - _start_factor)) / (_total_iters * _start_factor + (_last_epoch - 1) * (_end_factor - _start_factor));
+                                var factor = (1 + (_end_factor - _start_factor) / (_total_iters * _start_factor + (_last_epoch - 1) * (_end_factor - _start_factor)));
                                 return _optimizer.ParamGroups.Select(pg => pg.LearningRate * factor);
                             }
+                        }
+
+                        /// <summary>
+                        /// Computes the current closed-form learning rate.
+                        /// </summary>
+                        protected override IEnumerable<double> get_closed_form_lr()
+                        {
+                            return _base_lrs.Select(lr => lr * (_start_factor + (_end_factor - _start_factor) * Math.Min(_total_iters, _last_epoch) / _total_iters));
                         }
 
                         private double _start_factor;
@@ -478,7 +533,7 @@ namespace TorchSharp
 
                             _schedulers = schedulers.ToArray();
                             _milestones = milestones.ToArray();
-
+                            
                             foreach (var group in optimizer.ParamGroups) {
                                 group.LearningRate = group.InitialLearningRate;
                             }
@@ -552,6 +607,14 @@ namespace TorchSharp
                                 return _optimizer.ParamGroups.Select(pg => (1 + Math.Cos(Math.PI * _last_epoch / _T_max)) /
                                        (1 + Math.Cos(Math.PI * (_last_epoch - 1) / _T_max)) * (pg.LearningRate - _eta_min) + _eta_min);
                             }
+                        }
+
+                        /// <summary>
+                        /// Computes the current closed-form learning rate.
+                        /// </summary>
+                        protected override IEnumerable<double> get_closed_form_lr()
+                        {
+                            return _base_lrs.Select(lr => _eta_min + (lr - _eta_min) * (1 + Math.Cos(Math.PI * _last_epoch / _T_max)) / 2);
                         }
 
                         private double _T_max;

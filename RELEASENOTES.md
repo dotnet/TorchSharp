@@ -4,9 +4,18 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 ## NuGet Version 0.101.7
 
+__Breaking Changes__:
+
+The default value for the `end_factor` argument in the constructor for `LinearLR` was changed to 1.0 to match PyTorch.<br/>
+
 __API Changes__:
 
 #1219: Added support for loading and saving tensors that are >2GB.<br/> 
+
+__Bug Fixes__:
+
+Fixed LinearLR scheduler calculation with misplaced parentheses<br/>
+Added `get_closed_form_lr` to scheduler to match PyTorch behavior when specifying epoch in `.step()`<br/>
 
 ## NuGet Version 0.101.6
 
