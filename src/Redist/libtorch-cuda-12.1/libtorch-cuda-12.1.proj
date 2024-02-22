@@ -87,7 +87,7 @@
     <File Include= "libtorch\lib\libcaffe2_nvrtc.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcudart-9335f6a2.so.12" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcudnn.so.8" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libgomp-a34b3233.so.1" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libgomp-98b21ff3.so.1" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libjitbackend_test.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnnapi_backend.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvrtc-b51b459d.so.12" PackageSuffix="part1"  />
