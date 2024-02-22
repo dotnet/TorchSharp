@@ -8,6 +8,11 @@ __API Changes__:
 
 #1219: Added support for loading and saving tensors that are >2GB.<br/> 
 
+__Bug Fixes__:
+
+Fixed LinearLR scheduler calculation with misplaced parentheses<br/>
+Added `get_closed_form_lr` to scheduler to match PyTorch behavior when specifying epoch in `.step()`<br/>
+
 ## NuGet Version 0.101.6
 
 __API Changes__:
