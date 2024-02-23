@@ -77,15 +77,9 @@ elif command -v "clang-6.0" > /dev/null 2>&1; then
 elif command -v "clang-5.0" > /dev/null 2>&1; then
     export CC="$(command -v clang-5.0)"
     export CXX="$(command -v clang++-5.0)"
-elif command -v clang > /dev/null 2>&1; then
-    export CC="$(command -v clang)"
-    export CXX="$(command -v clang++)"
 else
     export CC="$(command -v clang)"
     export CXX="$(command -v clang++)"
-    # echo "Unable to find Clang Compiler"
-    # echo "Install clang-7.0, clang-6.0, or clang-5.0"
-    # exit 1
 fi
 
 # Specify path to be set for CMAKE_INSTALL_PREFIX.
@@ -101,7 +95,7 @@ OSName=$(uname -s)
 case $OSName in
     Darwin)
         
-        # PyTorch is specifyin options that require OpenMP support but AppleClang's  OpenMP support is lacking e.g. -fopenmp not supported
+        # PyTorch is specifying options that require OpenMP support but AppleClang's  OpenMP support is lacking e.g. -fopenmp not supported
         # See    https://github.com/oneapi-src/oneDNN/issues/591 for this potential workaround, though it may be better
         # to switch to brew clang.
         #LIBOMP=/usr/local/opt/libomp
