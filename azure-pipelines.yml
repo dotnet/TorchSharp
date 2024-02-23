@@ -179,6 +179,7 @@ jobs:
     vmImage: 'macos-latest'
   steps:
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true  /p:TargetOS=mac /t:Build /p:IncludeLibTorchCpuPackages=true
+    condition: eq(variables['BuildLibTorchPackages'], 'true')
     displayName: Download libtorch native binaries
 
   - script: dotnet build -c $(BuildConfig) src/TorchSharp/TorchSharp.csproj /p:SkipCuda=true /p:SkipTests=true 
