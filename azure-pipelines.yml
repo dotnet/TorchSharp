@@ -49,7 +49,7 @@ jobs:
     prepScript: echo "no prep needed"
     name: Windows_x64_NetCore
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetFxBuild=true -c
-    testScript: dotnet test /p:SkipCuda=true /p:SkipNetFxBuild=true --no-build --blame test\TorchSharpTest\TorchSharpTest.csproj -c
+    testScript: dotnet test /p:SkipCuda=true /p:SkipNetFxBuild=true --blame test\TorchSharpTest\TorchSharpTest.csproj -c
     pool:
       vmImage: 'windows-latest'
 
@@ -58,7 +58,7 @@ jobs:
     prepScript: echo "no prep needed"
     name: Windows_x64_NetFX
     buildScript: dotnet build /p:SkipCuda=true /p:SkipNetCoreBuild=true -c
-    testScript: dotnet test /p:SkipCuda=true /p:SkipNetCoreBuild=true --no-build --blame test\TorchSharpTest\TorchSharpTest.csproj -c
+    testScript: dotnet test /p:SkipCuda=true /p:SkipNetCoreBuild=true --blame test\TorchSharpTest\TorchSharpTest.csproj -c
     pool:
       vmImage: 'windows-latest'
 
@@ -67,7 +67,7 @@ jobs:
     prepScript: echo "no prep needed"
     name: MacOS_x64
     buildScript: dotnet build /p:SkipCuda=true -c
-    testScript: dotnet test --blame /p:SkipCuda=true --no-build --blame test/TorchSharpTest/TorchSharpTest.csproj -c
+    testScript: dotnet test --blame /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
       vmImage: 'macos-11'
 
@@ -95,10 +95,10 @@ jobs:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
         sudo apt-get -y update &&
-        sudo apt-get -y install clang-6.0 git cmake libunwind8 curl libomp-dev libomp5 &&
-        wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
+        sudo apt-get -y install cmake clang git libunwind8 curl libomp-dev libomp5 &&
+        wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&
         sudo dpkg --purge packages-microsoft-prod && sudo dpkg -i packages-microsoft-prod.deb &&
-        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update && sudo apt-get install -y dotnet-sdk-6.0 &&
+        sudo apt-get update; sudo apt-get install -y apt-transport-https && sudo apt-get update &&
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX)
     displayName: Install dependencies
 
@@ -191,7 +191,7 @@ jobs:
     displayName: Build TorchAudio
 
   - publish: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)
-    artifact: MacAssets
+    artifact: MacAssets_x64
 
 
 ################################################################################
@@ -251,34 +251,34 @@ jobs:
 
     # Download all bits contributing to the packages from the Mac build
   - download: current
-    artifact: MacAssets
+    artifact: MacAssets_x64
 
   - task: CopyFiles@2
     displayName: Copy mac native assets (TorchSharp) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchSharp
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64/TorchSharp
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchSharp
 
   - task: CopyFiles@2
     displayName: Copy mac native assets (TorchAudio) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchAudio
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64/TorchAudio
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchAudio
 
   - task: CopyFiles@2
     displayName: Copy mac native assets (TorchVision) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/TorchVision
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64/TorchVision
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/TorchVision
 
   - task: CopyFiles@2
     displayName: Copy mac native assets (libtorch-cpu) to correct folder where the bits contributing to the packages are assembled
     inputs:
-      sourceFolder: $(Pipeline.Workspace)/MacAssets/libtorch-cpu-osx-x64
+      sourceFolder: $(Pipeline.Workspace)/MacAssets_x64/libtorch-cpu-osx-x64
       targetFolder: $(Build.SourcesDirectory)/bin/obj/packprep/$(BuildConfig)/libtorch-cpu-osx-x64
 
-  - script: rmdir /s /q  $(Pipeline.Workspace)\MacAssets
-    displayName: Free up space (MacAssets in workspace)
+  - script: rmdir /s /q  $(Pipeline.Workspace)\MacAssets_x64
+    displayName: Free up space (MacAssets_x64 in workspace)
 
   - download: current
     artifact: WindowsAssets
