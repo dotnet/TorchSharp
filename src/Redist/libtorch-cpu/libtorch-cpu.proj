@@ -39,41 +39,33 @@
     <File Include="libtorch\lib\uv.dll" />
   </ItemGroup>
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(TargetOS)' == 'mac'">
-    <File Include="libtorch\lib\libbackend_with_compiler.dylib" />
-    <File Include="libtorch\lib\libc10.dylib" />
-    <File Include="libtorch\lib\libfbjni.dylib" />
-    <File Include="libtorch\lib\libiomp5.dylib" />
-    <File Include="libtorch\lib\libjitbackend_test.dylib" />
-    <File Include="libtorch\lib\libpytorch_jni.dylib" />
-    <File Include="libtorch\lib\libshm.dylib" />
-    <File Include="libtorch\lib\libtorch.dylib" />
-    <File Include="libtorch\lib\libtorchbind_test.dylib" />
-    <File Include="libtorch\lib\libtorch_cpu.dylib" />
-    <File Include="libtorch\lib\libtorch_global_deps.dylib" />
-    <File Include="libtorch\lib\libtorch_python.dylib" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and '$(TargetOS)' == 'mac'">
-    <File Include="libtorch\lib\libc10.dylib" />
-    <File Include="libtorch\lib\libfbjni.dylib" />
-    <File Include="libtorch\lib\libpytorch_jni.dylib" />
-    <File Include="libtorch\lib\libshm.dylib" />
-    <File Include="libtorch\lib\libtorch.dylib" />
-    <File Include="libtorch\lib\libtorch_cpu.dylib" />
-    <File Include="libtorch\lib\libtorch_global_deps.dylib" />
-    <File Include="libtorch\lib\libtorch_python.dylib" />
+    <File Include="libtorch\lib\libbackend_with_compiler.dylib"  PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libc10.dylib"  PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libfbjni.dylib"  PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libiomp5.dylib"  PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libjitbackend_test.dylib"  PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libpytorch_jni.dylib" PackageSuffix="part1" />
+    <File Include="libtorch\lib\libshm.dylib" PackageSuffix="part1" />
+    <File Include="libtorch\lib\libtorch.dylib" PackageSuffix="part1" />
+    <File Include="libtorch\lib\libtorchbind_test.dylib" PackageSuffix="part1" />
+    <File Include="libtorch\lib\libtorch_global_deps.dylib" PackageSuffix="part1" />
+    <File Include="libtorch\lib\libtorch_python.dylib" PackageSuffix="part1" />
+    <File Include= "libtorch\lib\libtorch_cpu.dylib" PackageSuffix="part2-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libtorch_cpu.dylib" PackageSuffix="part2-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
-    <File Include="libtorch\lib\libbackend_with_compiler.so" />
-    <File Include="libtorch\lib\libc10.so" />
-    <File Include="libtorch\lib\libgomp-98b21ff3.so.1" />
-    <File Include="libtorch\lib\libjitbackend_test.so" />
-    <File Include="libtorch\lib\libnnapi_backend.so" />
-    <File Include="libtorch\lib\libshm.so" />
-    <File Include="libtorch\lib\libtorch.so" />
-    <File Include="libtorch\lib\libtorchbind_test.so" />
-    <File Include="libtorch\lib\libtorch_cpu.so" />
-    <File Include="libtorch\lib\libtorch_global_deps.so" />
-    <File Include="libtorch\lib\libtorch_python.so" />
+    <File Include="libtorch\lib\libbackend_with_compiler.so" PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libc10.so" PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libgomp-98b21ff3.so.1" PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libjitbackend_test.so" PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libnnapi_backend.so" PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libshm.so" PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libtorch.so" PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"/>
+    <File Include="libtorch\lib\libtorch_python.so" PackageSuffix="part1"/>
+    <File Include= "libtorch\lib\libtorch_cpu.so" PackageSuffix="part2-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
+    <File Include= "libtorch\lib\libtorch_cpu.so" PackageSuffix="part2-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
   </ItemGroup>
 
   <Target Name="DownloadArchive" Inputs="..\..\..\LICENSE" Outputs="$(DownloadedArchive);$(DownloadedLicenseFile)">
@@ -121,11 +113,80 @@
 
   </Target>
 
+    <!-- Hack vast files into separate pieces so we can place them in separate nuget packages. -->
+  <UsingTask
+    TaskName="FileUnstitch"
+    TaskFactory="RoslynCodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+    <ParameterGroup>
+      <SourceFile ParameterType="System.String" Required="true" />
+      <DestinationFolder ParameterType="System.String" Required="true" />
+      <Start ParameterType="System.Int64" Required="true" />
+      <Size ParameterType="System.Int64" Required="true" />
+      <Index ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System"/>
+      <Using Namespace="System.IO"/>
+      <Using Namespace="System.IO.MemoryMappedFiles"/>
+      <Code Type="Fragment" Language="cs">
+<![CDATA[
+            {
+                string name = Path.GetFileName(SourceFile) + ((Start == 0) ? "" : ".fragment" + Index);
+                if (Size == -1)
+                    Size = Int32.MaxValue;
+                var fi = new FileInfo(SourceFile);
+                Console.WriteLine($"Opening source {SourceFile} for fragment {Index}...");
+                using (var mmf = MemoryMappedFile.CreateFromFile(SourceFile))
+                {
+                    long totSize = fi.Length;
+                    if (Start != 0)
+                        DestinationFolder = DestinationFolder.Replace("runtimes", "fragments");
+                    Directory.CreateDirectory(DestinationFolder);
+                    string outfile = Path.Combine(DestinationFolder, name);
+                    Size = Math.Max(Math.Min(Size, totSize - Start), 0);
+                    Console.WriteLine($"Reading fragment {Index} ({Start}..{Start + Size - 1}) from {SourceFile}...");
+                    var outBytes = new byte[Size];
+                    using (var accessor = mmf.CreateViewAccessor(Start, Size))
+                    {
+                        accessor.ReadArray<byte>(0, outBytes, 0, (int)Size);
+                    }
+                    Console.WriteLine($"Writing fragment to {outfile}...");
+                    File.WriteAllBytes(outfile, outBytes);
+                }
+            }
+            if (Start == 0)
+            {
+                using (var sha256Hash = System.Security.Cryptography.SHA256.Create())
+                {
+                    using (FileStream stream = File.OpenRead(SourceFile))
+                    {
+                        Console.WriteLine("Computing SHA...");
+                        byte[] bytes = sha256Hash.ComputeHash(stream);
+                        var builder = new System.Text.StringBuilder();
+                        for (int i = 0; i < bytes.Length; i++)
+                        {
+                            builder.Append(bytes[i].ToString("x2"));
+                        }
+                        var sha = builder.ToString();
+                        string shaFileName = Path.Combine(DestinationFolder, Path.GetFileName(SourceFile) + ".sha");
+                        File.WriteAllText(shaFileName, sha);
+                        Console.WriteLine($"Computed SHA {sha}...");
+                    }
+                }
+            }
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
   <Target Name="CopyFilesFromArchive" DependsOnTargets="ValidateAndExtractArchives" Inputs="$(ExtractSemaphore)" Outputs="$(CopyToPackageSemaphore)">
     <Message Importance="High" Text="Copy @(File) -> $(MainPackageFolder)\runtimes\$(TargetRuntimeID)\native\" />
 
     <!-- Copy to MainPackageFolder to use in libtorch-cpu package build -->
-    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)\runtimes\$(TargetRuntimeID)\native\" SkipUnchangedFiles="true" Condition="'$(IncludeLibTorchCpuPackages)' == 'true' "/>
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)\runtimes\$(TargetRuntimeID)\native\" SkipUnchangedFiles="true" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'  AND '%(File.PackageSuffix)' == ''"/>
+    <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(TargetRuntimeID)\native\" SkipUnchangedFiles="true" Condition="'%(File.FileUnstitchStart)' == '' AND '%(File.PackageSuffix)' != ''"/>
+    <FileUnstitch SourceFile="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(MainPackageFolder)-%(File.PackageSuffix)\runtimes\$(TargetRuntimeID)\native\" Start="%(File.FileUnstitchStart)" Size="%(File.FileUnstitchSize)" Index="%(File.FileUnstitchIndex)" Condition="'%(File.FileUnstitchStart)' != ''" />
 
     <!-- Copy license to MainPackageFolder to use in libtorch-cpu packages build -->
     <Copy SourceFiles="$(DownloadedLicenseFile)" DestinationFolder="$(MainPackageFolder)\" SkipUnchangedFiles="true" Condition="'$(IncludeLibTorchCpuPackages)' == 'true'"  />
@@ -133,6 +194,9 @@
     <!-- Copy to NativeOutputPath to use in tests (headers, lib etc.) -->
     <MakeDir Directories="$(NativeOutputPath)"  Condition="'$(SkipTests)' != 'true'"  />
     <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeOutputPath)" SkipUnchangedFiles="true"   Condition="'$(SkipTests)' != 'true'" />
+
+    <Message Importance="High" Text="Deleting '$(ExtractDirectory)\%(File.Identity)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
+    <Delete Files="$(ExtractDirectory)\%(File.Identity)"  Condition="'$(TF_BUILD)' != ''" />
 
     <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" Overwrite="true" />
   </Target>

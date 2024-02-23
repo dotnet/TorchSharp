@@ -2,9 +2,13 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
-## NuGet Version 0.101.7
+## NuGet Version 0.102.0
+
+This release upgrades the libtorch backend to v2.2.0.
 
 __Breaking Changes__:
+
+The Ubuntu builds are now done on a 22.04 version of the OS. This may (or may not) affect TorchSharp use on earlier versions.<br/>
 
 The default value for the `end_factor` argument in the constructor for `LinearLR` was changed to 1.0 to match PyTorch.<br/>
 

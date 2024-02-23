@@ -3,6 +3,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- see https://pytorch.org/get-started/locally/ for download links -->
+    <!-- For example Linux, LibTorch 1.9.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.9.0%2Bcpu.zip -->
+    <!-- note the very odd characters %2Bcpu in the LibTorch download name. The % is encoded via %25 -->
     <LocalBaseName>$(LibTorchCudaLocalBase)</LocalBaseName>
     <ArchiveBaseName>$(LibTorchCudaArchiveBase)</ArchiveBaseName>
     <ArchiveExtension>.zip</ArchiveExtension>
