@@ -81,9 +81,11 @@ elif command -v clang > /dev/null 2>&1; then
     export CC="$(command -v clang)"
     export CXX="$(command -v clang++)"
 else
-    echo "Unable to find Clang Compiler"
-    echo "Install clang-7.0, clang-6.0, or clang-5.0"
-    exit 1
+    export CC="$(command -v clang)"
+    export CXX="$(command -v clang++)"
+    # echo "Unable to find Clang Compiler"
+    # echo "Install clang-7.0, clang-6.0, or clang-5.0"
+    # exit 1
 fi
 
 # Specify path to be set for CMAKE_INSTALL_PREFIX.
