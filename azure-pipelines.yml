@@ -71,15 +71,6 @@ jobs:
     pool:
       vmImage: 'macos-latest'
 
-- template: /build/ci/job-template.yml
-  parameters:
-    prepScript: echo "no prep needed"
-    name: MacOS_arm64
-    buildScript: dotnet build /p:SkipCuda=true /p:TargetArchitecture=arm64 -c
-    testScript: echo "Azure Pipelines does not support arm64 yet, can't run tests"
-    pool:
-      vmImage: 'macos-latest'
-
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
 ################################################################################
