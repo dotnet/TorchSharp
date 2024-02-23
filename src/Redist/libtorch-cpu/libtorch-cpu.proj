@@ -195,9 +195,6 @@
     <MakeDir Directories="$(NativeOutputPath)"  Condition="'$(SkipTests)' != 'true'"  />
     <Copy SourceFiles="$(ExtractDirectory)\%(File.Identity)" DestinationFolder="$(NativeOutputPath)" SkipUnchangedFiles="true"   Condition="'$(SkipTests)' != 'true'" />
 
-    <Message Importance="High" Text="Deleting '$(ExtractDirectory)\%(File.Identity)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
-    <Delete Files="$(ExtractDirectory)\%(File.Identity)"  Condition="'$(TF_BUILD)' != ''" />
-
     <WriteLinesToFile File="$(CopyToPackageSemaphore)" Lines="done" Overwrite="true" />
   </Target>
 
