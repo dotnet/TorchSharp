@@ -91,6 +91,13 @@ jobs:
   container: UbuntuContainer
   # Exact copy of the dependency install above - TODO share this somewhere
   steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      packageType: sdk
+      version: 6.x
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
   - script:
         ldd --version && (/sbin/ldconfig -p | grep stdc++) && (strings /usr/lib/x86_64-linux-gnu/libstdc++.so.6 | grep LIBCXX) &&
         sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DE19EB17684BA42D &&
