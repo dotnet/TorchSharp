@@ -117,6 +117,7 @@ esac
 cd "$__IntermediatesDir"
 
 echo "Building Machine Learning native components from $DIR to $(pwd)"
+cmake --version
 set -x # turn on trace
 cmake "$DIR" -G "Unix Makefiles" $__cmake_defines
 set +x # turn off trace
