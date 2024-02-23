@@ -69,7 +69,16 @@ jobs:
     buildScript: dotnet build /p:SkipCuda=true -c
     testScript: dotnet test --blame /p:SkipCuda=true --blame test/TorchSharpTest/TorchSharpTest.csproj -c
     pool:
-      vmImage: 'macos-11'
+      vmImage: 'macos-latest'
+
+- template: /build/ci/job-template.yml
+  parameters:
+    prepScript: echo "no prep needed"
+    name: MacOS_arm64
+    buildScript: dotnet build /p:SkipCuda=true /p:TargetArchitecture=arm64 -c
+    testScript: echo "Azure Pipelines does not support arm64 yet, can't run tests"
+    pool:
+      vmImage: 'macos-latest'
 
 ################################################################################
 # {Build} --> combine --> package to build native bits on multiple OS's
@@ -176,7 +185,7 @@ jobs:
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     DOTNET_MULTILEVEL_LOOKUP: 0
   pool:
-    vmImage: 'macos-11'
+    vmImage: 'macos-latest'
   steps:
   - script: dotnet build -c $(BuildConfig) src/Redist/libtorch-cpu/libtorch-cpu.proj /p:UpdateSHA=true /p:SkipTests=true  /p:TargetOS=mac /t:Build /p:IncludeLibTorchCpuPackages=true
     displayName: Download libtorch native binaries
