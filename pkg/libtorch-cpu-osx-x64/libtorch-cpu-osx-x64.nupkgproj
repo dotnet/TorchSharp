@@ -8,6 +8,12 @@
   </ItemGroup>
 
   <ItemGroup>
+     <ProjectReference Include="../libtorch-cpu-osx-x64-part1/libtorch-cpu-osx-x64-part1.nupkgproj" />
+     <ProjectReference Include="../libtorch-cpu-osx-x64-part2-primary/libtorch-cpu-osx-x64-part2-primary.nupkgproj" />
+     <ProjectReference Include="../libtorch-cpu-osx-x64-part2-fragment1/libtorch-cpu-osx-x64-part2-fragment1.nupkgproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="..\common\CpuHeadPackage.props" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).props" />
     <Content Include="..\common\CpuHeadPackage.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\$(MSBuildProjectName).targets" />
     <Content Include="..\empty.txt" Pack="true" PackagePath="lib\netstandard2.0\_._" />

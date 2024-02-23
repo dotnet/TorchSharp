@@ -3,6 +3,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- see https://pytorch.org/get-started/locally/ for download links -->
+    <!-- For example Linux, LibTorch 1.9.0 https://download.pytorch.org/libtorch/cpu/libtorch-shared-with-deps-1.9.0%2Bcpu.zip -->
+    <!-- note the very odd characters %2Bcpu in the LibTorch download name. The % is encoded via %25 -->
     <LocalBaseName>$(LibTorchCudaLocalBase)</LocalBaseName>
     <ArchiveBaseName>$(LibTorchCudaArchiveBase)</ArchiveBaseName>
     <ArchiveExtension>.zip</ArchiveExtension>
@@ -57,7 +60,6 @@
     <File Include= "libtorch\lib\fbjni.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\libiomp5md.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\libiompstubs5md.dll" PackageSuffix="part6" />
-    <File Include= "libtorch\lib\nvfuser_codegen.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\nvrtc-builtins64_121.dll" PackageSuffix="part6" />
     <File Include= "libtorch\lib\nvToolsExt64_1.dll" PackageSuffix="part6" />
     
@@ -88,18 +90,14 @@
     <File Include= "libtorch\lib\libcaffe2_nvrtc.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcudart-9335f6a2.so.12" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libcudnn.so.8" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libfbjni.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libgomp-a34b3233.so.1" PackageSuffix="part1"  />
+    <File Include= "libtorch\lib\libgomp-98b21ff3.so.1" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libjitbackend_test.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnnapi_backend.so"  PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libnvfuser_codegen.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvrtc-b51b459d.so.12" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvrtc-builtins-6c5639ce.so.12.1" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libnvToolsExt-847d78f2.so.1" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libpytorch_jni.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libshm.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"  />
-    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part1" />
     <File Include= "libtorch\lib\libtorch.so"  PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_python.so" PackageSuffix="part1"  />
     <File Include= "libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"  />
@@ -115,7 +113,8 @@
     <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="350000000" />
     <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment1" FileUnstitchIndex="1" FileUnstitchStart="350000000" FileUnstitchSize="300000000" />
     <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment2" FileUnstitchIndex="2" FileUnstitchStart="650000000" FileUnstitchSize="300000000" />
-    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment3" FileUnstitchIndex="3" FileUnstitchStart="950000000" FileUnstitchSize="-1" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment3" FileUnstitchIndex="3" FileUnstitchStart="950000000" FileUnstitchSize="300000000" />
+    <File Include= "libtorch\lib\libtorch_cuda.so"  PackageSuffix="part3-fragment4" FileUnstitchIndex="4" FileUnstitchStart="1250000000" FileUnstitchSize="-1" />
 
     <File Include= "libtorch\lib\libcudnn_cnn_infer.so.8"  PackageSuffix="part4-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="275000000" />
     <File Include= "libtorch\lib\libcudnn_cnn_infer.so.8"  PackageSuffix="part4-fragment1" FileUnstitchIndex="1" FileUnstitchStart="275000000" FileUnstitchSize="-1" />
@@ -129,6 +128,11 @@
     <File Include= "libtorch\lib\libcudnn_ops_train.so.8" PackageSuffix="part7" />
     <File Include= "libtorch\lib\libcublas-37d11411.so.12" PackageSuffix="part7" />
     <File Include= "libtorch\lib\libcudnn_cnn_train.so.8" PackageSuffix="part7" />
+
+    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part8-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="275000000" />
+    <File Include= "libtorch\lib\libtorch_cuda_linalg.so"  PackageSuffix="part8-fragment1" FileUnstitchIndex="1" FileUnstitchStart="275000000" FileUnstitchSize="-1" />
+
+
   </ItemGroup>
 
   <Target Name="DownloadArchive" Inputs="..\..\..\LICENSE" Outputs="$(DownloadedArchive);$(DownloadedLicenseFile)">
