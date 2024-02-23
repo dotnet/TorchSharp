@@ -20,7 +20,7 @@ resources:
 #   https://mcrflowprodcentralus.data.mcr.microsoft.com/mcrprod/dotnet-buildtools/prereqs?P1=1616630425&P2=1&P3=1&P4=xAN4nwxX9ps%2BMi75FMzu0iGuhA7luhLsZKUGf0Q9fFU%3D&se=2021-03-25T00%3A00%3A25Z&sig=j1uhQmj8EAbZqaSyGS%2Fwz0ETxwrGVhN3WFwX4OpNz4w%3D&sp=r&sr=b&sv=2015-02-21
 
    - container: UbuntuContainer
-     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mlnet-20210924170306-87445d2
+     image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-mlnet-20240216051055-578f026
 
 jobs:
 - template: /build/ci/job-template.yml
