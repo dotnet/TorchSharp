@@ -39,33 +39,33 @@
     <File Include="libtorch\lib\uv.dll" />
   </ItemGroup>
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(TargetOS)' == 'mac'">
-    <File Include="libtorch\lib\libbackend_with_compiler.dylib"  PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libc10.dylib"  PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libfbjni.dylib"  PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libiomp5.dylib"  PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libjitbackend_test.dylib"  PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libpytorch_jni.dylib" PackageSuffix="part1" />
-    <File Include="libtorch\lib\libshm.dylib" PackageSuffix="part1" />
-    <File Include="libtorch\lib\libtorch.dylib" PackageSuffix="part1" />
-    <File Include="libtorch\lib\libtorchbind_test.dylib" PackageSuffix="part1" />
-    <File Include="libtorch\lib\libtorch_global_deps.dylib" PackageSuffix="part1" />
-    <File Include="libtorch\lib\libtorch_python.dylib" PackageSuffix="part1" />
-    <File Include= "libtorch\lib\libtorch_cpu.dylib" PackageSuffix="part2-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cpu.dylib" PackageSuffix="part2-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
+    <File Include="libtorch\lib\libbackend_with_compiler.dylib" />
+    <File Include="libtorch\lib\libc10.dylib" />
+    <File Include="libtorch\lib\libfbjni.dylib" />
+    <File Include="libtorch\lib\libiomp5.dylib" />
+    <File Include="libtorch\lib\libjitbackend_test.dylib" />
+    <File Include="libtorch\lib\libpytorch_jni.dylib" />
+    <File Include="libtorch\lib\libshm.dylib" />
+    <File Include="libtorch\lib\libtorch.dylib" />
+    <File Include="libtorch\lib\libtorchbind_test.dylib" />
+    <File Include="libtorch\lib\libtorch_global_deps.dylib" />
+    <File Include="libtorch\lib\libtorch_python.dylib" />
+    <File Include= "libtorch\lib\libtorch_cpu.dylib" />
+    <File Include= "libtorch\lib\libtorch_cpu.dylib" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
-    <File Include="libtorch\lib\libbackend_with_compiler.so" PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libc10.so" PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libgomp-98b21ff3.so.1" PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libjitbackend_test.so" PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libnnapi_backend.so" PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libshm.so" PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libtorch.so" PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libtorchbind_test.so" PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libtorch_global_deps.so" PackageSuffix="part1"/>
-    <File Include="libtorch\lib\libtorch_python.so" PackageSuffix="part1"/>
-    <File Include= "libtorch\lib\libtorch_cpu.so" PackageSuffix="part2-primary" FileUnstitchIndex="0" FileUnstitchStart="0" FileUnstitchSize="250000000" />
-    <File Include= "libtorch\lib\libtorch_cpu.so" PackageSuffix="part2-fragment1" FileUnstitchIndex="1" FileUnstitchStart="250000000" FileUnstitchSize="-1" />
+    <File Include="libtorch\lib\libbackend_with_compiler.so"/>
+    <File Include="libtorch\lib\libc10.so"/>
+    <File Include="libtorch\lib\libgomp-98b21ff3.so.1"/>
+    <File Include="libtorch\lib\libjitbackend_test.so"/>
+    <File Include="libtorch\lib\libnnapi_backend.so"/>
+    <File Include="libtorch\lib\libshm.so"/>
+    <File Include="libtorch\lib\libtorch.so"/>
+    <File Include="libtorch\lib\libtorchbind_test.so"/>
+    <File Include="libtorch\lib\libtorch_global_deps.so"/>
+    <File Include="libtorch\lib\libtorch_python.so"/>
+    <File Include= "libtorch\lib\libtorch_cpu.so" />
+    <File Include= "libtorch\lib\libtorch_cpu.so" />
   </ItemGroup>
 
   <Target Name="DownloadArchive" Inputs="..\..\..\LICENSE" Outputs="$(DownloadedArchive);$(DownloadedLicenseFile)">
