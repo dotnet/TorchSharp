@@ -777,6 +777,20 @@ namespace TorchSharp
                 return new Tensor(res);
             }
 
+
+            /// <summary>
+            /// Moves the tensor data to the MPS device
+            /// </summary>
+            public Tensor mps()
+            {
+                var res = NativeMethods.THSTensor_to_device(Handle, (int)DeviceType.MPS, -1, true);
+                if (res == IntPtr.Zero)
+                    CheckForErrors();
+
+                return new Tensor(res);
+
+            }
+            
             /// <summary>
             /// Returns a copy of this object in CUDA memory.
             /// If this object is already in CUDA memory and on the correct device, then no copy is performed and the original object is returned.

@@ -62,19 +62,7 @@
     <NativeAssemblyReference Include="zlibwapi" Variant="cuda\" />
   </ItemGroup>
 
-  <!-- Mac libtorch binary list used for examples and testing -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
-    <NativeAssemblyReference Include="c10" />
-    <NativeAssemblyReference Include="fbjni" />
-    <NativeAssemblyReference Include="pytorch_jni" />
-    <NativeAssemblyReference Include="shm" />
-    <NativeAssemblyReference Include="torch" />
-    <NativeAssemblyReference Include="torch_cpu" />
-    <NativeAssemblyReference Include="torch_global_deps" />
-    <NativeAssemblyReference Include="torch_python" />
-  </ItemGroup>
-
-  <!-- Mac libtorch binary list used for examples and testing -->
+  <!-- Mac x64 libtorch binary list used for examples and testing -->
   <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="backend_with_compiler" />
     <NativeAssemblyReference Include="c10" />
@@ -88,6 +76,15 @@
     <NativeAssemblyReference Include="torch_global_deps" />
     <NativeAssemblyReference Include="torch_python" />
     <NativeAssemblyReference Include="torchbind_test" />
+  </ItemGroup>
+
+	<!-- Mac arm64 libtorch binary list used for examples and testing -->
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64'and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
+    <NativeAssemblyReference Include="c10" />
+    <NativeAssemblyReference Include="shm" />
+    <NativeAssemblyReference Include="torch" />
+    <NativeAssemblyReference Include="torch_cpu" />
+    <NativeAssemblyReference Include="torch_global_deps" />
   </ItemGroup>
 
   <!-- Linux CPU libtorch binary list used for examples and testing -->

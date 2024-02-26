@@ -6,6 +6,8 @@ JITModule THSJIT_load(const char* filename, int64_t device, int64_t index)
     c10::DeviceType dev = c10::kCPU;
     if (device == 1)
         dev = c10::kCUDA;
+    if (device == 13)
+        dev = c10::kMPS;
 
     CATCH(
         auto res = torch::jit::load(filename, torch::Device(dev, index));
@@ -21,6 +23,8 @@ JITModule THSJIT_load_byte_array(char* bytes, int64_t size, int64_t device, int6
     c10::DeviceType dev = c10::kCPU;
     if (device == 1)
         dev = c10::kCUDA;
+    if (device == 13)
+        dev = c10::kMPS;
 
     CATCH(
         std::istringstream stream(std::string(bytes, size));
@@ -79,6 +83,9 @@ void THSJIT_Module_to_device_dtype(JITModule module, int8_t dtype, int64_t devic
     c10::DeviceType dev = c10::kCPU;
     if (device == 1)
         dev = c10::kCUDA;
+    if (device == 13)
+        dev = c10::kMPS;
+
     (*module)->to(torch::Device(dev, index));
 }
 

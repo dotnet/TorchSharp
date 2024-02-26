@@ -59,7 +59,7 @@ while [ "$1" != "" ]; do
 done
 
 # Force the build to be release since libtorch is in release.
-__cmake_defines="-DCMAKE_BUILD_TYPE=${__configuration} ${__strip_argument} -DLIBTORCH_PATH=${__libtorchpath}"
+__cmake_defines="-DCMAKE_BUILD_TYPE=${__configuration} ${__strip_argument} -DLIBTORCH_PATH=${__libtorchpath} -DLIBTORCH_ARCH=${__build_arch}"
 
 __IntermediatesDir="$__baseIntermediateOutputPath/$__build_arch.$__configuration/Native"
 __BinDir="$__rootBinPath/$__build_arch.$__configuration/Native"
@@ -115,4 +115,8 @@ cmake --version
 set -x # turn on trace
 cmake "$DIR" -G "Unix Makefiles" $__cmake_defines
 set +x # turn off trace
-make install
+
+if [ ! -f .install.guard ]; then
+    make install
+    touch .install.guard
+fi

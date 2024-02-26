@@ -8,8 +8,13 @@
     <!-- note the very odd characters %2Bcpu in the LibTorch download name. The % is encoded via %25 -->
     <LocalBaseName>$(LibTorchCpuLocalBase)</LocalBaseName>
     <ArchiveBaseName>$(LibTorchCpuArchiveBase)</ArchiveBaseName>
+    <ArchiveSource>$(LibTorchArchiveSource)</ArchiveSource>
     <ArchiveExtension>.zip</ArchiveExtension>
     <ArchiveUrl>https://download.pytorch.org/libtorch/cpu/$(ArchiveBaseName)$(ArchiveExtension)</ArchiveUrl>
+    <ArchiveExtension Condition="'$(ArchiveSource)' == 'conda'">.tar.bz2</ArchiveExtension>
+    <ArchiveUrl Condition="'$(ArchiveSource)' == 'conda'">
+      https://conda.anaconda.org/pytorch/$(CondaArchivePlatformName)/$(ArchiveBaseName)$(ArchiveExtension)
+    </ArchiveUrl>
     <DownloadedArchiveFolder>$(MassiveDownloadRoot)$(MSBuildProjectName)\</DownloadedArchiveFolder>
     <DownloadedArchiveFileName>$(ArchiveBaseName)$(ArchiveExtension)</DownloadedArchiveFileName>
     <DownloadedArchive>$(DownloadedArchiveFolder)$(DownloadedArchiveFileName)</DownloadedArchive>
@@ -47,11 +52,18 @@
     <File Include="libtorch\lib\libpytorch_jni.dylib" />
     <File Include="libtorch\lib\libshm.dylib" />
     <File Include="libtorch\lib\libtorch.dylib" />
+    <File Include="libtorch\lib\libtorch_cpu.dylib" />
     <File Include="libtorch\lib\libtorchbind_test.dylib" />
     <File Include="libtorch\lib\libtorch_global_deps.dylib" />
     <File Include="libtorch\lib\libtorch_python.dylib" />
-    <File Include= "libtorch\lib\libtorch_cpu.dylib" />
-    <File Include= "libtorch\lib\libtorch_cpu.dylib" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and '$(TargetOS)' == 'mac'">
+    <File Include="libtorch\lib\libc10.dylib" />
+    <File Include="libtorch\lib\libshm.dylib" />
+    <File Include="libtorch\lib\libtorch.dylib" />
+    <File Include="libtorch\lib\libtorch_cpu.dylib" />
+    <File Include="libtorch\lib\libtorch_global_deps.dylib" />
+    <File Include="libtorch\lib\libtorch_python.dylib" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetOS)' == 'linux'">
     <File Include="libtorch\lib\libbackend_with_compiler.so"/>
@@ -105,12 +117,19 @@
     <Exec Condition="'$(ArchiveExtension)' == '.tar.gz'"
           WorkingDirectory="$(ExtractDirectory)"
           Command="tar -xzmf &quot;$([MSBuild]::MakeRelative('$(ExtractDirectory)', '$(DownloadedArchive)'))&quot;" />
+    <Exec Condition="'$(ArchiveExtension)' == '.tar.bz2'"
+          WorkingDirectory="$(ExtractDirectory)"
+          Command="tar -xf &quot;$([MSBuild]::MakeRelative('$(ExtractDirectory)', '$(DownloadedArchive)'))&quot;" />
     <WriteLinesToFile File="$(ExtractSemaphore)" Lines="done" Overwrite="true" />
 
     <!-- delete the archive files when running on CI -->
     <Message Importance="High" Text="Deleting '$(DownloadedArchive)' to free up space." Condition="'$(TF_BUILD)' != ''"  />
     <Delete Files="$(DownloadedArchive)"  Condition="'$(TF_BUILD)' != ''" />
 
+    <!-- If we downloaded from conda instead of pytorch, we need to move it's torch folder to libtorch -->
+    <Exec Condition="'$(ArchiveSource)' == 'conda'"
+          WorkingDirectory="$(ExtractDirectory)"
+          Command="mv lib/python3.10/site-packages/torch libtorch" />
   </Target>
 
     <!-- Hack vast files into separate pieces so we can place them in separate nuget packages. -->

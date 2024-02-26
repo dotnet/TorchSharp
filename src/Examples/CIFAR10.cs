@@ -1,8 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 using TorchSharp.Modules;
+
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.nn.functional;
 using static TorchSharp.torch.utils.data;
@@ -40,9 +42,10 @@ namespace TorchSharp.Examples
                 // This worked on a GeForce RTX 2080 SUPER with 8GB, for all the available network architectures.
                 // It may not fit with less memory than that, but it's worth modifying the batch size to fit in memory.
                 torch.cuda.is_available() ? torch.CUDA :
+                RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && RuntimeInformation.OSArchitecture == Architecture.Arm64 ? torch.MPS :
                 torch.CPU;
 
-            if (device.type == DeviceType.CUDA) {
+            if (device.type != DeviceType.CPU) {
                 _trainBatchSize *= 8;
                 _testBatchSize *= 8;
                 _epochs *= 16;
