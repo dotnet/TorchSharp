@@ -507,7 +507,7 @@ namespace TorchSharp
                         throw new InvalidOperationException("The loaded state_dict is not identical to the target dictionary.");
 
                     // The copy_ operation is an in-place operation which can't be performed on a leaf variable which
-                    // requires_grad. Therefore, we will perform the coyp in a no_grad context. 
+                    // requires_grad. Therefore, we will perform the copy in a no_grad context. 
                     using var d = torch.no_grad();
 
                     foreach (var key in source.Keys) {
