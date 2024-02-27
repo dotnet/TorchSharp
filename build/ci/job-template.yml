@@ -22,9 +22,6 @@ jobs:
     strategy:
       maxParallel: 99
       matrix:
-        Debug_Build:
-          _configuration: Debug
-          _config_short: D
         Release_Build:
           _configuration: Release
           _config_short: R

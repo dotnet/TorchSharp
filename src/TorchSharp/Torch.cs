@@ -16,8 +16,8 @@ namespace TorchSharp
 {
     public static partial class torch
     {
-#if LIBTORCH_2_1_0_1
-        const string libtorchPackageVersion = "2.1.0.1";
+#if LIBTORCH_2_2_1_1
+        const string libtorchPackageVersion = "2.2.1.1";
 #else
 #error "Please update libtorchPackageVersion to match LibTorchPackageVersion"
 #endif
@@ -27,9 +27,12 @@ namespace TorchSharp
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
 
+        static bool isAppleSilicon = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && RuntimeInformation.OSArchitecture == Architecture.Arm64;
+        
         static string nativeRid =>
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "win-x64" :
-            RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "linux-x64" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"win-x64" :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? $"linux-x64" :
+            isAppleSilicon ? "osx-arm64" :
             RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "osx-x64" :
             "any";
 
@@ -109,7 +112,6 @@ namespace TorchSharp
                         ok = TryLoadNativeLibraryByName("cudnn_cnn_train64_8", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_ops_infer64_8", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("cudnn_ops_train64_8", typeof(torch).Assembly, trace);
-                        ok = TryLoadNativeLibraryByName("nvfuser_codegen", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc-builtins64_121", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("caffe2_nvrtc", typeof(torch).Assembly, trace);
                         ok = TryLoadNativeLibraryByName("nvrtc64_120_0", typeof(torch).Assembly, trace);
@@ -259,6 +261,11 @@ namespace TorchSharp
 
         public static bool TryInitializeDeviceType(DeviceType deviceType)
         {
+            if (deviceType == DeviceType.MPS && !isAppleSilicon)
+            {
+                return false;
+            }
+
             LoadNativeBackend(deviceType == DeviceType.CUDA, out _);
             if (deviceType == DeviceType.CUDA) {
                 return cuda.CallTorchCudaIsAvailable();
@@ -269,6 +276,11 @@ namespace TorchSharp
 
         public static void InitializeDeviceType(DeviceType deviceType)
         {
+            if (deviceType == DeviceType.MPS && !isAppleSilicon)
+            {
+                throw new InvalidOperationException($"Torch device type 'MPS' is not available on this platform.");
+            }
+
             LoadNativeBackend(deviceType == DeviceType.CUDA, out var trace);
             if (deviceType == DeviceType.CUDA) {
 
@@ -483,6 +495,11 @@ namespace TorchSharp
         /// </summary>
         public static bool cuda_is_available() => torch.cuda.is_available();
 
+        /// <summary>
+        /// Check whether MPS is available
+        /// </summary>
+        public static bool mps_is_available() => torch.isAppleSilicon;
+
         public static void CheckForErrors()
         {
             var error = THSTorch_get_and_reset_last_err();
@@ -584,6 +601,7 @@ namespace TorchSharp
         FPGA = 7, // FPGA
         MSNPU = 8, // MSNPU
         XLA = 9, // XLA / TPU
+        MPS = 13, // Apple Silicon
         META = 14,
     }
 }

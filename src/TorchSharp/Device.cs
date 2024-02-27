@@ -78,10 +78,17 @@ namespace TorchSharp
         }
 
         private static Device _CUDA;
+        private static Device _MPS;
+
         /// <summary>
         /// Convenience declaration of a CUDA device accessible everywhere.
         /// </summary>
         public static Device CUDA => _CUDA ??= InitializeDevice(new Device(DeviceType.CUDA, -1)); 
+
+        /// <summary>
+        /// Convenience declaration of a MPS device accessible everywhere.
+        /// </summary>
+        public static Device MPS => _MPS ??= InitializeDevice(new Device(DeviceType.MPS, -1));
 
         /// <summary>
         /// Convenience declaration of a CPU device accessible everywhere.

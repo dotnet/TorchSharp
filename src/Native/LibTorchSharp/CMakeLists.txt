@@ -1,6 +1,6 @@
 project(LibTorchSharp)
 
-if(APPLE)
+if(APPLE AND NOT LIBTORCH_ARCH STREQUAL "arm64")
  include_directories("/usr/local/include" "/usr/local/opt/llvm/include")
  link_directories("/usr/local/lib" "/usr/local/opt/llvm/lib")
 endif()
@@ -55,6 +55,15 @@ if(NOT WIN32)
         SET(CMAKE_MACOSX_RPATH TRUE)
     endif()
 
+endif()
+
+# Enable cross compilation for arm64/x64 on macOS
+if(APPLE)
+	if(LIBTORCH_ARCH STREQUAL "arm64")
+		set(CMAKE_OSX_ARCHITECTURES "arm64")
+	else()
+		set(CMAKE_OSX_ARCHITECTURES "x86_64")
+	endif()
 endif()
 
 # Add libTorch bindings
