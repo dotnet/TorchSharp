@@ -495,6 +495,11 @@ namespace TorchSharp
         /// </summary>
         public static bool cuda_is_available() => torch.cuda.is_available();
 
+        /// <summary>
+        /// Check whether MPS is available
+        /// </summary>
+        public static bool mps_is_available() => torch.isAppleSilicon;
+
         public static void CheckForErrors()
         {
             var error = THSTorch_get_and_reset_last_err();
