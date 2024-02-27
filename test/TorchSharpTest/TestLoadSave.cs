@@ -31,6 +31,14 @@ namespace TorchSharp
             Assert.Equal(new long[] { 2, 3, 4, 5 }, tensor.shape);
         }
 
+        [Fact]
+        public void TestLoadStateDict()
+        {
+            var module1 = torch.nn.Linear(10, 10);
+            var module2 = torch.nn.Linear(10, 10);
+
+            module2.load_state_dict(module1.state_dict());
+        }
 #if false
         [Fact]
         public void TestSaveLoadLinear1()
