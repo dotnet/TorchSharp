@@ -10,7 +10,7 @@ __Bug Fixes__:
 
 ## NuGet Version 0.102.0
 
-This release upgrades the libtorch backend to v2.2.0.
+This release upgrades the libtorch backend to v2.2.1.
 
 __Breaking Changes__:
 
