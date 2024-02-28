@@ -269,8 +269,10 @@ namespace TorchSharp
         {
             var device = torch.CPU;
 
-            var lin = Linear(1000, 100, true, device: device);
-            Assert.Throws<ArgumentNullException>(() => lin.bias = null);
+            var lin = Linear(100, 100, true, device: device);
+            // This should not throw:
+            lin.bias = null;
+            lin.call(torch.rand(100));
         }
 
         [Fact]
@@ -332,6 +334,8 @@ namespace TorchSharp
 
                 var input = torch.randn(new long[] { 1, 1000 }, device: device);
                 var output = lin.call(input);
+
+                output[0, 511] = 10; // When we modify the copy, the original should be altered, too.
 
                 Assert.Equal(device.type, output.device_type);
                 Assert.Equal(input.data<float>(), output.data<float>());
@@ -2361,12 +2365,12 @@ namespace TorchSharp
             var shape = new long[] { 16, 3, 28 };
             foreach (var device in TestUtils.AvailableDevices(false)) {
                 Tensor t = torch.rand(shape, device: device);
-                var conv = Conv1d(3, 64, 3, device: device);
+                var conv = Conv1d(3, 64, 5, device: device);
                 var output = conv.call(t);
                 Assert.Equal(device.type, output.device_type);
                 Assert.Equal(16, output.shape[0]);
                 Assert.Equal(64, output.shape[1]);
-                Assert.Equal(26, output.shape[2]);
+                Assert.Equal(24, output.shape[2]);
             }
         }
 
@@ -5183,6 +5187,7 @@ namespace TorchSharp
             using (var V = torch.tensor(v_data, src_seq_len, batch_size, vembed_dim))
             using (var Attn = torch.tensor(attn_data, batch_size, src_seq_len, src_seq_len)) {
 
+                var children = mha.children().ToList();
                 mha.eval();
                 Assert.False(mha.training);
 
@@ -5375,13 +5380,13 @@ namespace TorchSharp
                     Assert.Equal(new long[] { 32, 360 }, output.shape);
                 }
 
-                using (var flat = Flatten(startDim: 2)) {
+                using (var flat = Flatten(start_dim: 2)) {
                     var output = flat.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32, 3, 120 }, output.shape);
                 }
 
-                using (var flat = Flatten(startDim: 0)) {
+                using (var flat = Flatten(start_dim: 0)) {
                     var output = flat.call(data);
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(new long[] { 32 * 360 }, output.shape);

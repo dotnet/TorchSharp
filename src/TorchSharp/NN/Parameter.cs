@@ -26,6 +26,12 @@ namespace TorchSharp
             public Parameter(Tensor data, bool requires_grad = true) :
                 base(data.with_requires_grad(requires_grad).MoveHandle())
             {
+                var scope = data.OwningDisposeScope;
+                if (scope is not null) {
+                    this.OwningDisposeScope = scope;
+                    scope.Include(this);
+                    scope.Detach(data);
+                }
             }
 
             /// <summary>
@@ -35,7 +41,6 @@ namespace TorchSharp
             internal Parameter(System.IntPtr handle) : base(handle)
             {
             }
-
         };
     }
 
