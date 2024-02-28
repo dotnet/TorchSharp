@@ -2,6 +2,12 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# NuGet Version 0.102.1
+
+__Bug Fixes__:
+
+`module.load_state_dict()` throws error for in-place operation on a leaf variable that requires grad. <br/>
+
 ## NuGet Version 0.102.0
 
 This release upgrades the libtorch backend to v2.2.0.
