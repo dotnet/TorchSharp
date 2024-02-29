@@ -18,6 +18,7 @@ using System.Numerics;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using TorchSharp.Modules;
+using System.IO.Compression;
 
 #nullable enable
 
@@ -1632,6 +1633,26 @@ namespace TorchSharp
             Assert.Equal(0.05, Math.Round(scheduler.get_last_lr().First(), 2));
             scheduler.step();
             Assert.Equal(0.05, Math.Round(scheduler.get_last_lr().First(), 2));
+        }
+
+        [Fact]
+        public void ValidateLoadWithDeflateStream()
+        {
+            var seq = Sequential(Linear(100, 100), Linear(100, 100));
+
+            var ms = new MemoryStream();
+            using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true)) {
+                var entry = archive.CreateEntry("seq");
+
+                using (var stream = entry.Open())
+                    seq.save(stream);
+            }
+
+            // This test will succeed if the following code doesn't crash. 
+            ms.Position = 0;
+            using (var archive = new ZipArchive(ms)) {
+                seq.load(archive.GetEntry("seq")!.Open());
+            }
         }
     }
 }
