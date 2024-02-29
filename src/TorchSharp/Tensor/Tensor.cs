@@ -465,6 +465,9 @@ namespace TorchSharp
                         // Read in the current buffer size
                         int bytesRead = stream.Read(buffer, 0, (int)Math.Min(totalSize, bufferSize));
 
+                        if (bytesRead == 0)
+                            throw new EndOfStreamException();
+
                         // Copy the contents over to the span
                         var span = new Span<byte>((void*)ptr, bytesRead);
                         buffer.AsSpan(0, bytesRead).CopyTo(span);
