@@ -7,6 +7,7 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 __Bug Fixes__:
 
 `module.load_state_dict()` throws error for in-place operation on a leaf variable that requires grad. <br/>
+`module.load()` with streams which don't read the requested # of bytes throws error. <br/>
 
 ## NuGet Version 0.102.0
 
