@@ -90,7 +90,7 @@ namespace TorchSharp
                     long? padding = null, bool ceil_mode = false, bool count_include_pad = true)
                 {
                     var kernelSizes = new long[] { kernelSize };
-                    var strides = new long[] { stride ?? 1 };
+                    var strides = new long[] { stride ?? kernelSize };
                     var paddings = new long[] { padding ?? 0 };
                     unsafe {
                         fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {

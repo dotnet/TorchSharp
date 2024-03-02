@@ -1633,5 +1633,30 @@ namespace TorchSharp
             scheduler.step();
             Assert.Equal(0.05, Math.Round(scheduler.get_last_lr().First(), 2));
         }
+
+        [Fact]
+        public void Validate_1249()
+        {
+            var x = torch.zeros(5, 7, 128);
+            Console.WriteLine(x.metastr());
+            // [5x7x128], type = Float32, device = cpu
+
+            var y1 = torch.nn.functional.avg_pool1d(x, 2);
+            Console.WriteLine(y1.metastr());
+            Assert.Equal(64, y1.size(-1));
+            
+            var y2 = torch.nn.AvgPool1d(2).call(x);
+            Console.WriteLine(y2.metastr());
+            Assert.Equal(64, y1.size(-1));
+        }
+
+        [Fact]
+        public void Validate_1250()
+        {
+            Assert.Equal("[]", torch.zeros(0).npstr());
+            Assert.Equal("[0]", torch.zeros(1).npstr());
+            Assert.Equal("[0], type = Float32, device = cpu, value = float [] {}", torch.zeros(0).cstr());
+            Assert.Equal("[1], type = Float32, device = cpu, value = float [] {0f}", torch.zeros(1).cstr());
+        }
     }
 }

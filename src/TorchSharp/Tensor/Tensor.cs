@@ -6496,11 +6496,18 @@ namespace TorchSharp
                 var leadingRows = torch.maxRows - trailingRows;
 
                 var dim = t.dim();
+
                 if (t.size().Length == 0) return "";
                 var sb = new StringBuilder(isFCreate ? string.Join("", Enumerable.Repeat(' ', (int)(mdim - dim))) : "");
                 sb.Append('[');
                 var currentSize = t.size()[0];
-                if (dim == 1) {
+                if (currentSize == 0) {
+                    // print nothing
+                }
+                else if (dim == 0) {
+                    PrintValue(sb, t.dtype, t.ToScalar(), fltFormat, actualCulturInfo);
+                }
+                else if (dim == 1) {
                     if (currentSize <= torch.maxColumns) {
                         for (var i = 0; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
@@ -6572,7 +6579,6 @@ namespace TorchSharp
                 var leadingRows = torch.maxRows - trailingRows;
 
                 var dim = t.dim();
-                if (t.size().Length == 0) return "";
                 var sb = new StringBuilder();
 
                 if (top) {
@@ -6648,7 +6654,10 @@ namespace TorchSharp
                 }
 
                 var currentSize = t.size()[0];
-                if (dim == 1) {
+                if (currentSize == 0) {
+                    // do nothing
+                }
+                else if (dim == 1) {
                     if (currentSize <= torch.maxColumns) {
                         for (var i = 0; i < currentSize - 1; i++) {
                             PrintValue(sb, t.dtype, t[i].ToScalar(), fltFormat, actualCulturInfo);
