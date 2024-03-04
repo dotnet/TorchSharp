@@ -1659,7 +1659,8 @@ namespace TorchSharp
             Assert.Equal("[0], type = Float32, device = cpu, value = float [] {}", torch.zeros(0).cstr());
             Assert.Equal("[1], type = Float32, device = cpu, value = float [] {0f}", torch.zeros(1).cstr());
         }
-      
+
+        [Fact]
         public void ValidateLoadWithDeflateStream()
         {
 #if NET6_0_OR_GREATER
