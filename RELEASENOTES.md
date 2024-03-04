@@ -4,9 +4,17 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 # NuGet Version 0.102.1
 
+__Breaking Changes__:
+
+The `kernelSize` parameter in the function and class of `AvgPool1D` was renamed to `kernel_size` to match PyTorch naming.
+The `stride` parameter in the `torch.nn.functional.avg_pool1d` call now defaults to `kernelSize` instead of 1, to match the PyTorch behavior.
+
+
 __Bug Fixes__:
 
 `module.load_state_dict()` throws error for in-place operation on a leaf variable that requires grad. <br/>
+#1250 cstr and npstr for 0d tensors <br/>
+#1249 torch.nn.functional.avg_pool1d is not working correctly<br/>
 `module.load()` with streams which don't read the requested # of bytes throws error. <br/>
 
 ## NuGet Version 0.102.0
