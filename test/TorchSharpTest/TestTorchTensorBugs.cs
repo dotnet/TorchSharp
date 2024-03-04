@@ -1638,6 +1638,7 @@ namespace TorchSharp
         [Fact]
         public void ValidateLoadWithDeflateStream()
         {
+#if NET6_0_OR_GREATER
             var seq = Sequential(Linear(100, 100), Linear(100, 100));
 
             var ms = new MemoryStream();
@@ -1653,6 +1654,7 @@ namespace TorchSharp
             using (var archive = new ZipArchive(ms)) {
                 seq.load(archive.GetEntry("seq")!.Open());
             }
+#endif
         }
     }
 }
