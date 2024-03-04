@@ -6,7 +6,9 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 __Breaking Changes__:
 
-The `stride` parameter in the `torch.nn.functional.avg_pool1d` call now defaults to `kernelSize` instead of 1, to match the PyTorch behavior. 
+The `kernelSize` parameter in the function and class of `AvgPool1D` was renamed to `kernel_size` to match PyTorch naming.
+The `stride` parameter in the `torch.nn.functional.avg_pool1d` call now defaults to `kernelSize` instead of 1, to match the PyTorch behavior.
+
 
 __Bug Fixes__:
 
