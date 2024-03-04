@@ -18,6 +18,7 @@ using System.Numerics;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using TorchSharp.Modules;
+using System.IO.Compression;
 
 #nullable enable
 
@@ -1657,6 +1658,27 @@ namespace TorchSharp
             Assert.Equal("[0]", torch.zeros(1).npstr());
             Assert.Equal("[0], type = Float32, device = cpu, value = float [] {}", torch.zeros(0).cstr());
             Assert.Equal("[1], type = Float32, device = cpu, value = float [] {0f}", torch.zeros(1).cstr());
+        }
+      
+        public void ValidateLoadWithDeflateStream()
+        {
+#if NET6_0_OR_GREATER
+            var seq = Sequential(Linear(100, 100), Linear(100, 100));
+
+            var ms = new MemoryStream();
+            using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true)) {
+                var entry = archive.CreateEntry("seq");
+
+                using (var stream = entry.Open())
+                    seq.save(stream);
+            }
+
+            // This test will succeed if the following code doesn't crash. 
+            ms.Position = 0;
+            using (var archive = new ZipArchive(ms)) {
+                seq.load(archive.GetEntry("seq")!.Open());
+            }
+#endif
         }
     }
 }
