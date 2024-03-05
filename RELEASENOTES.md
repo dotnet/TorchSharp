@@ -16,6 +16,7 @@ __Bug Fixes__:
 #1250 cstr and npstr for 0d tensors <br/>
 #1249 torch.nn.functional.avg_pool1d is not working correctly<br/>
 `module.load()` with streams which don't read the requested # of bytes throws error. <br/>
+ #1246 Issue running in notebook on Apple Silicon<br/>
 
 ## NuGet Version 0.102.0
 

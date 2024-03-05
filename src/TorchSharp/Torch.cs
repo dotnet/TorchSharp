@@ -27,7 +27,9 @@ namespace TorchSharp
 #error "Please update cudaVersion to match CudaVersionDot"
 #endif
 
-        static bool isAppleSilicon = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && RuntimeInformation.OSArchitecture == Architecture.Arm64;
+        static bool isAppleSilicon => 
+            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && 
+            RuntimeInformation.OSArchitecture == Architecture.Arm64;
         
         static string nativeRid =>
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"win-x64" :
