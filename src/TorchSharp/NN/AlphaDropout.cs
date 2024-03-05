@@ -42,9 +42,9 @@ namespace TorchSharp
             protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
             protected internal override nn.Module _to(ScalarType dtype) => this;
 
-            private bool inplace;
-            private double p;
-        }
+            public bool inplace { get; set; }
+            public double p { get; set;}
+        }        
     }
 
     public static partial class torch

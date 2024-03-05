@@ -16,17 +16,17 @@ namespace TorchSharp
         {
             internal Flatten(long startDim = 1, long endDim = -1) : base(nameof(Flatten))
             {
-                _startDim = startDim;
-                _endDim = endDim;
+                start_dim = startDim;
+                end_dim = endDim;
             }
 
             public override Tensor forward(Tensor tensor)
             {
-                return tensor.flatten(_startDim, _endDim);
+                return tensor.flatten(start_dim, end_dim);
             }
 
-            private long _startDim;
-            private long _endDim;
+            public long start_dim {get; set;}
+            public long end_dim { get; set; }
 
             // Rather than spending cycles only to discover that this module has neither
             // parameters nor buffers, just shortcut the move completely.
