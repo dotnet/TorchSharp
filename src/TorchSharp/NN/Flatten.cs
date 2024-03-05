@@ -14,10 +14,10 @@ namespace TorchSharp
         /// </summary>
         public sealed class Flatten : ParamLessModule<Tensor, Tensor>
         {
-            internal Flatten(long startDim = 1, long endDim = -1) : base(nameof(Flatten))
+            internal Flatten(long start_dim = 1, long end_dim = -1) : base(nameof(Flatten))
             {
-                start_dim = startDim;
-                end_dim = endDim;
+                this.start_dim = start_dim;
+                this.end_dim = end_dim;
             }
 
             public override Tensor forward(Tensor tensor)

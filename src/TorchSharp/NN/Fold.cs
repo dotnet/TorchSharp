@@ -11,7 +11,7 @@ namespace TorchSharp
 
     namespace Modules
     {
-        public sealed class Fold : torch.nn.Module<Tensor, Tensor>
+        public sealed class Fold : ParamLessModule<Tensor, Tensor>
         {
             internal Fold((long, long) output_size, (long, long) kernel_size, (long, long) dilation, (long, long) padding, (long, long) stride) : base(nameof(Fold))
             {
