@@ -8,6 +8,7 @@ using static TorchSharp.PInvoke.NativeMethods;
 namespace TorchSharp
 {
     using Modules;
+    using TorchSharp.Utils;
 
     namespace Modules
     {
@@ -49,7 +50,6 @@ namespace TorchSharp
                     ConditionallyRegisterParameter(nameof(bias), _bias);
                 }
             }
-            private Parameter? _bias;
 
             public Parameter weight {
                 get => _weight!;
@@ -63,6 +63,9 @@ namespace TorchSharp
                 }
             }
 
+            [ComponentName(Name = "bias")]
+            private Parameter? _bias;
+            [ComponentName(Name = "weight")]
             private Parameter? _weight;
         }
     }
