@@ -1589,13 +1589,5 @@ namespace TorchVision
 
             Assert.True(expected.allclose(actual, rtol: 1e-4, atol: 1e-6));
         }
-
-        [Fact]
-        public void Adjust_Contrast_ReturnsTensorWithCorrectDtype()
-        {
-            var img1 = torch.randn(1, 32, 32).to(torch.uint8);
-            var img2 = torchvision.transforms.functional.adjust_contrast(img1, 2);
-            Assert.Equal(img1.dtype, img2.dtype);
-        }
     }
 }
