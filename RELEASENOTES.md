@@ -2,6 +2,12 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# NuGet Version 0.102.2
+
+__Bug Fixes__:
+
+#1257 InverseMelScale in NewDisposeScope doesn't dispose tensors<br/>
+
 # NuGet Version 0.102.1
 
 __Breaking Changes__:
