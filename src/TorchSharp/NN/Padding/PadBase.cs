@@ -16,9 +16,9 @@ namespace TorchSharp
         {
             protected PadBase(string name, PaddingModes mode, double value, params long[] padding) : base(name)
             {
-                _value = value;
-                _padding = padding;
-                _paddingMode = mode;
+                this.value = value;
+                this.padding = padding;
+                padding_mode = mode;
             }
 
             /// <summary>
@@ -28,12 +28,12 @@ namespace TorchSharp
             /// <returns></returns>
             public override Tensor forward(Tensor input)
             {
-                return nn.functional.pad(input, _padding, _paddingMode, _value);
+                return nn.functional.pad(input, padding, padding_mode, value);
             }
 
-            private PaddingModes _paddingMode;
-            private long[] _padding;
-            private double _value = 0.0;
+            private PaddingModes padding_mode { get; set; }
+            public long[] padding { get; set; }
+            public double value { get; set; }
         }
     }
 }

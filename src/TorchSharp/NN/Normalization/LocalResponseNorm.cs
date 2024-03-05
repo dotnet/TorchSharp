@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a LocalResponseNorm module.
         /// </summary>
-        public sealed class LocalResponseNorm : torch.nn.Module<Tensor, Tensor>
+        public sealed class LocalResponseNorm : ParamLessModule<Tensor, Tensor>
         {
             internal LocalResponseNorm(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {

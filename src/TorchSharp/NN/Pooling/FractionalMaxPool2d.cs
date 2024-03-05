@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a FractionalMaxPool2D module.
         /// </summary>
-        public sealed class FractionalMaxPool2d : torch.nn.Module<Tensor, Tensor>
+        public sealed class FractionalMaxPool2d : ParamLessModule<Tensor, Tensor>
         {
             internal FractionalMaxPool2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
@@ -31,14 +31,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero || indices == IntPtr.Zero) { torch.CheckForErrors(); }
                 return (new Tensor(res), new Tensor(indices));
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
-
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
-
-            protected internal override nn.Module _to(ScalarType dtype) => this;
         }
     }
 

@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// A cosine similarity module.
         /// </summary>
-        public sealed class CosineSimilarity : torch.nn.Module<Tensor, Tensor, Tensor>
+        public sealed class CosineSimilarity : ParamLessModule<Tensor, Tensor, Tensor>
         {
             internal CosineSimilarity(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
@@ -24,14 +24,6 @@ namespace TorchSharp
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                 return new Tensor(res);
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
-
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
-
-            protected internal override nn.Module _to(ScalarType dtype) => this;
         }
     }
 

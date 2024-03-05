@@ -18,13 +18,17 @@ namespace TorchSharp
         /// </summary>
         public sealed class LayerNorm : torch.nn.Module<Tensor, Tensor>
         {
-            private long[] _normalized_shape;
-            private double _eps;
+            public long[] normalized_shape { get; set; }
+            public double eps { get; set; }
+
+            public bool elementwise_affine { get; set; }
 
             internal LayerNorm(long[] normalized_shape, double eps, bool elementwise_affine, bool bias, Device? device, ScalarType? dtype) : base(nameof(LayerNorm))
             {
-                _normalized_shape = normalized_shape;
-                _eps = eps;
+                this.normalized_shape = normalized_shape;
+                this.eps = eps;
+                this.elementwise_affine = elementwise_affine;
+
                 if (elementwise_affine)
                 {
                     weight = Parameter(torch.empty(normalized_shape, dtype, device));
@@ -52,7 +56,7 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor tensor)
             {
-                return F.layer_norm(tensor, _normalized_shape, weight, bias, _eps);
+                return F.layer_norm(tensor, normalized_shape, weight, bias, eps);
             }
 
             public Parameter? bias {

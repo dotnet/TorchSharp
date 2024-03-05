@@ -204,7 +204,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent an Upsample module.
         /// </summary>
-        public sealed class Upsample : torch.nn.Module<Tensor, Tensor>
+        public sealed class Upsample : ParamLessModule<Tensor, Tensor>
         {
             internal Upsample(IntPtr handle, IntPtr boxedHandle, long[]? size, double[]? scale_factor, UpsampleMode mode, bool? align_corners) : base(handle, boxedHandle)
             {

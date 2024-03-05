@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a MaxUnpool1D module.
         /// </summary>
-        public sealed class MaxUnpool1d : torch.nn.Module<Tensor, Tensor, long[], Tensor>
+        public sealed class MaxUnpool1d : ParamLessModule<Tensor, Tensor, long[], Tensor>
         {
             internal MaxUnpool1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
@@ -33,14 +33,6 @@ namespace TorchSharp
             {
                 return base.call(tensor, indices, output_size);
             }
-
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
-
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
-
-            protected internal override nn.Module _to(ScalarType dtype) => this;
         }
     }
 

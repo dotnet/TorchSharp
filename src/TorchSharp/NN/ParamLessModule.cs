@@ -10,12 +10,14 @@ namespace TorchSharp
     namespace Modules
     {
         /// <summary>
-        /// Base class for all modules that do not have any parameters or buffers, and
+        /// Base class for all modules that do not have any tensor parameters or buffers, and
         /// for which the `_to()` implementation can therefore be simplified.
         /// </summary>
         public abstract class ParamLessModule<T1, T2> : nn.Module<T1, T2>
         {
             protected ParamLessModule(string name) : base(name) { }
+
+            protected ParamLessModule(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) {}
 
             // Rather than spending cycles only to discover that this module has neither
             // parameters nor buffers, just shortcut the move completely.
@@ -27,12 +29,33 @@ namespace TorchSharp
         }
 
         /// <summary>
-        /// Base class for all modules that do not have any parameters or buffers, and
+        /// Base class for all modules that do not have any tensor parameters or buffers, and
         /// for which the `_to()` implementation can therefore be simplified.
         /// </summary>
         public abstract class ParamLessModule<T1, T2, T3> : nn.Module<T1, T2, T3>
         {
             protected ParamLessModule(string name) : base(name) { }
+
+            protected ParamLessModule(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) {}
+
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
+
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
+
+            protected internal override nn.Module _to(ScalarType dtype) => this;
+        }
+
+        /// <summary>
+        /// Base class for all modules that do not have any tensor parameters or buffers, and
+        /// for which the `_to()` implementation can therefore be simplified.
+        /// </summary>
+        public abstract class ParamLessModule<T1, T2, T3, T4> : nn.Module<T1, T2, T3, T4>
+        {
+            protected ParamLessModule(string name) : base(name) { }
+
+            protected ParamLessModule(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) {}
 
             // Rather than spending cycles only to discover that this module has neither
             // parameters nor buffers, just shortcut the move completely.
