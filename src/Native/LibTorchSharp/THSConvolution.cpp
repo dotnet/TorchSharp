@@ -683,6 +683,7 @@ void THSNN_Conv1d_set_weight(const NNModule module, const Tensor weight)
     set_weight<torch::nn::Conv1d>(module, weight);
 }
 
+
 NNModule THSNN_Conv2d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,
     const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias,
@@ -756,6 +757,13 @@ void THSNN_Conv2d_set_weight(const NNModule module, const Tensor weight)
 {
     set_weight<torch::nn::Conv2d>(module, weight);
 }
+
+/*void THSNN_Conv2d_print_options(const NNModule module) {
+    auto opt = (*module)->as<torch::nn::Conv2d>()->options;
+    ::std::cout << "Conv2d (" << std::to_string(opt.in_channels()) << "," << std::to_string(opt.out_channels()) << ")" << std::endl;
+}*/
+
+
 
 NNModule THSNN_Conv3d_ctor(const int64_t inputChannel, const int64_t outputChannel,
     const int64_t kernelSize, const int64_t stride, const int64_t padding,

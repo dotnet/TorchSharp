@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using TorchSharp.Amp;
 using static TorchSharp.PInvoke.NativeMethods;
 
 #nullable enable
@@ -18,7 +19,14 @@ namespace TorchSharp
             device = InitializeDevice(device);
             var handle = THSTensor_newFloat32Scalar(scalar, (int)device.type, device.index, requires_grad);
             if (handle == IntPtr.Zero) { CheckForErrors(); }
-            return new Tensor(handle);
+
+
+            var t = new Tensor(handle).AutoCast();
+            /*if (is_autocast_cache_enabled()) {
+                if (is_autocast_gpu_enabled())
+                    return t.to(get_autocast_gpu_dtype()); //this work, but should put that on all tensor factorie... 
+            }*/
+            return t;
         }
 
         /// <summary>

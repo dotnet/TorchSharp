@@ -145,6 +145,7 @@ EXPORT_API(Tensor)   THSNN_Conv2d_weight(const NNModule module);
 EXPORT_API(void)     THSNN_Conv2d_set_weight(const NNModule module, const Tensor weight);
 EXPORT_API(Tensor)   THSNN_Conv2d_bias(const NNModule module);
 EXPORT_API(void)     THSNN_Conv2d_set_bias(const NNModule module, const Tensor bias);
+//EXPORT_API(void)     THSNN_Conv2d_print_options(const NNModule module);
 EXPORT_API(NNModule) THSNN_Conv3d_ctor(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelSize, const int64_t stride, const int64_t padding, const int64_t dilation, const int64_t paddingMode, const int64_t groups, const bool bias, NNAnyModule* outAsAnyModule);
 EXPORT_API(NNModule) THSNN_Conv3d_ctor_1(const int64_t inputChannel, const int64_t outputChannel, const int64_t kernelX, const int64_t kernelY, const int64_t kernelZ, const int64_t strideX, const int64_t strideY, const int64_t strideZ, const int64_t paddingX, const int64_t paddingY, const int64_t paddingZ, const int64_t dilationX, const int64_t dilationY, const int64_t dilationZ, const int64_t paddingMode, const int64_t groups, const bool bias, NNAnyModule* outAsAnyModule);
 EXPORT_API(Tensor)   THSNN_Conv3d_forward(const NNModule module, const Tensor tensor);
@@ -592,3 +593,7 @@ EXPORT_API(PackedSequence) THSNN_pack_padded_sequence(Tensor input, Tensor lengt
 EXPORT_API(void) THSNN_pad_packed_sequence(PackedSequence sequence, bool batch_first, double padding_value, int64_t total_length, Tensor* res1, Tensor* res2);
 EXPORT_API(Tensor) THSNN_pad_sequence(const Tensor* sequences, const int sequences_len, bool batch_first, double padding_value);
 EXPORT_API(PackedSequence) THSNN_pack_sequence(const Tensor* sequences, int sequences_len, bool enforce_sorted);
+
+
+// Printer Modules
+EXPORT_API(void) THSNN_Print_Module(const NNModule module);

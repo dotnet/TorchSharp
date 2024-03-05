@@ -33,8 +33,8 @@ namespace TorchSharp
             protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
             protected internal override nn.Module _to(ScalarType dtype) => this;
 
-            private bool inplace;
-            private double p;
+            internal bool inplace; //Set internal accesibility for PrintModule
+            internal double p; //Set internal accesibility for PrintModule
         }
     }
 

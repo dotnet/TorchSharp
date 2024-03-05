@@ -1333,6 +1333,10 @@ EXPORT_API(Tensor) THSTensor_to_type(const Tensor tensor, int8_t scalar_type, co
 
 EXPORT_API(Tensor) THSTensor_to_type_and_device(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index, const bool copy);
 
+//EXPORT_API(Tensor) THSTensor_device_and_non_blocking(const Tensor tensor, const int device_type, const int device_index, const bool non_blocking);
+
+EXPORT_API(Tensor) THSTensor_to_type_and_device_and_non_blocking(const Tensor tensor, int8_t scalar_type, const int device_type, const int device_index, const bool non_blocking);
+
 EXPORT_API(void) THSTensor_topk(const Tensor tensor, Tensor* (*allocator)(size_t length), const int k, const int64_t dim, const bool largest, const bool sorted);
 
 EXPORT_API(Tensor) THSTensor_trunc(const Tensor tensor);

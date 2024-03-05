@@ -179,6 +179,12 @@ namespace TorchSharp
                         tensor.rename_(names);
                     }
 
+                    if (!is_autocast_cache_enabled())
+                        return tensor;
+                    if (is_autocast_gpu_enabled())
+                        tensor = tensor.to(get_autocast_gpu_dtype());
+                    if (is_autocast_cpu_enabled())
+                        tensor = tensor.to(get_autocast_cpu_dtype());
                     return tensor;
                 }
             }
