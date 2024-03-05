@@ -60,24 +60,6 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSNN_alpha_dropout(IntPtr input, double p, [MarshalAs(UnmanagedType.U1)] bool training, [MarshalAs(UnmanagedType.U1)] bool inplace);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Bilinear_forward(torch.nn.Module.HType module, IntPtr input1, IntPtr input2);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Bilinear_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Bilinear_set_bias(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Bilinear_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_Bilinear_set_weight(torch.nn.Module.HType module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_Bilinear_ctor(long in1_features, long in2_features, long output_size, [MarshalAs(UnmanagedType.U1)] bool bias, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_functional_bilinear(IntPtr input1, IntPtr input2, IntPtr weights, IntPtr bias);
 
         [DllImport("LibTorchSharp")]
