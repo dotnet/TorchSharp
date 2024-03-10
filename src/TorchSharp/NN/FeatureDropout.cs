@@ -14,16 +14,19 @@ namespace TorchSharp
         /// </summary>
         public sealed class FeatureAlphaDropout : ParamLessModule<Tensor, Tensor>
         {
-            internal FeatureAlphaDropout(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal FeatureAlphaDropout(double p = 0.5, bool inplace = false) : base(nameof(FeatureAlphaDropout))
             {
+                this.p = p;
+                this.inplace = inplace;
             }
 
-            public override Tensor forward(Tensor tensor)
+            public override Tensor forward(Tensor input)
             {
-                var res = THSNN_FeatureAlphaDropout_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.feature_alpha_dropout(input, this.p, this.training, this.inplace);
             }
+
+            public bool inplace { get; set; }
+            public double p { get; set; }
         }
     }
 
@@ -38,11 +41,10 @@ namespace TorchSharp
             /// randomized on every forward call, and scaled and shifted to maintain zero mean and unit variance.
             /// </summary>
             /// <param name="p">Dropout probability of a channel to be zeroed. Default: 0.5</param>
-            public static FeatureAlphaDropout FeatureAlphaDropout(double p = 0.5)
+            /// <param name="inplace">If set to true, will do this operation in-place. Default: false</param>
+            public static FeatureAlphaDropout FeatureAlphaDropout(double p = 0.5, bool inplace = false)
             {
-                var handle = THSNN_FeatureAlphaDropout_ctor(p, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new FeatureAlphaDropout(handle, boxedHandle);
+                return new FeatureAlphaDropout(p, inplace);
             }
 
             public static partial class functional
