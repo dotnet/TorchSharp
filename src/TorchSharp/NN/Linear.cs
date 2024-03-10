@@ -19,6 +19,9 @@ namespace TorchSharp
 
             internal Linear(long inputSize, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null) : base(nameof(Linear))
             {
+                this.in_features = inputSize;
+                this.out_features = outputSize;
+
                 weight = torch.empty(outputSize, inputSize, device: device, dtype: dtype).AsParameter();
                 init.kaiming_uniform_(weight, a: _sqrt5);
 
@@ -69,6 +72,9 @@ namespace TorchSharp
             private Parameter? _bias;
             [ComponentName(Name = WeightComponentName)]
             private Parameter? _weight;
+
+            public int in_features { get; set; }
+            public int out_features { get; set; }
 
             private static readonly double _sqrt5 = Math.Sqrt(5);
         }
