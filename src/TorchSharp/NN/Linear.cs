@@ -73,8 +73,8 @@ namespace TorchSharp
             [ComponentName(Name = WeightComponentName)]
             private Parameter? _weight;
 
-            public int in_features { get; set; }
-            public int out_features { get; set; }
+            public long in_features { get; set; }
+            public long out_features { get; set; }
 
             private static readonly double _sqrt5 = Math.Sqrt(5);
         }
