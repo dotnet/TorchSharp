@@ -1172,7 +1172,7 @@ namespace TorchSharp
             () => Assert.Equal(expectedShape, functional.max_pool2d(t, new long[] { 2, 2 }).shape)
             );
 
-            Assert.Equal(expectedShape, functional.max_pool2d_with_indices(t, new long[] { 2, 2 }).Values.shape);
+            Assert.Equal(expectedShape, functional.max_pool2d_with_indices(t, new long[] { 2, 2 }).output.shape);
         }
 
         [Fact]
@@ -1182,7 +1182,7 @@ namespace TorchSharp
             var expectedShape = new long[] { 1, 6, 14, 14, 14 };
 
             Assert.Equal(expectedShape, functional.max_pool3d(t, new long[] { 2, 2, 2 }).shape);
-            Assert.Equal(expectedShape, functional.max_pool3d_with_indices(t, new long[] { 2, 2, 2 }).Values.shape);
+            Assert.Equal(expectedShape, functional.max_pool3d_with_indices(t, new long[] { 2, 2, 2 }).output.shape);
         }
 
         [Fact]

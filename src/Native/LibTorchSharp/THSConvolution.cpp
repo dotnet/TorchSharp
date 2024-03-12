@@ -3,6 +3,411 @@
 
 #include <torch/nn/init.h>
 
+
+
+NNModule THSNN_AvgPool1d_ctor(const int64_t* kernelSize, const int64_t* stride, const int64_t* padding,
+    bool ceil_mode, bool count_include_pad, int64_t divisor_override,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::AvgPool1dOptions(at::ArrayRef<int64_t>(kernelSize, 1)).ceil_mode(ceil_mode).count_include_pad(count_include_pad);
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, 1));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, 1));
+        if (divisor_override > 0)
+            opts = opts.divisor_override(divisor_override);
+        res = create_module<torch::nn::AvgPool1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_AvgPool1d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::AvgPool1d>()->forward(*tensor));
+}
+
+NNModule THSNN_AvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const int64_t* padding, const int paddingLength,
+    bool ceil_mode, bool count_include_pad, int64_t divisor_override,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::AvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength)).ceil_mode(ceil_mode).count_include_pad(count_include_pad);
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, paddingLength));
+        if (divisor_override > 0)
+            opts = opts.divisor_override(divisor_override);
+        res = create_module<torch::nn::AvgPool2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_AvgPool2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::AvgPool2d>()->forward(*tensor));
+}
+
+NNModule THSNN_AvgPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const int64_t* padding, const int paddingLength,
+    bool ceil_mode, bool count_include_pad, int64_t divisor_override,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::AvgPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength)).ceil_mode(ceil_mode).count_include_pad(count_include_pad);
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, paddingLength));
+        if (divisor_override > 0)
+            opts = opts.divisor_override(divisor_override);
+        res = create_module<torch::nn::AvgPool3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_AvgPool3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::AvgPool3d>()->forward(*tensor));
+}
+
+NNModule THSNN_AdaptiveAvgPool1d_ctor(const int64_t* kernelSize, const int kernelSizeLength,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::AdaptiveAvgPool1dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        res = create_module<torch::nn::AdaptiveAvgPool1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_AdaptiveAvgPool1d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::AdaptiveAvgPool1d>()->forward(*tensor));
+}
+
+NNModule THSNN_AdaptiveAvgPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::AdaptiveAvgPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        res = create_module<torch::nn::AdaptiveAvgPool2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_AdaptiveAvgPool2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::AdaptiveAvgPool2d>()->forward(*tensor));
+}
+
+NNModule THSNN_AdaptiveAvgPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::AdaptiveAvgPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        res = create_module<torch::nn::AdaptiveAvgPool3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_AdaptiveAvgPool3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::AdaptiveAvgPool3d>()->forward(*tensor));
+}
+
+NNModule THSNN_AdaptiveMaxPool1d_ctor(const int64_t* kernelSize, const int kernelSizeLength,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::AdaptiveMaxPool1dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        res = create_module<torch::nn::AdaptiveMaxPool1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_AdaptiveMaxPool1d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::AdaptiveMaxPool1d>()->forward(*tensor));
+}
+
+NNModule THSNN_AdaptiveMaxPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::AdaptiveMaxPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        res = create_module<torch::nn::AdaptiveMaxPool2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_AdaptiveMaxPool2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::AdaptiveMaxPool2d>()->forward(*tensor));
+}
+
+NNModule THSNN_AdaptiveMaxPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::AdaptiveMaxPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        res = create_module<torch::nn::AdaptiveMaxPool3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_AdaptiveMaxPool3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::AdaptiveMaxPool3d>()->forward(*tensor));
+}
+
+NNModule THSNN_LPPool1d_ctor(double norm_type, const int64_t* kernelSize, const int64_t* stride, const bool ceil_mode,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::LPPool1dOptions(norm_type, at::ArrayRef<int64_t>(kernelSize, 1)).ceil_mode(ceil_mode);
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, 1));
+        res = create_module<torch::nn::LPPool1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_LPPool1d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::LPPool1d>()->forward(*tensor));
+}
+
+NNModule THSNN_LPPool2d_ctor(double norm_type, const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const bool ceil_mode,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::LPPool2dOptions(norm_type, at::ArrayRef<int64_t>(kernelSize, kernelSizeLength)).ceil_mode(ceil_mode);
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        res = create_module<torch::nn::LPPool2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_LPPool2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::LPPool2d>()->forward(*tensor));
+}
+
+NNModule THSNN_MaxPool1d_ctor(const int64_t* kernelSize, const int64_t* stride, const int64_t* padding, const int64_t* dilation, bool ceil_mode,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MaxPool1dOptions(at::ArrayRef<int64_t>(kernelSize, 1)).ceil_mode(ceil_mode);
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, 1));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, 1));
+        if (dilation)
+            opts = opts.dilation(at::ArrayRef<int64_t>(dilation, 1));
+
+        res = create_module<torch::nn::MaxPool1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_MaxPool1d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::MaxPool1d>()->forward(*tensor));
+}
+
+Tensor THSNN_MaxPool1d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = (*module)->as<torch::nn::MaxPool1d>()->forward_with_indices(*tensor););
+    *indices = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+NNModule THSNN_MaxPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength, const int64_t* dilation, const int dilationLength, bool ceil_mode,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MaxPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength)).ceil_mode(ceil_mode);
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, paddingLength));
+        if (dilation)
+            opts = opts.dilation(at::ArrayRef<int64_t>(dilation, dilationLength));
+
+        res = create_module<torch::nn::MaxPool2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_MaxPool2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::MaxPool2d>()->forward(*tensor));
+}
+
+Tensor THSNN_MaxPool2d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = (*module)->as<torch::nn::MaxPool2d>()->forward_with_indices(*tensor););
+    *indices = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+NNModule THSNN_MaxPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength, const int64_t* dilation, const int dilationLength, bool ceil_mode,
+    NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MaxPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength)).ceil_mode(ceil_mode);
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, paddingLength));
+        if (dilation)
+            opts = opts.dilation(at::ArrayRef<int64_t>(dilation, dilationLength));
+
+        res = create_module<torch::nn::MaxPool3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_MaxPool3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::MaxPool3d>()->forward(*tensor));
+}
+
+Tensor THSNN_MaxPool3d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = (*module)->as<torch::nn::MaxPool3d>()->forward_with_indices(*tensor););
+    *indices = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+NNModule THSNN_MaxUnpool1d_ctor(const int64_t* kernelSize, const int64_t* stride, const int64_t* padding, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MaxUnpool1dOptions(at::ArrayRef<int64_t>(kernelSize, 1));
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, 1));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, 1));
+
+        res = create_module<torch::nn::MaxUnpool1dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_MaxUnpool1d_forward(const NNModule module, const Tensor tensor, const Tensor indices, const int64_t* outputSize)
+{
+    if (outputSize != nullptr) {
+        std::vector<int64_t> outSize;
+        outSize.push_back(*outputSize);
+
+        CATCH_TENSOR((*module)->as<torch::nn::MaxUnpool1d>()->forward(*tensor, *indices, outSize));
+    }
+    else {
+        CATCH_TENSOR((*module)->as<torch::nn::MaxUnpool1d>()->forward(*tensor, *indices));
+    }
+}
+
+NNModule THSNN_MaxUnpool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const int64_t* padding, const int paddingLength, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MaxUnpool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, paddingLength));
+
+        res = create_module<torch::nn::MaxUnpool2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_MaxUnpool2d_forward(const NNModule module, const Tensor tensor, const Tensor indices, const int64_t* outputSize, const int outputSizeLength)
+{
+    if (outputSize != nullptr) {
+        std::vector<int64_t> outSize;
+        for (auto i = 0L; i < outputSizeLength; i++) {
+            outSize.push_back(outputSize[i]);
+        }
+
+        CATCH_TENSOR((*module)->as<torch::nn::MaxUnpool2d>()->forward(*tensor, *indices, outSize));
+    }
+    else {
+        CATCH_TENSOR((*module)->as<torch::nn::MaxUnpool2d>()->forward(*tensor, *indices));
+    }
+}
+
+NNModule THSNN_MaxUnpool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const int64_t* padding, const int paddingLength, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::MaxUnpool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        if (stride)
+            opts = opts.stride(at::ArrayRef<int64_t>(stride, strideLength));
+        if (padding)
+            opts = opts.padding(at::ArrayRef<int64_t>(padding, paddingLength));
+
+        res = create_module<torch::nn::MaxUnpool3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor  THSNN_MaxUnpool3d_forward(const NNModule module, const Tensor tensor, const Tensor indices, const int64_t* outputSize, const int outputSizeLength)
+{
+    if (outputSize != nullptr) {
+        std::vector<int64_t> outSize;
+        for (auto i = 0L; i < outputSizeLength; i++) {
+            outSize.push_back(outputSize[i]);
+        }
+
+        CATCH_TENSOR((*module)->as<torch::nn::MaxUnpool3d>()->forward(*tensor, *indices, outSize));
+    }
+    else {
+        CATCH_TENSOR((*module)->as<torch::nn::MaxUnpool3d>()->forward(*tensor, *indices));
+    }
+}
+
+
+NNModule THSNN_FractionalMaxPool2d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* outputSize, const int outputSizeLength, const double* outputRatio, const int outputRatioLength, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::FractionalMaxPool2dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        if (outputSize)
+            opts = opts.output_size(at::ArrayRef<int64_t>(outputSize, outputSizeLength));
+        if (outputRatio)
+            opts = opts.output_ratio(at::ArrayRef<double>(outputRatio, outputRatioLength));
+
+        res = create_module<torch::nn::FractionalMaxPool2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor  THSNN_FractionalMaxPool2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::FractionalMaxPool2d>()->forward(*tensor));
+}
+
+Tensor  THSNN_FractionalMaxPool2d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = (*module)->as<torch::nn::FractionalMaxPool2d>()->forward_with_indices(*tensor););
+    *indices = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
+NNModule THSNN_FractionalMaxPool3d_ctor(const int64_t* kernelSize, const int kernelSizeLength, const int64_t* outputSize, const int outputSizeLength, const double* outputRatio, const int outputRatioLength, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::FractionalMaxPool3dOptions(at::ArrayRef<int64_t>(kernelSize, kernelSizeLength));
+        if (outputSize)
+            opts = opts.output_size(at::ArrayRef<int64_t>(outputSize, outputSizeLength));
+        if (outputRatio)
+            opts = opts.output_ratio(at::ArrayRef<double>(outputRatio, outputRatioLength));
+
+        res = create_module<torch::nn::FractionalMaxPool3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_FractionalMaxPool3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::FractionalMaxPool3d>()->forward(*tensor));
+}
+
+Tensor THSNN_FractionalMaxPool3d_forward_with_indices(const NNModule module, const Tensor tensor, Tensor* indices)
+{
+    std::tuple<at::Tensor, at::Tensor> res;
+    CATCH(res = (*module)->as<torch::nn::FractionalMaxPool3d>()->forward_with_indices(*tensor););
+    *indices = ResultTensor(std::get<1>(res));
+    return ResultTensor(std::get<0>(res));
+}
+
 template<typename T>
 void ApplyPaddingMode(T& opts, const int64_t padding)
 {

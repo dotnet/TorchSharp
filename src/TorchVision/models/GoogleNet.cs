@@ -119,21 +119,21 @@ namespace TorchSharp
                 this.transform_input = transform_input;
 
                 conv1 = conv_block(3, 64, kernel_size: 7, stride: 2, padding: 3);
-                maxpool1 = MaxPool2d(kernel_size: 3, stride: 2, ceil_mode: true);
+                maxpool1 = MaxPool2d(kernelSize: 3, stride: 2, ceilMode: true);
                 conv2 = conv_block(64, 64, kernel_size: 1);
                 conv3 = conv_block(64, 192, kernel_size: 3, padding: 1);
-                maxpool2 = MaxPool2d(kernel_size: 3, stride: 2, ceil_mode: true);
+                maxpool2 = MaxPool2d(kernelSize: 3, stride: 2, ceilMode: true);
 
                 inception3a = inception_block(192, 64, 96, 128, 16, 32, 32);
                 inception3b = inception_block(256, 128, 128, 192, 32, 96, 64);
-                maxpool3 = nn.MaxPool2d(3, stride: 2, ceil_mode: true);
+                maxpool3 = nn.MaxPool2d(3, stride: 2, ceilMode: true);
 
                 inception4a = inception_block(480, 192, 96, 208, 16, 48, 64);
                 inception4b = inception_block(512, 160, 112, 224, 24, 64, 64);
                 inception4c = inception_block(512, 128, 128, 256, 24, 64, 64);
                 inception4d = inception_block(512, 112, 144, 288, 32, 64, 64);
                 inception4e = inception_block(528, 256, 160, 320, 32, 128, 128);
-                maxpool4 = nn.MaxPool2d(2, stride: 2, ceil_mode: true);
+                maxpool4 = nn.MaxPool2d(2, stride: 2, ceilMode: true);
 
                 inception5a = inception_block(832, 256, 160, 320, 32, 128, 128);
                 inception5b = inception_block(832, 384, 192, 384, 48, 128, 128);
@@ -280,7 +280,7 @@ namespace TorchSharp
                         conv_block(ch5x5red, ch5x5, kernel_size: 3, padding: 1)
                     );
                     branch4 = nn.Sequential(
-                        nn.MaxPool2d(kernel_size: 3, stride: 1, padding: 1, ceil_mode: true),
+                        nn.MaxPool2d(kernelSize: 3, stride: 1, padding: 1, ceilMode: true),
                         conv_block(in_channels, pool_proj, kernel_size: 1)
                     );
                     RegisterComponents();

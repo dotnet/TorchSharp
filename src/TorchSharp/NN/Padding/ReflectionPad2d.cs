@@ -14,7 +14,7 @@ namespace TorchSharp
         /// </summary>
         public sealed class ReflectionPad2d : PadBase
         {
-            internal ReflectionPad2d(params long[] padding) : base(nameof(ReflectionPad2d), PaddingModes.Reflect, 0, padding) { }        
+            internal ReflectionPad2d(params long[] padding) : base(nameof(ReflectionPad1d), PaddingModes.Reflect, 0, padding) { }        
         }
     }
 

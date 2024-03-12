@@ -6,7 +6,6 @@ using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
-    using Google.Protobuf.WellKnownTypes;
     using Modules;
 
     namespace Modules
@@ -16,30 +15,23 @@ namespace TorchSharp
         /// </summary>
         public sealed class MaxPool3d : ParamLessModule<Tensor, Tensor>
         {
-            internal MaxPool3d(long[] kernel_size, long[] stride = null, long[] padding = null, long[] dilation = null, bool ceil_mode = false) : base(nameof(MaxPool3d))
+            internal MaxPool3d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
-                this.kernel_size = kernel_size;
-                this.stride = stride;
-                this.padding = padding;
-                this.dilation = dilation;
-                this.ceil_mode = ceil_mode;
             }
 
-            public override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.max_pool3d(input, kernel_size, stride, padding, dilation, ceil_mode);
+                var res = THSNN_MaxPool3d_forward(handle, tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
 
-            public (Tensor Values, Tensor Indices) forward_with_indices(Tensor input)
+            public (Tensor Values, Tensor Indices) forward_with_indices(Tensor tensor)
             {
-                return torch.nn.functional.max_pool3d_with_indices(input, kernel_size, stride, padding, dilation, ceil_mode);
+                var res = THSNN_MaxPool3d_forward_with_indices(handle, tensor.Handle, out var indices);
+                if (res == IntPtr.Zero || indices == IntPtr.Zero) { torch.CheckForErrors(); }
+                return (new Tensor(res), new Tensor(indices));
             }
-
-            public long[] kernel_size { get; set; }
-            public long[] stride { get; set; }
-            public long[] padding { get; set; }
-            public long[] dilation { get; set; }
-            public bool ceil_mode { get; set; }
         }
     }
 
@@ -50,49 +42,55 @@ namespace TorchSharp
             /// <summary>
             /// Applies a 3D max pooling over an input signal composed of several input planes.
             /// </summary>
-            /// <param name="kernel_size">The size of the sliding window, must be > 0.</param>
+            /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
             /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
-            /// <param name="ceil_mode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
+            /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
             /// <returns></returns>
-            public static MaxPool3d MaxPool3d(long kernel_size, long? stride = null, long? padding = null, long? dilation = null, bool ceil_mode = false)
+            public static MaxPool3d MaxPool3d(long kernelSize, long? stride = null, long? padding = null, long? dilation = null, bool ceilMode = false)
             {
                 var pStride = stride.HasValue ? new long[] { stride.Value, stride.Value, stride.Value } : null;
                 var pPadding = padding.HasValue ? new long[] { padding.Value, padding.Value, padding.Value } : null;
                 var pDilation = dilation.HasValue ? new long[] { dilation.Value, dilation.Value, dilation.Value } : null;
-                return MaxPool3d(new long[] { kernel_size, kernel_size, kernel_size }, pStride, pPadding, pDilation, ceil_mode);
+                return MaxPool3d(new long[] { kernelSize, kernelSize, kernelSize }, pStride, pPadding, pDilation, ceilMode);
             }
 
             /// <summary>
             /// Applies a 3D max pooling over an input signal composed of several input planes.
             /// </summary>
-            /// <param name="kernel_size">The size of the sliding window, must be > 0.</param>
+            /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
             /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
-            /// <param name="ceil_mode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
+            /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
             /// <returns></returns>
-            public static MaxPool3d MaxPool3d((long, long, long) kernel_size, (long, long, long)? stride = null, (long, long, long)? padding = null, (long, long, long)? dilation = null, bool ceil_mode = false)
+            public static MaxPool3d MaxPool3d((long, long, long) kernelSize, (long, long, long)? stride = null, (long, long, long)? padding = null, (long, long, long)? dilation = null, bool ceilMode = false)
             {
                 var pStride = stride.HasValue ? new long[] { stride.Value.Item1, stride.Value.Item2, stride.Value.Item3 } : null;
                 var pPadding = padding.HasValue ? new long[] { padding.Value.Item1, padding.Value.Item2, padding.Value.Item3 } : null;
                 var pDilation = dilation.HasValue ? new long[] { dilation.Value.Item1, dilation.Value.Item2, dilation.Value.Item3 } : null;
-                return MaxPool3d(new long[] { kernel_size.Item1, kernel_size.Item2, kernel_size.Item3 }, pStride, pPadding, pDilation, ceil_mode);
+                return MaxPool3d(new long[] { kernelSize.Item1, kernelSize.Item2, kernelSize.Item3 }, pStride, pPadding, pDilation, ceilMode);
             }
 
             /// <summary>
             /// Applies a 3D max pooling over an input signal composed of several input planes.
             /// </summary>
-            /// <param name="kernel_size">The size of the sliding window, must be > 0.</param>
-            /// <param name="stride">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
+            /// <param name="kernelSize">The size of the sliding window, must be > 0.</param>
+            /// <param name="strides">The stride of the sliding window, must be > 0. Default value is kernel_size.</param>
             /// <param name="padding">Implicit negative infinity padding to be added on both sides, must be >= 0 and less than or equal to kernel_size / 2</param>
             /// <param name="dilation">The stride between elements within a sliding window, must be > 0.</param>
-            /// <param name="ceil_mode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
+            /// <param name="ceilMode">If true, will use ceil instead of floor to compute the output shape. This ensures that every element in the input tensor is covered by a sliding window.</param>
             /// <returns></returns>
-            public static MaxPool3d MaxPool3d(long[] kernel_size, long[] stride = null, long[] padding = null, long[] dilation = null, bool ceil_mode = false)
+            public static MaxPool3d MaxPool3d(long[] kernelSize, long[] strides = null, long[] padding = null, long[] dilation = null, bool ceilMode = false)
             {
-                return new MaxPool3d(kernel_size, stride, padding, dilation, ceil_mode);
+                unsafe {
+                    fixed (long* pkernelSize = kernelSize, pstrides = strides, pPadding = padding, pDilation = dilation) {
+                        var handle = THSNN_MaxPool3d_ctor((IntPtr)pkernelSize, kernelSize.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), (IntPtr)pPadding, (padding == null ? 0 : padding.Length), (IntPtr)pDilation, (dilation == null ? 0 : dilation.Length), ceilMode, out var boxedHandle);
+                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new MaxPool3d(handle, boxedHandle);
+                    }
+                }
             }
 
             public static partial class functional
@@ -101,18 +99,31 @@ namespace TorchSharp
                 /// Applies a 3D max pooling over an input signal composed of several input planes.
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
-                /// <param name="kernel_size"></param>
-                /// <param name="stride"></param>
+                /// <param name="kernelSize"></param>
+                /// <param name="strides"></param>
                 /// <param name="padding"></param>
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static Tensor max_pool3d(Tensor input, long[] kernel_size, long[] stride = null,
+                public static Tensor max_pool3d(Tensor input, long[] kernelSize, long[] strides = null,
                     long[] padding = null, long[] dilation = null, bool ceil_mode = false)
                 {
-                    var ret = max_pool3d_with_indices(input, kernel_size, stride, padding, dilation, ceil_mode);
-                    ret.Indices.Dispose();
-                    return ret.Values;
+                    strides = strides ?? kernelSize;
+                    padding = padding ?? kernelSize.Select(x => 0L).ToArray();
+                    dilation = dilation ?? kernelSize.Select(x => 1L).ToArray();
+                    unsafe {
+                        fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
+                            var res =
+                                THSTensor_max_pool3d(input.Handle,
+                                    (IntPtr)pkernelSize, kernelSize.Length,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, padding.Length,
+                                    (IntPtr)pdilation, dilation.Length,
+                                    ceil_mode);
+                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                            return new Tensor(res);
+                        }
+                    }
                 }
 
                 /// <summary>
@@ -125,26 +136,30 @@ namespace TorchSharp
                 /// <param name="dilation"></param>
                 /// <param name="ceil_mode"></param>
                 /// <returns></returns>
-                public static (Tensor Values, Tensor Indices) max_pool3d_with_indices(Tensor input, long[] kernelSize, long[] strides = null,
+                public static (Tensor output, Tensor indices) max_pool3d_with_indices(Tensor input, long[] kernelSize, long[] strides = null,
                     long[] padding = null, long[] dilation = null, bool ceil_mode = false)
                 {
-                    strides ??= kernelSize;
-                    padding ??= kernelSize.Select(x => 0L).ToArray();
-                    dilation ??= kernelSize.Select(x => 1L).ToArray();
+                    strides = strides ?? kernelSize;
+                    padding = padding ?? kernelSize.Select(x => 0L).ToArray();
+                    dilation = dilation ?? kernelSize.Select(x => 1L).ToArray();
+                    IntPtr[] ptrArray;
 
-                    unsafe {
-                        fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
-                            var resOutput = THSTensor_max_pool3d_with_indices(input.Handle,
-                                (IntPtr)pkernelSize, kernelSize.Length,
-                                (IntPtr)pstrides, strides.Length,
-                                (IntPtr)ppadding, padding.Length,
-                                (IntPtr)pdilation, dilation.Length,
-                                ceil_mode, out var resIndices);
-
-                            if (resOutput == IntPtr.Zero || resIndices == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return (new Tensor(resOutput), new Tensor(resIndices));
+                    using (var pa = new PinnedArray<IntPtr>()) {
+                        unsafe {
+                            fixed (long* pkernelSize = kernelSize, pstrides = strides, ppadding = padding, pdilation = dilation) {
+                                THSTensor_max_pool3d_with_indices(input.Handle,
+                                    pa.CreateArray,
+                                    (IntPtr)pkernelSize, kernelSize.Length,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, padding.Length,
+                                    (IntPtr)pdilation, dilation.Length,
+                                    ceil_mode);
+                                torch.CheckForErrors();
+                            }
                         }
+                        ptrArray = pa.Array;
                     }
+                    return (new Tensor(ptrArray[0]), new Tensor(ptrArray[1]));
                 }
             }
         }

@@ -23,20 +23,6 @@ EXPORT_API(Tensor) THSTensor_adaptive_avg_pool3d(const Tensor tensor, const int6
 
 EXPORT_API(Tensor) THSTensor_adaptive_avg_pool3d_backward_out(const Tensor grad_input, const Tensor grad_output, const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_adaptive_max_pool1d(const Tensor tensor, const int64_t* outputSize, const int outputSizeLength, Tensor* indices);
-
-EXPORT_API(Tensor) THSTensor_adaptive_max_pool2d(const Tensor tensor, const int64_t* outputSize, const int outputSizeLength, Tensor* indices);
-
-EXPORT_API(Tensor) THSTensor_adaptive_max_pool3d(const Tensor tensor, const int64_t* outputSize, const int outputSizeLength, Tensor* indices);
-
-EXPORT_API(Tensor) THSTensor_fractional_max_pool2d(const Tensor tensor, const int64_t* kernelSize, const int kernelSizeLength, const int64_t* outputSize, const int outputSizeLength, const double* outputRatio, const int outputRatioLength, Tensor* indices);
-
-EXPORT_API(Tensor) THSTensor_fractional_max_pool3d(const Tensor tensor, const int64_t* kernelSize, const int kernelSizeLength, const int64_t* outputSize, const int outputSizeLength, const double* outputRatio, const int outputRatioLength, Tensor* indices);
-
-EXPORT_API(Tensor) THSTensor_lp_pool1d(const Tensor tensor, const double norm_type, const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const bool ceil_mode);
-
-EXPORT_API(Tensor) THSTensor_lp_pool2d(const Tensor tensor, const double norm_type, const int64_t* kernelSize, const int kernelSizeLength, const int64_t* stride, const int strideLength, const bool ceil_mode);
-
 EXPORT_API(Tensor) THSTensor_add(const Tensor left, const Tensor right, const Scalar alpha);
 
 EXPORT_API(void) THSTensor_add_(const Tensor left, const Tensor right, const Scalar alpha);
@@ -153,8 +139,7 @@ EXPORT_API(Tensor) THSTensor_avg_pool2d(
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength,
     bool ceil_mode,
-    bool count_include_pad,
-    const int64_t divisor_override);
+    bool count_include_pad);
 
 EXPORT_API(Tensor) THSTensor_avg_pool2d_backward(
     const Tensor grad_output,
@@ -172,8 +157,7 @@ EXPORT_API(Tensor) THSTensor_avg_pool3d(
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength,
     bool ceil_mode,
-    bool count_include_pad,
-    const int64_t divisor_override);
+    bool count_include_pad);
 
 EXPORT_API(Tensor) THSTensor_avg_pool3d_backward(
     const Tensor grad_output,
@@ -808,53 +792,68 @@ EXPORT_API(void) THSTensor_max_along_dimension(const Tensor tensor, Tensor* (*al
 
 EXPORT_API(Tensor) THSTensor_max_elementwise(const Tensor tensor, const Tensor other);
 
-EXPORT_API(Tensor) THSTensor_max_pool1d_with_indices(
+EXPORT_API(Tensor) THSTensor_max_pool1d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength,
     const int64_t* dilation, const int dilationLength,
-    bool ceil_mode, Tensor *indices);
+    bool ceil_mode);
 
-EXPORT_API(Tensor) THSTensor_max_pool2d_with_indices(
+EXPORT_API(Tensor) THSTensor_max_pool2d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength,
     const int64_t* dilation, const int dilationLength,
-    bool ceil_mode, Tensor* indices);
+    bool ceil_mode);
 
-EXPORT_API(Tensor) THSTensor_max_pool3d_with_indices(
+EXPORT_API(Tensor) THSTensor_max_pool3d(
     const Tensor tensor,
     const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* stride, const int strideLength,
     const int64_t* padding, const int paddingLength,
     const int64_t* dilation, const int dilationLength,
-    bool ceil_mode, Tensor* indices);
+    bool ceil_mode);
 
-EXPORT_API(Tensor) THSTensor_max_unpool1d(
+EXPORT_API(void) THSTensor_max_pool1d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+EXPORT_API(void) THSTensor_max_pool2d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+EXPORT_API(void) THSTensor_max_pool3d_with_indices(
+    const Tensor tensor,
+    Tensor* (*allocator)(size_t length),
+    const int64_t* kernelSize, const int kernelSizeLength,
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength,
+    const int64_t* dilation, const int dilationLength,
+    bool ceil_mode);
+
+EXPORT_API(Tensor) THSTensor_maxunpool2d(
     const Tensor tensor,
     const Tensor indices,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* outputSize, const int outputSizeLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* stride, const int strideLength);
+    const int64_t* outputSize, const int outputSizeLength);
 
-EXPORT_API(Tensor) THSTensor_max_unpool2d(
+EXPORT_API(Tensor) THSTensor_maxunpool3d(
     const Tensor tensor,
     const Tensor indices,
-    const int64_t* kernelSize, const int kernelSizeLength,
     const int64_t* outputSize, const int outputSizeLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* stride, const int strideLength);
-
-EXPORT_API(Tensor) THSTensor_max_unpool3d(
-    const Tensor tensor,
-    const Tensor indices,
-    const int64_t* kernelSize, const int kernelSizeLength,
-    const int64_t* outputSize, const int outputSizeLength,
-    const int64_t* padding, const int paddingLength,
-    const int64_t* stride, const int strideLength);
+    const int64_t* stride, const int strideLength,
+    const int64_t* padding, const int paddingLength);
 
 EXPORT_API(Tensor) THSTensor_mean(const Tensor tensor);
 

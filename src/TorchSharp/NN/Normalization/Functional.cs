@@ -84,6 +84,16 @@ namespace TorchSharp
                     return new Tensor(res);
                 }
 
+                /// <summary>
+                /// Applies Local Normalization.
+                /// </summary>
+                public static Tensor local_response_norm(Tensor input, long size, double alpha = 0.0001, double beta = 0.75, double k = 1.0)
+                {
+                    var res = THSNN_local_response_norm(input.Handle, size, alpha, beta, k);
+                    if (res == IntPtr.Zero)
+                        torch.CheckForErrors();
+                    return new Tensor(res);
+                }
             }
         }
     }

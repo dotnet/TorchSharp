@@ -18,8 +18,10 @@ namespace TorchSharp
         /// </summary>
         public sealed class LayerNorm : torch.nn.Module<Tensor, Tensor>
         {
-            const string WeightComponentName = nameof(weight);
-            const string BiasComponentName = nameof(bias);
+            public long[] normalized_shape { get; set; }
+            public double eps { get; set; }
+
+            public bool elementwise_affine { get; set; }
 
             internal LayerNorm(long[] normalized_shape, double eps, bool elementwise_affine, bool bias, Device? device, ScalarType? dtype) : base(nameof(LayerNorm))
             {
@@ -36,10 +38,11 @@ namespace TorchSharp
                     }
                 }
 
-                reset_parameters();
+
+                reset_parameters(elementwise_affine);
             }
 
-            public void reset_parameters()
+            private void reset_parameters(bool elementwise_affine)
             {
                 if (elementwise_affine)
                 {
@@ -56,19 +59,12 @@ namespace TorchSharp
                 return F.layer_norm(tensor, normalized_shape, weight, bias, eps);
             }
 
-            protected override void Dispose(bool disposing)
-            {
-                _weight?.Dispose();
-                _bias?.Dispose();
-                base.Dispose(disposing);
-            }
-
             public Parameter? bias {
                 get => _bias;
                 set {
                     _bias?.Dispose();
                     _bias = value?.DetachFromDisposeScope() as Parameter;
-                    ConditionallyRegisterParameter(BiasComponentName, _bias);
+                    ConditionallyRegisterParameter(nameof(bias), _bias);
                 }
             }
 
@@ -79,20 +75,22 @@ namespace TorchSharp
                     if (value.Handle != _weight?.Handle) {
                         _weight?.Dispose();
                         _weight = (value.DetachFromDisposeScope() as Parameter)!;
-                        ConditionallyRegisterParameter(WeightComponentName, _weight);
+                        ConditionallyRegisterParameter(nameof(weight), _weight);
                     }
                 }
             }
 
-            [ComponentName(Name = BiasComponentName)]
+            [ComponentName(Name = "bias")]
             private Parameter? _bias;
-            [ComponentName(Name = WeightComponentName)]
+            [ComponentName(Name = "weight")]
             private Parameter? _weight;
 
-
-            public long[] normalized_shape { get; set; }
-            public double eps { get; set; }
-            public bool elementwise_affine { get; set; }
+            protected override void Dispose(bool disposing)
+            {
+                _weight?.Dispose();
+                _bias?.Dispose();
+                base.Dispose(disposing);
+            }
         }
     }
 

@@ -14,23 +14,16 @@ namespace TorchSharp
         /// </summary>
         public sealed class LPPool1d : ParamLessModule<Tensor, Tensor>
         {
-            internal LPPool1d(double norm_type, long kernel_size, long? stride = null, bool ceil_mode = false) : base(nameof(LPPool1d))
+            internal LPPool1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
-                this.norm_type = norm_type;
-                this.kernel_size = kernel_size;
-                this.stride = stride;
-                this.ceil_mode = ceil_mode;
             }
 
-            public override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.lp_pool1d(input, norm_type, kernel_size, stride, ceil_mode);
+                var res = THSNN_LPPool1d_forward(handle.DangerousGetHandle(), tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
-
-            public double norm_type { get; set; }
-            public long kernel_size { get; set; }
-            public long? stride { get; set; }
-            public bool ceil_mode { get; set; }
         }
     }
 
@@ -42,37 +35,32 @@ namespace TorchSharp
             /// Applies a 1D power-average pooling over an input signal composed of several input planes.
             /// </summary>
             /// <param name="norm_type">The LP norm (exponent)</param>
-            /// <param name="kernel_size">The size of the window</param>
+            /// <param name="kernelSize">The size of the window</param>
             /// <param name="stride">The stride of the window. Default value is kernel_size</param>
             /// <param name="ceil_mode">Use ceil instead of floor to compute the output shape</param>
             /// <returns></returns>
-            public static LPPool1d LPPool1d(double norm_type, long kernel_size, long? stride = null, bool ceil_mode = false)
+            public static LPPool1d LPPool1d(double norm_type, long kernelSize, long? stride = null, bool ceil_mode = false)
             {
-                return new LPPool1d(norm_type, kernel_size, stride, ceil_mode);
+                return stride.HasValue ?
+                    LPPool1d(norm_type, new long[] { kernelSize }, new long[] { stride.Value }, ceil_mode) :
+                    LPPool1d(norm_type, new long[] { kernelSize }, null);
             }
 
-            public static partial class functional
+            /// <summary>
+            /// Applies a 1D power-average pooling over an input signal composed of several input planes.
+            /// </summary>
+            /// <param name="norm_type">The LP norm (exponent)</param>
+            /// <param name="kernelSize">The size of the window</param>
+            /// <param name="strides">The stride of the window. Default value is kernel_size</param>
+            /// <param name="ceil_mode">Use ceil instead of floor to compute the output shape</param>
+            /// <returns></returns>
+            private static LPPool1d LPPool1d(double norm_type, long[] kernelSize, long[] strides = null, bool ceil_mode = false)
             {
-                /// <summary>
-                /// Applies a 1D power-average pooling over an input signal composed of several input planes.
-                /// </summary>
-                /// <param name="input">The input tensor</param>
-                /// <param name="norm_type">The LP norm (exponent)</param>
-                /// <param name="kernel_size">The size of the window</param>
-                /// <param name="stride">The stride of the window. Default value is kernel_size</param>
-                /// <param name="ceil_mode">Use ceil instead of floor to compute the output shape</param>
-                /// <returns></returns>
-                public static Tensor lp_pool1d(Tensor input, double norm_type, long kernel_size, long? stride = null, bool ceil_mode = false)
-                {
-                    var kernels = new[] { kernel_size };
-                    var strides = stride.HasValue ? new[] { stride.Value } : Array.Empty<long>(); 
-
-                    unsafe {
-                        fixed (long* pkernelSize = kernels, pstrides = strides) {
-                            var res = THSTensor_lp_pool1d(input.Handle, norm_type, (IntPtr)pkernelSize, kernels.Length, (IntPtr)pstrides, strides.Length, ceil_mode);
-                            if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                            return new Tensor(res);
-                        }
+                unsafe {
+                    fixed (long* pkernelSize = kernelSize, pstrides = strides) {
+                        var handle = THSNN_LPPool1d_ctor(norm_type, (IntPtr)pkernelSize, (IntPtr)pstrides, ceil_mode, out var boxedHandle);
+                        if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                        return new LPPool1d(handle, boxedHandle);
                     }
                 }
             }

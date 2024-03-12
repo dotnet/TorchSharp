@@ -14,7 +14,7 @@ namespace TorchSharp
         /// </summary>
         public sealed class ReplicationPad2d : PadBase
         {
-            internal ReplicationPad2d(params long[] padding) : base(nameof(ReplicationPad2d), PaddingModes.Replicate, 0, padding) { }
+            internal ReplicationPad2d(params long[] padding) : base(nameof(ReplicationPad1d), PaddingModes.Replicate, 0, padding) { }
         }
     }
 

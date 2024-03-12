@@ -14,14 +14,8 @@ namespace TorchSharp
     {
         public sealed class Linear : torch.nn.Module<Tensor, Tensor>
         {
-            const string WeightComponentName = nameof(weight);
-            const string BiasComponentName = nameof(bias);
-
             internal Linear(long inputSize, long outputSize, bool hasBias = true, Device? device = null, ScalarType? dtype = null) : base(nameof(Linear))
             {
-                this.in_features = inputSize;
-                this.out_features = outputSize;
-
                 weight = torch.empty(outputSize, inputSize, device: device, dtype: dtype).AsParameter();
                 init.kaiming_uniform_(weight, a: _sqrt5);
 
@@ -52,7 +46,7 @@ namespace TorchSharp
                 set {
                     _bias?.Dispose();
                     _bias = value?.DetachFromDisposeScope() as Parameter;
-                    ConditionallyRegisterParameter(BiasComponentName, _bias);
+                    ConditionallyRegisterParameter(nameof(bias), _bias);
                 }
             }
 
@@ -63,19 +57,36 @@ namespace TorchSharp
                     if (value.Handle != _weight?.Handle) {
                         _weight?.Dispose();
                         _weight = (value.DetachFromDisposeScope() as Parameter)!;
-                        ConditionallyRegisterParameter(WeightComponentName, _weight);
+                        ConditionallyRegisterParameter(nameof(weight), _weight);
                     }
                 }
             }
 
-            [ComponentName(Name = BiasComponentName)]
+            protected internal override nn.Module _to(Device device, ScalarType dtype)
+            {
+                weight = new Parameter(_weight!.to(dtype, device));
+                if (bias is not null) bias = new Parameter(_bias!.to(dtype, device));
+                return this;
+            }
+
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1)
+            {
+                weight = new Parameter(_weight!.to(deviceType, deviceIndex));
+                if (bias is not null) bias = new Parameter(_bias!.to(deviceType, deviceIndex));
+                return this;
+            }
+
+            protected internal override nn.Module _to(ScalarType dtype)
+            {
+                weight = new Parameter(_weight!.to(dtype));
+                if (bias is not null) bias = new Parameter(_bias!.to(dtype));
+                return this;
+            }
+
+            [ComponentName(Name = "bias")]
             private Parameter? _bias;
-            [ComponentName(Name = WeightComponentName)]
+            [ComponentName(Name = "weight")]
             private Parameter? _weight;
-
-            public int in_features { get; set; }
-            public int out_features { get; set; }
-
             private static readonly double _sqrt5 = Math.Sqrt(5);
         }
     }

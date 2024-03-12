@@ -145,6 +145,61 @@ Tensor THSNN_InstanceNorm3d_forward(const NNModule module, const Tensor tensor)
     CATCH_TENSOR((*module)->as<torch::nn::InstanceNorm3d>()->forward(*tensor));
 }
 
+NNModule THSNN_LayerNorm_ctor(const int64_t* norm_shape, const int64_t norm_shape_len, const double eps, const bool elementwise_affine, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        std::vector<int64_t> normalized_shape;
+        for (int64_t i = 0; i < norm_shape_len; ++i)
+        {
+            normalized_shape.push_back(norm_shape[i]);
+        }
+        auto opts = torch::nn::LayerNormOptions(normalized_shape).eps(eps).elementwise_affine(elementwise_affine);
+        res = create_module<torch::nn::LayerNormImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_LayerNorm_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::LayerNorm>()->forward(*tensor));
+}
+
+Tensor THSNN_LayerNorm_bias(const NNModule module)
+{
+    return get_bias<torch::nn::LayerNorm>(module);
+}
+
+void THSNN_LayerNorm_set_bias(const NNModule module, const Tensor bias)
+{
+    set_bias<torch::nn::LayerNorm>(module, bias);
+}
+
+Tensor THSNN_LayerNorm_weight(const NNModule module)
+{
+    return get_weight<torch::nn::LayerNorm>(module);
+}
+
+void THSNN_LayerNorm_set_weight(const NNModule module, const Tensor weight)
+{
+    set_weight<torch::nn::LayerNorm>(module, weight);
+}
+
+
+NNModule THSNN_LocalResponseNorm_ctor(const int64_t size, const double alpha, const double beta, const double k, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::LocalResponseNormOptions(size)
+        .alpha(alpha)
+        .beta(beta)
+        .k(k);
+        res = create_module<torch::nn::LocalResponseNormImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_LocalResponseNorm_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::LocalResponseNorm>()->forward(*tensor));
+}
+
 void THSNN_BatchNorm1d_reset_stats(const NNModule module)
 {
     CATCH((*module)->as<torch::nn::BatchNorm1d>()->reset_running_stats(););

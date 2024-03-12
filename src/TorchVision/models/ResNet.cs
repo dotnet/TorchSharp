@@ -773,7 +773,7 @@ namespace TorchSharp
                 conv1 = Conv2d(3, in_planes, kernelSize: 7, stride: 2, padding: 3, bias: false);
                 bn1 = norm_layer(in_planes);
                 relu = ReLU(inplace: true);
-                maxpool = MaxPool2d(kernel_size: 3, stride: 2, padding: 1);
+                maxpool = MaxPool2d(kernelSize: 3, stride: 2, padding: 1);
 
                 MakeLayer(layer1, block, expansion, 64, layers[0], 1);
                 MakeLayer(layer2, block, expansion, 128, layers[1], 2, rswd.Item1);

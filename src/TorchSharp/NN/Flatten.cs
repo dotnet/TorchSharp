@@ -20,13 +20,19 @@ namespace TorchSharp
                 this.end_dim = end_dim;
             }
 
-            public override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor tensor)
             {
-                return input.flatten(start_dim, end_dim);
+                return tensor.flatten(start_dim, end_dim);
             }
 
-            public long start_dim { get; set; }
+            public long start_dim {get; set;}
             public long end_dim { get; set; }
+
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
+            protected internal override nn.Module _to(ScalarType dtype) => this;
         }
     }
 

@@ -76,17 +76,17 @@ namespace TorchSharp
                 features = Sequential(
                     Conv2d(3, 64, kernelSize: 11, stride: 4, padding: 2),
                     ReLU(inplace: true),
-                    MaxPool2d(kernel_size: 3, stride: 2),
+                    MaxPool2d(kernelSize: 3, stride: 2),
                     Conv2d(64, 192, kernelSize: 5, padding: 2),
                     ReLU(inplace: true),
-                    MaxPool2d(kernel_size: 3, stride: 2),
+                    MaxPool2d(kernelSize: 3, stride: 2),
                     Conv2d(192, 384, kernelSize: 3, padding: 1),
                     ReLU(inplace: true),
                     Conv2d(384, 256, kernelSize: 3, padding: 1),
                     ReLU(inplace: true),
                     Conv2d(256, 256, kernelSize: 3, padding: 1),
                     ReLU(inplace: true),
-                    MaxPool2d(kernel_size: 3, stride: 2)
+                    MaxPool2d(kernelSize: 3, stride: 2)
                 );
 
                 avgpool = AdaptiveAvgPool2d(new long[] { 6, 6 });

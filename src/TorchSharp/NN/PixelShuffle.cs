@@ -12,24 +12,29 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a dropout module.
         /// </summary>
-        public sealed class PixelShuffle : ParamLessModule<Tensor, Tensor>
+        public sealed class PixelShuffle : torch.nn.Module<Tensor, Tensor>
         {
-            internal PixelShuffle(long upscale_factor) : base(nameof(PixelShuffle))
-            {
-                this.upscale_factor = upscale_factor;
-            }
+            internal PixelShuffle(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
 
             /// <summary>
             /// Forward pass.
             /// </summary>
-            /// <param name="input">Input tensor</param>
+            /// <param name="tensor">Input tensor</param>
             /// <returns></returns>
-            public override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.pixel_shuffle(input, this.upscale_factor);
+                var res = THSNN_PixelShuffle_forward(handle, tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
-            
-            public long upscale_factor { get; set; }
+
+            // Rather than spending cycles only to discover that this module has neither
+            // parameters nor buffers, just shortcut the move completely.
+            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
+
+            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
+
+            protected internal override nn.Module _to(ScalarType dtype) => this;
         }
     }
 
@@ -41,11 +46,13 @@ namespace TorchSharp
             /// Rearranges elements in a tensor of shape (*, C * r^2, H, W) to a tensor of shape(*, C, H * r, W * r), where r is an upscale factor.
             /// This is useful for implementing efficient sub-pixel convolution with a stride of 1/r.
             /// </summary>
-            /// <param name="upscale_factor">Factor to increase spatial resolution by</param>
+            /// <param name="upscaleFactor">Factor to increase spatial resolution by</param>
             /// <returns></returns>
-            public static PixelShuffle PixelShuffle(long upscale_factor)
+            public static PixelShuffle PixelShuffle(long upscaleFactor)
             {
-                return new PixelShuffle(upscale_factor);
+                var handle = THSNN_PixelShuffle_ctor(upscaleFactor, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new PixelShuffle(handle, boxedHandle);
             }
 
             public static partial class functional
@@ -54,15 +61,15 @@ namespace TorchSharp
                 /// Rearranges elements in a tensor of shape (*, C * r^2, H, W) to a tensor of shape(*, C, H * r, W * r), where r is an upscale factor.
                 /// This is useful for implementing efficient sub-pixel convolution with a stride of 1/r.
                 /// </summary>
-                /// <param name="input">Input tensor</param>
-                /// <param name="upscale_factor">Factor to increase spatial resolution by</param>
+                /// <param name="x">Input tensor</param>
+                /// <param name="upscaleFactor">Factor to increase spatial resolution by</param>
                 /// <returns></returns>
                 /// <returns></returns>
-                public static Tensor pixel_shuffle(Tensor input, long upscale_factor)
+                public static Tensor pixel_shuffle(Tensor x, long upscaleFactor)
                 {
-                    var res = THSNN_pixel_shuffle(input.Handle, upscale_factor);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    using (var d = nn.PixelShuffle(upscaleFactor)) {
+                        return d.call(x);
+                    }
                 }
             }
         }

@@ -22,7 +22,9 @@ namespace TorchSharp
 
             public override Tensor forward(Tensor input)
             {
-                return torch.nn.functional.dropout3d(input, this.p, this.training, this.inplace);
+                var res = THSNN_dropout3d(input.Handle, p, this.training, inplace);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
             
             public bool inplace { get; set; }

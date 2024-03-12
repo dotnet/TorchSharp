@@ -5,7 +5,6 @@ using static TorchSharp.PInvoke.NativeMethods;
 
 namespace TorchSharp
 {
-    using System.Data;
     using Modules;
 
     namespace Modules
@@ -15,27 +14,16 @@ namespace TorchSharp
         /// </summary>
         public sealed class AvgPool2d : ParamLessModule<Tensor, Tensor>
         {
-            internal AvgPool2d(long[] kernel_size, long[] stride = null, long[] padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null) : base(nameof(AvgPool2d))
+            internal AvgPool2d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
-                this.kernel_size = kernel_size;
-                this.stride = stride;
-                this.padding = padding;
-                this.ceil_mode = ceil_mode;
-                this.count_include_pad = count_include_pad;
-                this.divisor_override = divisor_override;
             }
 
-            public override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.avg_pool2d(input, kernel_size, stride, padding, ceil_mode, count_include_pad, divisor_override);
+                var res = THSNN_AvgPool2d_forward(handle.DangerousGetHandle(), tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
-
-            public long[] kernel_size { get; set; }
-            public long[] stride { get; set; }
-            public long[] padding { get; set; }
-            public bool ceil_mode { get; set; }
-            public bool count_include_pad { get; set; }
-            public long? divisor_override { get; set; }
         }
     }
 
@@ -47,14 +35,18 @@ namespace TorchSharp
             /// Applies a 2D average pooling over an input signal composed of several input planes.
             /// </summary>
             /// <param name="kernel_size">The size of the window</param>
-            /// <param name="stride">The stride of the window. Default value is kernel_size</param>
+            /// <param name="strides">The stride of the window. Default value is kernel_size</param>
             /// <param name="padding">implicit zero padding to be added on both sides</param>
             /// <param name="ceil_mode">Whether to use ceil instead of floor to compute the output shape</param>
             /// <param name="count_include_pad">Whether to include the zero-padding in the averaging calculation</param>
             /// <param name="divisor_override">If specified, it will be used as divisor, otherwise size of the pooling region will be used</param>
-            public static AvgPool2d AvgPool2d(long[] kernel_size, long[] stride = null, long[] padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
+            public static unsafe AvgPool2d AvgPool2d(long[] kernel_size, long[] strides = null, long[] padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
             {
-                return new AvgPool2d(kernel_size, stride, padding, ceil_mode, count_include_pad, divisor_override);
+                fixed (long* pkernelSize = kernel_size, pstrides = strides, ppadding = padding) {
+                    var handle = THSNN_AvgPool2d_ctor((IntPtr)pkernelSize, kernel_size.Length, (IntPtr)pstrides, (strides == null ? 0 : strides.Length), (IntPtr)ppadding, (padding == null ? 0 : padding.Length), ceil_mode, count_include_pad, divisor_override.HasValue ? divisor_override.Value : 0, out var boxedHandle);
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new AvgPool2d(handle, boxedHandle);
+                }
             }
 
             /// <summary>
@@ -68,10 +60,19 @@ namespace TorchSharp
             /// <param name="divisor_override">If specified, it will be used as divisor, otherwise size of the pooling region will be used</param>
             public static unsafe AvgPool2d AvgPool2d((long,long) kernel_size, (long,long)? stride = null, (long,long)? padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
             {
-                long[] kernelValue = new[] { kernel_size.Item1, kernel_size.Item2 };
-                long[] strideValue = stride == null ? null : new[] { stride.Value.Item1, stride.Value.Item2 };
-                long[] paddingValue = padding == null ? null : new[] { padding.Value.Item1, padding.Value.Item2 };
-                return new AvgPool2d(kernelValue, strideValue, paddingValue, ceil_mode, count_include_pad, divisor_override);
+                long svalue1 = (stride == null) ? kernel_size.Item1 : stride.Value.Item1;
+                long svalue2 = (stride == null) ? kernel_size.Item2 : stride.Value.Item2;
+
+                long pvalue1 = (padding == null) ? 0 : padding.Value.Item1;
+                long pvalue2 = (padding == null) ? 0 : padding.Value.Item2;
+
+                long* pkernelSize = stackalloc long[2] { kernel_size.Item1, kernel_size.Item2 };
+                long* pstrides = stackalloc long[2] { svalue1, svalue2 };
+                long* ppadding = stackalloc long[2] { pvalue1, pvalue2 };
+
+                var handle = THSNN_AvgPool2d_ctor((IntPtr)pkernelSize, 2, (IntPtr)pstrides, 2, (IntPtr)ppadding, 2, ceil_mode, count_include_pad, divisor_override.HasValue ? divisor_override.Value : 0, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AvgPool2d(handle, boxedHandle);
             }
 
             /// <summary>
@@ -83,12 +84,18 @@ namespace TorchSharp
             /// <param name="ceil_mode">Whether to use ceil instead of floor to compute the output shape</param>
             /// <param name="count_include_pad">Whether to include the zero-padding in the averaging calculation</param>
             /// <param name="divisor_override">If specified, it will be used as divisor, otherwise size of the pooling region will be used</param>
-            public static AvgPool2d AvgPool2d(long kernel_size, long? stride = null, long? padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
+            public static unsafe AvgPool2d AvgPool2d(long kernel_size, long? stride = null, long? padding = null, bool ceil_mode = false, bool count_include_pad = true, long? divisor_override = null)
             {
-                long[] kernelValue = new[] { kernel_size, kernel_size };
-                long[] strideValue = stride == null ? null : new[] { stride.Value, stride.Value };
-                long[] paddingValue = padding == null ? null : new[] { padding.Value, padding.Value };
-                return new AvgPool2d(kernelValue, strideValue, paddingValue, ceil_mode, count_include_pad, divisor_override);
+                long svalue = (stride == null) ? kernel_size : stride.Value;
+                long pvalue = (padding == null) ? 0 : padding.Value;
+
+                long* pkernelSize = stackalloc long[2] { kernel_size, kernel_size };
+                long* pstrides = stackalloc long[2] { svalue, svalue };
+                long* ppadding = stackalloc long[2] { pvalue, pvalue };
+
+                var handle = THSNN_AvgPool2d_ctor((IntPtr)pkernelSize, 2, (IntPtr)pstrides, 2, (IntPtr)ppadding, 2, ceil_mode, count_include_pad, divisor_override.HasValue ? divisor_override.Value : 0, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new AvgPool2d(handle, boxedHandle);
             }
 
             public static partial class functional
@@ -97,32 +104,29 @@ namespace TorchSharp
                 /// Applies 2D average-pooling operation in kH × kW regions by step size sH * sW steps. The number of output features is equal to the number of input planes.
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
-                /// <param name="kernel_size"></param>
-                /// <param name="stride"></param>
-                /// <param name="padding"></param>
+                /// <param name="kernelSizes"></param>
+                /// <param name="strides"></param>
+                /// <param name="paddings"></param>
                 /// <param name="ceil_mode"></param>
                 /// <param name="count_include_pad"></param>
-                /// <param name="divisor_override"></param>
                 /// <returns></returns>
-                public static Tensor avg_pool2d(Tensor input, long[] kernel_size,
-                    long[] stride = null,
-                    long[] padding = null,
+                public static Tensor avg_pool2d(Tensor input, long[] kernelSizes,
+                    long[] strides = null,
+                    long[] paddings = null,
                     bool ceil_mode = false,
-                    bool count_include_pad = true,
-                    long? divisor_override = null)
+                    bool count_include_pad = true)
                 {
-                    stride = (stride == null) ? kernel_size : stride;
-                    padding = (padding == null) ? new long[] { 0 } : padding;
+                    strides = (strides == null) ? new long[] { 1 } : strides;
+                    paddings = (paddings == null) ? new long[] { 0 } : paddings;
                     unsafe {
-                        fixed (long* pkernelSize = kernel_size, pstrides = stride, ppadding = padding) {
+                        fixed (long* pkernelSize = kernelSizes, pstrides = strides, ppadding = paddings) {
                             var res =
                                 THSTensor_avg_pool2d(input.Handle,
-                                    (IntPtr)pkernelSize, kernel_size.Length,
-                                    (IntPtr)pstrides, stride.Length,
-                                    (IntPtr)ppadding, padding.Length,
+                                    (IntPtr)pkernelSize, kernelSizes.Length,
+                                    (IntPtr)pstrides, strides.Length,
+                                    (IntPtr)ppadding, paddings.Length,
                                     ceil_mode,
-                                    count_include_pad,
-                                    divisor_override ?? 0);
+                                    count_include_pad);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }
@@ -133,23 +137,21 @@ namespace TorchSharp
                 /// Applies 2D average-pooling operation in kH × kW regions by step size sH * sW steps. The number of output features is equal to the number of input planes.
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
-                /// <param name="kernel_size"></param>
+                /// <param name="kernelSize"></param>
                 /// <param name="stride"></param>
                 /// <param name="padding"></param>
                 /// <param name="ceil_mode"></param>
                 /// <param name="count_include_pad"></param>
-                /// <param name="divisor_override"></param>
                 /// <returns></returns>
-                public static unsafe Tensor avg_pool2d(Tensor input, long kernel_size,
+                public static unsafe Tensor avg_pool2d(Tensor input, long kernelSize,
                     long? stride = null,
                     long padding = 0,
                     bool ceil_mode = false,
-                    bool count_include_pad = true,
-                    long? divisor_override = null)
+                    bool count_include_pad = true)
                 {
-                    long svalue = (stride == null) ? kernel_size : stride.Value;
+                    long svalue = (stride == null) ? kernelSize : stride.Value;
 
-                    long* pkernelSize = stackalloc long[2] { kernel_size, kernel_size };
+                    long* pkernelSize = stackalloc long[2] { kernelSize, kernelSize };
                     long* pstrides = stackalloc long[2] { svalue, svalue };
                     long* ppadding = stackalloc long[2] { padding, padding };
 
@@ -159,8 +161,7 @@ namespace TorchSharp
                             (IntPtr)pstrides, 2,
                             (IntPtr)ppadding, 2,
                             ceil_mode,
-                            count_include_pad,
-                            divisor_override ?? 0);
+                            count_include_pad);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -169,29 +170,27 @@ namespace TorchSharp
                 /// Applies 2D average-pooling operation in kH × kW regions by step size sH * sW steps. The number of output features is equal to the number of input planes.
                 /// </summary>
                 /// <param name="input">The input tensor.</param>
-                /// <param name="kernel_size"></param>
+                /// <param name="kernelSize"></param>
                 /// <param name="stride"></param>
                 /// <param name="padding"></param>
                 /// <param name="ceil_mode"></param>
                 /// <param name="count_include_pad"></param>
-                /// <param name="divisor_override"></param>
                 /// <returns></returns>
-                public static unsafe Tensor avg_pool2d(Tensor input, (long, long) kernel_size,
+                public static unsafe Tensor avg_pool2d(Tensor input, (long, long) kernelSize,
                     (long, long)? stride = null,
                     (long, long)? padding = null,
                     bool ceil_mode = false,
-                    bool count_include_pad = true,
-                    long? divisor_override = null)
+                    bool count_include_pad = true)
                 {
-                    long svalue1 = (stride == null) ? kernel_size.Item1 : stride.Value.Item1;
-                    long svalue2 = (stride == null) ? kernel_size.Item2 : stride.Value.Item2;
+                    long svalue1 = (stride == null) ? kernelSize.Item1 : stride.Value.Item1;
+                    long svalue2 = (stride == null) ? kernelSize.Item2 : stride.Value.Item2;
                     long pvalue1 = padding != null ? padding.Value.Item1 : 0;
                     long pvalue2 = padding != null ? padding.Value.Item2 : 0;
 
                     long* pstrides = stackalloc long[2] { svalue1, svalue2 };
                     long* ppadding = stackalloc long[2] { pvalue1, pvalue2 };
 
-                    long* pkernelSize = stackalloc long[2] { kernel_size.Item1, kernel_size.Item2 };
+                    long* pkernelSize = stackalloc long[2] { kernelSize.Item1, kernelSize.Item2 };
 
                     var res =
                         THSTensor_avg_pool2d(input.Handle,
@@ -199,8 +198,7 @@ namespace TorchSharp
                             (IntPtr)pstrides, 2,
                             (IntPtr)ppadding, 2,
                             ceil_mode,
-                            count_include_pad,
-                            divisor_override ?? 0);
+                            count_include_pad);
                     if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                     return new Tensor(res);
                 }
@@ -211,7 +209,7 @@ namespace TorchSharp
                     long[] paddings = null,
                     bool ceil_mode = false,
                     bool count_include_pad = true,
-                    long? divisor_override = null)
+                    long divisorOverride = 0)
                 {
                     strides = (strides == null) ? new long[] { 1 } : strides;
                     paddings = (paddings == null) ? new long[] { 0 } : paddings;
@@ -224,7 +222,7 @@ namespace TorchSharp
                                     (IntPtr)ppadding, paddings.Length,
                                     ceil_mode,
                                     count_include_pad,
-                                    divisor_override ?? 0);
+                                    divisorOverride);
                             if (res == IntPtr.Zero) { torch.CheckForErrors(); }
                             return new Tensor(res);
                         }

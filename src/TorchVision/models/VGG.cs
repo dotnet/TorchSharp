@@ -363,7 +363,7 @@ namespace TorchSharp
                 for (var i = 0; i < channels.Length; i++) {
 
                     if (channels[i] == 0) {
-                        layers.Add(MaxPool2d(kernel_size: 2, stride: 2));
+                        layers.Add(MaxPool2d(kernelSize: 2, stride: 2));
                     } else {
                         layers.Add(Conv2d(in_channels, channels[i], kernelSize: 3, padding: 1));
                         if (batch_norm) {

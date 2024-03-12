@@ -12,7 +12,7 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent the base of all padding-related modules.
         /// </summary>
-        public abstract class PadBase : ParamLessModule<Tensor, Tensor>
+        public class PadBase : ParamLessModule<Tensor, Tensor>
         {
             protected PadBase(string name, PaddingModes mode, double value, params long[] padding) : base(name)
             {

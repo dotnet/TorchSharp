@@ -3,6 +3,19 @@
 
 #include <torch/nn/init.h>
 
+
+NNModule THSNN_Identity_ctor(NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        res = create_module<torch::nn::IdentityImpl>(outAsAnyModule);
+    );
+}
+
+Tensor THSNN_Identity_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Identity>()->forward(*tensor));
+}
+
 Tensor THSNN_functional_linear(const Tensor input, const Tensor weights, const Tensor bias)
 {
     CATCH_TENSOR(bias == nullptr ?
@@ -67,16 +80,113 @@ Tensor THSNN_feature_alpha_dropout(const Tensor input, const double p, bool trai
     CATCH_TENSOR(torch::nn::functional::feature_alpha_dropout(*input, opts));
 }
 
-Tensor THSNN_pixel_shuffle(const Tensor tensor, const int64_t upscale_factor)
+NNModule THSNN_Dropout_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
 {
-    auto opts = torch::nn::functional::PixelShuffleFuncOptions(upscale_factor);
-    CATCH_TENSOR(torch::nn::functional::pixel_shuffle(*tensor, opts));
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::DropoutOptions(probability).inplace(inplace);
+        res = create_module<torch::nn::DropoutImpl>(opts, outAsAnyModule);
+    );
 }
 
-Tensor THSNN_pixel_unshuffle(const Tensor tensor, const int64_t downscale_factor)
+Tensor THSNN_Dropout_forward(const NNModule module, const Tensor tensor)
 {
-    auto opts = torch::nn::functional::PixelUnshuffleFuncOptions(downscale_factor);
-    CATCH_TENSOR(torch::nn::functional::pixel_unshuffle(*tensor, opts));
+    CATCH_TENSOR((*module)->as<torch::nn::Dropout>()->forward(*tensor));
+}
+
+NNModule THSNN_AlphaDropout_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::AlphaDropoutOptions(probability).inplace(inplace);
+    res = create_module<torch::nn::AlphaDropoutImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_AlphaDropout_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::AlphaDropout>()->forward(*tensor));
+}
+
+NNModule THSNN_Dropout1d_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        // Creating a Dropout2d instance here is done on purpose. There's no torch::nn::Dropout1d
+        auto opts = torch::nn::Dropout2dOptions(probability).inplace(inplace);
+        res = create_module<torch::nn::Dropout2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_Dropout1d_forward(const NNModule module, const Tensor tensor)
+{
+    auto drop1d = (*module)->as<torch::nn::Dropout2d>();
+    CATCH_TENSOR(drop1d->options.inplace()
+        ? drop1d->forward((*tensor).unsqueeze_(-1)).squeeze_(-1)
+        : drop1d->forward((*tensor).unsqueeze(-1)).squeeze(-1));
+}
+
+
+NNModule THSNN_Dropout2d_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::Dropout2dOptions(probability).inplace(inplace);
+        res = create_module<torch::nn::Dropout2dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_Dropout2d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Dropout2d>()->forward(*tensor));
+}
+
+NNModule THSNN_Dropout3d_ctor(double probability, bool inplace, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::Dropout3dOptions(probability).inplace(inplace);
+        res = create_module<torch::nn::Dropout3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_Dropout3d_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Dropout3d>()->forward(*tensor));
+}
+
+NNModule THSNN_FeatureAlphaDropout_ctor(double probability, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::FeatureAlphaDropoutOptions(probability);
+        res = create_module<torch::nn::FeatureAlphaDropoutImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_FeatureAlphaDropout_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::FeatureAlphaDropout>()->forward(*tensor));
+}
+
+NNModule THSNN_PixelShuffle_ctor(const int64_t upscale_factor, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::PixelShuffleOptions(upscale_factor);
+        res = create_module<torch::nn::PixelShuffleImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_PixelShuffle_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::PixelShuffle>()->forward(*tensor));
+}
+
+NNModule THSNN_PixelUnshuffle_ctor(const int64_t downscale_factor, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::PixelUnshuffleOptions(downscale_factor);
+        res = create_module<torch::nn::PixelUnshuffleImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_PixelUnshuffle_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::PixelUnshuffle>()->forward(*tensor));
 }
 
 template<typename T>
@@ -109,6 +219,38 @@ void ApplyInterpolateMode(T& opts, const int8_t mode)
         opts = opts.mode(torch::kTrilinear);
     if (mode == 5)
         opts = opts.mode(torch::kArea);
+}
+
+NNModule THSNN_Upsample_ctor(const int64_t* size, const int size_len, const double* scale_factor, const int scale_factor_len, const int8_t mode, const int8_t align_corners, NNAnyModule* outAsAnyModule)
+{
+    auto opts = torch::nn::UpsampleOptions();
+    // align_corners -- 0=None, 1=true, 2=false
+    if (align_corners != 0)
+        opts.align_corners(align_corners == 1);
+    ApplyUpsampleMode(opts, mode);
+
+    CATCH_RETURN_NNModule(
+        if (size_len > 0) {
+            std::vector<int64_t> sizes;
+            for (int i = 0; i < size_len; ++i) {
+                sizes.push_back(size[i]);
+            }
+            opts.size(sizes);
+        }
+        if (scale_factor_len > 0) {
+            std::vector<double> scales;
+            for (int i = 0; i < scale_factor_len; ++i) {
+                scales.push_back(scale_factor[i]);
+            }
+            opts.scale_factor(scales);
+        }
+        res = create_module<torch::nn::UpsampleImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor   THSNN_Upsample_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Upsample>()->forward(*tensor));
 }
 
 template<typename T>
@@ -533,9 +675,54 @@ Tensor   THSNN_TransformerDecoder_forward(const NNModule module, const Tensor tg
     );
 }
 
-Tensor THSNN_cosine_similarity(const Tensor input1, const Tensor input2, int64_t dim, double eps)
+NNModule THSNN_Flatten_ctor(const int64_t start_dim, const int64_t end_dim, NNAnyModule* outAsAnyModule)
 {
-    CATCH_TENSOR(torch::nn::functional::cosine_similarity(*input1, *input2, torch::nn::functional::CosineSimilarityFuncOptions().dim(dim).eps(eps)));
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::FlattenOptions()
+            .start_dim(start_dim)
+            .end_dim(end_dim);
+
+        res = create_module<torch::nn::FlattenImpl>(opts, outAsAnyModule);
+    );
+}
+Tensor   THSNN_Flatten_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Flatten>()->forward(*tensor));
+}
+
+NNModule THSNN_Unflatten_ctor(const int64_t dim, const int64_t* shape, const int64_t shape_len, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        std::vector<int64_t> sizes;
+        for (int64_t i = 0; i < shape_len; ++i)
+        {
+            sizes.push_back(shape[i]);
+        }
+        auto opts = torch::nn::UnflattenOptions(dim, sizes);
+        res = create_module<torch::nn::UnflattenImpl>(opts, outAsAnyModule);
+    );
+}
+
+Tensor THSNN_Unflatten_forward(const NNModule module, const Tensor tensor)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::Unflatten>()->forward(*tensor));
+}
+
+NNModule THSNN_CosineSimilarity_ctor(const int64_t dim, double eps, NNAnyModule* outAsAnyModule)
+{
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::CosineSimilarityOptions()
+        .dim(dim)
+        .eps(eps);
+
+        res = create_module<torch::nn::CosineSimilarityImpl>(opts, outAsAnyModule);
+    );
+
+}
+
+Tensor  THSNN_CosineSimilarity_forward(const NNModule module, const Tensor input1, const Tensor input2)
+{
+    CATCH_TENSOR((*module)->as<torch::nn::CosineSimilarity>()->forward(*input1, *input2));
 }
 
 NNModule THSNN_PairwiseDistance_ctor(double p, double eps, bool keep_dim, NNAnyModule* outAsAnyModule)

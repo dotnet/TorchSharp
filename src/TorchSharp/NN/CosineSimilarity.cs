@@ -14,19 +14,16 @@ namespace TorchSharp
         /// </summary>
         public sealed class CosineSimilarity : ParamLessModule<Tensor, Tensor, Tensor>
         {
-            internal CosineSimilarity(long dim = 1, double eps = 1e-8) : base(nameof(CosineSimilarity))
+            internal CosineSimilarity(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
-                this.dim = dim;
-                this.eps = eps;
             }
 
             public override Tensor forward(Tensor input1, Tensor input2)
             {
-                return torch.nn.functional.cosine_similarity(input1, input2, this.dim, this.eps);
+                var res = THSNN_CosineSimilarity_forward(handle, input1.Handle, input2.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
-
-            public long dim { get; set; }
-            public double eps { get; set; }
         }
     }
 
@@ -42,7 +39,9 @@ namespace TorchSharp
             /// <returns></returns>
             public static CosineSimilarity CosineSimilarity(long dim = 1, double eps = 1e-8)
             {
-                return new CosineSimilarity(dim, eps);
+                var handle = THSNN_CosineSimilarity_ctor(dim, eps, out var boxedHandle);
+                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new CosineSimilarity(handle, boxedHandle);
             }
 
             public static partial class functional
@@ -57,9 +56,9 @@ namespace TorchSharp
                 /// <returns></returns>
                 public static Tensor cosine_similarity(Tensor x1, Tensor x2, long dim = 1, double eps = 1e-8)
                 {
-                    var res = THSNN_cosine_similarity(x1.Handle, x2.Handle, dim, eps);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new Tensor(res);
+                    using (var f = nn.CosineSimilarity(dim, eps)) {
+                        return f.call(x1, x2);
+                    }
                 }
             }
         }

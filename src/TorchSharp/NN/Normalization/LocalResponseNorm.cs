@@ -14,23 +14,17 @@ namespace TorchSharp
         /// </summary>
         public sealed class LocalResponseNorm : ParamLessModule<Tensor, Tensor>
         {
-            internal LocalResponseNorm(long size, double alpha = 0.0001, double beta = 0.75, double k = 1.0) : base(nameof(LocalResponseNorm))
+            internal LocalResponseNorm(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
-                this.size = size;
-                this.alpha = alpha;
-                this.beta = beta;
-                this.k = k;
             }
 
-            public override Tensor forward(Tensor input)
+            public override Tensor forward(Tensor tensor)
             {
-                return torch.nn.functional.local_response_norm(input, this.size, this.alpha, this.beta, this.k);
+                if (tensor.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for LocalResponseNorm argument: {tensor.Dimensions}");
+                var res = THSNN_LocalResponseNorm_forward(handle.DangerousGetHandle(), tensor.Handle);
+                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
+                return new Tensor(res);
             }
-
-            public long size { get; set; }
-            public double alpha { get; set; }
-            public double beta { get; set; }
-            public double k { get; set; }
         }
     }
 
@@ -43,24 +37,10 @@ namespace TorchSharp
             /// </summary>
             public static LocalResponseNorm LocalResponseNorm(long size, double alpha = 0.0001, double beta = 0.75, double k = 1.0)
             {
-                return new LocalResponseNorm(size, alpha, beta, k);
-            }
-
-            public static partial class functional
-            {
-
-                /// <summary>
-                /// Applies local response normalization over an input signal.
-                /// The input signal is composed of several input planes, where channels occupy the second dimension.
-                /// Applies normalization across channels.
-                /// </summary>
-                public static Tensor local_response_norm(Tensor input, long size, double alpha = 0.0001, double beta = 0.75, double k = 1.0)
-                {
-                    if (input.Dimensions < 3) throw new ArgumentException($"Invalid number of dimensions for LocalResponseNorm argument: {input.Dimensions}");
-                    var res = THSNN_local_response_norm(input.Handle, size, alpha, beta, k);
-                    if (res == IntPtr.Zero)
-                        torch.CheckForErrors();
-                    return new Tensor(res);
+                unsafe {
+                    var handle = THSNN_LocalResponseNorm_ctor(size, alpha, beta, k, out var boxedHandle);
+                    if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
+                    return new LocalResponseNorm(handle, boxedHandle);
                 }
             }
         }
