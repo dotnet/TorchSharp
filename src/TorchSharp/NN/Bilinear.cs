@@ -14,8 +14,15 @@ namespace TorchSharp
     {
         public sealed class Bilinear : Module<Tensor, Tensor, Tensor>
         {
+            const string WeightComponentName = nameof(weight);
+            const string BiasComponentName = nameof(bias);
+
             internal Bilinear(long in1_features, long in2_features, long out_features, bool hasBias = true, Device? device = null, ScalarType? dtype = null) : base(nameof(Bilinear))
             {
+                this.in1_features = in1_features;
+                this.in2_features = in2_features;
+                this.out_features = out_features;
+
                 weight = torch.empty(out_features, in1_features, in2_features, device: device, dtype: dtype).AsParameter();
                 var bound = 1 / Math.Sqrt(weight!.shape[1]);
 
@@ -23,7 +30,6 @@ namespace TorchSharp
 
                 if (hasBias) {
                     bias = torch.empty(out_features, device: device, dtype: dtype).AsParameter();
-                    var (fanIn, _) = init.CalculateFanInAndFanOut(weight);
                     init.uniform_(_bias, -bound, bound);
                 }
                 //NOTE: it's important not to call 'RegisterComponents' here.
@@ -47,7 +53,7 @@ namespace TorchSharp
                 set {
                     _bias?.Dispose();
                     _bias = value?.DetachFromDisposeScope() as Parameter;
-                    ConditionallyRegisterParameter(nameof(bias), _bias);
+                    ConditionallyRegisterParameter(BiasComponentName, _bias);
                 }
             }
 
@@ -58,15 +64,19 @@ namespace TorchSharp
                     if (value.Handle != _weight?.Handle) {
                         _weight?.Dispose();
                         _weight = (value.DetachFromDisposeScope() as Parameter)!;
-                        ConditionallyRegisterParameter(nameof(weight), _weight);
+                        ConditionallyRegisterParameter(WeightComponentName, _weight);
                     }
                 }
             }
 
-            [ComponentName(Name = "bias")]
+            [ComponentName(Name = BiasComponentName)]
             private Parameter? _bias;
-            [ComponentName(Name = "weight")]
+            [ComponentName(Name = WeightComponentName)]
             private Parameter? _weight;
+
+            public long in1_features { get; set; }
+            public long in2_features { get; set; }
+            public long out_features { get; set; }
         }
     }
 
