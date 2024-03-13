@@ -17,8 +17,7 @@ namespace TorchSharp
             {
                 this.groups = groups;
             }
-            private long groups {get; set;}
-
+            
             public override Tensor forward(Tensor tensor)
             {
                 return tensor.channel_shuffle(groups);
@@ -28,6 +27,8 @@ namespace TorchSharp
             {
                 return typeof(ChannelShuffle).Name;
             }
+
+            public long groups { get; set; }
         }
     }
 
