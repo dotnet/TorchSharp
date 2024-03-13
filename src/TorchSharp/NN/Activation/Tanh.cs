@@ -12,15 +12,16 @@ namespace TorchSharp
         /// <summary>
         /// This class is used to represent a Tanh module.
         /// </summary>
-        public sealed class Tanh : torch.nn.Module<Tensor, Tensor>
+        public sealed class Tanh : ParamLessModule<Tensor, Tensor>
         {
-            internal Tanh(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal Tanh(bool inplace) : base(nameof(Tanh))
+            {
+                this.inplace = inplace;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_Tanh_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.tanh(tensor, inplace);
             }
 
             public override string GetName()
@@ -28,11 +29,7 @@ namespace TorchSharp
                 return typeof(Tanh).Name;
             }
 
-            // Rather than spending cycles only to discover that this module has neither
-            // parameters nor buffers, just shortcut the move completely.
-            protected internal override nn.Module _to(Device device, ScalarType dtype) => this;
-            protected internal override nn.Module _to(DeviceType deviceType, int deviceIndex = -1) => this;
-            protected internal override nn.Module _to(ScalarType dtype) => this;
+            public bool inplace {get; set; }
         }
     }
 
@@ -44,11 +41,9 @@ namespace TorchSharp
             /// Tanh activation
             /// </summary>
             /// <returns></returns>
-            public static Tanh Tanh()
+            public static Tanh Tanh(bool inplace = false)
             {
-                var handle = THSNN_Tanh_ctor(out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tanh(handle, boxedHandle);
+                return new Tanh(inplace);
             }
 
             public static partial class functional

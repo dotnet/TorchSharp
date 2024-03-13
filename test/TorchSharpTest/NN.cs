@@ -19,11 +19,12 @@ namespace TorchSharp
 {
     static internal class TestUtils
     {
-        public static IList<Device> AvailableDevices(bool cuda = true)
+        public static IList<Device> AvailableDevices(bool cuda = true, bool mps = false)
         {
             List<Device> result = new List<Device>();
             result.Add(torch.CPU);
             if (cuda && torch.cuda_is_available()) result.Add(torch.CUDA);
+            if (mps && torch.mps_is_available()) result.Add(torch.MPS);
             return result;
         }
     }
@@ -601,6 +602,10 @@ namespace TorchSharp
 
                 var rel = PReLU(1, 0.35, device);
 
+                Assert.Equal(1, rel.num_parameters);
+                Assert.Equal(0.35f, rel.weight.item<float>());
+                Assert.True(rel.weight.requires_grad);
+
                 var input = torch.randn(new long[] { 4, 3, 8, 8 }, device: device) * 5.0;
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
@@ -717,10 +722,14 @@ namespace TorchSharp
         public void EvaluateSoftmax2d()
         {
             var rel = Softmax2d();
+            var rel_x = Softmax(-3);
+
             foreach (var device in TestUtils.AvailableDevices()) {
                 var input = torch.randn(new long[] { 64, 3, 8, 8 }, device: device) * 25.0;
                 var output = rel.call(input);
                 Assert.Equal(device.type, output.device_type);
+
+                Assert.True(torch.allclose(rel_x.call(input), output));
 
                 var values = output.data<float>().ToArray();
                 Assert.Equal(input.shape, output.shape);

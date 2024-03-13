@@ -251,9 +251,13 @@ EXPORT_API(Tensor) THSTensor_ceil(const Tensor tensor);
 
 EXPORT_API(void) THSTensor_ceil_(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_celu(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_celu(const Tensor tensor, const Scalar alpha);
 
-EXPORT_API(void) THSTensor_celu_(const Tensor tensor);
+EXPORT_API(void) THSTensor_celu_(const Tensor tensor, const Scalar alpha);
+
+EXPORT_API(Tensor) THSTensor_hardshrink(const Tensor tensor, const Scalar lambda);
+
+EXPORT_API(Tensor) THSTensor_softshrink(const Tensor tensor, const Scalar lambda);
 
 EXPORT_API(Tensor) THSTensor_cholesky(const Tensor tensor, const bool upper);
 
@@ -571,6 +575,9 @@ EXPORT_API(Tensor) THSTensor_ge_scalar(const Tensor left, const Scalar right);
 EXPORT_API(void) THSTensor_ge_scalar_(const Tensor left, const Scalar right);
 
 EXPORT_API(Tensor) THSTensor_gelu(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_gelu_(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_glu(const Tensor tensor, const int64_t dim);
 
 EXPORT_API(Tensor) THSTensor_get1(const Tensor tensor, int64_t index);
 
@@ -1077,16 +1084,16 @@ EXPORT_API(Tensor) THSTensor_ravel(const Tensor tensor);
 EXPORT_API(Tensor) THSTensor_real(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_reciprocal(const Tensor tensor);
-
 EXPORT_API(void) THSTensor_reciprocal_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_relu(const Tensor tensor);
-
 EXPORT_API(void) THSTensor_relu_(const Tensor tensor);
 
 EXPORT_API(Tensor) THSTensor_relu6(const Tensor tensor);
-
 EXPORT_API(void) THSTensor_relu6_(const Tensor tensor);
+
+EXPORT_API(Tensor) THSTensor_rrelu(const Tensor tensor, const double lower, const double upper);
+EXPORT_API(void) THSTensor_rrelu_(const Tensor tensor, const double lower, const double upper);
 
 EXPORT_API(Tensor) THSTensor_repeat(const Tensor tensor, const int64_t* sizes, const int length);
 
@@ -1159,7 +1166,7 @@ EXPORT_API(Tensor) THSTensor_sinh(const Tensor tensor);
 
 EXPORT_API(void) THSTensor_sinh_(const Tensor tensor);
 
-EXPORT_API(Tensor) THSTensor_softplus(const Tensor tensor);
+EXPORT_API(Tensor) THSTensor_softplus(const Tensor tensor, const Scalar beta, const Scalar threshold);
 
 EXPORT_API(Tensor) THSTensor_sort(const Tensor tensor, const int64_t dim, const bool descending, const bool stable, Tensor* indices);
 
@@ -1314,8 +1321,10 @@ EXPORT_API(Tensor) THSTensor_tril_indices(const int64_t row, const int64_t col, 
 EXPORT_API(Tensor) THSTensor_triu_indices(const int64_t row, const int64_t col, const int64_t offset, const int8_t scalar_type, const int device_type, const int device_index);
 
 EXPORT_API(Tensor) THSTensor_transpose(const Tensor tensor, const int64_t dim1, const int64_t dim2);
-
 EXPORT_API(void) THSTensor_transpose_(const Tensor tensor, const int64_t dim1, const int64_t dim2);
+
+EXPORT_API(Tensor) THSTensor_threshold(const Tensor tensor, const Scalar threshold, const Scalar value);
+EXPORT_API(void) THSTensor_threshold_(const Tensor tensor, const Scalar threshold, const Scalar value);
 
 EXPORT_API(Tensor) THSTensor_cumulative_trapezoid_x(const Tensor y, const Tensor x, int64_t dim);
 EXPORT_API(Tensor) THSTensor_cumulative_trapezoid_dx(const Tensor y, const double dx, int64_t dim);

@@ -7,6 +7,7 @@ using static TorchSharp.PInvoke.NativeMethods;
 namespace TorchSharp
 {
     using Modules;
+    using TorchSharp.Utils;
 
     namespace Modules
     {
@@ -15,13 +16,16 @@ namespace TorchSharp
         /// </summary>
         public sealed class PReLU : torch.nn.Module<Tensor, Tensor>
         {
-            internal PReLU(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle) { }
+            internal PReLU(long num_parameters, double init) : base(nameof(PReLU)) 
+            { 
+                this._init = init;
+                // This will also set the weights
+                this.num_parameters = num_parameters;
+            }
 
             public override Tensor forward(Tensor tensor)
             {
-                var res = THSNN_PReLU_forward(handle, tensor.Handle);
-                if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Tensor(res);
+                return torch.nn.functional.prelu(tensor, weight);
             }
 
             public override string GetName()
@@ -29,19 +33,55 @@ namespace TorchSharp
                 return typeof(PReLU).Name;
             }
 
-            public Parameter? weight {
-                get {
-                    var res = THSNN_PReLU_weight(handle);
-                    if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return (res == IntPtr.Zero) ? null : new Parameter(res);
-                }
+            public Parameter weight {
+                get => _weight!;
                 set {
-                    if (value is null) throw new ArgumentNullException("weight cannot be set to 'null'");
-                    THSNN_PReLU_set_weight(handle, value!.Handle);
-                    torch.CheckForErrors();
-                    ConditionallyRegisterParameter("weight", value);
+                    if (value is null) throw new ArgumentNullException(nameof(weight));
+                    if (value.Handle != _weight?.Handle) {
+                        _weight?.Dispose();
+                        _weight = (value.DetachFromDisposeScope() as Parameter)!;
+                        ConditionallyRegisterParameter(nameof(weight), _weight);
+                    }
                 }
             }
+
+            public long num_parameters {
+                get => _num_parameters;
+                set {
+                    if (value != _num_parameters)
+                    {
+                        this._num_parameters = value;
+                        var w = torch.empty(value);
+                        w.fill_(_init);
+                        this._weight = new Parameter(w);
+                    }
+                }
+
+            }
+
+            public double init {
+                get => _init;
+                set {
+                    if (value != _init)
+                    {
+                        this._init = value;
+                        var w = torch.empty(_num_parameters);
+                        w.fill_(value);
+                        this._weight = new Parameter(w);
+                    }
+                }
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                _weight?.Dispose();
+            }
+
+            private double _init = 0;
+            private long _num_parameters = 0;
+
+            [ComponentName(Name = nameof(weight))]
+            private Parameter? _weight;
         }
     }
 
@@ -61,9 +101,7 @@ namespace TorchSharp
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             public static PReLU PReLU(long num_parameters, double init = 0.25, Device? device = null, ScalarType? dtype = null)
             {
-                var handle = THSNN_PReLU_ctor(num_parameters, init, out var boxedHandle);
-                if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new PReLU(handle, boxedHandle).MoveModule<PReLU>(device, dtype);
+                return new PReLU(num_parameters, init).MoveModule<PReLU>(device, dtype);
             }
 
             public static partial class functional

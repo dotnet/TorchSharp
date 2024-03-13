@@ -785,6 +785,8 @@ namespace TorchSharp
 
                 public virtual string GetName()
                 {
+                    if (!string.IsNullOrEmpty(this.name)) return this.name;
+                    
                     var res = THSNN_Module_name(handle);
                     CheckForErrors();
                     return res;
