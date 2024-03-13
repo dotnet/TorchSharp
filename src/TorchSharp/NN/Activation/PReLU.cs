@@ -74,7 +74,9 @@ namespace TorchSharp
 
             protected override void Dispose(bool disposing)
             {
-                _weight?.Dispose();
+                if (disposing) {
+                    _weight?.Dispose();
+                }
             }
 
             private double _init = 0;
