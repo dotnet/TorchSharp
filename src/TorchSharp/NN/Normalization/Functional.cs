@@ -17,8 +17,8 @@ namespace TorchSharp
                 {
                     var res = THSNN_batch_norm(
                         input.Handle,
-                        running_mean.Handle,
-                        running_var.Handle,
+                        running_mean is not null ? running_mean.Handle : IntPtr.Zero,
+                        running_var is not null ? running_var.Handle : IntPtr.Zero,
                         weight is not null ? weight.Handle : IntPtr.Zero,
                         bias is not null ? bias.Handle : IntPtr.Zero,
                         training,
