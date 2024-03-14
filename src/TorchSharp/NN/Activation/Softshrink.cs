@@ -33,7 +33,7 @@ namespace TorchSharp
         public static partial class nn
         {
             /// <summary>
-            /// Hardshrink
+            /// Softshrink
             /// </summary>
             /// <param name="lambda"> the λ value for the Softshrink formulation. Default: 0.5</param>
             /// <returns></returns>
@@ -45,10 +45,10 @@ namespace TorchSharp
             public static partial class functional
             {
                 /// <summary>
-                /// Hardshrink
+                /// Softshrink
                 /// </summary>
                 /// <param name="x">The input tensor</param>
-                /// <param name="lambda">The λ value for the Hardshrink formulation. Default: 0.5</param>
+                /// <param name="lambda">The λ value for the Softshrink formulation. Default: 0.5</param>
                 /// <returns></returns>
                 public static Tensor softshrink(Tensor x, double lambda = 0.5)
                 {

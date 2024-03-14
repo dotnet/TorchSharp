@@ -47,7 +47,7 @@ namespace TorchSharp
 
             public long num_parameters {
                 get => _num_parameters;
-                set {
+                private set {
                     if (value != _num_parameters)
                     {
                         this._num_parameters = value;
@@ -61,7 +61,7 @@ namespace TorchSharp
 
             public double init {
                 get => _init;
-                set {
+                private set {
                     if (value != _init)
                     {
                         this._init = value;
