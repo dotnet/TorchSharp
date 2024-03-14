@@ -4,7 +4,7 @@ Releases, starting with 9/2/2021, are listed with the most recent release at the
 
 # NuGet Version 0.102.3
 
-__Breaking Changes__:
+__API Changes__:
 
 #1243 `fuse_conv_bn_weights` and `fuse_linear_bn_weights` are added.<br/>
 
