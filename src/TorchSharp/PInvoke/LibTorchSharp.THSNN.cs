@@ -750,24 +750,6 @@ namespace TorchSharp.PInvoke
         internal static extern IntPtr THSNN_BatchNorm1d_ctor(long features, double eps, double momentum, [MarshalAs(UnmanagedType.U1)] bool affine, [MarshalAs(UnmanagedType.U1)] bool track_running_stats, out IntPtr pBoxedModule);
 
         [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_GroupNorm_forward(IntPtr module, IntPtr tensor);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_GroupNorm_bias(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_GroupNorm_set_bias(torch.nn.Module.HType module, IntPtr bias);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_GroupNorm_weight(torch.nn.Module.HType module);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern void THSNN_GroupNorm_set_weight(torch.nn.Module.HType module, IntPtr weight);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSNN_GroupNorm_ctor(long num_groups, long num_channels, double eps, [MarshalAs(UnmanagedType.U1)] bool affine, out IntPtr pBoxedModule);
-
-        [DllImport("LibTorchSharp")]
         internal static extern IntPtr THSNN_Unflatten_forward(torch.nn.Module.HType module, IntPtr tensor);
 
         [DllImport("LibTorchSharp")]

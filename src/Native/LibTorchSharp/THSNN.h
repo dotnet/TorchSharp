@@ -173,14 +173,6 @@ EXPORT_API(Tensor)   THSNN_InstanceNorm1d_get_batches(const NNModule module);
 EXPORT_API(Tensor)   THSNN_InstanceNorm2d_get_batches(const NNModule module);
 EXPORT_API(Tensor)   THSNN_InstanceNorm3d_get_batches(const NNModule module);
 
-EXPORT_API(NNModule) THSNN_GroupNorm_ctor(const int64_t num_groups, const int64_t num_channels, const double eps, const bool affine, NNAnyModule* outAsAnyModule);
-EXPORT_API(Tensor)   THSNN_GroupNorm_forward(const NNModule module, const Tensor tensor);
-
-EXPORT_API(Tensor)   THSNN_GroupNorm_bias(const NNModule module);
-EXPORT_API(void)     THSNN_GroupNorm_set_bias(const NNModule module, const Tensor bias);
-EXPORT_API(Tensor)   THSNN_GroupNorm_weight(const NNModule module);
-EXPORT_API(void)     THSNN_GroupNorm_set_weight(const NNModule module, const Tensor weight);
-
 EXPORT_API(Tensor)   THSNN_batch_norm(const Tensor input, const Tensor running_mean, const Tensor running_var, const Tensor weight, const Tensor bias, const bool training, const double momentum, const double eps);
 EXPORT_API(Tensor)   THSNN_group_norm(const Tensor input, int64_t num_groups, const Tensor weight, const Tensor bias, const double eps);
 EXPORT_API(Tensor)   THSNN_instance_norm(const Tensor input, const Tensor running_mean, const Tensor running_var, const Tensor weight, const Tensor bias, const bool use_input_stats, const double momentum, const double eps);
