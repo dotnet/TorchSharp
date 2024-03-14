@@ -278,66 +278,62 @@ namespace TorchSharp
                 Assert.InRange(maxDifference, -tolerance, tolerance);
             }
 
-            {
-                // linear
-                var x = rand([20, 20]) * 100;
+            // linear
+            var x = rand([20, 20]) * 100;
 
-                var linear = nn.Linear(20, 5);
-                linear.eval();
-                SetRandomParameter(linear, x => x.weight!);
-                SetRandomParameter(linear, x => x.bias!);
+            var linear = nn.Linear(20, 5);
+            linear.eval();
+            SetRandomParameter(linear, x => x.weight!);
+            SetRandomParameter(linear, x => x.bias!);
 
-                var batchNorm1d = nn.BatchNorm1d(5, eps: 1);
-                batchNorm1d.eval();
-                SetRandomParameter(batchNorm1d, x => x.weight!);
-                SetRandomParameter(batchNorm1d, x => x.bias!);
-                SetRandomTensor(batchNorm1d, x => x.running_mean!);
-                SetRandomTensor(batchNorm1d, x => x.running_var!);
+            var batchNorm1d = nn.BatchNorm1d(5, eps: 1);
+            batchNorm1d.eval();
+            SetRandomParameter(batchNorm1d, x => x.weight!);
+            SetRandomParameter(batchNorm1d, x => x.bias!);
+            SetRandomTensor(batchNorm1d, x => x.running_mean!);
+            SetRandomTensor(batchNorm1d, x => x.running_var!);
 
-                (var weight, var bias) = nn.utils.fuse_linear_bn_weights(
-                    linear.weight!, linear.bias,
-                    batchNorm1d.running_mean!, batchNorm1d.running_var!,
-                    bn_eps: 1, batchNorm1d.weight!, batchNorm1d.bias!);
+            (var weight, var bias) = nn.utils.fuse_linear_bn_weights(
+                linear.weight!, linear.bias,
+                batchNorm1d.running_mean!, batchNorm1d.running_var!,
+                bn_eps: 1, batchNorm1d.weight!, batchNorm1d.bias!);
 
-                var newLinear = nn.Linear(20, 5);
-                newLinear.eval();
-                newLinear.weight = weight;
-                newLinear.bias = bias;
+            var newLinear = nn.Linear(20, 5);
+            newLinear.eval();
+            newLinear.weight = weight;
+            newLinear.bias = bias;
 
-                AssertRelativelyEqual(
-                    batchNorm1d.call(linear.call(x)),
-                    newLinear.call(x));
-            }
+            AssertRelativelyEqual(
+                batchNorm1d.call(linear.call(x)),
+                newLinear.call(x));
 
-            {
-                // conv
-                var x = rand([20, 20, 20, 20]) * 100;
-                var conv = nn.Conv2d(20, 5, 3);
-                conv.eval();
-                SetRandomParameter(conv, x => x.weight!);
-                SetRandomParameter(conv, x => x.bias!);
+            // conv
+            x = rand([20, 20, 20, 20]) * 100;
+            var conv = nn.Conv2d(20, 5, 3);
+            conv.eval();
+            SetRandomParameter(conv, x => x.weight!);
+            SetRandomParameter(conv, x => x.bias!);
 
-                var batchNorm2d = nn.BatchNorm2d(5, eps: 13);
-                batchNorm2d.eval();
-                SetRandomParameter(batchNorm2d, x => x.weight!);
-                SetRandomParameter(batchNorm2d, x => x.bias!);
-                SetRandomTensor(batchNorm2d, x => x.running_mean!);
-                SetRandomTensor(batchNorm2d, x => x.running_var!);
+            var batchNorm2d = nn.BatchNorm2d(5, eps: 13);
+            batchNorm2d.eval();
+            SetRandomParameter(batchNorm2d, x => x.weight!);
+            SetRandomParameter(batchNorm2d, x => x.bias!);
+            SetRandomTensor(batchNorm2d, x => x.running_mean!);
+            SetRandomTensor(batchNorm2d, x => x.running_var!);
 
-                (var weight, var bias) = nn.utils.fuse_conv_bn_weights(
-                    conv.weight!, conv.bias,
-                    batchNorm2d.running_mean!, batchNorm2d.running_var!,
-                    bn_eps: 13, batchNorm2d.weight!, batchNorm2d.bias!);
+            (weight, bias) = nn.utils.fuse_conv_bn_weights(
+                conv.weight!, conv.bias,
+                batchNorm2d.running_mean!, batchNorm2d.running_var!,
+                bn_eps: 13, batchNorm2d.weight!, batchNorm2d.bias!);
 
-                var newConv = nn.Conv2d(20, 5, 3);
-                newConv.eval();
-                newConv.weight = weight;
-                newConv.bias = bias;
+            var newConv = nn.Conv2d(20, 5, 3);
+            newConv.eval();
+            newConv.weight = weight;
+            newConv.bias = bias;
 
-                AssertRelativelyEqual(
-                    batchNorm2d.call(conv.call(x)),
-                    newConv.call(x));
-            }
+            AssertRelativelyEqual(
+                batchNorm2d.call(conv.call(x)),
+                newConv.call(x));
         }
 
         [Fact(Skip = "Intermittently fails")]
