@@ -239,7 +239,7 @@ namespace TorchSharp
         [Fact]
         public void UtilsFusion()
         {
-            static void FillRandom<T>(
+            static void SetRandomParameter<T>(
                 T module,
                 Expression<Func<T, Modules.Parameter>> parameterProperty)
             {
@@ -254,7 +254,7 @@ namespace TorchSharp
                 property.SetValue(module, newParameter);
             }
 
-            static void FillRandomTensor<T>(
+            static void SetRandomTensor<T>(
                 T module,
                 Expression<Func<T, Tensor>> tensorProperty)
             {
@@ -284,15 +284,15 @@ namespace TorchSharp
 
                 var linear = nn.Linear(20, 5);
                 linear.eval();
-                FillRandom(linear, x => x.weight!);
-                FillRandom(linear, x => x.bias!);
+                SetRandomParameter(linear, x => x.weight!);
+                SetRandomParameter(linear, x => x.bias!);
 
                 var batchNorm1d = nn.BatchNorm1d(5, eps: 1);
                 batchNorm1d.eval();
-                FillRandom(batchNorm1d, x => x.weight!);
-                FillRandom(batchNorm1d, x => x.bias!);
-                FillRandomTensor(batchNorm1d, x => x.running_mean!);
-                FillRandomTensor(batchNorm1d, x => x.running_var!);
+                SetRandomParameter(batchNorm1d, x => x.weight!);
+                SetRandomParameter(batchNorm1d, x => x.bias!);
+                SetRandomTensor(batchNorm1d, x => x.running_mean!);
+                SetRandomTensor(batchNorm1d, x => x.running_var!);
 
                 (var weight, var bias) = nn.utils.fuse_linear_bn_weights(
                     linear.weight!, linear.bias,
@@ -301,8 +301,8 @@ namespace TorchSharp
 
                 var newLinear = nn.Linear(20, 5);
                 newLinear.eval();
-                newLinear.weight = new Modules.Parameter(weight);
-                newLinear.bias = new Modules.Parameter(bias);
+                newLinear.weight = weight;
+                newLinear.bias = bias;
 
                 AssertRelativelyEqual(
                     batchNorm1d.call(linear.call(x)),
@@ -314,15 +314,15 @@ namespace TorchSharp
                 var x = rand([20, 20, 20, 20]) * 100;
                 var conv = nn.Conv2d(20, 5, 3);
                 conv.eval();
-                FillRandom(conv, x => x.weight!);
-                FillRandom(conv, x => x.bias!);
+                SetRandomParameter(conv, x => x.weight!);
+                SetRandomParameter(conv, x => x.bias!);
 
                 var batchNorm2d = nn.BatchNorm2d(5, eps: 13);
                 batchNorm2d.eval();
-                FillRandom(batchNorm2d, x => x.weight!);
-                FillRandom(batchNorm2d, x => x.bias!);
-                FillRandomTensor(batchNorm2d, x => x.running_mean!);
-                FillRandomTensor(batchNorm2d, x => x.running_var!);
+                SetRandomParameter(batchNorm2d, x => x.weight!);
+                SetRandomParameter(batchNorm2d, x => x.bias!);
+                SetRandomTensor(batchNorm2d, x => x.running_mean!);
+                SetRandomTensor(batchNorm2d, x => x.running_var!);
 
                 (var weight, var bias) = nn.utils.fuse_conv_bn_weights(
                     conv.weight!, conv.bias,
@@ -331,8 +331,8 @@ namespace TorchSharp
 
                 var newConv = nn.Conv2d(20, 5, 3);
                 newConv.eval();
-                newConv.weight = new Modules.Parameter(weight);
-                newConv.bias = new Modules.Parameter(bias);
+                newConv.weight = weight;
+                newConv.bias = bias;
 
                 AssertRelativelyEqual(
                     batchNorm2d.call(conv.call(x)),

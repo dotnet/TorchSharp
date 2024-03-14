@@ -435,6 +435,8 @@ namespace TorchSharp
                     Tensor? bn_w, Tensor? bn_b,
                     bool transpose = false)
                 {
+                    using var scope = NewDisposeScope();
+
                     var conv_weight_dtype = conv_w.dtype;
                     var conv_bias_dtype = conv_b?.dtype ?? conv_weight_dtype;
                     conv_b ??= zeros_like(bn_rm);
@@ -455,7 +457,7 @@ namespace TorchSharp
                     var weight = new Parameter(fused_conv_w, conv_w.requires_grad);
                     var bias = new Parameter(fused_conv_b, conv_b.requires_grad);
 
-                    return (weight, bias);
+                    return scope.MoveToOuter(weight, bias);
                 }
 
                 /// <summary>
@@ -474,6 +476,8 @@ namespace TorchSharp
                     Tensor bn_rm, Tensor bn_rv, double bn_eps,
                     Tensor bn_w, Tensor bn_b)
                 {
+                    using var scope = NewDisposeScope();
+
                     linear_b ??= zeros_like(bn_rm);
 
                     var bn_scale = bn_w * rsqrt(bn_rv + bn_eps);
@@ -484,7 +488,7 @@ namespace TorchSharp
                     var weight = new Parameter(fused_w, linear_w.requires_grad);
                     var bias = new Parameter(fused_b, linear_b.requires_grad);
 
-                    return (weight, bias);
+                    return scope.MoveToOuter(weight, bias);
                 }
             }
         }
