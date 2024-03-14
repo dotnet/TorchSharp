@@ -50,7 +50,8 @@ namespace TorchSharp
                 /// <param name="inplace">Do the operation in-place. Default: False</param>
                 public static Tensor softsign(Tensor x, bool inplace = false)
                 {
-                    using var y = 1 + x.abs();
+                    using var abs = x.abs();
+                    using var y = 1 + abs;
                     return inplace ? x.div_(y) : x.div(y);
                 }
             }

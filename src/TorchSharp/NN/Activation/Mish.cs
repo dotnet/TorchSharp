@@ -52,7 +52,7 @@ namespace TorchSharp
                 {
                     using var t1 = softplus(x);
                     using var t2 = t1.tanh();
-                    return inplace ? x.mul_(t2) : x.mul(t2);
+                    return inplace ? x.mul_(t2).alias() : x.mul(t2);
                 }
             }
         }

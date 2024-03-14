@@ -51,7 +51,7 @@ namespace TorchSharp
                 public static Tensor tanhshrink(Tensor x, bool inplace = false)
                 {
                     using var tanh_x = x.tanh();
-                    return inplace ? x.sub_(tanh_x) : x.sub(tanh_x);
+                    return inplace ? x.sub_(tanh_x).alias() : x.sub(tanh_x);
                 }
             }
         }
