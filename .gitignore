@@ -272,3 +272,4 @@ packages/
 *.code-workspace
 /.idea
 /test/TorchSharpTest/exportsd.py
+.vscode/settings.json
