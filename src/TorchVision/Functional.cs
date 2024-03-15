@@ -691,9 +691,9 @@ namespace TorchSharp
                 /// Resize the input image to the given size.
                 /// </summary>
                 /// <param name="input">An image tensor.</param>
-                /// <param name="height"></param>
-                /// <param name="width"></param>
-                /// <param name="maxSize"></param>
+                /// <param name="height">The height of the resized image. Must be > 0.</param>
+                /// <param name="width">The width of the resized image. Must be > 0.</param>
+                /// <param name="maxSize">The maximum allowed for the longer edge of the resized image.</param>
                 /// <returns></returns>
                 public static Tensor resize(Tensor input, int height, int width, int? maxSize = null)
                 {
