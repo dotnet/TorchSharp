@@ -1,6 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Reflection;
 using Xunit;
 
 using static TorchSharp.torch;
@@ -231,6 +234,110 @@ namespace TorchSharp
 
             Assert.Equal(data.shape, data1.shape);
             Assert.Equal(data, data1);
+        }
+
+        [Fact]
+        public void UtilsFusion()
+        {
+            static void SetRandomParameter<T>(
+                T module,
+                Expression<Func<T, Modules.Parameter>> parameterProperty)
+            {
+                var propertyExpression = (MemberExpression)parameterProperty.Body;
+                var property = (PropertyInfo)propertyExpression.Member;
+                var parameter = (Modules.Parameter)property.GetValue(module)!;
+                var randomTensor = rand_like(
+                    parameter,
+                    parameter.dtype,
+                    parameter.device) * 100;
+                var newParameter = new Modules.Parameter(randomTensor, parameter.requires_grad);
+                property.SetValue(module, newParameter);
+            }
+
+            static void SetRandomTensor<T>(
+                T module,
+                Expression<Func<T, Tensor>> tensorProperty)
+            {
+                var propertyExpression = (MemberExpression)tensorProperty.Body;
+                var property = (PropertyInfo)propertyExpression.Member;
+                var tensor = (Tensor)property.GetValue(module)!;
+                var newTensor = rand_like(
+                    tensor,
+                    tensor.dtype,
+                    tensor.device,
+                    tensor.requires_grad) * 100;
+                property.SetValue(module, newTensor);
+            }
+
+            static void AssertRelativelyEqual(
+                Tensor expected, Tensor actual, double tolerance = 1e-5)
+            {
+                Assert.Equal(expected.size(), actual.size());
+                var difference = (expected - actual) / expected;
+                var maxDifference = (double)difference.abs().max();
+                Assert.InRange(maxDifference, -tolerance, tolerance);
+            }
+
+            {
+                // linear
+                var x = rand(new long[] { 20, 20 }) * 100;
+
+                var linear = nn.Linear(20, 5);
+                linear.eval();
+                SetRandomParameter(linear, x => x.weight!);
+                SetRandomParameter(linear, x => x.bias!);
+
+                var batchNorm1d = nn.BatchNorm1d(5, eps: 1);
+                batchNorm1d.eval();
+                SetRandomParameter(batchNorm1d, x => x.weight!);
+                SetRandomParameter(batchNorm1d, x => x.bias!);
+                SetRandomTensor(batchNorm1d, x => x.running_mean!);
+                SetRandomTensor(batchNorm1d, x => x.running_var!);
+
+                (var weight, var bias) = nn.utils.fuse_linear_bn_weights(
+                    linear.weight!, linear.bias,
+                    batchNorm1d.running_mean!, batchNorm1d.running_var!,
+                    bn_eps: 1, batchNorm1d.weight!, batchNorm1d.bias!);
+
+                var newLinear = nn.Linear(20, 5);
+                newLinear.eval();
+                newLinear.weight = weight;
+                newLinear.bias = bias;
+
+                AssertRelativelyEqual(
+                    batchNorm1d.call(linear.call(x)),
+                    newLinear.call(x));
+            }
+
+            {
+                // conv
+                var x = rand(new long[] { 20, 20, 20, 20 }) * 100;
+                var conv = nn.Conv2d(20, 5, 3);
+                conv.eval();
+                SetRandomParameter(conv, x => x.weight!);
+                SetRandomParameter(conv, x => x.bias!);
+
+                var batchNorm2d = nn.BatchNorm2d(5, eps: 13);
+                batchNorm2d.eval();
+                SetRandomParameter(batchNorm2d, x => x.weight!);
+                SetRandomParameter(batchNorm2d, x => x.bias!);
+                SetRandomTensor(batchNorm2d, x => x.running_mean!);
+                SetRandomTensor(batchNorm2d, x => x.running_var!);
+
+                (var weight, var bias) = nn.utils.fuse_conv_bn_weights(
+                    conv.weight!, conv.bias,
+                    batchNorm2d.running_mean!, batchNorm2d.running_var!,
+                    bn_eps: 13, batchNorm2d.weight!, batchNorm2d.bias!);
+
+                var newConv = nn.Conv2d(20, 5, 3);
+                newConv.eval();
+                newConv.weight = weight;
+                newConv.bias = bias;
+
+                AssertRelativelyEqual(
+                    batchNorm2d.call(conv.call(x)),
+                    newConv.call(x));
+            }
         }
 
         [Fact(Skip = "Intermittently fails")]

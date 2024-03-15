@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using TorchSharp.Modules;
 using TorchSharp.PInvoke;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -414,6 +415,80 @@ namespace TorchSharp
                         THSTensor_vector_to_parameters(vec.Handle, tensorsRef, parray.Array.Length);
                         CheckForErrors();
                     }
+                }
+
+                /// <summary>
+                /// Fuse convolutional module parameters and BatchNorm module parameters into new convolutional module parameters.
+                /// </summary>
+                /// <param name="conv_w">Convolutional weight.</param>
+                /// <param name="conv_b">Convolutional bias.</param>
+                /// <param name="bn_rm">BatchNorm running mean.</param>
+                /// <param name="bn_rv">BatchNorm running variance.</param>
+                /// <param name="bn_eps">BatchNorm epsilon.</param>
+                /// <param name="bn_w">BatchNorm weight.</param>
+                /// <param name="bn_b">BatchNorm bias.</param>
+                /// <param name="transpose">If <c>true</c>, transpose the conv weight. Defaults to <c>false</c>.</param>
+                /// <returns>Fused convolutional weight and bias.</returns>
+                public static (Parameter weight, Parameter bias) fuse_conv_bn_weights(
+                    Tensor conv_w, Tensor? conv_b,
+                    Tensor bn_rm, Tensor bn_rv, double bn_eps,
+                    Tensor? bn_w, Tensor? bn_b,
+                    bool transpose = false)
+                {
+                    using var scope = NewDisposeScope();
+
+                    var conv_weight_dtype = conv_w.dtype;
+                    var conv_bias_dtype = conv_b?.dtype ?? conv_weight_dtype;
+                    conv_b ??= zeros_like(bn_rm);
+                    bn_w ??= ones_like(bn_rm);
+                    bn_b ??= zeros_like(bn_rm);
+                    var shape = conv_w.shape.Select(_ => 1L).ToArray();
+                    if (transpose)
+                        shape[1] = -1;
+                    else
+                        shape[0] = -1;
+
+                    var bn_var_rsqrt = rsqrt(bn_rv + bn_eps);
+                    var fused_conv_w = (conv_w * (bn_w * bn_var_rsqrt).reshape(shape))
+                        .to(conv_weight_dtype);
+                    var fused_conv_b = ((conv_b - bn_rm) * bn_var_rsqrt * bn_w + bn_b)
+                        .to(conv_bias_dtype);
+
+                    var weight = new Parameter(fused_conv_w, conv_w.requires_grad);
+                    var bias = new Parameter(fused_conv_b, conv_b.requires_grad);
+
+                    return scope.MoveToOuter(weight, bias);
+                }
+
+                /// <summary>
+                /// Fuse linear module parameters and BatchNorm module parameters into new linear module parameters.
+                /// </summary>
+                /// <param name="linear_w">Linear weight.</param>
+                /// <param name="linear_b">Linear bias.</param>
+                /// <param name="bn_rm">BatchNorm running mean.</param>
+                /// <param name="bn_rv">BatchNorm running variance.</param>
+                /// <param name="bn_eps">BatchNorm epsilon.</param>
+                /// <param name="bn_w">BatchNorm weight.</param>
+                /// <param name="bn_b">BatchNorm bias.</param>
+                /// <returns>Fused linear weight and bias.</returns>
+                public static (Parameter weight, Parameter bias) fuse_linear_bn_weights(
+                    Tensor linear_w, Tensor? linear_b,
+                    Tensor bn_rm, Tensor bn_rv, double bn_eps,
+                    Tensor bn_w, Tensor bn_b)
+                {
+                    using var scope = NewDisposeScope();
+
+                    linear_b ??= zeros_like(bn_rm);
+
+                    var bn_scale = bn_w * rsqrt(bn_rv + bn_eps);
+
+                    var fused_w = linear_w * bn_scale.unsqueeze(-1);
+                    var fused_b = (linear_b - bn_rm) * bn_scale + bn_b;
+
+                    var weight = new Parameter(fused_w, linear_w.requires_grad);
+                    var bias = new Parameter(fused_b, linear_b.requires_grad);
+
+                    return scope.MoveToOuter(weight, bias);
                 }
             }
         }
