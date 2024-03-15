@@ -13,7 +13,7 @@ Please check the [Release Notes](RELEASENOTES.md) file for news on what's been u
 
 __TorchSharp is now in the .NET Foundation!__
 
-If you are using TorchSharp from NuGet, you should be using a version >= 0.98.3 of TorchSharp, and >= 1.12.0 of the libtorch-xxx redistributable packages. We recommend using one of the 'bundled' packages: TorchSharp-cpu, TorchSharp-cuda-windows, or TorchSharp-cuda-linux. They will pull in the right libtorch backends.
+If you are using TorchSharp from NuGet, you should be using a version >= 0.98.3 of TorchSharp, and >= 1.12.0 of the libtorch-xxx redistributable packages. We recommend using one of the 'bundled' packages: TorchSharp-cpu, TorchSharp-cuda-windows, or TorchSharp-cuda-linux. They will pull in the right LibTorch backends.
 
 __TorchSharp examples has their own home!__
 
@@ -29,7 +29,7 @@ As we build up to a v1.0 release, we will continue to make breaking changes, but
 
 TorchSharp is a .NET library that provides access to the library that powers PyTorch. It is part of the .NET Foundation.
 
-The focus is to bind the API surfaced by libtorch with a particular focus on tensors. The design intent is to stay as close as possible to the Pytorch experience, while still taking advantage of the benefits of the .NET static type system where it makes sense. For example: method overloading is relied on when Pytorch defines multiple valid types for a particular parameter.
+The focus is to bind the API surfaced by LibTorch with a particular focus on tensors. The design intent is to stay as close as possible to the Pytorch experience, while still taking advantage of the benefits of the .NET static type system where it makes sense. For example: method overloading is relied on when Pytorch defines multiple valid types for a particular parameter.
 
 The technology is a "wrapper library": no more, no less. [DiffSharp](https://github.com/DiffSharp/DiffSharp/) uses this
 repository extensively and has been a major factor in iterating support.
@@ -91,9 +91,15 @@ See [docfx/articles/memory.md](docfx/articles/memory.md).
 
 # Download
 
-TorchSharp is distributed via the NuGet gallery: https://www.nuget.org/packages/TorchSharp/
+TorchSharp is distributed via the NuGet gallery: [https://www.nuget.org/packages/TorchSharp/](https://www.nuget.org/packages/TorchSharp/)
 
-To use TorchSharp, you also need one of the LibTorch backend packages: https://www.nuget.org/packages?q=libtorch, specifically one of
+We recommend using one of the 'bundled' packages, which will pull in both TorchSharp and the right backends:
+
+- [TorchSharp-cpu](https://www.nuget.org/packages/TorchSharp-cpu) (CPU, Linux/Windows/OSX)
+- [TorchSharp-cuda-windows](https://www.nuget.org/packages/TorchSharp-cuda-windows) (CPU/CUDA 12.1, Windows)
+- [TorchSharp-cuda-linux](https://www.nuget.org/packages/TorchSharp-cuda-linux) (CPU/CUDA 12.1, Linux)
+
+Otherwise, you also need one of the LibTorch backend packages: https://www.nuget.org/packages?q=libtorch, specifically one of
 
 * `libtorch-cpu-linux-x64` (CPU, Linux)
 
@@ -103,14 +109,14 @@ To use TorchSharp, you also need one of the LibTorch backend packages: https://w
 
 * `libtorch-cpu` (CPU, references all three, larger download but simpler)
 
-* `libtorch-cuda-12.1-linux-x64` (CPU/CUDA 11.3, Linux)
+* `libtorch-cuda-12.1-linux-x64` (CPU/CUDA 12.1, Linux)
 
   > NOTE: Due to the presence of very large native binaries, using the `libtorch-cuda-12.1-linux-x64` package requires
   > .NET 6, e.g. .NET SDK version `6.0.100-preview.5.21302.13` or greater.
 
-* `libtorch-cuda-12.1-win-x64` (CPU/CUDA 11.3, Windows)
+* `libtorch-cuda-12.1-win-x64` (CPU/CUDA 12.1, Windows)
 
-Alternatively you can access the libtorch native binaries via direct reference to existing local native
+Alternatively you can access the LibTorch native binaries via direct reference to existing local native
 binaries of LibTorch installed through other means (for example, by installing [PyTorch](https://pytorch.org/) using a Python package manager). You will have to add an explicit load of the relevant native library, for example:
 
 ```csharp
