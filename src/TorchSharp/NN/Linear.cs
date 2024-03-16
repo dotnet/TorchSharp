@@ -18,21 +18,8 @@ namespace TorchSharp
             {
             }
 
-            public long in_features {
-                get {
-                    var weight = this.weight;
-                    Debug.Assert(weight is not null);
-                    return weight.size(1);
-                }
-            }
-
-            public long out_features {
-                get {
-                    var weight = this.weight;
-                    Debug.Assert(weight is not null);
-                    return weight.size(0);
-                }
-            }
+            public long in_features => weight!.size(1);
+            public long out_features => weight!.size(0);
 
             public override Tensor forward(Tensor tensor)
             {

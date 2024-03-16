@@ -26,13 +26,7 @@ namespace TorchSharp
                 this.track_running_stats = track_running_stats;
             }
 
-            public long num_features {
-                get {
-                    var weight = this.weight;
-                    Debug.Assert(weight is not null);
-                    return weight.size(0);
-                }
-            }
+            public long num_features => weight!.size(0);
 
             public double eps { get; }
             public double momentum { get; }
@@ -145,7 +139,7 @@ namespace TorchSharp
                 unsafe {
                     var handle = THSNN_BatchNorm1d_ctor(features, eps, momentum, affine, track_running_stats, out var boxedHandle);
                     if (handle == IntPtr.Zero) { torch.CheckForErrors(); }
-                    return new BatchNorm1d(handle, boxedHandle).MoveModule<BatchNorm1d>(device, dtype);
+                    return new BatchNorm1d(handle, boxedHandle, eps, momentum, affine, track_running_stats).MoveModule<BatchNorm1d>(device, dtype);
                 }
             }
         }
