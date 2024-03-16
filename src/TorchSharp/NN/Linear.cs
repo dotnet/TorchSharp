@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Diagnostics;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.PInvoke.NativeMethods;
@@ -15,6 +16,22 @@ namespace TorchSharp
         {
             internal Linear(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
             {
+            }
+
+            public long in_features {
+                get {
+                    var weight = this.weight;
+                    Debug.Assert(weight is not null);
+                    return weight.size(1);
+                }
+            }
+
+            public long out_features {
+                get {
+                    var weight = this.weight;
+                    Debug.Assert(weight is not null);
+                    return weight.size(0);
+                }
             }
 
             public override Tensor forward(Tensor tensor)

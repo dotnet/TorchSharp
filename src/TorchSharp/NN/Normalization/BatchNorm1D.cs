@@ -1,5 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors.  All Rights Reserved.  See LICENSE in the project root for license information.
 using System;
+using System.Diagnostics;
 using static TorchSharp.torch;
 using static TorchSharp.PInvoke.NativeMethods;
 
@@ -15,9 +16,28 @@ namespace TorchSharp
         /// </summary>
         public sealed class BatchNorm1d : torch.nn.Module<Tensor, Tensor>
         {
-            internal BatchNorm1d(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            internal BatchNorm1d(IntPtr handle, IntPtr boxedHandle,
+                double eps, double momentum, bool affine, bool track_running_stats)
+                : base(handle, boxedHandle)
             {
+                this.eps = eps;
+                this.momentum = momentum;
+                this.affine = affine;
+                this.track_running_stats = track_running_stats;
             }
+
+            public long num_features {
+                get {
+                    var weight = this.weight;
+                    Debug.Assert(weight is not null);
+                    return weight.size(0);
+                }
+            }
+
+            public double eps { get; }
+            public double momentum { get; }
+            public bool affine { get; }
+            public bool track_running_stats { get; }
 
             public override Tensor forward(Tensor tensor)
             {
