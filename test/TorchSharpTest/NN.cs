@@ -598,13 +598,15 @@ namespace TorchSharp
         [Fact]
         public void EvaluatePReLU()
         {
+            var rel = PReLU(1, 0.35, torch.CPU);
+
+            Assert.Equal(1, rel.num_parameters);
+            Assert.Equal(0.35f, rel.weight.item<float>());
+            Assert.True(rel.weight.requires_grad);
+
             foreach (var device in TestUtils.AvailableDevices()) {
 
-                var rel = PReLU(1, 0.35, device);
-
-                Assert.Equal(1, rel.num_parameters);
-                Assert.Equal(0.35f, rel.weight.item<float>());
-                Assert.True(rel.weight.requires_grad);
+                rel = rel.to(device);
 
                 var input = torch.randn(new long[] { 4, 3, 8, 8 }, device: device) * 5.0;
                 var output = rel.call(input);

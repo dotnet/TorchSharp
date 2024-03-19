@@ -16,11 +16,15 @@ namespace TorchSharp
         /// </summary>
         public sealed class PReLU : torch.nn.Module<Tensor, Tensor>
         {
-            internal PReLU(long num_parameters, double init) : base(nameof(PReLU)) 
+            internal PReLU(long num_parameters, double init, Device? device = null, ScalarType? dtype = null) : base(nameof(PReLU)) 
             { 
-                this._init = init;
-                // This will also set the weights
+                this.init = init;
                 this.num_parameters = num_parameters;
+ 
+                var w = torch.empty(num_parameters, device:device, dtype:dtype);
+                w.fill_(init);
+
+                this.weight = new Parameter(w);
             }
 
             public override Tensor forward(Tensor tensor)
@@ -46,30 +50,11 @@ namespace TorchSharp
             }
 
             public long num_parameters {
-                get => _num_parameters;
-                private set {
-                    if (value != _num_parameters)
-                    {
-                        this._num_parameters = value;
-                        var w = torch.empty(value);
-                        w.fill_(_init);
-                        this._weight = new Parameter(w);
-                    }
-                }
-
+                get; private set;
             }
 
             public double init {
-                get => _init;
-                private set {
-                    if (value != _init)
-                    {
-                        this._init = value;
-                        var w = torch.empty(_num_parameters);
-                        w.fill_(value);
-                        this._weight = new Parameter(w);
-                    }
-                }
+                get; private set;
             }
 
             protected override void Dispose(bool disposing)
@@ -78,9 +63,6 @@ namespace TorchSharp
                     _weight?.Dispose();
                 }
             }
-
-            private double _init = 0;
-            private long _num_parameters = 0;
 
             [ComponentName(Name = nameof(weight))]
             private Parameter? _weight;
