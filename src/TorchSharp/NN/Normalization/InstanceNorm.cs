@@ -18,12 +18,12 @@ namespace TorchSharp
         {
             public InstanceNorm(long num_features, 
                                 double eps, 
-                                double momentum, 
+                                double? momentum, 
                                 bool affine, 
-                                bool track_running_stats, 
+                                bool track_running_stats,
                                 Device? device, 
                                 ScalarType? dtype, 
-                                string name) : base(num_features, eps, momentum, affine, track_running_stats, device, dtype, name) 
+                                string name) : base(num_features, eps, momentum.HasValue ? momentum : 0.1, affine, track_running_stats, device, dtype, name) 
             {                
             }
 
@@ -50,7 +50,7 @@ namespace TorchSharp
 
             private Tensor ApplyInstanceNorm(Tensor input)
             {
-                return F.instance_norm(input, running_mean, running_var, weight, bias, training || !track_running_stats, momentum, eps);
+                return F.instance_norm(input, running_mean, running_var, weight, bias, training || !track_running_stats, momentum.HasValue ? momentum.Value : 0.1, eps);
             }
         }
     }

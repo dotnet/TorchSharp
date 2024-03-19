@@ -52,7 +52,7 @@ namespace TorchSharp
                 {
                     using var abs = x.abs();
                     using var y = 1 + abs;
-                    return inplace ? x.div_(y) : x.div(y);
+                    return inplace ? x.div_(y).alias() : x.div(y);
                 }
             }
         }

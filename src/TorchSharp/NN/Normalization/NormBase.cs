@@ -16,7 +16,7 @@ namespace TorchSharp
         {
             public NormBase(long num_features, 
                             double eps, 
-                            double momentum, 
+                            double? momentum, 
                             bool affine, 
                             bool track_running_stats, 
                             Device? device, 
@@ -118,9 +118,9 @@ namespace TorchSharp
             
             public long num_features { get; private set; }
             
-            public double eps { get; private set; }
+            public double eps { get; set; }
             
-            public double momentum { get; private set; }
+            public double? momentum { get; set; }
 
             public bool affine { get; private set; }
             
