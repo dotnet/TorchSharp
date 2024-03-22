@@ -895,6 +895,31 @@ NNModule THSNN_ConvTranspose2d_ctor(const int64_t inputChannel, const int64_t ou
     );
 }
 
+NNModule THSNN_ConvTranspose2d_ctor_1(const int64_t inputChannel, const int64_t outputChannel,
+    const int64_t kernelX, const int64_t kernelY,
+    const int64_t strideX, const int64_t strideY,
+    const int64_t paddingX, const int64_t paddingY,
+    const int64_t output_paddingX, const int64_t output_paddingY,
+    const int64_t dilationX, const int64_t dilationY,
+    const int64_t paddingMode, const int64_t groups, const bool bias,
+    NNAnyModule* outAsAnyModule)
+{
+    auto padd = torch::ExpandingArray<2>({ paddingX, paddingY });
+
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ConvTranspose2dOptions(inputChannel, outputChannel, { kernelX, kernelY })
+        .stride({ strideX, strideY })
+        .padding(padd)
+        .dilation({ dilationX, dilationY })
+        .groups(groups)
+        .bias(bias)
+        .output_padding({ output_paddingX, output_paddingY });
+        ApplyPaddingMode(opts, paddingMode);
+
+        res = create_module<torch::nn::ConvTranspose2dImpl>(opts, outAsAnyModule);
+    );
+}
+
 Tensor THSNN_ConvTranspose2d_forward(const NNModule module, const Tensor tensor)
 {
     CATCH_TENSOR((*module)->as<torch::nn::ConvTranspose2d>()->forward(*tensor));
@@ -936,6 +961,31 @@ NNModule THSNN_ConvTranspose3d_ctor(const int64_t inputChannel, const int64_t ou
     ApplyPaddingMode(opts, paddingMode);
 
     res = create_module<torch::nn::ConvTranspose3dImpl>(opts, outAsAnyModule);
+    );
+}
+
+NNModule THSNN_ConvTranspose3d_ctor_1(const int64_t inputChannel, const int64_t outputChannel,
+    const int64_t kernelX, const int64_t kernelY, const int64_t kernelZ,
+    const int64_t strideX, const int64_t strideY, const int64_t strideZ,
+    const int64_t paddingX, const int64_t paddingY, const int64_t paddingZ,
+    const int64_t output_paddingX, const int64_t output_paddingY, const int64_t output_paddingZ,
+    const int64_t dilationX, const int64_t dilationY, const int64_t dilationZ,
+    const int64_t paddingMode, const int64_t groups, const bool bias,
+    NNAnyModule* outAsAnyModule)
+{
+    auto padd = torch::ExpandingArray<3>({ paddingX, paddingY, paddingZ });
+
+    CATCH_RETURN_NNModule(
+        auto opts = torch::nn::ConvTranspose3dOptions(inputChannel, outputChannel, { kernelX, kernelY, kernelZ })
+        .stride({ strideX, strideY, strideZ })
+        .padding(padd)
+        .dilation({ dilationX, dilationY, dilationZ })
+        .groups(groups)
+        .bias(bias)
+        .output_padding({output_paddingX, output_paddingY, output_paddingZ});
+        ApplyPaddingMode(opts, paddingMode);
+
+        res = create_module<torch::nn::ConvTranspose3dImpl>(opts, outAsAnyModule);
     );
 }
 

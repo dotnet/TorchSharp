@@ -97,45 +97,45 @@ namespace TorchSharp
             /// <summary>
             /// Applies a 1D convolution over an input signal composed of several input planes.
             /// </summary>
-            /// <param name="inputChannel">Number of channels in the input image</param>
-            /// <param name="outputChannel">Number of channels produced by the convolution</param>
+            /// <param name="in_channels">Number of channels in the input image</param>
+            /// <param name="out_channels">Number of channels produced by the convolution</param>
             /// <param name="kernelSize">Size of the convolving kernel</param>
             /// <param name="stride">Stride of the convolution. Default: 1</param>
             /// <param name="padding">Zero-padding added to both sides of the input. Default: 0</param>
             /// <param name="dilation">Spacing between kernel elements. Default: 1</param>
-            /// <param name="paddingMode">'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'</param>
+            /// <param name="padding_mode">'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'</param>
             /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns>Tensor of shape (N,C_out,L_out)</returns>
-            public static Conv1d Conv1d(long inputChannel, long outputChannel, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv1d Conv1d(long in_channels, long out_channels, long kernelSize, long stride = 1, long padding = 0, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_Conv1d_ctor(inputChannel, outputChannel, kernelSize, stride, padding, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
+                var res = THSNN_Conv1d_ctor(in_channels, out_channels, kernelSize, stride, padding, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Conv1d(res, boxedHandle, inputChannel).MoveModule<Conv1d>(device, dtype);
+                return new Conv1d(res, boxedHandle, in_channels).MoveModule<Conv1d>(device, dtype);
             }
 
             /// <summary>
             /// Applies a 1D convolution over an input signal composed of several input planes.
             /// </summary>
-            /// <param name="inputChannel">Number of channels in the input image</param>
-            /// <param name="outputChannel">Number of channels produced by the convolution</param>
+            /// <param name="in_channels">Number of channels in the input image</param>
+            /// <param name="out_channels">Number of channels produced by the convolution</param>
             /// <param name="kernelSize">Size of the convolving kernel</param>
             /// <param name="stride">Stride of the convolution. Default: 1</param>
             /// <param name="padding">Zero-padding added to both sides of the input. padding=Valid is the same as no padding. padding=Same pads the input so the output has the shape as the input. </param>
             /// <param name="dilation">Spacing between kernel elements. Default: 1</param>
-            /// <param name="paddingMode">'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'</param>
+            /// <param name="padding_mode">'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'</param>
             /// <param name="groups">Number of blocked connections from input channels to output channels. Default: 1</param>
             /// <param name="bias">If true, adds a learnable bias to the output. Default: true</param>
             /// <param name="device">The desired device of the parameters and buffers in this module</param>
             /// <param name="dtype">The desired floating point or complex dtype of the parameters and buffers in this module</param>
             /// <returns>Tensor of shape (N,C_out,L_out)</returns>
-            public static Conv1d Conv1d(long inputChannel, long outputChannel, long kernelSize, Padding padding, long stride = 1, long dilation = 1, PaddingModes paddingMode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
+            public static Conv1d Conv1d(long in_channels, long out_channels, long kernelSize, Padding padding, long stride = 1, long dilation = 1, PaddingModes padding_mode = PaddingModes.Zeros, long groups = 1, bool bias = true, Device? device = null, ScalarType? dtype = null)
             {
-                var res = THSNN_Conv1d_ctor(inputChannel, outputChannel, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)paddingMode, groups, bias, out var boxedHandle);
+                var res = THSNN_Conv1d_ctor(in_channels, out_channels, kernelSize, stride, padding == Padding.Valid ? 0 : -1, dilation, (long)padding_mode, groups, bias, out var boxedHandle);
                 if (res == IntPtr.Zero) { torch.CheckForErrors(); }
-                return new Conv1d(res, boxedHandle, inputChannel).MoveModule<Conv1d>(device, dtype);
+                return new Conv1d(res, boxedHandle, in_channels).MoveModule<Conv1d>(device, dtype);
             }
 
             public static partial class functional
