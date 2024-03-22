@@ -2449,7 +2449,7 @@ namespace TorchSharp
                     Assert.Equal(64, output.shape[1]);
                     Assert.Equal(28, output.shape[2]);
                 }
-                using (var conv = Conv1d(3, 64, 3, padding: 1, paddingMode: PaddingModes.Reflect, device: device))
+                using (var conv = Conv1d(3, 64, 3, padding: 1, padding_mode: PaddingModes.Reflect, device: device))
                 using (var output = conv.call(t)) {
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(16, output.shape[0]);
@@ -2574,7 +2574,7 @@ namespace TorchSharp
                     Assert.Equal(28, output.shape[2]);
                     Assert.Equal(28, output.shape[3]);
                 }
-                using (var conv = Conv2d(3, 64, (3, 3), padding: (1, 1), paddingMode: PaddingModes.Reflect, device: device))
+                using (var conv = Conv2d(3, 64, (3, 3), padding: (1, 1), padding_mode: PaddingModes.Reflect, device: device))
                 using (var output = conv.call(t)) {
                     Assert.Equal(device.type, output.device_type);
                     Assert.Equal(16, output.shape[0]);
@@ -2697,7 +2697,7 @@ namespace TorchSharp
                     Assert.Equal(28, output.shape[3]);
                     Assert.Equal(28, output.shape[4]);
                 }
-                using (var conv = Conv3d(3, 64, (3, 3, 3), padding: (1, 1, 1), paddingMode: PaddingModes.Replicate))
+                using (var conv = Conv3d(3, 64, (3, 3, 3), padding: (1, 1, 1), padding_mode: PaddingModes.Replicate))
                 using (var output = conv.call(t)) {
                     Assert.Equal(16, output.shape[0]);
                     Assert.Equal(64, output.shape[1]);
@@ -2745,12 +2745,36 @@ namespace TorchSharp
             var shape = new long[] { 16, 3, 28, 28 };
             foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
-                var conv = ConvTranspose2d(3, 64, 3, device: device);
-                var output = conv.call(t);
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(30, output.shape[2]);
-                Assert.Equal(30, output.shape[3]);
+                {
+                    var conv = ConvTranspose2d(3, 64, 3, device: device);
+                    var output = conv.call(t);
+                    Assert.Multiple(
+                    () => Assert.Equal(16, output.shape[0]),
+                    () => Assert.Equal(64, output.shape[1]),
+                    () => Assert.Equal(30, output.shape[2]),
+                    () => Assert.Equal(30, output.shape[3])
+                    );
+                }
+                {
+                    var conv = ConvTranspose2d(3, 64, (3,3), device: device);
+                    var output = conv.call(t);
+                    Assert.Multiple(
+                    () => Assert.Equal(16, output.shape[0]),
+                    () => Assert.Equal(64, output.shape[1]),
+                    () => Assert.Equal(30, output.shape[2]),
+                    () => Assert.Equal(30, output.shape[3])
+                    );
+                }
+                {
+                    var conv = ConvTranspose2d(3, 64, (1,2), stride: (1,2), device: device);
+                    var output = conv.call(t);
+                    Assert.Multiple(
+                    () => Assert.Equal(16, output.shape[0]),
+                    () => Assert.Equal(64, output.shape[1]),
+                    () => Assert.Equal(28, output.shape[2]),
+                    () => Assert.Equal(56, output.shape[3])
+                    );
+                }
             }
         }
 
@@ -2760,13 +2784,42 @@ namespace TorchSharp
             var shape = new long[] { 16, 3, 28, 28, 28 };
             foreach (var device in TestUtils.AvailableDevices(true)) {
                 Tensor t = torch.rand(shape, device: device);
-                var conv = ConvTranspose3d(3, 64, 3, device: device);
-                var output = conv.call(t);
-                Assert.Equal(16, output.shape[0]);
-                Assert.Equal(64, output.shape[1]);
-                Assert.Equal(30, output.shape[2]);
-                Assert.Equal(30, output.shape[3]);
-                Assert.Equal(30, output.shape[4]);
+                {
+                    using var conv = ConvTranspose3d(3, 64, 3, device: device);
+                    using var output = conv.call(t);
+
+                    Assert.Multiple(
+                    () => Assert.Equal(16, output.shape[0]),
+                    () => Assert.Equal(64, output.shape[1]),
+                    () => Assert.Equal(30, output.shape[2]),
+                    () => Assert.Equal(30, output.shape[3]),
+                    () => Assert.Equal(30, output.shape[4])
+                    );
+                }
+                {
+                    using var conv = ConvTranspose3d(3, 64, (3,3,3), device: device);
+                    using var output = conv.call(t);
+
+                    Assert.Multiple(
+                    () => Assert.Equal(16, output.shape[0]),
+                    () => Assert.Equal(64, output.shape[1]),
+                    () => Assert.Equal(30, output.shape[2]),
+                    () => Assert.Equal(30, output.shape[3]),
+                    () => Assert.Equal(30, output.shape[4])
+                    );
+                }
+                {
+                    using var conv = ConvTranspose3d(3, 64, (1,2,2), stride: (1,2,2), device: device);
+                    using var output = conv.call(t);
+
+                    Assert.Multiple(
+                    () => Assert.Equal(16, output.shape[0]),
+                    () => Assert.Equal(64, output.shape[1]),
+                    () => Assert.Equal(28, output.shape[2]),
+                    () => Assert.Equal(56, output.shape[3]),
+                    () => Assert.Equal(56, output.shape[4])
+                    );
+                }
             }
         }
         #endregion

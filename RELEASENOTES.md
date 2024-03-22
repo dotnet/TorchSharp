@@ -1,12 +1,17 @@
 ## TorchSharp Release Notes
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
-
 # NuGet Version 0.102.3
+
+__Breaking Changes__:
+
+The 'paddingMode' parameter of convolution has been changed to 'padding_mode', and the 'outputPadding' is now 'output_padding'.
 
 __API Changes__:
 
 #1243 `fuse_conv_bn_weights` and `fuse_linear_bn_weights` are added.<br/>
+#1274 ConvTranspose3d does not accept non-uniform kernelSize/stride values<br/>
+
 
 # NuGet Version 0.102.2
 
