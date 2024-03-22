@@ -2,6 +2,17 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# NuGet Version 0.102.3
+
+__Breaking Changes__:
+
+The 'paddingMode' parameter of convolution has been changed to 'padding_mode', and the 'outputPadding' is now 'output_padding'.
+
+__API Changes__:
+
+#1274 ConvTranspose3d does not accept non-uniform kernelSize/stride values<br/>
+
+
 # NuGet Version 0.102.2
 
 __Bug Fixes__:

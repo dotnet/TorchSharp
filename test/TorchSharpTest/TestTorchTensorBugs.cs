@@ -1027,7 +1027,7 @@ namespace TorchSharp
             public GitTestCnn(string name, Device? device = null) : base(name)
             {
                 var modules = new List<(string, Module<Tensor, Tensor>)>();
-                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernelSize: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), paddingMode: PaddingModes.Replicate, bias: false)));
+                modules.Add(($"{name}-conv2d-1", Conv2d(1, 4, kernelSize: (1L, 1L), stride: (1L, 1L), padding: (0L, 0L), padding_mode: PaddingModes.Replicate, bias: false)));
                 layers0 = Sequential(modules);
 
                 RegisterComponents();
