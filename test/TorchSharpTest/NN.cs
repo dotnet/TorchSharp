@@ -6633,5 +6633,37 @@ namespace TorchSharp
             lin1.call(input);
             Assert.Equal(1, counter);
         }
+
+        [Fact]
+        public void TestCustomParameterLessModule() 
+        {
+            var cnp = new CustomNoParameters("test");
+
+            // Should not throw
+            cnp.register_module("sub", new CustomNoParameters("test"));
+
+            Assert.True(cnp.named_modules().Count() > 0);
+            Assert.Equal("sub", cnp.named_modules().First().name);
+
+            Assert.Throws<InvalidOperationException>(() => cnp.register_module("test", torch.nn.Linear(10,10, true)));
+            Assert.Throws<InvalidOperationException>(() => cnp.register_buffer("test", torch.rand(10)));
+            Assert.Throws<InvalidOperationException>(() => cnp.register_parameter("test", new Parameter(torch.rand(10))));
+        }
+
+        class CustomNoParameters : ParamLessModule<Tensor, Tensor>
+        {
+            public CustomNoParameters(string name) : base(name)
+            {
+            }
+
+            public CustomNoParameters(IntPtr handle, IntPtr boxedHandle) : base(handle, boxedHandle)
+            {
+            }
+
+            public override Tensor forward(Tensor input)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }
