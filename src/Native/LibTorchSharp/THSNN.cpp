@@ -538,22 +538,9 @@ Tensor THSNN_cosine_similarity(const Tensor input1, const Tensor input2, int64_t
     CATCH_TENSOR(torch::nn::functional::cosine_similarity(*input1, *input2, torch::nn::functional::CosineSimilarityFuncOptions().dim(dim).eps(eps)));
 }
 
-NNModule THSNN_PairwiseDistance_ctor(double p, double eps, bool keep_dim, NNAnyModule* outAsAnyModule)
+Tensor THSNN_pairwise_distance(const Tensor input1, const Tensor input2, double p, double eps, bool keepdim)
 {
-    CATCH_RETURN_NNModule(
-        auto opts = torch::nn::PairwiseDistanceOptions()
-        .p(p)
-        .eps(eps)
-        .keepdim(keep_dim);
-
-        res = create_module<torch::nn::PairwiseDistanceImpl>(opts, outAsAnyModule);
-    );
-
-}
-
-Tensor  THSNN_PairwiseDistance_forward(const NNModule module, const Tensor input1, const Tensor input2)
-{
-    CATCH_TENSOR((*module)->as<torch::nn::PairwiseDistance>()->forward(*input1, *input2));
+    CATCH_TENSOR(torch::nn::functional::pairwise_distance(*input1, *input2, torch::nn::functional::PairwiseDistanceFuncOptions().p(p).eps(eps).keepdim(keepdim)));
 }
 
 NNModule THSNN_RNN_ctor(const int64_t input_size, const int64_t hidden_size, const int64_t num_layers, const int64_t nonlinearity, const bool bias, const bool batchFirst, const double dropout, const bool bidirectional, NNAnyModule* outAsAnyModule)
