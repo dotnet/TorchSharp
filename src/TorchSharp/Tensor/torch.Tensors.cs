@@ -46,7 +46,13 @@ namespace TorchSharp
         /// The default floating point dtype is initially torch.float32.
         /// </summary>
         /// <param name="dtype"></param>
-        public static void set_default_dtype(ScalarType dtype) { default_dtype = dtype; }
+        public static void set_default_dtype(ScalarType dtype)
+        {
+            if (!dtype.IsFloatingPoint()) {
+                throw new ArgumentException("only floating-point types are supported as the default type");
+            }
+            default_dtype = dtype;
+        }
 
         // https://pytorch.org/docs/stable/generated/torch.get_default_dtype
         /// <summary>
