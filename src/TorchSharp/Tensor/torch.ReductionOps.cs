@@ -410,12 +410,18 @@ namespace TorchSharp
         [Pure]public static Tensor sum(Tensor input, long dim, bool keepdim = false, ScalarType? type = null) => input.sum(dim, keepdim, type);
 
         // https://pytorch.org/docs/stable/generated/torch.unique
-        [Pure]static (Tensor output, Tensor? inverse_indices, Tensor? counts) unique(
+        /// <summary>
+        /// Returns the unique elements of the input tensor.
+        /// </summary>
+        [Pure]public static (Tensor output, Tensor? inverse_indices, Tensor? counts) unique(
             Tensor input, bool sorted = true, bool return_inverse = false, bool return_counts = false, int? dim = null)
             => input.unique(sorted, return_inverse, return_counts, dim);
 
         // https://pytorch.org/docs/stable/generated/torch.unique_consecutive
-        [Pure]static (Tensor output, Tensor? inverse_indices, Tensor? counts) unique_consecutive(
+        /// <summary>
+        /// Eliminates all but the first element from every consecutive group of equivalent elements.
+        /// </summary>
+        [Pure]public static (Tensor output, Tensor? inverse_indices, Tensor? counts) unique_consecutive(
             Tensor input, bool return_inverse = false, bool return_counts = false, int? dim = null)
             => input.unique_consecutive(return_inverse, return_counts, dim);
 
