@@ -16,6 +16,70 @@ namespace TorchSharp
     public class TestTorch
     {
         [Fact]
+        public void FInfoTest()
+        {
+            static void AssertScalarEqual(Tensor expected, Tensor actual)
+            {
+                Assert.Equal((double)expected, (double)actual);
+            }
+            static void AssertScalarNotEqual(Tensor expected, Tensor actual)
+            {
+                Assert.NotEqual((double)expected, (double)actual);
+            }
+
+            var floatingTypes = new[] {
+                ScalarType.Float16, ScalarType.Float32, ScalarType.Float64, ScalarType.BFloat16
+            };
+            foreach (var scalarType in floatingTypes) {
+                var info = finfo(scalarType);
+
+                var zeroPointFour = tensor(0.4, scalarType);
+                var zeroPointNine = tensor(0.9, scalarType);
+                var one = tensor(1, scalarType);
+                var zero = tensor(1, scalarType);
+                Assert.Equal(one.dtype.ElementSize() * 8, info.bits);
+                
+                var eps = tensor(info.eps, scalarType);
+                AssertScalarNotEqual(one, one + eps);
+                AssertScalarEqual(one + eps, one + eps * zeroPointNine);
+                AssertScalarEqual(one, one + eps * zeroPointFour);
+
+                var max = tensor(info.max, scalarType);
+                AssertScalarEqual(max, max + eps);
+
+                var min = tensor(info.min, scalarType);
+                AssertScalarEqual(-max, min);
+                AssertScalarEqual(min, min - eps);
+
+                var tiny = tensor(info.tiny, scalarType);
+                // not sure how to test for tiny.
+
+                var smallest_normal = tensor(info.smallest_normal, scalarType);
+                AssertScalarEqual(tiny, smallest_normal);
+
+                var resolution = tensor(info.resolution, scalarType);
+                // not sure how to test for resolution.
+            }
+
+            var complexTypes = new[] {
+                (ScalarType.ComplexFloat32, ScalarType.Float32),
+                (ScalarType.ComplexFloat64, ScalarType.Float64)
+            };
+            foreach (var (complex, floating) in complexTypes) {
+                var c = finfo(complex);
+                var f = finfo(floating);
+
+                Assert.Equal(f.bits, c.bits);
+                Assert.Equal(f.eps, c.eps);
+                Assert.Equal(f.max, c.max);
+                Assert.Equal(f.min, c.min);
+                Assert.Equal(f.tiny, c.tiny);
+                Assert.Equal(f.smallest_normal, c.smallest_normal);
+                Assert.Equal(f.resolution, c.resolution);
+            }
+        }
+
+        [Fact]
         public void EnumEquivalence()
         {
             Assert.Equal((int)InterpolationMode.Nearest, (int)UpsampleMode.Nearest);

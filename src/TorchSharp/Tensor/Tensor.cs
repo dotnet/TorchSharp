@@ -7226,37 +7226,63 @@ namespace TorchSharp
             public double max;
             public double min;
             public double tiny;
+            public double smallest_normal;
+            public double resolution;
+        }
+
+        public static FInfo finfo()
+        {
+            return finfo(default_dtype);
         }
 
         public static FInfo finfo(ScalarType dtype)
         {
-            if (!is_floating_point(dtype) && !is_complex(dtype))
-                throw new ArgumentException("'dtype' must be floating point or complex");
-
-            if (dtype == ScalarType.ComplexFloat32)
-                dtype = ScalarType.Float32;
-            if (dtype == ScalarType.ComplexFloat64)
-                dtype = ScalarType.Float64;
-
-            FInfo result = new FInfo();
-
             switch (dtype) {
+            case ScalarType.BFloat16:
+                return new FInfo() {
+                    bits = 16,
+                    eps = 0.0078125,
+                    max = 3.3895313892515355e+38,
+                    min = -3.3895313892515355e+38,
+                    tiny = 1.1754943508222875e-38,
+                    smallest_normal = 1.1754943508222875e-38,
+                    resolution = 0.01
+                };
+            case ScalarType.Float16:
+                return new FInfo() {
+                    bits = 16,
+                    eps = 0.0009765625,
+                    max = 65504.0,
+                    min = -65504.0,
+                    tiny = 6.103515625e-05,
+                    smallest_normal = 6.103515625e-05,
+                    resolution = 0.001
+                };
             case ScalarType.Float32:
-                result.bits = 32;
-                result.min = float.MinValue;
-                result.max = float.MaxValue;
-                result.eps = float.Epsilon;
-                result.tiny = float.Epsilon;
-                break;
+            case ScalarType.ComplexFloat32:
+                return new FInfo() {
+                    bits = 32,
+                    eps = 1.1920928955078125e-07,
+                    max = 3.4028234663852886e+38,
+                    min = -3.4028234663852886e+38,
+                    tiny = 1.1754943508222875e-38,
+                    smallest_normal = 1.1754943508222875e-38,
+                    resolution = 1e-06
+                };
             case ScalarType.Float64:
-                result.bits = 64;
-                result.min = double.MinValue;
-                result.max = double.MaxValue;
-                result.eps = double.Epsilon;
-                result.tiny = double.Epsilon;
-                break;
+            case ScalarType.ComplexFloat64:
+                return new FInfo() {
+                    bits = 64,
+                    eps = 2.220446049250313e-16,
+                    max = 1.7976931348623157e+308,
+                    min = -1.7976931348623157e+308,
+                    tiny = 2.2250738585072014e-308,
+                    smallest_normal = 2.2250738585072014e-308,
+                    resolution = 1e-15
+                };
+            default:
+                throw new ArgumentException("'dtype' must be floating point or complex");
             }
-            return result;
         }
 
         public static bool is_integral(ScalarType type)
