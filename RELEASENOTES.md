@@ -1,6 +1,13 @@
 ## TorchSharp Release Notes
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
+
+# NuGet Version 0.102.4
+
+__API Changes__:
+
+#1284 make `torch.unique` and `torch.unique_consecutive` public.<br/>
+
 # NuGet Version 0.102.3
 
 __Breaking Changes__:
