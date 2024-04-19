@@ -37,7 +37,7 @@ def _write_tensor(t, stream):
     stream.write(leb128.u.encode(len(t.shape)))
     for s in t.shape:
         stream.write(leb128.u.encode(s))
-    stream.write(t.numpy().tobytes())
+    stream.write(t.detach().cpu().numpy().tobytes())
 
 def write_tensor(t, file_name):
     f = open(file_name, "wb")
