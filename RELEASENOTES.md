@@ -2,11 +2,36 @@
 
 Releases, starting with 9/2/2021, are listed with the most recent release at the top.
 
+# NuGet Version 0.102.5
+
+__Breaking Changes__:
+
+__API Changes__:
+
+__Bug Fixes__:
+
+
+# NuGet Version 0.102.4
+
+__Breaking Changes__:
+
+Correct `torch.finfo`. (`torch.set_default_dtype`, `Categorical.entropy`, `_CorrCholesky.check`, `Distribution.ClampProbs`, `FisherSnedecor.rsample`, `Gamma.rsample`, `Geometric.rsample`, `distributions.Gumbel`, `Laplace.rsample`, `SigmoidTransform._call` and `SigmoidTransform._inverse` are influenced.)<br/>
+
+__API Changes__:
+
+#1284 make `torch.unique` and `torch.unique_consecutive` public.<br/>
+
 # NuGet Version 0.102.3
+
+__Breaking Changes__:
+
+The 'paddingMode' parameter of convolution has been changed to 'padding_mode', and the 'outputPadding' is now 'output_padding'.
 
 __API Changes__:
 
 #1243 `fuse_conv_bn_weights` and `fuse_linear_bn_weights` are added.<br/>
+#1274 ConvTranspose3d does not accept non-uniform kernelSize/stride values<br/>
+
 
 # NuGet Version 0.102.2
 
