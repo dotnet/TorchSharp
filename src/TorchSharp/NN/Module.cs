@@ -239,8 +239,9 @@ namespace TorchSharp
                                                             .ToDictionary(field => field.ComponentName());
 
                     foreach (var (name, param) in named_parameters(false).ToList()) {
+                        using var grad = param.grad;
                         if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device) &&
-                            (param.grad is null || !param.grad.toWillCopy(dtype ?? param.dtype, device ?? param.device)))
+                            (grad is null || !grad.toWillCopy(dtype ?? param.dtype, device ?? param.device)))
                             continue;
 
                         Parameter p;
@@ -256,15 +257,13 @@ namespace TorchSharp
                                 .DetachFromDisposeScope() as Parameter;
 
                             // Copy the gradient over as well, if it exists
-                            var grad = param.grad;
                             if (grad is not null) {
                                 p.grad = grad.to(paramType, device ?? param.device)
                                     .with_requires_grad(grad.requires_grad);
                             }
 
-                            // Dispose the param and gradient
+                            // Dispose the param
                             param.Dispose();
-                            grad?.Dispose();
                         }
                         ConditionallyRegisterParameter(name, p);
 
