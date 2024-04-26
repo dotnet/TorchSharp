@@ -8,6 +8,8 @@ __Breaking Changes__:
 
 __API Changes__:
 
+#1291 replace `Tensor.grad()` and `Tensor.set_grad()` with property `Tensor.grad`.<br/>
+
 __Bug Fixes__:
 
 
