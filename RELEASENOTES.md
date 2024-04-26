@@ -12,7 +12,7 @@ __API Changes__:
 
 __Bug Fixes__:
 
-- Potential memory leaks caused by `param.grad` in `_toEpilog` have been resolved.
+- Potential memory leaks caused by `param.grad` in `_toEpilog` have been resolved. 
 
 # NuGet Version 0.102.4
 
