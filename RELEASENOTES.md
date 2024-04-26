@@ -8,10 +8,11 @@ __Breaking Changes__:
 
 __API Changes__:
 
-#1291 replace `Tensor.grad()` and `Tensor.set_grad()` with property `Tensor.grad`.<br/>
+- #1291 `Tensor.grad()` and `Tensor.set_grad()` have been replaced by a new property `Tensor.grad`.
 
 __Bug Fixes__:
 
+- Potential memory leaks caused by `param.grad` in `_toEpilog` have been resolved.
 
 # NuGet Version 0.102.4
 
