@@ -21,8 +21,8 @@ namespace TorchSharp
 
             y.sum().backward();
 
-            Assert.NotNull(x.grad());
-            Assert.NotNull(weight.grad());
+            Assert.NotNull(x.grad);
+            Assert.NotNull(weight.grad);
         }
 
 
@@ -37,9 +37,9 @@ namespace TorchSharp
 
             (y[0].sum() + y[1].sum()).backward();
 
-            Assert.NotNull(x1.grad());
-            Assert.NotNull(x2.grad());
-            Assert.NotNull(weight.grad());
+            Assert.NotNull(x1.grad);
+            Assert.NotNull(x2.grad);
+            Assert.NotNull(weight.grad);
         }
 
         private void TestCustomTwoInputOneGradientLinearFunction(Device device, bool requires_grad)
@@ -53,9 +53,9 @@ namespace TorchSharp
 
             (y[0].sum() + y[1].sum()).backward();
 
-            Assert.NotNull(x1.grad());
-            Assert.NotNull(x2.grad());
-            Assert.Null(weight.grad());
+            Assert.NotNull(x1.grad);
+            Assert.NotNull(x2.grad);
+            Assert.Null(weight.grad);
         }
 
         private float TrainXOR(Device device)
@@ -203,8 +203,8 @@ namespace TorchSharp
 
             y.sum().backward();
 
-            Assert.NotNull(x.grad());
-            Assert.NotNull(weight.grad());
+            Assert.NotNull(x.grad);
+            Assert.NotNull(weight.grad);
         }
 
         [Fact]
@@ -214,7 +214,7 @@ namespace TorchSharp
             var y = MulConstantFunction.apply(x, 2.0);
             y.sum().backward();
 
-            Assert.NotNull(x.grad());
+            Assert.NotNull(x.grad);
         }
 
         class MulConstantFunction : torch.autograd.SingleTensorFunction<MulConstantFunction>

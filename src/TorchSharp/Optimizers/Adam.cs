@@ -164,7 +164,7 @@ namespace TorchSharp
 
                         var state = (State)_state[param.handle];
 
-                        var grad = (maximize) ? -param.grad() : param.grad();
+                        var grad = (maximize) ? -param.grad : param.grad;
 
                         if (grad is null) continue;
 

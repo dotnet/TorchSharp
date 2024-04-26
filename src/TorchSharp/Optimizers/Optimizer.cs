@@ -399,7 +399,7 @@ namespace TorchSharp
 
                     foreach (var p in g.Parameters) {
 
-                        using var grad = p.grad();
+                        using var grad = p.grad;
 
                         if (grad is null) continue;
 
