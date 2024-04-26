@@ -2152,14 +2152,14 @@ namespace TorchSharp
             output.backward();
 
             foreach (var parm in seq.parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 Assert.NotNull(grad);
             }
 
             seq.zero_grad();
 
             foreach (var parm in seq.parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 Assert.True(grad is null || grad!.count_nonzero().item<long>() == 0);
             }
         }
@@ -2186,14 +2186,14 @@ namespace TorchSharp
             output.backward();
 
             foreach (var parm in seq.parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 Assert.NotNull(grad);
             }
 
             seq.zero_grad();
 
             foreach (var parm in seq.parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 Assert.True(grad is null || grad!.count_nonzero().item<long>() == 0);
             }
         }
@@ -2220,14 +2220,14 @@ namespace TorchSharp
             output.backward();
 
             foreach (var parm in seq.parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 Assert.NotNull(grad);
             }
 
             seq.zero_grad();
 
             foreach (var parm in seq.parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 Assert.True(grad is null || grad!.count_nonzero().item<long>() == 0);
             }
         }
@@ -2254,9 +2254,9 @@ namespace TorchSharp
 
             output.backward();
 
-            var scalerGrad = scaler.grad();
-            var weightGrad = linear.weight.grad();
-            var biasGrad = linear.bias.grad();
+            var scalerGrad = scaler.grad;
+            var weightGrad = linear.weight.grad;
+            var biasGrad = linear.bias.grad;
             Assert.True(scalerGrad is not null && scalerGrad.shape.Length == 2);
             Assert.True(weightGrad is not null && weightGrad.shape.Length == 2);
             Assert.True(biasGrad is not null && biasGrad.shape.Length == 2);
@@ -2328,7 +2328,7 @@ namespace TorchSharp
             var gradCounts = 0;
 
             foreach (var (name, parm) in modT.named_parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 gradCounts += grad is not null ? (grad.Handle == IntPtr.Zero ? 0 : 1) : 0;
             }
 
@@ -2346,7 +2346,7 @@ namespace TorchSharp
             gradCounts = 0;
 
             foreach (var parm in modF.parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 gradCounts += grad is not null ? (grad.Handle == IntPtr.Zero ? 0 : 1) : 0;
             }
 
@@ -2839,14 +2839,14 @@ namespace TorchSharp
             output.backward();
 
             foreach (var (pName, parm) in module.named_parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 Assert.NotNull(grad);
             }
 
             module.zero_grad();
 
             foreach (var (pName, parm) in module.named_parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 Assert.True(grad is null || grad!.count_nonzero().item<long>() == 0);
             }
 
@@ -3016,7 +3016,7 @@ namespace TorchSharp
             output.backward();
 
             foreach (var parm in seq.parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
             }
         }
 
@@ -3037,7 +3037,7 @@ namespace TorchSharp
             output.backward();
 
             foreach (var parm in seq.parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
             }
         }
 
@@ -3121,7 +3121,7 @@ namespace TorchSharp
                 var y = torch.randn(2, device: torch.CUDA);
                 torch.nn.functional.mse_loss(module.call(x), y).backward();
                 foreach (var (pName, parm) in module.named_parameters()) {
-                    var grad = parm.grad();
+                    var grad = parm.grad;
                     Assert.NotNull(grad);
                 }
 
@@ -3134,7 +3134,7 @@ namespace TorchSharp
                 y = torch.randn(2);
                 torch.nn.functional.mse_loss(module.call(x), y).backward();
                 foreach (var (pName, parm) in module.named_parameters()) {
-                    var grad = parm.grad();
+                    var grad = parm.grad;
                     Assert.NotNull(grad);
                 }
             }
@@ -3151,7 +3151,7 @@ namespace TorchSharp
             var y = torch.randn(2, float64);
             torch.nn.functional.mse_loss(module.call(x), y).backward();
             foreach (var (pName, parm) in module.named_parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 Assert.NotNull(grad);
             }
 
@@ -3164,7 +3164,7 @@ namespace TorchSharp
             y = torch.randn(2);
             torch.nn.functional.mse_loss(module.call(x), y).backward();
             foreach (var (pName, parm) in module.named_parameters()) {
-                var grad = parm.grad();
+                var grad = parm.grad;
                 Assert.NotNull(grad);
             }
         }
@@ -3180,7 +3180,7 @@ namespace TorchSharp
                 var y = torch.randn(2, float16, torch.CUDA);
                 torch.nn.functional.mse_loss(module.call(x), y).backward();
                 foreach (var (pName, parm) in module.named_parameters()) {
-                    var grad = parm.grad();
+                    var grad = parm.grad;
                     Assert.NotNull(grad);
                 }
 
@@ -3193,7 +3193,7 @@ namespace TorchSharp
                 y = torch.randn(2);
                 torch.nn.functional.mse_loss(module.call(x), y).backward();
                 foreach (var (pName, parm) in module.named_parameters()) {
-                    var grad = parm.grad();
+                    var grad = parm.grad;
                     Assert.NotNull(grad);
                 }
             }

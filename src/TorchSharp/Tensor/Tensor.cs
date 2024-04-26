@@ -1340,25 +1340,21 @@ namespace TorchSharp
             /// This attribute is null by default and becomes a Tensor the first time a call to backward() computes gradients for the tensor.
             /// The attribute will then contain the gradients computed and future calls to backward() will accumulate (add) gradients into it.
             /// </summary>
-            public Tensor? grad()
-            {
-                var res = NativeMethods.THSTensor_grad(Handle);
-                CheckForErrors();
+            public Tensor? grad {
+                get {
+                    var res = NativeMethods.THSTensor_grad(Handle);
+                    CheckForErrors();
 
-                if (res == IntPtr.Zero)
-                    return null;
+                    if (res == IntPtr.Zero)
+                        return null;
 
-                return new Tensor(res);
-            }
-
-            /// <summary>
-            /// This function will set the `tensor.grad()` attribute to a custom tensor. 
-            /// </summary>
-            /// <param name="grad">The new gradient tensor</param>
-            public void set_grad(Tensor grad)
-            {
-                NativeMethods.THSTensor_set_grad(Handle, grad?.DetachFromDisposeScope().Handle ?? IntPtr.Zero);
-                CheckForErrors();
+                    return new Tensor(res);
+                }
+                set {
+                    _ = value?.DetachFromDisposeScope();
+                    NativeMethods.THSTensor_set_grad(Handle, value?.Handle ?? IntPtr.Zero);
+                    CheckForErrors();
+                }
             }
 
             internal void EncodeIndices(TensorIndex[] indices,

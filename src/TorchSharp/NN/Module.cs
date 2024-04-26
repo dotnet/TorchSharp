@@ -240,7 +240,7 @@ namespace TorchSharp
 
                     foreach (var (name, param) in named_parameters(false).ToList()) {
                         if (!param.toWillCopy(dtype ?? param.dtype, device ?? param.device) &&
-                            (param.grad() is null || !param.grad().toWillCopy(dtype ?? param.dtype, device ?? param.device)))
+                            (param.grad is null || !param.grad.toWillCopy(dtype ?? param.dtype, device ?? param.device)))
                             continue;
 
                         Parameter p;
@@ -256,11 +256,11 @@ namespace TorchSharp
                                 .DetachFromDisposeScope() as Parameter;
 
                             // Copy the gradient over as well, if it exists
-                            var grad = param.grad();
+                            var grad = param.grad;
                             if (grad is not null) {
-                                p.set_grad(grad.to(paramType, device ?? param.device)
-                                                .with_requires_grad(grad.requires_grad)
-                                                .MoveToOtherDisposeScope(p));
+                                p.grad = grad.to(paramType, device ?? param.device)
+                                    .with_requires_grad(grad.requires_grad)
+                                    .MoveToOtherDisposeScope(p);
                             }
 
                             // Dispose the param and gradient
@@ -360,10 +360,10 @@ namespace TorchSharp
                     CheckForErrors();
 
                     foreach (var (_, p) in named_parameters()) {
-                        var grad = p.grad();
+                        var grad = p.grad;
                         if (grad is not null) {
                             if (set_to_none) {
-                                p.set_grad(null);
+                                p.grad = null;
                                 grad.DetachFromDisposeScope().Dispose();
                             } else {
                                 grad.zero_();

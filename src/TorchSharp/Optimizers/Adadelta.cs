@@ -136,7 +136,7 @@ namespace TorchSharp
 
                     foreach (var param in group.Parameters) {
 
-                        var grad = (maximize) ? -param.grad() : param.grad();
+                        var grad = (maximize) ? -param.grad : param.grad;
 
                         if (grad is null) continue;
 
