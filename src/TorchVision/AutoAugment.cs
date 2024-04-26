@@ -141,7 +141,7 @@ namespace TorchSharp
                 {
                     if (probs[i].ToDouble() <= p) {
                         var (magnitudes, signed) = op_meta[op_name];
-                        var magnitude = magnitude_id != null ? magnitudes[magnitude_id].ToDouble() : 0.0;
+                        var magnitude = magnitude_id.HasValue ? magnitudes[magnitude_id.Value].ToDouble() : 0.0;
                         if (signed && signs[i].ToBoolean())
                             magnitude *= -1.0;
                         img = apply_op(img, op_name, magnitude, interpolation: this.interpolation, fill: this.fill);
