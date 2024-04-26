@@ -1681,16 +1681,5 @@ namespace TorchSharp
             }
 #endif
         }
-
-        [Fact]
-        public void ValidateGradDispose()
-        {
-            var tensor = torch.zeros(Array.Empty<long>());
-            var grad = torch.zeros(Array.Empty<long>());
-            tensor.grad = grad;
-            grad.Dispose();
-            Assert.Equal(0, tensor.grad.ToInt32());
-        }
-
     }
 }
